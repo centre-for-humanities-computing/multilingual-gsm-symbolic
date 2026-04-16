@@ -1,4 +1,5 @@
 import pytest
+
 from multilingual_gsm_symbolic.gsm_parser import (
     EVAL_CONTEXT_HELPERS,
     AnnotatedQuestion,
@@ -18,15 +19,13 @@ class TestGetAllPossibleAssignments:
             answer="Test answer",
             id_orig=1,
             id_shuffled=1,
-            question_annotated="Test template\n#init:\n- $x = range(1, 6)\n#conditions:\n- True\n#answer:\nAnswer is {x}",
+            question_annotated="Test template\n#init:\n- $x = range(1, 6)\n#conditions:\n- True\n#answer:\nAnswer is {x}",  # noqa: E501
             answer_annotated="Answer is {x}",
         )
 
         init_lines = ["$x = range(1, 6)"]
         replacements = {}
-        result = annotated_question._get_all_possible_assignments(
-            init_lines, replacements
-        )
+        result = annotated_question._get_all_possible_assignments(init_lines, replacements)
 
         # Expected: x should have values 1, 2, 3, 4, 5
         expected = {"x": [{"x": 1}, {"x": 2}, {"x": 3}, {"x": 4}, {"x": 5}]}
@@ -39,15 +38,13 @@ class TestGetAllPossibleAssignments:
             answer="Test answer",
             id_orig=1,
             id_shuffled=1,
-            question_annotated="Test template\n#init:\n- $x = range(1, 10, 2)\n#conditions:\n- True\n#answer:\nAnswer is {x}",
+            question_annotated="Test template\n#init:\n- $x = range(1, 10, 2)\n#conditions:\n- True\n#answer:\nAnswer is {x}",  # noqa: E501
             answer_annotated="Answer is {x}",
         )
 
         init_lines = ["$x = range(1, 10, 2)"]
         replacements = {}
-        result = annotated_question._get_all_possible_assignments(
-            init_lines, replacements
-        )
+        result = annotated_question._get_all_possible_assignments(init_lines, replacements)
 
         # Expected: x should have values 1, 3, 5, 7, 9 with step 2
         expected = {"x": [{"x": 1}, {"x": 3}, {"x": 5}, {"x": 7}, {"x": 9}]}
@@ -60,15 +57,13 @@ class TestGetAllPossibleAssignments:
             answer="Test answer",
             id_orig=1,
             id_shuffled=1,
-            question_annotated="Test template\n#init:\n- $x = sample([10, 20, 30])\n#conditions:\n- True\n#answer:\nAnswer is {x}",
+            question_annotated="Test template\n#init:\n- $x = sample([10, 20, 30])\n#conditions:\n- True\n#answer:\nAnswer is {x}",  # noqa: E501
             answer_annotated="Answer is {x}",
         )
 
         init_lines = ["$x = [10, 20, 30]"]
         replacements = {}
-        result = annotated_question._get_all_possible_assignments(
-            init_lines, replacements
-        )
+        result = annotated_question._get_all_possible_assignments(init_lines, replacements)
 
         # Expected: x should have possible values 10, 20, 30
         expected = {"x": [{"x": 10}, {"x": 20}, {"x": 30}]}
@@ -81,15 +76,13 @@ class TestGetAllPossibleAssignments:
             answer="Test answer",
             id_orig=1,
             id_shuffled=1,
-            question_annotated="Test template\n#init:\n- $x = range(5, 3)\n#conditions:\n- True\n#answer:\nAnswer is {x}",
+            question_annotated="Test template\n#init:\n- $x = range(5, 3)\n#conditions:\n- True\n#answer:\nAnswer is {x}",  # noqa: E501
             answer_annotated="Answer is {x}",
         )
 
         init_lines = ["$x = range(5, 3)"]
         replacements = {}
-        result = annotated_question._get_all_possible_assignments(
-            init_lines, replacements
-        )
+        result = annotated_question._get_all_possible_assignments(init_lines, replacements)
 
         # Expected: empty list for x since the range is invalid
         assert result == {"x": []}
@@ -101,15 +94,13 @@ class TestGetAllPossibleAssignments:
             answer="Test answer",
             id_orig=1,
             id_shuffled=1,
-            question_annotated="Test template\n#init:\n- $x = range(start, end)\n#conditions:\n- True\n#answer:\nAnswer is {x}",
+            question_annotated="Test template\n#init:\n- $x = range(start, end)\n#conditions:\n- True\n#answer:\nAnswer is {x}",  # noqa: E501
             answer_annotated="Answer is {x}",
         )
 
         init_lines = ["$x = range(start, end)"]
         replacements = {"start": 2, "end": 6}
-        result = annotated_question._get_all_possible_assignments(
-            init_lines, replacements
-        )
+        result = annotated_question._get_all_possible_assignments(init_lines, replacements)
 
         # Expected: x should have values 2, 3, 4, 5
         expected = {"x": [{"x": 2}, {"x": 3}, {"x": 4}, {"x": 5}]}
@@ -137,12 +128,8 @@ def test_template_formatting_matches_original(template_file, language):
     replacements = load_replacements(language)
     default_assignments = annotated_question.get_default_assignments(replacements)
 
-    formatted_question = annotated_question.format_question(
-        default_assignments, language=language
-    )
-    formatted_answer = annotated_question.format_answer(
-        default_assignments, language=language
-    )
+    formatted_question = annotated_question.format_question(default_assignments, language=language)
+    formatted_answer = annotated_question.format_answer(default_assignments, language=language)
 
     assert formatted_question == annotated_question.question, (
         f"Formatted question doesn't match original for {template_file.name}"
@@ -165,38 +152,27 @@ def test_default_assignments_are_valid(template_file, language):
         return
 
     replacements = load_replacements(language)
-    all_possible_assignments = annotated_question._get_all_possible_assignments(
-        constrained_lines, replacements
-    )
+    all_possible_assignments = annotated_question._get_all_possible_assignments(constrained_lines, replacements)
 
     # Check example values are in possible assignments
     for var_name, possible_assignments in all_possible_assignments.items():
         if var_name not in default_assignments:
             continue
-        possible_values_for_var = [
-            assignment[var_name] for assignment in possible_assignments
-        ]
+        possible_values_for_var = [assignment[var_name] for assignment in possible_assignments]
 
         default_value = default_assignments[var_name]
 
         if isinstance(default_value, tuple):
-            default_value = tuple(
-                int(c) if str(c).isnumeric() else str(c) for c in default_value
-            )
-            assert (
-                default_value in possible_values_for_var
-                or list(default_value) in possible_values_for_var
-            ), (
-                f"Example assignment {var_name}={default_value} not found in {possible_values_for_var} for {template_file.name}"
+            default_value = tuple(int(c) if str(c).isnumeric() else str(c) for c in default_value)
+            assert default_value in possible_values_for_var or list(default_value) in possible_values_for_var, (
+                f"Example assignment {var_name}={default_value} not found in {possible_values_for_var} for {template_file.name}"  # noqa: E501
             )
         else:
             val_as_float = try_parse_float(str(default_value))
             val_as_fraction = try_parse_fraction(str(default_value))
             val_as_int = (
                 int(default_value)
-                if str(default_value).isnumeric()
-                or isinstance(default_value, float)
-                and default_value.is_integer()
+                if str(default_value).isnumeric() or isinstance(default_value, float) and default_value.is_integer()
                 else default_value
             )
 
@@ -207,7 +183,7 @@ def test_default_assignments_are_valid(template_file, language):
                 or str(val_as_fraction) in possible_values_for_var
                 or val_as_int in possible_values_for_var
             ), (
-                f"Example assignment {var_name}={default_value} not found in {possible_values_for_var} for {template_file.name}"
+                f"Example assignment {var_name}={default_value} not found in {possible_values_for_var} for {template_file.name}"  # noqa: E501
             )
 
     # Check conditions are satisfied
@@ -222,11 +198,7 @@ def test_default_assignments_are_valid(template_file, language):
                 numeric_val = None
                 for component in default_value:
                     try:
-                        numeric_val = (
-                            float(component)
-                            if "." in str(component)
-                            else int(component)
-                        )
+                        numeric_val = float(component) if "." in str(component) else int(component)
                         break
                     except (ValueError, TypeError):
                         continue
@@ -245,9 +217,7 @@ def test_default_assignments_are_valid(template_file, language):
             k: v[1] for k, v in example_combination.items() if isinstance(v, tuple)
         }
         try:
-            condition_result = eval(
-                cond, {"__builtins__": {}}, EVAL_CONTEXT_HELPERS | temp_combination
-            )
+            condition_result = eval(cond, {"__builtins__": {}}, EVAL_CONTEXT_HELPERS | temp_combination)
             assert condition_result, (
                 f"Example assignments {default_assignments} failed condition '{cond}' for {template_file.name}"
             )
