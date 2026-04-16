@@ -1,0 +1,8 @@
+{
+  "question": "For at foretage et opkald fra en telefonboks, skal du betale 0,25 kroner for hvert minut af dit opkald. Efter 16 minutter falder prisen til 0,2 kroner per minut. Hvor meget ville et 36-minutters opkald koste?",
+  "answer": "De første 16 minutter ville koste 16 * 0,25 = <<16*0,25=4>>4 kroner.\nDerefter er der 36 - 16 = <<36-16=20>>20 minutter af opkaldet tilbage.\nOg disse 20 minutter koster 20 * 0,2 = <<20*0,2=4>>4 kroner.\nSå i alt ville det 36-minutters opkald koste 4 + 4 = 8 kroner.\n#### 8",
+  "id_orig": 1223,
+  "id_shuffled": 10,
+  "question_annotated": "For at foretage et opkald fra en {dev,telefonboks}, skal du betale {frac1,0.25} {currency,kroner} for hvert minut af dit opkald. Efter {t,16} minutter falder prisen til {frac2,0.2} {currency,kroner} per minut. Hvor meget ville et {total,36}-minutters opkald koste?\n\n#init:\n- dev = sample(['phone booth', 'hotel room phone'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+  "answer_annotated": "De første {t} minutter ville koste {t} * {frac1} = <<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} {currency}.\nDerefter er der {total} - {t} = <<{total}-{t}={total-t}>>{total-t} minutter af opkaldet tilbage.\nOg disse {total-t} minutter koster {total-t} * {frac2} = <<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)} {currency}.\nSå i alt ville det {total}-minutters opkald koste {int(t*frac1)} + {int((total-t)*frac2)} = {int(frac1 * t) + int(frac2*(total-t))} {currency}.\n#### {int((frac1 * t) + frac2*(total-t))}"
+}
