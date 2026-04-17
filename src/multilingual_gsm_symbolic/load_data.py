@@ -55,5 +55,12 @@ def _parse_json_file(filepath: str | Path) -> GSMProblem:
 
 
 def load_gsm(language: str = "eng", directory: str | Path | None = None) -> list[GSMProblem]:
-    dir_path = Path(directory) if directory is not None else _DATA_ROOT / language / "symbolic"
+    if directory is not None:
+        dir_path = Path(directory)
+    else:
+        langs = available_languages()
+        if language not in langs:
+            available = ", ".join(f"'{k}'" for k in langs)
+            raise ValueError(f"Unknown language '{language}'. Available languages: {available}.")
+        dir_path = _DATA_ROOT / language / "symbolic"
     return [_parse_json_file(f) for f in dir_path.glob("*.json")]
