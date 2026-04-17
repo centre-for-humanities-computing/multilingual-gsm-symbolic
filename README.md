@@ -1,35 +1,13 @@
 # multilingual-gsm-symbolic
 
 A Python package for generating diverse multilingual math word problems from symbolic templates.
-It ports the symbolic GSM (Grade School Math) engine originally developed as part of the
-[m-gsm-symbolic](https://github.com/centre-for-humanities-computing/m-gsm-symbolic) project.
-
-Given a symbolic template like:
-
-```
-A fog bank rolls in over a city at {speed,3} miles/hour.
-The city is {width,14} miles wide.
-#init:
-- $speed = range(1, 20)
-- $width = range(2, 100)
-#conditions:
-- is_int(width / speed)
-#answer: width // speed
-```
-
-the package generates many concrete, valid problem instances by systematically sampling
-variable values that satisfy the declared constraints.
+The 100 English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper and have been manually translated, localized, and validated — both computationally and manually — into Danish and other languages.
+The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
 
 ## Installation
 
 ```bash
 pip install multilingual-gsm-symbolic
-```
-
-or with [uv](https://docs.astral.sh/uv/):
-
-```bash
-uv add multilingual-gsm-symbolic
 ```
 
 ## Quickstart
@@ -42,8 +20,7 @@ templates = load_data()          # 100 English templates
 templates_dan = load_data("dan") # 100 Danish templates
 
 # Load language-specific replacement values (used in some templates)
-replacements = load_replacements()       # English
-replacements_dan = load_replacements("dan")
+replacements = load_replacements()
 
 # Generate concrete questions from a template
 template = templates[0]
@@ -53,16 +30,6 @@ for q in questions:
     print(q.question)
     print(q.answer)
     print()
-```
-
-You can also load the bundled concrete GSM problems directly:
-
-```python
-from multilingual_gsm_symbolic import load_gsm_eng, load_gsm_dan
-
-problems = load_gsm_eng()  # list of GSMProblem
-for p in problems[:3]:
-    print(p.id_orig, p.question[:60])
 ```
 
 ## Template format
@@ -88,6 +55,34 @@ Templates are JSON files with four fields:
 #answer: x * y + z          — Python expression evaluated to produce the numeric answer
 ```
 
+<details>
+<summary>Example: fog bank problem</summary>
+
+```json
+{
+  "question": "A fog bank rolls in over a city at 3 miles/hour. The city is 42 miles wide. How many hours will it take for the fog bank to cover the city?",
+  "question_annotated": "A fog bank rolls in over a city at {speed,3} miles/hour. The city is {width,42} miles wide. How many hours will it take for the fog bank to cover the city?\n#init:\n- $speed = range(1, 20)\n- $width = range(2, 100)\n#conditions:\n- is_int(width / speed)\n#answer: width // speed",
+  "answer": "At 3 miles/hour, it will take 42/3=14 hours for the fog to cover the city.",
+  "answer_annotated": "At {speed} miles/hour, it will take {width}/{speed}={width//speed} hours for the fog to cover the city."
+}
+```
+
+</details>
+
+<details>
+<summary>Example: shopping problem</summary>
+
+```json
+{
+  "question": "A store sells apples for $2 each and oranges for $3 each. If you buy 4 apples and 5 oranges, how much do you spend?",
+  "question_annotated": "A store sells apples for ${apple_price,2} each and oranges for ${orange_price,3} each. If you buy {n_apples,4} apples and {n_oranges,5} oranges, how much do you spend?\n#init:\n- $apple_price = range(1, 10)\n- $orange_price = range(1, 10)\n- $n_apples = range(1, 20)\n- $n_oranges = range(1, 20)\n#conditions:\n- True\n#answer: apple_price * n_apples + orange_price * n_oranges",
+  "answer": "You spend 4*2 + 5*3 = 8 + 15 = $23.",
+  "answer_annotated": "You spend {n_apples}*{apple_price} + {n_oranges}*{orange_price} = {n_apples*apple_price} + {n_oranges*orange_price} = ${apple_price*n_apples + orange_price*n_oranges}."
+}
+```
+
+</details>
+
 ### Available helper functions
 
 | Function | Description |
@@ -101,7 +96,7 @@ Templates are JSON files with four fields:
 | `divides(a, b)` | True if `a` divides `b` |
 | `frac_format(x)` | Format `x` as a fraction string |
 
-## API reference
+## 📖 API reference
 
 ### `load_data(language="eng", directory=None) → list[AnnotatedQuestion]`
 
@@ -142,9 +137,10 @@ Pydantic model for a concrete problem loaded from disk: `question`, `answer`, `i
 
 ## Data
 
-The package ships with **100 English** and **100 Danish** symbolic templates derived from
-[GSM8k](https://huggingface.co/datasets/openai/gsm8k) and localized into Danish as part of
-the [m-gsm-symbolic](https://github.com/centre-for-humanities-computing/m-gsm-symbolic) project.
+The package ships with **100 English** and **100 Danish** symbolic templates.
+The English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper.
+The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
+The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
 
 ## Development
 
@@ -152,9 +148,19 @@ the [m-gsm-symbolic](https://github.com/centre-for-humanities-computing/m-gsm-sy
 # Install with dev dependencies
 make install
 
-# Run tests (405 tests across all bundled templates)
+# Run tests
 make test
 
 # Lint
 make lint
 ```
+
+## Contributors
+
+This package was developed by:
+
+- [Kenneth Enevoldsen](https://github.com/KennethEnevoldsen)
+- [Simon Mosegaard](https://github.com/SMosegaard)
+- [Enniw](https://github.com/Enniwhere)
+
+The symbolic template engine and datasets were originally developed as part of the [m-gsm-symbolic](https://github.com/centre-for-humanities-computing/m-gsm-symbolic) project at the [Centre for Humanities Computing](https://chc.au.dk/).
