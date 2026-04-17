@@ -14,6 +14,14 @@ default_gsm_eng_path = _DATA_ROOT / "eng" / "symbolic"
 logger = logging.getLogger(__name__)
 
 
+def available_languages() -> dict[str, dict]:
+    return {
+        lang.name: {"number of samples": len(list((lang / "symbolic").glob("*.json")))}
+        for lang in sorted(_DATA_ROOT.iterdir())
+        if lang.is_dir() and (lang / "symbolic").exists()
+    }
+
+
 def load_replacements(language: str = "eng") -> dict:
     replacement_path = _DATA_ROOT / language / "replacements.json"
     with replacement_path.open("r", encoding="utf-8") as f:

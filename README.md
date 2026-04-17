@@ -1,8 +1,9 @@
 # multilingual-gsm-symbolic
 
-A Python package for generating diverse multilingual math word problems from symbolic templates.
-The 100 English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper and have been manually translated, localized, and validated — both computationally and manually — into Danish and other languages.
-The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
+A Python package for generating synthetic multilingual math problems from symbolic templates.
+See the [Data](#data) section for available languages.
+
+
 
 ## Installation
 
@@ -13,14 +14,20 @@ pip install multilingual-gsm-symbolic
 ## Quickstart
 
 ```python
-from multilingual_gsm_symbolic import load_data, load_replacements
+from multilingual_gsm_symbolic import load_data, load_replacements, available_languages
+
+# see possible languages
+languages = available_languages()
+
+lang = "eng"
+print(languages[lang])
+# {"number of samples": 100}
 
 # Load English templates (default)
-templates = load_data()          # 100 English templates
-templates_dan = load_data("dan") # 100 Danish templates
+templates = load_data(lang)
 
 # Load language-specific replacement values (used in some templates)
-replacements = load_replacements()
+replacements = load_replacements(lang)
 
 # Generate concrete questions from a template
 template = templates[0]
@@ -137,23 +144,14 @@ Pydantic model for a concrete problem loaded from disk: `question`, `answer`, `i
 
 ## Data
 
-The package ships with **100 English** and **100 Danish** symbolic templates.
 The English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper.
 The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
 The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
 
-## Development
-
-```bash
-# Install with dev dependencies
-make install
-
-# Run tests
-make test
-
-# Lint
-make lint
-```
+| Language | Code | Templates |
+|---|---|---|
+| English | `eng` | 100 |
+| Danish | `dan` | 100 |
 
 ## Contributors
 
