@@ -18,6 +18,10 @@ lint-check:
 	uv run ruff format . --check                    # running ruff formatting
 	uv run ruff check .                             # running ruff linting
 
+type-check:
+	@echo "--- 🔍 Running type checker ---"
+	uv run ty check src/
+
 test:
 	@echo "--- 🧪 Running tests ---"
 	uv run pytest -vv
