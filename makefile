@@ -6,7 +6,7 @@ add-uv:
 
 install:
 	@echo "--- 🚀 Installing project ---"
-	uv sync --extra dev
+	uv sync
 
 lint:
 	@echo "--- 🧹 Running linters ---"
