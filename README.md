@@ -116,10 +116,9 @@ Load symbolic templates.
 
 Load language-specific named values (e.g. lists of names, places) used inside templates.
 
-### `load_gsm_eng(directory_path=...) → list[GSMProblem]`
-### `load_gsm_dan(directory_path=...) → list[GSMProblem]`
+### `load_gsm(language="eng", directory=None) → list[GSMProblem]`
 
-Load the 100 bundled concrete problems for English / Danish.
+Load the bundled concrete problems for a given language.
 
 ### `AnnotatedQuestion`
 

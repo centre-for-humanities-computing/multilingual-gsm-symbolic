@@ -470,7 +470,7 @@ class AnnotatedQuestion:
 
     def _get_all_combinations(self, possibilities):
         num_combinations = reduce(lambda x, y: x * len(y), possibilities.values(), 1)
-        print(f"Number of combinations: {num_combinations}")
+        logger.info(f"Number of combinations: {num_combinations}")
         if num_combinations > 10000000:
             raise ValueError(
                 f"Too many combinations ({num_combinations}) for question {self.id_shuffled}. "
@@ -580,6 +580,6 @@ class AnnotatedQuestion:
                 question = self._generate_question(language, replacements)
                 questions.append(question)
             except Exception as e:
-                logger.error(f"Error generating question {i + 1}: {e}")
+                logger.warning(f"Skipping question {i + 1}: {e}")
                 continue
         return questions

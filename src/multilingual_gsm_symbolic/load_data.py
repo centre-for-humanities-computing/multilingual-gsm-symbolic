@@ -8,9 +8,6 @@ from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
 
 _DATA_ROOT = Path(__file__).parent / "data" / "templates"
 
-default_gsm_dan_path = _DATA_ROOT / "dan" / "symbolic"
-default_gsm_eng_path = _DATA_ROOT / "eng" / "symbolic"
-
 logger = logging.getLogger(__name__)
 
 
@@ -57,17 +54,6 @@ def _parse_json_file(filepath: str | Path) -> GSMProblem:
     )
 
 
-def load_gsm_dan(
-    directory_path: str | Path = default_gsm_dan_path,
-) -> list[GSMProblem]:
-    dir_path = Path(directory_path)
-    json_files = list(dir_path.glob("*.json"))
-    return [_parse_json_file(f) for f in json_files]
-
-
-def load_gsm_eng(
-    directory_path: str | Path = default_gsm_eng_path,
-) -> list[GSMProblem]:
-    dir_path = Path(directory_path)
-    json_files = list(dir_path.glob("*.json"))
-    return [_parse_json_file(f) for f in json_files]
+def load_gsm(language: str = "eng", directory: str | Path | None = None) -> list[GSMProblem]:
+    dir_path = Path(directory) if directory is not None else _DATA_ROOT / language / "symbolic"
+    return [_parse_json_file(f) for f in dir_path.glob("*.json")]

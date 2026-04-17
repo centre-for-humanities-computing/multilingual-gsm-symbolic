@@ -3,8 +3,7 @@ from multilingual_gsm_symbolic.load_data import (
     GSMProblem,
     available_languages,
     load_data,
-    load_gsm_dan,
-    load_gsm_eng,
+    load_gsm,
     load_replacements,
 )
 
@@ -14,7 +13,6 @@ __all__ = [
     "GSMProblem",
     "available_languages",
     "load_data",
-    "load_gsm_dan",
-    "load_gsm_eng",
+    "load_gsm",
     "load_replacements",
 ]
