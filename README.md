@@ -3,7 +3,7 @@
 A Python package for generating synthetic multilingual math problems from symbolic templates.
 See the [Data](#data) section for available languages.
 
-
+![Example of a symbolic template and generated questions](images/example.png)
 
 ## Installation
 
@@ -43,12 +43,12 @@ for q in questions:
 
 Templates are JSON files with four fields:
 
-| Field | Description |
-|---|---|
-| `question` | Concrete question (the original example) |
-| `answer` | Concrete answer with calculation steps |
+| Field                | Description                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| `question`           | Concrete question (the original example)                                             |
+| `answer`             | Concrete answer with calculation steps                                               |
 | `question_annotated` | Template with variable placeholders and `#init` / `#conditions` / `#answer` sections |
-| `answer_annotated` | Answer template with inline expressions |
+| `answer_annotated`   | Answer template with inline expressions                                              |
 
 ### Annotated question syntax
 
@@ -92,16 +92,16 @@ Templates are JSON files with four fields:
 
 ### Available helper functions
 
-| Function | Description |
-|---|---|
-| `range(start, end[, step])` | All integers in `[start, end)` |
-| `sample([a, b, c])` | One value from the list |
-| `range_sample(start, end, step)` | Uniform sample from a range |
-| `sample_sequential(items, n)` | `n` consecutive items from a list |
+| Function                          | Description                               |
+| --------------------------------- | ----------------------------------------- |
+| `range(start, end[, step])`       | All integers in `[start, end)`            |
+| `sample([a, b, c])`               | One value from the list                   |
+| `range_sample(start, end, step)`  | Uniform sample from a range               |
+| `sample_sequential(items, n)`     | `n` consecutive items from a list         |
 | `arange_sample(start, end, step)` | Sample from `np.arange(start, end, step)` |
-| `is_int(x)` | True if `x` is an integer |
-| `divides(a, b)` | True if `a` divides `b` |
-| `frac_format(x)` | Format `x` as a fraction string |
+| `is_int(x)`                       | True if `x` is an integer                 |
+| `divides(a, b)`                   | True if `a` divides `b`                   |
+| `frac_format(x)`                  | Format `x` as a fraction string           |
 
 ## 📖 API reference
 
@@ -127,12 +127,12 @@ Core class. Constructed from a JSON template file via `AnnotatedQuestion.from_js
 
 Key methods:
 
-| Method | Description |
-|---|---|
-| `generate_questions(n, language, replacements)` | Generate `n` concrete `Question` instances |
-| `get_default_assignments(replacements)` | Extract the example variable values from the template |
-| `format_question(assignments, language)` | Render the question text for a given assignment |
-| `format_answer(assignments, language)` | Render the answer text for a given assignment |
+| Method                                          | Description                                           |
+| ----------------------------------------------- | ----------------------------------------------------- |
+| `generate_questions(n, language, replacements)` | Generate `n` concrete `Question` instances            |
+| `get_default_assignments(replacements)`         | Extract the example variable values from the template |
+| `format_question(assignments, language)`        | Render the question text for a given assignment       |
+| `format_answer(assignments, language)`          | Render the answer text for a given assignment         |
 
 ### `Question`
 
@@ -148,17 +148,17 @@ The English templates are derived from Apple's [GSM-Symbolic](https://machinelea
 The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
 The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
 
-| Language | Code | Templates |
-|---|---|---|
-| English | `eng` | 100 |
-| Danish | `dan` | 100 |
+| Language | Code  | Templates |
+| -------- | ----- | --------- |
+| English  | `eng` | 100       |
+| Danish   | `dan` | 100       |
 
-## Contributors
+## Acknowledgement
 
-This package was developed by:
+The symbolic template engine and the danish subset were originally developed as part of the [m-gsm-symbolic](https://github.com/centre-for-humanities-computing/m-gsm-symbolic) project at the [Centre for Humanities Computing](https://chc.au.dk/) by:
 
 - [Kenneth Enevoldsen](https://github.com/KennethEnevoldsen)
 - [Simon Mosegaard](https://github.com/SMosegaard)
 - [Enniw](https://github.com/Enniwhere)
 
-The symbolic template engine and datasets were originally developed as part of the [m-gsm-symbolic](https://github.com/centre-for-humanities-computing/m-gsm-symbolic) project at the [Centre for Humanities Computing](https://chc.au.dk/).
+The initial template format was derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper and the original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
