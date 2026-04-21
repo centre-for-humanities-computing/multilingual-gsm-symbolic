@@ -4,6 +4,48 @@ from conftest import get_lightly_constrained_template_files, get_unconstrained_t
 from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion, Question
 from multilingual_gsm_symbolic.load_data import load_replacements
 
+
+def _multi_var_constrained_template() -> AnnotatedQuestion:
+    """Template with a multi-variable init line where x is constrained and y is not.
+
+    The bug: _is_init_line_constrained(" ".join(["x", "y"]), ...) is called with
+    "x y" (no '='). _extract_variables_from_init_line splits on '=' (absent),
+    then on ',' (absent), returning ["x y"] — a single token that never matches
+    "x" or "y", so the check always returns False and constrained variables leak
+    into unconstrained_choices.
+    """
+    return AnnotatedQuestion(
+        question="Q {x,3}",
+        answer="{x}",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated=(
+            "Q {x,3}\n"
+            "#init:\n"
+            "- $x, $y = [(1, 10), (2, 20), (3, 30)]\n"
+            "- $z = range(1, 5)\n"
+            "#conditions:\n"
+            "- x > 1\n"
+            "#answer: x"
+        ),
+        answer_annotated="{x}",
+    )
+
+
+def test_precompute_unconstrained_excludes_constrained_variables():
+    """Constrained variables must not appear in _precompute_unconstrained output.
+
+    x is constrained (has a condition). The multi-variable init line $x, $y means
+    the whole line should be skipped. z is unconstrained and must appear.
+    """
+    template = _multi_var_constrained_template()
+    choices = template._precompute_unconstrained({})
+    choice_vars = {var for choice_list in choices for choice in choice_list for var in choice}
+    assert "x" not in choice_vars, "constrained variable 'x' must not appear in unconstrained choices"
+    assert "y" not in choice_vars, "y is paired with constrained x — its line must also be skipped"
+    assert "z" in choice_vars, "unconstrained variable 'z' must appear in unconstrained choices"
+
+
 _TEMPLATES = get_unconstrained_template_files() + get_lightly_constrained_template_files()
 
 

@@ -1,22 +1,104 @@
+import ast
 import itertools
 import json
 import logging
+import math
+import operator as _operator
 import random
 import re
-import types
 import warnings
 from dataclasses import asdict, dataclass
 from fractions import Fraction
-from functools import cached_property, reduce
+from functools import cached_property
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 
 import numpy as np
 
 logger = logging.getLogger(__name__)
 
+_BINOPS: dict[type, Any] = {
+    ast.Add: _operator.add,
+    ast.Sub: _operator.sub,
+    ast.Mult: _operator.mul,
+    ast.Div: _operator.truediv,
+    ast.FloorDiv: _operator.floordiv,
+    ast.Mod: _operator.mod,
+    ast.Pow: _operator.pow,
+}
+_CMPOPS: dict[type, Any] = {
+    ast.Eq: _operator.eq,
+    ast.NotEq: _operator.ne,
+    ast.Lt: _operator.lt,
+    ast.LtE: _operator.le,
+    ast.Gt: _operator.gt,
+    ast.GtE: _operator.ge,
+}
 
-def is_int(value):
+
+def _eval_node(node: ast.expr, env: dict[str, Any]) -> Any:
+    """Evaluate a restricted Python AST node against an environment dict.
+
+    Supports the subset of Python used in template init lines, conditions,
+    and answer expressions: constants, name lookups, lists/tuples, arithmetic,
+    comparisons, boolean operators, and function calls.
+    """
+    if isinstance(node, ast.Constant):
+        return node.value
+    if isinstance(node, ast.Name):
+        if node.id not in env:
+            raise NameError(f"name '{node.id}' is not defined")
+        return env[node.id]
+    if isinstance(node, ast.List):
+        return [_eval_node(e, env) for e in node.elts]
+    if isinstance(node, ast.Tuple):
+        return tuple(_eval_node(e, env) for e in node.elts)
+    if isinstance(node, ast.BinOp):
+        op_fn = _BINOPS.get(type(node.op))
+        if op_fn is None:
+            raise ValueError(f"Unsupported binary operator: {type(node.op).__name__}")
+        return op_fn(_eval_node(node.left, env), _eval_node(node.right, env))
+    if isinstance(node, ast.UnaryOp):
+        val = _eval_node(node.operand, env)
+        if isinstance(node.op, ast.USub):
+            return -val
+        if isinstance(node.op, ast.UAdd):
+            return +val
+        if isinstance(node.op, ast.Not):
+            return not val
+        raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
+    if isinstance(node, ast.Call):
+        func = _eval_node(node.func, env)
+        args = [_eval_node(a, env) for a in node.args]
+        kwargs = {kw.arg: _eval_node(kw.value, env) for kw in node.keywords if kw.arg is not None}
+        return func(*args, **kwargs)
+    if isinstance(node, ast.Compare):
+        left = _eval_node(node.left, env)
+        for op, comparator in zip(node.ops, node.comparators):
+            op_fn = _CMPOPS.get(type(op))
+            if op_fn is None:
+                raise ValueError(f"Unsupported comparison: {type(op).__name__}")
+            right = _eval_node(comparator, env)
+            if not op_fn(left, right):
+                return False
+            left = right
+        return True
+    if isinstance(node, ast.BoolOp):
+        if isinstance(node.op, ast.And):
+            return all(_eval_node(v, env) for v in node.values)
+        if isinstance(node.op, ast.Or):
+            return any(_eval_node(v, env) for v in node.values)
+        raise ValueError(f"Unsupported bool operator: {type(node.op).__name__}")
+    if isinstance(node, ast.IfExp):
+        return _eval_node(node.body if _eval_node(node.test, env) else node.orelse, env)
+    raise ValueError(f"Unsupported AST node type: {type(node).__name__}")
+
+
+def _parse_expr(source: str) -> ast.expr:
+    return ast.parse(source, mode="eval").body
+
+
+def is_int(value: Any) -> bool:
     return (
         isinstance(value, int)
         or (isinstance(value, float) and (value.is_integer() or (value - round(value)) < 1e-6))
@@ -24,112 +106,83 @@ def is_int(value):
     )
 
 
-def divides(a, b):
-    if not (isinstance(a, (int, float)) and isinstance(b, (int, float))):
-        raise TypeError("Both arguments must be int or float.")
+def divides(a: int | float, b: int | float) -> bool:
     if b == 0:
         return False
     return a % b == 0
 
 
-def sample(items, n=1):
-    """Sample n items from the list"""
+def sample(items: list, n: int = 1) -> Any:
     if n == 1:
         return random.choice(items)
     return random.sample(items, n)
 
 
-def range_sample(start, end, step=1):
-    """Sample an item from a range statement."""
+def range_sample(start: int, end: int, step: int = 1) -> int:
     if start > end:
         raise ValueError(f"Start ({start}) must be less than or equal to end ({end}).")
-    if step <= 0:
-        raise ValueError(f"Step ({step}) must be a positive integer.")
-    possible_numbers = [i for i in range(start, end + 1, step)]
-    if not possible_numbers:
-        raise ValueError(f"No valid numbers in range({start}, {end}, {step}).")
-    return random.choice(possible_numbers)
+    return random.choice(list(range(start, end + 1, step)))
 
 
-def range_str(start, end, step, numbers):
-    """Return a string representation of a range statement."""
+def range_str(start: int, end: int, step: int, numbers: list) -> tuple:
     if start > end:
-        return ""
-    number_range = range(start, end + 1, step)
-    possible_numbers = [(i, numbers[i - 1]) for i in number_range if i > 0 and i <= len(numbers)]
-    return random.choice(possible_numbers)
+        return ()
+    candidates = [(i, numbers[i - 1]) for i in range(start, end + 1, step) if 0 < i <= len(numbers)]
+    return random.choice(candidates)
 
 
-def sample_sequential(items, n):
-    """Sample n sequential items from the list"""
+def sample_sequential(items: list, n: int) -> list:
     start_idx = random.randint(0, len(items) - 1)
     return [items[(start_idx + i) % len(items)] for i in range(n)]
 
 
-def arange_sample(start, end, step=1):
-    """Sample an item from a numpy arange"""
+def arange_sample(start: float, end: float, step: float = 1) -> str:
     if start > end:
-        return []
+        return ""
     return str(random.choice(np.linspace(start, end, round((end - start) / step) + 1)))
 
 
-def frac_format(value):
-    """Format a value as a fraction if it is a float, otherwise return as is."""
+def frac_format(value: Any) -> str:
     if isinstance(value, float):
-        # Convert float to Fraction
         frac = Fraction(value).limit_denominator()
         return f"{frac.numerator}/{frac.denominator}" if frac.denominator != 1 else str(frac.numerator)
     return str(value)
 
 
-def is_variable_mentioned(variable_name, text_list):
-    """
-    Check if a variable is mentioned in any text from a list.
-    """
-    # Create a regular expression that matches the variable name
-    # surrounded by word boundaries to ensure it's a standalone reference
-    # \b is a word boundary that matches positions where a word character
-    # is not followed or preceded by another word character
-    variable_pattern = re.compile(rf"\b{re.escape(variable_name)}\b", re.I)
-
-    for text in text_list:
-        if variable_pattern.search(text):
-            return True
-
-    return False
+def is_variable_mentioned(variable_name: str, text_list: list[str]) -> bool:
+    pattern = re.compile(rf"\b{re.escape(variable_name)}\b", re.I)
+    return any(pattern.search(text) for text in text_list)
 
 
-def range_possibilities(start, end, step=1):
-    """Return possibilities for given range statement."""
+def range_possibilities(start: int, end: int, step: int = 1) -> list[int]:
     if start > end:
         return []
     return list(range(start, end, step))
 
 
-def range_possibilities_str(start, end, step, numbers):
-    """Return possibilities for given range statement."""
-    possible_numbers = range_possibilities(start, end, step)
-    return [(numbers[i - 1], i) for i in possible_numbers]
+def range_possibilities_str(start: int, end: int, step: int, numbers: list) -> list[tuple]:
+    return [(numbers[i - 1], i) for i in range_possibilities(start, end, step)]
 
 
-def arange_possibilities(start, end, step=1):
-    """Return possibilities for given numpy arange statement."""
+def arange_possibilities(start: float, end: float, step: float = 1) -> list[str]:
     if start > end:
         return []
     return list(map(str, np.linspace(start, end, round((end - start) / step) + 1)))
 
 
-def sample_possibilities(items, n=1):
-    """Return possibilities for given sample statement."""
+def sample_possibilities(items: list, n: int = 1) -> list:
     return list(itertools.combinations(items, n)) if n > 1 else items
 
 
-def strip_elements(lst):
-    """Strip whitespace from each element in a list"""
-    return [elem.strip() for elem in lst]
+def sample_sequential_possibilities(items: list, n: int) -> list[list]:
+    return [[items[(i + j) % len(items)] for j in range(n)] for i in range(len(items))]
 
 
-EVAL_CONTEXT_HELPERS = {
+def strip_elements(lst: list[str]) -> list[str]:
+    return [s.strip() for s in lst]
+
+
+EVAL_CONTEXT_HELPERS: dict[str, Any] = {
     "is_int": is_int,
     "divides": divides,
     "int": int,
@@ -147,24 +200,39 @@ EVAL_CONTEXT_HELPERS = {
     "Fraction": frac_format,
 }
 
-COMBINATION_HELPERS = {
+COMBINATION_HELPERS: dict[str, Any] = {
     "range": range_possibilities,
+    "range_list": range_possibilities,
     "range_str": range_possibilities_str,
+    "sample_sequential": sample_sequential_possibilities,
     "arange": arange_possibilities,
     "sample": sample_possibilities,
     "list": list,
+    # deterministic helpers shared with EVAL_CONTEXT_HELPERS
+    "int": int,
+    "float": float,
+    "str": str,
+    "len": len,
+    "round": round,
+    "is_int": is_int,
+    "divides": divides,
+    "Fraction": frac_format,
 }
 
+# Pre-compiled regex patterns used in hot paths
+_RE_TEMPLATE_VAR = re.compile(r"\{(\w+),\s*([^}]+)\}")
+_RE_CURLY_EXPR = re.compile(r"\{([^}]+)\}")
+_RE_NUMBER_FORMAT = re.compile(r"\b\d+(?:\.\d+)\b|\b\d{5,}\b")
+_RE_SENTENCE_CAP = re.compile(r"([.!?]+\s*)([a-z])")
 
-# Convert value to int, float, or fraction if possible
-def parse_value(val):
-    if isinstance(val, str) and val.isnumeric() or isinstance(val, float) and val.is_integer():
+
+def parse_value(val: Any) -> int | float | Fraction | str:
+    if (isinstance(val, str) and val.isnumeric()) or (isinstance(val, float) and val.is_integer()):
         return int(val)
     return try_parse_fraction(try_parse_float(val))
 
 
-def try_parse_float(value):
-    """Try to parse a string as float, return string if it fails."""
+def try_parse_float(value: Any) -> Any:
     if not isinstance(value, str):
         return value
     try:
@@ -173,56 +241,39 @@ def try_parse_float(value):
         return value
 
 
-def try_parse_fraction(value):
-    """Try to parse a string as a fraction, return string if it fails."""
+def try_parse_fraction(value: Any) -> Any:
     if not isinstance(value, str):
         return value
-    if "/" in value:
-        try:
-            num, denom = value.split("/")
+    if value.count("/") == 1:
+        num, denom = value.split("/")
+        if num.lstrip("-").isdigit() and denom.lstrip("-").isdigit():
             return Fraction(int(num), int(denom))
-        except ValueError:
-            return value
     return value
 
 
-def capitalize_sentences(text):
-    """Capitalize the first letter of each sentence using regex."""
-    import re
-
-    # Capitalize first letter of text
+def capitalize_sentences(text: str) -> str:
     text = text[0].upper() + text[1:] if text else text
-
-    # Capitalize letters after sentence-ending punctuation
-    text = re.sub(r"([.!?]+\s*)([a-z])", lambda m: m.group(1) + m.group(2).upper(), text)
-
-    return text
+    return _RE_SENTENCE_CAP.sub(lambda m: m.group(1) + m.group(2).upper(), text)
 
 
-def format_numbers_by_language(text, language):
-    import re
-
-    def format_number(match):
+def format_numbers_by_language(text: str, language: str) -> str:
+    def format_number(match: re.Match) -> str:
         number_str = match.group(0)
-
         if "." in number_str:
             integer_part, decimal_part = number_str.split(".")
             number = int(integer_part)
             formatted_int = f"{number:,}" if number >= 10000 else str(number)
-
             if language == "dan":
                 return formatted_int.replace(",", ".") + "," + decimal_part
-            else:
-                return formatted_int + "." + decimal_part
+            return formatted_int + "." + decimal_part
         else:
             number = int(number_str)
             if number >= 10000:
                 formatted = f"{number:,}"
                 return formatted.replace(",", ".") if language == "dan" else formatted
-            else:
-                return number_str
+            return number_str
 
-    return re.sub(r"\b\d+(?:\.\d+)\b|\b\d{5,}\b", format_number, text)
+    return _RE_NUMBER_FORMAT.sub(format_number, text)
 
 
 @dataclass
@@ -254,20 +305,18 @@ class AnnotatedQuestion:
 
     @cached_property
     def question_template(self) -> str:
-        """extract question template from question_annotated"""
         return self.question_annotated.splitlines()[0].strip()
 
     @cached_property
     def variables(self) -> list[str]:
-        """extract variable names from question_annotated"""
-
-        variables_per_line = [self._extract_variables_from_init_line(line) for line in self.init if "=" in line]
-        variable_sets = [set(v) for v in variables_per_line]
-        return list(reduce(set.union, variable_sets))
+        all_vars: set[str] = set()
+        for line in self.init:
+            if "=" in line:
+                all_vars.update(self._extract_variables_from_init_line(line))
+        return list(all_vars)
 
     @cached_property
     def init(self) -> list[str]:
-        """extract variable definitions from question_annotated"""
         init_block = (
             self.question_annotated.split("#init:")[1]
             .split("#answer:")[0]
@@ -279,329 +328,241 @@ class AnnotatedQuestion:
 
     @cached_property
     def conditions(self) -> list[str]:
-        """extract conditions from question_annotated"""
         if "#conditions:" not in self.question_annotated:
             return []
-
-        try:
-            condition_block = self.question_annotated.split("#conditions:")[1].split("#answer:")[0].strip().splitlines()
-            return [line.strip("- ") for line in condition_block if line.strip()]
-        except IndexError:
-            return []
+        condition_block = self.question_annotated.split("#conditions:")[1].split("#answer:")[0].strip().splitlines()
+        return [line.strip("- ") for line in condition_block if line.strip()]
 
     @cached_property
     def constrained_variables(self) -> list[str]:
-        """extract variable names from conditions"""
         if not self.conditions:
             return []
         return [v for v in self.variables if is_variable_mentioned(v, self.conditions)]
 
     @cached_property
     def unconstrained_lines(self) -> list[str]:
-        """extract unconstrained lines from question_annotated"""
         return [line for line in self.init if not self._is_init_line_constrained(line, self.constrained_variables)]
 
     @cached_property
     def constrained_lines(self) -> list[str]:
-        """extract constrained lines from question_annotated"""
         return [line for line in self.init if self._is_init_line_constrained(line, self.constrained_variables)]
 
     @cached_property
-    def _compiled_answer_exprs(self) -> dict[str, types.CodeType]:
-        exprs = re.findall(r"\{([^}]+)\}", self.answer_annotated)
-        return {expr.strip(): compile(expr.strip(), "<string>", "eval") for expr in set(exprs)}
+    def _answer_expr_asts(self) -> dict[str, ast.expr]:
+        exprs = _RE_CURLY_EXPR.findall(self.answer_annotated)
+        return {expr.strip(): _parse_expr(expr.strip()) for expr in set(exprs)}
 
-    def get_default_assignments(self, replacements: dict) -> dict:
-        """extract example assignments from question_annotated"""
-        assignment_tuples = re.findall(r"\{(\w+),\s*([^}]+)\}", self.question_template)
+    @cached_property
+    def _init_line_asts(self) -> list[tuple[list[str], ast.expr]]:
+        result = []
+        for line in self.init:
+            if "=" not in line:
+                continue
+            variable_part, definition_part = line.split("=", 1)
+            variables = strip_elements(variable_part.strip("$").split(","))
+            result.append((variables, _parse_expr(definition_part.strip())))
+        return result
 
-        assignments = {var: parse_value(val) for var, val in assignment_tuples}
+    @cached_property
+    def _condition_asts(self) -> list[ast.expr]:
+        return [_parse_expr(cond.strip()) for cond in self.conditions if cond.strip() != "True"]
 
-        # Ensure that all variables in the answer are also in the question template
+    def get_default_assignments(self, replacements: dict[str, Any]) -> dict[str, Any]:
+        assignment_tuples = _RE_TEMPLATE_VAR.findall(self.question_template)
+        assignments: dict[str, Any] = {var: parse_value(val) for var, val in assignment_tuples}
+
         for var in self.variables:
+            if var in assignments:
+                continue
+            logger.debug(f"Variable {var} not in question template; deriving from init in question {self.id_shuffled}.")
+            assignment_line = next(
+                (line for line in self.init if var in self._extract_variables_from_init_line(line)),
+                None,
+            )
+            if not assignment_line:
+                raise ValueError(f"Variable {var} not found in any assignment line in question {self.id_shuffled}.")
+            line_vars = self._extract_variables_from_init_line(assignment_line)
+            definition_part = assignment_line.split("=", 1)[1].strip()
+            other_var = next((v for v in line_vars if v != var), None)
+            if not (other_var and other_var in assignments):
+                raise ValueError(
+                    f"Variable {var} not found in assignments, and no other variable to derive from "
+                    f"in question {self.id_shuffled}."
+                )
+            other_value = assignments[other_var]
+            potential_values = _eval_node(_parse_expr(definition_part), COMBINATION_HELPERS | replacements)
+            for val in potential_values:
+                if isinstance(val, (tuple, list)) and len(val) == 2:
+                    if val[0] == other_value or str(val[0]) == str(other_value):
+                        assignments[var] = val[1]
+                        break
+                    if val[1] == other_value or str(val[1]) == str(other_value):
+                        assignments[var] = val[0]
+                        break
             if var not in assignments:
-                logger.debug(
-                    f"Variable {var} found in answer but not in question template. "
-                    f"Attempting to derive value from other variables. In question {self.id_shuffled}."
+                raise ValueError(
+                    f"Could not derive value for {var} (other_var={other_var}, value={other_value}) "
+                    f"from line '{assignment_line}' in question {self.id_shuffled}."
                 )
-                assignment_line = next(
-                    (line for line in self.init if var in self._extract_variables_from_init_line(line)),
-                    None,
-                )
-                if not assignment_line:
-                    raise ValueError(
-                        f"Variable {var} not found in any assignment line in question {self.id_shuffled}. "
-                        "Please check the question template."
-                    )
-                vars = self._extract_variables_from_init_line(assignment_line)
-                definition_part = self._extract_definition_part_from_init_line(assignment_line)
-                other_var = next((v for v in vars if v != var), None)
-                if other_var and other_var in assignments:
-                    other_value = assignments[other_var]
-                    potential_values = eval(
-                        definition_part,
-                        {"__builtins__": {}},
-                        COMBINATION_HELPERS | replacements,
-                    )
-                    for val in potential_values:
-                        if isinstance(val, (tuple, list)) and len(val) == 2:
-                            if (
-                                val[0] == other_value
-                                or val[1] == other_value
-                                or str(val[0]) == str(other_value)
-                                or str(val[1]) == str(other_value)
-                            ):
-                                assignments[var] = (
-                                    val[1] if val[0] == other_value or str(val[0]) == str(other_value) else val[0]
-                                )
-                                break
-                    if assignments.get(var) is None:
-                        raise ValueError(
-                            f"Could not derive value for variable {var} with value {other_value} from other variables "
-                            f"in assignment line: {assignment_line} with potential values {potential_values}. "
-                            "Please check the question template."
-                        )
-                else:
-                    raise ValueError(
-                        f"Variable {var} not found in assignments, and no other variable found to derive value from. "
-                        f"Please check the question template for question {self.id_shuffled}."
-                    )
 
         return assignments
 
     def _extract_variables_from_init_line(self, line: str) -> list[str]:
-        """extract variable names from a line"""
-        variables = line.split("=")[0].strip("- ").strip("$").split(",")
-        return [v.strip() for v in variables]
-
-    def _extract_definition_part_from_init_line(self, line: str) -> str:
-        """extract the assignment statement from a line"""
-        if "=" in line:
-            return line.split("=", 1)[1].strip()
-        return ""
+        return strip_elements(line.split("=")[0].strip("- ").strip("$").split(","))
 
     def _is_init_line_constrained(self, line: str, constrained_variables: list[str]) -> bool:
-        """check if a line is constrained"""
         return any(v in self._extract_variables_from_init_line(line) for v in constrained_variables)
 
-    def _evaluate_unconstrained_init_line(self, init_line, replacements):
-        """Evaluate a single unconstrained init line and return the assignments."""
-        #  If the line is unconstrained, we evaluate it directly since no other variables depend on it.
-        logger.debug(f"Evaluating unconstrained init line: {init_line}")
-        assignments = {}
-        variable_part, definition_part = init_line.split("=", 1)
-        variables = strip_elements(variable_part.strip("$").split(","))
-        definition_part = definition_part.strip()
-
-        try:
-            values = eval(
-                definition_part,
-                {"__builtins__": {}},
-                EVAL_CONTEXT_HELPERS | replacements,
-            )
-
-            values = [values] if not isinstance(values, (list, tuple)) else values
-            logger.debug(f"Variables: {variables}, Definition part: {definition_part}, Evaluated values: {values}")
-        except Exception as e:
-            logger.error(f"Error evaluating assignment for {variable_part}: {definition_part} -> {e}")
-            raise e
-        if (isinstance(values, list) or isinstance(values, tuple)) and len(values) == len(variables):
-            for var, val in zip(variables, values):
-                assignments[var] = val
-        else:
-            logger.warning(f"Warning: {variables} and {values} are incompatible for line {init_line}.")
-
-        return assignments
-
-    def _evaluate_constrained_init_lines(self, init_lines, conditions, replacements):
-        """Returns a list of valid combinations of values for the constrained init lines."""
-
+    def _evaluate_constrained_init_lines(self, init_lines: list[str], replacements: dict[str, Any]) -> list[dict]:
         possible_assignments = self._get_all_possible_assignments(init_lines, replacements)
         all_combinations = self._get_all_combinations(possible_assignments)
-        return self._filter_invalid_combinations(all_combinations, conditions)
+        return self._filter_invalid_combinations(all_combinations)
 
-    def _get_all_possible_assignments(self, init_lines, replacements):
-        possible_assignments = {}
+    def _get_all_possible_assignments(
+        self, init_lines: list[str], replacements: dict[str, Any]
+    ) -> dict[str, list[dict]]:
+        possible_assignments: dict[str, list[dict]] = {}
+        env = COMBINATION_HELPERS | replacements
         for line in init_lines:
             variable_part, definition_part = line.split("=", 1)
             variables = strip_elements(variable_part.strip("$").split(","))
-            definition_part = definition_part.strip()
-            logger.debug(f"Variables: {variables}, Definition part: {definition_part}")
+            possible_values = _eval_node(_parse_expr(definition_part.strip()), env)
+
+            key = ", ".join(variables)
             if len(variables) == 1:
-                variable_name = variables[0].strip()
-                try:
-                    possible_values = eval(
-                        definition_part,
-                        {"__builtins__": {}},
-                        COMBINATION_HELPERS | replacements,
-                    )
-
-                    possible_assignments[variable_name] = [{variable_name: val} for val in possible_values]
-                except Exception as e:
-                    logger.error(f"Error evaluating line '{line}': {e} for file {self.id_shuffled}")
-                    raise e
+                possible_assignments[key] = [{variables[0]: val} for val in possible_values]
+            elif isinstance(possible_values, list):
+                possible_assignments[key] = [dict(zip(variables, pos_val)) for pos_val in possible_values]
+            elif isinstance(possible_values, tuple) and len(possible_values) == len(variables):
+                possible_assignments[key] = [dict(zip(variables, possible_values))]
             else:
-                # If there are multiple variables, we need to handle them as a collected assignment
-                try:
-                    possible_values = eval(
-                        definition_part,
-                        {"__builtins__": {}},
-                        COMBINATION_HELPERS | replacements,
-                    )
-                    logger.debug(
-                        f"Variables: {variables}, Definition part: {definition_part}, "
-                        f"Possible values: {possible_values}"
-                    )
-                except Exception as e:
-                    logger.error(f"Error evaluating assignment for {variable_part}: {definition_part} -> {e}")
-                    raise e
-
-                num_vars = len(variables)
-                num_vals = len(possible_values[0] if isinstance(possible_values, list) else possible_values)
-                if num_vars == num_vals and isinstance(possible_values, list):
-                    assignment = ", ".join(variables)
-                    # We need to save it as a collected assignment in order to avoid
-                    # splitting them up when generating combinations later
-                    possible_assignments[assignment] = [
-                        {var: val for var, val in zip(variables, pos_val)} for pos_val in possible_values
-                    ]
-                elif num_vars == num_vals and isinstance(possible_values, tuple):
-                    # If the possible values are a single tuple, we can directly map them to the variables
-                    possible_assignments[", ".join(variables)] = [
-                        {var: val for var, val in zip(variables, possible_values)}
-                    ]
-                else:
-                    logger.warning(f"Warning: {variables} and {possible_values} are incompatible for line {line}.")
+                logger.warning(f"Incompatible variables {variables} and values {possible_values} for line '{line}'.")
 
         return possible_assignments
 
-    def _get_all_combinations(self, possibilities):
-        num_combinations = reduce(lambda x, y: x * len(y), possibilities.values(), 1)
+    def _get_all_combinations(self, possibilities: dict[str, list[dict]]) -> list[dict]:
+        num_combinations = math.prod(len(v) for v in possibilities.values())
         logger.info(f"Number of combinations: {num_combinations}")
         if num_combinations > 10_000_000:
             raise ValueError(
                 f"Too many combinations ({num_combinations}) for question {self.id_shuffled}. "
                 "Please reduce the number of variables or their possible values."
             )
-        all_combinations = list(itertools.product(*possibilities.values()))
-        unpacked_combinations = [reduce(lambda x, y: x | y, combination) for combination in all_combinations]
-        combination_dicts = [
-            {k: parse_value(v) for k, v in combination.items()} for combination in unpacked_combinations
+        return [
+            {k: parse_value(v) for d in combo for k, v in d.items()}
+            for combo in itertools.product(*possibilities.values())
         ]
-        return combination_dicts
 
-    def _filter_invalid_combinations(self, combinations, conditions):
-        valid_combinations = []
-        # Iterate through each combination and check against every condition
-        compiled_conditions = [compile(c, "<string>", "eval") for c in conditions]
-        for combination in combinations:
-            is_valid = True
-            for compiled_cond in compiled_conditions:
-                if not eval(compiled_cond, {"__builtins__": {}}, EVAL_CONTEXT_HELPERS | combination):
-                    is_valid = False
-                    break
+    def _filter_invalid_combinations(self, combinations: list[dict]) -> list[dict]:
+        condition_asts = self._condition_asts
+        valid = [
+            combo
+            for combo in combinations
+            if all(_eval_node(cond, EVAL_CONTEXT_HELPERS | combo) for cond in condition_asts)
+        ]
+        logger.debug(f"Number of valid combinations: {len(valid)}")
+        return valid
 
-            if is_valid:
-                valid_combinations.append(combination)
-
-        logger.debug(f"Number of valid combinations: {len(valid_combinations)}")
-        return valid_combinations
-
-    def format_question(self, assignments, language: str = "eng"):
-        def replace_placeholder(match):
+    def format_question(self, assignments: dict[str, Any], language: str = "eng") -> str:
+        def replace_placeholder(match: re.Match) -> str:
             variable_name = match.group(1)
-            if variable_name in assignments:
-                value = assignments[variable_name]
-                return str(value)
+            return str(assignments[variable_name]) if variable_name in assignments else match.group(0)
 
-            return match.group(0)
-
-        processed_text = re.sub(r"\{(\w+),\s*([^}]+)\}", replace_placeholder, self.question_template)
+        processed_text = _RE_TEMPLATE_VAR.sub(replace_placeholder, self.question_template)
         processed_text = format_numbers_by_language(processed_text, language)
         return capitalize_sentences(processed_text)
 
-    def format_answer(self, assignments, language: str = "eng"):
-        eval_env = EVAL_CONTEXT_HELPERS | assignments
-        eval_env = eval_env | {
-            k: int(v)
-            for k, v in eval_env.items()
-            if isinstance(v, str) and v.isnumeric() or isinstance(v, float) and v.is_integer()
-        }
-        eval_env = eval_env | {k: try_parse_float(v) for k, v in eval_env.items()}
-        eval_env = eval_env | {k: try_parse_fraction(v) for k, v in eval_env.items()}
+    def format_answer(self, assignments: dict[str, Any], language: str = "eng") -> str:
+        eval_env = EVAL_CONTEXT_HELPERS | {k: parse_value(v) for k, v in assignments.items()}
 
-        def eval_curly_expr(match):
-            expr_str = match.group(1)
+        def eval_curly_expr(match: re.Match) -> str:
+            expr_str = match.group(1).strip()
             logger.debug(f"Evaluating expression: {expr_str}")
-            try:
-                value = eval(self._compiled_answer_exprs[expr_str.strip()], {"__builtins__": {}}, eval_env)
-                logger.debug(f"Evaluated value: {value}")
-                if isinstance(value, float) and value.is_integer():
-                    value = int(value)
-                return str(value)
-            except NameError as e:
-                raise NameError(
-                    str(e) + f"\nNameError evaluating expression '{expr_str}' with environment {eval_env} "
-                    f"for answer {self.answer_annotated} with assignments {assignments} in file {self.id_shuffled}"
-                )
-            except Exception as e:
-                logger.error(
-                    f"Error evaluating expression '{expr_str}': {e} with environment {eval_env} "
-                    f"for answer {self.answer_annotated} with assignments {assignments} in file {self.id_shuffled}"
-                )
-                raise e
+            value = _eval_node(self._answer_expr_asts[expr_str], eval_env)
+            logger.debug(f"Evaluated value: {value}")
+            if isinstance(value, float) and value.is_integer():
+                value = int(value)
+            return str(value)
 
-        processed_text = self.answer_annotated
-        processed_text = re.sub(r"\{([^}]+)\}", lambda m: eval_curly_expr(m), processed_text)
+        processed_text = _RE_CURLY_EXPR.sub(eval_curly_expr, self.answer_annotated)
         processed_text = format_numbers_by_language(processed_text, language)
         return capitalize_sentences(processed_text)
+
+    def _precompute_unconstrained(self, replacements: dict[str, Any]) -> list[list[dict]]:
+        """Pre-enumerate all possible assignments for each unconstrained init line."""
+        constrained = set(self.constrained_variables)
+        env = COMBINATION_HELPERS | replacements
+        choices_per_line: list[list[dict]] = []
+        for variables, ast_node in self._init_line_asts:
+            if any(v in constrained for v in variables):
+                continue
+            possible_values = _eval_node(ast_node, env)
+            if len(variables) == 1:
+                var = variables[0]
+                if not isinstance(possible_values, list):
+                    possible_values = [possible_values]
+                choices_per_line.append([{var: v} for v in possible_values])
+            else:
+                choices_per_line.append([dict(zip(variables, vals)) for vals in possible_values])
+        return choices_per_line
 
     def _generate_question(
-        self, language, replacements: dict[str, list], valid_combinations: list[dict] | None = None
+        self,
+        language: str,
+        replacements: dict[str, Any],
+        valid_combinations: list[dict] | None = None,
+        unconstrained_choices: list[list[dict]] | None = None,
     ) -> Question:
-        unconstrained_assignments = [
-            self._evaluate_unconstrained_init_line(line, replacements) for line in self.unconstrained_lines
-        ]
+        if unconstrained_choices is not None:
+            unconstrained_assignments = [random.choice(choices) for choices in unconstrained_choices]
+        else:
+            unconstrained_assignments = [
+                self._evaluate_unconstrained_init_line(line, replacements) for line in self.unconstrained_lines
+            ]
         logger.debug(f"Unconstrained assignments: {unconstrained_assignments}")
         if self.constrained_lines:
             if valid_combinations is None:
-                valid_combinations = self._evaluate_constrained_init_lines(
-                    self.constrained_lines, self.conditions, replacements
-                )
+                valid_combinations = self._evaluate_constrained_init_lines(self.constrained_lines, replacements)
             constrained_assignments = random.choice(valid_combinations)
         else:
             constrained_assignments = {}
         logger.debug(f"Constrained assignments: {constrained_assignments}")
-        collected_assignments = constrained_assignments | reduce(lambda x, y: x | y, unconstrained_assignments)
+        collected_assignments = constrained_assignments | {
+            k: v for d in unconstrained_assignments for k, v in d.items()
+        }
         logger.debug(f"All assignments: {collected_assignments}")
         formatted_question = self.format_question(collected_assignments, language)
         logger.info(f"Formatted question: {formatted_question}")
         formatted_answer = self.format_answer(collected_assignments, language)
         logger.info(f"Formatted answer: {formatted_answer}")
-
         return Question(formatted_question, formatted_answer, self.id_orig, self.id_shuffled)
 
+    def _evaluate_unconstrained_init_line(self, init_line: str, replacements: dict[str, Any]) -> dict[str, Any]:
+        variable_part, definition_part = init_line.split("=", 1)
+        variables = strip_elements(variable_part.strip("$").split(","))
+        values = _eval_node(_parse_expr(definition_part.strip()), EVAL_CONTEXT_HELPERS | replacements)
+        if not isinstance(values, (list, tuple)):
+            values = [values]
+        if len(values) != len(variables):
+            logger.warning(f"Incompatible variables {variables} and values {values} in template {self.id_shuffled}.")
+            return {}
+        return dict(zip(variables, values))
+
     def generate_questions(
-        self, n: int, language: str, replacements: dict[str, list], verbose: bool = True
+        self, n: int, language: str, replacements: dict[str, Any], verbose: bool = True
     ) -> list[Question]:
         if verbose and self.constrained_variables:
-            msg = (
+            warnings.warn(
                 f"Template {self.id_shuffled} has constrained variables {self.constrained_variables}. "
-                "Generation may be slow for large n. Set verbose=False to suppress this warning."
+                "Generation may be slow for large n. Set verbose=False to suppress this warning.",
+                stacklevel=2,
             )
-            logger.warning(msg)
-            warnings.warn(msg, stacklevel=2)
         valid_combinations = (
-            self._evaluate_constrained_init_lines(self.constrained_lines, self.conditions, replacements)
+            self._evaluate_constrained_init_lines(self.constrained_lines, replacements)
             if self.constrained_lines
             else None
         )
-        questions = []
-        for i in range(n):
-            try:
-                question = self._generate_question(language, replacements, valid_combinations)
-                questions.append(question)
-            except Exception as e:
-                logger.warning(f"Skipping question {i + 1}: {e}")
-                continue
-        return questions
+        unconstrained_choices = self._precompute_unconstrained(replacements)
+        return [
+            self._generate_question(language, replacements, valid_combinations, unconstrained_choices) for _ in range(n)
+        ]

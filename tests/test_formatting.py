@@ -48,10 +48,10 @@ def test_format_answer_integer_float_coercion():
     assert t.format_answer({"x": 4}) == "Answer: 2"
 
 
-def test_format_answer_compiled_exprs_cached():
+def test_format_answer_expr_asts_cached():
     t = make_template("Value is {x*2}.")
     _ = t.format_answer({"x": 3})
-    assert "x*2" in t._compiled_answer_exprs
+    assert "x*2" in t._answer_expr_asts
 
 
 def test_format_answer_repeated_expression():
