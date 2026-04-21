@@ -575,14 +575,13 @@ class AnnotatedQuestion:
         return Question(formatted_question, formatted_answer, self.id_orig, self.id_shuffled)
 
     def generate_questions(self, n: int, language: str, replacements: dict[str, list], verbose: bool = True) -> list[Question]:
-        if self.constrained_variables:
+        if verbose and self.constrained_variables:
             msg = (
                 f"Template {self.id_shuffled} has constrained variables {self.constrained_variables}. "
                 "Generation may be slow for large n. Set verbose=False to suppress this warning."
             )
             logger.warning(msg)
-            if verbose:
-                warnings.warn(msg, stacklevel=2)
+            warnings.warn(msg, stacklevel=2)
         valid_combinations = (
             self._evaluate_constrained_init_lines(self.constrained_lines, self.conditions, replacements)
             if self.constrained_lines
