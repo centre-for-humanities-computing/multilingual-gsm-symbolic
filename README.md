@@ -1,7 +1,13 @@
 # multilingual-gsm-symbolic
 
-A Python package for generating synthetic multilingual math problems from symbolic templates.
-See the [Data](#data) section for available languages.
+[![tests](https://github.com/centre-for-humanities-computing/multilingual-gsm-symbolic/actions/workflows/tests.yml/badge.svg)](https://github.com/centre-for-humanities-computing/multilingual-gsm-symbolic/actions/workflows/tests.yml)
+[![PyPI version](https://img.shields.io/pypi/v/multilingual-gsm-symbolic.svg?style=flat&logo=pypi&logoColor=white)](https://pypi.org/project/multilingual-gsm-symbolic/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat)](https://github.com/astral-sh/ruff)
+[![ty](https://img.shields.io/badge/type--checked-ty-blue?style=flat)](https://github.com/astral-sh/ty)
+
+
+A Python package for generating synthetic multilingual math problems from symbolic templates. Allows you to create more than a thousand examples from just one problem and allows you to test if the LLMs actually understand the problem or whether it was just lucky pattern-matching.
+
 
 ![Example of a symbolic template and generated questions](https://raw.githubusercontent.com/centre-for-humanities-computing/multilingual-gsm-symbolic/main/images/example.png)
 
