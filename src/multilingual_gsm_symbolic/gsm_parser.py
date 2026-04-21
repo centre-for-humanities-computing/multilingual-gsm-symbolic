@@ -3,6 +3,7 @@ import json
 import logging
 import random
 import re
+import types
 import warnings
 from dataclasses import asdict, dataclass
 from fractions import Fraction
@@ -305,6 +306,11 @@ class AnnotatedQuestion:
         """extract constrained lines from question_annotated"""
         return [line for line in self.init if self._is_init_line_constrained(line, self.constrained_variables)]
 
+    @cached_property
+    def _compiled_answer_exprs(self) -> dict[str, types.CodeType]:
+        exprs = re.findall(r"\{([^}]+)\}", self.answer_annotated)
+        return {expr.strip(): compile(expr.strip(), "<string>", "eval") for expr in set(exprs)}
+
     def get_default_assignments(self, replacements: dict) -> dict:
         """extract example assignments from question_annotated"""
         assignment_tuples = re.findall(r"\{(\w+),\s*([^}]+)\}", self.question_template)
@@ -487,10 +493,11 @@ class AnnotatedQuestion:
     def _filter_invalid_combinations(self, combinations, conditions):
         valid_combinations = []
         # Iterate through each combination and check against every condition
+        compiled_conditions = [compile(c, "<string>", "eval") for c in conditions]
         for combination in combinations:
             is_valid = True
-            for cond in conditions:
-                if not eval(cond, {"__builtins__": {}}, EVAL_CONTEXT_HELPERS | combination):
+            for compiled_cond in compiled_conditions:
+                if not eval(compiled_cond, {"__builtins__": {}}, EVAL_CONTEXT_HELPERS | combination):
                     is_valid = False
                     break
 
@@ -514,24 +521,20 @@ class AnnotatedQuestion:
         return capitalize_sentences(processed_text)
 
     def format_answer(self, assignments, language: str = "eng"):
+        eval_env = EVAL_CONTEXT_HELPERS | assignments
+        eval_env = eval_env | {
+            k: int(v)
+            for k, v in eval_env.items()
+            if isinstance(v, str) and v.isnumeric() or isinstance(v, float) and v.is_integer()
+        }
+        eval_env = eval_env | {k: try_parse_float(v) for k, v in eval_env.items()}
+        eval_env = eval_env | {k: try_parse_fraction(v) for k, v in eval_env.items()}
+
         def eval_curly_expr(match):
-            expr_str = match.group(1)  # Expression inside curly braces
-
+            expr_str = match.group(1)
             logger.debug(f"Evaluating expression: {expr_str}")
-
-            eval_env = EVAL_CONTEXT_HELPERS | assignments
-            # Parse the occasional integer...
-            eval_env = eval_env | {
-                k: int(v)
-                for k, v in eval_env.items()
-                if isinstance(v, str) and v.isnumeric() or isinstance(v, float) and v.is_integer()
-            }
-            # Parse the occational float...
-            eval_env = eval_env | {k: try_parse_float(v) for k, v in eval_env.items()}
-            # Parse the occational fraction...
-            eval_env = eval_env | {k: try_parse_fraction(v) for k, v in eval_env.items()}
             try:
-                value = eval(expr_str, {"__builtins__": {}}, eval_env)
+                value = eval(self._compiled_answer_exprs[expr_str.strip()], {"__builtins__": {}}, eval_env)
                 logger.debug(f"Evaluated value: {value}")
                 if isinstance(value, float) and value.is_integer():
                     value = int(value)

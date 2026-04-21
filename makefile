@@ -20,7 +20,7 @@ lint-check:
 
 type-check:
 	@echo "--- 🔍 Running type checker ---"
-	uv run ty check src/
+	uv run ty check src/multilingual_gsm_symbolic
 
 test:
 	@echo "--- 🧪 Running tests ---"
