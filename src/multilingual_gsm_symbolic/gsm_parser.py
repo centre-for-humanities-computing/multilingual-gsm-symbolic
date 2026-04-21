@@ -6,7 +6,7 @@ import re
 import warnings
 from dataclasses import asdict, dataclass
 from fractions import Fraction
-from functools import reduce
+from functools import cached_property, reduce
 from pathlib import Path
 from typing import Self
 
@@ -251,12 +251,12 @@ class AnnotatedQuestion:
             data = json.load(f)
         return cls(**data)
 
-    @property
+    @cached_property
     def question_template(self) -> str:
         """extract question template from question_annotated"""
         return self.question_annotated.splitlines()[0].strip()
 
-    @property
+    @cached_property
     def variables(self) -> list[str]:
         """extract variable names from question_annotated"""
 
@@ -264,7 +264,7 @@ class AnnotatedQuestion:
         variable_sets = [set(v) for v in variables_per_line]
         return list(reduce(set.union, variable_sets))
 
-    @property
+    @cached_property
     def init(self) -> list[str]:
         """extract variable definitions from question_annotated"""
         init_block = (
@@ -276,7 +276,7 @@ class AnnotatedQuestion:
         )
         return [line.strip("- ") for line in init_block]
 
-    @property
+    @cached_property
     def conditions(self) -> list[str]:
         """extract conditions from question_annotated"""
         if "#conditions:" not in self.question_annotated:
@@ -288,19 +288,19 @@ class AnnotatedQuestion:
         except IndexError:
             return []
 
-    @property
+    @cached_property
     def constrained_variables(self) -> list[str]:
         """extract variable names from conditions"""
         if not self.conditions:
             return []
         return [v for v in self.variables if is_variable_mentioned(v, self.conditions)]
 
-    @property
+    @cached_property
     def unconstrained_lines(self) -> list[str]:
         """extract unconstrained lines from question_annotated"""
         return [line for line in self.init if not self._is_init_line_constrained(line, self.constrained_variables)]
 
-    @property
+    @cached_property
     def constrained_lines(self) -> list[str]:
         """extract constrained lines from question_annotated"""
         return [line for line in self.init if self._is_init_line_constrained(line, self.constrained_variables)]
@@ -472,7 +472,7 @@ class AnnotatedQuestion:
     def _get_all_combinations(self, possibilities):
         num_combinations = reduce(lambda x, y: x * len(y), possibilities.values(), 1)
         logger.info(f"Number of combinations: {num_combinations}")
-        if num_combinations > 10000000:
+        if num_combinations > 10_000_000:
             raise ValueError(
                 f"Too many combinations ({num_combinations}) for question {self.id_shuffled}. "
                 "Please reduce the number of variables or their possible values."
@@ -553,15 +553,15 @@ class AnnotatedQuestion:
         processed_text = format_numbers_by_language(processed_text, language)
         return capitalize_sentences(processed_text)
 
-    def _generate_question(self, language, replacements: dict[str, list]) -> Question:
+    def _generate_question(self, language, replacements: dict[str, list], valid_combinations: list[dict] | None = None) -> Question:
         unconstrained_assignments = [
             self._evaluate_unconstrained_init_line(line, replacements) for line in self.unconstrained_lines
         ]
         logger.debug(f"Unconstrained assignments: {unconstrained_assignments}")
-        if len(self.constrained_lines) > 0:
-            constrained_assignments = random.choice(
-                self._evaluate_constrained_init_lines(self.constrained_lines, self.conditions, replacements)
-            )
+        if self.constrained_lines:
+            if valid_combinations is None:
+                valid_combinations = self._evaluate_constrained_init_lines(self.constrained_lines, self.conditions, replacements)
+            constrained_assignments = random.choice(valid_combinations)
         else:
             constrained_assignments = {}
         logger.debug(f"Constrained assignments: {constrained_assignments}")
@@ -583,10 +583,15 @@ class AnnotatedQuestion:
             logger.warning(msg)
             if verbose:
                 warnings.warn(msg, stacklevel=2)
+        valid_combinations = (
+            self._evaluate_constrained_init_lines(self.constrained_lines, self.conditions, replacements)
+            if self.constrained_lines
+            else None
+        )
         questions = []
         for i in range(n):
             try:
-                question = self._generate_question(language, replacements)
+                question = self._generate_question(language, replacements, valid_combinations)
                 questions.append(question)
             except Exception as e:
                 logger.warning(f"Skipping question {i + 1}: {e}")
