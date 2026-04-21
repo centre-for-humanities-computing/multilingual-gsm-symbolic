@@ -3,7 +3,7 @@
 A Python package for generating synthetic multilingual math problems from symbolic templates.
 See the [Data](#data) section for available languages.
 
-![Example of a symbolic template and generated questions](images/example.png)
+![Example of a symbolic template and generated questions](https://raw.githubusercontent.com/centre-for-humanities-computing/multilingual-gsm-symbolic/main/images/example.png)
 
 ## Installation
 
