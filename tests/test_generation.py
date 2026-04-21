@@ -1,9 +1,8 @@
 import pytest
+from conftest import get_lightly_constrained_template_files, get_unconstrained_template_files
 
 from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion, Question
 from multilingual_gsm_symbolic.load_data import load_replacements
-
-from conftest import get_lightly_constrained_template_files, get_unconstrained_template_files
 
 _TEMPLATES = get_unconstrained_template_files() + get_lightly_constrained_template_files()
 

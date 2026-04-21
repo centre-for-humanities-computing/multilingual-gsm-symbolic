@@ -556,14 +556,18 @@ class AnnotatedQuestion:
         processed_text = format_numbers_by_language(processed_text, language)
         return capitalize_sentences(processed_text)
 
-    def _generate_question(self, language, replacements: dict[str, list], valid_combinations: list[dict] | None = None) -> Question:
+    def _generate_question(
+        self, language, replacements: dict[str, list], valid_combinations: list[dict] | None = None
+    ) -> Question:
         unconstrained_assignments = [
             self._evaluate_unconstrained_init_line(line, replacements) for line in self.unconstrained_lines
         ]
         logger.debug(f"Unconstrained assignments: {unconstrained_assignments}")
         if self.constrained_lines:
             if valid_combinations is None:
-                valid_combinations = self._evaluate_constrained_init_lines(self.constrained_lines, self.conditions, replacements)
+                valid_combinations = self._evaluate_constrained_init_lines(
+                    self.constrained_lines, self.conditions, replacements
+                )
             constrained_assignments = random.choice(valid_combinations)
         else:
             constrained_assignments = {}
@@ -577,7 +581,9 @@ class AnnotatedQuestion:
 
         return Question(formatted_question, formatted_answer, self.id_orig, self.id_shuffled)
 
-    def generate_questions(self, n: int, language: str, replacements: dict[str, list], verbose: bool = True) -> list[Question]:
+    def generate_questions(
+        self, n: int, language: str, replacements: dict[str, list], verbose: bool = True
+    ) -> list[Question]:
         if verbose and self.constrained_variables:
             msg = (
                 f"Template {self.id_shuffled} has constrained variables {self.constrained_variables}. "

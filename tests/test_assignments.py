@@ -1,4 +1,5 @@
 import pytest
+from conftest import get_template_files
 
 from multilingual_gsm_symbolic.gsm_parser import (
     EVAL_CONTEXT_HELPERS,
@@ -7,8 +8,6 @@ from multilingual_gsm_symbolic.gsm_parser import (
     try_parse_fraction,
 )
 from multilingual_gsm_symbolic.load_data import load_replacements
-
-from conftest import get_template_files
 
 
 class TestGetAllPossibleAssignments:
