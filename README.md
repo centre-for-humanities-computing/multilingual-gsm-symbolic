@@ -5,13 +5,13 @@ See the [Data](#data) section for available languages.
 
 ![Example of a symbolic template and generated questions](https://raw.githubusercontent.com/centre-for-humanities-computing/multilingual-gsm-symbolic/main/images/example.png)
 
-## Installation
+## ⏳ Installation
 
 ```bash
 pip install multilingual-gsm-symbolic
 ```
 
-## Quickstart
+## 👩‍💻 Get started
 
 ```python
 from multilingual_gsm_symbolic import load_data, load_replacements, available_languages
@@ -39,7 +39,7 @@ for q in questions:
     print()
 ```
 
-## Template format
+## 📋 Template format
 
 Templates are JSON files with four fields:
 
@@ -103,45 +103,7 @@ Templates are JSON files with four fields:
 | `divides(a, b)`                   | True if `a` divides `b`                   |
 | `frac_format(x)`                  | Format `x` as a fraction string           |
 
-## 📖 API reference
-
-### `load_data(language="eng", directory=None) → list[AnnotatedQuestion]`
-
-Load symbolic templates.
-
-- `language` — `"eng"` (default) or `"dan"`, or any language code for which a template folder exists
-- `directory` — override the bundled data; load templates from this path instead
-
-### `load_replacements(language="eng") → dict`
-
-Load language-specific named values (e.g. lists of names, places) used inside templates.
-
-### `load_gsm(language="eng", directory=None) → list[GSMProblem]`
-
-Load the bundled concrete problems for a given language.
-
-### `AnnotatedQuestion`
-
-Core class. Constructed from a JSON template file via `AnnotatedQuestion.from_json(path)`.
-
-Key methods:
-
-| Method                                          | Description                                           |
-| ----------------------------------------------- | ----------------------------------------------------- |
-| `generate_questions(n, language, replacements)` | Generate `n` concrete `Question` instances            |
-| `get_default_assignments(replacements)`         | Extract the example variable values from the template |
-| `format_question(assignments, language)`        | Render the question text for a given assignment       |
-| `format_answer(assignments, language)`          | Render the answer text for a given assignment         |
-
-### `Question`
-
-Dataclass holding a single generated problem: `question`, `answer`, `id_orig`, `id_shuffled`.
-
-### `GSMProblem`
-
-Pydantic model for a concrete problem loaded from disk: `question`, `answer`, `id_orig`, `filepath`.
-
-## Data
+## 🗃️ Data
 
 The English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper.
 The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
@@ -151,6 +113,115 @@ The original concrete problems are from [GSM8k](https://huggingface.co/datasets/
 | -------- | ----- | --------- |
 | English  | `eng` | 100       |
 | Danish   | `dan` | 100       |
+
+## 📖 API reference
+
+### <kbd>function</kbd> `load_data`
+
+```python
+load_data(language="eng", directory=None) → list[AnnotatedQuestion]
+```
+
+Load symbolic templates.
+
+| Argument    | Type            | Description                                                               |
+| ----------- | --------------- | ------------------------------------------------------------------------- |
+| `language`  | `str`           | Language code, e.g. `"eng"` (default) or `"dan"`                         |
+| `directory` | `Path \| None`  | Override the bundled data; load templates from this path instead          |
+| **RETURNS** | `list[AnnotatedQuestion]` | The loaded templates                                          |
+
+### <kbd>function</kbd> `load_replacements`
+
+```python
+load_replacements(language="eng") → dict
+```
+
+Load language-specific named values (e.g. lists of names, places) used inside templates.
+
+| Argument    | Type   | Description                               |
+| ----------- | ------ | ----------------------------------------- |
+| `language`  | `str`  | Language code, e.g. `"eng"` (default)    |
+| **RETURNS** | `dict` | Mapping of replacement name → value list |
+
+### <kbd>function</kbd> `load_gsm`
+
+```python
+load_gsm(language="eng", directory=None) → list[GSMProblem]
+```
+
+Load the bundled concrete problems for a given language.
+
+| Argument    | Type            | Description                                              |
+| ----------- | --------------- | -------------------------------------------------------- |
+| `language`  | `str`           | Language code, e.g. `"eng"` (default)                   |
+| `directory` | `Path \| None`  | Override the bundled data directory                      |
+| **RETURNS** | `list[GSMProblem]` | The loaded concrete problems                          |
+
+### <kbd>class</kbd> `AnnotatedQuestion`
+
+Core class representing a symbolic template. Constructed from a JSON template file via `AnnotatedQuestion.from_json(path)`.
+
+#### <sup><kbd>method</kbd> `AnnotatedQuestion.generate_questions`</sup>
+
+Generate concrete `Question` instances from the template.
+
+| Argument       | Type    | Description                                    |
+| -------------- | ------- | ---------------------------------------------- |
+| `n`            | `int`   | Number of questions to generate                |
+| `language`     | `str`   | Language code for rendered text                |
+| `replacements` | `dict`  | Replacement values from `load_replacements`    |
+| **RETURNS**    | `list[Question]` | The generated questions                 |
+
+#### <sup><kbd>method</kbd> `AnnotatedQuestion.get_default_assignments`</sup>
+
+Extract the example variable values from the template.
+
+| Argument       | Type   | Description                                 |
+| -------------- | ------ | ------------------------------------------- |
+| `replacements` | `dict` | Replacement values from `load_replacements` |
+| **RETURNS**    | `dict` | Mapping of variable name → default value    |
+
+#### <sup><kbd>method</kbd> `AnnotatedQuestion.format_question`</sup>
+
+Render the question text for a given variable assignment.
+
+| Argument      | Type  | Description                        |
+| ------------- | ----- | ---------------------------------- |
+| `assignments` | `dict` | Variable name → value mapping     |
+| `language`    | `str`  | Language code for rendered text   |
+| **RETURNS**   | `str`  | The rendered question string      |
+
+#### <sup><kbd>method</kbd> `AnnotatedQuestion.format_answer`</sup>
+
+Render the answer text for a given variable assignment.
+
+| Argument      | Type  | Description                       |
+| ------------- | ----- | --------------------------------- |
+| `assignments` | `dict` | Variable name → value mapping    |
+| `language`    | `str`  | Language code for rendered text  |
+| **RETURNS**   | `str`  | The rendered answer string       |
+
+### <kbd>class</kbd> `Question`
+
+Dataclass holding a single generated problem.
+
+| Attribute     | Type  | Description                              |
+| ------------- | ----- | ---------------------------------------- |
+| `question`    | `str` | The rendered question text               |
+| `answer`      | `str` | The rendered answer text                 |
+| `id_orig`     | `int` | Index of the original template           |
+| `id_shuffled` | `int` | Index within the shuffled sample         |
+
+### <kbd>class</kbd> `GSMProblem`
+
+Pydantic model for a concrete problem loaded from disk.
+
+| Attribute  | Type   | Description                              |
+| ---------- | ------ | ---------------------------------------- |
+| `question` | `str`  | The question text                        |
+| `answer`   | `str`  | The answer text                          |
+| `id_orig`  | `int`  | Original problem index                   |
+| `filepath` | `Path` | Path to the source file on disk          |
 
 ## Acknowledgement
 
