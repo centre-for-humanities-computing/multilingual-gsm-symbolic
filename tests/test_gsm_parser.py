@@ -3,6 +3,7 @@ import pytest
 from multilingual_gsm_symbolic.gsm_parser import (
     EVAL_CONTEXT_HELPERS,
     AnnotatedQuestion,
+    Question,
     try_parse_float,
     try_parse_fraction,
 )
@@ -122,6 +123,30 @@ def get_template_files():
     return template_files
 
 
+def get_unconstrained_template_files(n: int = 5):
+    result = []
+    for path, lang in get_template_files():
+        template = AnnotatedQuestion.from_json(path)
+        if not template.constrained_variables:
+            result.append((path, lang))
+        if len(result) >= n:
+            break
+    return result
+
+
+def get_lightly_constrained_template_files(n: int = 3):
+    """Templates with exactly 2 constrained variables — exercises the constrained
+    path without hitting the combinatorial explosion of heavily constrained ones."""
+    result = []
+    for path, lang in get_template_files():
+        template = AnnotatedQuestion.from_json(path)
+        if len(template.constrained_variables) == 2:
+            result.append((path, lang))
+        if len(result) >= n:
+            break
+    return result
+
+
 @pytest.mark.parametrize("template_file,language", get_template_files())
 def test_template_formatting_matches_original(template_file, language):
     annotated_question = AnnotatedQuestion.from_json(template_file)
@@ -223,3 +248,73 @@ def test_default_assignments_are_valid(template_file, language):
             )
         except Exception:
             pass  # Some conditions reference variables not in example_assignments
+
+
+# --- generate_questions ---
+
+@pytest.mark.parametrize("template_file,language", get_unconstrained_template_files() + get_lightly_constrained_template_files())
+def test_generate_questions_returns_questions(template_file, language):
+    template = AnnotatedQuestion.from_json(template_file)
+    replacements = load_replacements(language)
+    questions = template.generate_questions(n=3, language=language, replacements=replacements, verbose=False)
+    assert len(questions) > 0
+    assert all(isinstance(q, Question) for q in questions)
+
+
+@pytest.mark.parametrize("template_file,language", get_unconstrained_template_files() + get_lightly_constrained_template_files())
+def test_generate_questions_non_empty_strings(template_file, language):
+    template = AnnotatedQuestion.from_json(template_file)
+    replacements = load_replacements(language)
+    questions = template.generate_questions(n=3, language=language, replacements=replacements, verbose=False)
+    for q in questions:
+        assert isinstance(q.question, str) and q.question.strip()
+        assert isinstance(q.answer, str) and q.answer.strip()
+
+
+@pytest.mark.parametrize("template_file,language", get_unconstrained_template_files() + get_lightly_constrained_template_files())
+def test_generate_questions_ids(template_file, language):
+    template = AnnotatedQuestion.from_json(template_file)
+    replacements = load_replacements(language)
+    questions = template.generate_questions(n=3, language=language, replacements=replacements, verbose=False)
+    for q in questions:
+        assert q.id_orig == template.id_orig
+        assert q.id_shuffled == template.id_shuffled
+
+
+# --- format_answer expression evaluation ---
+
+def make_template(answer_annotated: str) -> AnnotatedQuestion:
+    return AnnotatedQuestion(
+        question="Q",
+        answer="A",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated="Q\n#init:\n- $x = range(1, 5)\n#conditions:\n- True\n#answer: x",
+        answer_annotated=answer_annotated,
+    )
+
+
+def test_format_answer_simple_expression():
+    t = make_template("Result is {x+1}.")
+    assert t.format_answer({"x": 3}) == "Result is 4."
+
+
+def test_format_answer_multiple_expressions():
+    t = make_template("{a} + {b} = {a+b}")
+    assert t.format_answer({"a": 2, "b": 3}) == "2 + 3 = 5"
+
+
+def test_format_answer_integer_float_coercion():
+    t = make_template("Answer: {x/2}")
+    assert t.format_answer({"x": 4}) == "Answer: 2"
+
+
+def test_format_answer_compiled_exprs_cached():
+    t = make_template("Value is {x*2}.")
+    _ = t.format_answer({"x": 3})
+    assert "x*2" in t._compiled_answer_exprs
+
+
+def test_format_answer_repeated_expression():
+    t = make_template("{x} and {x} again")
+    assert t.format_answer({"x": 5}) == "5 and 5 again"
