@@ -3,6 +3,7 @@ import json
 import logging
 import random
 import re
+import warnings
 from dataclasses import asdict, dataclass
 from fractions import Fraction
 from functools import reduce
@@ -573,7 +574,15 @@ class AnnotatedQuestion:
 
         return Question(formatted_question, formatted_answer, self.id_orig, self.id_shuffled)
 
-    def generate_questions(self, n, language: str, replacements: dict[str, list]) -> list[Question]:
+    def generate_questions(self, n: int, language: str, replacements: dict[str, list], verbose: bool = True) -> list[Question]:
+        if self.constrained_variables:
+            msg = (
+                f"Template {self.id_shuffled} has constrained variables {self.constrained_variables}. "
+                "Generation may be slow for large n. Set verbose=False to suppress this warning."
+            )
+            logger.warning(msg)
+            if verbose:
+                warnings.warn(msg, stacklevel=2)
         questions = []
         for i in range(n):
             try:
