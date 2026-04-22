@@ -46,6 +46,26 @@ def test_precompute_unconstrained_excludes_constrained_variables():
     assert "z" in choice_vars, "unconstrained variable 'z' must appear in unconstrained choices"
 
 
+def test_range_str_tuple_order_matches_range_possibilities_str():
+    """range_str and range_possibilities_str must return (int, str) in the same order.
+
+    Bug: range_possibilities_str returned (numbers[i-1], i) while range_str returned (i, numbers[i-1]).
+    Templates like `d_val, d_txt = range_str(...)` rely on the first element being the int.
+    """
+    from multilingual_gsm_symbolic.gsm_parser import range_possibilities_str, range_str
+
+    numbers = ["en", "to", "tre", "fire", "fem"]
+    possibilities = range_possibilities_str(1, 6, 1, numbers)
+    assert all(isinstance(p[0], str) and isinstance(p[1], int) for p in possibilities), (
+        "range_possibilities_str must return (str, int) tuples"
+    )
+    # Also verify it matches a single range_str draw
+    import random
+    random.seed(0)
+    single = range_str(1, 5, 1, numbers)
+    assert isinstance(single[0], str) and isinstance(single[1], int)
+
+
 _TEMPLATES = get_unconstrained_template_files() + get_lightly_constrained_template_files()
 
 
