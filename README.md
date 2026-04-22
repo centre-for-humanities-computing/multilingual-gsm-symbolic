@@ -96,18 +96,6 @@ Templates are JSON files with four fields:
 
 </details>
 
-### Available helper functions
-
-| Function                          | Description                               |
-| --------------------------------- | ----------------------------------------- |
-| `range(start, end[, step])`       | All integers in `[start, end)`            |
-| `sample([a, b, c])`               | One value from the list                   |
-| `range_sample(start, end, step)`  | Uniform sample from a range               |
-| `sample_sequential(items, n)`     | `n` consecutive items from a list         |
-| `arange_sample(start, end, step)` | Sample from `np.arange(start, end, step)` |
-| `is_int(x)`                       | True if `x` is an integer                 |
-| `divides(a, b)`                   | True if `a` divides `b`                   |
-| `frac_format(x)`                  | Format `x` as a fraction string           |
 
 ## 🗃️ Data
 
@@ -120,6 +108,52 @@ The original concrete problems are from [GSM8k](https://huggingface.co/datasets/
 | English  | `eng` | 100       |
 | Danish   | `dan` | 100       |
 
+
+### Writing a custom template
+
+Here is a complete example — a "speed × time = distance" problem with randomised values and a divisibility constraint:
+
+```json
+{
+  "question": "A car travels at 60 mph for 3 hours. How far does it travel?",
+  "answer": "Distance = speed × time = 60 × 3 = 180 miles.\n#### 180",
+  "id_orig": 0,
+  "id_shuffled": 0,
+  "question_annotated": "A car travels at {speed,60} mph for {hours,3} hours. How far does it travel?\n#init:\n- $speed = range(20, 100, 10)\n- $hours = range(1, 9)\n#conditions:\n- is_int(speed * hours / 10)\n#answer: speed * hours",
+  "answer_annotated": "Distance = speed × time = {speed} × {hours} = {speed * hours} miles.\n#### {speed * hours}"
+}
+```
+
+Save it as a `.json` file and load it directly:
+
+```python
+from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
+
+template = AnnotatedQuestion.from_json("my_template.json")
+questions = template.generate_questions(n=5, language="eng", replacements={})
+for q in questions:
+    print(q.question)
+    print(q.answer)
+```
+
+**Init functions** available in `#init` lines:
+
+| Function | Returns |
+| -------- | ------- |
+| `range(start, end[, step])` | integers in `[start, end)` |
+| `arange(start, end[, step])` | evenly-spaced floats |
+| `sample(items[, n])` | one item (or `n` items) from a list |
+| `sample_sequential(items, n)` | `n` consecutive items from a list |
+| `range_str(start, end, step, word_list)` | `(word, int)` pairs, e.g. `("three", 3)` |
+
+**Condition functions** available in `#conditions` lines:
+
+| Function | Returns |
+| -------- | ------- |
+| `is_int(x)` | `True` if `x` is a whole number |
+| `divides(a, b)` | `True` if `a % b == 0` |
+| `Fraction(x)` | fraction string, e.g. `"3/4"` |
+
 ## 📖 API reference
 
 ### <kbd>function</kbd> `load_data`
@@ -130,11 +164,11 @@ load_data(language="eng", directory=None) → list[AnnotatedQuestion]
 
 Load symbolic templates.
 
-| Argument    | Type            | Description                                                               |
-| ----------- | --------------- | ------------------------------------------------------------------------- |
-| `language`  | `str`           | Language code, e.g. `"eng"` (default) or `"dan"`                         |
-| `directory` | `Path \| None`  | Override the bundled data; load templates from this path instead          |
-| **RETURNS** | `list[AnnotatedQuestion]` | The loaded templates                                          |
+| Argument    | Type                      | Description                                                      |
+| ----------- | ------------------------- | ---------------------------------------------------------------- |
+| `language`  | `str`                     | Language code, e.g. `"eng"` (default) or `"dan"`                 |
+| `directory` | `Path \| None`            | Override the bundled data; load templates from this path instead |
+| **RETURNS** | `list[AnnotatedQuestion]` | The loaded templates                                             |
 
 ### <kbd>function</kbd> `load_replacements`
 
@@ -144,8 +178,8 @@ load_replacements(language="eng") → dict
 
 Load language-specific named values (e.g. lists of names, places) used inside templates.
 
-| Argument    | Type   | Description                               |
-| ----------- | ------ | ----------------------------------------- |
+| Argument    | Type   | Description                              |
+| ----------- | ------ | ---------------------------------------- |
 | `language`  | `str`  | Language code, e.g. `"eng"` (default)    |
 | **RETURNS** | `dict` | Mapping of replacement name → value list |
 
@@ -157,11 +191,11 @@ load_gsm(language="eng", directory=None) → list[GSMProblem]
 
 Load the bundled concrete problems for a given language.
 
-| Argument    | Type            | Description                                              |
-| ----------- | --------------- | -------------------------------------------------------- |
-| `language`  | `str`           | Language code, e.g. `"eng"` (default)                   |
-| `directory` | `Path \| None`  | Override the bundled data directory                      |
-| **RETURNS** | `list[GSMProblem]` | The loaded concrete problems                          |
+| Argument    | Type               | Description                           |
+| ----------- | ------------------ | ------------------------------------- |
+| `language`  | `str`              | Language code, e.g. `"eng"` (default) |
+| `directory` | `Path \| None`     | Override the bundled data directory   |
+| **RETURNS** | `list[GSMProblem]` | The loaded concrete problems          |
 
 ### <kbd>class</kbd> `AnnotatedQuestion`
 
@@ -171,12 +205,12 @@ Core class representing a symbolic template. Constructed from a JSON template fi
 
 Generate concrete `Question` instances from the template.
 
-| Argument       | Type    | Description                                    |
-| -------------- | ------- | ---------------------------------------------- |
-| `n`            | `int`   | Number of questions to generate                |
-| `language`     | `str`   | Language code for rendered text                |
-| `replacements` | `dict`  | Replacement values from `load_replacements`    |
-| **RETURNS**    | `list[Question]` | The generated questions                 |
+| Argument       | Type             | Description                                 |
+| -------------- | ---------------- | ------------------------------------------- |
+| `n`            | `int`            | Number of questions to generate             |
+| `language`     | `str`            | Language code for rendered text             |
+| `replacements` | `dict`           | Replacement values from `load_replacements` |
+| **RETURNS**    | `list[Question]` | The generated questions                     |
 
 #### <sup><kbd>method</kbd> `AnnotatedQuestion.get_default_assignments`</sup>
 
@@ -191,43 +225,43 @@ Extract the example variable values from the template.
 
 Render the question text for a given variable assignment.
 
-| Argument      | Type  | Description                        |
-| ------------- | ----- | ---------------------------------- |
-| `assignments` | `dict` | Variable name → value mapping     |
-| `language`    | `str`  | Language code for rendered text   |
-| **RETURNS**   | `str`  | The rendered question string      |
+| Argument      | Type   | Description                     |
+| ------------- | ------ | ------------------------------- |
+| `assignments` | `dict` | Variable name → value mapping   |
+| `language`    | `str`  | Language code for rendered text |
+| **RETURNS**   | `str`  | The rendered question string    |
 
 #### <sup><kbd>method</kbd> `AnnotatedQuestion.format_answer`</sup>
 
 Render the answer text for a given variable assignment.
 
-| Argument      | Type  | Description                       |
-| ------------- | ----- | --------------------------------- |
-| `assignments` | `dict` | Variable name → value mapping    |
-| `language`    | `str`  | Language code for rendered text  |
-| **RETURNS**   | `str`  | The rendered answer string       |
+| Argument      | Type   | Description                     |
+| ------------- | ------ | ------------------------------- |
+| `assignments` | `dict` | Variable name → value mapping   |
+| `language`    | `str`  | Language code for rendered text |
+| **RETURNS**   | `str`  | The rendered answer string      |
 
 ### <kbd>class</kbd> `Question`
 
 Dataclass holding a single generated problem.
 
-| Attribute     | Type  | Description                              |
-| ------------- | ----- | ---------------------------------------- |
-| `question`    | `str` | The rendered question text               |
-| `answer`      | `str` | The rendered answer text                 |
-| `id_orig`     | `int` | Index of the original template           |
-| `id_shuffled` | `int` | Index within the shuffled sample         |
+| Attribute     | Type  | Description                      |
+| ------------- | ----- | -------------------------------- |
+| `question`    | `str` | The rendered question text       |
+| `answer`      | `str` | The rendered answer text         |
+| `id_orig`     | `int` | Index of the original template   |
+| `id_shuffled` | `int` | Index within the shuffled sample |
 
 ### <kbd>class</kbd> `GSMProblem`
 
 Pydantic model for a concrete problem loaded from disk.
 
-| Attribute  | Type   | Description                              |
-| ---------- | ------ | ---------------------------------------- |
-| `question` | `str`  | The question text                        |
-| `answer`   | `str`  | The answer text                          |
-| `id_orig`  | `int`  | Original problem index                   |
-| `filepath` | `Path` | Path to the source file on disk          |
+| Attribute  | Type   | Description                     |
+| ---------- | ------ | ------------------------------- |
+| `question` | `str`  | The question text               |
+| `answer`   | `str`  | The answer text                 |
+| `id_orig`  | `int`  | Original problem index          |
+| `filepath` | `Path` | Path to the source file on disk |
 
 ## Acknowledgement
 
