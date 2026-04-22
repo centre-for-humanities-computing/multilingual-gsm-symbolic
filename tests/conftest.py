@@ -5,14 +5,11 @@ from multilingual_gsm_symbolic.load_data import _DATA_ROOT
 
 
 def get_template_files() -> list[Path]:
-    template_dirs = [
-        _DATA_ROOT / "dan" / "symbolic",
-        _DATA_ROOT / "eng" / "symbolic",
-    ]
     template_files = []
-    for template_dir in template_dirs:
-        if template_dir.exists():
-            for template_file in sorted(template_dir.glob("**/*.json")):
+    for lang_dir in sorted(_DATA_ROOT.iterdir()):
+        symbolic_dir = lang_dir / "symbolic"
+        if symbolic_dir.exists():
+            for template_file in sorted(symbolic_dir.glob("**/*.json")):
                 template_files.append(template_file)
     return template_files
 

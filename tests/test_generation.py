@@ -66,6 +66,54 @@ def test_range_str_tuple_order_matches_range_possibilities_str():
     assert isinstance(single[0], str) and isinstance(single[1], int)
 
 
+def test_fixed_numeric_vars_do_not_vary():
+    """Variables named in `fixed` must be identical across all generated questions."""
+    template = AnnotatedQuestion(
+        question="A fog bank rolls in at 3 miles/hour. The city is 42 miles wide.",
+        answer="14 hours",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated=(
+            "A fog bank rolls in at {speed,3} miles/hour. The city is {width,42} miles wide.\n"
+            "#init:\n"
+            "- $speed = range(1, 20)\n"
+            "- $width = range(2, 100)\n"
+            "#conditions:\n"
+            "- is_int(width / speed)\n"
+            "#answer: width // speed"
+        ),
+        answer_annotated="At {speed} miles/hour, it will take {width}/{speed}={width//speed} hours.",
+    )
+    questions = template.generate_questions(n=10, fixed={"speed": 3}, verbose=False)
+    assert len(questions) == 10
+    for q in questions:
+        assert "3 miles/hour" in q.question, f"speed was not fixed to 3 in: {q.question}"
+        # width should vary — not all identical
+    widths = {q.question.split("city is ")[1].split(" miles")[0] for q in questions}
+    assert len(widths) > 1, "width should vary when only speed is fixed"
+
+
+def test_fixed_unconstrained_var_does_not_vary():
+    """Fixed variable in an unconstrained init line must not vary."""
+    template = AnnotatedQuestion(
+        question="A store sells apples for $2 each.",
+        answer="$2",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated=(
+            "A store sells apples for ${price,2} each.\n"
+            "#init:\n"
+            "- $price = range(1, 10)\n"
+            "#conditions:\n"
+            "- True\n"
+            "#answer: price"
+        ),
+        answer_annotated="${price}",
+    )
+    questions = template.generate_questions(n=20, fixed={"price": 5}, verbose=False)
+    assert all("$5" in q.question for q in questions), "price must be fixed at 5"
+
+
 _TEMPLATES = get_unconstrained_template_files() + get_lightly_constrained_template_files()
 
 
