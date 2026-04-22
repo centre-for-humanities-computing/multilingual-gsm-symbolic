@@ -1,4 +1,5 @@
 import ast
+import decimal
 import itertools
 import json
 import logging
@@ -136,10 +137,17 @@ def sample_sequential(items: list, n: int) -> list:
     return [items[(start_idx + i) % len(items)] for i in range(n)]
 
 
+def _step_precision(step: float) -> int:
+    exponent = decimal.Decimal(str(step)).as_tuple().exponent
+    return max(0, -exponent) if isinstance(exponent, int) else 0
+
+
 def arange_sample(start: float, end: float, step: float = 1) -> str:
     if start > end:
         return ""
-    return str(random.choice(np.linspace(start, end, round((end - start) / step) + 1)))
+    values = np.linspace(start, end, round((end - start) / step) + 1)
+    precision = _step_precision(step)
+    return str(round(float(random.choice(values)), precision))
 
 
 def frac_format(value: Any) -> str:
@@ -167,7 +175,9 @@ def range_possibilities_str(start: int, end: int, step: int, numbers: list) -> l
 def arange_possibilities(start: float, end: float, step: float = 1) -> list[str]:
     if start > end:
         return []
-    return list(map(str, np.linspace(start, end, round((end - start) / step) + 1)))
+    values = np.linspace(start, end, round((end - start) / step) + 1)
+    precision = _step_precision(step)
+    return [str(round(float(v), precision)) for v in values]
 
 
 def sample_possibilities(items: list, n: int = 1) -> list:

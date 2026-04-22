@@ -1,7 +1,7 @@
 import pytest
 from conftest import get_template_files
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
+from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion, arange_possibilities
 from multilingual_gsm_symbolic.load_data import load_replacements
 
 
@@ -57,3 +57,38 @@ def test_format_answer_expr_asts_cached():
 def test_format_answer_repeated_expression():
     t = make_template("{x} and {x} again")
     assert t.format_answer({"x": 5}) == "5 and 5 again"
+
+
+def test_arange_no_floating_point_noise():
+    """arange_possibilities must not produce strings like '1.7999999999999998'.
+
+    np.linspace(0.2, 4.8, 47) can produce values that numpy float64 renders as
+    '1.7999999999999998' instead of '1.8'. These corrupt the question text.
+    """
+
+    values = arange_possibilities(0.2, 4.8, 0.1)
+    noisy = [v for v in values if len(v.split(".")[-1]) > 10 if "." in v]
+    assert not noisy, f"Floating-point noise in arange values: {noisy[:5]}"
+
+
+def test_format_question_arange_variable_no_noise():
+    """A template using arange must not produce '1.7999...' in the rendered question."""
+    t = AnnotatedQuestion(
+        question="Price is 1.8",
+        answer="1.8",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated=(
+            "Price is {unit_price,1.8}\n"
+            "#init:\n"
+            "- $unit_price = arange(0.2, 4.8, 0.1)\n"
+            "#conditions:\n"
+            "- True\n"
+            "#answer: unit_price"
+        ),
+        answer_annotated="{unit_price}",
+    )
+    questions = t.generate_questions(n=50, verbose=False)
+    for q in questions:
+        assert "1.7999" not in q.question, f"Floating-point noise in question: {q.question}"
+        assert "1.7999" not in q.answer, f"Floating-point noise in answer: {q.answer}"
