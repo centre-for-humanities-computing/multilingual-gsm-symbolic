@@ -25,3 +25,9 @@ type-check:
 test:
 	@echo "--- 🧪 Running tests ---"
 	uv run pytest -vv
+
+publish:
+	@echo "--- 📦 Publishing to PyPI ---"
+	rm -rf dist
+	uv build
+	uv publish
