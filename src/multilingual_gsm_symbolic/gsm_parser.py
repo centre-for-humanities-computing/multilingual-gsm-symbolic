@@ -127,7 +127,7 @@ def range_sample(start: int, end: int, step: int = 1) -> int:
 def range_str(start: int, end: int, step: int, numbers: list) -> tuple:
     if start > end:
         return ()
-    candidates = [(i, numbers[i - 1]) for i in range(start, end + 1, step) if 0 < i <= len(numbers)]
+    candidates = [(numbers[i - 1], i) for i in range(start, end + 1, step) if 0 < i <= len(numbers)]
     return random.choice(candidates)
 
 
