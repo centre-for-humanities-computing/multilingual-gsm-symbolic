@@ -9,7 +9,7 @@ from multilingual_gsm_symbolic.load_data import load_replacements
 def test_template_formatting_matches_original(template_file):
     annotated_question = AnnotatedQuestion.from_json(template_file)
     replacements = load_replacements(annotated_question.language)
-    default_assignments = annotated_question.get_default_assignments(replacements)
+    default_assignments = annotated_question._get_full_default_assignments(replacements)
 
     formatted_question = annotated_question.format_question(default_assignments)
     formatted_answer = annotated_question.format_answer(default_assignments)

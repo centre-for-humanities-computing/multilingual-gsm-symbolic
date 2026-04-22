@@ -205,19 +205,18 @@ Generate concrete `Question` instances from the template.
 
 | Argument       | Type             | Description                                 |
 | -------------- | ---------------- | ------------------------------------------- |
-| `n`            | `int`            | Number of questions to generate             |
-| `language`     | `str`            | Language code for rendered text             |
-| `replacements` | `dict`           | Replacement values from `load_replacements` |
-| **RETURNS**    | `list[Question]` | The generated questions                     |
+| `n`            | `int`            | Number of questions to generate                        |
+| `replacements` | `dict \| None`   | Replacement values; loaded automatically if omitted    |
+| `seed`         | `int \| None`    | Random seed for reproducibility                        |
+| **RETURNS**    | `list[Question]` | The generated questions                                |
 
 #### <sup><kbd>method</kbd> `AnnotatedQuestion.get_default_assignments`</sup>
 
-Extract the example variable values from the template.
+Extract the default variable values from the question template placeholders.
 
-| Argument       | Type   | Description                                 |
-| -------------- | ------ | ------------------------------------------- |
-| `replacements` | `dict` | Replacement values from `load_replacements` |
-| **RETURNS**    | `dict` | Mapping of variable name → default value    |
+| Argument    | Type   | Description                             |
+| ----------- | ------ | --------------------------------------- |
+| **RETURNS** | `dict` | Mapping of variable name → default value |
 
 #### <sup><kbd>method</kbd> `AnnotatedQuestion.format_question`</sup>
 

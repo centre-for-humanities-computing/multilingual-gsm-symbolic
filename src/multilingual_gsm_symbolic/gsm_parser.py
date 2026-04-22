@@ -379,9 +379,14 @@ class AnnotatedQuestion:
     def _condition_asts(self) -> list[ast.expr]:
         return [_parse_expr(cond.strip()) for cond in self.conditions if cond.strip() != "True"]
 
-    def get_default_assignments(self, replacements: dict[str, Any]) -> dict[str, Any]:
+    def get_default_assignments(self) -> dict[str, Any]:
+        """Return the default variable values as written in the question template placeholders."""
         assignment_tuples = _RE_TEMPLATE_VAR.findall(self.question_template)
-        assignments: dict[str, Any] = {var: parse_value(val) for var, val in assignment_tuples}
+        return {var: parse_value(val) for var, val in assignment_tuples}
+
+    def _get_full_default_assignments(self, replacements: dict[str, Any]) -> dict[str, Any]:
+        """Return defaults for all variables, deriving paired variables not in the question template."""
+        assignments = self.get_default_assignments()
 
         for var in self.variables:
             if var in assignments:

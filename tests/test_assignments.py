@@ -81,7 +81,7 @@ class TestGetAllPossibleAssignments:
 def test_default_assignments_are_valid(template_file):
     annotated_question = AnnotatedQuestion.from_json(template_file)
     replacements = load_replacements(annotated_question.language)
-    default_assignments = annotated_question.get_default_assignments(replacements)
+    default_assignments = annotated_question._get_full_default_assignments(replacements)
     constrained_lines = annotated_question.constrained_lines
     conditions = annotated_question.conditions
 
