@@ -256,8 +256,8 @@ Dataclass holding a single generated problem.
 The symbolic template engine and the danish subset were originally developed as part of the [m-gsm-symbolic](https://github.com/centre-for-humanities-computing/m-gsm-symbolic) project at the [Centre for Humanities Computing](https://chc.au.dk/) by:
 
 - [Kenneth Enevoldsen](https://github.com/KennethEnevoldsen)
-- [Simon Mosegaard](https://github.com/SMosegaard)
-- [Enniw](https://github.com/Enniwhere)
+- [Sofie Mosegaard](https://github.com/SMosegaard)
+- [Simon Enni](https://github.com/Enniwhere)
 
 The initial template format was derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper and the original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
 
