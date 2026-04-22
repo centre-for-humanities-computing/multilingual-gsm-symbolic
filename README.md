@@ -4,6 +4,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/multilingual-gsm-symbolic.svg?style=flat&logo=pypi&logoColor=white)](https://pypi.org/project/multilingual-gsm-symbolic/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat)](https://github.com/astral-sh/ruff)
 [![ty](https://img.shields.io/badge/type--checked-ty-blue?style=flat)](https://github.com/astral-sh/ty)
+[![Dataset](https://img.shields.io/badge/🤗%20Dataset-multilingual--gsm--symbolic-yellow?style=flat)](https://huggingface.co/datasets/danish-foundation-models/multilingual-gsm-symbolic)
 
 
 A Python package for generating synthetic multilingual math problems from symbolic templates. Allows you to create more than a thousand examples from just one problem and allows you to test if the LLMs actually understand the problem or whether it was just lucky pattern-matching.
