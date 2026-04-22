@@ -430,13 +430,15 @@ class AnnotatedQuestion:
     def _is_init_line_constrained(self, line: str, constrained_variables: list[str]) -> bool:
         return any(v in self._extract_variables_from_init_line(line) for v in constrained_variables)
 
-    def _evaluate_constrained_init_lines(self, init_lines: list[str], replacements: dict[str, Any]) -> list[dict]:
-        possible_assignments = self._get_all_possible_assignments(init_lines, replacements)
+    def _evaluate_constrained_init_lines(
+        self, init_lines: list[str], replacements: dict[str, Any], fixed: dict[str, Any] | None = None
+    ) -> list[dict]:
+        possible_assignments = self._get_all_possible_assignments(init_lines, replacements, fixed)
         all_combinations = self._get_all_combinations(possible_assignments)
         return self._filter_invalid_combinations(all_combinations)
 
     def _get_all_possible_assignments(
-        self, init_lines: list[str], replacements: dict[str, Any]
+        self, init_lines: list[str], replacements: dict[str, Any], fixed: dict[str, Any] | None = None
     ) -> dict[str, list[dict]]:
         possible_assignments: dict[str, list[dict]] = {}
         env = COMBINATION_HELPERS | replacements
@@ -447,9 +449,17 @@ class AnnotatedQuestion:
 
             key = ", ".join(variables)
             if len(variables) == 1:
-                possible_assignments[key] = [{variables[0]: val} for val in possible_values]
+                var = variables[0]
+                candidates = [{var: val} for val in possible_values]
+                if fixed and var in fixed:
+                    candidates = [c for c in candidates if c[var] == fixed[var]] or candidates
+                possible_assignments[key] = candidates
             elif isinstance(possible_values, list):
-                possible_assignments[key] = [dict(zip(variables, pos_val)) for pos_val in possible_values]
+                candidates = [dict(zip(variables, pos_val)) for pos_val in possible_values]
+                if fixed:
+                    filtered = [c for c in candidates if all(c.get(k) == fixed[k] for k in fixed if k in c)]
+                    candidates = filtered or candidates
+                possible_assignments[key] = candidates
             elif isinstance(possible_values, tuple) and len(possible_values) == len(variables):
                 possible_assignments[key] = [dict(zip(variables, possible_values))]
             else:
@@ -505,7 +515,9 @@ class AnnotatedQuestion:
         processed_text = format_numbers_by_language(processed_text, self.language)
         return capitalize_sentences(processed_text)
 
-    def _precompute_unconstrained(self, replacements: dict[str, Any]) -> list[list[dict]]:
+    def _precompute_unconstrained(
+        self, replacements: dict[str, Any], fixed: dict[str, Any] | None = None
+    ) -> list[list[dict]]:
         """Pre-enumerate all possible assignments for each unconstrained init line."""
         constrained = set(self.constrained_variables)
         env = COMBINATION_HELPERS | replacements
@@ -518,9 +530,15 @@ class AnnotatedQuestion:
                 var = variables[0]
                 if not isinstance(possible_values, list):
                     possible_values = [possible_values]
-                choices_per_line.append([{var: v} for v in possible_values])
+                choices: list[dict] = [{var: v} for v in possible_values]
+                if fixed and var in fixed:
+                    choices = [c for c in choices if c[var] == fixed[var]] or choices
             else:
-                choices_per_line.append([dict(zip(variables, vals)) for vals in possible_values])
+                choices = [dict(zip(variables, vals)) for vals in possible_values]
+                if fixed:
+                    filtered = [c for c in choices if all(c.get(k) == fixed[k] for k in fixed if k in c)]
+                    choices = filtered or choices
+            choices_per_line.append(choices)
         return choices_per_line
 
     def _generate_question(
@@ -570,6 +588,7 @@ class AnnotatedQuestion:
         replacements: dict[str, Any] | None = None,
         seed: int | None = None,
         verbose: bool = True,
+        fixed: dict[str, Any] | None = None,
     ) -> list[Question]:
         if replacements is None:
             from multilingual_gsm_symbolic.load_data import load_replacements
@@ -584,9 +603,9 @@ class AnnotatedQuestion:
                 stacklevel=2,
             )
         valid_combinations = (
-            self._evaluate_constrained_init_lines(self.constrained_lines, replacements)
+            self._evaluate_constrained_init_lines(self.constrained_lines, replacements, fixed)
             if self.constrained_lines
             else None
         )
-        unconstrained_choices = self._precompute_unconstrained(replacements)
+        unconstrained_choices = self._precompute_unconstrained(replacements, fixed)
         return [self._generate_question(replacements, valid_combinations, unconstrained_choices) for _ in range(n)]

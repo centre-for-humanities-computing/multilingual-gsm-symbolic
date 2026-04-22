@@ -36,6 +36,12 @@ for q in questions:
     print(q.question)
     print(q.answer)
     print()
+
+# We can also control the synthetic generation: 
+# fix numeric variables and only vary names/strings
+defaults = templates[0].get_default_assignments()
+number_vars = {var: val for var, val in defaults.items() if not isinstance(val, str)}
+questions = templates[0].generate_questions(n=5, fixed=number_vars, verbose=False)
 ```
 
 ## 📋 Template format
@@ -208,6 +214,7 @@ Generate concrete `Question` instances from the template.
 | `n`            | `int`            | Number of questions to generate                        |
 | `replacements` | `dict \| None`   | Replacement values; loaded automatically if omitted    |
 | `seed`         | `int \| None`    | Random seed for reproducibility                        |
+| `fixed`        | `dict \| None`   | Variables to hold constant; only the remaining variables are sampled |
 | **RETURNS**    | `list[Question]` | The generated questions                                |
 
 #### <sup><kbd>method</kbd> `AnnotatedQuestion.get_default_assignments`</sup>
