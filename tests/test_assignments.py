@@ -77,10 +77,10 @@ class TestGetAllPossibleAssignments:
         assert result == {"x": [{"x": 2}, {"x": 3}, {"x": 4}, {"x": 5}]}
 
 
-@pytest.mark.parametrize("template_file,language", get_template_files())
-def test_default_assignments_are_valid(template_file, language):
+@pytest.mark.parametrize("template_file", get_template_files())
+def test_default_assignments_are_valid(template_file):
     annotated_question = AnnotatedQuestion.from_json(template_file)
-    replacements = load_replacements(language)
+    replacements = load_replacements(annotated_question.language)
     default_assignments = annotated_question.get_default_assignments(replacements)
     constrained_lines = annotated_question.constrained_lines
     conditions = annotated_question.conditions

@@ -20,24 +20,17 @@ pip install multilingual-gsm-symbolic
 ## 👩‍💻 Get started
 
 ```python
-from multilingual_gsm_symbolic import load_data, load_replacements, available_languages
+from multilingual_gsm_symbolic import load_data, available_languages
 
 # see possible languages
-languages = available_languages()
+print(available_languages())
+# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}}
 
-lang = "eng"
-print(languages[lang])
-# {"number of samples": 100}
-
-# Load English templates (default)
-templates = load_data(lang)
-
-# Load language-specific replacement values (used in some templates)
-replacements = load_replacements(lang)
+# Load English templates
+templates = load_data("eng")
 
 # Generate concrete questions from a template
-template = templates[0]
-questions = template.generate_questions(n=10, language="eng", replacements=replacements)
+questions = templates[0].generate_questions(n=10)
 
 for q in questions:
     print(q.question)
@@ -96,18 +89,8 @@ Templates are JSON files with four fields:
 
 </details>
 
-
-## 🗃️ Data
-
-The English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper.
-The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
-The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
-
-| Language | Code  | Templates |
-| -------- | ----- | --------- |
-| English  | `eng` | 100       |
-| Danish   | `dan` | 100       |
-
+<details>
+<summary>Writing a custom template</summary>
 
 ### Writing a custom template
 
@@ -130,7 +113,7 @@ Save it as a `.json` file and load it directly:
 from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
 
 template = AnnotatedQuestion.from_json("my_template.json")
-questions = template.generate_questions(n=5, language="eng", replacements={})
+questions = template.generate_questions(n=5)
 for q in questions:
     print(q.question)
     print(q.answer)
@@ -138,21 +121,36 @@ for q in questions:
 
 **Init functions** available in `#init` lines:
 
-| Function | Returns |
-| -------- | ------- |
-| `range(start, end[, step])` | integers in `[start, end)` |
-| `arange(start, end[, step])` | evenly-spaced floats |
-| `sample(items[, n])` | one item (or `n` items) from a list |
-| `sample_sequential(items, n)` | `n` consecutive items from a list |
+| Function                                 | Returns                                  |
+| ---------------------------------------- | ---------------------------------------- |
+| `range(start, end[, step])`              | integers in `[start, end)`               |
+| `arange(start, end[, step])`             | evenly-spaced floats                     |
+| `sample(items[, n])`                     | one item (or `n` items) from a list      |
+| `sample_sequential(items, n)`            | `n` consecutive items from a list        |
 | `range_str(start, end, step, word_list)` | `(word, int)` pairs, e.g. `("three", 3)` |
 
 **Condition functions** available in `#conditions` lines:
 
-| Function | Returns |
-| -------- | ------- |
-| `is_int(x)` | `True` if `x` is a whole number |
-| `divides(a, b)` | `True` if `a % b == 0` |
-| `Fraction(x)` | fraction string, e.g. `"3/4"` |
+| Function        | Returns                         |
+| --------------- | ------------------------------- |
+| `is_int(x)`     | `True` if `x` is a whole number |
+| `divides(a, b)` | `True` if `a % b == 0`          |
+| `Fraction(x)`   | fraction string, e.g. `"3/4"`   |
+
+
+</details>
+
+## 🗃️ Data
+
+The English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper.
+The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
+The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
+
+| Language | Code  | Templates |
+| -------- | ----- | --------- |
+| English  | `eng` | 100       |
+| Danish   | `dan` | 100       |
+
 
 ## 📖 API reference
 
@@ -252,16 +250,6 @@ Dataclass holding a single generated problem.
 | `id_orig`     | `int` | Index of the original template   |
 | `id_shuffled` | `int` | Index within the shuffled sample |
 
-### <kbd>class</kbd> `GSMProblem`
-
-Pydantic model for a concrete problem loaded from disk.
-
-| Attribute  | Type   | Description                     |
-| ---------- | ------ | ------------------------------- |
-| `question` | `str`  | The question text               |
-| `answer`   | `str`  | The answer text                 |
-| `id_orig`  | `int`  | Original problem index          |
-| `filepath` | `Path` | Path to the source file on disk |
 
 ## Acknowledgement
 
@@ -272,3 +260,5 @@ The symbolic template engine and the danish subset were originally developed as 
 - [Enniw](https://github.com/Enniwhere)
 
 The initial template format was derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper and the original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
+
+The code was refactored for optimizations and usability by [Kenneth Enevoldsen](https://github.com/KennethEnevoldsen), who is also the current maintainer.

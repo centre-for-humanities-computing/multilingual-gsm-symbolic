@@ -296,6 +296,8 @@ class AnnotatedQuestion:
     id_shuffled: int
     question_annotated: str
     answer_annotated: str
+    language: str = "eng"
+    creation: str = ""
 
     @classmethod
     def from_json(cls, filepath: Path) -> Self:
@@ -463,16 +465,16 @@ class AnnotatedQuestion:
         logger.debug(f"Number of valid combinations: {len(valid)}")
         return valid
 
-    def format_question(self, assignments: dict[str, Any], language: str = "eng") -> str:
+    def format_question(self, assignments: dict[str, Any]) -> str:
         def replace_placeholder(match: re.Match) -> str:
             variable_name = match.group(1)
             return str(assignments[variable_name]) if variable_name in assignments else match.group(0)
 
         processed_text = _RE_TEMPLATE_VAR.sub(replace_placeholder, self.question_template)
-        processed_text = format_numbers_by_language(processed_text, language)
+        processed_text = format_numbers_by_language(processed_text, self.language)
         return capitalize_sentences(processed_text)
 
-    def format_answer(self, assignments: dict[str, Any], language: str = "eng") -> str:
+    def format_answer(self, assignments: dict[str, Any]) -> str:
         eval_env = EVAL_CONTEXT_HELPERS | {k: parse_value(v) for k, v in assignments.items()}
 
         def eval_curly_expr(match: re.Match) -> str:
@@ -485,7 +487,7 @@ class AnnotatedQuestion:
             return str(value)
 
         processed_text = _RE_CURLY_EXPR.sub(eval_curly_expr, self.answer_annotated)
-        processed_text = format_numbers_by_language(processed_text, language)
+        processed_text = format_numbers_by_language(processed_text, self.language)
         return capitalize_sentences(processed_text)
 
     def _precompute_unconstrained(self, replacements: dict[str, Any]) -> list[list[dict]]:
@@ -508,7 +510,6 @@ class AnnotatedQuestion:
 
     def _generate_question(
         self,
-        language: str,
         replacements: dict[str, Any],
         valid_combinations: list[dict] | None = None,
         unconstrained_choices: list[list[dict]] | None = None,
@@ -531,9 +532,9 @@ class AnnotatedQuestion:
             k: v for d in unconstrained_assignments for k, v in d.items()
         }
         logger.debug(f"All assignments: {collected_assignments}")
-        formatted_question = self.format_question(collected_assignments, language)
+        formatted_question = self.format_question(collected_assignments)
         logger.info(f"Formatted question: {formatted_question}")
-        formatted_answer = self.format_answer(collected_assignments, language)
+        formatted_answer = self.format_answer(collected_assignments)
         logger.info(f"Formatted answer: {formatted_answer}")
         return Question(formatted_question, formatted_answer, self.id_orig, self.id_shuffled)
 
@@ -549,8 +550,18 @@ class AnnotatedQuestion:
         return dict(zip(variables, values))
 
     def generate_questions(
-        self, n: int, language: str, replacements: dict[str, Any], verbose: bool = True
+        self,
+        n: int,
+        replacements: dict[str, Any] | None = None,
+        seed: int | None = None,
+        verbose: bool = True,
     ) -> list[Question]:
+        if replacements is None:
+            from multilingual_gsm_symbolic.load_data import load_replacements
+
+            replacements = load_replacements(self.language)
+        if seed is not None:
+            random.seed(seed)
         if verbose and self.constrained_variables:
             warnings.warn(
                 f"Template {self.id_shuffled} has constrained variables {self.constrained_variables}. "
@@ -563,6 +574,4 @@ class AnnotatedQuestion:
             else None
         )
         unconstrained_choices = self._precompute_unconstrained(replacements)
-        return [
-            self._generate_question(language, replacements, valid_combinations, unconstrained_choices) for _ in range(n)
-        ]
+        return [self._generate_question(replacements, valid_combinations, unconstrained_choices) for _ in range(n)]
