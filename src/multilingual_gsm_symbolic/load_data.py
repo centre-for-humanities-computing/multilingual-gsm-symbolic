@@ -11,9 +11,19 @@ _DATA_ROOT = Path(__file__).parent / "data" / "templates"
 logger = logging.getLogger(__name__)
 
 
+def _active_template_files(lang_dir: Path) -> list[Path]:
+    files = []
+    for f in (lang_dir / "symbolic").glob("*.json"):
+        with f.open(encoding="utf-8") as fp:
+            data = json.load(fp)
+        if not data.get("ignore"):
+            files.append(f)
+    return files
+
+
 def available_languages() -> dict[str, dict]:
     return {
-        lang.name: {"number of samples": len(list((lang / "symbolic").glob("*.json")))}
+        lang.name: {"number of samples": len(_active_template_files(lang))}
         for lang in sorted(_DATA_ROOT.iterdir())
         if lang.is_dir() and (lang / "symbolic").exists() and not (lang / "ignore").exists()
     }
@@ -27,11 +37,11 @@ def load_replacements(language: str = "eng") -> dict:
 
 def load_data(language: str = "eng", directory: str | Path | None = None) -> list[AnnotatedQuestion]:
     if directory is not None:
-        template_path = Path(directory)
+        lang_dir = Path(directory).parent if Path(directory).name == "symbolic" else Path(directory)
+        template_files = _active_template_files(lang_dir) if (lang_dir / "symbolic").exists() else list(Path(directory).glob("*.json"))
     else:
-        template_path = _DATA_ROOT / language / "symbolic"
-    template_files = list(template_path.glob("*.json"))
-    return [AnnotatedQuestion.from_json(template_file) for template_file in template_files]
+        template_files = _active_template_files(_DATA_ROOT / language)
+    return [AnnotatedQuestion.from_json(f) for f in template_files]
 
 
 class GSMProblem(BaseModel):
@@ -56,11 +66,11 @@ def _parse_json_file(filepath: str | Path) -> GSMProblem:
 
 def load_gsm(language: str = "eng", directory: str | Path | None = None) -> list[GSMProblem]:
     if directory is not None:
-        dir_path = Path(directory)
+        template_files = list(Path(directory).glob("*.json"))
     else:
         langs = available_languages()
         if language not in langs:
             available = ", ".join(f"'{k}'" for k in langs)
             raise ValueError(f"Unknown language '{language}'. Available languages: {available}.")
-        dir_path = _DATA_ROOT / language / "symbolic"
-    return [_parse_json_file(f) for f in dir_path.glob("*.json")]
+        template_files = _active_template_files(_DATA_ROOT / language)
+    return [_parse_json_file(f) for f in template_files]
