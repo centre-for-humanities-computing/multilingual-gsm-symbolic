@@ -119,9 +119,7 @@ def translate_template_fields(
     return json.loads(raw), messages
 
 
-def fix_template_fields(
-    client: OpenAI, model: str, feedback: str, messages: list[dict]
-) -> tuple[dict, list[dict]]:
+def fix_template_fields(client: OpenAI, model: str, feedback: str, messages: list[dict]) -> tuple[dict, list[dict]]:
     """Continue the translation conversation with error feedback."""
     messages = messages + [
         {"role": "user", "content": f"The translation has the following issues — fix ONLY what is needed:\n{feedback}"},
@@ -150,6 +148,7 @@ def _strip_answer_annotated_defaults(tgt_data: dict) -> dict:
     The model sometimes copies the {var,default} pattern from question_annotated — this undoes that.
     """
     _RE_VAR = re.compile(r"\{([^}]+)\}")
+
     def _strip(m: re.Match) -> str:
         inner = m.group(1)
         if "," in inner:
@@ -162,9 +161,7 @@ def _strip_answer_annotated_defaults(tgt_data: dict) -> dict:
     return tgt_data
 
 
-def translate_template(
-    client: OpenAI, src_data: dict, src: str, tgt: str, model: str
-) -> tuple[dict, list[dict]]:
+def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model: str) -> tuple[dict, list[dict]]:
     tgt_data = dict(src_data)
     translated_fields, messages = translate_template_fields(client, src_data, src, tgt, model)
     tgt_data.update(translated_fields)
@@ -230,10 +227,21 @@ def verify_renders(tgt_data: dict, replacements: dict) -> list[str]:
     """
     issues = []
     try:
-        template = AnnotatedQuestion(**{k: tgt_data[k] for k in (
-            "question", "answer", "question_annotated", "answer_annotated",
-            "id_orig", "id_shuffled", "language",
-        ) if k in tgt_data})
+        template = AnnotatedQuestion(
+            **{
+                k: tgt_data[k]
+                for k in (
+                    "question",
+                    "answer",
+                    "question_annotated",
+                    "answer_annotated",
+                    "id_orig",
+                    "id_shuffled",
+                    "language",
+                )
+                if k in tgt_data
+            }
+        )
     except Exception as e:
         return [f"failed to construct AnnotatedQuestion: {e}"]
 
@@ -242,13 +250,9 @@ def verify_renders(tgt_data: dict, replacements: dict) -> list[str]:
         formatted_q = template.format_question(defaults)
         formatted_a = template.format_answer(defaults)
         if formatted_q != template.question:
-            issues.append(
-                f"question mismatch:\n  rendered: {formatted_q!r}\n  expected: {template.question!r}"
-            )
+            issues.append(f"question mismatch:\n  rendered: {formatted_q!r}\n  expected: {template.question!r}")
         if formatted_a != template.answer:
-            issues.append(
-                f"answer mismatch:\n  rendered: {formatted_a!r}\n  expected: {template.answer!r}"
-            )
+            issues.append(f"answer mismatch:\n  rendered: {formatted_a!r}\n  expected: {template.answer!r}")
     except Exception as e:
         issues.append(f"render error: {e}")
 
@@ -308,8 +312,9 @@ def main() -> None:
             if not issues:
                 logger.info("[%d/%d] %s OK (skipping)", i + 1, len(template_files), src_file.name)
                 continue
-            logger.warning("[%d/%d] %s has issues, fixing: %s",
-                           i + 1, len(template_files), src_file.name, "; ".join(issues))
+            logger.warning(
+                "[%d/%d] %s has issues, fixing: %s", i + 1, len(template_files), src_file.name, "; ".join(issues)
+            )
             messages = _reconstruct_messages(src_data, tgt_data, args.src, args.tgt)
             feedback = "\n".join(issues)
         else:
@@ -324,9 +329,7 @@ def main() -> None:
             logger.warning("  Attempt %d/%d failed, retrying with feedback", attempt, args.retries)
             time.sleep(1)
             try:
-                translated_fields, messages = fix_template_fields(
-                    client, args.model, feedback, messages
-                )
+                translated_fields, messages = fix_template_fields(client, args.model, feedback, messages)
                 tgt_data.update(translated_fields)
                 tgt_data = _strip_answer_annotated_defaults(tgt_data)
                 issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
