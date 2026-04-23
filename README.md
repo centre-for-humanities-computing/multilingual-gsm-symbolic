@@ -168,6 +168,10 @@ The original concrete problems are from [GSM8k](https://huggingface.co/datasets/
 | Norwegian Bokmål   | `nob` | 100       | Machine translated and computationally validated |
 
 
+### Want to add a new language?
+
+Want to add a new language or validate an existing one? Great to hear. `src/data/**` folder contains all the templates for a specific languages and `scripts/translate_templates.py` can be used to translate the templates from one language to another. We have already pre-generated few language, see the data folder for which ones, but if you need the translation for validation. Once you have validated the examples you can submit a PR with the changes.
+
 ## 📖 API reference
 
 ### <kbd>function</kbd> `load_data`
