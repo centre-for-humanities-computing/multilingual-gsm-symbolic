@@ -9,7 +9,7 @@ as the test suite. Templates that fail validation are retried up to 3 times.
 
 Usage:
     uv run src/scripts/translate_templates.py --from dan --to nob
-    uv run src/scripts/translate_templates.py --from eng --to fra --model gpt-5.4-nano
+    uv run src/scripts/translate_templates.py --from eng --to fra --model gpt-5.4
 """
 
 import argparse
@@ -55,7 +55,7 @@ throughout (e.g. the same word for every object, same names in every field).
 
 Rules:
 1. Translate all natural-language prose, including default values inside placeholders.
-   - Variable placeholders have the form {{varname,default}} — keep the {{varname,...}} syntax but translate the default value. E.g. {{animal,haj}} → {{animal,hai}} when translating to Norwegian.
+   - Variable placeholders have the form {{varname,default}} — keep the {{varname,...}} syntax but translate the default value. E.g. {{animal,haj}} → {{animal,hai}} when translating to Norwegian. Default values are mid-sentence fragments: use lowercase and the uninflected/indefinite form (e.g. {{unit,måned}} not {{unit,Måned}} or {{unit,måneden}}).
    - Bare variable references {{varname}} (no default) — leave completely unchanged.
    - Init / conditions / answer blocks: lines starting with #init:, #conditions:, #answer: — do NOT alter these lines at all.
    - Init expressions: range(...), sample(...), arange(...), etc. — do NOT alter.
@@ -87,49 +87,60 @@ def lang_name(code: str) -> str:
     return _LANGUAGE_NAMES.get(code, code)
 
 
-def translate_template_fields(client: OpenAI, src_data: dict, src: str, tgt: str, model: str) -> dict:
-    """Translate all four prose fields in a single call for consistent terminology."""
+_RENDERED_NOTE = (
+    "Note: `question` and `answer` are the rendered forms of `question_annotated` and "
+    "`answer_annotated` respectively — all {var,default} placeholders are replaced by their "
+    "default values and all <<expr=result>> tags by their result values. Use them as a "
+    "reference for what the annotated fields should produce when rendered.\n\n"
+)
+
+
+def _build_initial_messages(src_data: dict, src: str, tgt: str) -> list[dict]:
     system = _SYSTEM_PROMPT.format(src_name=lang_name(src), tgt_name=lang_name(tgt))
     payload = {f: src_data[f] for f in _TRANSLATE_FIELDS if f in src_data}
+    return [
+        {"role": "system", "content": system},
+        {"role": "user", "content": _RENDERED_NOTE + json.dumps(payload, ensure_ascii=False, indent=2)},
+    ]
+
+
+def translate_template_fields(
+    client: OpenAI, src_data: dict, src: str, tgt: str, model: str
+) -> tuple[dict, list[dict]]:
+    """Translate all four prose fields in a single call. Returns translated data and conversation history."""
+    messages = _build_initial_messages(src_data, src, tgt)
     response = client.chat.completions.create(
         model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": json.dumps(payload, ensure_ascii=False, indent=2)},
-        ],
+        messages=messages,
         temperature=0.2,
     )
     raw = response.choices[0].message.content.strip()
-    return json.loads(raw)
+    messages = messages + [{"role": "assistant", "content": raw}]
+    return json.loads(raw), messages
 
 
 def fix_template_fields(
-    client: OpenAI, tgt_data: dict, tgt: str, model: str, feedback: str
-) -> dict:
-    """Fix an existing translation by passing the current target text + error feedback."""
-    tgt_name = lang_name(tgt)
-    system = (
-        f"You are fixing an existing {tgt_name} translation of a mathematical word problem.\n\n"
-        f"The translation has specific issues listed below. Correct ONLY what is needed to fix those "
-        f"issues — do NOT re-translate or change anything else. In particular:\n"
-        f"- All prose must remain in {tgt_name}\n"
-        f"- <<expr=result>> tags must be copied exactly as they appear in the source, character for character\n"
-        f"- Placeholder syntax {{{{var,default}}}} must be kept — but the default value IS {tgt_name} prose and may be corrected\n"
-        f"- Bare {{{{var}}}} references (no default) must be left unchanged\n"
-        f"- #init:, #conditions:, #answer: blocks must be preserved\n\n"
-        f"Return ONLY valid JSON with the same keys — no markdown, no explanation."
-    )
-    payload = {f: tgt_data[f] for f in _TRANSLATE_FIELDS if f in tgt_data}
+    client: OpenAI, model: str, feedback: str, messages: list[dict]
+) -> tuple[dict, list[dict]]:
+    """Continue the translation conversation with error feedback."""
+    messages = messages + [
+        {"role": "user", "content": f"The translation has the following issues — fix ONLY what is needed:\n{feedback}"},
+    ]
     response = client.chat.completions.create(
         model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": f"Current translation:\n{json.dumps(payload, ensure_ascii=False, indent=2)}\n\nIssues to fix:\n{feedback}"},
-        ],
+        messages=messages,
         temperature=0.4,
     )
     raw = response.choices[0].message.content.strip()
-    return json.loads(raw)
+    messages = messages + [{"role": "assistant", "content": raw}]
+    return json.loads(raw), messages
+
+
+def _reconstruct_messages(src_data: dict, tgt_data: dict, src: str, tgt: str) -> list[dict]:
+    """Build a synthetic conversation for an existing translation so retries use the same path."""
+    messages = _build_initial_messages(src_data, src, tgt)
+    tgt_payload = {f: tgt_data[f] for f in _TRANSLATE_FIELDS if f in tgt_data}
+    return messages + [{"role": "assistant", "content": json.dumps(tgt_payload, ensure_ascii=False, indent=2)}]
 
 
 def _strip_answer_annotated_defaults(tgt_data: dict) -> dict:
@@ -151,9 +162,11 @@ def _strip_answer_annotated_defaults(tgt_data: dict) -> dict:
     return tgt_data
 
 
-def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model: str) -> dict:
+def translate_template(
+    client: OpenAI, src_data: dict, src: str, tgt: str, model: str
+) -> tuple[dict, list[dict]]:
     tgt_data = dict(src_data)
-    translated_fields = translate_template_fields(client, src_data, src, tgt, model)
+    translated_fields, messages = translate_template_fields(client, src_data, src, tgt, model)
     tgt_data.update(translated_fields)
     tgt_data = _strip_answer_annotated_defaults(tgt_data)
     tgt_data["language"] = tgt
@@ -161,7 +174,7 @@ def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model
         f"machine-translated from {lang_name(src)} using {model}, "
         f"based on {lang_name(src)} templates; computationally validated"
     )
-    return tgt_data
+    return tgt_data, messages
 
 
 def translate_replacements(client: OpenAI, src_data: dict, src: str, tgt: str, model: str) -> dict:
@@ -248,7 +261,7 @@ def main() -> None:
     parser.add_argument("--to", dest="tgt", required=True, help="Target language code (e.g. nob)")
     parser.add_argument("--model", default="gpt-5.4-nano", help="OpenAI model to use")
     parser.add_argument("--overwrite", action="store_true", help="Re-translate already existing files")
-    parser.add_argument("--retries", type=int, default=3, help="Max retries for templates failing validation")
+    parser.add_argument("--retries", type=int, default=2, help="Max retries for templates failing validation")
     args = parser.parse_args()
 
     src_dir = _DATA_ROOT / args.src
@@ -295,12 +308,13 @@ def main() -> None:
             if not issues:
                 logger.info("[%d/%d] %s OK (skipping)", i + 1, len(template_files), src_file.name)
                 continue
-            logger.warning("[%d/%d] %s has issues, re-translating: %s",
+            logger.warning("[%d/%d] %s has issues, fixing: %s",
                            i + 1, len(template_files), src_file.name, "; ".join(issues))
+            messages = _reconstruct_messages(src_data, tgt_data, args.src, args.tgt)
             feedback = "\n".join(issues)
         else:
             logger.info("[%d/%d] Translating %s", i + 1, len(template_files), src_file.name)
-            tgt_data = translate_template(client, src_data, args.src, args.tgt, args.model)
+            tgt_data, messages = translate_template(client, src_data, args.src, args.tgt, args.model)
             issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
             feedback = "\n".join(issues)
 
@@ -310,8 +324,8 @@ def main() -> None:
             logger.warning("  Attempt %d/%d failed, retrying with feedback", attempt, args.retries)
             time.sleep(1)
             try:
-                translated_fields = fix_template_fields(
-                    client, tgt_data, args.tgt, args.model, feedback=feedback
+                translated_fields, messages = fix_template_fields(
+                    client, args.model, feedback, messages
                 )
                 tgt_data.update(translated_fields)
                 tgt_data = _strip_answer_annotated_defaults(tgt_data)

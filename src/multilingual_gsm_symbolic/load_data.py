@@ -15,7 +15,7 @@ def available_languages() -> dict[str, dict]:
     return {
         lang.name: {"number of samples": len(list((lang / "symbolic").glob("*.json")))}
         for lang in sorted(_DATA_ROOT.iterdir())
-        if lang.is_dir() and (lang / "symbolic").exists()
+        if lang.is_dir() and (lang / "symbolic").exists() and not (lang / "ignore").exists()
     }
 
 

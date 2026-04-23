@@ -1,16 +1,14 @@
 from pathlib import Path
 
 from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
-from multilingual_gsm_symbolic.load_data import _DATA_ROOT
+from multilingual_gsm_symbolic.load_data import _DATA_ROOT, available_languages
 
 
 def get_template_files() -> list[Path]:
     template_files = []
-    for lang_dir in sorted(_DATA_ROOT.iterdir()):
-        symbolic_dir = lang_dir / "symbolic"
-        if symbolic_dir.exists():
-            for template_file in sorted(symbolic_dir.glob("**/*.json")):
-                template_files.append(template_file)
+    for lang in sorted(available_languages()):
+        for template_file in sorted((_DATA_ROOT / lang / "symbolic").glob("**/*.json")):
+            template_files.append(template_file)
     return template_files
 
 
