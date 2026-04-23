@@ -37,13 +37,21 @@ for q in questions:
     print(q.question)
     print(q.answer)
     print()
+```
 
+### Running experiments
+
+You might often be interested in some sort of variation upon the dataset. E.g. does the performance degredation happens only due to the changes names:
+
+```py
 # We can also control the synthetic generation: 
 # fix numeric variables and only vary names/strings
 defaults = templates[0].get_default_assignments()
 number_vars = {var: val for var, val in defaults.items() if not isinstance(val, str)}
 questions = templates[0].generate_questions(n=5, fixed=number_vars, verbose=False)
 ```
+
+You could imagine similar ablations, but adding spelling errors, introducing irrelevant task information like "Hey just a small math question: {question}" or similar.
 
 ## 📋 Template format
 
@@ -153,10 +161,11 @@ The English templates are derived from Apple's [GSM-Symbolic](https://machinelea
 The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
 The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
 
-| Language | Code  | Templates |
-| -------- | ----- | --------- |
-| English  | `eng` | 100       |
-| Danish   | `dan` | 100       |
+| Language | Code  | Templates | Creation |
+| -------- | ----- | --------- | --- |
+| English  | `eng` | 100       | Derived from GSM8k |
+| Danish   | `dan` | 100       | Machine translated, human corrected and localized and validated both computationally and by humans |
+| Norwegian Bokmål   | `nob` | 100       | Machine translated and computationally validated |
 
 
 ## 📖 API reference
