@@ -75,14 +75,14 @@ deu = load_dataset("danish-foundation-models/multilingual-gsm-symbolic", split="
 You can evaluate with inspect-ai simply using:
 
 ```bash
-inspect eval hf/danish-foundation-models/multilingual-gsm-symbolic/synthetic_eng --model openai/gpt-5.4-nano --reasoning-effort high
+inspect eval hf/danish-foundation-models/multilingual-gsm-symbolic/synthetic_eng --model openai/gpt-5.4-nano --reasoning-effort low
 ```
 
 you can of course change to the original split or a specific languages if you wish.
 
 ## Evaluation Results
 
-As a sanity check for the results we evaluated the model with [inspect-ai](https://inspect.ai) using `openai/gpt-5.4-nano` (reasoning effort: high).
+As a sanity check for the results we evaluated the model with [inspect-ai](https://inspect.ai) using `openai/gpt-5.4-nano` (reasoning effort: low).
 Each split was run with 4 epochs (to estimate degree of certainty in the answers); original splits contain 100 problems × 4 epochs = 400 samples,
 synthetic splits contain 2 000 problems × 4 epochs = 8 000 samples. German and Icelandic synthetic splits have fewer problems as some templates are pending human validation.
 
