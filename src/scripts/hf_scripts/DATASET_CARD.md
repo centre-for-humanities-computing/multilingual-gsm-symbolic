@@ -5,8 +5,6 @@ language:
 - de
 - is
 license: mit
-task_ids:
-  - text-generation
 pretty_name: Multilingual GSM-Symbolic
 size_categories:
 - 1K<n<10K
@@ -18,6 +16,8 @@ tags:
 ---
 
 # Multilingual GSM-Symbolic
+
+[![GitHub](https://img.shields.io/badge/GitHub-multilingual--gsm--symbolic-blue?logo=github)](https://github.com/centre-for-humanities-computing/multilingual-gsm-symbolic)
 
 **Multilingual GSM-Symbolic** is a benchmark for evaluating arithmetic reasoning in large language models across multiple languages. It extends Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) approach by providing symbolic templates that generate thousands of structurally equivalent but numerically distinct math problems. Templates and generation are handled by the [`multilingual-gsm-symbolic`](https://github.com/centre-for-humanities-computing/multilingual-gsm-symbolic) package.
 
@@ -86,16 +86,12 @@ As a sanity check for the results we evaluated the model with [inspect-ai](https
 Each split was run with 4 epochs (to estimate degree of certainty in the answers); original splits contain 100 problems × 4 epochs = 400 samples,
 synthetic splits contain 2 000 problems × 4 epochs = 8 000 samples. German and Icelandic synthetic splits have fewer problems as some templates are pending human validation.
 
-| Split | Language | Accuracy |
-|-------|----------|----------|
-| `original_eng` | English | 90.0% |
-| `synthetic_eng` | English | 75.2% |
-| `original_dan` | Danish | 83.2% |
-| `synthetic_dan` | Danish | 70.2% |
-| `original_deu` | German | — |
-| `synthetic_deu` | German | — |
-| `original_isl` | Icelandic | — |
-| `synthetic_isl` | Icelandic | — |
+| Language | Original accuracy | Synthetic accuracy |
+|----------|------------------|--------------------|
+| English  | 90.0%            | 75.2%              |
+| Danish   | 83.2%            | 70.2%              |
+| German   | —                | —                  |
+| Icelandic| —                | —                  |
 
 The gap between `original` and `synthetic` accuracy reflects performance degradation on novel
 number combinations — a proxy for how much a model relies on memorisation vs. genuine reasoning.
@@ -113,15 +109,7 @@ number combinations — a proxy for how much a model relies on memorisation vs. 
 <img src="figures/by_steps.png" width="70%" alt="Accuracy as a function of the number of reasoning steps">
 
 
-### Reproducing the evaluation
-
-```bash
-inspect eval hf/danish-foundation-models/multilingual-gsm-symbolic/{subset} \
-  --model openai/gpt-5.4-nano --reasoning-effort high --epochs 4
-```
-
-Eval logs are available in the [`logs/`](logs/) folder of the
-[GitHub repository](https://github.com/centre-for-humanities-computing/multilingual-gsm-symbolic).
+Eval logs are available in the [`logs/`](https://huggingface.co/datasets/danish-foundation-models/multilingual-gsm-symbolic/tree/main/logs) folder on this repository.
 
 ## Citation
 
