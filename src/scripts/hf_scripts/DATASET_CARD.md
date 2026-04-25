@@ -29,12 +29,14 @@ Want to add your own language to the dataset? It only requires validating 100 te
 
 ## Dataset Structure
 
+Each language is a separate **config** (subset); each config has two **splits**:
+
 | Split | Description |
 |-------|-------------|
-| `original` | The concrete GSM problems (one per template, all languages) |
-| `synthetic` | 20 generated variants per template per language |
-| `original_{lang}` | Original problems for a specific language |
-| `synthetic_{lang}` | Synthetic problems for a specific language |
+| `original` | The 100 concrete GSM problems for that language |
+| `synthetic` | 20 generated variants per template (2 000 problems) |
+
+Available configs: `eng`, `dan`, `nob`, `deu`, `isl`
 
 ### Fields
 
@@ -62,12 +64,11 @@ At 3 miles/hour, it will take 42/3=14 hours for the fog to cover the city.
 ```python
 from datasets import load_dataset
 
-# All languages
-ds = load_dataset("danish-foundation-models/multilingual-gsm-symbolic", split="synthetic")
+# English synthetic split
+eng = load_dataset("danish-foundation-models/multilingual-gsm-symbolic", name="eng", split="synthetic")
 
-# Language-specific split
-eng = load_dataset("danish-foundation-models/multilingual-gsm-symbolic", split="synthetic_eng")
-deu = load_dataset("danish-foundation-models/multilingual-gsm-symbolic", split="synthetic_deu")
+# German original split
+deu = load_dataset("danish-foundation-models/multilingual-gsm-symbolic", name="deu", split="original")
 ```
 
 ### With inspect-ai
@@ -78,7 +79,7 @@ You can evaluate with inspect-ai simply using:
 inspect eval hf/danish-foundation-models/multilingual-gsm-symbolic/synthetic_eng --model openai/gpt-5.4-nano --reasoning-effort low
 ```
 
-you can of course change to the original split or a specific languages if you wish.
+This uses the `eval.yaml` in the repository. You can target any task id (e.g. `original_deu`, `synthetic_isl`) or omit the task name to run all languages.
 
 ## Evaluation Results
 

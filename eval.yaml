@@ -6,8 +6,9 @@ description: >
 evaluation_framework: inspect-ai
 
 tasks:
-  - id: synthetic_eng
-    split: synthetic_eng
+  - id: original_eng
+    config: eng
+    split: original
 
     field_spec:
       input: question
@@ -28,30 +29,9 @@ tasks:
         args:
           pattern: '####\s*(.+)'
 
-  - id: synthetic_dan
-    split: synthetic_dan
-
-    field_spec:
-      input: question
-      target: target
-      metadata:
-        - answer
-        - language
-        - source_id
-
-    solvers:
-      - name: prompt_template
-        args:
-          template: "Løs følgende matematikproblem trin for trin. Afslut dit svar med en linje der kun indeholder det numeriske svar foranstillet af '####', for eksempel: '#### 42'.\n\n{prompt}"
-      - name: generate
-
-    scorers:
-      - name: pattern
-        args:
-          pattern: '####\s*(.+)'
-
-  - id: original_eng
-    split: original_eng
+  - id: synthetic_eng
+    config: eng
+    split: synthetic
 
     field_spec:
       input: question
@@ -73,7 +53,8 @@ tasks:
           pattern: '####\s*(.+)'
 
   - id: original_dan
-    split: original_dan
+    config: dan
+    split: original
 
     field_spec:
       input: question
@@ -94,8 +75,9 @@ tasks:
         args:
           pattern: '####\s*(.+)'
 
-  - id: synthetic_deu
-    split: synthetic_deu
+  - id: synthetic_dan
+    config: dan
+    split: synthetic
 
     field_spec:
       input: question
@@ -108,7 +90,53 @@ tasks:
     solvers:
       - name: prompt_template
         args:
-          template: "Löse das folgende Mathematikproblem Schritt für Schritt. Beende deine Antwort mit einer Zeile, die nur die numerische Antwort enthält, eingeleitet von '####', zum Beispiel: '#### 42'.\n\n{prompt}"
+          template: "Løs følgende matematikproblem trin for trin. Afslut dit svar med en linje der kun indeholder det numeriske svar foranstillet af '####', for eksempel: '#### 42'.\n\n{prompt}"
+      - name: generate
+
+    scorers:
+      - name: pattern
+        args:
+          pattern: '####\s*(.+)'
+
+  - id: original_nob
+    config: nob
+    split: original
+
+    field_spec:
+      input: question
+      target: target
+      metadata:
+        - answer
+        - language
+        - source_id
+
+    solvers:
+      - name: prompt_template
+        args:
+          template: "Løs følgende matematikkproblem steg for steg. Avslutt svaret ditt med en linje som bare inneholder det numeriske svaret foran '####', for eksempel: '#### 42'.\n\n{prompt}"
+      - name: generate
+
+    scorers:
+      - name: pattern
+        args:
+          pattern: '####\s*(.+)'
+
+  - id: synthetic_nob
+    config: nob
+    split: synthetic
+
+    field_spec:
+      input: question
+      target: target
+      metadata:
+        - answer
+        - language
+        - source_id
+
+    solvers:
+      - name: prompt_template
+        args:
+          template: "Løs følgende matematikkproblem steg for steg. Avslutt svaret ditt med en linje som bare inneholder det numeriske svaret foran '####', for eksempel: '#### 42'.\n\n{prompt}"
       - name: generate
 
     scorers:
@@ -117,7 +145,8 @@ tasks:
           pattern: '####\s*(.+)'
 
   - id: original_deu
-    split: original_deu
+    config: deu
+    split: original
 
     field_spec:
       input: question
@@ -138,8 +167,32 @@ tasks:
         args:
           pattern: '####\s*(.+)'
 
-  - id: synthetic_isl
-    split: synthetic_isl
+  - id: synthetic_deu
+    config: deu
+    split: synthetic
+
+    field_spec:
+      input: question
+      target: target
+      metadata:
+        - answer
+        - language
+        - source_id
+
+    solvers:
+      - name: prompt_template
+        args:
+          template: "Löse das folgende Mathematikproblem Schritt für Schritt. Beende deine Antwort mit einer Zeile, die nur die numerische Antwort enthält, eingeleitet von '####', zum Beispiel: '#### 42'.\n\n{prompt}"
+      - name: generate
+
+    scorers:
+      - name: pattern
+        args:
+          pattern: '####\s*(.+)'
+
+  - id: original_isl
+    config: isl
+    split: original
 
     field_spec:
       input: question
@@ -160,8 +213,9 @@ tasks:
         args:
           pattern: '####\s*(.+)'
 
-  - id: original_isl
-    split: original_isl
+  - id: synthetic_isl
+    config: isl
+    split: synthetic
 
     field_spec:
       input: question
