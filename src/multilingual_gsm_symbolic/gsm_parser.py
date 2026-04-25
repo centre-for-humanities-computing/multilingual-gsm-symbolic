@@ -289,7 +289,27 @@ def format_numbers_by_language(text: str, language: str) -> str:
                 return formatted.replace(",", ".") if comma_decimal else formatted
             return number_str
 
-    return _RE_NUMBER_FORMAT.sub(format_number, text)
+    def format_decimal_only(match: re.Match) -> str:
+        """Inside <<...>>: convert decimal separator only, no thousands sep on integers."""
+        number_str = match.group(0)
+        if "." in number_str and comma_decimal:
+            integer_part, decimal_part = number_str.split(".")
+            return integer_part + "," + decimal_part
+        return number_str
+
+    # Apply full formatting outside <<...>> markers and the #### answer line.
+    # Inside <<...>>: decimal separator only (no thousands sep on integers).
+    # On #### line: no formatting (keep plain integer for scoring).
+    _RE_SKIP = re.compile(r"(<<[^>]*>>|####\s*-?\d[\d.,]*)")
+    parts = _RE_SKIP.split(text)
+    result = []
+    for i, part in enumerate(parts):
+        if i % 2 == 0:
+            result.append(_RE_NUMBER_FORMAT.sub(format_number, part))
+        else:
+            # <<...>> or #### line: decimal separator only, no thousands sep on integers
+            result.append(_RE_NUMBER_FORMAT.sub(format_decimal_only, part))
+    return "".join(result)
 
 
 @dataclass
