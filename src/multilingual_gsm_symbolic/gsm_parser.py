@@ -102,7 +102,7 @@ def _parse_expr(source: str) -> ast.expr:
 def is_int(value: Any) -> bool:
     return (
         isinstance(value, int)
-        or (isinstance(value, float) and (value.is_integer() or (value - round(value)) < 1e-6))
+        or (isinstance(value, float) and (value.is_integer() or abs(value - round(value)) < 1e-6))
         or (isinstance(value, Fraction) and value.denominator == 1)
     )
 
