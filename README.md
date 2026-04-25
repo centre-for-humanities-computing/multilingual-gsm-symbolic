@@ -25,7 +25,7 @@ from multilingual_gsm_symbolic import load_data, available_languages
 
 # see possible languages
 print(available_languages())
-# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}}
+# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
 
 # Load English templates
 templates = load_data("eng")
@@ -157,16 +157,42 @@ for q in questions:
 
 ## 🗃️ Data
 
-The English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper.
+The English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper, from which the remainder is derived.
+E.g. the Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
+The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
+
+You can see the available languages as follows:
+```python
+from multilingual_gsm_symbolic import available_languages
+
+# see possible languages
+print(available_languages())
+# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
+```
+
+And 
+
+
 The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
 The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
 
-| Language | Code  | Templates | Creation |
-| -------- | ----- | --------- | --- |
-| English  | `eng` | 100       | Derived from GSM8k |
-| Danish   | `dan` | 100       | Machine translated, human corrected and localized and validated both computationally and by humans |
-| Norwegian Bokmål   | `nob` | 100       | Machine translated and computationally validated |
 
+```python
+from multilingual_gsm_symbolic import load_data, available_languages
+
+# see possible languages
+print(available_languages())
+# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
+
+# example creation strategy:
+templates = load_data("dan")
+templates[0].creation
+# machine-translated from English, localized and validated by humans, computationally validated
+
+templates = load_data("isl")
+templates[0].creation
+# machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated
+```
 
 ### Want to add a new language?
 

@@ -42,6 +42,10 @@ _LANGUAGE_NAMES = {
     "nld": "Dutch",
     "fin": "Finnish",
     "isl": "Icelandic",
+    "spa": "Spanish",
+    "ita": "Italian",
+    "pol": "Polish",
+    "por": "Portuguese",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")

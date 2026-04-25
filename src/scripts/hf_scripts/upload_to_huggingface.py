@@ -149,14 +149,16 @@ def main() -> None:
     def filter_lang(rows: list[dict], lang: str) -> list[dict]:
         return [r for r in rows if r["language"] == lang]
 
+    lang_splits = {}
+    for lang in available_languages():
+        lang_splits[f"original_{lang}"] = Dataset.from_list(filter_lang(original_rows, lang))
+        lang_splits[f"synthetic_{lang}"] = Dataset.from_list(filter_lang(synthetic_rows, lang))
+
     dataset = DatasetDict(
         {
             "original": Dataset.from_list(original_rows),
             "synthetic": Dataset.from_list(synthetic_rows),
-            "original_eng": Dataset.from_list(filter_lang(original_rows, "eng")),
-            "original_dan": Dataset.from_list(filter_lang(original_rows, "dan")),
-            "synthetic_eng": Dataset.from_list(filter_lang(synthetic_rows, "eng")),
-            "synthetic_dan": Dataset.from_list(filter_lang(synthetic_rows, "dan")),
+            **lang_splits,
         }
     )
     log.info(str(dataset))

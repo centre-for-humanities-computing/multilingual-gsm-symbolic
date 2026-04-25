@@ -38,7 +38,11 @@ def load_replacements(language: str = "eng") -> dict:
 def load_data(language: str = "eng", directory: str | Path | None = None) -> list[AnnotatedQuestion]:
     if directory is not None:
         lang_dir = Path(directory).parent if Path(directory).name == "symbolic" else Path(directory)
-        template_files = _active_template_files(lang_dir) if (lang_dir / "symbolic").exists() else list(Path(directory).glob("*.json"))
+        template_files = (
+            _active_template_files(lang_dir)
+            if (lang_dir / "symbolic").exists()
+            else list(Path(directory).glob("*.json"))
+        )
     else:
         template_files = _active_template_files(_DATA_ROOT / language)
     return [AnnotatedQuestion.from_json(f) for f in template_files]
