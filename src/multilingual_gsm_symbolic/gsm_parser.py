@@ -567,6 +567,76 @@ class AnnotatedQuestion:
             choices_per_line.append(choices)
         return choices_per_line
 
+    def _project_assignment(self, assignment: dict[str, Any], only_numeric: bool = True) -> dict[str, Any]:
+        projected: dict[str, Any] = {}
+        for variable, value in assignment.items():
+            value = parse_value(value)
+            if only_numeric and (not isinstance(value, (int, float, Fraction)) or isinstance(value, bool)):
+                continue
+            projected[variable] = value
+        return projected
+
+    def get_combinations(
+        self,
+        replacements: dict[str, Any] | None = None,
+        only_numeric: bool = True,
+        fixed: dict[str, Any] | None = None,
+        limit: int | None = None,
+    ) -> list[dict[str, Any]]:
+        """Enumerate unique valid assignments for this template.
+
+        This is a simple helper for inspecting the solution space of a template.
+        It combines all valid constrained assignments with all unconstrained
+        assignments, optionally drops non-numeric variables, removes duplicates,
+        and returns the resulting assignments.
+
+        Args:
+            replacements: Replacement values used by template init expressions. If
+                omitted, replacements for the template language are loaded
+                automatically.
+            only_numeric: If True, keep only numeric variables in each returned
+                assignment.
+            fixed: Optional mapping of variable names to values that should be
+                held constant while enumerating combinations.
+            limit: Optional maximum number of unique combinations to return.
+
+        Returns:
+            A list of unique valid assignments for the template.
+        """
+        if replacements is None:
+            from multilingual_gsm_symbolic.load_data import load_replacements
+
+            replacements = load_replacements(self.language)
+
+        valid_combinations = (
+            self._evaluate_constrained_init_lines(self.constrained_lines, replacements, fixed)
+            if self.constrained_lines
+            else [{}]
+        )
+        unconstrained_choices = self._precompute_unconstrained(replacements, fixed)
+
+        combinations: list[dict[str, Any]] = []
+        seen: set[tuple[tuple[str, str], ...]] = set()
+
+        for constrained_assignment in valid_combinations:
+            unconstrained_products = itertools.product(*unconstrained_choices) if unconstrained_choices else [()]
+            for unconstrained_assignment in unconstrained_products:
+                assignment = dict(constrained_assignment)
+                for partial_assignment in unconstrained_assignment:
+                    assignment.update(partial_assignment)
+
+                projected = self._project_assignment(assignment, only_numeric=only_numeric)
+                key = tuple(sorted((variable, repr(value)) for variable, value in projected.items()))
+                if key in seen:
+                    continue
+                seen.add(key)
+                combinations.append(projected)
+
+                if limit is not None and len(combinations) >= limit:
+                    return combinations
+
+        return combinations
+
     def _generate_question(
         self,
         replacements: dict[str, Any],

@@ -51,6 +51,15 @@ number_vars = {var: val for var, val in defaults.items() if not isinstance(val, 
 questions = templates[0].generate_questions(n=5, fixed=number_vars, verbose=False)
 ```
 
+You can also inspect the available combinations directly:
+
+```py
+# get up to 100 unique numeric assignments for a template
+combinations = templates[0].get_combinations(limit=100, only_numeric=True)
+print(len(combinations))
+print(combinations[:3])
+```
+
 You could imagine similar ablations, but adding spelling errors, introducing irrelevant task information like "Hey just a small math question: {question}" or similar.
 
 ## 📋 Template format
@@ -264,6 +273,18 @@ Extract the default variable values from the question template placeholders.
 | Argument    | Type   | Description                             |
 | ----------- | ------ | --------------------------------------- |
 | **RETURNS** | `dict` | Mapping of variable name → default value |
+
+#### <sup><kbd>method</kbd> `AnnotatedQuestion.get_combinations`</sup>
+
+Enumerate unique valid assignments for a template.
+
+| Argument       | Type           | Description                                                           |
+| -------------- | -------------- | --------------------------------------------------------------------- |
+| `replacements` | `dict \| None` | Replacement values; loaded automatically if omitted                   |
+| `only_numeric` | `bool`         | If `True`, keep only numeric variables in each returned assignment    |
+| `fixed`        | `dict \| None` | Variables to hold constant while enumerating combinations             |
+| `limit`        | `int \| None`  | Stop after this many unique combinations                              |
+| **RETURNS**    | `list[dict]`   | Unique valid assignments for the template                             |
 
 #### <sup><kbd>method</kbd> `AnnotatedQuestion.format_question`</sup>
 

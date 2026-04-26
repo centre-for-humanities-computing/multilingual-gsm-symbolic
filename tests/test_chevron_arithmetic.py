@@ -30,7 +30,7 @@ def _check_answer(answer: str, template_name: str) -> list[str]:
         eq_idx = inner.rfind("=")
         if eq_idx == -1:
             continue
-        lhs_raw, rhs_raw = inner[:eq_idx], inner[eq_idx + 1:]
+        lhs_raw, rhs_raw = inner[:eq_idx], inner[eq_idx + 1 :]
 
         # Normalise locale decimal commas to Python dots.
         lhs = lhs_raw.replace(",", ".")
@@ -46,9 +46,7 @@ def _check_answer(answer: str, template_name: str) -> list[str]:
             continue
 
         if not math.isclose(computed, expected, rel_tol=1e-6, abs_tol=1e-9):
-            errors.append(
-                f"  <<{lhs_raw}={rhs_raw}>>: computed {computed}, expected {expected}"
-            )
+            errors.append(f"  <<{lhs_raw}={rhs_raw}>>: computed {computed}, expected {expected}")
     return errors
 
 
@@ -56,7 +54,4 @@ def _check_answer(answer: str, template_name: str) -> list[str]:
 def test_chevron_arithmetic(template_file):
     aq = AnnotatedQuestion.from_json(template_file)
     errors = _check_answer(aq.answer, template_file.name)
-    assert not errors, (
-        f"{template_file.name} has incorrect <<lhs=rhs>> computations:\n"
-        + "\n".join(errors)
-    )
+    assert not errors, f"{template_file.name} has incorrect <<lhs=rhs>> computations:\n" + "\n".join(errors)
