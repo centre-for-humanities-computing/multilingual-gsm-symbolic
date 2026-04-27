@@ -314,6 +314,14 @@ def format_numbers_by_language(text: str, language: str) -> str:
 
 @dataclass
 class Question:
+    """Dataclass holding a single generated problem.
+
+    Attributes:
+        question: The rendered question text.
+        answer: The rendered answer text.
+        id_orig: Index of the original template.
+        id_shuffled: Index within the shuffled sample.
+    """
     question: str
     answer: str
     id_orig: int
@@ -337,6 +345,14 @@ class AnnotatedQuestion:
 
     @classmethod
     def from_json(cls, filepath: Path) -> Self:
+        """Load an AnnotatedQuestion from a JSON template file.
+
+        Args:
+            filepath: Path to the JSON template file.
+
+        Returns:
+            The loaded AnnotatedQuestion instance.
+        """
         with filepath.open("r", encoding="utf-8") as f:
             data = json.load(f)
         return cls(**data)
@@ -406,6 +422,11 @@ class AnnotatedQuestion:
         return [_parse_expr(cond.strip()) for cond in self.conditions if cond.strip() != "True"]
 
     def get_default_assignments(self) -> dict[str, Any]:
+        """Extract the default variable values from the question template placeholders.
+
+        Returns:
+            Mapping of variable name → default value.
+        """
         """Return the default variable values as written in the question template placeholders."""
         assignment_tuples = _RE_TEMPLATE_VAR.findall(self.question_template)
         return {var: parse_value(val) for var, val in assignment_tuples}
@@ -517,6 +538,14 @@ class AnnotatedQuestion:
         return valid
 
     def format_question(self, assignments: dict[str, Any]) -> str:
+        """Render the question text for a given variable assignment.
+
+        Args:
+            assignments: Variable name → value mapping.
+
+        Returns:
+            The rendered question string.
+        """
         def replace_placeholder(match: re.Match) -> str:
             variable_name = match.group(1)
             return str(assignments[variable_name]) if variable_name in assignments else match.group(0)
@@ -526,6 +555,14 @@ class AnnotatedQuestion:
         return capitalize_sentences(processed_text)
 
     def format_answer(self, assignments: dict[str, Any]) -> str:
+        """Render the answer text for a given variable assignment.
+
+        Args:
+            assignments: Variable name → value mapping.
+
+        Returns:
+            The rendered answer string.
+        """
         eval_env = EVAL_CONTEXT_HELPERS | {k: parse_value(v) for k, v in assignments.items()}
 
         def eval_curly_expr(match: re.Match) -> str:
@@ -584,11 +621,6 @@ class AnnotatedQuestion:
         limit: int | None = None,
     ) -> list[dict[str, Any]]:
         """Enumerate unique valid assignments for this template.
-
-        This is a simple helper for inspecting the solution space of a template.
-        It combines all valid constrained assignments with all unconstrained
-        assignments, optionally drops non-numeric variables, removes duplicates,
-        and returns the resulting assignments.
 
         Args:
             replacements: Replacement values used by template init expressions. If
@@ -686,6 +718,18 @@ class AnnotatedQuestion:
         verbose: bool = True,
         fixed: dict[str, Any] | None = None,
     ) -> list[Question]:
+        """Generate concrete Question instances from the template.
+
+        Args:
+            n: Number of questions to generate.
+            replacements: Replacement values; loaded automatically if omitted.
+            seed: Random seed for reproducibility.
+            verbose: Show warnings for slow generation.
+            fixed: Variables to hold constant; only remaining variables are sampled.
+
+        Returns:
+            The generated questions.
+        """
         if replacements is None:
             from multilingual_gsm_symbolic.load_data import load_replacements
 
