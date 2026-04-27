@@ -9,6 +9,7 @@ The package provides:
 - `Question`: Dataclass for a single generated problem
 - `GSMProblem`: Dataclass for a concrete problem from the GSM dataset
 """
+
 from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion, Question
 from multilingual_gsm_symbolic.load_data import (
     GSMProblem,

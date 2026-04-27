@@ -322,6 +322,7 @@ class Question:
         id_orig: Index of the original template.
         id_shuffled: Index within the shuffled sample.
     """
+
     question: str
     answer: str
     id_orig: int
@@ -546,6 +547,7 @@ class AnnotatedQuestion:
         Returns:
             The rendered question string.
         """
+
         def replace_placeholder(match: re.Match) -> str:
             variable_name = match.group(1)
             return str(assignments[variable_name]) if variable_name in assignments else match.group(0)

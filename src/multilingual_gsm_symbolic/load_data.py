@@ -79,6 +79,7 @@ class GSMProblem(BaseModel):
         id_orig: Index of the original template.
         filepath: Path to the source JSON file.
     """
+
     question: str
     answer: str
     id_orig: int

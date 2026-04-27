@@ -56,8 +56,14 @@ def _write_language_cache(
     _CACHE_DIR.mkdir(exist_ok=True)
     template_ids = {template.question_annotated: template.id_shuffled for _, template in templates}
     entries = [
-        {"id": template_ids[question_annotated], "question_annotated": question_annotated, "count": cache[question_annotated]}
-        for question_annotated in sorted(cache, key=lambda question_annotated: (template_ids[question_annotated], question_annotated))
+        {
+            "id": template_ids[question_annotated],
+            "question_annotated": question_annotated,
+            "count": cache[question_annotated],
+        }
+        for question_annotated in sorted(
+            cache, key=lambda question_annotated: (template_ids[question_annotated], question_annotated)
+        )
     ]
     _cache_path(language).write_text(json.dumps(entries, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
