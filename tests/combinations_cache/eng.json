@@ -458,5 +458,45 @@
     "id": 91,
     "question_annotated": "At {name,Allan}'s house, there are {mult_txt,twice} as many {food1,corn}s as {food2,cannoli}s. He has a total of {n,40} {food2,cannoli}s in his house. {name,Allan} bought {m,60} more {food2,cannoli}s at the store and {k,40} fewer {food1,corn}s than the number of {food2,cannoli}s. Find the combined total of the number of {food1,corn}s and {food2,cannoli}s {name,Allan} has in the house?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"cannoli\",\"corn\", \"apple\", \"banana\", \"orange\", \"pear\", \"grape\", \"fig\", \"persimmon\", \"plum\", \"kiwi\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)",
     "count": 100
+  },
+  {
+    "id": 92,
+    "question_annotated": "Prince {name1,Thaddeus} slew {n1,100} {creature,dragons} with his mighty {weapon1,sword}, while Prince {name2,Arthur}, using a {weapon2,spear}, slew {frac1_txt,three quarters} as many {creature,dragons} as Prince {name1,Thaddeus}. Using a {weapon3,rusty iron axe}, Prince {name3,Walter} slew {mult1_txt,twice} as many {creature,dragons} as Prince {name2,Arthur}. But Prince {name4,Bruce}, having forgotten his {weapon4,sword} at home, slew {frac2_txt,one fifth} as many {creature,dragons} as Prince {name3,Walter} using a {weapon5,nail file}. How many {creature,dragons} has Prince {name4,Bruce} slain?\n\n#init:\n- name1, name2, name3, name4 = sample(names_male, 4)\n- creature = sample([\"ogres\", \"trolls\", \"goblins\", \"orcs\", \"giants\"])\n- weapon1 = sample([\"sword\", \"mace\", \"battle axe\", \"war hammer\"])\n- weapon2 = sample([\"spear\", \"lance\", \"javelin\", \"halberd\"])\n- weapon3 = sample([\"rusty iron axe\", \"wooden club\", \"stone hammer\", \"bone dagger\"])\n- weapon4 = sample([\"sword\", \"axe\", \"mace\", \"hammer\"])\n- weapon5 = sample([\"nail file\", \"butter knife\", \"wooden spoon\", \"feather\"])\n- $n1 = range(50, 501, 50)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n1 * frac1_val * mult1_val)\n- is_int(n1 * frac1_val * mult1_val * frac2_val)\n\n#answer: int(n1 * frac1_val * mult1_val * frac2_val)",
+    "count": 100
+  },
+  {
+    "id": 93,
+    "question_annotated": "When the water is cold {name,Ray} swims a {unit,mile} in {t1,16} minutes. When the water is warm {name,Ray} swims a {unit,mile} in {n,2} minutes more than {mult_txt,twice} as long. How much longer does {name,Ray} take to swim {d,3} {unit,mile}s on a hot day than a cold day?\n\n#init:\n- name = sample(names)\n- unit = sample(['mile', 'kilometer'])\n- $t1 = range(10, 50)\n- $n = range(1, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $d = range(2, 10)\n\n#conditions:\n- t1 < 60\n- n + mult_val * t1 < 60\n- d * (n + mult_val * t1) - d * t1 > 0\n\n#answer: d * (n + mult_val * t1) - d * t1",
+    "count": 100
+  },
+  {
+    "id": 94,
+    "question_annotated": "{n,100} people apply for a job at {company,Google}. Of the people that apply, only {p1,30}% receive interviews. Of those who receive interviews, {p2,20}% receive a job offer. Of those who receive a job offer, {frac_txt,one third} of the people accept the position. How many people accept the position?\n\n#init:\n- company = sample([\"Microsoft\", \"Apple\", \"Amazon\", \"Facebook\", \"Netflix\", \"Tesla\", \"Microsoft\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: int(n * (p1/100) * (p2/100) * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 95,
+    "question_annotated": "There are {n1,6} students playing {sport1,tennis} and {mult_txt,twice} that number playing {sport2,volleyball}. There are {n2,16} boys and {n3,22} girls playing {sport3,soccer}. If each student only participates in one group, how many students are there in total?\n\n#init:\n- sport1, sport2, sport3 = sample(['basketball', 'badminton', 'table tennis',  'football', 'volleyball'], 3)\n- mult_txt, mult_var = sample(multi_times)\n- $n1 = range(4, 21)\n- $n2 = range(10, 31)\n- $n3 = range(10, 31)\n\n#conditions:\n- n1 * mult_var + n2 + n3 <= 250\n\n#answer: n1 + n1 * mult_var[1] + n2 + n3",
+    "count": 100
+  },
+  {
+    "id": 96,
+    "question_annotated": "{name,Morgan}'s {parent,dad} said that she had {cur,$}{budget,90} budgeted for her birthday party. She wants to make sure she and her friends all get to play one round of {activity1,mini-golf}, have {cur,$}{tokens,5} in {activity2,arcade} tokens, and get to ride the {activity3,go-karts} {times_txt,twice}. A round of {activity1,mini-golf} is {cur,$}{cost1,5}. The {activity3,go-karts} cost {cur,$}{cost2,10} a ride. How many friends can she invite?\n\n#init:\n- name = sample(names_female)\n- parent = sample([\"mom\", \"dad\", \"aunt\", \"uncle\"])\n- activity1 = sample([\"mini-golf\", \"bowling\", \"laser tag\"])\n- activity2 = sample([\"arcade\", \"game room\", \"pinball\"])\n- activity3 = sample([\"go-karts\", \"bumper cars\", \"roller coaster\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1",
+    "count": 100
+  },
+  {
+    "id": 97,
+    "question_annotated": "{name1,Julie} operates the cash register exactly {mult_txt,twice} as fast as her less-experienced colleague {name2,Jewel}. Daily, {name2,Jewel} processes {n,50} customers. What is the total weekly production for the two if they work all days of the week?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- mult_txt, mult_var = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_var)\n- is_int((n + n * mult_var) * 7)\n\n#answer: (n + n * mult_var) * 7",
+    "count": 100
+  },
+  {
+    "id": 98,
+    "question_annotated": "A {disease,plague} infects {n0_txt,ten} people. Every day, each infected person infects {r_txt,six} others. How many people are infected after {d_txt,three} days?\n\n#init:\n- disease = sample(['virus', 'bacteria', 'parasite', 'infection'])\n- n0_txt, n0_val = range_str(5, 21, 1, numbers)\n- r_txt, r_val = range_str(2, 8, 1, numbers)\n- d_txt, d_val = range_str(3, 5, 1, numbers)\n\n#conditions:\n- n0_val * (r_val + 1)**d_val < 20000\n\n#answer: n0_val * (r_val + 1)**d_val",
+    "count": 100
+  },
+  {
+    "id": 99,
+    "question_annotated": "If {name,Chester} eats {n1,3} eggs a day for {d1,30} days and then increases it to {n2,5} eggs a day for {d2,30} days, how many dozens of eggs will {name,Chester} need for {d3,60} days?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
+    "count": 100
   }
 ]
