@@ -572,8 +572,7 @@ class AnnotatedQuestion:
         self, init_lines: list[str], replacements: dict[str, Any], fixed: dict[str, Any] | None = None
     ) -> list[dict]:
         possible_assignments = self._get_all_possible_assignments(init_lines, replacements, fixed)
-        all_combinations = self._get_all_combinations(possible_assignments)
-        return self._filter_invalid_combinations(all_combinations)
+        return self._filter_invalid_combinations_streaming(possible_assignments)
 
     def _get_all_possible_assignments(
         self, init_lines: list[str], replacements: dict[str, Any], fixed: dict[str, Any] | None = None
@@ -606,6 +605,7 @@ class AnnotatedQuestion:
         return possible_assignments
 
     def _get_all_combinations(self, possibilities: dict[str, list[dict]]) -> list[dict]:
+        """Materialise all combinations (used when full list is needed, e.g. for generation)."""
         num_combinations = math.prod(len(v) for v in possibilities.values())
         logger.info(f"Number of combinations: {num_combinations}")
         if num_combinations > 10_000_000:
@@ -618,13 +618,36 @@ class AnnotatedQuestion:
             for combo in itertools.product(*possibilities.values())
         ]
 
-    def _filter_invalid_combinations(self, combinations: list[dict]) -> list[dict]:
+    def _filter_invalid_combinations_streaming(
+        self, possibilities: dict[str, list[dict]], limit: int | None = None
+    ) -> list[dict]:
+        """Stream combinations from itertools.product and stop as soon as limit is reached."""
+        num_combinations = math.prod(len(v) for v in possibilities.values())
+        logger.info(f"Number of combinations: {num_combinations}")
+        if num_combinations > 10_000_000:
+            raise ValueError(
+                f"Too many combinations ({num_combinations}) for question {self.id_shuffled}. "
+                "Please reduce the number of variables or their possible values."
+            )
         condition_asts = self._condition_asts
-        valid = [
-            combo
-            for combo in combinations
-            if all(_eval_node(cond, EVAL_CONTEXT_HELPERS | combo) for cond in condition_asts)
-        ]
+        valid = []
+        for combo in itertools.product(*possibilities.values()):
+            assignment = {k: parse_value(v) for d in combo for k, v in d.items()}
+            if all(_eval_node(cond, EVAL_CONTEXT_HELPERS | assignment) for cond in condition_asts):
+                valid.append(assignment)
+                if limit is not None and len(valid) >= limit:
+                    break
+        logger.debug(f"Number of valid combinations: {len(valid)}")
+        return valid
+
+    def _filter_invalid_combinations(self, combinations: list[dict], limit: int | None = None) -> list[dict]:
+        condition_asts = self._condition_asts
+        valid = []
+        for combo in combinations:
+            if all(_eval_node(cond, EVAL_CONTEXT_HELPERS | combo) for cond in condition_asts):
+                valid.append(combo)
+                if limit is not None and len(valid) >= limit:
+                    break
         logger.debug(f"Number of valid combinations: {len(valid)}")
         return valid
 
@@ -743,7 +766,25 @@ class AnnotatedQuestion:
         seen: set[tuple[tuple[str, str], ...]] = set()
 
         for constrained_assignment in valid_combinations:
-            unconstrained_products = itertools.product(*unconstrained_choices) if unconstrained_choices else [()]
+            # When only_numeric=True, non-numeric unconstrained variables (names, strings)
+            # are stripped during projection, so all unconstrained products yield the same
+            # key. We only need to iterate unconstrained products when they carry numeric vars.
+            if only_numeric and unconstrained_choices:
+                # Check whether any unconstrained line contributes numeric values
+                sample_combo = {k: v for d in [c[0] for c in unconstrained_choices] for k, v in d.items()}
+                sample_proj = self._project_assignment(
+                    dict(constrained_assignment) | sample_combo, only_numeric=True
+                )
+                constrained_proj = self._project_assignment(constrained_assignment, only_numeric=True)
+                unconstrained_adds_numeric = set(sample_proj) != set(constrained_proj)
+            else:
+                unconstrained_adds_numeric = True
+
+            if unconstrained_adds_numeric:
+                unconstrained_products = itertools.product(*unconstrained_choices) if unconstrained_choices else [()]
+            else:
+                unconstrained_products = [()]  # type: ignore[assignment]
+
             for unconstrained_assignment in unconstrained_products:
                 assignment = dict(constrained_assignment)
                 for partial_assignment in unconstrained_assignment:

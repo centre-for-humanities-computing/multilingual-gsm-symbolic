@@ -11,8 +11,8 @@
   },
   {
     "id": 2,
-    "question_annotated": "{name,Jerry} is rolling a {sides_txt,six-sided} die. How much more likely is it (expressed as a percentage) that he rolls a number greater than {target,3} than that he rolls two {z,even} numbers in a row?\n\n#init:\n- name=sample(names_male)\n- sides_txt, sides_val = sample([(\"four-sided\", 4), (\"six-sided\", 6), (\"ten-sided\", 10), (\"twelve-sided\", 12), (\"twenty-sided\", 20), (\"d4\", 4),  (\"d6\", 6), (\"d8\", 8), (\"d10\", 10), (\"d12\", 12), (\"d20\", 20), (\"4-sided\", 4),  (\"6-sided\", 6), (\"8-sided\", 8), (\"10-sided\", 10), (\"12-sided\", 12), (\"20-sided\", 20) ] * 3)\n- $target = range(1, 20)\n- z = sample([\"even\", \"odd\"])\n\n#conditions: \n- target < sides_val\n- divides(sides_val-target, target)\n- is_int((sides_val-target)/sides_val * 100)\n-  int((sides_val-target)/sides_val * 100) > 25\n\n#answer: int((sides_val-target)/sides_val * 100) - 25",
-    "count": 15
+    "question_annotated": "{name,Jerry} is rolling a {sides_txt,six-sided} die. How much more likely is it (expressed as a percentage) that he rolls a number greater than {target,3} than that he rolls two {z,even} numbers in a row?\n\n#init:\n- name=sample(names_male)\n- sides_txt, sides_val = sample([(\"4-sided\", 4), (\"six-sided\", 6), (\"8-sided\", 8), (\"10-sided\", 10), (\"12-sided\", 12), (\"14-sided\", 14), (\"16-sided\", 16), (\"18-sided\", 18), (\"20-sided\", 20), (\"22-sided\", 22), (\"24-sided\", 24), (\"26-sided\", 26), (\"28-sided\", 28), (\"30-sided\", 30), (\"32-sided\", 32), (\"34-sided\", 34), (\"36-sided\", 36), (\"38-sided\", 38), (\"40-sided\", 40), (\"42-sided\", 42), (\"44-sided\", 44), (\"46-sided\", 46), (\"48-sided\", 48), (\"50-sided\", 50), (\"52-sided\", 52), (\"54-sided\", 54), (\"56-sided\", 56), (\"58-sided\", 58), (\"60-sided\", 60), (\"62-sided\", 62), (\"64-sided\", 64), (\"66-sided\", 66), (\"68-sided\", 68), (\"70-sided\", 70), (\"72-sided\", 72), (\"74-sided\", 74), (\"76-sided\", 76), (\"78-sided\", 78), (\"80-sided\", 80), (\"82-sided\", 82), (\"84-sided\", 84), (\"86-sided\", 86), (\"88-sided\", 88), (\"90-sided\", 90), (\"92-sided\", 92), (\"94-sided\", 94), (\"96-sided\", 96), (\"98-sided\", 98), (\"100-sided\", 100)])\n- $target = range(1, 100)\n- z = sample([\"even\", \"odd\"])\n\n#conditions: \n- target < sides_val\n- divides(sides_val-target, target)\n- is_int((sides_val-target)/sides_val * 100)\n-  int((sides_val-target)/sides_val * 100) > 25\n\n#answer: int((sides_val-target)/sides_val * 100) - 25",
+    "count": 100
   },
   {
     "id": 3,
@@ -86,8 +86,8 @@
   },
   {
     "id": 17,
-    "question_annotated": "{name,Grandma} walks {n,3} {unit,mile}s every day on her favorite walking trail, which includes {m,2} {unit,mile}s of walking on the beach and {k,1} {unit,mile}(s) of walking on the sidewalk. On the sidewalk, {name,Grandma} walks at {mult_txt,twice} the rate of speed that she does on the beach. If {t,40} minutes of her walk is spent on the beach, how long does it take for her to complete the entire {n,3}-{unit, mile} walk, in minutes?\n\n#init:\n- name = sample(names_female)\n- unit = sample(length_lg)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 40)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / mult_val*m/t)\n#answer: {t+(k/mult_val*m/t)} ",
-    "count": 75
+    "question_annotated": "{name,Grandma} walks {n,3} {unit,mile}s every day on her favorite walking trail, which includes {m,2} {unit,mile}s of walking on the beach and {k,1} {unit,mile}(s) of walking on the sidewalk. On the sidewalk, {name,Grandma} walks at {mult_txt,twice} the rate of speed that she does on the beach. If {t,40} minutes of her walk is spent on the beach, how long does it take for her to complete the entire {n,3}-{unit, mile} walk, in minutes?\n\n#init:\n- name = sample(names_female)\n- unit = sample(length_lg)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 60)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: {t+(k/mult_val*m/t)} ",
+    "count": 100
   },
   {
     "id": 18,
@@ -186,8 +186,8 @@
   },
   {
     "id": 37,
-    "question_annotated": "A {item,loaf of bread} has {n,24} {unit,slices}. If {name1,Abby} can eat {x,2} {unit,slices} a day while {name2,Josh} can eat {mult_txt,twice} as much, how many days will the {item,loaf of bread} last?\n\n#init:\n- item = sample([\"pizza\", \"cake\", \"pie\", \"lasagna\"])\n- unit = sample([\"pieces\", \"portions\", \"servings\"])\n- name1, name2 = sample(names, 2)\n- $n = range(12, 49, 3)\n- $x = range(2, 6)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- divides(n, x + x*mult_val)\n\n#answer: n // (x + x*mult_val)",
-    "count": 38
+    "question_annotated": "A {item,loaf of bread} has {n,24} {unit,slices}. If {name1,Abby} can eat {x,2} {unit,slices} a day while {name2,Josh} can eat {mult_txt,twice} as much, how many days will the {item,loaf of bread} last?\n\n#init:\n- item = sample([\"pizza\", \"cake\", \"pie\", \"lasagna\"])\n- unit = sample([\"pieces\", \"portions\", \"servings\"])\n- name1, name2 = sample(names, 2)\n- $n = range(12, 76, 3)\n- $x = range(2, 13)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- divides(n, x + x*mult_val)\n\n#answer: n // (x + x*mult_val)",
+    "count": 100
   },
   {
     "id": 38,
@@ -276,8 +276,8 @@
   },
   {
     "id": 55,
-    "question_annotated": "{name,Elise} is learning to write and decides to keep re-writing the {alphabets_txt,alphabet} until she knows it. She writes it in full {n1_txt,twice}, writes {frac_txt,half} of it once, then re-writes everything she has already written. How many letters has {name,Elise} written in total?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"alphabet\", 26), (\"hiragana (with 48 letters)\", 48), (\"farsi alphabet (with 32 letters)\", 32), (\"arabic abjad (with 28 letters)\", 28)])\n- n1_txt, n1_val = sample(multi_times)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
-    "count": 48
+    "question_annotated": "{name,Elise} is learning to write and decides to keep re-writing the {alphabets_txt,alphabet} until she knows it. She writes it in full {n1_txt,twice}, writes {frac_txt,half} of it once, then re-writes everything she has already written. How many letters has {name,Elise} written in total?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"alphabet\", 26), (\"hiragana (with 48 letters)\", 48), (\"farsi alphabet (with 32 letters)\", 32), (\"arabic abjad (with 28 letters)\", 28)])\n- n1_txt, n1_val = sample([(\"twice\", 2), (\"three times\", 3), (\"four times\", 4), (\"five times\", 5), (\"six times\", 6), (\"seven times\", 7), (\"eight times\", 8), (\"nine times\", 9), (\"ten times\", 10), (\"eleven times\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
+    "count": 100
   },
   {
     "id": 56,
@@ -291,8 +291,8 @@
   },
   {
     "id": 58,
-    "question_annotated": "One {worker,gnome} can mine {base,12} {unit,pounds} of ore per day with {tool1,his bare hands}. He can mine {mult1_txt,twice} as much with a {tool2,bronze pickaxe} and {mult2,50}% more with a {tool3,steel pickaxe} than with a {tool2,bronze pickaxe}. How many {unit,pounds} of ore can {n,40} {worker,gnome}s with {tool3,steel pickaxe}s mine in a month with {days,30} days?\n\n#init:\n- worker = sample([\"miner\", \"goblin\", \"gnome\", \"troll\"])\n- tool1 = sample([\"bare hands\", \"basic shovel\", \"wooden pickaxe\"])\n- unit = sample([\"pounds\", \"kgs\"])\n- tool2 = sample([\"nickel pickaxe\", \"bronze pickaxe\", \"silver pickaxe\"])\n- tool3 = sample([\"bronze pickaxe\", \"steel pickaxe\", \"diamond pickaxe\", \"mithril pickaxe\", \"titanium pickaxe\"])\n- $base = range(5, 20)\n- mult1_txt, mult1_val = sample(multi_times)\n- $mult2 = range(30, 80, 5)\n- $n = range(20, 50)\n- $days = range(28, 32)\n\n#conditions:\n- is_int(mult2/100*base*mult1_val)\n- int(base * mult1_val * (1 + mult2/100) * n * days) < 10000\n\n#answer: int(base * mult1_val * (1 + mult2/100) * n * days)",
-    "count": 67
+    "question_annotated": "One {worker,gnome} can mine {base,12} {unit,pounds} of ore per day with {tool1,his bare hands}. He can mine {mult1_txt,twice} as much with a {tool2,bronze pickaxe} and {mult2,50}% more with a {tool3,steel pickaxe} than with a {tool2,bronze pickaxe}. How many {unit,pounds} of ore can {n,40} {worker,gnome}s with {tool3,steel pickaxe}s mine in a month with {days,30} days?\n\n#init:\n- worker = sample([\"miner\", \"goblin\", \"gnome\", \"troll\"])\n- tool1 = sample([\"bare hands\", \"basic shovel\", \"wooden pickaxe\"])\n- unit = sample([\"pounds\", \"kgs\"])\n- tool2 = sample([\"nickel pickaxe\", \"bronze pickaxe\", \"silver pickaxe\"])\n- tool3 = sample([\"bronze pickaxe\", \"steel pickaxe\", \"diamond pickaxe\", \"mithril pickaxe\", \"titanium pickaxe\"])\n- $base = range(5, 20)\n- mult1_txt, mult1_val = sample(multi_times)\n- $mult2 = range(30, 80, 5)\n- $n = range(20, 50)\n- $days = range(28, 32)\n\n#conditions:\n- is_int(mult2/100*base*mult1_val)\n- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000\n\n#answer: int(base * mult1_val * (1 + mult2/100) * n * days)",
+    "count": 100
   },
   {
     "id": 59,
@@ -401,8 +401,8 @@
   },
   {
     "id": 80,
-    "question_annotated": "The vending machines sell {item1,chips} for {price1,40} cents and {item2,candy bars} for {price2,75} cents. {name,George} spent {cur,$}{total,5} and got {n1,3} bags of {item1,chips} and had {p,1}% of his money left in change. How many {item2,candy bars} did he buy?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['pretzels', 'popcorn', 'gum', 'cookies', 'crackers'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 15, 1)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p /100)\n- is_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))\n- (total * (100 - p) / 100 - n1 * price1 / 100) % (price2 / 100) == 0\n\n#answer: int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))",
-    "count": 0
+    "question_annotated": "The vending machines sell {item1,chips} for {price1,40} cents and {item2,candy bars} for {price2,75} cents. {name,George} spent {cur,$}{total,5} and got {n1,3} bags of {item1,chips} and had {p,1}% of his money left in change. How many {item2,candy bars} did he buy?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['pretzels', 'popcorn', 'gum', 'cookies', 'crackers'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: int((total * (100 - p) - n1 * price1) / price2)",
+    "count": 100
   },
   {
     "id": 81,
