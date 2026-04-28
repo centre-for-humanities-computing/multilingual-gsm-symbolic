@@ -7,6 +7,7 @@ import math
 import operator as _operator
 import random
 import re
+import tomllib
 import warnings
 from dataclasses import asdict, dataclass
 from fractions import Fraction
@@ -348,6 +349,9 @@ class AnnotatedQuestion:
     def from_json(cls, filepath: Path) -> Self:
         """Load an AnnotatedQuestion from a JSON template file.
 
+        .. note::
+            TOML is the preferred format. Use :meth:`from_toml` for new templates.
+
         Args:
             filepath: Path to the JSON template file.
 
@@ -356,6 +360,32 @@ class AnnotatedQuestion:
         """
         with filepath.open("r", encoding="utf-8") as f:
             data = json.load(f)
+        return cls(**data)
+
+    @classmethod
+    def from_toml(cls, filepath: str | Path) -> Self:
+        """Load an AnnotatedQuestion from a TOML template file.
+
+        The TOML file must use the same top-level keys as the JSON format.
+        Long text fields (``question_annotated``, ``answer_annotated``,
+        ``question``, ``answer``) are typically stored as TOML multiline
+        strings, which automatically strips the leading newline.
+
+        Args:
+            filepath: Path to the TOML template file.
+
+        Returns:
+            The loaded AnnotatedQuestion instance.
+        """
+        with Path(filepath).open("rb") as f:
+            data = tomllib.load(f)
+        # TOML multiline basic strings strip the first newline, but may keep a
+        # trailing newline before the closing \"\"\". Strip both ends to match
+        # the JSON values which have no surrounding whitespace.
+        for key in ("question", "answer", "question_annotated", "answer_annotated"):
+            if key in data and isinstance(data[key], str):
+                data[key] = data[key].strip("\n")
+        data.pop("ignore", None)
         return cls(**data)
 
     @cached_property

@@ -64,7 +64,7 @@ You could imagine similar ablations, but adding spelling errors, introducing irr
 
 ## 📋 Template format
 
-Templates are JSON files with four fields:
+Templates are TOML files with the following fields:
 
 | Field                | Description                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------ |
@@ -88,13 +88,30 @@ Templates are JSON files with four fields:
 <details>
 <summary>Example: fog bank problem</summary>
 
-```json
-{
-  "question": "A fog bank rolls in over a city at 3 miles/hour. The city is 42 miles wide. How many hours will it take for the fog bank to cover the city?",
-  "question_annotated": "A fog bank rolls in over a city at {speed,3} miles/hour. The city is {width,42} miles wide. How many hours will it take for the fog bank to cover the city?\n#init:\n- $speed = range(1, 20)\n- $width = range(2, 100)\n#conditions:\n- is_int(width / speed)\n#answer: width // speed",
-  "answer": "At 3 miles/hour, it will take 42/3=14 hours for the fog to cover the city.",
-  "answer_annotated": "At {speed} miles/hour, it will take {width}/{speed}={width//speed} hours for the fog to cover the city."
-}
+```toml
+question = "A fog bank rolls in over a city at 3 miles/hour. The city is 42 miles wide. How many hours will it take for the fog bank to cover the city?"
+
+answer = "At 3 miles/hour, it will take 42/3=14 hours for the fog to cover the city."
+
+id_orig = 0
+id_shuffled = 0
+creation = "example"
+language = "eng"
+
+question_annotated = """
+A fog bank rolls in over a city at {speed,3} miles/hour. The city is {width,42} miles wide. How many hours will it take for the fog bank to cover the city?
+
+#init:
+- $speed = range(1, 20)
+- $width = range(2, 100)
+
+#conditions:
+- is_int(width / speed)
+
+#answer: width // speed
+"""
+
+answer_annotated = "At {speed} miles/hour, it will take {width}/{speed}={width//speed} hours for the fog to cover the city."
 ```
 
 </details>
@@ -102,13 +119,32 @@ Templates are JSON files with four fields:
 <details>
 <summary>Example: shopping problem</summary>
 
-```json
-{
-  "question": "A store sells apples for $2 each and oranges for $3 each. If you buy 4 apples and 5 oranges, how much do you spend?",
-  "question_annotated": "A store sells apples for ${apple_price,2} each and oranges for ${orange_price,3} each. If you buy {n_apples,4} apples and {n_oranges,5} oranges, how much do you spend?\n#init:\n- $apple_price = range(1, 10)\n- $orange_price = range(1, 10)\n- $n_apples = range(1, 20)\n- $n_oranges = range(1, 20)\n#conditions:\n- True\n#answer: apple_price * n_apples + orange_price * n_oranges",
-  "answer": "You spend 4*2 + 5*3 = 8 + 15 = $23.",
-  "answer_annotated": "You spend {n_apples}*{apple_price} + {n_oranges}*{orange_price} = {n_apples*apple_price} + {n_oranges*orange_price} = ${apple_price*n_apples + orange_price*n_oranges}."
-}
+```toml
+question = "A store sells apples for $2 each and oranges for $3 each. If you buy 4 apples and 5 oranges, how much do you spend?"
+
+answer = "You spend 4*2 + 5*3 = 8 + 15 = $23."
+
+id_orig = 0
+id_shuffled = 0
+creation = "example"
+language = "eng"
+
+question_annotated = """
+A store sells apples for ${apple_price,2} each and oranges for ${orange_price,3} each. If you buy {n_apples,4} apples and {n_oranges,5} oranges, how much do you spend?
+
+#init:
+- $apple_price = range(1, 10)
+- $orange_price = range(1, 10)
+- $n_apples = range(1, 20)
+- $n_oranges = range(1, 20)
+
+#conditions:
+- True
+
+#answer: apple_price * n_apples + orange_price * n_oranges
+"""
+
+answer_annotated = "You spend {n_apples}*{apple_price} + {n_oranges}*{orange_price} = {n_apples*apple_price} + {n_oranges*orange_price} = ${apple_price*n_apples + orange_price*n_oranges}."
 ```
 
 </details>
@@ -120,23 +156,44 @@ Templates are JSON files with four fields:
 
 Here is a complete example — a "speed × time = distance" problem with randomised values and a divisibility constraint:
 
-```json
-{
-  "question": "A car travels at 60 mph for 3 hours. How far does it travel?",
-  "answer": "Distance = speed × time = 60 × 3 = 180 miles.\n#### 180",
-  "id_orig": 0,
-  "id_shuffled": 0,
-  "question_annotated": "A car travels at {speed,60} mph for {hours,3} hours. How far does it travel?\n#init:\n- $speed = range(20, 100, 10)\n- $hours = range(1, 9)\n#conditions:\n- is_int(speed * hours / 10)\n#answer: speed * hours",
-  "answer_annotated": "Distance = speed × time = {speed} × {hours} = {speed * hours} miles.\n#### {speed * hours}"
-}
+```toml
+question = "A car travels at 60 mph for 3 hours. How far does it travel?"
+
+answer = """
+Distance = speed × time = 60 × 3 = 180 miles.
+#### 180
+"""
+
+id_orig = 0
+id_shuffled = 0
+creation = "example"
+language = "eng"
+
+question_annotated = """
+A car travels at {speed,60} mph for {hours,3} hours. How far does it travel?
+
+#init:
+- $speed = range(20, 100, 10)
+- $hours = range(1, 9)
+
+#conditions:
+- is_int(speed * hours / 10)
+
+#answer: speed * hours
+"""
+
+answer_annotated = """
+Distance = speed × time = {speed} × {hours} = {speed * hours} miles.
+#### {speed * hours}
+"""
 ```
 
-Save it as a `.json` file and load it directly:
+Save it as a `.toml` file and load it directly:
 
 ```python
 from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
 
-template = AnnotatedQuestion.from_json("my_template.json")
+template = AnnotatedQuestion.from_toml("my_template.toml")
 questions = template.generate_questions(n=5)
 for q in questions:
     print(q.question)
@@ -252,7 +309,7 @@ Load the bundled concrete problems for a given language.
 
 ### <kbd>class</kbd> `AnnotatedQuestion`
 
-Core class representing a symbolic template. Constructed from a JSON template file via `AnnotatedQuestion.from_json(path)`.
+Core class representing a symbolic template. Constructed from a TOML template file via `AnnotatedQuestion.from_toml(path)`.
 
 #### <sup><kbd>method</kbd> `AnnotatedQuestion.generate_questions`</sup>
 

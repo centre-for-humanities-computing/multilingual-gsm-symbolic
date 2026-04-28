@@ -1,0 +1,45 @@
+question = "Morten var en penneven med 5 personer. Han stoppede med at være pennevenner med 2 af dem. De sender hver 2 breve om ugen, der er 5 sider lange. Han svarer med det samme. Han kan skrive en side hver 6 minut. Hvor mange timer bruger han på at skrive om ugen?"
+
+answer = """
+Morten er pennevenner med 5-2=<<5-2=3>>3 personer
+Således får han 3*2=<<3*2=6>>6 breve om ugen
+Så han skriver 6*5=<<6*5=30>>30 sider om ugen
+Så han skriver i 30*6=<<30*6=180>>180 minutter om ugen
+Så han skriver 180/60=<<180/60=3>>3 timer om ugen
+#### 3
+"""
+
+id_orig = 242
+
+id_shuffled = 72
+
+question_annotated = """
+{name,Morten} var en penneven med {n1,5} personer. Han stoppede med at være pennevenner med {n2,2} af dem. De sender hver {l,2} breve om ugen, der er {p,5} sider lange. Han svarer med det samme. Han kan skrive en side hver {t,6} minut. Hvor mange timer bruger han på at skrive om ugen?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(5, 15)
+- $n2 = range(1, 5)
+- $l = range(2, 5)
+- $p = range(5, 12)
+- $t = range(4, 15)
+
+#conditions:
+- n2 < n1
+- is_int(((n1 - n2) * l * p * t) / 60)
+
+#answer: ((n1 - n2) * l * p * t) // 60
+"""
+
+answer_annotated = """
+{name} er pennevenner med {n1}-{n2}=<<{n1}-{n2}={n1-n2}>>{n1-n2} personer
+Således får han {n1-n2}*{l}=<<{n1-n2}*{l}={(n1-n2)*l}>>{(n1-n2)*l} breve om ugen
+Så han skriver {(n1-n2)*l}*{p}=<<{(n1-n2)*l}*{p}={((n1-n2)*l*p)}>>{((n1-n2)*l*p)} sider om ugen
+Så han skriver i {((n1-n2)*l*p)}*{t}=<<{((n1-n2)*l*p)}*{t}={((n1-n2)*l*p*t)}>>{((n1-n2)*l*p*t)} minutter om ugen
+Så han skriver {((n1-n2)*l*p*t)}/60=<<{((n1-n2)*l*p*t)}/60={((n1-n2)*l*p*t)//60}>>{((n1-n2)*l*p*t)//60} timer om ugen
+#### {((n1-n2)*l*p*t)//60}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

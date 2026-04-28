@@ -1,0 +1,54 @@
+question = "Søren assiste TV depois de terminar a lição de casa. Na segunda-feira e na terça-feira, ele assistiu a um episódio de 1 hora do seu programa favorito. Na quarta-feira, ele assistiu a alguns episódios de um programa de 30 minutos. Na quinta-feira, ele terminou a lição de casa cedo e assistiu a um episódio de 1 hora e a um programa de 30 minutos. Na sexta-feira, ele pôde ficar acordado até mais tarde, então assistiu a dois episódios de 1 hora. Se ao todo ele assistiu a 7 horas de TV, quantos episódios de 30 minutos ele assistiu na quarta-feira?"
+
+answer = """
+Seja E o número de episódios que ele assistiu na quarta-feira.
+Depois de segunda-feira, ele tinha 7 - 1 = <<7-1=6>>6 horas de TV restantes.
+Depois de terça-feira, ele tinha 6 - 1 = <<6-1=5>>5 horas de TV restantes.
+Depois de quinta-feira, ele tinha 5 - 1 - 0,5 = 3,5 horas de TV restantes.
+Depois de sexta-feira, ele tinha 3,5 - 2 = 1,5 horas de TV restantes.
+Cada episódio de 30 minutos dura 0,5 hora.
+Assim, E = 1,5/0,5 = 3 episódios.
+#### 3
+"""
+
+id_orig = 107
+
+id_shuffled = 21
+
+question_annotated = """
+{name,Søren} assiste TV depois de terminar a lição de casa. Na {d1,segunda-feira} e na {d2,terça-feira}, ele assistiu a um episódio de {h1,1} hora do seu programa favorito. Na {d3,quarta-feira}, ele assistiu a alguns episódios de um programa de {m1,30} minutos. Na {d4,quinta-feira}, ele terminou a lição de casa cedo e assistiu a um episódio de {h2,1} hora e a um programa de {m2,30} minutos. Na {d5,sexta-feira}, ele pôde ficar acordado até mais tarde, então assistiu a {n2_txt,dois} episódios de {h3,1} hora. Se ao todo ele assistiu a {total,7} horas de TV, quantos episódios de {m1,30} minutos ele assistiu na {d3,quarta-feira}?
+
+#init:
+- name = sample(names_male)
+- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)
+- $total = range(7, 33)
+- $h1 = range(1, 7)
+- $h3 = range(1, 6)
+- $m1 = range(5, 61, 5)
+- $m2 = range(5, 61, 5)
+- $h2 = range(1, 7)
+- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+
+#conditions: 
+- divides(m1, 15)
+- divides(m2, 15)
+- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0
+- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 
+
+#answer: (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1
+"""
+
+answer_annotated = """
+Seja E o número de episódios que ele assistiu na {d3}.
+Depois de {d1}, ele tinha {total} - {h1} = <<{total}-{h1}={total-h1}>>{total-h1} horas de TV restantes.
+Depois de {d2}, ele tinha {total-h1} - {h1} = <<{total-h1}-{h1}={total-2*h1}>>{total-2*h1} horas de TV restantes.
+Depois de {d4}, ele tinha {total-2*h1} - {h2} - {m2/60} = {total-2*h1-h2- m2/60} horas de TV restantes.
+Depois de {d5}, ele tinha {total-2*h1-h2-m2/60} - {n2_val*h3} = {total-2*h1-h2-m2/60-n2_val*h3} horas de TV restantes.
+Cada episódio de {m1} minutos dura {Fraction(m1/60)} hora.
+Assim, E = {total-2*h1-h2-m2/60-n2_val*h3}/{m1/60} = {(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1} episódios.
+#### {(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "por"

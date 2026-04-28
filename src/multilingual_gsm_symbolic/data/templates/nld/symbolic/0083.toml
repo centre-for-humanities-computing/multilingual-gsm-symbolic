@@ -1,0 +1,38 @@
+question = "Het gezin Adams is druk bezig met het maken van koekjes. Tot nu toe hebben ze 7995 koekjes gemaakt. Ze hebben 2595 regenboogkoekjes, 3075 havermoutkoekjes en een aantal chocoladeschilferkoekjes. Hoeveel chocoladeschilferkoekjes hebben ze gemaakt?"
+
+answer = """
+Het totaal aantal stukken van regenboog- en havermoutkoekjes is 2595 + 3075 = <<2595+3075=5670>>5670.
+Daarom hebben ze 7995 - 5670 = <<7995-5670=2325>>2325 chocoladeschilferkoekjes gemaakt.
+#### 2325
+"""
+
+id_orig = 1305
+
+id_shuffled = 83
+
+question_annotated = """
+Het gezin {family,Adams} is druk bezig met het maken van {item,koekje}s. Tot nu toe hebben ze {total,7995} {item,koekje}s gemaakt. Ze hebben {n1,2595} {flavor1,regenboog} {item,koekje}s, {n2,3075} {flavor2,havermout} {item,koekje}s en een aantal {flavor3,chocoladeschilfer} {item,koekje}s. Hoeveel {flavor3,chocoladeschilfer} {item,koekje}s hebben ze gemaakt?
+
+#init:
+- family = sample(["Smith", "Johnson", "Williams", "Brown", "Jones"])
+- item = sample(["cupcake", "muffin", "brownie", "biscuit"])
+- flavor1, flavor2, flavor3 = sample(["vanilla", "strawberry", "blueberry", "lemon", "peanut butter"], 3)
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3200, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+
+answer_annotated = """
+Het totaal aantal stukken van {flavor1} en {flavor2} {item}s is {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}.
+Daarom hebben ze {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {flavor3} {item}s gemaakt.
+#### {total-(n1+n2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

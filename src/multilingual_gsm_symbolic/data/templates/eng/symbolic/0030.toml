@@ -1,0 +1,41 @@
+question = "David has $12.48 and wants to buy 16 bolts from a bin at the hardware store. Each bolt costs $0.03. How much money does David have left after paying for the bolts?"
+
+answer = """
+David paid 16 * $0.03 = $<<16*0.03=0.48>>0.48 for the bolts.
+David has $12.48 - $0.48 = $12 left.
+#### 12
+"""
+
+id_orig = 873
+
+id_shuffled = 30
+
+question_annotated = """
+{name,David} has {cur,$}{initial_amount,12.48} and wants to buy {quantity,16} {item,bolt}s from a bin at the {store_type,hardware} store. Each {item,bolt} costs {cur,$}{unit_price,0.03}. How much money does {name,David} have left after paying for the {item,bolt}s?
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- item = sample(["screw", "nail", "washer", "nut", "anchor"])
+- store_type = sample(["hardware", "home improvement", "construction supply"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(12.48, 105, 0.48)
+- $unit_price = arange(0.01, 1, 0.01)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: int(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name} paid {quantity} * {cur}{round(unit_price,2)} = {cur}<<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} for the {item}s.
+{name} has {cur}{initial_amount} - {cur}{round(quantity*unit_price,2)} = {cur}{int(initial_amount - quantity * unit_price)} left.
+#### {int(initial_amount - quantity * unit_price) }
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

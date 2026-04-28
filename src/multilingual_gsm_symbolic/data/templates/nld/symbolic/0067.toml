@@ -1,0 +1,44 @@
+question = "De auto van John gaat kapot. De auto weegt 1200 pond en hij heeft er bagage in die 250 pond weegt. Hij heeft ook zijn twee jonge kinderen die elk 75 pond wegen. Als de kracht om de auto te verplaatsen 1% van het gewicht is, hoeveel kracht heeft hij nodig om de auto duwen?"
+
+answer = """
+Zijn twee kinderen wegen 75*2=<<75*2=150>>150 pond
+Dus het totale gewicht van de auto en alles is 1200+250+150=<<1200+250+150=1600>>1600 pond
+Dus hij moet 1600*0.01=<<1600*0.01=16>>16 pond aan kracht leveren
+#### 16
+"""
+
+id_orig = 1275
+
+id_shuffled = 67
+
+question_annotated = """
+{name,John}'s {vehicle,auto} gaat kapot. De {vehicle,auto} weegt {weight_vehicle,1200} {unit,pond} en hij heeft er {item,bagage} in die weegt {weight_item,250} {unit,pond}. Hij heeft ook zijn {num_passengers_txt,twee} jonge {passenger_type,kinderen} die elk {weight_passenger,75} {unit,pond} wegen. Als de kracht om de {vehicle,auto} te verplaatsen {force_percent,1}% van het gewicht is, hoeveel kracht heeft hij nodig om de {vehicle,auto} te duwen?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(['auto', 'bus', 'vrachtwagen', 'SUV'])
+- item = sample(['bagage', 'boodschappen', 'uitrusting', 'meubilair'])
+- passenger_type = sample(['kinderen', 'vrienden', 'collega’s', 'teamgenoten'])
+- unit = sample(['pond', 'kilogram'])
+- $weight_vehicle = range(1000, 3000, 50)
+- $weight_item = range(100, 500, 25)
+- $weight_passenger = range(50, 100, 5)
+- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- $force_percent = range(1, 6)
+
+#conditions:
+- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+
+#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+"""
+
+answer_annotated = """
+Zijn {num_passengers_txt} {passenger_type} wegen {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
+Dus het totale gewicht van de {vehicle} en alles is {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
+Dus hij moet {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit} aan kracht leveren
+#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

@@ -1,0 +1,47 @@
+question = "Deandre a attrapé 3 thons lundi dernier, le premier thon qu’il a attrapé pèse 56 kilogrammes, le deuxième thon qu’il a attrapé pèse 46 kilogrammes, et le thon restant qu’il a attrapé pèse 26 kilogrammes. Si un kilogramme de thon coûte 0,5 $, combien gagnera-t-il après avoir vendu tous les thons au marché ?"
+
+answer = """
+Deandre gagnera 56*$0.5 = $<<56*0.5=28>>28 du premier thon.
+Il gagnera 46*$0.5 = $<<46*0.5=23>>23 pour le deuxième thon.
+Les thons restants sont 3-2 = <<3-2=1>>1. Il gagnera 26*$0.5 = $<<26*0.5=13>>13 pour chacun d’eux. Donc il gagnera 1 * 13 = <<1*13>>=13
+Ainsi, le montant total qu’il gagnera pour tous les thons est de $28 + $23 + $13= $<<28+23+13=64>>64.
+#### 64
+"""
+
+id_orig = 1207
+
+id_shuffled = 76
+
+question_annotated = """
+{name,Deandre} a attrapé {n,3} {fish,tuna}s {day} dernier, le premier {fish,tuna} qu’il a attrapé pèse {w1,56} {unit,kilogram}s, le deuxième {fish,tuna} qu’il a attrapé pèse {w2,46} {unit,kilogram}s, et le {fish,tuna} restant qu’il a attrapé pèse {w3,26} {unit,kilogram}s. Si un {unit,kilogram} de {fish,tuna} coûte {cur,$}{price,0.5}, combien gagnera-t-il après avoir vendu tous les {fish,tuna}s au marché ?
+
+#init:
+- name = sample(names_male)
+- fish = sample(["tune","salmon", "cod", "trout", "steelhead"])
+- day = sample(weekdays)
+- unit = sample(["kilogram", "pound", "kg"])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(0.25, 2.5, 0.25)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+
+answer_annotated = """
+{name} gagnera {w1}*{cur}{price} = {cur}<<{w1}*{price}={w1*price}>>{w1*price} du premier {fish}.
+Il gagnera {w2}*{cur}{price} = {cur}<<{w2}*{price}={w2*price}>>{w2*price} pour le deuxième {fish}.
+Les {fish}s restants sont {n}-2 = <<{n}-2={n-2}>>{n-2}. Il gagnera {w3}*{cur}{price} = {cur}<<{w3}*{price}={w3*price}>>{w3*price} pour chacun d’eux. Donc il gagnera {n-2} * {w3*price} = <<{n-2}*{w3*price}>>={((n-2)*w3*price)}
+Ainsi, le montant total qu’il gagnera pour tous les {fish}s est {cur}{w1*price} + {cur}{w2*price} + {cur}{((n-2)*w3*price)}= {cur}<<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)}.
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

@@ -1,0 +1,41 @@
+question = "Det tar Karen 10 minutter å fullføre et kryssord og 5 minutter å fullføre en sudoku. I løpet av helgen løste hun 3 kryssord og 8 sudoku. Hvor mye tid brukte hun på å spille disse spillene?"
+
+answer = """
+Det tar 10 minutter å fullføre et kryssord, og hun fullførte 3, som totalt blir 10*3 = <<10*3=30>>30 minutter
+Det tar 5 minutter å fullføre en sudoku, og hun fullførte 8, som totalt blir 5*8 = <<5*8=40>>40 minutter
+Hun brukte 30 minutter på kryssord og 40 minutter på sudoku, totalt 30+40 = <<30+40=70>>70 minutter
+#### 70
+"""
+
+id_orig = 220
+
+id_shuffled = 68
+
+question_annotated = """
+Det tar {name,Karen} {t1,10} minutter å fullføre et {game1,kryssord} og {t2,5} minutter å fullføre en {game2,sudoku}. I løpet av {period,helgen} løste hun {n1,3} {game1,kryssord} og {n2,8} {game2,sudoku}. Hvor mye tid brukte hun på å spille disse spillene?
+
+#init:
+- name = sample(names_female)
+- game1, game2 = sample(["ordgåde", "sudoku", "skak opgave", "gåde", "krydsogtværs"], 2)
+- period = sample(["weekenden", "ferien", "helligdagen", "fridagen", "ugen"])
+- $t1 = range(5, 30)
+- $t2 = range(3, 20)
+- $n1 = range(2, 10)
+- $n2 = range(4, 15)
+
+#conditions:
+- t1 > t2
+
+#answer: t1*n1 + t2*n2
+"""
+
+answer_annotated = """
+Det tar {t1} minutter å fullføre et {game1}, og hun fullførte {n1}, som totalt blir {t1}*{n1} = <<{t1}*{n1}={t1*n1}>>{t1*n1} minutter
+Det tar {t2} minutter å fullføre en {game2}, og hun fullførte {n2}, som totalt blir {t2}*{n2} = <<{t2}*{n2}={t2*n2}>>{t2*n2} minutter
+Hun brukte {t1*n1} minutter på {game1} og {t2*n2} minutter på {game2}, totalt {t1*n1}+{t2*n2} = <<{t1*n1}+{t2*n2}={t1*n1 + t2*n2}>>{t1*n1 + t2*n2} minutter
+#### {t1*n1 + t2*n2}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

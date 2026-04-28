@@ -7,7 +7,7 @@ from multilingual_gsm_symbolic.load_data import load_replacements
 
 @pytest.mark.parametrize("template_file", get_template_files())
 def test_template_formatting_matches_original(template_file):
-    annotated_question = AnnotatedQuestion.from_json(template_file)
+    annotated_question = AnnotatedQuestion.from_toml(template_file)
     replacements = load_replacements(annotated_question.language)
     default_assignments = annotated_question._get_full_default_assignments(replacements)
 

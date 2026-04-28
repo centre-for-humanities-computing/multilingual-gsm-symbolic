@@ -1,0 +1,45 @@
+question = "Niels sammelt Geld für einen Schulausflug. Er hat die Schule um Hilfe gebeten, und sie hat beschlossen, die Hälfte der Kosten des Schulausflugs zu übernehmen. Wie viel Geld fehlt Niels, wenn er 350 kr hat und der Schulausflug 2000 kr kostet?"
+
+answer = """
+Niels' Schule hat beschlossen, 2000*1/2=<<2000*1/2=1000>>1000 kr für seinen Schulausflug zu bezahlen.
+Insgesamt hat Niels 1000 + 350 = <<1000+350=1350>>1350 kr für seinen Schulausflug gedeckt.
+Deshalb braucht Niels 2000 - 1350 = <<2000-1350=650>>650 kr mehr für den Schulausflug.
+#### 650
+"""
+
+id_orig = 788
+
+id_shuffled = 35
+
+question_annotated = """
+{name,Niels} sammelt Geld für einen {event,schulausflug}. Er hat {organization,schule} um Hilfe gebeten, und sie hat beschlossen, {fraction_txt,die Hälfte} der Kosten des {event,schulausflug}s zu übernehmen. Wie viel Geld fehlt {name,Niels}, wenn er {current,350} {cur,kr} hat und der {event,schulausflug} {total,2000} {cur,kr} kostet?
+
+#init:
+- name = sample(names_male)
+- event = sample(["ekskursion", "sportsturnering", "konference", "festival", "videnskabsmesse"])
+- cur = sample(currencies_sym)
+- organization = sample(["skole", "kommune", "lokale velgørenhedsorganisation", "ungdomsklub", "forældre"])
+- $fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(50, 1350, 50)
+- $total = range(1350, 7000, 50)
+
+#conditions:
+- total > current
+- is_int(total * (fraction_val))
+- is_int(total - (total * (fraction_val) + current))
+
+#answer: total - (total * (fraction_val) + current)
+"""
+
+answer_annotated = """
+{name}' {organization} hat beschlossen, {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur} für seinen {event} zu bezahlen.
+Insgesamt hat {name} {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} für seinen {event} gedeckt.
+Deshalb braucht {name} {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} mehr für den {event}.
+#### {total-(total*(fraction_val)+current)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

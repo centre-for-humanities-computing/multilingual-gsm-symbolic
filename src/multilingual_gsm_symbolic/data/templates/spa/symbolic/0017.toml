@@ -1,0 +1,39 @@
+question = "La abuela camina 3 kilómetros cada día en su ruta de senderismo favorita, que incluye 2 kilómetros en la playa y 1 kilómetro en la acera. En la acera, la abuela camina dos veces más rápido que en la playa. Si 40 minutos de su caminata transcurren en la playa, ¿cuánto tiempo tarda en completar toda la caminata de 3 kilómetros, en minutos?"
+
+answer = "En la playa, la abuela camina a una velocidad de 2 kilómetros por 40 minutos, o 2/40 = 1/20 kilómetros por minuto. En la acera, camina dos veces más rápido que en la arena, o 2*1/20 = 1/10 kilómetros por minuto. Para caminar 1 kilómetro en la acera, tarda 1/(1/10)=<<1/(1/10)=10>>10 minutos. Así que, en total, la abuela tarda 40+10=<<40+10=50>>50 minutos en recorrer su ruta favorita. #### 50"
+
+id_orig = 1133
+
+id_shuffled = 17
+
+question_annotated = """
+{name,la abuela} camina {n,3} {unit,kilómetros} cada día en su ruta de senderismo favorita, que incluye {m,2} {unit,kilómetros} en la playa y {k,1} {unit}(s) en la acera. En la acera, {name,la abuela} camina {mult_txt,dos veces} más rápido que en la playa. Si {t,40} minutos de su caminata transcurren en la playa, ¿cuánto tiempo tarda en completar toda la caminata de {n,3}-{unit, kilómetros}, en minutos?
+
+#init:
+- name = sample(names_female)
+- unit = sample(length_lg)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(3, 40)
+- $m = range(2, 20)
+- $k = range(1, 20)
+- $t = range(40, 70)
+#conditions:
+- m + k == n
+- m < t
+- mult_val *m < t
+- divides(t, m)
+- is_int(k / (mult_val*m/t))
+#answer: {t+(k/(mult_val*m/t))} 
+"""
+
+answer_annotated = """
+En la playa, {name} camina a una velocidad de {m} {unit}s por {t} minutos, o {m}/{t} = {Fraction(m/t)} {unit}s por minuto.
+En la acera, camina {mult_txt} más rápido que cuando está en la arena, o {mult_val}*{Fraction(m/t)} = {mult_val*m/t} {unit}s por minuto.
+Para caminar {k} {unit}(s) en la acera, tarda {k}/{mult_val*m/t} = <<{k}/{mult_val*m/t}={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minutos.
+Así que, en total, {name} tarda {t}+{k/(mult_val*m/t)} = <<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minutos en recorrer su ruta favorita.
+#### {t+(k/(mult_val*m/t))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "spa"

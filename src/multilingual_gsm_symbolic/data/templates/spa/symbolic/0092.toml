@@ -1,0 +1,47 @@
+question = "El príncipe Thaddeus mató 100 dragones con su poderosa espada, mientras que el príncipe Arthur, usando una lanza, mató tres cuartas partes de los dragones que mató el príncipe Thaddeus. Usando un hacha de hierro oxidado, el príncipe Walter mató el doble de dragones que el príncipe Arthur. Pero el príncipe Bruce, habiendo olvidado su espada en casa, mató una quinta parte de los dragones que mató el príncipe Walter usando una lima de clavos. ¿Cuántos dragones ha matado el príncipe Bruce?"
+
+answer = """
+El príncipe Arthur mató tres cuartas partes de los dragones que mató el príncipe Thaddeus, o 100*3/4=<<100*3/4=75>>75 dragones.
+El príncipe Walter mató el doble de dragones que el príncipe Arthur, o 2*75=<<2*75=150>>150 dragones.
+El príncipe Bruce mató una quinta parte de los dragones que mató el príncipe Walter, o 150*1/5=<<150*1/5=30>>30 dragones.
+#### 30
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+El príncipe {name1,Thaddeus} mató {n1,100} {creature,dragones} con su poderosa {weapon1,espada}, mientras que el príncipe {name2,Arthur}, usando una {weapon2,lanza}, mató {frac1_txt,tres cuartas partes} de los {creature,dragones} que mató el príncipe {name1,Thaddeus}. Usando una {weapon3,hacha de hierro oxidado}, el príncipe {name3,Walter} mató {mult1_txt,el doble} de {creature,dragones} que el príncipe {name2,Arthur}. Pero el príncipe {name4,Bruce}, habiendo olvidado su {weapon4,espada} en casa, mató {frac2_txt,una quinta parte} de los {creature,dragones} que mató el príncipe {name3,Walter} usando una {weapon5,lima de clavos}. ¿Cuántos {creature,dragones} ha matado el príncipe {name4,Bruce}?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["ogres", "trolls", "goblins", "orcos", "gigantes"])
+- weapon1 = sample(["sword", "mace", "battle axe", "war hammer"])
+- weapon2 = sample(["spear", "lance", "javelin", "halberd"])
+- weapon3 = sample(["rusty iron axe", "wooden club", "stone hammer", "bone dagger"])
+- weapon4 = sample(["sword", "axe", "mace", "hammer"])
+- weapon5 = sample(["nail file", "butter knife", "wooden spoon", "feather"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+El príncipe {name2} mató {frac1_txt} de los {creature} que mató el príncipe {name1}, o {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+El príncipe {name3} mató {mult1_txt} de los {creature} que mató el príncipe {name2}, o {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+El príncipe {name4} mató {frac2_txt} de los {creature} que mató el príncipe {name3}, o {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "spa"

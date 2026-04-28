@@ -1,0 +1,38 @@
+question = "Charlie ha tre volte tanti amici su Facebook quanti ne ha Dorothy. James ha quattro volte tanti amici su Facebook quanti ne ha Dorothy. Se Charlie ha 12 amici su Facebook, quanti amici su Facebook ha James?"
+
+answer = """
+Dorothy ha 12/3 = <<12/3=4>>4 amici su Facebook.
+James ha 4*4 = <<4*4=16>>16 amici su Facebook.
+#### 16
+"""
+
+id_orig = 149
+
+id_shuffled = 90
+
+question_annotated = """
+{name1,Charlie} ha {mult1_txt,tre} volte tanti amici su {platform,Facebook} quanti ne ha {name2,Dorothy}. {name3,James} ha {mult2_txt,quattro} volte tanti amici su {platform,Facebook} quanti ne ha {name2,Dorothy}. Se {name1,Charlie} ha {n,12} amici su {platform,Facebook}, quanti amici su {platform,Facebook} ha {name3,James}?
+
+#init:
+- name1, name2, name3 = sample(names, 3)
+- platform = sample(["Instagram", "Twitter", "LinkedIn", "TikTok", "Snapchat"])
+- mult1_txt, mult1_val = range_str(1,6,1,numbers)
+- mult2_txt, mult2_val = range_str(1,6,1,numbers)
+- $n = range(10, 201)
+
+#conditions:
+- mult2_val != mult1_val
+- is_int(n / mult1_val)
+
+#answer: int((n / mult1_val) * mult2_val)
+"""
+
+answer_annotated = """
+{name2} ha {n}/{mult1_val} = <<{n}/{mult1_val}={n//mult1_val}>>{n//mult1_val} amici su {platform}.
+{name3} ha {mult2_val}*{n//mult1_val} = <<{mult2_val}*{n//mult1_val}={int((n / mult1_val) * mult2_val)}>>{int((n / mult1_val) * mult2_val)} amici su {platform}.
+#### {int((n / mult1_val) * mult2_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

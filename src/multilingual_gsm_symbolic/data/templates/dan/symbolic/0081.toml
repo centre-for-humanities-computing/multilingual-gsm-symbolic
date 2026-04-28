@@ -1,0 +1,40 @@
+question = "Påskeægs-jagtholdet gemte 100 æg. Jensen-tvillingerne fandt hver 30 æg. Alle de andre æg undtagen 10 blev fundet af deres venner. Hvor mange æg fandt vennerne?"
+
+answer = """
+Jensen-tvillingerne fandt 30 * 2 = <<30*2=60>>60 æg.
+Antallet der forblev skjult var 100 - 60 = <<100-60=40>>40 æg
+Da 10 æg ikke blev fundet, betyder det, at vennerne fandt 40 - 10 = 30 æg.
+#### 30
+"""
+
+id_orig = 1025
+
+id_shuffled = 81
+
+question_annotated = """
+Påskeægs-{event,jagtholdet} gemte {total,100} {item,æg}. {family,Jensen}-tvillingerne fandt hver {n,30} {item,æg}. Alle de andre {item,æg} undtagen {m,10} blev fundet af deres venner. Hvor mange {item,æg} fandt vennerne?
+
+#init:
+- event = sample(["jægerne", "skattejægerne", "deltagerne"])
+- item = sample(["æg", "godter", "legetøj", "mønter", "slik", "goder"])
+- family = sample(["Madsen", "Hansen", "Æbelgaard", "Poulsen", "Christensen"])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+
+answer_annotated = """
+{family}-tvillingerne fandt {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
+Antallet der forblev skjult var {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
+Da {m} {item} ikke blev fundet, betyder det, at vennerne fandt {total-2*n} - {m} = {total - 2*n - m} {item}.
+#### {total - 2*n - m}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

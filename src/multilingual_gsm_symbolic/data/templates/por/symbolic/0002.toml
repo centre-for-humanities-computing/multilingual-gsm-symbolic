@@ -1,0 +1,41 @@
+question = "Anders lança um dado de seis lados. Quanto mais provável é (expresso em percentagem) que ele obtenha um número maior que 3 do que obter dois números pares seguidos?"
+
+answer = """
+Há 3 números maiores que 3 no dado, por isso a probabilidade de obter um deles é 3/6=50%.
+A probabilidade de obter um número par é 50%, por isso a probabilidade de obter dois seguidos é 50% * 50% = 25%.
+A diferença entre estas duas probabilidades é 50% - 25% = 25%.
+#### 25
+"""
+
+id_orig = 184
+
+id_shuffled = 2
+
+question_annotated = """
+{name,Anders} lança um dado de {sides_txt,seis lados}. Quanto mais provável é (expresso em percentagem) que ele obtenha um número maior que {target,3} do que obter dois números {z,pares} seguidos?
+
+#init:
+- name=sample(names_male)
+- sides_txt, sides_val = sample([("four-sided", 4), ("six-sided", 6), ("ten-sided", 10), ("twelve-sided", 12), ("twenty-sided", 20), ("d4", 4),  ("d6", 6), ("d8", 8), ("d10", 10), ("d12", 12), ("d20", 20), ("4-sided", 4),  ("6-sided", 6), ("8-sided", 8), ("10-sided", 10), ("12-sided", 12), ("20-sided", 20) ] * 3)
+- $target = range(1, 20)
+- z = sample(["lige", "ulige"])
+
+#conditions: 
+- target < sides_val
+- divides(sides_val-target, target)
+- is_int((sides_val-target)/sides_val * 100)
+-  int((sides_val-target)/sides_val * 100) > 25
+
+#answer: int((sides_val-target)/sides_val * 100) - 25
+"""
+
+answer_annotated = """
+Há {sides_val-target} números maiores que {target} no dado, por isso a probabilidade de obter um deles é {sides_val-target}/{sides_val}={int((sides_val-target)/sides_val * 100)}%.
+A probabilidade de obter um número {z} é 50%, por isso a probabilidade de obter dois seguidos é 50% * 50% = 25%.
+A diferença entre estas duas probabilidades é {int((sides_val-target)/sides_val * 100)}% - 25% = { int((sides_val-target)/sides_val * 100) - 25}%.
+#### { int((sides_val-target)/sides_val * 100) - 25}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "por"

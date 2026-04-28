@@ -1,0 +1,40 @@
+question = "Die Familie Slot ist damit beschäftigt, Kekse zu backen. Bisher haben sie 7995 Kekse gemacht. Sie haben 2595 Zitronen-Kekse, 3075 Haferflocken-Kekse und einige Schokoladen-Kekse. Wie viele Schokoladen-Kekse haben sie gemacht?"
+
+answer = """
+Die Gesamtzahl der Zitronen- und Haferflocken-Kekse ist 2595 + 3075 = <<2595+3075=5670>>5670.
+Daher haben sie 7995 - 5670 = <<7995-5670=2325>>2325 Schokoladen-Kekse gemacht.
+#### 2325
+"""
+
+id_orig = 1305
+
+id_shuffled = 83
+
+question_annotated = """
+Die Familie {family,Slot} ist damit beschäftigt, {item,Kekse} zu backen. Bisher haben sie {total,7995} {item,Kekse} gemacht. Sie haben {n1,2595} {flavor1,Zitronen-Kekse}, {n2,3075} {flavor2,Haferflocken-Kekse} und einige {flavor3,Schokoladen-Kekse}. Wie viele {flavor3,Schokoladen-Kekse} haben sie gemacht?
+
+#init:
+- family = sample(["Nørgaard", "Højby", "Jensen", "Bruun", "Christensen"])
+- item = sample(["muffins", "cupcakes", "sandkager", "brownies"])
+- flavor1, flavor2, flavor3 = sample(["vanilje", "jordbær", "blåbær", "citron", "appelsin"], 3)
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3100, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+
+answer_annotated = """
+Die Gesamtzahl der {flavor1} und {flavor2} {item} ist {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}.
+Daher haben sie {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {flavor3} gemacht.
+#### {total-(n1+n2)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

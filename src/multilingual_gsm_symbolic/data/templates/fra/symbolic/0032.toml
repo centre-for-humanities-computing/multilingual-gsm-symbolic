@@ -1,0 +1,47 @@
+question = "Mme Jensen cherche une maison qui ne dépassera pas son budget de 2.700.000 kr. Elle a vu un bien immobilier dont le prix de vente est de 2.370.000 kr. En plus, l’acheteur doit payer des frais d’agence, qui représentent 5% du prix de vente, ainsi que des frais de transfert, qui s’élèvent à 12% du prix de vente total. De combien le prix total de la maison dépasse-t-il le budget de Mme Jensen ?"
+
+answer = """
+Les frais d’agence sont de 2.370.000 kr*5/100 = <<2370000*5/100=118500>>118.500 kr.
+Les frais de transfert sont de 2.370.000 kr*12/100 = <<2370000*12/100=284400>>284.400 kr.
+Le prix total de la maison est de 2.370.000 kr + 118.500 kr + 284.400 kr = 2.772.900 kr.
+Donc, cela fait 2.772.900 kr - 2.700.000 kr = <<2772900-2700000=72900>>72.900 kr de plus que le budget de Mme Jensen.
+#### 72900
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name, Mme Jensen} cherche une {property_type, maison} qui ne dépassera pas son budget de {budget, 2700000} kr. Elle a vu un bien immobilier dont le prix de vente est de {price, 2370000} kr. En plus, l’acheteur doit payer des frais d’agence, qui représentent {brokerage_fee, 5}% du prix de vente, ainsi que des frais de transfert, qui s’élèvent à {transfer_fee, 12}% du prix de vente total. De combien le prix total de la maison dépasse-t-il le budget de {name, Mme Jensen} ?
+
+#init:
+- name = sample(["Fru Madsen", "Frøken Hansen", "Dr. Sørensen", "Fru Andersen"])
+- property_type = sample(["maison", "appartement", "copropriété", "maison de ville"])
+- $budget = range(2000000, 3410000, 100000)
+- $price = range(1700000, 3050000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price * (1 + brokerage_fee/100 + transfer_fee/100) > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)
+"""
+
+answer_annotated = """
+Les frais d’agence sont de {price} kr*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} kr.
+Les frais de transfert sont de {price} kr*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} kr.
+Le prix total de la {property_type} est de {price} kr + {int(price*brokerage_fee/100)} kr + {int(price*transfer_fee/100)} kr = {int(price * (1 + brokerage_fee/100 + transfer_fee/100))} kr.
+Donc, cela fait {int(price * (1 + brokerage_fee/100 + transfer_fee/100))} kr - {budget} kr = <<{int(price * (1 + brokerage_fee/100 + transfer_fee/100))}-{budget}={int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)}>>{int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)} kr de plus que le budget de {name}.
+#### {int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fra"

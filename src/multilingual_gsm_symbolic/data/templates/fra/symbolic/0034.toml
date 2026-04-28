@@ -1,0 +1,46 @@
+question = "M. Hansen a vendu sa maison pour 2.700.000 kr. Il a payé des frais de transfert représentant 3% du prix de vente et a aussi payé des frais d'agent immobilier de 5% du prix de vente. S'il a aussi payé 1.700.000 kr pour le solde restant du prêt de la maison, quel est le produit net de M. Hansen provenant de la vente de la maison ?"
+
+answer = """
+M. Hansen a payé 2.700.000 kr*3/100 = <<2700000*3/100=81000>>81.000 kr pour les frais de transfert.
+Il a payé 2.700.000 kr*5/100 = <<2700000*5/100=135000>>135.000 kr pour les frais d'agent immobilier.
+Donc M. Hansen a payé au total 81.000 kr + 135.000 kr + 1.700.000 kr = <<81000+135000+1700000=1916000>>1.916.000 kr pour les frais de transfert, les frais d'agent immobilier et le montant du prêt.
+Par conséquent, le produit net de M. Hansen est de 2.700.000 kr - 1.916.000 kr = <<2700000-1916000=784000>>784.000 kr.
+#### 784000
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{title,M.} {name,Hansen} a vendu sa {property,maison} pour {price,2700000} kr. Il a payé des frais de {fee1_name,transfert} représentant {fee1_percent,3}% du prix de vente et a aussi payé des frais d'{fee2_name,agent immobilier} de {fee2_percent,5}% du prix de vente. S'il a aussi payé {loan,1700000} kr pour le solde restant du prêt de la {property,maison}, quel est le produit net de {title,M.} {name,Hansen} provenant de la vente de la {property,maison} ?
+
+#init:
+- title = sample(["Hr.", "Prof.", "Dr."])
+- name = sample(["Christensen", "Johnson", "Løkke", "Jørgensen", "Rasmussen", "Frederiksen", "Johansen", "Møller", "Mortensen"])
+- property = sample(["hus", "lejlighed", "villa", "sommerhus", "andelsbolig"])
+- fee1_name = sample(["overdragelses", "registrerings", "advokats"])
+- fee2_name = sample(["mægler", "agent", "ejensomsmægler"])
+- $price = range(1300000, 6700000, 70000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(700000, 4700000, 100000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{title} {name} a payé {price} kr*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{price * fee1_percent // 100} kr pour les frais de {fee1_name}.
+Il a payé {price} kr*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{price * fee2_percent // 100} kr pour les frais d'{fee2_name}.
+Donc {title} {name} a payé au total {price * fee1_percent // 100} kr + {price * fee2_percent // 100} kr + {loan} kr = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{price * (fee1_percent + fee2_percent) // 100 + loan} kr pour les frais de {fee1_name}, les frais d'{fee2_name} et le montant du prêt.
+Par conséquent, le produit net de {title} {name} est de {price} kr - {price * (fee1_percent + fee2_percent) // 100 + loan} kr = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} kr.
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fra"

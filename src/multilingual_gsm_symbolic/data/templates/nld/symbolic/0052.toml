@@ -1,0 +1,48 @@
+question = "Craig heeft 2 biljetten van $20. Hij koopt zes waterpistolen voor $2 per stuk. Hij koopt ook 3 pakken waterballonnen voor $3 per stuk. Hoeveel geld heeft hij nog over?"
+
+answer = """
+Craig begint met 2 * $20 = $<<2*20=40>>40.
+Craig geeft 6*$2 = $<<6*2=12>>12 uit aan waterpistolen.
+Craig geeft 3 pakken waterballonnen * $3 = $<<3*3=9>>9 uit aan waterballonnen.
+Totaal heeft Craig $12 + $9 = $<<12+9=21>>21 uitgegeven.
+Craig heeft $40 - $21 = $<<40-21=19>>19 over.
+#### 19
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name,Craig} heeft {n,2} {cur,$}{bill,20} biljetten. Hij koopt {m_txt,zes} {item1,waterpistool}s voor {cur,$}{p1,2} per stuk. Hij koopt ook {k,3} pakken {item2,waterballon}s voor {cur,$}{p2,3} per stuk. Hoeveel geld heeft hij nog over?
+
+#init:
+- name = sample(names_male)
+- $bill = sample([5, 10, 20, 50, 100])
+- item1 = sample(["toy car", "action figure", "coloring book", "puzzle", "board game"])
+- item2 = sample(["sticker", "candy bar", "trading card", "pencil", "eraser"])
+- cur = sample(currencies_sym)
+- $n = range(1, 10)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+
+#conditions:
+- n * int(bill) > m_val * p1 + k * p2
+
+#answer: n * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} begint met {n} * {cur}{bill} = {cur}<<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)}.
+{name} geeft {m_val}*{cur}{p1} = {cur}<<{m_val}*{p1}={m_val*p1}>>{m_val*p1} uit aan {item1}s.
+{name} geeft {k} pakken {item2}s * {cur}{p2} = {cur}<<{k}*{p2}={k*p2}>>{k*p2} uit aan {item2}s.
+Totaal heeft {name} {cur}{m_val*p1} + {cur}{k*p2} = {cur}<<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} uitgegeven.
+{name} heeft {cur}{n*int(bill)} - {cur}{m_val*p1+k*p2} = {cur}<<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} over.
+#### {n*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

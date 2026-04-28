@@ -1,0 +1,39 @@
+question = "De oppervlakte van Bjørns rechthoekige slaapkamer is 33 vierkante meter. Als de lengte van zijn kamer 300 cm is, wat is de omtrek van de kamer in meter?"
+
+answer = """
+De lengte van de kamer is 300 cm * 1/100 meter/cm = <<300*(1/100)=3>>3 meter.
+De breedte van de kamer is 33 vierkante meter / 3 meter = <<33/3=11>>11 meter.
+De omtrek van de kamer is 2*(11+3) = 28 meter
+#### 28
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+De oppervlakte van {name,Bjørn}s rechthoekige {room_type,slaapkamer} is {area,33} vierkante meter. Als de lengte van zijn kamer {length,300} cm is, wat is de omtrek van de kamer in meter?
+
+#init:
+- name = sample(names_male)
+- room_type = sample(["woonkamer", "werkkamer", "eetkamer", "kinderkamer"])
+- $area = range(18, 110)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+
+answer_annotated = """
+De lengte van de kamer is {length} cm * 1/100 meter/cm = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} meter.
+De breedte van de kamer is {area} vierkante meter / {length * (1/100)} meter = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} meter.
+De omtrek van de kamer is 2({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))}
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

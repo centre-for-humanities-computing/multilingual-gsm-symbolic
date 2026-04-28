@@ -1,0 +1,45 @@
+question = "Watson lavora un turno di 10 ore ogni giorno, cinque giorni a settimana. Guadagna 10 dollari all’ora e riceve un bonus di 300 dollari ogni settimana se l’azienda va molto bene. Quanto denaro ha guadagnato Watson ad aprile se l’azienda è andata molto bene per tutto il mese?"
+
+answer = """
+In un giorno, Watson guadagna 10 * 10 = $<<10*10=100>>100
+Se lavora cinque giorni a settimana, il numero totale di giorni per l’intero mese è 5*4=<<5*4=20>>20 giorni.
+Dato che guadagna $100 al giorno, l’importo totale per l’intero mese è 20 * 100= $<<20*100=2000>>2000.
+Inoltre ha ricevuto un bonus di 300 * 4 = $<<300*4=1200>>1200 perché l’azienda è andata molto bene in tutte le settimane di aprile.
+Alla fine di aprile, ha guadagnato 2000 + 1200 = $<<2000+1200=3200>>3200.
+#### 3200
+"""
+
+id_orig = 304
+
+id_shuffled = 60
+
+question_annotated = """
+{name,Watson} lavora un turno di {h,10} ore ogni giorno, {d_txt,cinque} giorni a settimana. Guadagna {cur,$}{r,10} all’ora e riceve un bonus di {cur,$}{b,300} ogni settimana se l’azienda va molto bene. Quanto denaro ha guadagnato {name,Watson} a {month,April} se l’azienda è andata molto bene per tutto il mese?
+
+#init:
+- name = sample(names_male)
+- month = sample(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+- cur = sample(currencies_sym)
+- $h = range(6, 13)
+- d_txt, d_val = range_str(3, 7, 1, numbers)
+- $r = range(8, 31)
+- $b = range(100, 601)
+
+#conditions:
+- is_int(h * r)
+
+#answer: h * r * d_val * 4 + b * 4
+"""
+
+answer_annotated = """
+In un giorno, {name} guadagna {h} * {r} = {cur}<<{h}*{r}={h*r}>>{h*r}
+Se lavora {d_txt} giorni a settimana, il numero totale di giorni per l’intero mese è {d_val}*4=<<{d_val}*4={d_val*4}>>{d_val*4} giorni.
+Dato che guadagna {cur}{h*r} al giorno, l’importo totale per l’intero mese è {d_val*4} * {h*r}= {cur}<<{d_val*4}*{h*r}={d_val*4*h*r}>>{d_val*4*h*r}.
+Inoltre ha ricevuto un bonus di {b} * 4 = {cur}<<{b}*4={b*4}>>{b*4} perché l’azienda è andata molto bene in tutte le settimane di {month}.
+Alla fine di {month}, ha guadagnato {d_val*4*h*r} + {b*4} = {cur}<<{d_val*4*h*r}+{b*4}={d_val*4*h*r+b*4}>>{d_val*4*h*r+b*4}.
+#### {d_val*4*h*r+b*4}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

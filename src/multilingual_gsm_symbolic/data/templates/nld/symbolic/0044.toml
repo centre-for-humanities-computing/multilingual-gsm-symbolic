@@ -1,0 +1,36 @@
+question = "Er zijn 6 meisjes in het park. Als er twee keer zoveel jongens in het park zijn, hoeveel kinderen zijn er dan in het park?"
+
+answer = """
+Er zijn 6 meisjes*2 jongens/meisjes = <<6*2=12>>12 jongens in het park.
+In totaal zijn er 6 meisjes + 12 jongens = <<6+12=18>>18 kinderen in het park
+#### 18
+"""
+
+id_orig = 365
+
+id_shuffled = 44
+
+question_annotated = """
+Er zijn {n,6} meisjes in {place,het park}. Als er {mult_txt,twee keer} zoveel jongens in {place,het park} zijn, hoeveel kinderen zijn er dan in {place,het park}?
+
+#init:
+- place = sample(["parken", "gården", "haven", "legepladsen", "skolegården"])
+- $n = range(5, 51)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- is_int(n * mult_val + 1)
+- n * (mult_val + 1) <= 200
+
+#answer: n * (mult_val + 1)
+"""
+
+answer_annotated = """
+Er zijn {n} meisjes*{mult_val} jongens/meisjes = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} jongens in {place}.
+In totaal zijn er {n} meisjes + {n*mult_val} jongens = <<{n}+{n*mult_val}={n*(mult_val+1)}>>{n*(mult_val+1)} kinderen in {place}
+#### {n*(mult_val+1)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

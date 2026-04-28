@@ -1,0 +1,47 @@
+question = "Jeg har 10 liter appelsindrik, der er to tredjedele vand og jeg ønsker at tilføje det til 15 liter ananasdrik, der er tre femtedele vand. Men da jeg hælder det, spilder jeg fire liter af appelsindrikken. Hvor meget vand er der i de resterende 24 liter?"
+
+answer = """
+Der er 15*3/5=<<15*3/5=9>>9 liter vand fra de 15 liter ananasdrik.
+Efter fire liter af appelsindrikken blev spildt, var der 10-4=<<10-4=6>>6 liter appelsindrik tilbage.
+Ud af de 6 liter er 6*2/3=<<6*2/3=4>>4 liter vand.
+Dermed er der i alt 9 + 4 = <<9+4=13>>13 liter vand ud af de 24 liter.
+#### 13
+"""
+
+id_orig = 20
+
+id_shuffled = 59
+
+question_annotated = """
+Jeg har {n1,10} liter {fruit1,appelsin}drik, der er {frac1_txt,to tredjedele} vand og jeg ønsker at tilføje det til {n2,15} liter {fruit2,ananas}drik, der er {frac2_txt,tre femtedele} vand. Men da jeg hælder det, spilder jeg {spill_txt,fire} liter af {fruit1,appelsin}drikken. Hvor meget vand er der i de resterende {total,24} liter?
+
+#init:
+- fruit1, fruit2 = sample(["æble", "vindrue", "mango", "fersken", "citron"], 2)
+- $n1 = range(9, 21)
+- $n2 = range(12, 31)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+- spill_txt, spill_val = range_str(3, 7, 1, numbers)
+- $total = range(20, 51)
+
+#conditions:
+- spill_val < n1
+- n1 + n2 - spill_val == total
+- is_int(n2 * frac2_val)
+- is_int((n1 - spill_val) * frac1_val)
+- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+
+#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+"""
+
+answer_annotated = """
+Der er {n2}*{frac2_val}=<<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val} liter vand fra de {n2} liter {fruit2}drik.
+Efter {spill_txt} liter af {fruit1}drikken blev spildt, var der {n1}-{spill_val}=<<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} liter {fruit1}drik tilbage.
+Ud af de {n1-spill_val} liter er {n1-spill_val}*{frac1_val}=<<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} liter vand.
+Dermed er der i alt {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} liter vand ud af de {total} liter.
+#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

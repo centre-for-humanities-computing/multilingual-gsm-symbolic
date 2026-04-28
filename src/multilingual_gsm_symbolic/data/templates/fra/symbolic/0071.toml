@@ -1,0 +1,44 @@
+question = "Nate nourrit son bétail avec du foin. Chaque chèvre a besoin de 5 livres, et chaque lama a besoin de 3 livres de moins que le double de la quantité dont chaque chèvre a besoin. S’il y a 15 chèvres et 12 lamas, de combien de livres de foin Nate a-t-il besoin ?"
+
+answer = """
+D’abord, on calcule la quantité de foin dont chaque lama a besoin : 5 livres * 2 - 3 = <<5*2-3=7>>7 livres/lama
+Ensuite, on calcule la quantité totale de foin dont les lamas ont besoin : 7 livres/lama * 12 lamas = <<7*12=84>>84 livres
+Maintenant, on calcule la quantité totale de foin dont les chèvres ont besoin : 5 livres/chèvre * 15 chèvres = <<5*15=75>>75 livres
+Enfin, on additionne les deux quantités de foin pour obtenir le total : 84 livres + 75 livres = <<84+75=159>>159 livres
+#### 159
+"""
+
+id_orig = 937
+
+id_shuffled = 71
+
+question_annotated = """
+{name,Nate} nourrit son bétail avec {food,foin}. Chaque {animal1,chèvre} a besoin de {n1,5} {unit,livres}, et chaque {animal2,lama} a besoin de {n2,3} {unit,livres} de moins que le double de la quantité dont chaque {animal1,chèvre} a besoin. S’il y a {k1,15} {animal1,chèvres} et {k2,12} {animal2,lamas}, de combien de {unit,livres} de {food,foin} {name,Nate} a-t-il besoin ?
+
+#init:
+- name = sample(names_male)
+- food = sample(["hay", "grain", "feed", "silage"])
+- animal1, animal2 = sample(["goat", "cow", "horse", "donkey", "llama", "alpaca", "pig", "turkey", "duck"], 2)
+- unit = sample(["pounds", "kilograms", "kg"])
+- $n1 = range(3, 15)
+- $n2 = range(1, 10)
+- $k1 = range(10, 50)
+- $k2 = range(10, 50)
+
+#conditions:
+- 2*n1 - n2 > 0
+
+#answer: k1*n1 + k2*(2*n1 - n2)
+"""
+
+answer_annotated = """
+D’abord, on calcule la quantité de {food} dont chaque {animal2} a besoin : {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2}
+Ensuite, on calcule la quantité totale de {food} dont les {animal2} ont besoin : {2*n1-n2} {unit}/{animal2} * {k2} {animal2}s = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
+Maintenant, on calcule la quantité totale de {food} dont les {animal1} ont besoin : {n1} {unit}/{animal1} * {k1} {animal1}s = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
+Enfin, on additionne les deux quantités de {food} pour obtenir le total : {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
+#### {k1*n1 + k2*(2*n1 - n2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

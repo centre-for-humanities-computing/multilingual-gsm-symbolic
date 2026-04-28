@@ -1,0 +1,45 @@
+question = "Pat has a flower bed that is 111 feet long. Pat wants to fill her flower bed with plants. Pat's flowers grow 12 inches wide so she needs to leave 1.5 feet between every plant. Pat already owns 17 flowers. Each flowering plant costs $6 at the store, how much money will Pat spend at the store to fill up her flower bed?"
+
+answer = """
+Pat's flower bed is 111 feet / 1.5 feet per plant = <<111/1.5=74>>74 plants needed.
+Pat needs to buy 74 plants - 17 plants = <<74-17=57>>57 plants needed to purchase.
+Pat will spend 57 plants * $6 = $<<57*6=342>>342.
+#### 342
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,Pat} has a flower bed that is {length,111} {unit_length,feet} long. {name,Pat} wants to fill her flower bed with plants. {name,Pat}'s flowers grow {plant_width,12} inches wide so she needs to leave {space,1.5} {unit_length,feet} between every plant. {name,Pat} already owns {owned,17} flowers. Each flowering plant costs {cur,$}{cost,6} at the store, how much money will {name,Pat} spend at the store to fill up her flower bed?
+
+#init:
+- name = sample(names_female)
+- unit_length = sample(['feet', 'meters'])
+- cur = sample(currencies_sym)
+- $length = range(110, 220)
+- $plant_width = range(2, 13)
+- $space = arange(1, 20, 0.25)
+- $owned = range(10, 30)
+- $cost = range(3, 15)
+
+#conditions:
+- plant_width * 3 < length
+- plant_width < space
+- is_int(length / space)
+- length / space > owned
+
+#answer: int((length / space - owned) * cost)
+"""
+
+answer_annotated = """
+{name}'s flower bed is {length} {unit_length} / {space} {unit_length} per plant = <<{length}/{space}={int(length/space)}>>{int(length/space)} plants needed.
+{name} needs to buy {int(length/space)} plants - {owned} plants = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} plants needed to purchase.
+{name} will spend {int(length/space)-owned} plants * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}.
+#### {int((length/space - owned) * cost)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

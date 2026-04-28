@@ -1,0 +1,38 @@
+question = "Slot-familien har det travelt med å lage småkaker. Så langt har de laget 7995 småkaker. De har 2595 sitron småkaker, 3075 havregryn småkaker og noen sjokolade småkaker. Hvor mange sjokolade småkaker har de laget?"
+
+answer = """
+Det samlede antallet sitron og havregryn småkaker er 2595 + 3075 = <<2595+3075=5670>>5670.
+Derfor har de laget 7995 - 5670 = <<7995-5670=2325>>2325 sjokolade småkaker.
+#### 2325
+"""
+
+id_orig = 1305
+
+id_shuffled = 83
+
+question_annotated = """
+{family,Slot}-familien har det travelt med å lage {item,småkaker}. Så langt har de laget {total,7995} {item,småkaker}. De har {n1,2595} {flavor1,sitron} {item,småkaker}, {n2,3075} {flavor2,havregryn} {item,småkaker} og noen {flavor3,sjokolade} {item,småkaker}. Hvor mange {flavor3,sjokolade} {item,småkaker} har de laget?
+
+#init:
+- family = sample(["Nørgaard", "Højby", "Jensen", "Bruun", "Christensen"])
+- item = sample(["muffins", "cupcakes", "sandkager", "brownies"])
+- flavor1, flavor2, flavor3 = sample(["vanilje", "jordbær", "blåbær", "citron", "appelsin"], 3)
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3100, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+
+answer_annotated = """
+Det samlede antallet {flavor1} og {flavor2} {item} er {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}.
+Derfor har de laget {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {flavor3} {item}.
+#### {total-(n1+n2)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

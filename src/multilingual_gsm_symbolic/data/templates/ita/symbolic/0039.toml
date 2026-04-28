@@ -1,0 +1,49 @@
+question = "Un custode deve pulire una scuola con 80 aule. Hanno 5 giorni per finire il lavoro. Ci vogliono 15 minuti per ogni aula. Se lavorano 8 ore ogni giorno, che percentuale della loro giornata, in media, viene spesa per pulire le aule?"
+
+answer = """
+Devono pulire 16 aule al giorno perché 80 / 5 = <<80/5=16>>16
+Passano 240 minuti a pulire ogni giorno perché 16*15 = <<16*15=240>>240
+Passano 4 ore al giorno perché 240 / 60 = <<240/60=4>>4
+Passano 1/2 della loro giornata a pulire le aule perché 4 / 8 = <<4/8=0.5>>0.5
+Passano il 50% della loro giornata a pulire le aule perché 0.5*100 = <<0.5*100=50>>50
+#### 50
+"""
+
+id_orig = 1239
+
+id_shuffled = 39
+
+question_annotated = """
+Un {job,custode} deve pulire una {building,scuola} con {n,80} {room,aule}s. Hanno {d,5} giorni per finire il lavoro. Ci vogliono {t,15} minuti per ogni {room,aula}. Se lavorano {h,8} ore ogni giorno, che percentuale della loro giornata, in media, viene spesa per pulire le {room,aule}?
+
+#init:
+- job = sample(["custode", "addetto alle pulizie", "addetto alla manutenzione"])
+- building = sample(["edificio per uffici", "ospedale", "università",])
+- room = sample(["aula", "piano"])
+- $n = range(50, 221, 5)
+- $d = range(3, 12)
+- $t = range(10, 46, 5)
+- $h = range(6, 17)
+
+#conditions:
+- divides(n, d)
+- divides(60, t)
+- (n/d) * t < h * 60
+- is_int( 10 * (n/d) * t / (h * 60))
+- is_int(100 * (n/d) * t / (h * 60))
+
+#answer: int(100 * (n/d) * t / (h * 60))
+"""
+
+answer_annotated = """
+Devono pulire {n//d} {room} al giorno perché {n} / {d} = <<{n}/{d}={n//d}>>{n//d}
+Passano {(n//d)*t} minuti a pulire ogni giorno perché {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
+Passano {(n//d)*t/60} ore al giorno perché {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
+Passano {Fraction((n//d)*t/(h*60))} della loro giornata a pulire le {room} perché {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
+Passano {int(100 * (n/d) * t / (h * 60))}% della loro giornata a pulire le {room} perché {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
+#### {int(100 * (n/d) * t / (h * 60))}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

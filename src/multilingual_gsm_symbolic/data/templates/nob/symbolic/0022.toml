@@ -1,0 +1,39 @@
+question = "Laura gjorde seg klar til et middagsselskap hjemme hos seg, hvor hun hadde tenkt å servere gryterett. Hun la merke til at hun hadde gått tom for plastskjeer, så hun kjøpte en ny pakke med skjeer. Senere kjøpte mannen hennes også en pakke med fem nye skjeer og ga dem til Laura. Mens Laura lagde gryterett, brukte hun tre skjeer til å smake på gryteretten sin. Senere, da hun gikk for å dekke bordet, hadde hun i alt 12 skjeer. Hvor mange skjeer var det i pakken som Laura kjøpte?"
+
+answer = """
+Det totale antallet skjeer fra Laura og mannen hennes var 12+3=<<12+3=15>>15 skjeer.
+Siden mannen kjøpte en pakke med fem skjeer, inneholdt Lauras pakke 15-5=<<15-5=10>>10 skjeer.
+#### 10
+"""
+
+id_orig = 125
+
+id_shuffled = 22
+
+question_annotated = """
+{name,Laura} gjorde seg klar til et {event,middagsselskap} hjemme hos seg, hvor hun hadde tenkt å servere {food,gryterett}. Hun la merke til at hun hadde gått tom for plast{obj,skjeer}, så hun kjøpte en ny pakke med {obj,skjeer}. Senere kjøpte mannen hennes også en pakke med {n1_txt,fem} nye {obj,skjeer} og ga dem til {name,Laura}. Mens {name,Laura} lagde {food,gryterett}, brukte hun {n2_txt,tre} {obj,skjeer} til å smake på {food,gryterett}en sin. Senere, da hun gikk for å dekke bordet, hadde hun i alt {total,12} {obj,skjeer}. Hvor mange {obj,skjeer} var det i pakken som {name,Laura} kjøpte?
+
+#init:
+- name = sample(names_female)
+- event = sample(["frokostselskab", "fødselsdagsfest", "sammenkomst", "baby shower", "spil aften"])
+- food = sample(["stegt kylling", "grillet laks", "oksegryderet", "vegetar lasagne", "fyldte peberfrugter", "creme brulee"])
+- obj = sample(["skeer", "gafler", "tallerkener"])
+- n1_txt, n1_val = range_str(5, 20, 1, numbers)
+- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- $total = range(12, 40)
+
+#conditions:
+- total+n2_val-n1_val > 0
+
+#answer: total+n2_val-n1_val
+"""
+
+answer_annotated = """
+Det totale antallet {obj} fra {name} og mannen hennes var {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj}.
+Siden mannen kjøpte en pakke med {n1_txt} {obj}, inneholdt {name}s pakke {total+n2_val}-{n1_val}=<<{total+n2_val}-{n1_val}={total+n2_val-n1_val}>>{total+n2_val-n1_val} {obj}.
+#### {total+n2_val-n1_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

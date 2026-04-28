@@ -1,0 +1,46 @@
+question = "Þegar vatnið er kalt syndir Rasmus einn km á 16 mínútum. Þegar vatnið er heitt syndir Rasmus einn km á 2 mínútum meira en tvisvar svo langan tíma. Hversu miklu lengri tíma tekur það Rasmus að synda 3 km á heitum degi en á köldum degi?"
+
+answer = """
+Kalt vatn km = <<16=16>>16 mínútur
+Heitt vatn km = 2+2*16=34 mínútur
+3 km í köldu vatni: 3*16=<<3*16=48>>48 mínútur
+3 km í heitu vatni: 3*34=<<3*34=102>>102 mínútur
+Rasmus tekur 102-48=<<102-48=54>>54 mínútum lengri tíma
+#### 54
+"""
+
+id_orig = 554
+
+id_shuffled = 93
+
+question_annotated = """
+Þegar vatnið er kalt syndir {name,Rasmus} einn {unit,km} á {t1,16} mínútum. Þegar vatnið er heitt syndir {name,Rasmus} einn {unit,km} á {n,2} mínútum meira en {mult_txt,tvisvar} svo langan tíma. Hversu miklu lengri tíma tekur það {name,Rasmus} að synda {d,3} {unit,km} á heitum degi en á köldum degi?
+
+#init:
+- name = sample(names)
+- unit = sample(['km', 'kilometer'])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- mult_txt, mult_val = sample(multi_times)
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+
+answer_annotated = """
+Kalt vatn {unit} = <<{t1}={t1}>>{t1} mínútur
+Heitt vatn {unit} = {n}+{mult_val}*{t1}={n + mult_val * t1} mínútur
+{d} {unit} í köldu vatni: {d}*{t1}=<<{d}*{t1}={d*t1}>>{d*t1} mínútur
+{d} {unit} í heitu vatni: {d}*{n + mult_val * t1}=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} mínútur
+{name} tekur {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} mínútum lengri tíma
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

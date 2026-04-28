@@ -1,0 +1,41 @@
+question = "Í safni af galdrakortum eru 15 rauðra spil og 60% fleiri grænna spil. Gul spil eru jafnmörg og samanlagður fjöldi rauðra og grænna spila. Hversu mörg spil af öllum nefndum litum eru þar?"
+
+answer = """
+Það eru 60/100 * 15 = <<60/100*15=9>>9 fleiri grænna spil en rauðra spil.
+Sem þýðir að það eru 15 + 9 = <<15+9=24>>24 grænna spil.
+Gul spil eru alls 15 + 24 = <<15+24=39>>39 spil.
+Samtals eru því 39 + 39 = <<39+39=78>>78 spil í mismunandi litum.
+#### 78
+"""
+
+id_orig = 456
+
+id_shuffled = 62
+
+question_annotated = """
+Í safni af {item,galdra}kortum eru {n1,15} {c1,rauð} spil og {p,60}% fleiri {c2,græn} spil. {c3,gul} spil eru jafnmörg og samanlagður fjöldi {c1,rauðra} og {c2,grænna} spila. Hversu mörg spil af öllum nefndum litum eru þar?
+
+#init:
+- item = sample(["trylle", "tryllekunstner", "magiker", "kunstner", "magi"])
+- c1, c2, c3 = sample(["røde", "blå", "grønne", "gule", "lilla", "orange"], 3)
+- $n1 = range(15, 81)
+- $p = range(20, 90)
+
+#conditions:
+- p < 100
+- is_int(p/100 * n1)
+
+#answer: 2 * (n1 + (p/100 * n1))
+"""
+
+answer_annotated = """
+Það eru {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} fleiri {c2} spil en {c1} spil.
+Sem þýðir að það eru {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)} {c2} spil.
+{c3} spil eru alls {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} spil.
+Samtals eru því {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{ 2*(n1+(n1+int(p/100*n1)))} spil í mismunandi litum.
+#### {2*(n1+(n1+int(p/100*n1)))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

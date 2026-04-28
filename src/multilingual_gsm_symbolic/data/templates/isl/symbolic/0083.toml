@@ -1,0 +1,38 @@
+question = "Slot-fjölskyldan hefur verið upptekin við að baka smákökur. Hingað til hafa þau bakað 7995 smákökur. Þau eru með 2595 sítrónu smákökur, 3075 haframjöls smákökur og nokkrar súkkulaði smákökur. Hvað hafa þau bakað margar súkkulaði smákökur?"
+
+answer = """
+Heildarfjöldi sítrónu og haframjöls smákökur er 2595 + 3075 = <<2595+3075=5670>>5670.
+Þess vegna hafa þau bakað 7995 - 5670 = <<7995-5670=2325>>2325 súkkulaði smákökur.
+#### 2325
+"""
+
+id_orig = 1305
+
+id_shuffled = 83
+
+question_annotated = """
+{family,Slot}-fjölskyldan hefur verið upptekin við að baka {item,smákökur}. Hingað til hafa þau bakað {total,7995} {item,smákökur}. Þau eru með {n1,2595} {flavor1,sítrónu} {item,smákökur}, {n2,3075} {flavor2,haframjöls} {item,smákökur} og nokkrar {flavor3,súkkulaði} {item,smákökur}. Hvað hafa þau bakað margar {flavor3,súkkulaði} {item,smákökur}?
+
+#init:
+- family = sample(["Nørgaard", "Højby", "Jensen", "Bruun", "Christensen"])
+- item = sample(["muffins", "cupcakes", "sandkager", "brownies"])
+- flavor1, flavor2, flavor3 = sample(["vanilje", "jordbær", "blåbær", "citron", "appelsin"], 3)
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3100, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+
+answer_annotated = """
+Heildarfjöldi {flavor1} og {flavor2} {item} er {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}.
+Þess vegna hafa þau bakað {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {flavor3} {item}.
+#### {total-(n1+n2)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

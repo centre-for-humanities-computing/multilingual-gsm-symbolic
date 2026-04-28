@@ -1,0 +1,40 @@
+question = "Een klas van 50 leerlingen heeft verschillende hobby's. 10 houden van bakken, 5 houden van voetbal spelen en de rest houdt ofwel van videogames spelen of muziek maken. Hoeveel houden van videogames spelen, als het aantal dat van muziek maken houdt twee keer zo groot is als het aantal dat liever voetbal speelt?"
+
+answer = """
+Het aantal leerlingen dat van muziek maken houdt, is twee keer zo groot als het aantal dat van voetbal houdt, dus 2 * 5 = <<2*5=10>>10
+Het aantal dat van videogames spelen houdt, is 50 leerlingen in totaal - 10 die van bakken houden - 5 die van voetbal spelen houden - 10 die van muziek maken houden = <<50-10-5-10=25>>25
+#### 25
+"""
+
+id_orig = 740
+
+id_shuffled = 3
+
+question_annotated = """
+Een {g,klas} van {n, 50} leerlingen heeft verschillende hobby's. {n_1,10} houden van {h_1, bakken}, {n_2,5} houden van {h_2,voetbal spelen} en de rest houdt ofwel van {h_3,videogames spelen} of {h_4,muziek maken}. Hoeveel houden van {h_3,videogames spelen}, als het aantal dat van {h_4,muziek maken} houdt twee keer zo groot is als het aantal dat liever voetbal speelt?
+
+#init:
+- g = sample(["gruppe", "klasse"])
+- h_2 = sample(sports)
+- h_1, h_3, h_4 = sample(['læse', 'male', 'vandre', 'danse', 'bage', 'spille videospil', 'spille musik'], 3)
+- $n = range(5, 200)
+- $n_1 = range(2, 200)
+- $n_2 = range(2, 200)
+
+#conditions:
+- n_1 < n
+- n_2 < n
+- n - (n_1 + n_2) - (2 * n_2) > 0
+
+#answer: int(n - (n_1 + n_2) - (2 * n_2))
+"""
+
+answer_annotated = """
+Het aantal leerlingen dat van {h_4} houdt, is twee keer zo groot als het aantal dat van voetbal houdt, dus 2 * {n_2} = <<2*{n_2}={2*n_2}>>{2*n_2}
+Het aantal dat van {h_3} houdt, is {n} leerlingen in totaal - {n_1} die van {h_1} houden - {n_2} die van {h_2} houden - {2*n_2} die van {h_4} houden = <<{n}-{n_1}-{n_2}-{2*n_2}={n-n_1-n_2-2*n_2}>>{n-n_1-n_2-2*n_2}
+#### {n-n_1-n_2-2*n_2}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

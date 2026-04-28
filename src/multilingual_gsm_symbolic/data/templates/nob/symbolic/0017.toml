@@ -1,0 +1,33 @@
+question = "Bestemor går 3 kilometer hver dag på sin yndlingsvandrerute, som inkluderer 2 kilometer på stranden og 1 kilometer på fortauet. På fortauet går Bestemor to ganger så raskt som hun gjør på stranden. Hvis 40 minutter av gåturen hennes tilbringes på stranden, hvor lang tid tar det henne å fullføre hele gåturen på 3 kilometer, i minutter?"
+
+answer = "På stranden går Bestemor med en hastighet på 2 kilometer per 40 minutter, eller 2/40 = 1/20 kilometer per minutt. På fortauet går hun to ganger så raskt som når hun er på sanden, eller 2*1/20 = 1/10 kilometer per minutt. For å gå 1 kilometer på fortauet, tar det henne 1/(1/10)=<<1/(1/10)=10>>10 minutter. Så totalt tar det Bestemor 40+10=<<40+10=50>>50 minutter å gå yndlingsruten sin. #### 50"
+
+id_orig = 1133
+
+id_shuffled = 17
+
+question_annotated = """
+{name,Bestemor} går {n,3} {unit,kilometer} hver dag på sin yndlingsvandrerute, som inkluderer {m,2} {unit,kilometer} på stranden og {k,1} {unit,kilometer} på fortauet. På fortauet går {name,Bestemor} {mult_txt,to ganger} så raskt som hun gjør på stranden. Hvis {t,40} minutter av gåturen hennes tilbringes på stranden, hvor lang tid tar det henne å fullføre hele gåturen på {n,3} {unit,kilometer}, i minutter?
+
+#init:
+- name = sample(names_female)
+- unit = sample(length_lg)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(3, 40)
+- $m = range(2, 20)
+- $k = range(1, 20)
+- $t = range(40, 70)
+#conditions:
+- m + k == n
+- m < t
+- mult_val *m < t
+- divides(t, m)
+- is_int(k / (mult_val*m/t))
+#answer: {t+(k/(mult_val*m/t))} 
+"""
+
+answer_annotated = "På stranden går {name} med en hastighet på {m} {unit} per {t} minutter, eller {m}/{t} = {Fraction(m/t)} {unit} per minutt. På fortauet går hun {mult_txt} så raskt som når hun er på sanden, eller {mult_val}*{Fraction(m/t)} = {Fraction(mult_val*m/t)} {unit} per minutt. For å gå {k} {unit} på fortauet, tar det henne {k}/({Fraction(mult_val*m/t)})=<<{k}/({Fraction(mult_val*m/t)})={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minutter. Så totalt tar det {name} {t}+{k/(mult_val*m/t)}=<<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minutter å gå yndlingsruten sin. #### {t+(k/(mult_val*m/t))}"
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

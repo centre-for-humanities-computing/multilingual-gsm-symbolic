@@ -1,0 +1,43 @@
+question = "Emilie kann 6 Garnelen pro Minute schälen und 30 Garnelen in 10 Minuten anbraten. Wie lange wird sie brauchen, um 90 Garnelen zu schälen und anzubraten? Emilie kann nicht gleichzeitig schälen und anbraten."
+
+answer = """
+Finde zuerst heraus, wie lange Emilie braucht, um die Garnelen zu schälen: 90 Garnelen / 6 Garnelen/Minute = <<90/6=15>>15 Minuten
+Danach findest du heraus, wie viele Portionen Garnelen sie zubereiten muss: 90 Garnelen / 30 Garnelen/Portion = <<90/30=3>>3 Portionen
+Dann multiplizierst du die Anzahl der Portionen mit der Zeit pro Portion, um die gesamte Zubereitungszeit zu finden: 3 Portionen * 10 Minuten/Portion = <<3*10=30>>30 Minuten
+Zum Schluss addierst du die Schälzeit, um die gesamte Zeit zu finden, die Emilie braucht: 30 Minuten + 15 Minuten = <<30+15=45>>45 Minuten
+#### 45
+"""
+
+id_orig = 989
+
+id_shuffled = 48
+
+question_annotated = """
+{name,Emilie} kann {n1,6} {food,Garnelen} pro Minute schälen und {n2,30} {food,Garnelen} in {t,10} Minuten anbraten. Wie lange wird sie brauchen, um {total,90} {food,Garnelen} zu schälen und anzubraten? {name,Emilie} kann nicht gleichzeitig schälen und anbraten.
+
+#init:
+- name = sample(names_female)
+- food = sample(["Garnelen", "Zwiebeln", "Möhren", "Pilze", "Muscheln"])
+- $n1 = range(4, 15)
+- $n2 = range(20, 50, 5)
+- $t = range(5, 20)
+- $total = range(60, 200, 10)
+
+#conditions:
+- divides(total, n1)
+- divides(total, n2)
+
+#answer: total // n1 + (total // n2) * t
+"""
+
+answer_annotated = """
+Finde zuerst heraus, wie lange {name} braucht, um die {food} zu schälen: {total} {food} / {n1} {food}/Minute = <<{total}/{n1}={total//n1}>>{total//n1} Minuten
+Danach findest du heraus, wie viele Portionen {food} sie zubereiten muss: {total} {food} / {n2} {food}/Portion = <<{total}/{n2}={total//n2}>>{total//n2} Portionen
+Dann multiplizierst du die Anzahl der Portionen mit der Zeit pro Portion, um die gesamte Zubereitungszeit zu finden: {total//n2} Portionen * {t} Minuten/Portion = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t} Minuten
+Zum Schluss addierst du die Schälzeit, um die gesamte Zeit zu finden, die {name} braucht: {(total//n2)*t} Minuten + {total//n1} Minuten = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1} Minuten
+#### {(total//n2)*t + total//n1}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"

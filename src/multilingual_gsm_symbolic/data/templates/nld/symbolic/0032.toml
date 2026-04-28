@@ -1,0 +1,47 @@
+question = "Mevrouw Jensen zoekt een huis dat niet boven haar budget van 2.700.000 kr uitkomt. Ze zag een woning met een verkoopprijs van 2.370.000 kr. Daarbovenop moet de koper een makelaarscourtage betalen, die 5% van de verkoopprijs is, en ook de overdrachtskosten, die 12% van de totale verkoopprijs bedragen. Hoeveel meer is de totale prijs van het huis dan het budget van mevrouw Jensen?"
+
+answer = """
+De makelaarscourtage is 2.370.000 kr*5/100 = <<2370000*5/100=118500>>118.500 kr.
+De overdrachtskosten zijn 2.370.000 kr*12/100 = <<2370000*12/100=284400>>284.400 kr.
+De totale prijs van het huis is 2.370.000 kr + 118.500 kr + 284.400 kr = 2.772.900 kr.
+Dus dat is 2.772.900 kr - 2.700.000 kr = <<2772900-2700000=72900>>72.900 kr meer dan het budget van mevrouw Jensen.
+#### 72900
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name, mevrouw Jensen} zoekt een {property_type, huis} dat niet boven haar budget van {budget, 2700000} kr uitkomt. Ze zag een woning met een verkoopprijs van {price, 2370000} kr. Daarbovenop moet de koper een makelaarscourtage betalen, die {brokerage_fee, 5}% van de verkoopprijs is, en ook de overdrachtskosten, die {transfer_fee, 12}% van de totale verkoopprijs bedragen. Hoeveel meer is de totale prijs van het {property_type, huis} dan het budget van {name, mevrouw Jensen}?
+
+#init:
+- name = sample(["Fru Madsen", "Frøken Hansen", "Dr. Sørensen", "Fru Andersen"])
+- property_type = sample(["huis", "appartement", "rijtjeshuis", "koopappartement"])
+- $budget = range(2000000, 3410000, 100000)
+- $price = range(1700000, 3050000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price * (1 + brokerage_fee/100 + transfer_fee/100) > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)
+"""
+
+answer_annotated = """
+De makelaarscourtage is {price} kr*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} kr.
+De overdrachtskosten zijn {price} kr*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} kr.
+De totale prijs van het {property_type} is {price} kr + {int(price*brokerage_fee/100)} kr + {int(price*transfer_fee/100)} kr = {int(price * (1 + brokerage_fee/100 + transfer_fee/100))} kr.
+Dus dat is {int(price * (1 + brokerage_fee/100 + transfer_fee/100))} kr - {budget} kr = <<{int(price * (1 + brokerage_fee/100 + transfer_fee/100))}-{budget}={int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)}>>{int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)} kr meer dan het budget van {name}.
+#### {int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

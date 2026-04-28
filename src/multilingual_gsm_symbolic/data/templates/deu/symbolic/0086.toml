@@ -1,0 +1,53 @@
+question = "Alice qualifizierte sich für einen Platz im Laufteam, also ging sie los, um Sportausrüstung zu kaufen. Sie kaufte ein Tanktop für 10 kr, eine Laufshorts für 5 kr mehr, als das Tanktop kostete, und ein Paar Sneakers, die ursprünglich 48 kr kosteten, aber zum halben Preis im Angebot waren. Sie hatte einen Gutschein über 2 kr Rabatt auf die Packung Sportsocken für 8 kr, die sie ebenfalls kaufte. Wie viel gab sie für Sportausrüstung aus?"
+
+answer = """
+Die Shorts kosteten 5 kr mehr als das Tanktop, also kosteten sie 5 kr + 10 kr = <<5+10=15>>15 kr.
+Ihre Sneakers kosteten die Hälfte des ursprünglichen Preises von 48 kr, also kosteten sie 48 kr*1/2=24 kr.
+Mit ihrem Gutschein kosteten die Socken 8 kr - 2 kr = <<8-2=6>>6 kr.
+Das Tanktop, die Shorts, die Sneakers und die Socken kosteten zusammen 10 kr + 15 kr + 24 kr + 6 kr = <<10+15+24+6=55>>55 kr.
+#### 55
+"""
+
+id_orig = 1053
+
+id_shuffled = 86
+
+question_annotated = """
+{name,Alice} qualifizierte sich für einen Platz im {sport,Lauf}team, also ging sie los, um Sportausrüstung zu kaufen. Sie kaufte ein {item1,Tanktop} für {p1,10} {cur,kr}, eine {sport,lauf}{item2,shorts} für {p2,5} {cur,kr} mehr, als das {item1_definite,Tanktop} kostete, und ein Paar {item3,sneakers}, die ursprünglich {p3,48} {cur,kr} kosteten, aber zum {frac_txt,halben} Preis im Angebot waren. Sie hatte einen Gutschein über {d,2} {cur,kr} Rabatt auf die Packung Sport{item4,strømper} für {p4,8} {cur,kr}, die sie ebenfalls kaufte. Wie viel gab sie für Sportausrüstung aus?
+
+#init:
+- name = sample(names_female)
+- sport = sample(["svømme", "cykel", "basketball", "fodbold", "håndbold"])
+- item1, item1_definite = sample([("tanktop", "tanktoppen"), ("t-shirt", "t-shirten"), ("trøje", "trøjen"), ("sportsbh", "sportsbh'en")])
+- item2, item2_definite = sample([("shorts", "shortsene"), ("leggings", "leggingsne"), ("sweatpants", "sweatpantsene")])
+- item3, item3_definite = sample([("sneakers", "sneakersne"), ("tennissko","tennisskoene"), ("træningssko", "træningsskoene")])
+- item4, item4_definite = sample([("sokker", "sokkerne"),("strømper","strømperne"),("pandebånd","pandebåndet"), ("svedbånd","svedbåndet")])
+- cur = sample(currencies_sym)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(8, 25)
+- $p2 = range(3, 15)
+- $p3 = range(30, 80, 2)
+- $p4 = range(5, 15)
+- $d = range(1, 5)
+
+#conditions:
+- is_int(p3*frac_val)
+- p3 % 2 == 0
+- p4 > d
+
+#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)
+"""
+
+answer_annotated = """
+{item2_definite} kosteten {p2} {cur} mehr als {item1_definite}, also kosteten sie {p2} {cur} + {p1} {cur} = <<{p2}+{p1}={p1+p2}>>{p1+p2} {cur}.
+Ihre {item3} kosteten {frac_txt} des ursprünglichen Preises von {p3} {cur}, also kosteten sie {p3} {cur}*{frac_val}={p3*frac_val} {cur}.
+Mit ihrem Gutschein kosteten {item4_definite} {p4} {cur} - {d} {cur} = <<{p4}-{d}={p4-d}>>{p4-d} {cur}.
+{item1_definite}, {item2_definite}, {item3_definite} und {item4_definite} kosteten zusammen {p1} {cur} + {p1+p2} {cur} + {p3*frac_val} {cur} + {p4-d} {cur} = <<{p1}+{p1+p2}+{p3*frac_val}+{p4-d}={p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}>>{p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)} {cur}.
+#### {p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

@@ -1,0 +1,38 @@
+question = "Um malabarista consegue fazer malabarismo com 16 bolas. Metade das bolas são bolas de golfe e metade das bolas de golfe são azuis. Quantas bolas de golfe azuis há?"
+
+answer = """
+Bolas de golfe: 16*1/2=<<16*1/2=8>>8.
+Bolas de golfe azuis: 8*1/2=<<8*1/2=4>>4 bolas
+#### 4
+"""
+
+id_orig = 269
+
+id_shuffled = 8
+
+question_annotated = """
+Um malabarista consegue fazer malabarismo com {n, 16} bolas. {frac_1_txt,metade} das bolas são bolas de {ball_type, golfe} e {frac_2_txt,metade} das bolas de {ball_type, golfe} são {color, azuis}. Quantas bolas de {ball_type, golfe} {color, azuis} há?
+
+#init:
+- ball_type = sample(["golf", "tennis"])
+- color = sample(colors)
+- $frac_1_txt, frac_1_val = sample(fraction_alnum)
+- $frac_2_txt, frac_2_val = sample(fraction_alnum)
+- $n = range(16, 100, 2)
+
+#conditions:
+- is_int(n * frac_1_val)
+- is_int(n * frac_1_val * frac_2_val)
+
+#answer: int(n * frac_1_val * frac_2_val)
+"""
+
+answer_annotated = """
+Bolas de {ball_type}: {n}*{frac_1_val}=<<{n}*{frac_1_val}={n*frac_1_val}>>{int(n*frac_1_val)}.
+Bolas de {ball_type} {color}: {int(n*frac_1_val)}*{frac_2_val}=<<{int(n*frac_1_val)}*{frac_2_val}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} bolas
+#### {int(n*frac_1_val*frac_2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "por"

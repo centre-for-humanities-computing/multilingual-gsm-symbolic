@@ -1,0 +1,47 @@
+question = "Er zijn 6 lesuren op een dag voor een normale leerling, maar John moet 2 extra lessen volgen. Elke les duurt 40 minuten. Hij gaat 5 dagen per week naar school. Daarna besteedt hij 1/16 van zijn wekelijkse minuten aan zaterdag en zondag als extra leertijd. Hoeveel uur per week besteedt hij aan leren?"
+
+answer = """
+Hij neemt 6+2=<<6+2=8>>8 lessen per dag
+Dat betekent dat hij 40*8=<<40*8=320>>320 minuten per dag in de les doorbrengt
+Dus hij besteedt 320*5=<<320*5=1600>>1600 minuten per week in de les
+Dat betekent dat hij 1600*1/16=<<1600*1/16=100>>100 minuten per dag op zaterdag en zondag besteedt aan extra leertijd.
+Dus hij besteedt 1600+100+100=<<1600+100+100=1800>>1800 minuten per week aan leren
+Dus hij besteedt 1800/60=<<1800/60=30>>30 uur per week aan leren
+#### 30
+"""
+
+id_orig = 1088
+
+id_shuffled = 78
+
+question_annotated = """
+Er zijn {n1,6} lesuren op een dag voor een normale leerling, maar {name,John} moet {n2,2} extra lessen volgen. Elke les duurt {t,40} minuten. Hij gaat {d,5} dagen per week naar school. Daarna besteedt hij {frac,1/16} van zijn wekelijkse minuten aan zaterdag en zondag als extra leertijd. Hoeveel uur per week besteedt hij aan leren?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(5, 10)
+- $n2 = range(1, 5)
+- $t = range(30, 61, 5)
+- $d = range(4, 7)
+- $frac = sample(fractions)
+
+#conditions:
+- is_int((n1 + n2) * t * d * frac)
+- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)
+
+#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60
+"""
+
+answer_annotated = """
+Hij neemt {n1}+{n2}=<<{n1}+{n2}={n1+n2}>>{n1+n2} lessen per dag
+Dat betekent dat hij {t}*{n1+n2}=<<{t}*{n1+n2}={t*(n1+n2)}>>{t*(n1+n2)} minuten per dag in de les doorbrengt
+Dus hij besteedt {t*(n1+n2)}*{d}=<<{t*(n1+n2)}*{d}={t*(n1+n2)*d}>>{t*(n1+n2)*d} minuten per week in de les
+Dat betekent dat hij {t*(n1+n2)*d}*{frac}=<<{t*(n1+n2)*d}*{frac}={int((n1 + n2) * t * d * frac)}>>{int((n1 + n2) * t * d * frac)} minuten per dag op zaterdag en zondag besteedt aan extra leertijd.
+Dus hij besteedt {t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}=<<{t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}={t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}>>{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)} minuten per week aan leren
+Dus hij besteedt {t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60=<<{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60={((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}>>{((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60} uur per week aan leren
+#### {((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

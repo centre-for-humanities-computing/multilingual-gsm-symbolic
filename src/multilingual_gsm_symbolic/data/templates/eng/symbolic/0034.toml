@@ -1,0 +1,46 @@
+question = "Mr. Tan sold his house for $400,000. He paid the transfer fees that amount to 3% of the selling price and also paid a brokerage fee that is 5% of the selling price. If he also paid $250,000 for the remaining loan amount of the house, how much is Mr. Tan's net proceeds from selling the house?"
+
+answer = """
+Mr. Tan paid $400,000*3/100 = <<400000*3/100=12000>>$12,000 for the transfer fees.
+He paid $400,000*5/100 = <<400000*5/100=20000>>$20,000 for the brokerage fee.
+So, Mr. Tan paid a total of $12,000 + $20,000 + $250,000 = <<12000+20000+250000=282000>>$282,000 for the transfer, brokerage, and loan fees.
+Hence, Mr. Tan's net proceeds is $400,000 - $282,000 = <<400000-282000=118000>>$118,000.
+#### 118000
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{title,Mr.} {name,Tan} sold his {property,house} for ${price,400000}. He paid the {fee1_name,transfer} fees that amount to {fee1_percent,3}% of the selling price and also paid a {fee2_name,brokerage} fee that is {fee2_percent,5}% of the selling price. If he also paid ${loan,250000} for the remaining loan amount of the {property,house}, how much is {title,Mr.} {name,Tan}'s net proceeds from selling the {property,house}?
+
+#init:
+- title = sample(['Mr.', 'Prof.', 'Dr.'])
+- name = sample(['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'])
+- property = sample(['house', 'apartment', 'condo', 'villa', 'cottage'])
+- fee1_name = sample(['transfer', 'registration', 'legal'])
+- fee2_name = sample(['brokerage', 'agent', 'realtor'])
+- $price = range(200000, 1000000, 10000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(100000, 700000, 10000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{title} {name} paid ${price}*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>${price * fee1_percent // 100} for the {fee1_name} fees.
+He paid ${price}*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>${price * fee2_percent // 100} for the {fee2_name} fee.
+So, {title} {name} paid a total of ${price * fee1_percent // 100} + ${price * fee2_percent // 100} + ${loan} = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>${price * (fee1_percent + fee2_percent) // 100 + loan} for the {fee1_name}, {fee2_name}, and loan fees.
+Hence, {title} {name}'s net proceeds is ${price} - ${price * (fee1_percent + fee2_percent) // 100 + loan} = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>${price - (price * (fee1_percent + fee2_percent) // 100 + loan)}.
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

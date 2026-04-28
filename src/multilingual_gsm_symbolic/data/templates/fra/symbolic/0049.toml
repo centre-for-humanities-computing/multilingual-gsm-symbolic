@@ -1,0 +1,51 @@
+question = "John collecte des déchets provenant de 3 différents ensembles d’appartements. Les deux premiers ont 200 appartements chacun et le dernier est 60% plus grand que les deux autres réunis. Il collecte des déchets 3 fois par semaine dans chaque lieu et il est payé 0.4 $ par collecte pour chaque appartement. Combien d’argent gagne-t-il en une semaine ?"
+
+answer = """
+Les deux premiers ensembles ont 2*200=<<2*200=400>>400 appartements
+Le numéro 3 a 400*0.6=<<400*0.6=240>>240 appartements de plus que ces deux ensembles réunis.
+Donc au total, il en a 400+240=<<400+240=640>>640 appartements.
+Donc au total, il se rend à 640+400=<<640+400=1040>>1040 appartements à chaque fois
+Cela signifie qu’il visite 1040*3=<<1040*3=3120>>3120 appartements chaque semaine
+Donc il gagne 3120*$0.4=$<<3120*0.4=1248>>1248 chaque semaine
+#### 1248
+"""
+
+id_orig = 1165
+
+id_shuffled = 49
+
+question_annotated = """
+{name,John} collecte des déchets provenant de {n,3} différents ensembles d’appartements. Les deux premiers {n_first_txt,two} ont {a,200} appartements chacun et le dernier est {p,60}% plus grand que les deux autres réunis. Il collecte des déchets {f,3} fois par semaine dans chaque lieu et il est payé {cur,$}{r,0.4} par collecte pour chaque appartement. Combien d’argent gagne-t-il en une semaine ?
+
+#init:
+- name = sample(names_male)
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)
+- $a = range(100, 500, 50)
+- $p = range(20, 81, 5)
+- $f = range(2, 6)
+- $r = arange(0.20, 0.55, 0.05)
+
+#conditions:
+- n_first_val == n-1
+- is_int((n-1)*a*p/100)
+- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)
+
+
+#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)
+"""
+
+answer_annotated = """
+Les premiers {n_first_txt} ensembles ont {n_first_val}*{a}=<<{n_first_val}*{a}={n_first_val*a}>>{n_first_val*a} appartements
+Le numéro {n} a {n_first_val*a}*{p/100}=<<{n_first_val*a}*{p/100}={(n-1)*a*p/100}>>{int((n-1)*a*p/100)} appartements de plus que ceux {n_first_txt} réunis.
+Donc au total, il en a {n_first_val*a}+{int((n-1)*a*p/100)}=<<{n_first_val*a}+{int((n-1)*a*p/100)}={int(n_first_val*a+(n-1)*a*p/100)}>>{int(n_first_val*a+(n-1)*a*p/100)} appartements.
+Donc au total, il se rend à {int(n_first_val*a+(n-1)*a*p/100)}+{n_first_val*a}=<<{int(n_first_val*a+(n-1)*a*p/100)}+{n_first_val*a}={(n-1)*a + (n-1)*a + (n-1)*a*p/100}>>{int((n-1)*a + (n-1)*a + (n-1)*a*p/100)} appartements à chaque fois
+Cela signifie qu’il visite {int((n-1)*a + (n-1)*a + (n-1)*a*p/100)}*{f}=<<{int((n-1)*a + (n-1)*a + (n-1)*a*p/100)}*{f}={((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f}>>{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)} appartements chaque semaine
+Donc il gagne {int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)}*{cur}{r}={cur}<<{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)}*{r}={int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)}>>{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)} chaque semaine
+#### {int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

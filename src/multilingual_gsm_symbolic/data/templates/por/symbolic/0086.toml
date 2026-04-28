@@ -1,0 +1,51 @@
+question = "Alison conseguiu uma vaga no time de corrida, então foi às compras para comprar alguns itens esportivos. Ela comprou uma camiseta regata por $10, um short de corrida por $5 a mais do que custou a camiseta regata e um par de tênis de tênis que custavam originalmente $48, mas estavam com desconto pela metade do preço. Ela tinha um cupom de $2 de desconto no pacote de $8 de meias esportivas que ela também comprou. Quanto ela gastou com os itens esportivos?"
+
+answer = """
+O short custava $5 a mais do que a camiseta regata, então custou $5 + $10 = $<<5+10=15>>15.
+Os tênis custavam metade do preço original de $48, então custaram $48*1/2=$24.
+Com o cupom, as meias custaram $8 - $2 = $<<8-2=6>>6.
+A camiseta regata, o short, os tênis e as meias juntos custaram $10 + $15 + $24 + $6 = $<<10+15+24+6=55>>55.
+#### 55
+"""
+
+id_orig = 1053
+
+id_shuffled = 86
+
+question_annotated = """
+{name,Alison} conseguiu uma vaga no time de {sport,corrida}, então foi às compras para comprar alguns itens esportivos. Ela comprou uma {item1,camiseta regata} por {cur,$}{p1,10}, um par de {sport, corrida} {item2,shorts} por {cur,$}{p2,5} a mais do que custou a {item1, camiseta regata} e, e um par de {item3,tênis} que custavam originalmente {cur,$}{p3,48}, mas estavam com desconto pela {frac_txt,metade} do preço. Ela tinha um cupom de {cur,$}{d,2} de desconto no pacote de {cur,$}{p4,8} de {item4,meias} esportivas que ela também comprou. Quanto ela gastou com os itens esportivos?
+
+#init:
+- name = sample(names_female)
+- sport = sample(["natação", "ciclismo", "basquete", "futebol", "vôlei"])
+- item1 = sample(["camiseta", "camiseta de time", "top esportivo"])
+- item2 = sample(["shorts", "legging", "calça de moletom"])
+- item3 = sample(["tênis", "chuteiras", "calçados esportivos"])
+- item4 = sample(["meias", "faixas de cabeça", "pulseiras"])
+- cur = sample(currencies_sym)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(8, 25)
+- $p2 = range(3, 15)
+- $p3 = range(30, 80, 2)
+- $p4 = range(5, 15)
+- $d = range(1, 5)
+
+#conditions:
+- is_int(p3*frac_val)
+- p3 % 2 == 0
+- p4 > d
+
+#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)
+"""
+
+answer_annotated = """
+O {item2} custava {cur}{p2} a mais do que a {item1}, então custou {cur}{p2} + {cur}{p1} = {cur}<<{p2}+{p1}={p1+p2}>>{p1+p2}.
+Os {item3} custavam {frac_txt} do preço original de {cur}{p3}, então custaram {cur}{p3}*{frac_val}={cur}{p3*frac_val}.
+Com o cupom, as {item4} custaram {cur}{p4} - {cur}{d} = {cur}<<{p4}-{d}={p4-d}>>{p4-d}.
+A {item1}, o {item2}, os {item3} e as {item4} juntos custaram {cur}{p1} + {cur}{p1+p2} + {cur}{p3*frac_val} + {cur}{p4-d} = {cur}<<{p1}+{p1+p2}+{p3*frac_val}+{p4-d}={p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}>>{p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}.
+#### {p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "por"

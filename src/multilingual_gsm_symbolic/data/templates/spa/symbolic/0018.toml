@@ -1,0 +1,42 @@
+question = "Rasmus fue a comprar algunos materiales escolares. Compró 4 bolígrafos, que costaban 1,5 coronas cada uno, 2 cuadernos, que costaban 4 coronas cada uno, y una resma de papel, que costaba 20 coronas. ¿Cuánto gastó Rasmus en total?"
+
+answer = """
+Rasmus gastó 4*1,5 coronas = <<4*1,5=6>>6 coronas en los bolígrafos.
+También gastó 2*4 coronas = <<2*4=8>>8 coronas en los cuadernos.
+Por lo tanto, Rasmus gastó en total 6 coronas + 8 coronas + 20 coronas = <<6+8+20=34>>34 coronas en materiales escolares.
+#### 34
+"""
+
+id_orig = 158
+
+id_shuffled = 18
+
+question_annotated = """
+{name,Rasmus} fue a comprar algunos materiales escolares. Compró {n1,4} {obj1,bolígrafos}, que costaban {c1,1.5} {cur,coronas} cada uno, {n2,2} {obj2,cuadernos}, que costaban {c2,4} {cur,coronas} cada uno, y una resma de papel, que costaba {c3,20} {cur,coronas}. ¿Cuánto gastó {name,Rasmus} en total?
+
+#init:
+- name = sample(names_male)
+- obj1, obj2 = sample(["notesbøger", "blyanter", "farveblyanter", "tuscher", "linealer", "mapper"], 2)
+- cur = sample(currencies_sym)
+- $n1 = range(4, 25, 2)
+- $c1 = arange(1.5, 11.5, 0.25)
+- $n2 = range(2, 15, 2)
+- $c2 = arange(4, 19.5, 0.25)
+- $c3 = range(10, 25)
+
+#conditions:
+- is_int(n1 * c1)
+- is_int(n2 * c2)
+#answer: int(n1*c1 + n2*c2 + c3)
+"""
+
+answer_annotated = """
+{name} gastó {n1}*{c1} {cur} = <<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} {cur} en los {obj1}.
+También gastó {n2}*{c2} {cur} = <<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} {cur} en los {obj2}.
+Por lo tanto, {name} gastó en total {int(n1*c1)} {cur} + {int(n2*c2)} {cur} + {c3} {cur} = <<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} {cur} en materiales escolares.
+#### {int(n1*c1+n2*c2+c3)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "spa"

@@ -1,0 +1,38 @@
+question = "Julie bedient de kassa precies twee keer zo snel als haar minder ervaren collega Jewel. Dagelijks verwerkt Jewel 50 klanten. Wat is de totale wekelijkse productie voor de twee als ze alle dagen van de week werken?"
+
+answer = """
+Terwijl Jewel 50 bestellingen per dag verwerkt, verwerkt Julie 50 bestellingen/dag*2=<<50*2=100>>100 bestellingen/dag.
+Op een dag verwerken ze samen 100 bestellingen/dag + 50 bestellingen/dag = <<100+50=150>>150 bestellingen.
+Het totale aantal bestellingen dat de twee in een week verwerken is 150 bestellingen/dag * 7 dagen/week = <<150*7=1050>>1050 bestellingen
+#### 1050
+"""
+
+id_orig = 636
+
+id_shuffled = 97
+
+question_annotated = """
+{name1,Julie} bedient de kassa precies {mult_txt,twee keer} zo snel als haar minder ervaren collega {name2,Jewel}. Dagelijks verwerkt {name2,Jewel} {n,50} klanten. Wat is de totale wekelijkse productie voor de twee als ze alle dagen van de week werken?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- mult_txt, mult_var = sample(multi_times)
+- $n = range(30, 100)
+
+#conditions:
+- is_int(n * mult_var)
+- is_int((n + n * mult_var) * 7)
+
+#answer: (n + n * mult_var) * 7
+"""
+
+answer_annotated = """
+Terwijl {name2} {n} bestellingen per dag verwerkt, verwerkt {name1} {n} bestellingen/dag*{mult_var}=<<{n}*{mult_var}={n*mult_var}>>{n*mult_var} bestellingen/dag.
+Op een dag verwerken ze samen {n*mult_var} bestellingen/dag + {n} bestellingen/dag = <<{n*mult_var}+{n}={n+n*mult_var}>>{n+n*mult_var} bestellingen.
+Het totale aantal bestellingen dat de twee in een week verwerken is {n+n*mult_var} bestellingen/dag * 7 dagen/week = <<{n+n*mult_var}*7={(n+n*mult_var)*7}>>{(n+n*mult_var)*7} bestellingen
+#### {(n+n*mult_var)*7}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

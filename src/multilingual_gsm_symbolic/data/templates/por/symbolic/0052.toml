@@ -1,0 +1,48 @@
+question = "Craig tem 2 notas de $20. Ele compra seis pistolas de água por $2 cada. Ele também compra 3 pacotes de balões de água por $3 cada. Quanto dinheiro ele tem sobrando?"
+
+answer = """
+Craig começa com 2 * $20 = $<<2*20=40>>40.
+Craig gasta 6*$2 = $<<6*2=12>>12 em pistolas de água.
+Craig gasta 3 pacotes de balões de água * $3 = $<<3*3=9>>9 em balões de água.
+Ao todo, Craig já gastou $12 + $9 = $<<12+9=21>>21.
+Craig tem $40 - $21 = $<<40-21=19>>19 sobrando.
+#### 19
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name,Craig} tem {n,2} {cur,$}{bill,20} notas. Ele compra {m_txt,seis} {item1,pistola de água}s por {cur,$}{p1,2} cada. Ele também compra {k,3} pacotes de {item2,balão de água}s por {cur,$}{p2,3} cada. Quanto dinheiro ele tem sobrando?
+
+#init:
+- name = sample(names_male)
+- $bill = sample([5, 10, 20, 50, 100])
+- item1 = sample(["toy car", "action figure", "coloring book", "puzzle", "board game"])
+- item2 = sample(["sticker", "candy bar", "trading card", "pencil", "eraser"])
+- cur = sample(currencies_sym)
+- $n = range(1, 10)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+
+#conditions:
+- n * int(bill) > m_val * p1 + k * p2
+
+#answer: n * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} começa com {n} * {cur}{bill} = {cur}<<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)}.
+{name} gasta {m_val}*{cur}{p1} = {cur}<<{m_val}*{p1}={m_val*p1}>>{m_val*p1} em {item1}s.
+{name} gasta {k} pacotes de {item2}s * {cur}{p2} = {cur}<<{k}*{p2}={k*p2}>>{k*p2} em {item2}s.
+Ao todo, {name} já gastou {cur}{m_val*p1} + {cur}{k*p2} = {cur}<<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2}.
+{name} tem {cur}{n*int(bill)} - {cur}{m_val*p1+k*p2} = {cur}<<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} sobrando.
+#### {n*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "por"

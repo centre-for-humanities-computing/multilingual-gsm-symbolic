@@ -1,0 +1,49 @@
+question = "Dennis fing am Montag 3 Thunfische, der erste Thunfisch, den er fing, wiegt 56 Kilogramm, der zweite Thunfisch, den er fing, wiegt 46 Kilogramm und der letzte Thunfisch, den er fing, wiegt 26 Kilogramm. Wenn ein Kilogramm Thunfisch 0,5 kr kostet, wie viel wird er verdienen, nachdem er alle Thunfische auf dem Markt verkauft hat?"
+
+answer = """
+Dennis wird 56*0,5 kr = <<56*0,5=28>>28 kr mit dem ersten Thunfisch verdienen.
+Er wird 46*0,5 kr = <<46*0,5=23>>23 kr mit dem zweiten Thunfisch verdienen.
+Und er wird 26*0,5 kr = <<26*0,5=13>>13 kr mit dem dritten Thunfisch verdienen.
+Daher ist der Gesamtbetrag, den er für alle Thunfische verdienen wird, 28 kr + 23 kr + 13 kr = <<28+23+13=64>>64 kr.
+#### 64
+"""
+
+id_orig = 1207
+
+id_shuffled = 76
+
+question_annotated = """
+{name,Dennis} fing am {day,Montag} {n,3} {fish,Thunfische}, der erste {fish,Thunfisch}, den er fing, wiegt {w1,56} {unit,Kilogramm}, der zweite {fish,Thunfisch}, den er fing, wiegt {w2,46} {unit,Kilogramm} und der letzte {fish,Thunfisch}, den er fing, wiegt {w3,26} {unit,Kilogramm}. Wenn ein {unit,Kilogramm} {fish,Thunfisch} {price,0.5} {cur,kr} kostet, wie viel wird er verdienen, nachdem er alle {fish,Thunfische} auf dem Markt verkauft hat?
+
+#init:
+- name = sample(names_male)
+- fish = sample(["tun", "laks", "torsk", "ørred", "pigvar"])
+- day = sample(weekdays)
+- unit = sample(["kilogram", "kg"])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(0.25, 2.5, 0.25)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+
+answer_annotated = """
+{name} wird {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} mit dem ersten {fish} verdienen.
+Er wird {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} mit dem zweiten {fish} verdienen.
+Und er wird {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} mit dem dritten Thunfisch verdienen.
+Daher ist der Gesamtbetrag, den er für alle {fish} verdienen wird, {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

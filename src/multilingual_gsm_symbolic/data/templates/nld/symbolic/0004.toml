@@ -1,0 +1,46 @@
+question = "Sara maakt popcorn als snack. Wanneer de pan met de maïskorrels warm wordt, beginnen de korrels sneller te poffen. 20 poffen in de eerste 30 seconden van het bereiden, daarna drie keer dat aantal in de volgende 30 seconden. De korrels nemen toe tot vier keer de oorspronkelijke pofsnelheid in de volgende 30 seconden, maar in de laatste 30 seconden neemt de pofsnelheid af tot de helft van de snelheid van de vorige 30 seconden. Nadat Sara de pan van het vuur heeft gehaald, poft een kwart van het aantal korrels dat in de laatste 30 seconden van het bereiden pofte door de resterende warmte. Hoeveel popcorn heeft Sara om te eten?"
+
+answer = """
+In de tweede 30 seconden van het bereiden poffen 3*20=<<3*20=60>>60 korrels.
+In de derde 30 seconden poffen 4*20=<<4*20=80>>80 korrels.
+In de laatste 30 seconden poffen 80/2=<<80/2=40>>40 korrels.
+Na het bereiden zorgt de resterende warmte ervoor dat 40/4=<<40/4=10>>10 korrels poffen.
+Dus heeft Sara 20 + 60 + 80 + 40 + 10 = <<20+60+80+40+10=210>>210 popcorn om te eten.
+#### 210
+"""
+
+id_orig = 1264
+
+id_shuffled = 4
+
+question_annotated = """
+{name,Sara} maakt popcorn als snack. Wanneer {p,de pan} met de maïskorrels warm wordt, beginnen de korrels sneller te poffen. {n,20} poffen in de eerste {s,30} seconden van het bereiden, daarna {k_2_txt, drie} keer dat aantal in de volgende {s,30} seconden. De korrels nemen toe tot {k_3_txt,vier} keer de oorspronkelijke pofsnelheid in de volgende {s,30} seconden, maar in de laatste {s,30} seconden neemt de pofsnelheid af tot de helft van de snelheid van de vorige {s,30} seconden. Nadat {name,Sara} {p,de pan} van het vuur heeft gehaald, poft een kwart van het aantal korrels dat in de laatste {s,30} seconden van het bereiden pofte door de resterende warmte. Hoeveel popcorn heeft {name,Sara} om te eten?
+
+
+#init:
+- name = sample(names)
+- p = sample(['panden', 'gryden'])
+- $n = range(10, 101, 10)
+- $s = range(10, 31, 2)
+- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)
+- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)
+
+#conditions:
+- k_3_val > k_2_val
+- divides(k_3_val * n, 8)
+
+#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)
+"""
+
+answer_annotated = """
+In de tweede {s} seconden van het bereiden poffen {k_2_val}*{n}=<<{k_2_val}*{n}={k_2_val*n}>>{k_2_val*n} korrels.
+In de derde {s} seconden poffen {k_3_val}*{n}=<<{k_3_val}*{n}={k_3_val * n}>>{k_3_val * n} korrels.
+In de laatste {s} seconden poffen {k_3_val*n}/2=<<{k_3_val*n}/2={k_3_val*n//2}>>{k_3_val*n//2} korrels.
+Na het bereiden zorgt de resterende warmte ervoor dat {k_3_val*n//2}/4=<<{k_3_val*n//2}/4={k_3_val*n//8}>>{k_3_val*n//8} korrels poffen.
+Dus heeft {name} {n} + {k_2_val * n} + {k_3_val * n} + {k_3_val * n // 2} + {k_3_val * n // 8} = <<{n}+{k_2_val * n}+{k_3_val * n}+{k_3_val * n // 2}+{k_3_val * n // 8}={n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)}>>{n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)} popcorn om te eten.
+#### {n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

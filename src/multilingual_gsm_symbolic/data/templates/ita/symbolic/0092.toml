@@ -1,0 +1,47 @@
+question = "Il principe Taddeo uccise 100 draghi con la sua possente spada, mentre il principe Artù, usando una lancia, uccise tre quarti del numero di draghi uccisi dal principe Taddeo. Usando un’ascia di ferro arrugginita, il principe Walter uccise il doppio dei draghi uccisi dal principe Artù. Ma il principe Bruce, avendo dimenticato la sua spada a casa, uccise un quinto del numero di draghi uccisi dal principe Walter usando una lima per unghie. Quanti draghi ha ucciso il principe Bruce?"
+
+answer = """
+Il principe Artù uccise tre quarti del numero di draghi uccisi dal principe Taddeo, cioè 100*3/4=<<100*3/4=75>>75 draghi.
+Il principe Walter uccise il doppio del numero di draghi uccisi dal principe Artù, cioè 2*75=<<2*75=150>>150 draghi.
+Il principe Bruce uccise un quinto del numero di draghi uccisi dal principe Walter, cioè 150*1/5=<<150*1/5=30>>30 draghi.
+#### 30
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+Il principe {name1,Thaddeus} uccise {n1,100} {creature,draghi} con la sua possente {weapon1,spada}, mentre il principe {name2,Arthur}, usando una {weapon2,lancia}, uccise {frac1_txt,tre quarti} del numero di {creature,draghi} uccisi dal principe {name1,Thaddeus}. Usando una {weapon3,ascia di ferro arrugginita}, il principe {name3,Walter} uccise {mult1_txt,il doppio} del numero di {creature,draghi} uccisi dal principe {name2,Arthur}. Ma il principe {name4,Bruce}, avendo dimenticato la sua {weapon4,spada} a casa, uccise {frac2_txt,un quinto} del numero di {creature,draghi} uccisi dal principe {name3,Walter} usando una {weapon5,lima per unghie}. Quanti {creature,draghi} ha ucciso il principe {name4,Bruce}?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["ogres", "trolls", "goblins", "orcs", "giants"])
+- weapon1 = sample(["sword", "mace", "battle axe", "war hammer"])
+- weapon2 = sample(["spear", "lance", "javelin", "halberd"])
+- weapon3 = sample(["rusty iron axe", "wooden club", "stone hammer", "bone dagger"])
+- weapon4 = sample(["sword", "axe", "mace", "hammer"])
+- weapon5 = sample(["nail file", "butter knife", "wooden spoon", "feather"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+Il principe {name2} uccise {frac1_txt} del numero di {creature} uccisi dal principe {name1}, cioè {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+Il principe {name3} uccise {mult1_txt} del numero di {creature} uccisi dal principe {name2}, cioè {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+Il principe {name4} uccise {frac2_txt} del numero di {creature} uccisi dal principe {name3}, cioè {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

@@ -1,0 +1,41 @@
+question = "100 personnes postulent à un emploi chez Google. Parmi les personnes qui postulent, seulement 30% obtiennent des entretiens. Parmi celles qui obtiennent des entretiens, 20% reçoivent une offre d’emploi. Parmi celles qui reçoivent une offre d’emploi, un tiers des personnes acceptent le poste. Combien de personnes acceptent le poste ?"
+
+answer = """
+Le nombre de personnes qui reçoivent des entretiens est 100 * 0.3 = <<100*0.3=30>>30 personnes
+Le nombre de personnes qui reçoivent une offre d’emploi est 30 * 0.2 = <<30*0.2=6>>6 personnes
+Le nombre de personnes qui acceptent le poste est 6*1/3 = <<6*1/3=2>>2 personnes
+#### 2
+"""
+
+id_orig = 718
+
+id_shuffled = 94
+
+question_annotated = """
+{n,100} personnes postulent à un emploi chez {company,Google}. Parmi les personnes qui postulent, seulement {p1,30}% obtiennent des entretiens. Parmi celles qui obtiennent des entretiens, {p2,20}% reçoivent une offre d’emploi. Parmi celles qui reçoivent une offre d’emploi, {frac_txt,un tiers} des personnes acceptent le poste. Combien de personnes acceptent le poste ?
+
+#init:
+- company = sample(["Microsoft", "Apple", "Amazon", "Facebook", "Netflix", "Tesla", "Microsoft"])
+- $n = range(100, 1001, 10)
+- $p1 = range(10, 51)
+- $p2 = range(10, 51)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (p2/100))
+- is_int(n * (p1/100) * (p2/100) * frac_val)
+
+#answer: int(n * (p1/100) * (p2/100) * frac_val)
+"""
+
+answer_annotated = """
+Le nombre de personnes qui reçoivent des entretiens est {n} * {p1/100} = <<{n}*{p1/100}={int(n*(p1/100))}>>{int(n*(p1/100))} personnes
+Le nombre de personnes qui reçoivent une offre d’emploi est {int(n*(p1/100))} * {p2/100} = <<{int(n*(p1/100))}*{p2/100}={int(n*(p1/100)*(p2/100))}>>{int(n*(p1/100)*(p2/100))} personnes
+Le nombre de personnes qui acceptent le poste est {int(n*(p1/100)*(p2/100))}*{frac_val} = <<{int(n*(p1/100)*(p2/100))}*{frac_val}={int(n*(p1/100)*(p2/100)*frac_val)}>>{int(n*(p1/100)*(p2/100)*frac_val)} personnes
+#### {int(n*(p1/100)*(p2/100)*frac_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

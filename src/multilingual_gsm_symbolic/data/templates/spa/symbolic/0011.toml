@@ -1,0 +1,49 @@
+question = "Peter quiere hacer cubitos de hielo de diferentes tamaños con 32 gramos de agua. Puede hacer cubitos de hielo grandes, que usan 4 gramos por cubito, cubitos de hielo medianos, que usan 2 gramos, y cubitos de hielo pequeños, que usan 1/2 gramo. Si hace 3 cubitos de hielo grandes, 7 cubitos de hielo medianos y 8 cubitos de hielo pequeños, ¿cuántos gramos de agua le quedan?"
+
+answer = """
+Los cubitos grandes usaron 12 gramos de agua, porque 3 por 4 es igual a <<3*4=12>>12.
+Los cubitos medianos usaron 14 gramos de agua, porque 7 por 2 es igual a <<7*2=14>>14.
+Los cubitos pequeños usaron 4 gramos de agua, porque 8 por 1/2 es igual a 4.
+Esto significa que Peter ha usado 30 gramos de agua, porque 12 más 14 más 4 es igual a 30.
+A Peter le quedan 2 gramos de agua, porque 32 menos 30 es igual a <<32-30=2>>2.
+#### 2
+"""
+
+id_orig = 737
+
+id_shuffled = 11
+
+question_annotated = """
+{name, Peter} quiere hacer cubitos de hielo de diferentes tamaños con {n,32} {unit,gramos} de agua. Puede hacer cubitos de hielo grandes, que usan {w1,4} {unit,gramos} por cubito, cubitos de hielo medianos, que usan {w2,2} {unit,gramos}, y cubitos de hielo pequeños, que usan {w3,1/2} {unit,gramo}. Si hace {n1,3} cubitos de hielo grandes, {n2,7} cubitos de hielo medianos y {n3,8} cubitos de hielo pequeños, ¿cuántos {unit,gramos} de agua le quedan?
+
+#init:
+- name = sample(names_male)
+- unit = sample(weights_sm)
+- $w1 = range(4, 10)
+- $w2 = range(2, 10)
+- $w3 = sample(fractions)
+- $n1 = range(3, 10)
+- $n2 = range(7, 13)
+- $n3 = sample([8, 14, 24, 15])
+- $n = range(32, 240, 4)
+
+#conditions:
+- w3 < w2 < w1
+- is_int(n3 * w3)
+- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0
+
+#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))
+"""
+
+answer_annotated = """
+Los cubitos grandes usaron {n1*w1} {unit} de agua, porque {n1} por {w1} es igual a <<{n1}*{w1}={n1*w1}>>{n1*w1}.
+Los cubitos medianos usaron {n2*w2} {unit} de agua, porque {n2} por {w2} es igual a <<{n2}*{w2}={n2*w2}>>{n2*w2}.
+Los cubitos pequeños usaron {int(w3*n3)} {unit} de agua, porque {n3} por {w3} es igual a {int(n3*w3)}.
+Esto significa que {name} ha usado {int(n3*w3+n2*w2+n1*w1)} {unit} de agua, porque {n1*w1} más {n2*w2} más {int(w3*n3)} es igual a {int(n3*w3+n2*w2+n1*w1)}.
+A {name} le quedan {(n - (n1*w1) - (n2*w2) - int(n3*w3))} {unit} de agua, porque {n} menos {int(n3*w3+n2*w2+n1*w1)} es igual a <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{(n - (n1*w1) - (n2*w2) - int(n3*w3))}.
+#### {(n - (n1*w1) - (n2*w2) - int(n3*w3))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "spa"

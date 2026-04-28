@@ -1,0 +1,45 @@
+question = "Watson werkt elke dag een dienst van 10 uur, vijf dagen per week. Hij verdient $10 per uur en krijgt elke week een bonus van $300 als het bedrijf het goed doet. Hoeveel geld heeft Watson verdiend in april als het bedrijf de hele maand heel goed presteerde?"
+
+answer = """
+In een dag verdient Watson 10 * 10 = $<<10*10=100>>100
+Als hij vijf dagen per week werkt, is het totale aantal dagen voor de hele maand 5*4=<<5*4=20>>20 dagen.
+Omdat hij $100 per dag verdient, is het totale bedrag voor de hele maand 20 * 100= $<<20*100=2000>>2000.
+Hij kreeg ook een bonus van 300 * 4 = $<<300*4=1200>>1200 omdat het bedrijf in alle weken van april goed presteerde.
+Aan het einde van april verdiende hij 2000 + 1200 = $<<2000+1200=3200>>3200.
+#### 3200
+"""
+
+id_orig = 304
+
+id_shuffled = 60
+
+question_annotated = """
+{name,Watson} werkt elke dag een dienst van {h,10} uur, {d_txt,vijf} dagen per week. Hij verdient {cur,$}{r,10} per uur en krijgt elke week een bonus van {cur,$}{b,300} als het bedrijf het goed doet. Hoeveel geld heeft {name,Watson} verdiend in {month,april} als het bedrijf de hele maand heel goed presteerde?
+
+#init:
+- name = sample(names_male)
+- month = sample(["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"])
+- cur = sample(currencies_sym)
+- $h = range(6, 13)
+- d_txt, d_val = range_str(3, 7, 1, numbers)
+- $r = range(8, 31)
+- $b = range(100, 601)
+
+#conditions:
+- is_int(h * r)
+
+#answer: h * r * d_val * 4 + b * 4
+"""
+
+answer_annotated = """
+In een dag verdient {name} {h} * {r} = {cur}<<{h}*{r}={h*r}>>{h*r}
+Als hij {d_txt} dagen per week werkt, is het totale aantal dagen voor de hele maand {d_val}*4=<<{d_val}*4={d_val*4}>>{d_val*4} dagen.
+Omdat hij {cur}{h*r} per dag verdient, is het totale bedrag voor de hele maand {d_val*4} * {h*r}= {cur}<<{d_val*4}*{h*r}={d_val*4*h*r}>>{d_val*4*h*r}.
+Hij kreeg ook een bonus van {b} * 4 = {cur}<<{b}*4={b*4}>>{b*4} omdat het bedrijf in alle weken van {month} goed presteerde.
+Aan het einde van {month} verdiende hij {d_val*4*h*r} + {b*4} = {cur}<<{d_val*4*h*r}+{b*4}={d_val*4*h*r+b*4}>>{d_val*4*h*r+b*4}.
+#### {d_val*4*h*r+b*4}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

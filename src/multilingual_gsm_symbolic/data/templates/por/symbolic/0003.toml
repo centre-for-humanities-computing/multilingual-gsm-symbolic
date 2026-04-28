@@ -1,0 +1,40 @@
+question = "Uma turma de 50 alunos tem diferentes hobbies. 10 gostam de cozinhar, 5 gostam de jogar futebol e o restante gosta ou de jogar videogames ou de tocar música. Quantos gostam de jogar videogames, se o número dos que gostam de tocar música é o dobro dos que preferem jogar futebol?"
+
+answer = """
+O número de alunos que gostam de tocar música é o dobro dos que gostam de futebol, então 2 * 5 = <<2*5=10>>10
+O número dos que gostam de jogar videogames é 50 alunos ao todo - 10 que gostam de cozinhar - 5 que gostam de jogar futebol - 10 que gostam de tocar música = <<50-10-5-10=25>>25
+#### 25
+"""
+
+id_orig = 740
+
+id_shuffled = 3
+
+question_annotated = """
+Uma {g,turma} de {n, 50} alunos tem diferentes hobbies. {n_1,10} gostam de {h_1, cozinhar}, {n_2,5} gostam de jogar {h_2,futebol} e o restante gosta ou de {h_3,jogar videogames} ou de {h_4,tocar música}. Quantos gostam de {h_3,jogar videogames}, se o número dos que gostam de {h_4,tocar música} é o dobro dos que preferem jogar {h_2, futebol}?
+
+#init:
+- g = sample(["gruppe", "klasse"])
+- h_2 = sample(sports)
+- h_1, h_3, h_4 = sample(['læse', 'male', 'vandre', 'danse', 'bage', 'spille videospil', 'spille musik'], 3)
+- $n = range(5, 200)
+- $n_1 = range(2, 200)
+- $n_2 = range(2, 200)
+
+#conditions:
+- n_1 < n
+- n_2 < n
+- n - (n_1 + n_2) - (2 * n_2) > 0
+
+#answer: int(n - (n_1 + n_2) - (2 * n_2))
+"""
+
+answer_annotated = """
+O número de alunos que gostam de {h_4} é o dobro dos que gostam de {h_2}, então 2 * {n_2} = <<2*{n_2}={2*n_2}>>{2*n_2}
+O número dos que gostam de {h_3} é {n} alunos ao todo - {n_1} que gostam de {h_1} - {n_2} que gostam de jogar {h_2} - {2*n_2} que gostam de {h_4} = <<{n}-{n_1}-{n_2}-{2*n_2}={n-n_1-n_2-2*n_2}>>{n-n_1-n_2-2*n_2}
+#### {n-n_1-n_2-2*n_2}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "por"

@@ -1,0 +1,40 @@
+question = "Menntaskólinn í Árósum heldur útskriftarathöfn í hátíðarsal sínum í ár, sem rúmar 1900 manns. Eftir að hafa tekið frá 450 sæti fyrir útskriftarnema og 100 sæti fyrir starfsfólk skólans, hversu marga miða getur hver útskriftarnemi gefið vinum sínum og fjölskyldu, ef miðunum er skipt jafnt?"
+
+answer = """
+Leggðu saman sæti fyrir útskriftarnema og starfsfólk. 450 + 100 = <<450+100=550>>550 sæti fyrir starfsfólk og útskriftarnema
+Dragðu sæti fyrir starfsfólk og útskriftarnema frá heildarfjölda leyfilegra sæta. 1900 - 550 = <<1900-550=1350>>1350 sæti eftir.
+Deildu fjölda útskriftarnema í eftirstandandi sæti 1350/450 = <<1350/450=3>>3 miðar
+#### 3
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Menntaskólinn í Árósum} heldur útskriftarathöfn í {venue,hátíðarsal} sínum í ár, sem rúmar {total,1900} manns. Eftir að hafa tekið frá {graduates,450} sæti fyrir útskriftarnema og {faculty,100} sæti fyrir starfsfólk skólans, hversu marga miða getur hver útskriftarnemi gefið vinum sínum og fjölskyldu, ef miðunum er skipt jafnt?
+
+#init:
+- school = sample(["Aarhus Universitet", "Risskov Gymnasium", "Egaa Gymnasium", "Marselisborg Gymnasium"])
+- venue = sample(["Auditorium", "Sports Arena", "Atrium"])
+- $total = range(1500, 10000, 100)
+- $graduates = range(400, 1500, 50)
+- $faculty = range(100, 1500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Leggðu saman sæti fyrir útskriftarnema og starfsfólk. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} sæti fyrir starfsfólk og útskriftarnema
+Dragðu sæti fyrir starfsfólk og útskriftarnema frá heildarfjölda leyfilegra sæta. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} sæti eftir.
+Deildu fjölda útskriftarnema í eftirstandandi sæti {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} miðar
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

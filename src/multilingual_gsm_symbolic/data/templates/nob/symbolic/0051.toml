@@ -1,0 +1,50 @@
+question = "Albert har en blomsterbod på markedet. Han selger tre slags blomster: tulipaner, liljer og solsikker. Han selger vanligvis tulipaner for 18,1 kr per potte, liljer for 12,3 kr per potte og solsikker for 14,9 kr per potte. Albert har ingen øre i dag, så han har bestemt seg for å runde av til nærmeste krone. Hvis han selger 12 potter med tulipaner, 9 potter med liljer og 17 potter med solsikker, hvor mye vil han tjene?"
+
+answer = """
+Albert vil runde tulipanene sine ned fra 18,1 kr til 18 kr, siden tallet etter 18 er lavere enn 5.
+Albert vil runde solsikkene sine opp fra 14,9 kr til 15 kr, siden tallet etter 14 er 5 eller høyere.
+Albert selger 12 potter med tulipaner*18 kr = <<12*18=216>>216 kr
+Albert selger 9 potter med liljer*12 kr = <<9*12=108>>108 kr
+Albert selger 17 potter med solsikker*15 kr = <<17*15=255>>255 kr
+Til sammen vil Albert tjene 216 kr + 108 kr + 255 kr = <<216+108+255=579>>579 kr
+#### 579
+"""
+
+id_orig = 74
+
+id_shuffled = 51
+
+question_annotated = """
+{name,Albert} har en {product,blomster}bod på {location,markedet}. Han selger tre slags {product,blomster}: {item1,tulipaner}, {item2,liljer} og {item3,solsikker}. Han selger vanligvis {item1,tulipaner} for {p1,18.1} {cur,kr} per {unit,potte}, {item2,liljer} for {p2,12.3} {cur,kr} per {unit,potte} og {item3,solsikker} for {p3,14.9} {cur,kr} per {unit,potte}. {name,Albert} har ingen øre i dag, så han har bestemt seg for å runde av til nærmeste krone. Hvis han selger {n1,12} {unit_plural,potter} med {item1,tulipaner}, {n2,9} {unit_plural,potter} med {item2,liljer} og {n3,17} {unit_plural,potter} med {item3,solsikker}, hvor mye vil han tjene?
+
+#init:
+- name = sample(names_male)
+- product = sample(["grønsager", "blomster", "urter", "planter"])
+- location = sample(["markedet", "messen", "basaren", "gaden", "torvet"])
+- item1, item2, item3 = sample(["roser", "tusindfryd", "orkideer", "pæoner", "anemoner", "kornblomster"], 3)
+- unit, unit_plural = sample([("potte", "potter"), ("buket", "buketter"), ("kurv", "kurve"), ("bundt", "bundter"), ("håndfuld", "håndfulde")])
+- cur = sample(currencies_sym)
+- $p1 = arange(8.1, 23.3, 2.7)
+- $p2 = arange(14.9, 36.4, 1.7)
+- $p3 = arange(31.9, 42.8, 2.2)
+- $n1 = range(5, 21)
+- $n2 = range(15, 31)
+- $n3 = range(35, 41)
+
+
+#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)
+"""
+
+answer_annotated = """
+{name} vil runde tulipanene sine ned fra {p1} {cur} til {round(p1)} {cur}, siden tallet etter {int(p1)} er lavere enn 5.
+{name} vil runde solsikkene sine {'opp' if round(p3) > p3 else 'ned'} fra {p3} {cur} til {round(p3)} {cur}, siden tallet etter {int(p3)} er {'5 eller høyere' if round(p3) > p3 else 'lavere enn 5'}.
+{name} selger {n1} potter med {item1}*{round(p1)} {cur} = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}
+{name} selger {n2} potter med {item2}*{round(p2)} {cur} = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}
+{name} selger {n3} potter med {item3}*{round(p3)} {cur} = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}
+Til sammen vil {name} tjene {n1*round(p1)} {cur} + {n2*round(p2)} {cur} + {n3*round(p3)} {cur} = <<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)} {cur}
+#### {n1*round(p1) + n2*round(p2) + n3*round(p3)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

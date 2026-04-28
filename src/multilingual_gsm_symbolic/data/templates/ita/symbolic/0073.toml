@@ -1,0 +1,40 @@
+question = "La cometa di Halley orbita attorno al Sole ogni 75 anni. Il padre di Bill ha visto la cometa quando aveva 30 anni. Bill ha visto la cometa una seconda volta quando aveva tre volte l’età che suo padre aveva quando vide la cometa. Quanti anni aveva Bill quando vide la cometa per la prima volta?"
+
+answer = """
+Bill ha visto la Cometa una seconda volta quando aveva 30 anni * 3= <<30*3=90>>90 anni.
+La cometa di Halley può essere vista ogni 75 anni, quindi Bill ha visto la cometa per la prima volta quando aveva 90 anni - 75 anni = <<90-75=15>>15 anni.
+#### 15
+"""
+
+id_orig = 991
+
+id_shuffled = 73
+
+question_annotated = """
+La cometa {comet_name,Halley} orbita attorno al Sole ogni {orbit_period,75} anni. {name,Bill}'s {relative,dad} ha visto la Cometa quando aveva {relative_age,30} anni. {name,Bill} ha visto la cometa una seconda volta quando aveva {multiple_txt,three} volte l’età che suo {relative,dad} aveva quando ha visto la Cometa. Quanti anni aveva {name,Bill} quando ha visto la Cometa per la prima volta?
+
+#init:
+- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])
+- name = sample(names_male)
+- relative = sample(['dad', 'father', 'uncle', 'grandfather'])
+- $orbit_period = range(50, 101, 5)
+- $relative_age = range(20, 51)
+- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)
+
+#conditions:
+- multiple_val * relative_age < 100
+- multiple_val * relative_age > orbit_period
+- is_int(multiple_val * relative_age - orbit_period)
+
+#answer: multiple_val * relative_age - orbit_period
+"""
+
+answer_annotated = """
+{name} ha visto la Cometa una seconda volta quando aveva {relative_age} anni * {multiple_val}= <<{relative_age}*{multiple_val}={relative_age*multiple_val}>>{relative_age*multiple_val} anni.
+La cometa {comet_name} può essere vista ogni {orbit_period} anni, quindi {name} ha visto la cometa per la prima volta quando aveva {relative_age*multiple_val} anni - {orbit_period} anni = <<{relative_age*multiple_val}-{orbit_period}={relative_age*multiple_val-orbit_period}>>{relative_age*multiple_val-orbit_period} anni.
+#### {relative_age*multiple_val-orbit_period}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

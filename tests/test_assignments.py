@@ -79,7 +79,7 @@ class TestGetAllPossibleAssignments:
 
 @pytest.mark.parametrize("template_file", get_template_files())
 def test_default_assignments_are_valid(template_file):
-    annotated_question = AnnotatedQuestion.from_json(template_file)
+    annotated_question = AnnotatedQuestion.from_toml(template_file)
     replacements = load_replacements(annotated_question.language)
     default_assignments = annotated_question._get_full_default_assignments(replacements)
     constrained_lines = annotated_question.constrained_lines

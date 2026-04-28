@@ -1,0 +1,54 @@
+question = "Dorte getur hlaupið fjórum sinnum hraðar en hún getur gengið, en hún getur hoppað á hraða sem er helmingur af þeim hraða sem hún getur hlaupið á. Ef hún getur hoppað á 3 km á klukkustund, hversu marga km getur hún ferðast á sex klukkustundum ef hún notar einn þriðji af tímanum í að hlaupa og tveir þriðju tímans í að ganga?"
+
+answer = """
+Ef Dorte getur hoppað á helmingur af þeim hraða sem hún getur hlaupið á, þá getur hún hlaupið á 3*2=<<3*2=6>>6 km á klukkustund.
+Og þar sem hún getur hlaupið á hraða sem er fjórum sinnum meiri en sá hraði sem hún getur gengið á, þýðir það að hún getur gengið á 6/4=1,5 km á klukkustund.
+Ef tveir þriðju af tímanum fer í að ganga, þá gengur hún í 6*2/3=<<6*2/3=4>>4 klukkustundir.
+Ef einn þriðji af tímanum fer í að hlaupa, þá hleypur hún í 6-4=<<6-4=2>>2 klukkustundir.
+Þannig hleypur hún í 2 klukkustundir á 6 km á klukkustund, eða 2*6=<<2*6=12>>12 km.
+Hún gengur í 4 klukkustundir á 1,5 km á klukkustund, eða 4*1,5=<<4*1,5=6>>6 km.
+Þannig ferðast hún samtals 12+6=<<12+6=18>>18 km.
+#### 18
+"""
+
+id_orig = 39
+
+id_shuffled = 88
+
+question_annotated = """
+{name,Dorte} getur hlaupið {mult_run_txt,fjórum sinnum} hraðar en hún getur gengið, en hún getur hoppað á hraða sem er {frac_skip_txt,helmingur} af þeim hraða sem hún getur hlaupið á. Ef hún getur hoppað á {skip_speed,3} km á klukkustund, hversu marga km getur hún ferðast á {total_time_txt,sex} klukkustundum ef hún notar {frac_run_txt,einn þriðji} af tímanum í að hlaupa og {frac_walk_txt,tveir þriðju} tímans í að ganga?
+
+#init:
+- name = sample(names_female)
+- mult_run_txt, mult_run_val = sample(multi_times)
+- frac_skip_txt, frac_skip_val = sample(fraction_alnum)
+- $skip_speed = range(2, 10)
+- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)
+- frac_run_txt, frac_run_val = sample(fraction_alnum)
+- frac_walk_txt, frac_walk_val = sample(fraction_alnum)
+
+#conditions:
+- frac_run_val + frac_walk_val == 1
+- skip_speed / frac_skip_val < 13
+- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))
+- is_int(skip_speed / frac_skip_val)
+- is_int(total_time_val * frac_run_val)
+- is_int(total_time_val * frac_walk_val)
+
+#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))
+"""
+
+answer_annotated = """
+Ef {name} getur hoppað á {frac_skip_txt} af þeim hraða sem hún getur hlaupið á, þá getur hún hlaupið á {skip_speed}*{1/frac_skip_val}=<<{skip_speed}*{1/frac_skip_val}={skip_speed / frac_skip_val}>>{skip_speed / frac_skip_val} km á klukkustund.
+Og þar sem hún getur hlaupið á hraða sem er {mult_run_txt} meiri en sá hraði sem hún getur gengið á, þýðir það að hún getur gengið á {skip_speed / frac_skip_val}/{mult_run_val}={float(skip_speed / frac_skip_val / mult_run_val)} km á klukkustund.
+Ef {frac_walk_txt} af tímanum fer í að ganga, þá gengur hún í {total_time_val}*{frac_walk_val}=<<{total_time_val}*{frac_walk_val}={total_time_val * frac_walk_val}>>{total_time_val * frac_walk_val} klukkustundir.
+Ef {frac_run_txt} af tímanum fer í að hlaupa, þá hleypur hún í {total_time_val}-{total_time_val * frac_walk_val}=<<{total_time_val}-{total_time_val * frac_walk_val}={total_time_val * frac_run_val}>>{total_time_val * frac_run_val} klukkustundir.
+Þannig hleypur hún í {total_time_val * frac_run_val} klukkustundir á {skip_speed / frac_skip_val} km á klukkustund, eða {total_time_val * frac_run_val}*{skip_speed / frac_skip_val}=<<{total_time_val * frac_run_val}*{skip_speed / frac_skip_val}={total_time_val * frac_run_val * (skip_speed / frac_skip_val)}>>{total_time_val * frac_run_val * (skip_speed / frac_skip_val)} km.
+Hún gengur í {total_time_val * frac_walk_val} klukkustundir á {float(skip_speed / frac_skip_val / mult_run_val)} km á klukkustund, eða {total_time_val * frac_walk_val}*{float(skip_speed / frac_skip_val / mult_run_val)}=<<{total_time_val * frac_walk_val}*{float(skip_speed / frac_skip_val / mult_run_val)}={total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}>>{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)} km.
+Þannig ferðast hún samtals {total_time_val * frac_run_val * (skip_speed / frac_skip_val)}+{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}=<<{total_time_val * frac_run_val * (skip_speed / frac_skip_val)}+{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}={int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))}>>{ int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))} km.
+#### {int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

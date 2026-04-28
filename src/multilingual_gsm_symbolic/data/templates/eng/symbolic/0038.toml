@@ -1,0 +1,42 @@
+question = "A loaf of bread at the bakery costs $2. Bagels cost $1 each. How much more do 3 loaves of bread cost than 2 bagels?"
+
+answer = """
+3 loaves of bread cost 3 * $2 = $<<3*2=6>>6.
+2 bagels cost 2 * $1 = $<<2*1=2>>2.
+The loaves of bread cost $6 - $2 = $<<6-2=4>>4 more than the bagels.
+#### 4
+"""
+
+id_orig = 799
+
+id_shuffled = 38
+
+question_annotated = """
+A loaf of {item1,bread} at the {shop,bakery} costs {currency,$}{price1,2}. {item2,Bagel}s cost {currency,$}{price2,1} each. How much more do {n1,3} loaves of {item1,bread} cost than {n2,2} {item2,bagel}s?
+
+#init:
+- item1 = sample(["bread", "sourdough"])
+- item2 = sample(["bagel", "muffin", "croissant", "biscuit"])
+- shop = sample(["bakery", "cafe", "store", "market"])
+- currency = sample(currencies_sym)
+- $price1 = range(2, 10)
+- $price2 = range(1, 5)
+- $n1 = range(2, 10)
+- $n2 = range(2, 10)
+
+#conditions:
+- n1 * price1 > n2 * price2
+
+#answer: n1 * price1 - n2 * price2
+"""
+
+answer_annotated = """
+{n1} loaves of {item1} cost {n1} * {currency}{price1} = {currency}<<{n1}*{price1}={n1*price1}>>{n1*price1}.
+{n2} {item2}s cost {n2} * {currency}{price2} = {currency}<<{n2}*{price2}={n2*price2}>>{n2*price2}.
+The loaves of {item1} cost {currency}{n1*price1} - {currency}{n2*price2} = {currency}<<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} more than the {item2}s.
+#### {n1*price1-n2*price2}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

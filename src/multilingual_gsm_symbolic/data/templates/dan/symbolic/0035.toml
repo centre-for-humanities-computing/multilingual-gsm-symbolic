@@ -1,0 +1,43 @@
+question = "Niels samler penge ind til en skoleudflugt. Han har søgt om hjælp fra skolen, som har besluttet at dække halvdelen af skoleudflugtens omkostninger. Hvor mange penge mangler Niels, hvis han har 350 kr og skoleudflugten koster 2000 kr?"
+
+answer = """
+Niels' skole har besluttet at betale 2000*1/2=<<2000*1/2=1000>>1000 kr for hans skoleudflugt.
+I alt har Niels dækket 1000 + 350 = <<1000+350=1350>>1350 kr af sin skoleudflugt
+Derfor har Niels brug for 2000 - 1350 = <<2000-1350=650>>650 kr mere til skoleudflugten.
+#### 650
+"""
+
+id_orig = 788
+
+id_shuffled = 35
+
+question_annotated = """
+{name,Niels} samler penge ind til {event_article,en} {event,skoleudflugt}. Han har søgt om hjælp fra {organization_definite,skolen}, som har besluttet at dække {fraction_txt,halvdelen} af {event_genitive,skoleudflugtens} omkostninger. Hvor mange penge mangler {name,Niels}, hvis han har {current,350} {cur,kr} og {event_definite,skoleudflugten} koster {total,2000} {cur,kr}?
+
+#init:
+- name = sample(names_male)
+- event_article, event, event_definite, event_genitive = sample([("en", "ekskursion", "ekskursionen", "ekskursionens"), ("en", "sportsturnering", "sportsturneringen", "sportsturneringens"), ("en", "konference", "konferencen", "konferencens"), ("en", "festival", "festivalen", "festivalens"), ("en", "videnskabsmesse", "videnskabsmessen", "videnskabsmessens")])
+- cur = sample(currencies_sym)
+- organization, organization_definite = sample([("skole", "skolen"), ("kommune", "kommunen"), ("lokale velgørenhedsorganisation", "den lokale velgørenhedsorganisation"), ("ungdomsklub", "ungdomsklubben"), ("forældre", "forældrene")])
+- $fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(50, 1350, 50)
+- $total = range(1350, 7000, 50)
+
+#conditions:
+- total > current
+- is_int(total * (fraction_val))
+- is_int(total - (total * (fraction_val) + current))
+
+#answer: total - (total * (fraction_val) + current)
+"""
+
+answer_annotated = """
+{name}' {organization} har besluttet at betale {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur} for hans {event}.
+I alt har {name} dækket {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} af sin {event}
+Derfor har {name} brug for {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} mere til {event_definite}.
+#### {total-(total*(fraction_val)+current)}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

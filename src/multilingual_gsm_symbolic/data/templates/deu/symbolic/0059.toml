@@ -1,0 +1,49 @@
+question = "Ich habe 10 Liter Orangensaftgetränk, das zu zwei Dritteln aus Wasser besteht, und ich möchte es zu 15 Litern Ananassaftgetränk hinzufügen, das zu drei Fünfteln aus Wasser besteht. Aber beim Eingießen verschütte ich vier Liter des Orangensaftgetränks. Wie viel Wasser ist in den verbleibenden 24 Litern?"
+
+answer = """
+Es gibt 15*3/5=<<15*3/5=9>>9 Liter Wasser aus den 15 Litern Ananassaftgetränk.
+Nachdem vier Liter des Orangensaftgetränks verschüttet wurden, blieben 10-4=<<10-4=6>>6 Liter Orangensaftgetränk übrig.
+Von den 6 Litern sind 6*2/3=<<6*2/3=4>>4 Liter Wasser.
+Damit gibt es insgesamt 9 + 4 = <<9+4=13>>13 Liter Wasser von den 24 Litern.
+#### 13
+"""
+
+id_orig = 20
+
+id_shuffled = 59
+
+question_annotated = """
+Ich habe {n1,10} Liter {fruit1,orange}saftgetränk, das zu {frac1_txt,zwei dritteln} aus Wasser besteht, und ich möchte es zu {n2,15} Litern {fruit2,ananas}saftgetränk hinzufügen, das zu {frac2_txt,drei fünfteln} aus Wasser besteht. Aber beim Eingießen verschütte ich {spill_txt,vier} Liter des {fruit1,orange}saftgetränks. Wie viel Wasser ist in den verbleibenden {total,24} Litern?
+
+#init:
+- fruit1, fruit2 = sample(["æble", "vindrue", "mango", "fersken", "citron"], 2)
+- $n1 = range(9, 21)
+- $n2 = range(12, 31)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+- spill_txt, spill_val = range_str(3, 7, 1, numbers)
+- $total = range(20, 51)
+
+#conditions:
+- spill_val < n1
+- n1 + n2 - spill_val == total
+- is_int(n2 * frac2_val)
+- is_int((n1 - spill_val) * frac1_val)
+- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+
+#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+"""
+
+answer_annotated = """
+Es gibt {n2}*{frac2_val}=<<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val} Liter Wasser aus den {n2} Litern {fruit2}saftgetränk.
+Nachdem {spill_txt} Liter des {fruit1}saftgetränks verschüttet wurden, blieben {n1}-{spill_val}=<<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} Liter {fruit1}saftgetränk übrig.
+Von den {n1-spill_val} Litern sind {n1-spill_val}*{frac1_val}=<<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} Liter Wasser.
+Damit gibt es insgesamt {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} Liter Wasser von den {total} Litern.
+#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

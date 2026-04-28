@@ -1,0 +1,52 @@
+question = "Carl faldi 3 tylftir af eggjum í garðinum fyrir páskaeggjaleitina. Liam finnur 5 egg. Sofia finnur tvöfalt svo mörg egg og Liam. Jacob finnur 2 færri en Sofia. Og Maj finnur helminginn af fjölda Jacobs. Hversu mörg egg eru enn falin í garðinum?"
+
+answer = """
+Carl faldi 3*12 = <<3*12=36>>36 egg.
+Liam finnur 5 egg.
+Sofia finnur 5*2=<<5*2=10>>10 egg.
+Jacob finnur 10 - 2 = <<10-2=8>>8 egg.
+Maj finnur 8*1/2=<<8*1/2=4>>4 egg.
+Börnin finna samtals 5 + 10 + 8 + 4 = <<5+10+8+4=27>>27 egg.
+Heildarfjöldi eggja sem enn eru í garðinum er 36 - 27 = <<36-27=9>>9 egg.
+#### 9
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,Carl} faldi {n,3} tylftir af eggjum í garðinum fyrir páskaeggjaleitina. {name2,Liam} finnur {x,5} egg. {name3,Sofia} finnur {mult1_txt,tvöfalt} svo mörg egg og {name2,Liam}. {name4,Jacob} finnur {y,2} færri en {name3,Sofia}. Og {name5,Maj} finnur {frac_txt,helminginn} af fjölda {name4,Jacob}s. Hversu mörg egg eru enn falin í garðinum?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} faldi {n}*12 = <<{n}*12={n*12}>>{n*12} egg.
+{name2} finnur {x} egg.
+{name3} finnur {x}*{mult1_val}=<<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} egg.
+{name4} finnur {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} egg.
+{name5} finnur {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} egg.
+Börnin finna samtals {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} egg.
+Heildarfjöldi eggja sem enn eru í garðinum er {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} egg.
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

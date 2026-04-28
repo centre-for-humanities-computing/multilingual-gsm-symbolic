@@ -1,0 +1,41 @@
+question = "Als Sam en Harry samen 100 voet schutting hebben, en ze spreken af om het te verdelen waarbij Harry 60 voet meer krijgt dan Sam, hoeveel blijft er over voor Sam?"
+
+answer = """
+Laat x het stuk schutting zijn dat Sam krijgt en y het stuk schutting dat Harry krijgt. We weten dat y = x + 60, en y + x = 100.
+Door de eerste vergelijking in de tweede vergelijking in te vullen, krijgen we 2x+60=100
+Door van beide kanten 60 af te trekken, krijgen we 2x=40
+We delen beide kanten door twee, waardoor x=20 overblijft. Dit betekent dat Sam 20 voet schutting overhoudt.
+#### 20
+"""
+
+id_orig = 1084
+
+id_shuffled = 85
+
+question_annotated = """
+Als {name1,Sam} en {name2,Harry} samen {total,100} {unit,voet} schutting hebben, en ze spreken af om het te verdelen waarbij {name2,Harry} {diff,60} {unit,voet} meer krijgt dan {name1,Sam}, hoeveel blijft er over voor {name1,Sam}?
+
+#init:
+- name1, name2 = sample(names, 2)
+- unit = sample(["feet", "yards", "meters"])
+- $total = range(100, 1000, 20)
+- $diff = range(20, 200, 10)
+
+#conditions:
+- total - diff > 10
+- is_int((total - diff) / 2)
+
+#answer: (total - diff) // 2
+"""
+
+answer_annotated = """
+Laat x het stuk schutting zijn dat {name1} krijgt en y het stuk schutting dat {name2} krijgt. We weten dat y = x + {diff}, en y + x = {total}.
+Door de eerste vergelijking in de tweede vergelijking in te vullen, krijgen we 2x+{diff}={total}
+Door van beide kanten {diff} af te trekken, krijgen we 2x={total-diff}
+We delen beide kanten door twee, waardoor x={(total-diff)//2} overblijft. Dit betekent dat {name1} {(total-diff)//2} {unit} schutting overhoudt.
+#### {(total-diff)//2}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

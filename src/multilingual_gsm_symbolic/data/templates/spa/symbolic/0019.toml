@@ -1,0 +1,48 @@
+question = "En un cuestionario con 60 preguntas, el 40% de las preguntas son fáciles y el resto se reparte por igual entre preguntas medias y difíciles. Si Alma está segura de acertar el 75% de las preguntas fáciles y la mitad de las preguntas medias y difíciles, ¿cuántos puntos está segura de obtener?"
+
+answer = """
+Las preguntas medias y difíciles constituyen 100% - 40% = 60% del cuestionario.
+Hay 60 preguntas*40/100 = <<60*40/100=24>>24 preguntas fáciles.
+Hay en total 60 preguntas*60/100 = <<60*60/100=36>>36 preguntas medias y difíciles.
+Si Alma está segura de acertar el 75% de las preguntas fáciles, eso significa que tiene asegurados 24 preguntas*75/100 = <<24*75/100=18>>18 puntos.
+De las preguntas medias y difíciles, está segura de acertar la mitad, así que son 36 preguntas*1/2 = <<36*1/2=18>>18 puntos.
+Así, está segura de obtener 18 puntos + 18 puntos = <<18+18=36>>36 puntos en su cuestionario.
+#### 36
+"""
+
+id_orig = 1021
+
+id_shuffled = 19
+
+question_annotated = """
+En un cuestionario con {n,60} preguntas, el {p1,40}% de las preguntas son {s1,fáciles} y el resto se reparte por igual entre preguntas {s2,medias} y {s3,difíciles}. Si {name,Alma} está segura de acertar el {r1,75}% de las preguntas {s1,fáciles} y {frac_txt,la mitad} de las preguntas {s2,medias} y {s3,difíciles}, ¿cuántos puntos está segura de obtener?
+
+#init:
+- s1, s2, s3 = sample(["historie", "geografi", "biologi", "kemi", "fysik", "økonomi", "litteratur", "algebra", "geometri"], 3)
+- name = sample(names_female)
+- $frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(5, 71, 5)
+- $r1 = range(5, 101, 5)
+- $n = range(10, 151, 10)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (r1/100))
+- is_int(n*(1-(p1/100))*frac_val)
+
+#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)
+"""
+
+answer_annotated = """
+Las preguntas {s2} y {s3} constituyen 100% - {p1}% = {100-p1}% del cuestionario.
+Hay {n} preguntas*{p1}/100 = <<{n}*{p1}/100={int(n * (p1/100))}>>{int(n * (p1/100))} preguntas {s1}.
+Hay en total {n} preguntas*{100-p1}/100 = <<{n}*{100-p1}/100={int(n*(1-(p1/100)))}>>{int(n*(1-(p1/100)))} preguntas {s2} y {s3}.
+Si {name} está segura de acertar el {r1}% de las preguntas {s1}, eso significa que tiene asegurados {int(n * (p1/100))} preguntas*{r1}/100 = <<{int(n * (p1/100))}*{r1}/100={int(n * (p1/100) * (r1/100))}>>{int(n * (p1/100) * (r1/100))} puntos.
+De las preguntas {s2} y {s3}, está segura de acertar {frac_txt}, así que son {int(n*(1-(p1/100)))} preguntas*{frac_val} = <<{int(n*(1-(p1/100)))}*{frac_val}={int(n*(1-(p1/100))*frac_val)}>>{int(n*(1-(p1/100))*frac_val)} puntos.
+Así, está segura de obtener {int(n * (p1/100) * (r1/100))} puntos + {int(n*(1-(p1/100))*frac_val)} puntos = <<{int(n * (p1/100) * (r1/100))}+{int(n*(1-(p1/100))*frac_val)}={int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)}>>{int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)} puntos en su cuestionario.
+#### {int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "spa"

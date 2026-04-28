@@ -1,0 +1,46 @@
+question = "Et sykehus har en kapasitet på 1000 senger med 1/5 opptatt. På grunn av koronavirusutbruddet blir 50 pasienter innlagt på sykehuset hver dag. Beregn det totale antallet ledige senger på sykehuset etter to uker."
+
+answer = """
+Hvis 1/5 av den totale kapasiteten av senger er opptatt, betyr det at 1/5 * 1000 = <<1000*1/5=200>>200 senger har pasienter som bruker dem.
+Det totale antallet senger på sykehuset uten nye innleggelser er 1000 senger - 200 senger = <<1000-200=800>>800 senger.
+Hvis 50 personer blir innlagt hver dag, er det totale antallet pasienter på sykehuset etter en uke 50 pasienter/dag * 7 dager/uke = 350 pasienter.
+Etter to uker er det totale antallet pasienter innlagt på sykehuset 350 pasienter/uke*2 uker = <<350*2=700>>700 pasienter, som hver bruker én seng.
+Hvis det var 800 ledige senger på sykehuset før de nye innleggelsene, reduseres det totale antallet til 800 senger - 700 senger = <<800-700=100>>100 ledige senger.
+#### 100
+"""
+
+id_orig = 955
+
+id_shuffled = 28
+
+question_annotated = """
+{facility_article, et} {facility, sykehus} har en kapasitet på {total, 1000} {item_plural, senger} med {frac, 1/5} opptatt. På grunn av {event, koronavirusutbruddet} blir {daily, 50} pasienter innlagt på {facility_definite, sykehuset} hver dag. Beregn det totale antallet ledige {item_plural, senger} på {facility_definite, sykehuset} etter {period_txt,to} uker.
+
+#init:
+- facility, facility_article, facility_definite = sample([("hospital", "et", "hospitalet"), ("klinik", "en", "klinikken"), ("medisinsk senter", "et", "det medisinske senteret"), ("pleiefasilitet", "en", "pleiefasiliteten")])
+- item, item_plural = sample([("seng","senger"), ("rom","rom"), ("avdeling","avdelinger")])
+- event = sample(["koronavirusutbruddet", "influensasesongen", "en naturkatastrofe", "en stor ulykke", "pandemien"])
+- $total = range(500, 2000, 100)
+- $frac = sample(fractions)
+- $daily = range(20, 100, 5)
+- period_txt, period_val = range_str(2, 5, 1, numbers)
+
+#conditions:
+- is_int(total * frac)
+- total * frac + daily * period_val * 7 < total
+
+#answer: total - (total * frac + daily * period_val * 7)
+"""
+
+answer_annotated = """
+Hvis {frac} av den totale kapasiteten av {item_plural} er opptatt, betyr det at {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} har pasienter som bruker dem.
+Det totale antallet {item_plural} på {facility_definite} uten nye innleggelser er {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
+Hvis {daily} personer blir innlagt hver dag, er det totale antallet pasienter på {facility_definite} etter en uke {daily} pasienter/dag * 7 dager/uke = {daily*7} pasienter.
+Etter {period_txt} uker er det totale antallet pasienter innlagt på {facility_definite} {daily*7} pasienter/uke*{period_val} uker = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} pasienter, som hver bruker én {item}.
+Hvis det var {total-int(total*frac)} ledige {item_plural} på {facility_definite} før de nye innleggelsene, reduseres det totale antallet til {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} ledige {item_plural}.
+#### {total - (total * frac + daily * period_val * 7)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

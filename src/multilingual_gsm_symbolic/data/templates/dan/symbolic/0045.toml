@@ -1,0 +1,44 @@
+question = "Sofie har et blomsterbed, der er 28,8 m langt. Sofie vil fylde sit blomsterbed med planter. Sofies blomster bliver 30 cm brede, så hun skal bruge 45 cm mellem hver plante. Sofie ejer allerede 17 blomster. Hver blomstrende plante koster 40 kr i butikken, hvor mange penge skal Sofie bruge på sit blomsterbed?"
+
+answer = """
+Sofies blomsterbed er 28,8 m / 45 cm per plante = <<2880/45=64>>64 planter påkrævet.
+Sofie skal købe 64 planter - 17 planter = <<64-17=47>>47 planter, der skal købes.
+Sofie skal bruge 47 planter * 40 kr = <<47*40=1880>>1880 kr.
+#### 1880
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,Sofie} har et blomsterbed, der er {length,28.8} m langt. {name,Sofie} vil fylde sit blomsterbed med planter. {name,Sofie}s blomster bliver {plant_width,30} cm brede, så hun skal bruge {space,45} cm mellem hver plante. {name,Sofie} ejer allerede {owned,17} blomster. Hver blomstrende plante koster {cost,40} {cur,kr} i butikken, hvor mange penge skal {name,Sofie} bruge på sit blomsterbed?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $length = arange(25, 40, 0.2)
+- $plant_width = range(20, 40)
+- $space = range(20, 60)
+- $owned = range(5, 20)
+- $cost = range(20, 100)
+
+#conditions:
+- plant_width * 3 < length*100
+- plant_width < space
+- is_int(length*100 / space)
+- length*100 / space > owned
+
+#answer: int((length*100 / space - owned) * cost)
+"""
+
+answer_annotated = """
+{name}s blomsterbed er {length} m / {space} cm per plante = <<{length*100}/{space}={int(length*100/space)}>>{int(length*100/space)} planter påkrævet.
+{name} skal købe {int(length*100/space)} planter - {owned} planter = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} planter, der skal købes.
+{name} skal bruge {int(length*100/space)-owned} planter * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
+#### {int(length*100/space - owned) * cost}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

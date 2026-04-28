@@ -1,0 +1,39 @@
+question = "Það eru 6 nemendur sem stunda tennis og tvisvar sinnum fleiri sem stunda handbolta. Það eru 16 strákar og 22 stelpur sem stunda fótbolta. Ef hver nemandi tekur aðeins þátt í einum hópi, hversu margir nemendur eru alls?"
+
+answer = """
+Það eru 6*2=<<6*2=12>>12 nemendur sem stunda handbolta.
+Það eru 16 + 22 = <<16+22=38>>38 nemendur sem stunda fótbolta.
+Alls eru 6 + 12 + 38 = <<6+12+38=56>>56 nemendur.
+#### 56
+"""
+
+id_orig = 918
+
+id_shuffled = 95
+
+question_annotated = """
+Það eru {n1,6} nemendur sem stunda {sport1,tennis} og {mult_txt,tvisvar sinnum} fleiri sem stunda {sport2,handbolta}. Það eru {n2,16} strákar og {n3,22} stelpur sem stunda {sport3,fótbolta}. Ef hver nemandi tekur aðeins þátt í einum hópi, hversu margir nemendur eru alls?
+
+#init:
+- sport1, sport2, sport3 = sample(['badminton', 'sejlsport', 'bordtennis',  'fodbold', 'håndbold', 'atletik'], 3)
+- mult_txt, mult_val = sample(multi_times)
+- $n1 = range(4, 21)
+- $n2 = range(10, 31)
+- $n3 = range(10, 31)
+
+#conditions:
+- n1 * mult_val + n2 + n3 <= 250
+
+#answer: n1 + n1 * mult_val[1] + n2 + n3
+"""
+
+answer_annotated = """
+Það eru {n1}*{mult_val}=<<{n1}*{mult_val}={n1*mult_val}>>{n1*mult_val} nemendur sem stunda {sport2}.
+Það eru {n2} + {n3} = <<{n2}+{n3}={n2+n3}>>{n2+n3} nemendur sem stunda {sport3}.
+Alls eru {n1} + {n1*mult_val} + {n2+n3} = <<{n1}+{n1*mult_val}+{n2+n3}={n1 + n1*mult_val + n2 + n3}>>{n1 + n1*mult_val + n2 + n3} nemendur.
+#### {n1 + n1*mult_val + n2 + n3}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

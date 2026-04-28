@@ -1,0 +1,44 @@
+question = "Henrique viu um tubarão de 3 metros de comprimento com 2 marcas de 15 cm cada no lado. Que percentagem do comprimento do corpo do tubarão é o comprimento total das marcas?"
+
+answer = """
+Primeiro, encontra o comprimento total das marcas em cm: 15 cm/marca * 2 marcas = <<15*2=30>>30 cm.
+Depois divides esse número por 100 para o converter em metros: 30 cm / 100 cm/m = <<30/100=0,3>>0,3 m.
+Depois divides o comprimento total das marcas em metros pelo comprimento do tubarão e multiplicas por 100% para expressar a resposta como uma percentagem: 0,3/3 metros * 100% = 10%
+
+#### 10
+"""
+
+id_orig = 473
+
+id_shuffled = 0
+
+question_annotated = """
+{n,Henrique} viu um {big_fish,tubarão} de {x,3} metros de comprimento com {k,2} marcas de {y,15} cm cada no lado. Que percentagem do comprimento do corpo do {big_fish,tubarão} é o comprimento total das marcas?
+
+#init:
+- n = sample(names)
+- big_fish = sample(["delfin", "hval", "haj"])
+- $x = range(2, 10, 1)
+- $k = range(2, 10)
+- $y = range(2, 100)
+
+#conditions:
+- k * y  < x* 100
+- divides(k*y,100)
+- divides(x * 100, k*y)
+- divides(100, x * 100 / (k*y))
+
+#answer: int((k * y)/(x * 100) * 100)
+"""
+
+answer_annotated = """
+Primeiro, encontra o comprimento total das marcas em cm: {y} cm/marca * {k} marcas = <<{y}*{k}={k*y}>>{k*y} cm.
+Depois divides esse número por 100 para o converter em metros: {k*y} cm / 100 cm/m = <<{k*y}/100={k*y//100}>>{k*y//100} m.
+Depois divides o comprimento total das marcas em metros pelo comprimento do {big_fish} e multiplicas por 100% para expressar a resposta como uma percentagem: {k*y//100}/{x} metros * 100% = {int(k*y/(100*x)*100)}%
+
+#### {int(k*y/(100*x)*100)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "por"

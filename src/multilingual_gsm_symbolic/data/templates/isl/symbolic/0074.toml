@@ -1,0 +1,41 @@
+question = "Það eru 96 nemendur í fjórða bekk í Frederiksbjerg skóla. 43 þeirra eru stúlkur. Á föstudag voru 5 stúlkur í fjórða bekk og 4 drengir í fjórða bekk fjarverandi. Hvað voru margir drengir í fjórða bekk í Frederiksbjerg skóla á föstudag?"
+
+answer = """
+Af 96 nemendum í fjórða bekk eru 43 stúlkur, þannig að 96 nemendur - 43 stúlkur = <<96-43=53>>53 drengir.
+Á föstudag voru 53 drengir - 4 fjarverandi = <<53-4=49>>49 drengir.
+#### 49
+"""
+
+id_orig = 364
+
+id_shuffled = 74
+
+question_annotated = """
+Það eru {total,96} nemendur í {grade,fjórða} bekk í {school_name,Frederiksbjerg} skóla. {num_girls,43} þeirra eru stúlkur. Á {day,föstudag} voru {absent_girls,5} stúlkur í {grade,fjórða} bekk og {absent_boys,4} drengir í {grade,fjórða} bekk fjarverandi. Hvað voru margir drengir í {grade,fjórða} bekk í {school_name,Frederiksbjerg} skóla á {day,föstudag}?
+
+#init:
+- school_name = sample(["", "Læssøesgades", "Elise Smith", "Bygade"])
+- grade = sample(["første", "anden", "tredje", "fjerde", "femte"])
+- day = sample(["mandag", "tirsdag", "onsdag", "torsdag", "fredag"])
+- $total = range(50, 200)
+- $num_girls = range(20, 100)
+- $absent_girls = range(2, 10)
+- $absent_boys = range(2, 10)
+
+#conditions:
+- num_girls < total
+- absent_girls < num_girls
+- absent_boys < (total - num_girls)
+
+#answer: total - num_girls - absent_boys
+"""
+
+answer_annotated = """
+Af {total} nemendum í {grade} bekk eru {num_girls} stúlkur, þannig að {total} nemendur - {num_girls} stúlkur = <<{total}-{num_girls}={total-num_girls}>>{total-num_girls} drengir.
+Á {day} voru {total-num_girls} drengir - {absent_boys} fjarverandi = <<{total-num_girls}-{absent_boys}={total-num_girls-absent_boys}>>{total-num_girls-absent_boys} drengir.
+#### {total-num_girls-absent_boys}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

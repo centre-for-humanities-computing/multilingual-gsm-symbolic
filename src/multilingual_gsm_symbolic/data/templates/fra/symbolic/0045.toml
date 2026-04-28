@@ -1,0 +1,45 @@
+question = "Pat a un parterre de fleurs de 111 pieds de long. Pat veut remplir son parterre de fleurs avec des plantes. Les fleurs de Pat poussent sur 12 pouces de large, donc elle doit laisser 1,5 pied entre chaque plante. Pat possède déjà 17 fleurs. Chaque plante en fleur coûte 6 $ au magasin, combien d’argent Pat va-t-elle dépenser au magasin pour remplir entièrement son parterre de fleurs ?"
+
+answer = """
+Le parterre de fleurs de Pat fait 111 pieds / 1,5 pied par plante = <<111/1.5=74>>74 plantes nécessaires.
+Pat doit acheter 74 plantes - 17 plantes = <<74-17=57>>57 plantes à acheter.
+Pat dépensera 57 plantes * 6 $ = $<<57*6=342>>342.
+#### 342
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,Pat} a un parterre de fleurs de {length,111} {unit_length,pieds} de long. {name,Pat} veut remplir son parterre de fleurs avec des plantes. Les fleurs de {name,Pat} poussent sur {plant_width,12} pouces de large, donc elle doit laisser {space,1.5} {unit_length,pied} entre chaque plante. {name,Pat} possède déjà {owned,17} fleurs. Chaque plante en fleur coûte {cur,$}{cost,6} au magasin, combien d’argent {name,Pat} va-t-elle dépenser au magasin pour remplir entièrement son parterre de fleurs ?
+
+#init:
+- name = sample(names_female)
+- unit_length = sample(['feet', 'meters'])
+- cur = sample(currencies_sym)
+- $length = range(110, 220)
+- $plant_width = range(2, 13)
+- $space = arange(1, 20, 0.25)
+- $owned = range(10, 30)
+- $cost = range(3, 15)
+
+#conditions:
+- plant_width * 3 < length
+- plant_width < space
+- is_int(length / space)
+- length / space > owned
+
+#answer: int((length / space - owned) * cost)
+"""
+
+answer_annotated = """
+Le parterre de fleurs de {name} fait {length} {unit_length} / {space} {unit_length} par plante = <<{length}/{space}={int(length/space)}>>{int(length/space)} plantes nécessaires.
+{name} doit acheter {int(length/space)} plantes - {owned} plantes = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} plantes à acheter.
+{name} va dépenser {int(length/space)-owned} plantes * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}.
+#### {int((length/space - owned) * cost)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

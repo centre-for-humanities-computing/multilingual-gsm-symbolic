@@ -1,0 +1,42 @@
+question = "Eine Klasse mit 50 Schülern hat verschiedene Hobbys. 10 mögen Backen, 5 mögen Fußball spielen und der Rest spielt entweder Videospiele oder macht Musik. Wie viele spielen gern Videospiele, wenn die Anzahl derer, die gern Musik machen, doppelt so groß ist wie die derer, die lieber Fußball spielen?"
+
+answer = """
+Die Anzahl der Schüler, die gern Musik machen, ist doppelt so groß wie die derer, die Fußball mögen, also 2 * 5 = <<2*5=10>>10
+Die Anzahl derer, die gern Videospiele spielen, ist insgesamt 50 Schüler - 10, die gern backen - 5, die gern Fußball spielen - 10, die gern Musik machen = <<50-10-5-10=25>>25
+#### 25
+"""
+
+id_orig = 740
+
+id_shuffled = 3
+
+question_annotated = """
+Eine {g,Klasse} mit {n, 50} Schülern hat verschiedene Hobbys. {n_1,10} mögen {h_1, Backen}, {n_2,5} mögen {h_2,Fußball spielen} und der Rest spielt entweder {h_3,Videospiele} oder macht {h_4,Musik}. Wie viele spielen gern {h_3,Videospiele}, wenn die Anzahl derer, die gern {h_4,Musik} machen, doppelt so groß ist wie die derer, die lieber {h_2, Fußball spielen}?
+
+#init:
+- g = sample(["gruppe", "klasse"])
+- h_2 = sample(sports)
+- h_1, h_3, h_4 = sample(['læse', 'male', 'vandre', 'danse', 'bage', 'spille videospil', 'spille musik'], 3)
+- $n = range(5, 200)
+- $n_1 = range(2, 200)
+- $n_2 = range(2, 200)
+
+#conditions:
+- n_1 < n
+- n_2 < n
+- n - (n_1 + n_2) - (2 * n_2) > 0
+
+#answer: int(n - (n_1 + n_2) - (2 * n_2))
+"""
+
+answer_annotated = """
+Die Anzahl der Schüler, die gern {h_4} machen, ist doppelt so groß wie die derer, die {h_2} mögen, also 2 * {n_2} = <<2*{n_2}={2*n_2}>>{2*n_2}
+Die Anzahl derer, die gern {h_3} spielen, ist insgesamt {n} Schüler - {n_1}, die gern {h_1} - {n_2}, die gern {h_2} spielen - {2*n_2}, die gern {h_4} machen = <<{n}-{n_1}-{n_2}-{2*n_2}={n-n_1-n_2-2*n_2}>>{n-n_1-n_2-2*n_2}
+#### {n-n_1-n_2-2*n_2}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

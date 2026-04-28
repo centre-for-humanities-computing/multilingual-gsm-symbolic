@@ -1,0 +1,44 @@
+question = "Henrik så en 3 meter lang haj med 2 markeringer på 15 cm hver på siden. Hvor mange procent af hajens kropslængde udgør den samlede længde af markeringerne?"
+
+answer = """
+Først, find den samlede længde af markeringerne i cm: 15 cm/markering * 2 markeringer = <<15*2=30>>30 cm.
+Derefter dividerer du det tal med 100 for at konvertere det til meter: 30 cm / 100 cm/m = <<30/100=0,3>>0,3 m.
+Derefter dividerer du den samlede markeringslængde i meter med hajens længde og ganger med 100% for at udtrykke svaret som en procentdel: 0,3/3 meter * 100% = 10%
+
+#### 10
+"""
+
+id_orig = 473
+
+id_shuffled = 0
+
+question_annotated = """
+{n,Henrik} så en {x,3} meter lang {big_fish,haj} med {k,2} markeringer på {y,15} cm hver på siden. Hvor mange procent af {big_fish,haj}ens kropslængde udgør den samlede længde af markeringerne?
+
+#init:
+- n = sample(names)
+- big_fish = sample(["delfin", "hval", "haj"])
+- $x = range(2, 21, 1)
+- $k = range(2, 21)
+- $y = range(2, 100)
+
+#conditions:
+- k * y  < x* 100
+- divides(k*y,100)
+- divides(x * 100, k*y)
+- divides(100, x * 100 / (k*y))
+
+#answer: int((k * y)/(x * 100) * 100)
+"""
+
+answer_annotated = """
+Først, find den samlede længde af markeringerne i cm: {y} cm/markering * {k} markeringer = <<{y}*{k}={k*y}>>{k*y} cm.
+Derefter dividerer du det tal med 100 for at konvertere det til meter: {k*y} cm / 100 cm/m = <<{k*y}/100={k*y/100}>>{k*y/100} m.
+Derefter dividerer du den samlede markeringslængde i meter med {big_fish}ens længde og ganger med 100% for at udtrykke svaret som en procentdel: {k*y/100}/{x} meter * 100% = {int(k*y/(100*x)*100)}%
+
+#### {int(k*y/(100*x)*100)}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

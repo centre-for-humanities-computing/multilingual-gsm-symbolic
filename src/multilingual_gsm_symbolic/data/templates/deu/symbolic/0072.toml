@@ -1,0 +1,45 @@
+question = "Morten hatte 5 Brieffreunde. Mit 2 von ihnen hörte er auf, Brieffreundschaften zu haben. Sie schicken jeweils 2 Briefe pro Woche, die 5 Seiten lang sind. Er antwortet sofort. Er kann eine Seite in 6 Minuten schreiben. Wie viele Stunden verbringt er pro Woche mit Schreiben?"
+
+answer = """
+Morten hat 5-2=<<5-2=3>>3 Brieffreunde
+Also bekommt er 3*2=<<3*2=6>>6 Briefe pro Woche
+Also schreibt er 6*5=<<6*5=30>>30 Seiten pro Woche
+Also schreibt er 30*6=<<30*6=180>>180 Minuten pro Woche
+Also schreibt er 180/60=<<180/60=3>>3 Stunden pro Woche
+#### 3
+"""
+
+id_orig = 242
+
+id_shuffled = 72
+
+question_annotated = """
+{name,Morten} hatte {n1,5} Brieffreunde. Mit {n2,2} von ihnen hörte er auf, Brieffreundschaften zu haben. Sie schicken jeweils {l,2} Briefe pro Woche, die {p,5} Seiten lang sind. Er antwortet sofort. Er kann eine Seite in {t,6} Minuten schreiben. Wie viele Stunden verbringt er pro Woche mit Schreiben?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(5, 15)
+- $n2 = range(1, 5)
+- $l = range(2, 5)
+- $p = range(5, 12)
+- $t = range(4, 15)
+
+#conditions:
+- n2 < n1
+- is_int(((n1 - n2) * l * p * t) / 60)
+
+#answer: ((n1 - n2) * l * p * t) // 60
+"""
+
+answer_annotated = """
+{name} hat {n1}-{n2}=<<{n1}-{n2}={n1-n2}>>{n1-n2} Brieffreunde
+Also bekommt er {n1-n2}*{l}=<<{n1-n2}*{l}={(n1-n2)*l}>>{(n1-n2)*l} Briefe pro Woche
+Also schreibt er {(n1-n2)*l}*{p}=<<{(n1-n2)*l}*{p}={((n1-n2)*l*p)}>>{((n1-n2)*l*p)} Seiten pro Woche
+Also schreibt er {((n1-n2)*l*p)}*{t}=<<{((n1-n2)*l*p)}*{t}={((n1-n2)*l*p*t)}>>{((n1-n2)*l*p*t)} Minuten pro Woche
+Also schreibt er {((n1-n2)*l*p*t)}/60=<<{((n1-n2)*l*p*t)}/60={((n1-n2)*l*p*t)//60}>>{((n1-n2)*l*p*t)//60} Stunden pro Woche
+#### {((n1-n2)*l*p*t)//60}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"

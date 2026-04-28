@@ -1,0 +1,49 @@
+question = "Peter ønsker å lage isbiter av forskjellig størrelse med 32 gram vann. Han kan lage store isbiter, som bruker 4 gram per bit, mellomstore isbiter, som bruker 2 gram, og små isbiter, som bruker 1/2 gram. Hvis han lager 3 store isbiter, 7 mellomstore isbiter og 8 små isbiter, hvor mange gram vann har han igjen?"
+
+answer = """
+De store bitene brukte 12 gram vann, fordi 3 ganger 4 er lik <<3*4=12>>12.
+Mellomstore biter brukte 14 gram vann, fordi 7 ganger 2 er lik <<7*2=14>>14.
+De små bitene brukte 4 gram vann, fordi 8 ganger 1/2 er lik 4.
+Dette betyr at Peter har brukt 30 gram vann, fordi 12 pluss 14 pluss 4 er lik 30.
+Peter har 2 gram vann igjen, fordi 32 minus 30 er lik <<32-30=2>>2.
+#### 2
+"""
+
+id_orig = 737
+
+id_shuffled = 11
+
+question_annotated = """
+{name, Peter} ønsker å lage isbiter av forskjellig størrelse med {n,32} {unit,gram} vann. Han kan lage store isbiter, som bruker {w1,4} {unit,gram} per bit, mellomstore isbiter, som bruker {w2,2} {unit,gram}, og små isbiter, som bruker {w3,1/2} {unit,gram}. Hvis han lager {n1,3} store isbiter, {n2,7} mellomstore isbiter og {n3,8} små isbiter, hvor mange {unit,gram} vann har han igjen?
+
+#init:
+- name = sample(names_male)
+- unit = sample(weights_sm)
+- $w1 = range(4, 10)
+- $w2 = range(2, 10)
+- $w3 = sample(fractions)
+- $n1 = range(3, 10)
+- $n2 = range(7, 13)
+- $n3 = sample([8, 14, 24, 15])
+- $n = range(32, 240, 4)
+
+#conditions:
+- w3 < w2 < w1
+- is_int(n3 * w3)
+- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0
+
+#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))
+"""
+
+answer_annotated = """
+De store bitene brukte {n1*w1} {unit} vann, fordi {n1} ganger {w1} er lik <<{n1}*{w1}={n1*w1}>>{n1*w1}.
+Mellomstore biter brukte {n2*w2} {unit} vann, fordi {n2} ganger {w2} er lik <<{n2}*{w2}={n2*w2}>>{n2*w2}.
+De små bitene brukte {int(w3*n3)} {unit} vann, fordi {n3} ganger {w3} er lik {int(n3*w3)}.
+Dette betyr at {name} har brukt {int(n3*w3+n2*w2+n1*w1)} {unit} vann, fordi {n1*w1} pluss {n2*w2} pluss {int(w3*n3)} er lik {int(n3*w3+n2*w2+n1*w1)}.
+{name} har {(n - (n1*w1) - (n2*w2) - int(n3*w3))} {unit} vann igjen, fordi {n} minus {int(n3*w3+n2*w2+n1*w1)} er lik <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{(n - (n1*w1) - (n2*w2) - int(n3*w3))}.
+#### {(n - (n1*w1) - (n2*w2) - int(n3*w3))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

@@ -1,0 +1,38 @@
+question = "En sjonglør kan sjonglere med 16 baller. Halvparten av ballene er golfballer, og halvparten av golfballene er blå. Hvor mange blå golfballer er det?"
+
+answer = """
+Golfballer: 16*1/2=<<16*1/2=8>>8.
+Blå golfballer: 8*1/2=<<8*1/2=4>>4 baller
+#### 4
+"""
+
+id_orig = 269
+
+id_shuffled = 8
+
+question_annotated = """
+En sjonglør kan sjonglere med {n, 16} baller. {frac_1_txt,halvparten} av ballene er {ball_type, golf}baller, og {frac_2_txt,halvparten} av {ball_type, golf}ballene er {color, blå}. Hvor mange {color, blå} {ball_type, golf}baller er det?
+
+#init:
+- ball_type = sample(["golf", "tennis"])
+- color = sample(colors)
+- $frac_1_txt, frac_1_val = sample(fraction_alnum)
+- $frac_2_txt, frac_2_val = sample(fraction_alnum)
+- $n = range(16, 100, 2)
+
+#conditions:
+- is_int(n * frac_1_val)
+- is_int(n * frac_1_val * frac_2_val)
+
+#answer: int(n * frac_1_val * frac_2_val)
+"""
+
+answer_annotated = """
+{ball_type}baller: {n}*{frac_1_val}=<<{n}*{frac_1_val}={n*frac_1_val}>>{int(n*frac_1_val)}.
+{color} {ball_type}baller: {int(n*frac_1_val)}*{frac_2_val}=<<{int(n*frac_1_val)}*{frac_2_val}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} baller
+#### {int(n*frac_1_val*frac_2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

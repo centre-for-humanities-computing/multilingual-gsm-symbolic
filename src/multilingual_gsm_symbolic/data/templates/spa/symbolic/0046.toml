@@ -1,0 +1,40 @@
+question = "El instituto Apple High School celebra la graduación en su Centro de Artes Escénicas este año, que tiene espacio para 6000 personas. Después de reservar 950 asientos para los graduados y 300 asientos para el personal docente que asiste, ¿cuántos boletos recibiría cada graduado para dárselos a sus amigos y familiares si los boletos se reparten por igual?"
+
+answer = """
+Suma los asientos de graduados y del personal docente. 950 + 300 = <<950+300=1250>>1250 asientos para el personal docente y los graduados
+Resta los asientos del personal docente y los graduados del total de asientos permitidos. 6000 - 1250 = <<6000-1250=4750>>4750 asientos restantes.
+Divide los asientos restantes entre la cantidad de graduados. 4750/950 = <<4750/950=5>>5 boletos
+#### 5
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Apple High School} está celebrando la graduación en su {venue,Centro de Artes Escénicas} este año, que tiene espacio para {total,6000} personas. Después de reservar {graduates,950} asientos para los graduados y {faculty,300} asientos para el personal docente que asiste, ¿cuántos boletos recibiría cada graduado para dárselos a sus amigos y familiares si los boletos se reparten por igual?
+
+#init:
+- school = sample(["Oakwood High School", "Riverside Academy", "Sunnyside High", "Greenville High School"])
+- venue = sample(["Auditorium", "Gymnasium", "Sports Arena", "Convention Center"])
+- $total = range(3000, 10000, 100)
+- $graduates = range(100, 1500, 50)
+- $faculty = range(100, 500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Suma los asientos de graduados y del personal docente. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} asientos para el personal docente y los graduados
+Resta los asientos del personal docente y los graduados del total de asientos permitidos. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} asientos restantes.
+Divide los asientos restantes entre la cantidad de graduados. {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} boletos
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "spa"

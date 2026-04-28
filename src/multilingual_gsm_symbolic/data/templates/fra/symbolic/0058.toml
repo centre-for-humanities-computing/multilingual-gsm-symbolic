@@ -1,0 +1,47 @@
+question = "Un gnome peut extraire 12 livres de minerai par jour à mains nues. Il peut extraire deux fois plus avec une pioche en bronze et 50 % de plus avec une pioche en acier qu’avec une pioche en bronze. Combien de livres de minerai 40 gnomes munis de pioches en acier peuvent-ils extraire en un mois de 30 jours ?"
+
+answer = """
+D’abord, trouver la quantité de minerai qu’un gnome peut extraire avec une pioche en bronze : 12 livres/jour*2=<<12*2=24>>24 livres/jour
+Ensuite, multiplier cette quantité par 150 % pour trouver la quantité qu’un gnome peut extraire avec une pioche en acier : 24 livres/jour * 150 % = <<24*150*.01=36>>36 livres/jour
+Puis, multiplier la quantité que 1 gnome peut extraire par jour avec une pioche en acier par le nombre de gnomes : 36 livres/jour/gnome * 40 gnomes = <<36*40=1440>>1440 livres/jour
+Enfin, multiplier la quantité quotidienne de minerai par le nombre de jours pour obtenir la quantité totale extraite en un mois : 1440 livres/jour * 30 jours = <<1440*30=43200>>43,200 livres/jour
+#### 43200
+"""
+
+id_orig = 1026
+
+id_shuffled = 58
+
+question_annotated = """
+Un {worker,gnome} peut extraire {base,12} {unit,pounds} de minerai par jour avec {tool1,his bare hands}. Il peut extraire {mult1_txt,twice} autant avec une {tool2,bronze pickaxe} et {mult2,50}% de plus avec une {tool3,steel pickaxe} que par rapport à une {tool2,bronze pickaxe}. Combien de {unit,pounds} de minerai {n,40} {worker,gnome}s avec des {tool3,steel pickaxe}s peuvent-ils extraire en un mois de {days,30} jours ?
+
+#init:
+- worker = sample(["miner", "goblin", "gnome", "troll"])
+- tool1 = sample(["bare hands", "basic shovel", "wooden pickaxe"])
+- unit = sample(["pounds", "kgs"])
+- tool2 = sample(["nickel pickaxe", "bronze pickaxe", "silver pickaxe"])
+- tool3 = sample(["bronze pickaxe", "steel pickaxe", "diamond pickaxe", "mithril pickaxe", "titanium pickaxe"])
+- $base = range(5, 20)
+- mult1_txt, mult1_val = sample(multi_times)
+- $mult2 = range(30, 80, 5)
+- $n = range(20, 50)
+- $days = range(28, 32)
+
+#conditions:
+- is_int(mult2/100*base*mult1_val)
+- int(base * mult1_val * (1 + mult2/100) * n * days) < 10000
+
+#answer: int(base * mult1_val * (1 + mult2/100) * n * days)
+"""
+
+answer_annotated = """
+D’abord, trouver la quantité de minerai qu’un {worker} peut extraire avec une {tool2} : {base} livres/jour*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/jour
+Ensuite, multiplier cette quantité par {100+mult2}% pour trouver la quantité qu’un {worker} peut extraire avec une {tool3} : {base*mult1_val} {unit}/jour * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/jour
+Puis, multiplier la quantité que 1 {worker} peut extraire par jour avec une {tool3} par le nombre de {worker}s : {int(base*mult1_val*(1+mult2/100))} {unit}/jour/{worker} * {n} {worker}s = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/jour
+Enfin, multiplier la quantité quotidienne de minerai par le nombre de jours pour obtenir la quantité totale extraite en un mois : {int(base*mult1_val*(1+mult2/100)*n)} {unit}/jour * {days} jours = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}/jour
+#### {int(base*mult1_val*(1+mult2/100)*n*days)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

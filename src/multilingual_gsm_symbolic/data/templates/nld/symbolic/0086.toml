@@ -1,0 +1,51 @@
+question = "Alison kreeg een plek op het hardloopteam, dus ze ging winkelen voor sportkleding. Ze kocht een tanktop voor $10, een paar hardloopshorts voor $5 meer dan de prijs van de tanktop, en een paar tennisschoenen die oorspronkelijk $48 kostten maar nu in de aanbieding waren voor de helft van de prijs. Ze had een kortingsbon van $2 korting op het pakket van $8 sportkousen dat ze ook kocht. Hoeveel heeft ze uitgegeven aan sportkleding?"
+
+answer = """
+De shorts waren $5 meer dan de tanktop, dus ze kostten $5 + $10 = $<<5+10=15>>15.
+Haar tennisschoenen waren de helft van de oorspronkelijke prijs van $48, dus ze kostten $48*1/2=$24.
+Met haar kortingsbon waren de kousen $8 - $2 = $<<8-2=6>>6.
+De tanktop, shorts, tennisschoenen en kousen samen kostten $10 + $15 + $24 + $6 = $<<10+15+24+6=55>>55.
+#### 55
+"""
+
+id_orig = 1053
+
+id_shuffled = 86
+
+question_annotated = """
+{name,Alison} kreeg een plek op het {sport,running}team, dus ze ging winkelen voor sportkleding. Ze kocht een {item1,tanktop} voor {cur,$}{p1,10}, een paar {sport, hardloop} {item2,shorts} voor {cur,$}{p2,5} meer dan de {item1, tanktop} kostte, en een paar {item3,tennisschoenen} die oorspronkelijk {cur,$}{p3,48} kostten maar nu in de aanbieding waren voor {frac_txt,half} prijs. Ze had een kortingsbon voor {cur,$}{d,2} korting op het pakket van {cur,$}{p4,8} sport {item4,kousen} dat ze ook kocht. Hoeveel heeft ze uitgegeven aan sportkleding?
+
+#init:
+- name = sample(names_female)
+- sport = sample(["zwemmen", "wielrennen", "basketbal", "voetbal", "volleybal"])
+- item1 = sample(["t-shirt", "shirt", "sport-bh"])
+- item2 = sample(["shorts", "leggings", "sportbroeken"])
+- item3 = sample(["sneakers", "schoenen met noppen", "sportschoenen"])
+- item4 = sample(["kousen", "hoofdbanden", "polsbanden"])
+- cur = sample(currencies_sym)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(8, 25)
+- $p2 = range(3, 15)
+- $p3 = range(30, 80, 2)
+- $p4 = range(5, 15)
+- $d = range(1, 5)
+
+#conditions:
+- is_int(p3*frac_val)
+- p3 % 2 == 0
+- p4 > d
+
+#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)
+"""
+
+answer_annotated = """
+De {item2} waren {cur}{p2} meer dan de {item1}, dus ze kostten {cur}{p2} + {cur}{p1} = {cur}<<{p2}+{p1}={p1+p2}>>{p1+p2}.
+Haar {item3} waren {frac_txt} van de oorspronkelijke {cur}{p3} prijs, dus ze kostten {cur}{p3}*{frac_val}={cur}{p3*frac_val}.
+Met haar kortingsbon waren de {item4} {cur}{p4} - {cur}{d} = {cur}<<{p4}-{d}={p4-d}>>{p4-d}.
+De {item1}, {item2}, {item3} en {item4} samen kostten {cur}{p1} + {cur}{p1+p2} + {cur}{p3*frac_val} + {cur}{p4-d} = {cur}<<{p1}+{p1+p2}+{p3*frac_val}+{p4-d}={p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}>>{p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}.
+#### {p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

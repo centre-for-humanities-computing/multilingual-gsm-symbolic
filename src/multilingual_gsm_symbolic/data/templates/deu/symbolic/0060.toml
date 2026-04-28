@@ -1,0 +1,45 @@
+question = "William arbeitet jeden Tag eine 10-stündige Schicht, fünf Tage pro Woche. Er verdient 10 kr pro Stunde und bekommt jede Woche einen Bonus von 300 kr, wenn das Unternehmen gut läuft. Wie viel Geld verdiente William im April, wenn das Unternehmen den ganzen Monat über wirklich gut lief?"
+
+answer = """
+An einem Tag verdient William 10 * 10 = <<10*10=100>>100 kr
+Wenn er fünf Tage pro Woche arbeitet, beträgt die Gesamtzahl der Tage für den ganzen Monat 5*4 = <<5*4=20>>20 Tage.
+Da er 100 kr pro Tag verdient, beträgt der Gesamtbetrag für den ganzen Monat 20 * 100 = <<20*100=2000>>2000 kr.
+Er bekam auch einen Bonus von 300 * 4 = <<300*4=1200>>1200 kr, weil das Unternehmen in allen Wochen im April gut lief.
+Am Ende des April hatte er 2000 + 1200 = <<2000+1200=3200>>3200 kr verdient.
+#### 3200
+"""
+
+id_orig = 304
+
+id_shuffled = 60
+
+question_annotated = """
+{name,William} arbeitet jeden Tag eine {h,10}-stündige Schicht, {d_txt,fünf} Tage pro Woche. Er verdient {r,10} {cur,kr} pro Stunde und bekommt jede Woche einen Bonus von {b,300} {cur,kr}, wenn das Unternehmen gut läuft. Wie viel Geld verdiente {name,William} im {month,April}, wenn das Unternehmen den ganzen Monat über wirklich gut lief?
+
+#init:
+- name = sample(names_male)
+- month = sample(["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"])
+- cur = sample(currencies_sym)
+- $h = range(6, 13)
+- d_txt, d_val = range_str(3, 7, 1, numbers)
+- $r = range(8, 31)
+- $b = range(100, 601)
+
+#conditions:
+- is_int(h * r)
+
+#answer: h * r * d_val * 4 + b * 4
+"""
+
+answer_annotated = """
+An einem Tag verdient {name} {h} * {r} = <<{h}*{r}={h*r}>>{h*r} {cur}
+Wenn er {d_txt} Tage pro Woche arbeitet, beträgt die Gesamtzahl der Tage für den ganzen Monat {d_val}*4 = <<{d_val}*4={d_val*4}>>{d_val*4} Tage.
+Da er {h*r} {cur} pro Tag verdient, beträgt der Gesamtbetrag für den ganzen Monat {d_val*4} * {h*r} = <<{d_val*4}*{h*r}={d_val*4*h*r}>>{d_val*4*h*r} {cur}.
+Er bekam auch einen Bonus von {b} * 4 = <<{b}*4={b*4}>>{b*4} {cur}, weil das Unternehmen in allen Wochen im {month} gut lief.
+Am Ende des {month} hatte er {d_val*4*h*r} + {b*4} = <<{d_val*4*h*r}+{b*4}={d_val*4*h*r+b*4}>>{d_val*4*h*r+b*4} {cur} verdient.
+#### {d_val*4*h*r+b*4}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"

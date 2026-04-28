@@ -1,0 +1,53 @@
+question = "Jakob mietet eine Pferdekutsche von 17 Uhr bis 21 Uhr. Er bekommt 1 Stunde gratis. Die erste bezahlte Stunde kostet 15 kr und jede folgende Stunde kostet doppelt so viel. Wie viel hat er bezahlt?"
+
+answer = """
+Er hatte sie 21-17=<<21-17=4>>4 Stunden
+Er bezahlt für 4-1=<<4-1=3>>3 Stunden
+Die erste Stunde kostet 1*15=<<1*15=15>>15 kr
+Die anderen 3-1=2 Stunden sind teurer
+Sie kosten 15*2=<<15*2=30>>30 kr pro Stunde
+Also kosten die 2 Stunden 2*30=<<2*30=60>>60 kr
+Also bezahlt er 60+15=<<60+15=75>>75 kr für die Stunden
+#### 75
+"""
+
+id_orig = 652
+
+id_shuffled = 89
+
+question_annotated = """
+{name,Jakob} mietet eine {vehicle,Pferdekutsche} von {start_time,17} Uhr bis {end_time,21} Uhr. Er bekommt {free_hours,1} Stunde gratis. Die erste bezahlte Stunde kostet {first_hour_cost,15} {cur,kr} und jede folgende Stunde kostet {multiplier_txt,to gange} so viel. Wie viel hat er bezahlt?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(["limousine", "partybus", "båd", "sportsvogn"])
+- $start_time = range(13, 20)
+- $end_time = range(15, 24)
+- $free_hours = range(1, 3)
+- cur = sample(currencies_sym)
+- $first_hour_cost = range(10, 51)
+- multiplier_txt, multiplier_val = sample(multi_times)
+
+#conditions:
+- end_time - start_time > free_hours + 1
+- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)
+
+#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val
+"""
+
+answer_annotated = """
+Er hatte sie {end_time}-{start_time}=<<{end_time}-{start_time}={end_time-start_time}>>{end_time-start_time} Stunden
+Er bezahlt für {end_time-start_time}-{free_hours}=<<{end_time-start_time}-{free_hours}={end_time-start_time-free_hours}>>{end_time-start_time-free_hours} Stunden
+Die erste Stunde kostet 1*{first_hour_cost}=<<1*{first_hour_cost}={first_hour_cost}>>{first_hour_cost} {cur}
+Die anderen {end_time-start_time-free_hours}-1={end_time-start_time-free_hours-1} Stunden sind teurer
+Sie kosten {first_hour_cost}*{multiplier_val}=<<{first_hour_cost}*{multiplier_val}={first_hour_cost*multiplier_val}>>{first_hour_cost*multiplier_val} {cur} pro Stunde
+Also kosten die {end_time-start_time-free_hours-1} Stunden {end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}=<<{end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}={(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}>>{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val} {cur}
+Also bezahlt er {(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}=<<{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}={first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}>>{first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val} {cur} für die Stunden
+#### {first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

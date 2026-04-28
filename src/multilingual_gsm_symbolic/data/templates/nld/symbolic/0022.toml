@@ -1,0 +1,39 @@
+question = "Laura maakte zich klaar voor een etentje in haar huis, waar ze van plan was stoofpot te serveren. Ze merkte dat ze geen plastic lepels meer had, dus kocht ze een nieuw pak met lepels. Later kocht haar man ook een pak met vijf nieuwe lepels en gaf die aan Laura. Terwijl Laura stoofpot maakte, gebruikte ze drie lepels om van haar stoofpot te proeven. Later, toen ze de tafel ging dekken, had ze in totaal 12 lepels. Hoeveel lepels zaten er in het pak dat Laura kocht?"
+
+answer = """
+Het totale aantal lepels van Laura en haar man was 12+3=<<12+3=15>>15 lepels.
+Omdat de man een pak met vijf lepels kocht, bevatte Laura's pak 15-5=<<15-5=10>>10 lepels.
+#### 10
+"""
+
+id_orig = 125
+
+id_shuffled = 22
+
+question_annotated = """
+{name,Laura} maakte zich klaar voor een {event,etentje} in haar huis, waar ze van plan was {food,stoofpot} te serveren. Ze merkte dat ze geen plastic {obj,lepels} meer had, dus kocht ze een nieuw pak met {obj,lepels}. Later kocht haar man ook een pak met {n1,5} nieuwe {obj,lepels} en gaf die aan {name,Laura}. Terwijl {name,Laura} {food,stoofpot} maakte, gebruikte ze {n2_txt,drie} {obj,lepels} om van haar {food,stoofpot} te proeven. Later, toen ze de tafel ging de dekken, had ze in totaal {total,12} {obj,lepels}. Hoeveel {obj,lepels} zaten er in het pak dat {name,Laura} kocht?
+
+#init:
+- name = sample(names_female)
+- event = sample(["frokostselskab", "fødselsdagsfest", "sammenkomst", "baby shower", "spil aften"])
+- food = sample(["stegt kylling", "grillet laks", "oksegryderet", "vegetar lasagne", "gevulde paprika's", "creme brulee"])
+- obj = sample(["skeer", "gafler", "tallerkener"])
+- n1_txt, n1_val = range_str(5, 20, 1, numbers)
+- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- $total = range(12, 40)
+
+#conditions:
+- total+n2_val-n1_val > 0
+
+#answer: total+n2_val-n1_val
+"""
+
+answer_annotated = """
+Het totale aantal {obj} van {name} en haar man was {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj}.
+Omdat de man een pak met {n1_val} {obj} kocht, bevatte {name}'s pak {total+n2_val}-{n1_val}=<<{total+n2_val}-{n1_val}={total+n2_val-n1_val}>>{total+n2_val-n1_val} {obj}.
+#### {total+n2_val-n1_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

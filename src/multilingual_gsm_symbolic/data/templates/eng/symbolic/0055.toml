@@ -1,0 +1,40 @@
+question = "Elise is learning to write and decides to keep re-writing the alphabet until she knows it. She writes it in full twice, writes half of it once, then re-writes everything she has already written. How many letters has Elise written in total?"
+
+answer = """
+Elise has written the alphabet twice which is a total of 26*2=<<26*2=52>>52 letters.
+She then writes half the alphabet, which is 26*1/2=<<26*1/2=13>>13 letters.
+So far, this is a total of 52 + 13 = <<52+13=65>>65 letters.
+Writing this again means she has doubled the number of letters she has written, so she has written a total of 65 * 2 = <<65*2=130>>130 letters.
+#### 130
+"""
+
+id_orig = 546
+
+id_shuffled = 55
+
+question_annotated = """
+{name,Elise} is learning to write and decides to keep re-writing the {alphabets_txt,alphabet} until she knows it. She writes it in full {n1_txt,twice}, writes {frac_txt,half} of it once, then re-writes everything she has already written. How many letters has {name,Elise} written in total?
+
+#init:
+- name = sample(names_female)
+- alphabets_txt, alphabets_val = sample([("alphabet", 26), ("hiragana (with 48 letters)", 48), ("farsi alphabet (with 32 letters)", 32), ("arabic abjad (with 28 letters)", 28)])
+- n1_txt, n1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)
+"""
+
+answer_annotated = """
+{name} has written the {alphabets_txt} {n1_txt} which is a total of {alphabets_val}*{n1_val}=<<{alphabets_val}*{n1_val}={alphabets_val*n1_val}>>{alphabets_val*n1_val} letters.
+She then writes {frac_txt} the {alphabets_txt}, which is {alphabets_val}*{frac_val}=<<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} letters.
+So far, this is a total of {alphabets_val*n1_val} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1_val}+{int(alphabets_val*frac_val)}={alphabets_val*n1_val + int(alphabets_val*frac_val)}>>{alphabets_val*n1_val + int(alphabets_val*frac_val)} letters.
+Writing this again means she has doubled the number of letters she has written, so she has written a total of {alphabets_val*n1_val + int(alphabets_val*frac_val)} * 2 = <<{alphabets_val*n1_val + int(alphabets_val*frac_val)}*2={2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1_val + int(alphabets_val*frac_val))} letters.
+#### {2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

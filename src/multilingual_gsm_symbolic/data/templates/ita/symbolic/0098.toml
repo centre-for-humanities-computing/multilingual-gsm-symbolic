@@ -1,0 +1,42 @@
+question = "Una piaga infetta dieci persone. Ogni giorno, ogni persona infetta ne contagia altre sei. Quante persone sono infette dopo tre giorni?"
+
+answer = """
+Nel primo giorno, le dieci persone originali infettano sei persone ciascuna, quindi 10*6 = <<10*6=60>>60 persone in più vengono infettate.
+Dopo il primo giorno, ci sono 10+60 = <<10+60=70>>70 persone infette.
+Nel secondo giorno, 70*6 = <<70*6=420>>420 persone in più vengono infettate.
+Dopo il secondo giorno, ci sono 70 + 420 = <<70+420=490>>490 persone infette.
+Nel terzo giorno, 490*6 = 2940 persone in più vengono infettate. Quindi, dopo tre giorni, ci sono 490 + 2940 = 3430 persone infette.
+#### 3430
+"""
+
+id_orig = 858
+
+id_shuffled = 98
+
+question_annotated = """
+Una {disease,piaga} infetta {n0_txt,dieci} persone. Ogni giorno, ogni persona infetta ne contagia altre {r_txt,sei}. Quante persone sono infette dopo {d_txt,tre} giorni?
+
+#init:
+- disease = sample(['virus', 'batteri', 'parassita', 'infezione'])
+- n0_txt, n0_val = range_str(5, 21, 1, numbers)
+- r_txt, r_val = range_str(2, 8, 1, numbers)
+- d_txt, d_val = range_str(3, 5, 1, numbers)
+
+#conditions:
+- n0_val * (r_val + 1)**d_val < 20000
+
+#answer: n0_val * (r_val + 1)**d_val
+"""
+
+answer_annotated = """
+Nel primo giorno, le {n0_txt} persone originali infettano {r_txt} persone ciascuna, quindi {n0_val}*{r_val} = <<{n0_val}*{r_val}={n0_val*r_val}>>{n0_val*r_val} persone in più vengono infettate.
+Dopo il primo giorno, ci sono {n0_val}+{n0_val*r_val} = <<{n0_val}+{n0_val*r_val}={n0_val+n0_val*r_val}>>{n0_val+n0_val*r_val} persone infette.
+Nel secondo giorno, {n0_val+n0_val*r_val}*{r_val} = <<{n0_val+n0_val*r_val}*{r_val}={(n0_val+n0_val*r_val)*r_val}>>{(n0_val+n0_val*r_val)*r_val} persone in più vengono infettate.
+Dopo il secondo giorno, ci sono {n0_val+n0_val*r_val} + {(n0_val+n0_val*r_val)*r_val} = <<{n0_val+n0_val*r_val}+{(n0_val+n0_val*r_val)*r_val}={n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val}>>{n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val} persone infette.
+Nel terzo giorno, {n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val}*{r_val} = {(n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val)*r_val} persone in più vengono infettate. Quindi, dopo {d_txt} giorni, ci sono {n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val} + {(n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val)*r_val} = {n0_val * (r_val + 1)**d_val} persone infette.
+#### {n0_val * (r_val + 1)**d_val}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

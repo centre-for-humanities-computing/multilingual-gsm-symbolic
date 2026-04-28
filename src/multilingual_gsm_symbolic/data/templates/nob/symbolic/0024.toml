@@ -1,0 +1,46 @@
+question = "Ifølge opplysningene om næringsinnhold har en pose chips 250 kalorier per porsjon. Hvis en pose på 300 gram har 5 porsjoner, hvor mange gram kan du spise hvis ditt daglige kalorimål er 2000 og du allerede har inntatt 1800 kalorier?"
+
+answer = """
+Hvis det totale kalorimålet er 2000 og jeg har inntatt 1800 kalorier, så har jeg 2000-1800 = <<2000-1800=200>>200 kalorier igjen å spise
+Hvis hver porsjon chips har 250 kalorier og jeg bare har 200 kalorier igjen å spise, så kan jeg bare spise 200/250 av en porsjon = 4/5 av en porsjon
+Vi vet også at en pose chips på 300 gram har 5 porsjoner, derfor har hver porsjon 300 gram/5 = <<300/5=60>>60 gram
+Hvis jeg bare kan spise 4/5 av en porsjon, så kan jeg bare spise 60 gram*4/5 = 48 gram
+#### 48
+"""
+
+id_orig = 43
+
+id_shuffled = 24
+
+question_annotated = """
+Ifølge opplysningene om næringsinnhold har en pose {food,chips} {cal,250} kalorier per porsjon. Hvis en pose på {size,300} {unit,gram} har {n,5} porsjoner, hvor mange {unit,gram} kan du spise hvis ditt daglige kalorimål er {total,2000} og du allerede har inntatt {spent,1800} kalorier?
+
+#init:
+- food = sample(["popcorn", "slik",  "småkager"])
+- unit = sample(["gram", "g"])
+- $cal = range(150, 500, 25)
+- $size = range(100, 400, 25)
+- $n = range(4, 8)
+- $total = range(1900, 2500, 5)
+- $spent = range(600, 1900, 25)
+
+#conditions:
+- spent < total
+- is_int( 5 * (total - spent) / cal)
+- divides(size, n)
+- divides(size//n, (total-spent)/cal)
+
+#answer: size//n * (total-spent)/cal
+"""
+
+answer_annotated = """
+Hvis det totale kalorimålet er {total} og jeg har inntatt {spent} kalorier, så har jeg {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} kalorier igjen å spise
+Hvis hver porsjon {food} har {cal} kalorier og jeg bare har {total-spent} kalorier igjen å spise, så kan jeg bare spise {total-spent}/{cal} av en porsjon = {Fraction((total-spent)/cal)} av en porsjon
+Vi vet også at en pose {food} på {size} {unit} har {n} porsjoner, derfor har hver porsjon {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit}
+Hvis jeg bare kan spise {Fraction((total-spent)/cal)} av en porsjon, så kan jeg bare spise {size//n} {unit}*{Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit}
+#### {size//n * (total-spent)/cal}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

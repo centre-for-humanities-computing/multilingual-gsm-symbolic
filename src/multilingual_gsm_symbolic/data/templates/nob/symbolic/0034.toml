@@ -1,0 +1,46 @@
+question = "Hr. Hansen solgte huset sitt for 2.700.000 kr. Han betalte et overdragelsesgebyr, som utgjør 3% av salgsprisen, og betalte også et meglergebyr, som er 5% av salgsprisen. Hvis han også betalte 1.700.000 kr for husets resterende lånebeløp, hvor mye er Hr. Hansens nettoproveny fra salget av huset?"
+
+answer = """
+Hr. Hansen betalte 2.700.000 kr*3/100 = <<2700000*3/100=81000>>81.000 kr for overdragelsesgebyret.
+Han betalte 2.700.000 kr*5/100 = <<2700000*5/100=135000>>135.000 kr for meglergebyret.
+Så Hr. Hansen betalte i alt 81.000 kr + 135.000 kr + 1.700.000 kr = <<81000+135000+1700000=1916000>>1.916.000 kr for overdragelsesgebyret, meglergebyret og lånebeløpet.
+Derfor er Hr. Hansens nettoproveny 2.700.000 kr - 1.916.000 kr = <<2700000-1916000=784000>>784.000 kr.
+#### 784000
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{title,Hr.} {name,Hansen} solgte {property,hus}et sitt for {price,2700000} kr. Han betalte et {fee1_name,overdragelses}gebyr, som utgjør {fee1_percent,3}% av salgsprisen, og betalte også et {fee2_name,megler}gebyr, som er {fee2_percent,5}% av salgsprisen. Hvis han også betalte {loan,1700000} kr for {property,hus}ets resterende lånebeløp, hvor mye er {title,Hr.} {name,Hansen}s nettoproveny fra salget av {property,hus}et?
+
+#init:
+- title = sample(["Hr.", "Prof.", "Dr."])
+- name = sample(["Christensen", "Johnson", "Løkke", "Jørgensen", "Rasmussen", "Frederiksen", "Johansen", "Møller", "Mortensen"])
+- property = sample(["hus", "lejlighed", "villa", "sommerhus", "andelsbolig"])
+- fee1_name = sample(["overdragelses", "registrerings", "advokats"])
+- fee2_name = sample(["mægler", "agent", "ejensomsmægler"])
+- $price = range(1300000, 6700000, 70000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(700000, 4700000, 100000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{title} {name} betalte {price} kr*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{price * fee1_percent // 100} kr for {fee1_name}gebyret.
+Han betalte {price} kr*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{price * fee2_percent // 100} kr for {fee2_name}gebyret.
+Så {title} {name} betalte i alt {price * fee1_percent // 100} kr + {price * fee2_percent // 100} kr + {loan} kr = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{price * (fee1_percent + fee2_percent) // 100 + loan} kr for {fee1_name}gebyret, {fee2_name}gebyret og lånebeløpet.
+Derfor er {title} {name}s nettoproveny {price} kr - {price * (fee1_percent + fee2_percent) // 100 + loan} kr = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} kr.
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

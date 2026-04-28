@@ -1,0 +1,54 @@
+question = "A farmer is buying feed for his horses. He buys a variety of hay, oats, carrots and sugar cubes. Since sugar cubes are a rare treat, he only buys two 1-pound boxes of them for the whole stable. He only wants enough carrots to feed the horses while the vegetables are fresh, so he buys four 12-pound bags. Hay are the main diet of his horses, so he buys forty-two 75-pound packs. Oats are a staple to supplement the hay, so he buys twenty 65-pound sacks. If his farm truck can carry 2250 pounds at a time, how many trips does the farmer need to transport all the feed?"
+
+answer = """
+The farmer is buying 2*1 = <<2*1=2>>2 pounds of sugar cubes.
+He is buying 4*12 = <<4*12=48>>48 pounds of carrots.
+He is buying 20*65 = <<20*65=1300>>1300 pounds of oats.
+He is buying 42*75 = <<42*75=3150>>3150 pounds of hay.
+The weight of all the feed is 2 + 48 + 1300 + 3150 = <<2+48+1300+3150=4500>>4500 pounds.
+Thus, the farmer needs 4500 / 2250 = <<4500/2250=2>>2 trips to transport all the feed in his farm truck.
+#### 2
+"""
+
+id_orig = 459
+
+id_shuffled = 7
+
+question_annotated = """
+A farmer is buying feed for his {animals,horses}. He buys a variety of {o1, hay}, {o2,oats}, {o3,carrots} and {o4, sugar cubes}. Since {o4,sugar cubes} are a rare treat, he only buys {n4_txt,two} {w4,1}-{unit,pound} boxes of them for the whole stable. He only wants enough {o3,carrots} to feed the {animals,horses} while the vegetables are fresh, so he buys {n3_txt,four} {w3,12}-{unit, pound} bags. {o1,hay} are the main diet of his {animals,horses}, so he buys {n1_txt,forty-two} {w1,75}-{unit,pound} packs. {o2, oats} are a staple to supplement the {o1, hay}, so he buys {n2_txt,twenty} {w2, 65}-{unit,pound} sacks. If his farm truck can carry {total,2250} {unit,pound}s at a time, how many trips does the farmer need to transport all the feed?
+
+#init:
+- animals = sample(['horses', 'cows', 'sheep', 'pigs', 'alpacas'])
+- unit = sample(weights_med)
+- o1, o2, o4 = sample(["hay", "corns", "oats", "apples", "wheats"], 3)
+- o3 = sample(["carrots", "beets", "cucumbers"])
+- n4_txt, n4_val = range_str(2, 7, 2, numbers)
+- n3_txt, n3_val = range_str(4, 11, 2, numbers)
+- n2_txt, n2_val = range_str(15, 21, 1, numbers)
+- n1_txt, n1_val = range_str(30, 43, 2, numbers)
+- $w4 = range(1, 4)
+- $w3 = range(8, 13, 2)
+- $w2 = range(45, 70, 5)
+- $w1 = range(55, 80, 5)
+- $total = range(1500, 2300, 150)
+
+#conditions:
+- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val
+- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)
+
+#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total
+"""
+
+answer_annotated = """
+The farmer is buying {n4_val}*{w4} = <<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit}s of {o4}.
+He is buying {n3_val}*{w3} = <<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {unit}s of {o3}.
+He is buying {n2_val}*{w2} = <<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {unit}s of {o2}.
+He is buying {n1_val}*{w1} = <<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {unit}s of {o1}.
+The weight of all the feed is {n4_val*w4} + {n3_val*w3} + {n2_val*w2} + {n1_val*w1} = <<{n4_val*w4}+{n3_val*w3}+{n2_val*w2}+{n1_val*w1}={n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4}>>{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} {unit}s.
+Thus, the farmer needs {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total} = <<{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4}/{total}={(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}>>{(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total} trips to transport all the feed in his farm truck.
+#### {(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

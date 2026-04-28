@@ -1,0 +1,47 @@
+question = "Prinz Theodor tötete 100 Drachen mit seinem mächtigen Schwert, während Prinz Arthur, der einen Speer benutzte, drei Viertel so viele Drachen tötete wie Prinz Theodor. Mit einer rostigen Eisenaxt tötete Prinz Wilhelm zweimal so viele Drachen wie Prinz Arthur. Aber Prinz Stefan, der sein Schwert zu Hause vergessen hatte, tötete mit einer Nagelfeile ein Fünftel so viele Drachen wie Prinz Wilhelm. Wie viele Drachen hat Prinz Stefan getötet?"
+
+answer = """
+Prinz Arthur tötete drei Viertel so viele Drachen wie Prinz Theodor, also 100*3/4=<<100*3/4=75>>75 Drachen.
+Prinz Wilhelm tötete zweimal so viele Drachen wie Prinz Arthur, also 2*75=<<2*75=150>>150 Drachen.
+Prinz Stefan tötete ein Fünftel so viele Drachen wie Prinz Wilhelm, also 150*1/5=<<150*1/5=30>>30 Drachen.
+#### 30
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+Prinz {name1,Theodor} tötete {n1,100} {creature,Drachen} mit seinem mächtigen {weapon1,Schwert}, während Prinz {name2,Arthur}, der einen {weapon2,Speer} benutzte, {frac1_txt,drei Viertel} so viele {creature,Drachen} tötete wie Prinz {name1,Theodor}. Mit einer {weapon3,rostigen Eisenaxt} tötete Prinz {name3,Wilhelm} {mult1_txt,zweimal} so viele {creature,Drachen} wie Prinz {name2,Arthur}. Aber Prinz {name4,Stefan}, der sein {weapon4,Schwert} zu Hause vergessen hatte, tötete mit einer {weapon5,Nagelfeile} {frac2_txt,ein Fünftel} so viele {creature,Drachen} wie Prinz {name3,Wilhelm}. Wie viele {creature,Drachen} hat Prinz {name4,Stefan} getötet?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["orker", "trolde", "gobliner", "giganter"])
+- weapon1 = sample(["sværd", "kampøkse", "krigshammer"])
+- weapon2 = sample(["spyd", "lanse", "hellebard"])
+- weapon3 = sample(["rusten jernøkse", "sten hammer", "træ hammer"])
+- weapon4 = sample(["sværd", "økse", "hammer"])
+- weapon5 = sample(["neglefil", "smørkniv", "ske", "fjer"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+Prinz {name2} tötete {frac1_txt} so viele {creature} wie Prinz {name1}, also {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+Prinz {name3} tötete {mult1_txt} so viele {creature} wie Prinz {name2}, also {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+Prinz {name4} tötete {frac2_txt} so viele {creature} wie Prinz {name3}, also {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"

@@ -1,0 +1,54 @@
+question = "Carl versteckte 3 Dutzend Eier im Hof für die Ostereiersuche. Liam findet 5 Eier. Sofia findet zwei Mal so viele wie Liam. Jacob findet 2 weniger als Sofia. Und Maj findet die Hälfte von Jacobs Anzahl. Wie viele Eier sind noch im Hof versteckt?"
+
+answer = """
+Carl versteckte 3*12 = <<3*12=36>>36 Eier.
+Liam findet 5 Eier.
+Sofia findet 5*2=<<5*2=10>>10 Eier.
+Jacob findet 10 - 2 = <<10-2=8>>8 Eier.
+Maj findet 8*1/2=<<8*1/2=4>>4 Eier.
+Die Kinder finden insgesamt 5 + 10 + 8 + 4 = <<5+10+8+4=27>>27 Eier.
+Die Gesamtzahl der Eier, die noch im Hof sind, ist 36 - 27 = <<36-27=9>>9 Eier.
+#### 9
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,Carl} versteckte {n,3} Dutzend Eier im Hof für die Ostereiersuche. {name2,Liam} findet {x,5} Eier. {name3,Sofia} findet {mult1_txt,zweimal} so viele wie {name2,Liam}. {name4,Jacob} findet {y,2} weniger als {name3,Sofia}. Und {name5,Maj} findet {frac_txt,die hälfte} von {name4,Jacob}s Anzahl. Wie viele Eier sind noch im Hof versteckt?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} versteckte {n}*12 = <<{n}*12={n*12}>>{n*12} Eier.
+{name2} findet {x} Eier.
+{name3} findet {x}*{mult1_val}=<<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} Eier.
+{name4} findet {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} Eier.
+{name5} findet {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} Eier.
+Die Kinder finden insgesamt {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} Eier.
+Die Gesamtzahl der Eier, die noch im Hof sind, ist {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} Eier.
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

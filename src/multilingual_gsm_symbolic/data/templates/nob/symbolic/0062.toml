@@ -1,0 +1,41 @@
+question = "I en kortstokk med magikerkort er det 15 røde kort og 60% flere grønne kort. Gule kort er like mange som summen av røde og grønne kort. Hvor mange kort i alle de nevnte fargene er det?"
+
+answer = """
+Det er 60/100 * 15 = <<60/100*15=9>>9 flere grønne kort enn røde kort.
+Det betyr at det er 15 + 9 = <<15+9=24>>24 grønne kort.
+Gule kort utgjør 15 + 24 = <<15+24=39>>39 kort.
+Så totalt er det 39 + 39 = <<39+39=78>>78 kort i forskjellige farger.
+#### 78
+"""
+
+id_orig = 456
+
+id_shuffled = 62
+
+question_annotated = """
+I en kortstokk med {item,magiker}kort er det {n1,15} {c1,røde} kort og {p,60}% flere {c2,grønne} kort. {c3,gule} kort er like mange som summen av {c1,røde} og {c2,grønne} kort. Hvor mange kort i alle de nevnte fargene er det?
+
+#init:
+- item = sample(["trylle", "tryllekunstner", "magiker", "kunstner", "magi"])
+- c1, c2, c3 = sample(["røde", "blå", "grønne", "gule", "lilla", "orange"], 3)
+- $n1 = range(15, 81)
+- $p = range(20, 90)
+
+#conditions:
+- p < 100
+- is_int(p/100 * n1)
+
+#answer: 2 * (n1 + (p/100 * n1))
+"""
+
+answer_annotated = """
+Det er {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} flere {c2} kort enn {c1} kort.
+Det betyr at det er {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)} {c2} kort.
+{c3} kort utgjør {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} kort.
+Så totalt er det {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{ 2*(n1+(n1+int(p/100*n1)))} kort i forskjellige farger.
+#### {2*(n1+(n1+int(p/100*n1)))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

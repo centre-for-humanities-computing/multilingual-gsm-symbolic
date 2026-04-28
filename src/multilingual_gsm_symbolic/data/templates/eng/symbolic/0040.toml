@@ -1,0 +1,48 @@
+question = "Sally went to the seashore for vacation. Her parents gave her $15 to buy whatever she wanted. At the souvenir shop, taffy was on sale for \"Buy 1 pound at $3 per pound, get 1 pound 1/2 off.\" She scooped up 4 pounds. She also bought a mixed bag of seashells for $1.5 and 4 magnets that were $0.25 each. How much money does Sally have left?"
+
+answer = """
+Sally is buying 1 pound for $3 and gets 1 pound 1/2 off. So 1/2 off of 1 pound is $3*1/2 = $1.5. The rest of 2 pounds does not have discount and costs 2*$3 = $6, so total is $3+$3/2+$6=$21/2
+4 magnets at $0.25 each is 4*0.25=$<<4*0.25=1>>1
+When you add all her purchases, $21/2+$1.5+$1 = $<<21/2+1.5+1=13>>13
+She had $15 and spent $13 so she had $15-$13 = $<<15-13=2>>2 left over
+#### 2
+"""
+
+id_orig = 410
+
+id_shuffled = 40
+
+question_annotated = """
+Sally went to the seashore for vacation. Her parents gave her ${total,15} to buy whatever she wanted. At the souvenir shop, taffy was on sale for "Buy {n1,1} pound at ${p1,3} per pound, get {n2,1} pound {discount,1/2} off." She scooped up {n12,4} pounds. She also bought a mixed bag of seashells for ${p2,1.5} and {n3,4} magnets that were ${p3,0.25} each. How much money does Sally have left?
+
+#init:
+- $total = range(10, 40, 5)
+- $n1 = range(1, 6)
+- $n2 = range(1, 6)
+- $n12 = range(2, 12)
+- $n3 = range(4, 12, 4)
+- $p1 = range(1, 10)
+- $p2 = arange(1, 3.5, 0.5)
+- $p3 = arange(0.25, 1.5, 0.25)
+- $discount = sample(fractions)
+
+#conditions:
+- n2 <= n1
+- n12 - n1 - n2 > 0
+- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)
+- p1 + n2/n1 * (1-discount) * p1 + (n12 - n1 - n2)/n1 * p1 + p2 + n3 * p3 < total
+
+#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)
+"""
+
+answer_annotated = """
+Sally is buying {n1} pound for ${p1} and gets {n2} pound {discount} off. So {discount} off of {n2} pound is ${p1}*{discount} = ${float(n2*discount*p1)}. The rest of {n12-n1-n2} pounds does not have discount and costs {n12-n1-n2}*${p1} = ${(n12-n1-n2)*p1}, so total is ${n1*p1}+${n2*(1-discount)*p1}+${(n12-n1-n2)*p1}=${n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}
+{n3} magnets at ${p3} each is {n3}*{p3}=$<<{n3}*{p3}={n3*p3}>>{n3*p3}
+When you add all her purchases, ${n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+${p2}+${n3*p3} = $<<{n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+{p2}+{n3*p3}={int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}
+She had ${total} and spent ${int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} so she had ${total}-${int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} = $<<{total}-{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}={total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} left over
+#### {total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

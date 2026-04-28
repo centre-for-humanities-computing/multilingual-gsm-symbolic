@@ -1,0 +1,39 @@
+question = "Jørgen riceve 80 e-mail al giorno. Il 20% di queste e-mail non richiede alcuna risposta. Risponde alle restanti. A quante e-mail risponde Jørgen in una settimana lavorativa di 5 giorni?"
+
+answer = """
+Jørgen riceve 80*20/100=<<80*20/100=16>>16 e-mail che non richiedono una risposta
+Quindi risponde a 80-16=<<80-16=64>>64 e-mail al giorno
+In una settimana lavorativa di 5 giorni, Jørgen risponde quindi a 64*5=<<64*5=320>>320 e-mail
+#### 320
+"""
+
+id_orig = 1063
+
+id_shuffled = 27
+
+question_annotated = """
+{name,Jørgen} riceve {n,80} e-mail al giorno. Il {p,20}% di queste e-mail non richiede alcuna risposta. Risponde alle restanti. A quante e-mail risponde {name,Jørgen} in una settimana lavorativa di {d,5} giorni?
+
+#init:
+- name = sample(male_names)
+- $n = range(50, 200)
+- $p = range(5, 40)
+- $d = range(3, 7)
+
+#conditions:
+- is_int(n * p / 100)
+- is_int(n * (100 - p) / 100)
+
+#answer: d * (n * (100 - p) / 100)
+"""
+
+answer_annotated = """
+{name} riceve {n}*{p}/100=<<{n}*{p}/100={n*p//100}>>{n*p//100} e-mail che non richiedono una risposta
+Quindi risponde a {n}-{n*p//100}=<<{n}-{n*p//100}={n*(100-p)//100}>>{n*(100-p)//100} e-mail al giorno
+In una settimana lavorativa di {d} giorni, {name} risponde quindi a {n*(100-p)//100}*{d}=<<{n*(100-p)/100}*{d}={d*(n*(100-p)//100)}>>{d*(n*(100-p)//100)} e-mail
+#### {d*(n*(100-p)//100)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "ita"

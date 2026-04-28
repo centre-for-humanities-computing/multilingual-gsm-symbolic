@@ -1,0 +1,47 @@
+question = "Dennis fanget 3 tunfisk på mandag, den første tunfisken han fanget veier 56 kilogram, den andre tunfisken han fanget veier 46 kilogram og den siste tunfisken han fanget veier 26 kilogram. Hvis et kilogram tunfisk koster 0,5 kr, hvor mye vil han tjene etter å ha solgt alle tunfiskene på markedet?"
+
+answer = """
+Dennis vil tjene 56*0,5 kr = <<56*0,5=28>>28 kr fra den første tunfisken.
+Han vil tjene 46*0,5 kr = <<46*0,5=23>>23 kr for den andre tunfisken.
+Og han vil tjene 26*0,5 kr = <<26*0,5=13>>13 kr fra den tredje tunfisken.
+Derfor er den totale mengden han vil tjene for alle tunfiskene 28 kr + 23 kr + 13 kr = <<28+23+13=64>>64 kr.
+#### 64
+"""
+
+id_orig = 1207
+
+id_shuffled = 76
+
+question_annotated = """
+{name,Dennis} fanget {n,3} {fish,tunfisk} på {day,mandag}, den første {fish,tunfisk}en han fanget veier {w1,56} {unit,kilogram}, den andre {fish,tunfisk}en han fanget veier {w2,46} {unit,kilogram} og den siste {fish,tunfisk}en han fanget veier {w3,26} {unit,kilogram}. Hvis et {unit,kilogram} {fish,tunfisk} koster {price,0.5} {cur,kr}, hvor mye vil han tjene etter å ha solgt alle {fish,tunfisk}ene på markedet?
+
+#init:
+- name = sample(names_male)
+- fish = sample(["tun", "laks", "torsk", "ørred", "pigvar"])
+- day = sample(weekdays)
+- unit = sample(["kilogram", "kg"])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(0.25, 2.5, 0.25)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+
+answer_annotated = """
+{name} vil tjene {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} fra den første {fish}en.
+Han vil tjene {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} for den andre {fish}en.
+Og han vil tjene {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} fra den tredje tunfisken.
+Derfor er den totale mengden han vil tjene for alle {fish}ene {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

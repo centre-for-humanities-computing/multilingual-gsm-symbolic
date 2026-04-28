@@ -1,0 +1,48 @@
+question = "Craig ha 2 banconote da 20 $. Compra sei pistole spara-spruzzi a 2 $ ciascuna. Compra anche 3 confezioni di palloncini d’acqua a 3 $ ciascuna. Quanto denaro gli resta?"
+
+answer = """
+Craig parte con 2 * $20 = $<<2*20=40>>40.
+Craig spende 6*$2 = $<<6*2=12>>12 per le pistole spara-spruzzi.
+Craig spende 3 confezioni di palloncini d’acqua * $3 = $<<3*3=9>>9 per i palloncini d’acqua.
+In totale, Craig ha speso $12 + $9 = $<<12+9=21>>21.
+Craig ha $40 - $21 = $<<40-21=19>>19 rimanenti.
+#### 19
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name,Craig} ha {n,2} {cur,$}{bill,20} banconote. Compra {m_txt,six} {item1,pistola spara-spruzzi}s per {cur,$}{p1,2} ciascuna. Compra anche {k,3} confezioni di {item2,palloncino d’acqua}s per {cur,$}{p2,3} ciascuna. Quanto denaro gli resta?
+
+#init:
+- name = sample(names_male)
+- $bill = sample([5, 10, 20, 50, 100])
+- item1 = sample(["toy car", "action figure", "coloring book", "puzzle", "board game"])
+- item2 = sample(["sticker", "candy bar", "trading card", "pencil", "eraser"])
+- cur = sample(currencies_sym)
+- $n = range(1, 10)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+
+#conditions:
+- n * int(bill) > m_val * p1 + k * p2
+
+#answer: n * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} parte con {n} * {cur}{bill} = {cur}<<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)}.
+{name} spende {m_val}*{cur}{p1} = {cur}<<{m_val}*{p1}={m_val*p1}>>{m_val*p1} per {item1}s.
+{name} spende {k} confezioni di {item2}s * {cur}{p2} = {cur}<<{k}*{p2}={k*p2}>>{k*p2} per {item2}s.
+In totale, {name} ha speso {cur}{m_val*p1} + {cur}{k*p2} = {cur}<<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2}.
+{name} ha {cur}{n*int(bill)} - {cur}{m_val*p1+k*p2} = {cur}<<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} rimanenti.
+#### {n*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

@@ -1,0 +1,53 @@
+question = "Kristian verkoopt honingkoeken en appeltaart voor een inzamelingsactie. Op zaterdag verkocht hij 10 dozen honingkoeken en 4 minder dozen appeltaart dan op zondag. Op zondag verkocht hij bovendien 5 dozen honingkoeken meer dan op zaterdag en 15 dozen appeltaart. Als honingkoeken 6 kronen kosten en appeltaarten 15 kronen kosten, hoeveel verdiende Kristian in twee dagen?"
+
+answer = """
+Hij verkocht 10 + 5 = <<10+5=15>>15 dozen honingkoeken op zondag.
+Het totale aantal dozen honingkoeken dat Kristian verkocht, is 10 + 15 = <<10+15=25>>25.
+Kristian verdiende 25*6 kronen = <<25*6=150>>150 kronen met de verkoop van honingkoeken.
+Hij verkocht 15 - 4 = <<15-4=11>>11 dozen appeltaart op zaterdag.
+Het totale aantal dozen appeltaart dat Kristian verkocht, is 15 + 11 = <<15+11=26>>26.
+Hij verdiende 26*15 kronen = <<26*15=390>>390 kronen met de verkoop van appeltaart.
+Dus Kristian verdiende 150 kronen + 390 kronen = <<150+390=540>>540 kronen in twee dagen.
+#### 540
+"""
+
+id_orig = 976
+
+id_shuffled = 16
+
+question_annotated = """
+{name, Kristian} verkoopt {food,honingkoeken} en {fruit,appel}taart voor een inzamelingsactie. Op {d1,zaterdag} verkocht hij {n1,10} dozen {food,honingkoeken} en {m1,4} minder dozen {fruit,appel}taart dan op {d2,zondag}. Op {d2,zondag} verkocht hij bovendien {n2,5} dozen {food,honingkoeken} meer dan op {d1,zaterdag} en {m2,15} dozen {fruit,appel}taart. Als {food,honingkoeken} {cn,6} {cur,kronen} kosten en {fruit,appel}taarten {cm,15} {cur,kronen} kosten, hoeveel verdiende {name,Kristian} in twee dagen?
+
+#init:
+- name = sample(names_male)
+- fruit, fruit_plural = sample(fruits)
+- cur = sample(currencies_sym)
+- food = sample([ "honningkager", "brownies", "kanelsnegle", "wienerbrød",])
+- d1, d2 = sample_sequential(weekdays, 2)
+- $n1 = range(21, 30)
+- $n2 = range(11, 15)
+- $m1 = range(2, 20)
+- $m2 = range(15, 30)
+- $cn = range(7, 13)
+- $cm = range(20, 33)
+
+#conditions:
+- m1 < m2
+
+#answer: (2*n1+n2)*cn + (2*m2-m1)*cm
+"""
+
+answer_annotated = """
+Hij verkocht {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} dozen {food} op {d2}.
+Het totale aantal dozen {food} dat {name} verkocht, is {n1} + {n1+n2} = <<{n1}+{n1+n2}={2*n1+n2}>>{n1+n1+n2}.
+{name} verdiende {n1+n1+n2}*{cn} {cur} = <<{n1+n1+n2}*{cn}={(n1+n1+n2)*cn}>>{(n1+n1+n2)*cn} {cur} met de verkoop van {food}.
+Hij verkocht {m2} - {m1} = <<{m2}-{m1}={m2-m1}>>{m2-m1} dozen {fruit}taart op {d1}.
+Het totale aantal dozen {fruit}taart dat {name} verkocht, is {m2} + {m2-m1} = <<{m2}+{m2-m1}={2*m2-m1}>>{2*m2-m1}.
+Hij verdiende {2*m2-m1}*{cm} {cur} = <<{2*m2-m1}*{cm}={(2*m2-m1)*cm}>>{(2*m2-m1)*cm} {cur} met de verkoop van {fruit}taart.
+Dus {name} verdiende {(n1+n1+n2)*cn} {cur} + {(2*m2-m1)*cm} {cur} = <<{(n1+n1+n2)*cn}+{(2*m2-m1)*cm}={(2*n1+n2)*cn + (2*m2-m1)*cm}>>{(2*n1+n2)*cn + (2*m2-m1)*cm} {cur} in twee dagen.
+#### {(2*n1+n2)*cn + (2*m2-m1)*cm}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

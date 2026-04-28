@@ -1,0 +1,40 @@
+question = "Jakob en Jens hebben 30 minuten om samen naar school te lopen. Het kost hun 6 minuten om bij de hoek te komen waar de bibliotheek is. Daarna kost het hun nog eens 13 minuten om bij de brandweerkazerne te komen. Hoeveel tijd hebben ze nog over om school te bereiken zonder te laat te komen?"
+
+answer = """
+Jakob en Jens komen aan bij de bibliotheek met 30 - 6 = <<30-6=24>>24 minuten over om de brandweerkazerne te bereiken.
+Daarna komen ze aan bij de brandweerkazerne en hebben ze 24 - 13 = <<24-13=11>>11 minuten over om school te bereiken zonder te laat te komen.
+#### 11
+"""
+
+id_orig = 684
+
+id_shuffled = 14
+
+question_annotated = """
+{n1,Jakob} en {n2,Jens} hebben {t,30} minuten om samen naar {loc1,school} te lopen. Het kost hun {t1,6} minuten om bij de hoek te komen waar de {loc2,bibliotheek} is. Daarna kost het hun nog eens {t2,13} minuten om bij de {loc3, brandweerkazerne} te komen. Hoeveel tijd hebben ze nog over om {loc1,school} te bereiken zonder te laat te komen?
+
+#init:
+- n1, n2 = sample(names, 2)
+- loc1, loc2, loc3 = sample(['skolen', 'indkøbscenteret', 'biblioteket', 'parken', 'fitnesscenteret', 'banken', 'brandstationen'], 3)
+- $t1 = range(6, 30)
+- $t2 = range(10, 70)
+- $t = range(30, 140)
+
+#conditions:
+- not divides(t1, 5)
+- not divides(t2, 5)
+- not divides(t, 5)
+- t > t1 + t2
+
+#answer: t - t1 - t2
+"""
+
+answer_annotated = """
+{n1} en {n2} komen aan bij de {loc2} met {t} - {t1} = <<{t}-{t1}={t-t1}>>{t-t1} minuten over om de {loc3} te bereiken.
+Daarna komen ze aan bij de {loc3} en hebben ze {t-t1} - {t2} = <<{t-t1}-{t2}={t-t1-t2}>>{t-t1-t2} minuten over om {loc1} te bereiken zonder te laat te komen.
+#### {t-t1-t2}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

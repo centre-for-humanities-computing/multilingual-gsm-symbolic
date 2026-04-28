@@ -1,0 +1,49 @@
+question = "Un concierge doit nettoyer une école avec 80 salles de classe. Ils ont 5 jours pour le faire. Cela leur prend 15 minutes par salle de classe. S'ils travaillent 8 heures par jour, quel pourcentage de leur journée, en moyenne, est consacré au nettoyage des salles de classe ?"
+
+answer = """
+Ils doivent nettoyer 16 salles de classe par jour, car 80/5 = <<80/5=16>>16
+Ils passent 240 minutes à nettoyer par jour, car 16*15 = <<16*15=240>>240
+Ils passent 4 heures par jour, car 240 / 60 = <<240/60=4>>4
+Ils passent 1/2 de leur journée à nettoyer les salles de classe, car 4 / 8 = <<4/8=0,5>>0,5
+Ils passent 50% de leur journée à nettoyer les salles de classe, car 0,5*100 = <<0,5*100=50>>50
+#### 50
+"""
+
+id_orig = 1239
+
+id_shuffled = 39
+
+question_annotated = """
+Un {job,concierge} doit nettoyer une {building,école} avec {n,80} {room_plural,salles de classe}. Ils ont {d,5} jours pour le faire. Cela leur prend {t,15} minutes par {room,salle de classe}. S'ils travaillent {h,8} heures par jour, quel pourcentage de leur journée, en moyenne, est consacré au nettoyage des {room_plural,salles de classe} ?
+
+#init:
+- job = sample(["vicevært", "rengøringsmedarbejder", "pedel"])
+- building = sample(["kontorbygning", "hospital", "universitet",])
+- room, room_plural = sample([("klasselokale", "klasselokaler"), ("rum", "rum"), ("etage", "etager")])
+- $n = range(50, 221, 5)
+- $d = range(3, 12)
+- $t = range(10, 46, 5)
+- $h = range(6, 17)
+
+#conditions:
+- divides(n, d)
+- divides(60, t)
+- (n/d) * t < h * 60
+- is_int( 10 * (n/d) * t / (h * 60))
+- is_int(100 * (n/d) * t / (h * 60))
+
+#answer: int(100 * (n/d) * t / (h * 60))
+"""
+
+answer_annotated = """
+Ils doivent nettoyer {n//d} {room_plural} par jour, car {n}/{d} = <<{n}/{d}={n//d}>>{n//d}
+Ils passent {(n//d)*t} minutes à nettoyer par jour, car {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
+Ils passent {(n//d)*t/60} heures par jour, car {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
+Ils passent {Fraction((n//d)*t/(h*60))} de leur journée à nettoyer les {room_plural}, car {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
+Ils passent {int(100 * (n/d) * t / (h * 60))}% de leur journée à nettoyer les {room_plural}, car {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
+#### {int(100 * (n/d) * t / (h * 60))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fra"

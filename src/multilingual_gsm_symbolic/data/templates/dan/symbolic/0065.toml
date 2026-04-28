@@ -1,0 +1,40 @@
+question = "Josefine overvejer, om hun skal lave sine skatter selv eller hyre en revisor. Hvis hun gør det selv, vil hun kunne udføre 3 færre timer freelancearbejde, hvilket medfører et tab på 35 kr/time i mistet indkomst. Revisoren kræver 90 kr. Hvor mange flere penge vil hun have, hvis hun hyrer revisoren?"
+
+answer = """
+Først find den samlede mistede indkomst, hvis Josefine laver sine skatter selv: 35 kr/time * 3 timer = <<35*3=105>>105 kr
+Træk derefter revisorens gebyr fra for at finde ud af, hvor mange penge Josefine sparer: 105 kr - 90 kr = <<105-90=15>>15 kr
+#### 15
+"""
+
+id_orig = 164
+
+id_shuffled = 65
+
+question_annotated = """
+{name,Josefine} overvejer, om hun skal lave {task,sine skatter} selv eller hyre en {profession,revisor}. Hvis hun gør det selv, vil hun kunne udføre {n,3} færre timer {work_type,freelance}arbejde, hvilket medfører et tab på {rate,35} {cur,kr}/time i mistet indkomst. {profession_definite,revisoren} kræver {fee,90} {cur,kr}. Hvor mange flere penge vil hun have, hvis hun hyrer {profession,revisor}en?
+
+#init:
+- name = sample(names_female)
+- task = sample(["sine skatter", "sin finansielle planlægning", "sit forretningsregnskab"])
+- profession, profession_definite = sample([("revisor", "revisoren"), ("finansiel rådgiver", "den finansielle rådgiver"), ("skattekonsulent", "skattekonsulenten"), ("bogholder", "bogholderen")])
+- work_type = sample(["freelance", "konsulent", "deltids", "kontrakt"])
+- cur = sample(currencies_sym)
+- $n = range(3, 14)
+- $rate = range(20, 100)
+- $fee = range(50, 200)
+
+#conditions:
+- n * rate > fee
+
+#answer: n * rate - fee
+"""
+
+answer_annotated = """
+Først find den samlede mistede indkomst, hvis {name} laver {task} selv: {rate} {cur}/time * {n} timer = <<{rate}*{n}={rate*n}>>{rate*n} {cur}
+Træk derefter {profession_definite}s gebyr fra for at finde ud af, hvor mange penge {name} sparer: {rate*n} {cur} - {fee} {cur} = <<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee} {cur}
+#### {rate*n-fee}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

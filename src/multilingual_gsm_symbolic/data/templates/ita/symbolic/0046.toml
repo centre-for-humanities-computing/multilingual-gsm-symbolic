@@ -1,0 +1,40 @@
+question = "La Apple High School sta tenendo la cerimonia di diploma nel loro Centro per le Arti Fine Arts Center quest’anno, che ha spazio per 6000 persone. Dopo aver considerato 950 posti per i diplomandi e 300 posti per il personale docente che partecipa, quanti biglietti riceverebbe ciascun diplomando per darli ai propri amici e familiari se i biglietti vengono divisi in parti uguali?"
+
+answer = """
+Somma i posti per i diplomandi e per il personale docente. 950 + 300 = <<950+300=1250>>1250 posti per personale docente e diplomandi
+Sottrai i posti per il personale docente e per i diplomandi dal totale dei posti consentiti. 6000 - 1250 = <<6000-1250=4750>>4750 posti rimanenti.
+Dividi i posti rimanenti per il numero di diplomandi. 4750/950 = <<4750/950=5>>5 biglietti
+#### 5
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Apple High School} sta tenendo la cerimonia di diploma nel loro {venue,Centro per le Arti Fine Arts Center} quest’anno, che ha spazio per {total,6000} persone. Dopo aver considerato {graduates,950} posti per i diplomandi e {faculty,300} posti per il personale docente che partecipa, quanti biglietti riceverebbe ciascun diplomando per darli ai propri amici e familiari se i biglietti vengono divisi in parti uguali?
+
+#init:
+- school = sample(["Oakwood High School", "Riverside Academy", "Sunnyside High", "Greenville High School"])
+- venue = sample(["Auditorium", "Gymnasium", "Sports Arena", "Convention Center"])
+- $total = range(3000, 10000, 100)
+- $graduates = range(100, 1500, 50)
+- $faculty = range(100, 500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Somma i posti per i diplomandi e per il personale docente. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} posti per personale docente e diplomandi
+Sottrai i posti per il personale docente e per i diplomandi dal totale dei posti consentiti. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} posti rimanenti.
+Dividi i posti rimanenti per il numero di diplomandi. {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} biglietti
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

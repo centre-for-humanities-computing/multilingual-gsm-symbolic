@@ -1,0 +1,53 @@
+question = "Kristian vend des pains d'épices et des tartes aux pommes pour une collecte de fonds. Le samedi, il a vendu 10 boîtes de pains d'épices et 4 boîtes de tartes aux pommes de moins que le dimanche. Le dimanche, il a vendu 5 boîtes de pains d'épices de plus que le samedi et 15 boîtes de tartes aux pommes. Si les pains d'épices coûtent 6 couronnes et les tartes aux pommes coûtent 15 couronnes, combien Kristian a-t-il gagné en deux jours ?"
+
+answer = """
+Il a vendu 10 + 5 = <<10+5=15>>15 boîtes de pains d'épices le dimanche.
+Le nombre total de boîtes de pains d'épices que Kristian a vendues est 10 + 15 = <<10+15=25>>25.
+Kristian a gagné 25*6 couronnes = <<25*6=150>>150 couronnes en vendant des pains d'épices.
+Il a vendu 15 - 4 = <<15-4=11>>11 boîtes de tartes aux pommes le samedi.
+Le nombre total de boîtes de tartes aux pommes que Kristian a vendues est 15 + 11 = <<15+11=26>>26.
+Il a gagné 26*15 couronnes = <<26*15=390>>390 couronnes en vendant des tartes aux pommes.
+Donc Kristian a gagné 150 couronnes + 390 couronnes = <<150+390=540>>540 couronnes en deux jours.
+#### 540
+"""
+
+id_orig = 976
+
+id_shuffled = 16
+
+question_annotated = """
+{name, Kristian} vend des {food,pains d'épices} et des tartes aux {fruit,pomme}s pour une collecte de fonds. Le {d1,samedi}, il a vendu {n1,10} boîtes de {food,pains d'épices} et {m1,4} boîtes de tartes aux {fruit,pomme}s de moins que le {d2,dimanche}. Le {d2,dimanche}, il a vendu {n2,5} boîtes de {food,pains d'épices} de plus que le {d1,samedi} et {m2,15} boîtes de tartes aux {fruit,pomme}s. Si les {food,pains d'épices} coûtent {cn,6} {cur,couronnes} et les tartes aux {fruit,pomme}s coûtent {cm,15} {cur,couronnes}, combien {name,Kristian} a-t-il gagné en deux jours ?
+
+#init:
+- name = sample(names_male)
+- fruit, fruit_plural = sample(fruits)
+- cur = sample(currencies_sym)
+- food = sample([ "honningkager", "brownies", "kanelsnegle", "wienerbrød",])
+- d1, d2 = sample_sequential(weekdays, 2)
+- $n1 = range(21, 30)
+- $n2 = range(11, 15)
+- $m1 = range(2, 20)
+- $m2 = range(15, 30)
+- $cn = range(7, 13)
+- $cm = range(20, 33)
+
+#conditions:
+- m1 < m2
+
+#answer: (2*n1+n2)*cn + (2*m2-m1)*cm
+"""
+
+answer_annotated = """
+Il a vendu {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} boîtes de {food} le {d2}.
+Le nombre total de boîtes de {food} que {name} a vendues est {n1} + {n1+n2} = <<{n1}+{n1+n2}={2*n1+n2}>>{n1+n1+n2}.
+{name} a gagné {n1+n1+n2}*{cn} {cur} = <<{n1+n1+n2}*{cn}={(n1+n1+n2)*cn}>>{(n1+n1+n2)*cn} {cur} en vendant des {food}.
+Il a vendu {m2} - {m1} = <<{m2}-{m1}={m2-m1}>>{m2-m1} boîtes de tartes aux {fruit}s le {d1}.
+Le nombre total de boîtes de tartes aux {fruit}s que {name} a vendues est {m2} + {m2-m1} = <<{m2}+{m2-m1}={2*m2-m1}>>{2*m2-m1}.
+Il a gagné {2*m2-m1}*{cm} {cur} = <<{2*m2-m1}*{cm}={(2*m2-m1)*cm}>>{(2*m2-m1)*cm} {cur} en vendant des tartes aux {fruit}s.
+Donc {name} a gagné {(n1+n1+n2)*cn} {cur} + {(2*m2-m1)*cm} {cur} = <<{(n1+n1+n2)*cn}+{(2*m2-m1)*cm}={(2*n1+n2)*cn + (2*m2-m1)*cm}>>{(2*n1+n2)*cn + (2*m2-m1)*cm} {cur} en deux jours.
+#### {(2*n1+n2)*cn + (2*m2-m1)*cm}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fra"

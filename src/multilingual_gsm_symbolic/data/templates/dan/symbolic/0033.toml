@@ -1,0 +1,41 @@
+question = "Caroline og Johanne er søstre fra København, der elsker at samle underskrifter fra kendisser. I løbet af deres sommerferie bruger søstrene hver eftermiddag på at samle underskrifter. Efter fem uger sammenligner Caroline og Johanne deres autografbøger og tæller antallet af underskrifter, hver søster har indsamlet. Caroline har 20 underskrifter i sin autografbog og Johanne har 44. Søstrene har tre ugers sommerferie tilbage og de beslutter sig for, at de vil nå 100 underskrifter mellem dem inden udgangen af sommeren. Hvor mange underskrifter skal søstrene samle for at nå deres mål?"
+
+answer = """
+Caroline og Johanne har allerede samlet 20 + 44 underskrifter = <<20+44=64>>64 underskrifter.
+Da deres mål er 100, skal de indsamle 100 - 64 underskrifter. 100 - 64 = <<100-64=36>>36 underskrifter
+#### 36
+"""
+
+id_orig = 677
+
+id_shuffled = 33
+
+question_annotated = """
+{name1,Caroline} og {name2,Johanne} er søstre fra {city,København}, der elsker at samle underskrifter fra {celebrity_type,kendisser}. I løbet af deres {vacation_type,sommerferie} bruger søstrene hver eftermiddag på at samle underskrifter. Efter {n1_txt,fem} uger sammenligner {name1,Caroline} og {name2,Johanne} deres autografbøger og tæller antallet af underskrifter, hver søster har indsamlet. {name1,Caroline} har {s1,20} underskrifter i sin autografbog og {name2,Johanne} har {s2,44}. Søstrene har {n2_txt,tre} ugers {vacation_type,sommerferie} tilbage og de beslutter sig for, at de vil nå {goal,100} underskrifter mellem dem inden udgangen af sommeren. Hvor mange underskrifter skal søstrene samle for at nå deres mål?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- city = sample(cities)
+- celebrity_type = sample(["filmstjerner", "atleter", "musikere", "politikere", "forfattere"])
+- vacation_type = sample(["vinterferie", "påskeferie", "sommerferie", "efterårsferie"])
+- n1_txt, n1_val = range_str(3, 8, 1, numbers)
+- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+- $s1 = range(15, 40)
+- $s2 = range(30, 60)
+- $goal = range(90, 150, 5)
+
+#conditions:
+- s1 + s2 < goal
+
+#answer: goal - (s1 + s2)
+"""
+
+answer_annotated = """
+{name1} og {name2} har allerede samlet {s1} + {s2} underskrifter = <<{s1}+{s2}={s1+s2}>>{s1+s2} underskrifter.
+Da deres mål er {goal}, skal de indsamle {goal} - {s1+s2} underskrifter. {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} underskrifter
+#### {goal-(s1+s2)}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

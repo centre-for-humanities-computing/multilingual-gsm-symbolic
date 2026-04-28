@@ -1,0 +1,45 @@
+question = "Grandma walks 3 miles every day on her favorite walking trail, which includes 2 miles of walking on the beach and 1 mile(s) of walking on the sidewalk. On the sidewalk, Grandma walks at twice the rate of speed that she does on the beach. If 40 minutes of her walk is spent on the beach, how long does it take for her to complete the entire 3-mile walk, in minutes?"
+
+answer = """
+On the beach, Grandma walks at a rate of 2 miles per 40 minutes, or 2/40 = 1/20 miles per minute.
+On the sidewalk, she walks at twice the rate of speed as when she is on the sand, or 2*1/20 = 0.1 miles per minute.
+To walk 1 mile(s) on the sidewalk, it takes her 1/0.1 = <<1/0.1=10>>10 minutes.
+Thus, in total, it takes Grandma 40+10 = <<40+10=50>>50 minutes to walk her favorite route.
+#### 50
+"""
+
+id_orig = 1133
+
+id_shuffled = 17
+
+question_annotated = """
+{name,Grandma} walks {n,3} {unit,mile}s every day on her favorite walking trail, which includes {m,2} {unit,mile}s of walking on the beach and {k,1} {unit,mile}(s) of walking on the sidewalk. On the sidewalk, {name,Grandma} walks at {mult_txt,twice} the rate of speed that she does on the beach. If {t,40} minutes of her walk is spent on the beach, how long does it take for her to complete the entire {n,3}-{unit, mile} walk, in minutes?
+
+#init:
+- name = sample(names_female)
+- unit = sample(length_lg)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(3, 40)
+- $m = range(2, 20)
+- $k = range(1, 20)
+- $t = range(40, 70)
+#conditions:
+- m + k == n
+- m < t
+- mult_val *m < t
+- divides(t, m)
+- is_int(k / mult_val*m/t)
+#answer: {t+(k/mult_val*m/t)} 
+"""
+
+answer_annotated = """
+On the beach, {name} walks at a rate of {m} {unit}s per {t} minutes, or {m}/{t} = {Fraction(m/t)} {unit}s per minute.
+On the sidewalk, she walks at {mult_txt} the rate of speed as when she is on the sand, or {mult_val}*{Fraction(m/t)} = {mult_val*m/t} {unit}s per minute.
+To walk {k} {unit}(s) on the sidewalk, it takes her {k}/{mult_val*m/t} = <<{k}/{mult_val*m/t}={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minutes.
+Thus, in total, it takes {name} {t}+{k/(mult_val*m/t)} = <<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minutes to walk her favorite route.
+#### {t+(k/(mult_val*m/t))}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

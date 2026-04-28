@@ -1,0 +1,47 @@
+question = "Prins Theodor drap 100 dreka með voldugu sverði sínu, en prins Arthur, sem notaði spjót, drap þrír fjórðu af jafn mörgum dreka og prins Theodor. Með ryðgaðri járnöxi drap prins Wilhelm tvöfalt fleiri dreka en prins Arthur. En prins Stefan, sem hafði gleymt sverði sínu heima, drap einn fimmti af jafn mörgum dreka og prins Wilhelm með naglaþjöl. Hversu marga dreka drap prins Stefan?"
+
+answer = """
+Prins Arthur drap þrír fjórðu af jafn mörgum dreka og prins Theodor, þannig að 100*3/4=<<100*3/4=75>>75 dreka.
+Prins Wilhelm drap tvöfalt fleiri dreka en prins Arthur, þannig að 2*75=<<2*75=150>>150 dreka.
+Prins Stefan drap einn fimmti af jafn mörgum dreka og prins Wilhelm, þannig að 150*1/5=<<150*1/5=30>>30 dreka.
+#### 30
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+Prins {name1,Theodor} drap {n1,100} {creature,dreka} með voldugu {weapon1,sverði} sínu, en prins {name2,Arthur}, sem notaði {weapon2,spjót}, drap {frac1_txt,þrír fjórðu} af jafn mörgum {creature,drekum} og prins {name1,Theodor}. Með {weapon3,ryðgaðri járnöxi} drap prins {name3,Wilhelm} {mult1_txt,tvöfalt} fleiri {creature,dreka} en prins {name2,Arthur}. En prins {name4,Stefan}, sem hafði gleymt {weapon4,sverði} sínu heima, drap {frac2_txt,einn fimmti} af jafn mörgum {creature,drekum} og prins {name3,Wilhelm} með {weapon5,naglaþjöl}. Hversu marga {creature,dreka} drap prins {name4,Stefan}?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["orker", "trolde", "gobliner", "giganter"])
+- weapon1 = sample(["sværd", "kampøkse", "krigshammer"])
+- weapon2 = sample(["spyd", "lanse", "hellebard"])
+- weapon3 = sample(["rusten jernøkse", "sten hammer", "træ hammer"])
+- weapon4 = sample(["sværd", "økse", "hammer"])
+- weapon5 = sample(["neglefil", "smørkniv", "ske", "fjer"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+Prins {name2} drap {frac1_txt} af jafn mörgum {creature} og prins {name1}, þannig að {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+Prins {name3} drap {mult1_txt} fleiri {creature} en prins {name2}, þannig að {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+Prins {name4} drap {frac2_txt} af jafn mörgum {creature} og prins {name3}, þannig að {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

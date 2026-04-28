@@ -1,0 +1,48 @@
+question = "Carl á tveir 50-kr seðla. Hann kaupir sex vatnsbyssur á 5 kr stykkið. Hann kaupir líka 3 pakka af vatnsblöðrum á 8 kr stykkið. Hvað á hann mikla peninga eftir?"
+
+answer = """
+Carl byrjar með 2*50 kr = <<2*50=100>>100 kr.
+Carl kaupir sex vatnsbyssur * 5 kr = <<6*5=30>>30 kr í vatnsbyssur.
+Carl kaupir 3 pakka af vatnsblöðrum * 8 kr = <<3*8=24>>24 kr í vatnsblöðrur.
+Samtals hefur Carl eytt 30 kr + 24 kr = <<30+24=54>>54 kr.
+Carl á 100 kr - 54 kr = <<100-54=46>>46 kr eftir.
+#### 46
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name,Carl} á {n_txt,tveir} {bill,50}-{cur,kr} seðla. Hann kaupir {m_txt,sex} {item1,vatnsbyssur} á {p1,5} {cur,kr} stykkið. Hann kaupir líka {k,3} pakka af {item2,vatnsblöðrum} á {p2,8} {cur,kr} stykkið. Hvað á hann mikla peninga eftir?
+
+#init:
+- name = sample(names_male)
+- $bill = sample([50, 100, 200])
+- item1 = sample(["vandpistoler", "legetøjsbiler", "action figurer", "malebøger", "puslespil", "brætspil"])
+- item2 = sample(["vandballoner", "klistermærker", "chokoladebarer", "pokemon kort", "blyanter", "viskelædere"])
+- cur = sample(currencies_sym)
+- n_txt, n_val = range_str(1, 10, 1, numbers)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+
+#conditions:
+- n_val * int(bill) > m_val * p1 + k * p2
+
+#answer: n_val * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} byrjar með {n_val}*{bill} {cur} = <<{n_val}*{int(bill)}={n_val*int(bill)}>>{n_val*int(bill)} {cur}.
+{name} kaupir {m_txt} {item1} * {p1} {cur} = <<{m_val}*{p1}={m_val*p1}>>{m_val*p1} {cur} í {item1}.
+{name} kaupir {k} pakka af {item2} * {p2} {cur} = <<{k}*{p2}={k*p2}>>{k*p2} {cur} í vatnsblöðrur.
+Samtals hefur {name} eytt {m_val*p1} {cur} + {k*p2} {cur} = <<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} {cur}.
+{name} á {n_val*int(bill)} {cur} - {m_val*p1+k*p2} {cur} = <<{n_val*int(bill)}-{m_val*p1+k*p2}={n_val*int(bill)-(m_val*p1+k*p2)}>>{n_val*int(bill)-(m_val*p1+k*p2)} {cur} eftir.
+#### {n_val*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

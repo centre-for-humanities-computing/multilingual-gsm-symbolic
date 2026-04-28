@@ -1,0 +1,47 @@
+question = "Un gnomo puede extraer 12 libras de mineral por día con sus manos desnudas. Puede extraer el doble con un pico de bronce y un 50% más con un pico de acero que con un pico de bronce. ¿Cuántas libras de mineral pueden extraer 40 gnomos con picos de acero en un mes de 30 días?"
+
+answer = """
+Primero, encuentra cuánta mena puede extraer un gnomo con un pico de bronce: 12 libras/día*2=<<12*2=24>>24 libras/día
+Luego multiplica esa cantidad por 150% para encontrar cuánta mena puede extraer un gnomo con un pico de acero: 24 libras/día * 150% = <<24*150*.01=36>>36 libras/día
+Luego multiplica la cantidad que un gnomo puede extraer en un día con un pico de acero por el número de gnomos: 36 libras/día/gnomo * 40 gnomos = <<36*40=1440>>1440 libras/día
+Luego multiplica la cantidad diaria de mena por el número de días para hallar la mena total extraída en un mes: 1440 libras/día * 30 días = <<1440*30=43200>>43,200 libras/día
+#### 43200
+"""
+
+id_orig = 1026
+
+id_shuffled = 58
+
+question_annotated = """
+Un {worker,gnome} puede extraer {base,12} {unit,libras} de mineral por día con {tool1,sus manos desnudas}. Puede extraer {mult1_txt,doble} de cantidad con un {tool2,pico de bronce} y {mult2,50}% más con un {tool3,pico de acero} que con un {tool2,pico de bronce}. ¿Cuántas {unit,libras} de mineral pueden extraer {n,40} {worker,gnome}s con {tool3,picos de acero} en un mes de {days,30} días?
+
+#init:
+- worker = sample(["miner", "goblin", "gnome", "troll"])
+- tool1 = sample(["bare hands", "basic shovel", "wooden pickaxe"])
+- unit = sample(["pounds", "kgs"])
+- tool2 = sample(["nickel pickaxe", "bronze pickaxe", "silver pickaxe"])
+- tool3 = sample(["bronze pickaxe", "steel pickaxe", "diamond pickaxe", "mithril pickaxe", "titanium pickaxe"])
+- $base = range(5, 20)
+- mult1_txt, mult1_val = sample(multi_times)
+- $mult2 = range(30, 80, 5)
+- $n = range(20, 50)
+- $days = range(28, 32)
+
+#conditions:
+- is_int(mult2/100*base*mult1_val)
+- int(base * mult1_val * (1 + mult2/100) * n * days) < 10000
+
+#answer: int(base * mult1_val * (1 + mult2/100) * n * days)
+"""
+
+answer_annotated = """
+Primero, encuentra cuánta mena puede extraer un {worker} con un {tool2}: {base} libras/día*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/día
+Luego multiplica esa cantidad por {100+mult2}% para encontrar cuánta mena puede extraer un {worker} con un {tool3}: {base*mult1_val} {unit}/día * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/día
+Luego multiplica la cantidad que un {worker} puede extraer en un día con un {tool3} por el número de {worker}s: {int(base*mult1_val*(1+mult2/100))} {unit}/día/{worker} * {n} {worker}s = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/día
+Luego multiplica la cantidad diaria de mena por el número de días para hallar la mena total extraída en un mes: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/día * {days} días = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}/día
+#### {int(base*mult1_val*(1+mult2/100)*n*days)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "spa"

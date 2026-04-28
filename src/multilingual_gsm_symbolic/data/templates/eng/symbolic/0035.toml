@@ -1,0 +1,43 @@
+question = "John is raising money for a school trip. He has applied for help from the school, which has decided to cover half of the cost of the school trip. How much money is John missing if he has $50 and the school trip costs $300?"
+
+answer = """
+John's school has decided to pay 300*1/2=$<<300*1/2=150>>150 for his school trip.
+In total John has covered 150 + 50 = $<<150+50=200>>200 for his school trip
+Therefore, John needs 300 - 200 = $<<300-200=100>>100 more for the school trip.
+#### 100
+"""
+
+id_orig = 788
+
+id_shuffled = 35
+
+question_annotated = """
+{name,John} is raising money for a {event,school trip}. He has applied for help from the {organization,school}, which has decided to cover {fraction_txt,half} of the cost of the {event,school trip}. How much money is {name,John} missing if he has {cur,$}{current,50} and the {event,school trip} costs {cur,$}{total,300}?
+
+#init:
+- name = sample(names_male)
+- event = sample(["school trip", "field trip", "sports tournament", "conference", "music festival", "science fair"])
+- cur = sample(currencies_sym)
+- organization = sample(["school", "community center", "local charity", "youth club", "parent association"])
+- fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(10, 200, 5)
+- $total = range(200, 1000, 10)
+
+#conditions:
+- total > current
+- is_int(total * fraction_val)
+- is_int(total - (total * fraction_val + current))
+
+#answer: total - (total * fraction_val + current)
+"""
+
+answer_annotated = """
+{name}'s {organization} has decided to pay {total}*{fraction_val}={cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} for his {event}.
+In total {name} has covered {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} for his {event}
+Therefore, {name} needs {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} more for the {event}.
+#### {total-(total*fraction_val+current)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

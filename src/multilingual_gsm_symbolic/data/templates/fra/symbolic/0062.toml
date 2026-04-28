@@ -1,0 +1,41 @@
+question = "Dans un ensemble de cartes de magiciens, il y a 15 cartes rouges, et 60% de cartes vertes en plus. Les cartes jaunes sont autant que la somme des cartes rouges et des cartes vertes. Combien de cartes de toutes les couleurs mentionnées y a-t-il ?"
+
+answer = """
+Il y a 60/100 * 15 = <<60/100*15=9>>9 cartes vertes de plus que les cartes rouges.
+Cela signifie qu’il y a 15 + 9 = <<15+9=24>>24 cartes vertes.
+Les cartes jaunes représentent au total 15 + 24 = <<15+24=39>>39 cartes.
+Donc, au total, il y a 39 + 39 = <<39+39=78>>78 cartes de couleurs différentes.
+#### 78
+"""
+
+id_orig = 456
+
+id_shuffled = 62
+
+question_annotated = """
+Dans un ensemble de {item,magicien}'s cartes, il y a {n1,15} {c1,rouge} cartes, et {p,60}% de {c2,vert} cartes en plus. Les {c3,jaune} cartes sont autant que la somme des {c1,rouge} et des {c2,vert} cartes. Combien de cartes de toutes les couleurs mentionnées y a-t-il ?
+
+#init:
+- item = sample(["magician", "artist", "chef", "scientist", "athlete"])
+- c1, c2, c3 = sample(["red", "blue", "green", "yellow", "purple", "orange"], 3)
+- $n1 = range(15, 81)
+- $p = range(20, 90)
+
+#conditions:
+- p < 100
+- is_int(p/100 * n1)
+
+#answer: 2 * (n1 + (p/100 * n1))
+"""
+
+answer_annotated = """
+Il y a {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} cartes {c2} de plus que les cartes {c1}.
+Cela signifie qu’il y a {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)} cartes {c2}.
+Les {c3} cartes représentent au total {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} cartes.
+Donc, au total, il y a {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{ 2*(n1+(n1+int(p/100*n1)))} cartes de couleurs différentes.
+#### {2*(n1+(n1+int(p/100*n1)))}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

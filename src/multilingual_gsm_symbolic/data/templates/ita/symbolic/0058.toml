@@ -1,0 +1,47 @@
+question = "Un folletto può estrarre 12 libbre di minerale al giorno con le sue mani nude. Può estrarre il doppio con un piccone di bronzo e il 50% in più con un piccone d’acciaio rispetto a un piccone di bronzo. Quante libbre di minerale possono estrarre 40 folletto con picconi d’acciaio in un mese di 30 giorni?"
+
+answer = """
+Prima trova quante libbre di minerale può estrarre un folletto con un piccone di bronzo: 12 libbre/giorno*2=<<12*2=24>>24 libbre/giorno
+Poi moltiplica quella quantità per il 150% per trovare quante libbre di minerale può estrarre un folletto con un piccone d’acciaio: 24 libbre/giorno * 150% = <<24*150*.01=36>>36 libbre/giorno
+Poi moltiplica la quantità che un folletto può estrarre in un giorno con un piccone d’acciaio per il numero di folletto: 36 libbre/giorno/folletto * 40 folletto = <<36*40=1440>>1440 libbre/giorno
+Poi moltiplica la quantità giornaliera di minerale per il numero di giorni per trovare il totale di minerale estratto in un mese: 1440 libbre/giorno * 30 giorni = <<1440*30=43200>>43,200 libbre/giorno
+#### 43200
+"""
+
+id_orig = 1026
+
+id_shuffled = 58
+
+question_annotated = """
+Un {worker,gnome} può estrarre {base,12} {unit,libbre} di minerale al giorno con {tool1,le sue mani nude}. Può estrarre {mult1_txt,doppio} la quantità con un {tool2,piccone di bronzo} e {mult2,50}% in più con un {tool3,piccone d’acciaio} rispetto a un {tool2,piccone di bronzo}. Quante {unit,libbre} di minerale può {n,40} {worker,gnome}s con {tool3,picconi d’acciaio} estrarre in un mese di {days,30} giorni?
+
+#init:
+- worker = sample(["minatore", "goblin", "gnomo", "troll"])
+- tool1 = sample(["mani nude", "pala di base", "piccone di legno"])
+- unit = sample(["libbre", "kg"])
+- tool2 = sample(["piccone di nichel", "piccone di bronzo", "piccone d’argento"])
+- tool3 = sample(["piccone di bronzo", "piccone d’acciaio", "piccone di diamante", "piccone di mithril", "piccone di titanio"])
+- $base = range(5, 20)
+- mult1_txt, mult1_val = sample(multi_times)
+- $mult2 = range(30, 80, 5)
+- $n = range(20, 50)
+- $days = range(28, 32)
+
+#conditions:
+- is_int(mult2/100*base*mult1_val)
+- int(base * mult1_val * (1 + mult2/100) * n * days) < 10000
+
+#answer: int(base * mult1_val * (1 + mult2/100) * n * days)
+"""
+
+answer_annotated = """
+Prima trova quante {unit} di minerale può estrarre un {worker} con un {tool2}: {base} libbre/giorno*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/giorno
+Poi moltiplica quella quantità per {100+mult2}% per trovare quante {unit} di minerale può estrarre un {worker} con un {tool3}: {base*mult1_val} {unit}/giorno * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/giorno
+Poi moltiplica la quantità che un {worker} può estrarre in un giorno con un {tool3} per il numero di {worker}: {int(base*mult1_val*(1+mult2/100))} {unit}/giorno/{worker} * {n} {worker}s = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/giorno
+Poi moltiplica la quantità giornaliera di minerale per il numero di giorni per trovare il totale di minerale estratto in un mese: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/giorno * {days} giorni = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}/giorno
+#### {int(base*mult1_val*(1+mult2/100)*n*days)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

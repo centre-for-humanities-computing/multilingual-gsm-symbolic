@@ -1,0 +1,40 @@
+question = "Elise holder på å lære å skrive og bestemmer seg for å skrive om alfabetet til hun kan det. Hun skriver det helt ut to ganger, skriver halvparten av det én gang og skriver deretter om alt hun allerede har skrevet. Hvor mange bokstaver har Elise skrevet totalt?"
+
+answer = """
+Elise har skrevet alfabetet to ganger, som er i alt 28*2=<<28*2=56>>56 bokstaver.
+Deretter skriver hun halvparten av alfabetet, som er 28*1/2=<<28*1/2=14>>14 bokstaver.
+Så langt er dette i alt 56 + 14 = <<56+14=70>>70 bokstaver.
+Hvis hun skriver dette igjen, betyr det at hun har fordoblet antallet bokstaver hun har skrevet, så hun har skrevet i alt 70 * 2 = <<70*2=140>>140 bokstaver.
+#### 140
+"""
+
+id_orig = 546
+
+id_shuffled = 55
+
+question_annotated = """
+{name,Elise} holder på å lære å skrive og bestemmer seg for å skrive om {alphabets_txt,alfabetet} til hun kan det. Hun skriver det helt ut {n1_txt,to ganger}, skriver {frac_txt,halvparten} av det én gang og skriver deretter om alt hun allerede har skrevet. Hvor mange bokstaver har {name,Elise} skrevet totalt?
+
+#init:
+- name = sample(names_female)
+- alphabets_txt, alphabets_val = sample([("alfabetet", 28), ("Hiragana (med 48 bogstaver)", 48), ("farsi alfabet (med 32 bogstaver)", 32), ("det arabiske alfabet (med 28 bogstaver)", 28)])
+- n1_txt, n1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)
+"""
+
+answer_annotated = """
+{name} har skrevet {alphabets_txt} {n1_txt}, som er i alt {alphabets_val}*{n1_val}=<<{alphabets_val}*{n1_val}={alphabets_val*n1_val}>>{alphabets_val*n1_val} bokstaver.
+Deretter skriver hun {frac_txt} av {alphabets_txt}, som er {alphabets_val}*{frac_val}=<<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} bokstaver.
+Så langt er dette i alt {alphabets_val*n1_val} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1_val}+{int(alphabets_val*frac_val)}={alphabets_val*n1_val + int(alphabets_val*frac_val)}>>{alphabets_val*n1_val + int(alphabets_val*frac_val)} bokstaver.
+Hvis hun skriver dette igjen, betyr det at hun har fordoblet antallet bokstaver hun har skrevet, så hun har skrevet i alt {alphabets_val*n1_val + int(alphabets_val*frac_val)} * 2 = <<{alphabets_val*n1_val + int(alphabets_val*frac_val)}*2={2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1_val + int(alphabets_val*frac_val))} bokstaver.
+#### {2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

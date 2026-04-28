@@ -1,0 +1,45 @@
+question = "Maria køber 8 aktier af en aktie for 8 kr hver. Aktiekursen stiger 50% det første år, Maria ejer dem og falder derefter 25% det andet år. Hvad er den endelige værdi af alle Marias aktier?"
+
+answer = """
+Først finder vi den oprindelige samlede værdi af Marias køb: 8 aktier * 8 kr/aktie = <<8*8=64>>64 kr
+Derefter finder vi beløbet for den første prisstigning: 64 kr*0,5 = <<64*0,5=32>>32 kr
+Tilføj det beløb til den oprindelige værdi for at finde værdien efter det første år: 64 kr + 32 kr = <<64+32=96>>96 kr
+Derefter multiplicer det beløb med 25% for at finde faldet i det andet år: 96 kr * 25% = <<96*25*0,01=24>>24 kr
+Træk derefter det beløb fra værdien efter det første år for at finde den endelige værdi: 96 kr - 24 kr = <<96-24=72>>72 kr
+#### 72
+"""
+
+id_orig = 336
+
+id_shuffled = 84
+
+question_annotated = """
+{name,Maria} køber {n,8} aktier af en aktie for {p,8} {cur,kr} hver. Aktiekursen stiger {r1,50}% det første år, {name,Maria} ejer dem og falder derefter {r2,25}% det andet år. Hvad er den endelige værdi af alle {name,Maria}s aktier?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $n = range(5, 20)
+- $p = range(5, 100)
+- $r1 = range(10, 100, 5)
+- $r2 = range(5, 50, 5)
+
+#conditions:
+- is_int(n * p * r1/100)
+- is_int(n * p * (1 + r1/100) * (1 - r2/100))
+
+#answer: int(n * p * (1 + r1/100) * (1 - r2/100))
+"""
+
+answer_annotated = """
+Først finder vi den oprindelige samlede værdi af {name}s køb: {n} aktier * {p} {cur}/aktie = <<{n}*{p}={n*p}>>{n*p} {cur}
+Derefter finder vi beløbet for den første prisstigning: {n*p} {cur}*{r1/100} = <<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)} {cur}
+Tilføj det beløb til den oprindelige værdi for at finde værdien efter det første år: {n*p} {cur} + {n*p*r1/100} {cur} = <<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))} {cur}
+Derefter multiplicer det beløb med {r2}% for at finde faldet i det andet år: {n*p*(1+r1/100)} {cur} * {r2}% = <<{n*p*(1+r1/100)}*{r2}*0.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)} {cur}
+Træk derefter det beløb fra værdien efter det første år for at finde den endelige værdi: {int(n*p*(1+r1/100))} {cur} - {int(n*p*(1+r1/100)*r2/100)} {cur} = <<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={int(n*p*(1+r1/100)*(1-r2/100))}>>{int(n*p*(1+r1/100)*(1-r2/100))} {cur}
+#### {int(n*p*(1+r1/100)*(1-r2/100))}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

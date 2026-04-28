@@ -1,0 +1,45 @@
+question = "Per effettuare una chiamata da una cabina telefonica, devi pagare 0,25 corone per ogni minuto della tua chiamata. Dopo 16 minuti, il prezzo scende a 0,2 corone al minuto. Quanto costerebbe una chiamata di 36 minuti?"
+
+answer = """
+I primi 16 minuti costerebbero 16 * 0,25 = <<16*0,25=4>>4 corone.
+Dopodiché restano 36 - 16 = <<36-16=20>>20 minuti della chiamata.
+E questi 20 minuti costano 20 * 0,2 = <<20*0,2=4>>4 corone.
+Quindi in totale la chiamata di 36 minuti costerebbe 4 + 4 = 8 corone.
+#### 8
+"""
+
+id_orig = 1223
+
+id_shuffled = 10
+
+question_annotated = """
+Per effettuare una chiamata da una {dev,cabina telefonica}, devi pagare {frac1,0.25} {currency,corone} per ogni minuto della tua chiamata. Dopo {t,16} minuti, il prezzo scende a {frac2,0.2} {currency,corone} al minuto. Quanto costerebbe una chiamata di {total,36} minuti?
+
+#init:
+- dev = sample(['phone booth', 'hotel room phone'])
+- currency = sample(currencies_sym)
+- $frac1 = sample(fraction_decimals)
+- $frac2 = sample(fraction_decimals)
+- $t = range(10, 50)
+- $total = range(36, 100)
+
+#conditions:
+- is_int(frac1 * t)
+- is_int((total-t) * frac2)
+- frac2 < frac1
+- t < total
+
+#answer: int((frac1 * t) + frac2*(total-t))
+"""
+
+answer_annotated = """
+I primi {t} minuti costerebbero {t} * {frac1} = <<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} {currency}.
+Dopodiché restano {total} - {t} = <<{total}-{t}={total-t}>>{total-t} minuti della chiamata.
+E questi {total-t} minuti costano {total-t} * {frac2} = <<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)} {currency}.
+Quindi in totale la chiamata di {total} minuti costerebbe {int(t*frac1)} + {int((total-t)*frac2)} = {int(frac1 * t) + int(frac2*(total-t))} {currency}.
+#### {int((frac1 * t) + frac2*(total-t))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "ita"

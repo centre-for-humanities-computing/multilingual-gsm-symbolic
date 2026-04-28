@@ -1,0 +1,44 @@
+question = "Sofie hat ein Blumenbeet, das 28,8 m lang ist. Sofie möchte ihr Blumenbeet mit Pflanzen füllen. Sofies Blumen werden 30 cm breit, daher braucht sie 45 cm zwischen jeder Pflanze. Sofie besitzt bereits 17 Blumen. Jede blühende Pflanze kostet im Laden 40 kr, wie viel Geld muss Sofie für ihr Blumenbeet ausgeben?"
+
+answer = """
+Sofies Blumenbeet ist 28,8 m / 45 cm pro Pflanze = <<2880/45=64>>64 benötigte Pflanzen.
+Sofie muss 64 Pflanzen - 17 Pflanzen = <<64-17=47>>47 Pflanzen kaufen.
+Sofie muss 47 Pflanzen * 40 kr = <<47*40=1880>>1880 kr ausgeben.
+#### 1880
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,Sofie} hat ein Blumenbeet, das {length,28.8} m lang ist. {name,Sofie} möchte ihr Blumenbeet mit Pflanzen füllen. {name,Sofie}s Blumen werden {plant_width,30} cm breit, daher braucht sie {space,45} cm zwischen jeder Pflanze. {name,Sofie} besitzt bereits {owned,17} Blumen. Jede blühende Pflanze kostet im Laden {cost,40} {cur,kr}, wie viel Geld muss {name,Sofie} für ihr Blumenbeet ausgeben?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $length = arange(25, 40, 0.2)
+- $plant_width = range(20, 40)
+- $space = range(20, 60)
+- $owned = range(5, 20)
+- $cost = range(20, 100)
+
+#conditions:
+- plant_width * 3 < length*100
+- plant_width < space
+- is_int(length*100 / space)
+- length*100 / space > owned
+
+#answer: int((length*100 / space - owned) * cost)
+"""
+
+answer_annotated = """
+{name}s Blumenbeet ist {length} m / {space} cm pro Pflanze = <<{length*100}/{space}={int(length*100/space)}>>{int(length*100/space)} benötigte Pflanzen.
+{name} muss {int(length*100/space)} Pflanzen - {owned} Pflanzen = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} Pflanzen kaufen.
+{name} muss {int(length*100/space)-owned} Pflanzen * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur} ausgeben.
+#### {int(length*100/space - owned) * cost}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"

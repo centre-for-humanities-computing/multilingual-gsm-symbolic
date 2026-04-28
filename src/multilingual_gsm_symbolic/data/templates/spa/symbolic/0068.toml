@@ -1,0 +1,41 @@
+question = "A Carmen le toma 10 minutos terminar un crucigrama y 5 minutos terminar un sudoku. Durante el fin de semana resolvió 3 crucigramas y 8 sudokus. ¿Cuánto tiempo pasó jugando a estos juegos?"
+
+answer = """
+Le toma 10 minutos a Carmen completar un crucigrama y ella completó 3, para un total de 10*3 = <<10*3=30>>30 minutos
+Le toma 5 minutos a Carmen completar un sudoku y ella completó 8, para un total de 5*8 = <<5*8=40>>40 minutos
+Pasó 30 minutos en crucigramas y 40 minutos en sudokus, para un total de 30+40 = <<30+40=70>>70 minutos
+#### 70
+"""
+
+id_orig = 220
+
+id_shuffled = 68
+
+question_annotated = """
+A {name,Carmen} le toma {t1,10} minutos terminar un {game1,crucigrama} y {t2,5} minutos terminar un {game2,sudoku}. Durante el {period,fin de semana} resolvió {n1,3} {game1,crucigrama}s y {n2,8} {game2,sudoku}s. ¿Cuánto tiempo pasó jugando a estos juegos?
+
+#init:
+- name = sample(names_female)
+- game1, game2 = sample(["crucigrama", "sudoku", "rompecabezas de palabras", "rompecabezas", "rompecabezas de ajedrez", "adivinanza", "acertijo"], 2)
+- period = sample(["fin de semana", "vacaciones", "festividad", "día libre", "tiempo libre"])
+- $t1 = range(5, 30)
+- $t2 = range(3, 20)
+- $n1 = range(2, 10)
+- $n2 = range(4, 15)
+
+#conditions:
+- t1 > t2
+
+#answer: t1*n1 + t2*n2
+"""
+
+answer_annotated = """
+Le toma {t1} minutos a {name} completar un {game1} y ella completó {n1}, para un total de {t1}*{n1} = <<{t1}*{n1}={t1*n1}>>{t1*n1} minutos
+Le toma {t2} minutos a {name} completar un {game2} y ella completó {n2}, para un total de {t2}*{n2} = <<{t2}*{n2}={t2*n2}>>{t2*n2} minutos
+Pasó {t1*n1} minutos en {game1}s y {t2*n2} minutos en {game2}s, para un total de {t1*n1}+{t2*n2} = <<{t1*n1}+{t2*n2}={t1*n1 + t2*n2}>>{t1*n1 + t2*n2} minutos
+#### {t1*n1 + t2*n2}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "spa"

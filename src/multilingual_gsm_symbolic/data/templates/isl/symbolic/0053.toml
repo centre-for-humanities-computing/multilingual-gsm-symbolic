@@ -1,0 +1,41 @@
+question = "Per fékk 278 stig í leiknum keilu. Nadja fékk 11 stigum meira en helmingurinn af stigum Pers. Hvað voru Per og Nadja með mörg stig samtals?"
+
+answer = """
+Per = <<278=278>>278 stig
+Nadja = 1/2*278 + 11 = 150 stig
+278 + 150 = <<278+150=428>>428 stig
+Samtals fengu Per og Nadja 428 stig.
+#### 428
+"""
+
+id_orig = 800
+
+id_shuffled = 53
+
+question_annotated = """
+{name1,Per} fékk {n1,278} stig í leiknum {game,keilu}. {name2,Nadja} fékk {n2,11} stigum meira en {frac_txt,helmingurinn} af stigum {name1,Per}s. Hvað voru {name1,Per} og {name2,Nadja} með mörg stig samtals?
+
+#init:
+- name1, name2 = sample(names, 2)
+- game = sample(["bowling", "dart", "bueskydning", "basketball", "tennis"])
+- $n1 = range(200, 500)
+- $n2 = range(5, 50)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(frac_val * n1)
+
+#answer: n1 + int(frac_val * n1 + n2)
+"""
+
+answer_annotated = """
+{name1} = <<{n1}={n1}>>{n1} stig
+{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} stig
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} stig
+Samtals fengu {name1} og {name2} {n1 + int(frac_val * n1 + n2)} stig.
+#### {n1 + int(frac_val * n1 + n2)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

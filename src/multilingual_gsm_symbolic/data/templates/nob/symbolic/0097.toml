@@ -1,0 +1,38 @@
+question = "Julie betjener kassen nøyaktig to ganger så raskt som hennes mindre erfarne kollega Sofie. Daglig betjener Sofie 50 kunder. Hva er den samlede ukentlige produksjonen for de to, hvis de jobber alle ukens dager?"
+
+answer = """
+Mens Sofie behandler 50 ordre på en dag, behandler Julie 50 ordre/dag*2=<<50*2=100>>100 ordre/dag.
+På en dag behandler de 100 ordre/dag + 50 ordre/dag = <<100+50=150>>150 ordre sammen.
+Det samlede antallet ordre de to behandler på en uke, er 150 ordre/dag * 7 dager/uke = <<150*7=1050>>1050 ordre
+#### 1050
+"""
+
+id_orig = 636
+
+id_shuffled = 97
+
+question_annotated = """
+{name1,Julie} betjener kassen nøyaktig {mult_txt,to ganger} så raskt som hennes mindre erfarne kollega {name2,Sofie}. Daglig betjener {name2,Sofie} {n,50} kunder. Hva er den samlede ukentlige produksjonen for de to, hvis de jobber alle ukens dager?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(30, 100)
+
+#conditions:
+- is_int(n * mult_val)
+- is_int((n + n * mult_val) * 7)
+
+#answer: (n + n * mult_val) * 7
+"""
+
+answer_annotated = """
+Mens {name2} behandler {n} ordre på en dag, behandler {name1} {n} ordre/dag*{mult_val}=<<{n}*{mult_val}={n*mult_val}>>{n*mult_val} ordre/dag.
+På en dag behandler de {n*mult_val} ordre/dag + {n} ordre/dag = <<{n*mult_val}+{n}={n+n*mult_val}>>{n+n*mult_val} ordre sammen.
+Det samlede antallet ordre de to behandler på en uke, er {n+n*mult_val} ordre/dag * 7 dager/uke = <<{n+n*mult_val}*7={(n+n*mult_val)*7}>>{(n+n*mult_val)*7} ordre
+#### {(n+n*mult_val)*7}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

@@ -1,5 +1,6 @@
 import json
 import logging
+import tomllib
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -13,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 def _active_template_files(lang_dir: Path) -> list[Path]:
     files = []
-    for f in (lang_dir / "symbolic").glob("*.json"):
-        with f.open(encoding="utf-8") as fp:
-            data = json.load(fp)
+    for f in sorted((lang_dir / "symbolic").glob("*.toml")):
+        with f.open("rb") as fp:
+            data = tomllib.load(fp)
         if not data.get("ignore"):
             files.append(f)
     return files
@@ -63,11 +64,11 @@ def load_data(language: str = "eng", directory: str | Path | None = None) -> lis
         template_files = (
             _active_template_files(lang_dir)
             if (lang_dir / "symbolic").exists()
-            else list(Path(directory).glob("*.json"))
+            else list(Path(directory).glob("*.toml"))
         )
     else:
         template_files = _active_template_files(_DATA_ROOT / language)
-    return [AnnotatedQuestion.from_json(f) for f in template_files]
+    return [AnnotatedQuestion.from_toml(f) for f in template_files]
 
 
 class GSMProblem(BaseModel):
@@ -110,7 +111,7 @@ def load_gsm(language: str = "eng", directory: str | Path | None = None) -> list
         The loaded concrete problems as GSMProblem objects.
     """
     if directory is not None:
-        template_files = list(Path(directory).glob("*.json"))
+        template_files = list(Path(directory).glob("*.toml"))
     else:
         langs = available_languages()
         if language not in langs:

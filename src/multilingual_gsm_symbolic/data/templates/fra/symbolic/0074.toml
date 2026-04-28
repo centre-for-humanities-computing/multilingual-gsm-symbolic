@@ -1,0 +1,41 @@
+question = "Il y a 96 élèves de quatrième année à l’école Small Tree. 43 d’entre eux sont des filles. Vendredi, 5 filles de quatrième année et 4 garçons de quatrième année étaient absents. Combien de garçons de quatrième année y avait-il à l’école Small Tree vendredi ?"
+
+answer = """
+Parmi les 96 élèves de quatrième année, 43 sont des filles, donc 96 élèves - 43 filles = <<96-43=53>>53 garçons.
+Vendredi, il y avait 53 garçons - 4 absents = <<53-4=49>>49 garçons.
+#### 49
+"""
+
+id_orig = 364
+
+id_shuffled = 74
+
+question_annotated = """
+Il y a {total,96} élèves de {grade,fourth}-ième année à l’école {school_name,Small Tree}. {num_girls,43} d’entre eux sont des filles. {day,Friday}, {absent_girls,5} {grade,fourth}-ième année filles et {absent_boys,4} {grade,fourth}-ième année garçons étaient absents. Combien de {grade,fourth}-ième année garçons y avait-il à l’école {school_name,Small Tree} le {day,Friday} ?
+
+#init:
+- school_name = sample(["Maple Grove", "Sunny Hill", "Oak Ridge", "Pine Valley"])
+- grade = sample(["first", "second", "third", "fourth", "fifth"])
+- day = sample(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
+- $total = range(50, 200)
+- $num_girls = range(20, 100)
+- $absent_girls = range(2, 10)
+- $absent_boys = range(2, 10)
+
+#conditions:
+- num_girls < total
+- absent_girls < num_girls
+- absent_boys < (total - num_girls)
+
+#answer: total - num_girls - absent_boys
+"""
+
+answer_annotated = """
+Parmi les {total} élèves de {grade} , {num_girls} sont des filles, donc {total} élèves - {num_girls} filles = <<{total}-{num_girls}={total-num_girls}>>{total-num_girls} garçons.
+Le {day} , il y avait {total-num_girls} garçons - {absent_boys} absents = <<{total-num_girls}-{absent_boys}={total-num_girls-absent_boys}>>{total-num_girls-absent_boys} garçons.
+#### {total-num_girls-absent_boys}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

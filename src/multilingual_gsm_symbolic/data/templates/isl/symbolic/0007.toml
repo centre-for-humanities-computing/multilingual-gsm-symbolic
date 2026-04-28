@@ -1,0 +1,54 @@
+question = "Bóndi kaupir fóður handa hestunum sínum. Hann kaupir nokkrar mismunandi tegundir af heyi, höfrum, gulrótum og sykurmolum. Þar sem sykurmolar eru sjaldgæft góðgæti kaupir hann aðeins tveir 1-kíló kassa fyrir allt hesthúsið. Hann vill aðeins nóg af gulrótum til að gefa hestanna á meðan grænmetið er ferskt, svo hann kaupir fjórir 12-kíló poka. Hey er aðalfæðan í fæði hestanna, svo hann kaupir fjörutíu og tveir 75-kíló bagga. Hafrar eru grunnvara til að bæta við heyið, svo hann kaupir tuttugu 65-kíló sekki. Ef pallbíllinn hans getur borið 2250 kíló í einu, hversu margar ferðir þarf bóndinn að fara til að flytja allt fóðrið?"
+
+answer = """
+Bóndinn kaupir 2*1=<<2*1=2>>2 kíló af sykurmolum.
+Hann kaupir 4*12=<<4*12=48>>48 kíló af gulrótum.
+Hann kaupir 42*75=<<42*75=3150>>3150 kíló af heyi.
+Hann kaupir 20*65=<<20*65=1300>>1300 kíló af höfrum.
+Þyngd alls fóðursins er 2 + 48 + 3150 + 1300 = <<2+48+3150+1300=4500>>4500 kíló.
+Þess vegna þarf bóndinn að fara 4500 / 2250 = <<4500/2250=2>>2 ferðir til að flytja allt fóðrið á pallbílnum sínum.
+#### 2
+"""
+
+id_orig = 459
+
+id_shuffled = 7
+
+question_annotated = """
+Bóndi kaupir fóður handa {animals,hestunum} sínum. Hann kaupir nokkrar mismunandi tegundir af {o1,heyi}, {o2,höfrum}, {o3,gulrótum} og {o4,sykurmolum}. Þar sem sykurmolar eru sjaldgæft góðgæti kaupir hann aðeins {n4_txt,tveir} {w4,1}-{unit,kílóa} kassa fyrir allt hesthúsið. Hann vill aðeins nóg af {o3,gulrótum} til að gefa {animals_definite,hestunum} á meðan grænmetið er ferskt, svo hann kaupir {n3_txt,fjórir} {w3,12}-{unit,kílóa} poka. Hey er aðalfæðan í fæði {animals_definite,hestanna}, svo hann kaupir {n1_txt,fjörutíu og tveir} {w1,75}-{unit,kílóa} bagga. Hafrar eru grunnvara til að bæta við heyið, svo hann kaupir {n2_txt,tuttugu} {w2,65}-{unit,kílóa} sekki. Ef pallbíllinn hans getur borið {total,2250} {unit,kíló} í einu, hversu margar ferðir þarf bóndinn að fara til að flytja allt fóðrið?
+
+#init:
+- animals, animals_definite = sample([('hestar', 'hestarnir'), ('kýr', 'kýrnar'), ('kindur', 'kindurnar'), ('griðungur', 'griðungarnir'), ('lambarnir', 'lambarnir')])
+- unit = sample(weights_med)
+- o1, o2, o4 = sample(["hey", "maís", "hafrar", "epli", "hveiti"], 3)
+- o3 = sample(["gulrætur", "rauðrófur", "gúrkur"])
+- n4_txt, n4_val = range_str(2, 7, 2, numbers)
+- n3_txt, n3_val = range_str(4, 11, 2, numbers)
+- n2_txt, n2_val = range_str(15, 21, 1, numbers)
+- n1_txt, n1_val = range_str(30, 43, 2, numbers)
+- $w4 = range(1, 4)
+- $w3 = range(8, 13, 2)
+- $w2 = range(45, 70, 5)
+- $w1 = range(55, 80, 5)
+- $total = range(1500, 2300, 150)
+
+#conditions:
+- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val
+- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)
+
+#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total
+"""
+
+answer_annotated = """
+Bóndinn kaupir {n4_val}*{w4}=<<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit} af {o4}.
+Hann kaupir {n3_val}*{w3}=<<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {unit} af {o3}.
+Hann kaupir {n1_val}*{w1}=<<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {unit} af {o1}.
+Hann kaupir {n2_val}*{w2}=<<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {unit} af {o2}.
+Þyngd alls fóðursins er {n4_val*w4} + {n3_val*w3} + {n1_val*w1} + {n2_val*w2} = <<{n4_val*w4}+{n3_val*w3}+{n1_val*w1}+{n2_val*w2}={n1_val*w1+n2_val*w2+ n3_val*w3 + n4_val*w4}>>{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} {unit}.
+Þess vegna þarf bóndinn að fara {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total} = <<{n1_val*w1+n2_val*w2+n3_val*w3+n4_val*w4}/{total}={(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}>>{(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total} ferðir til að flytja allt fóðrið á pallbílnum sínum.
+#### {(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

@@ -1,0 +1,46 @@
+question = "In Hansens Klasse mit 30 Schülern sind 20% der Klasse Fußballspieler. Von den übrigen Schülern sind 25% Cheerleader oder Teil der Band. Diese 3 Gruppen von Schülern müssen heute die Schule früher verlassen, um zu einem Auswärtsspiel zu fahren. Wie viele Schüler verlassen die Schule früher?"
+
+answer = """
+20% der 30 Schüler in der Klasse sind Fußballspieler, also sind das 0,2*30 = <<0,2*30=6>>6 Schüler
+Es gibt 30 Schüler und 6 sind Fußballspieler, also bleiben 30-6 = <<30-6=24>>24 Schüler übrig
+25% der verbleibenden 24 Schüler sind Teil der Band oder Cheerleader, also sind das 0,25*24 = <<0,25*24=6>>6 Schüler
+6 Schüler sind Fußballspieler und 6 sind Teil der Band/Cheerleader, also werden 6+6 = <<6+6=12>>12 Schüler die Schule früher verlassen
+#### 12
+"""
+
+id_orig = 982
+
+id_shuffled = 25
+
+question_annotated = """
+In {lærer,Hansen}s Klasse mit {total,30} Schülern sind {p1,20}% der Klasse {gruppe1,Fußballspieler}. Von den übrigen Schülern sind {p2,25}% {gruppe2,Cheerleader} oder {gruppe3,Teil der Band}. Diese 3 Gruppen von Schülern müssen heute die Schule früher verlassen, um zu {event,einem Auswärtsspiel} zu fahren. Wie viele Schüler verlassen die Schule früher?
+
+#init:
+- lærer = sample(['Hansen', 'Jensen', 'Susanne', 'Lærke'])
+- gruppe1 = sample(['fodboldspillere', 'basketballspillere', 'volleyballspillere', 'svømmere'])
+- gruppe2, gruppe3 = sample(['dansere', 'kormedlemmer', 'cheerleadere'],  2)
+- event = sample(['en udekamp', 'en konkurrence', 'en turnering', 'en forestilling', 'et stævne'])
+- $total = range(20, 150)
+- $p1 = range(10, 50)
+- $p2 = range(15, 45)
+
+#conditions:
+- p1 < 100
+- p2 < 100
+- is_int(total * p1 / 100)
+- is_int((total - total * p1 / 100) * p2 / 100)
+
+#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)
+"""
+
+answer_annotated = """
+{p1}% der {total} Schüler in der Klasse sind {gruppe1}, also sind das {p1/100}*{total} = <<{p1/100}*{total}={int(total*p1/100)}>>{int(total*p1/100)} Schüler
+Es gibt {total} Schüler und {int(total*p1/100)} sind {gruppe1}, also bleiben {total}-{int(total*p1/100)} = <<{total}-{int(total*p1/100)}={total-int(total*p1/100)}>>{total-int(total*p1/100)} Schüler übrig
+{p2}% der verbleibenden {total-int(total*p1/100)} Schüler sind {gruppe3} oder {gruppe2}, also sind das {p2/100}*{total-int(total*p1/100)} = <<{p2/100}*{total-int(total*p1/100)}={int((total-int(total*p1/100))*p2/100)}>>{int((total-int(total*p1/100))*p2/100)} Schüler
+{int(total*p1/100)} Schüler sind {gruppe1} und {int((total-int(total*p1/100))*p2/100)} sind {gruppe3}/{gruppe2}, also werden {int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)} = <<{int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)}={int(total*p1/100 + (total-int(total*p1/100))*p2/100)}>>{int(total*p1/100 + (total-int(total*p1/100))*p2/100)} Schüler die Schule früher verlassen
+#### {int(total*p1/100 + (total-int(total*p1/100))*p2/100)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"

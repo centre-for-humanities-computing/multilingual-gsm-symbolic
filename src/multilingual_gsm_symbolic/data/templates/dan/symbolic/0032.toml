@@ -1,0 +1,47 @@
+question = "Fru Jensen leder efter et hus, der ikke vil gå over hendes 2.700.000 kr budget. Hun så en ejendom, der har en salgspris på 2.370.000 kr. Oveni det skal køberen betale et mæglergebyr, som er 5% af salgsprisen og også overdragelsesgebyret, der er 12% af den samlede salgspris. Hvor meget mere er husets samlede pris end fru Jensens budget?"
+
+answer = """
+Mæglergebyret er 2.370.000 kr*5/100 = <<2370000*5/100=118500>>118.500 kr.
+Overførselsgebyret er 2.370.000 kr*12/100 = <<2370000*12/100=284400>>284.400 kr.
+Den totale pris på huset er 2.370.000 kr + 118.500 kr + 284.400 kr = 2.772.900 kr.
+Så det er 2.772.900 kr - 2.700.000 kr = <<2772900-2700000=72900>>72.900 kr mere end fru Jensens budget.
+#### 72900
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name, Fru Jensen} leder efter {property_type_article,et} {property_type, hus}, der ikke vil gå over hendes {budget, 2700000} kr budget. Hun så en ejendom, der har en salgspris på {price, 2370000} kr. Oveni det skal køberen betale et mæglergebyr, som er {brokerage_fee, 5}% af salgsprisen og også overdragelsesgebyret, der er {transfer_fee, 12}% af den samlede salgspris. Hvor meget mere er {property_type_definite,huset}s samlede pris end {name_genitive,fru Jensens} budget?
+
+#init:
+- name, name_genitive = sample([("Fru Madsen", "fru Madsens"), ("Frøken Hansen", "frøken Hansens"), ("Dr. Sørensen", "dr. Sørensens"), ("Fru Andersen", "fru Andersens")])
+- property_type_article, property_type, property_type_definite = sample([("et", "hus", "huset"), ("en", "lejlighed", "lejligheden"), ("et", "byhus", "byhuset"), ("en", "andelslejlighed", "andelslejligheden")])
+- $budget = range(2000000, 3410000, 100000)
+- $price = range(1700000, 3050000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price * (1 + brokerage_fee/100 + transfer_fee/100) > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)
+"""
+
+answer_annotated = """
+Mæglergebyret er {price} kr*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} kr.
+Overførselsgebyret er {price} kr*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} kr.
+Den totale pris på {property_type_definite} er {price} kr + {int(price*brokerage_fee/100)} kr + {int(price*transfer_fee/100)} kr = {int(price * (1 + brokerage_fee/100 + transfer_fee/100))} kr.
+Så det er {int(price * (1 + brokerage_fee/100 + transfer_fee/100))} kr - {budget} kr = <<{int(price * (1 + brokerage_fee/100 + transfer_fee/100))}-{budget}={int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)}>>{int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)} kr mere end {name_genitive} budget.
+#### {int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

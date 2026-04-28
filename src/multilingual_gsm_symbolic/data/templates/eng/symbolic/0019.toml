@@ -1,0 +1,48 @@
+question = "In a 60-item quiz, 40% of the questions are easy, and the rest are equally divided as average and difficult questions. If Aries is sure to get 75% of the easy questions, and half of the average and difficult questions correctly, how many points is she sure to get?"
+
+answer = """
+The average and difficult questions comprises 100% - 40% = 60% of the quiz.
+There are 60 questions*40/100 = <<60*40/100=24>>24 easy questions.
+There are a total of 60 questions*60/100 = <<60*60/100=36>>36 average and difficult questions.
+If Aries is sure to get 75% of the easy questions, then this means she is sure of her 24 questions*75/100 = <<24*75/100=18>>18 points.
+From the average and difficult questions, she is sure to get half of it correctly so that is 36 questions*1/2 = <<36*1/2=18>>18 points.
+Thus, she is sure of getting 18 points + 18 points = <<18+18=36>>36 points in her quiz.
+#### 36
+"""
+
+id_orig = 1021
+
+id_shuffled = 19
+
+question_annotated = """
+In a {n,60}-item quiz, {p1,40}% of the questions are {s1,easy}, and the rest are equally divided as {s2,average} and {s3,difficult} questions. If {name,Aries} is sure to get {r1,75}% of the {s1,easy} questions, and {frac_txt,half} of the {s2,average} and {s3,difficult} questions correctly, how many points is she sure to get?
+
+#init:
+- s1, s2, s3 = sample(["history", "geography", "biology", "chemistry", "physics", "economics", "literature", "algebra", "geometry" ], 3)
+- name = sample(names_female)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(5, 71, 5)
+- $r1 = range(5, 101, 5)
+- $n = range(10, 151, 10)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (r1/100))
+- is_int(n*(1-(p1/100))*frac_val)
+
+#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)
+"""
+
+answer_annotated = """
+The {s2} and {s3} questions comprises 100% - {p1}% = {100-p1}% of the quiz.
+There are {n} questions*{p1}/100 = <<{n}*{p1}/100={int(n * (p1/100))}>>{int(n * (p1/100))} {s1} questions.
+There are a total of {n} questions*{100-p1}/100 = <<{n}*{100-p1}/100={int(n*(1-(p1/100)))}>>{int(n*(1-(p1/100)))} {s2} and {s3} questions.
+If {name} is sure to get {r1}% of the {s1} questions, then this means she is sure of her {int(n * (p1/100))} questions*{r1}/100 = <<{int(n * (p1/100))}*{r1}/100={int(n * (p1/100) * (r1/100))}>>{int(n * (p1/100) * (r1/100))} points.
+From the {s2} and {s3} questions, she is sure to get {frac_txt} of it correctly so that is {int(n*(1-(p1/100)))} questions*{frac_val} = <<{int(n*(1-(p1/100)))}*{frac_val}={int(n*(1-(p1/100))*frac_val)}>>{int(n*(1-(p1/100))*frac_val)} points.
+Thus, she is sure of getting {int(n * (p1/100) * (r1/100))} points + {int(n*(1-(p1/100))*frac_val)} points = <<{int(n * (p1/100) * (r1/100))}+{int(n*(1-(p1/100))*frac_val)}={int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)}>>{int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)} points in her quiz.
+#### {int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

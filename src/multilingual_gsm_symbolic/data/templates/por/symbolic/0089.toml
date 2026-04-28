@@ -1,0 +1,51 @@
+question = "James aluga uma carruagem puxada por cavalos das 17h às 21h. Ele ganha 1 hora(s) grátis. A primeira hora paga custa $15 e cada hora depois disso custa o dobro do preço. Quanto ele pagou?"
+
+answer = """
+Ele conseguiu por 9-5=<<9-5=4>>4 horas
+Ele paga por 4-1=<<4-1=3>>3 horas
+A primeira hora custa 1*15=$<<1*15=15>>15
+As outras 3-1=2 horas são mais caras
+Elas custam 15*2=$<<15*2=30>>30 por hora
+Então essas 2 horas custam 2*30=$<<2*30=60>>60
+Então ele paga 60+15=$<<60+15=75>>75 no total
+#### 75
+"""
+
+id_orig = 652
+
+id_shuffled = 89
+
+question_annotated = """
+{name,James} aluga uma {vehicle,carruagem puxada por cavalos} das {start_time,5}h às {end_time,9}h. Ele ganha {free_hours,1} hora(s) grátis. A primeira hora paga custa {cur,$}{first_hour_cost,15} e cada hora depois disso custa {multiplier_txt,duas vezes} o preço. Quanto ele pagou?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(["limousine", "party bus", "boat", "luxury car"])
+- $start_time = range(1, 8)
+- $end_time = range(3, 12)
+- $free_hours = range(1, 3)
+- cur = sample(currencies_sym)
+- $first_hour_cost = range(10, 51)
+- multiplier_txt, multiplier_val = sample(multi_times)
+
+#conditions:
+- end_time - start_time > free_hours + 1
+- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)
+
+#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val
+"""
+
+answer_annotated = """
+Ele conseguiu por {end_time}-{start_time}=<<{end_time}-{start_time}={end_time-start_time}>>{end_time-start_time} horas
+Ele paga por {end_time-start_time}-{free_hours}=<<{end_time-start_time}-{free_hours}={end_time-start_time-free_hours}>>{end_time-start_time-free_hours} horas
+A primeira hora custa 1*{first_hour_cost}={cur}<<1*{first_hour_cost}={first_hour_cost}>>{first_hour_cost}
+As outras {end_time-start_time-free_hours}-1={end_time-start_time-free_hours-1} horas são mais caras
+Elas custam {first_hour_cost}*{multiplier_val}={cur}<<{first_hour_cost}*{multiplier_val}={first_hour_cost*multiplier_val}>>{first_hour_cost*multiplier_val} por hora
+Então essas {end_time-start_time-free_hours-1} horas custam {end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}={cur}<<{end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}={(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}>>{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}
+Então ele paga {(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}={cur}<<{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}={first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}>>{first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val} no total
+#### {first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "por"

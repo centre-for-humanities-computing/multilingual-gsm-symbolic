@@ -1,0 +1,49 @@
+question = "Ein Zwerg kann mit seinen bloßen Händen 12 kg Erz pro Tag abbauen. Mit einer Eisenhacke kann er doppelt so viel abbauen und mit einer Stahlhacke 50% mehr als mit einer Eisenhacke. Wie viele kg Erz können 40 Zwerge mit Stahlhacken in einem Monat mit 30 Tagen abbauen?"
+
+answer = """
+Finde zuerst heraus, wie viel Erz ein Zwerg mit einer Eisenhacke abbauen kann: 12 kg/Tag*2=<<12*2=24>>24 kg/Tag
+Dann multipliziere diesen Betrag mit 150%, um herauszufinden, wie viel ein Zwerg mit einer Stahlhacke abbauen kann: 24 kg/Tag * 150% = <<24*150*.01=36>>36 kg/Tag
+Dann multipliziere das, was ein Zwerg an einem Tag mit einer Stahlhacke abbauen kann, mit der Anzahl der Zwerge: 36 kg/Tag/Zwerg * 40 Zwerge = <<36*40=1440>>1440 kg/Tag
+Dann multipliziere die tägliche Menge an Erz mit der Anzahl der Tage, um die insgesamt in einem Monat abgebaute Menge zu finden: 1440 kg/Tag * 30 Tage = <<1440*30=43200>>43.200 kg/Tag
+#### 43200
+"""
+
+id_orig = 1026
+
+id_shuffled = 58
+
+question_annotated = """
+Ein {worker,zwerg} kann {base,12} {unit,kg} Erz pro Tag mit {tool1,seinen bloßen Händen} abbauen. Mit einer {tool2,eisenhacke} kann er {mult1_txt,2 gange} so viel abbauen und mit einer {tool3,stahlhacke} {mult2,50}% mehr als mit einer {tool2,eisenhacke}. Wie viele {unit,kg} Erz können {n,40} {worker_plural,zwerge} mit {tool3,stahlhacke}n in einem Monat mit {days,30} Tagen abbauen?
+
+#init:
+- worker, worker_plural = sample([("dværg", "dværge"), ("goblin", "gobliner"), ("gnom", "gnomer"), ("trold", "trolde")])
+- tool1 = sample(["bare hænder", "skovl", "træhakke"])
+- unit = sample(["kg", "g"])
+- tool2 = sample(["nikkelhakke", "bronzehakke", "sølvhakke"])
+- tool3 = sample(["stålhakke", "diamanthakke", "mithril hakke", "titaniumhakke"])
+- $base = range(5, 20)
+- mult1_txt, mult1_val = sample(multi_times)
+- $mult2 = range(30, 80, 5)
+- $n = range(20, 50)
+- $days = range(28, 32)
+
+#conditions:
+- is_int(mult2/100*base*mult1_val)
+- int(base * mult1_val * (1 + mult2/100) * n * days) < 10000
+
+#answer: int(base * mult1_val * (1 + mult2/100) * n * days)
+"""
+
+answer_annotated = """
+Finde zuerst heraus, wie viel Erz ein {worker} mit einer {tool2} abbauen kann: {base} {unit}/Tag*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/Tag
+Dann multipliziere diesen Betrag mit {100+mult2}%, um herauszufinden, wie viel ein {worker} mit einer {tool3} abbauen kann: {base*mult1_val} {unit}/Tag * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/Tag
+Dann multipliziere das, was ein {worker} an einem Tag mit einer {tool3} abbauen kann, mit der Anzahl der {worker_plural}: {int(base*mult1_val*(1+mult2/100))} {unit}/Tag/{worker} * {n} {worker_plural} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/Tag
+Dann multipliziere die tägliche Menge an Erz mit der Anzahl der Tage, um die insgesamt in einem Monat abgebaute Menge zu finden: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/Tag * {days} Tage = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}/Tag
+#### {int(base*mult1_val*(1+mult2/100)*n*days)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

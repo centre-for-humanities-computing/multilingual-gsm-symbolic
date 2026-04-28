@@ -1,0 +1,41 @@
+question = "100 mensen solliciteren naar een baan bij Google. Van de mensen die solliciteren, krijgt slechts 30% een sollicitatiegesprek. Van degenen die een sollicitatiegesprek krijgen, krijgt 20% een baanaanbieding. Van degenen die een baanaanbieding krijgen, accepteert een derde van de mensen de functie. Hoeveel mensen accepteren de functie?"
+
+answer = """
+Het aantal mensen dat een sollicitatiegesprek krijgt is 100 * 0.3 = <<100*0.3=30>>30 mensen
+Het aantal mensen dat een baanaanbieding krijgt is 30 * 0.2 = <<30*0.2=6>>6 mensen
+Het aantal mensen dat de functie accepteert is 6*1/3 = <<6*1/3=2>>2 mensen
+#### 2
+"""
+
+id_orig = 718
+
+id_shuffled = 94
+
+question_annotated = """
+{n,100} mensen solliciteren naar een baan bij {company,Google}. Van de mensen die solliciteren, krijgt slechts {p1,30}% een sollicitatiegesprek. Van degenen die een sollicitatiegesprek krijgen, krijgt {p2,20}% een baanaanbieding. Van degenen die een baanaanbieding krijgen, {frac_txt,een derde} van de mensen accepteert de functie. Hoeveel mensen accepteren de functie?
+
+#init:
+- company = sample(["Microsoft", "Apple", "Amazon", "Facebook", "Netflix", "Tesla", "Microsoft"])
+- $n = range(100, 1001, 10)
+- $p1 = range(10, 51)
+- $p2 = range(10, 51)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (p2/100))
+- is_int(n * (p1/100) * (p2/100) * frac_val)
+
+#answer: int(n * (p1/100) * (p2/100) * frac_val)
+"""
+
+answer_annotated = """
+Het aantal mensen dat een sollicitatiegesprek krijgt is {n} * {p1/100} = <<{n}*{p1/100}={int(n*(p1/100))}>>{int(n*(p1/100))} mensen
+Het aantal mensen dat een baanaanbieding krijgt is {int(n*(p1/100))} * {p2/100} = <<{int(n*(p1/100))}*{p2/100}={int(n*(p1/100)*(p2/100))}>>{int(n*(p1/100)*(p2/100))} mensen
+Het aantal mensen dat de functie accepteert is {int(n*(p1/100)*(p2/100))}*{frac_val} = <<{int(n*(p1/100)*(p2/100))}*{frac_val}={int(n*(p1/100)*(p2/100)*frac_val)}>>{int(n*(p1/100)*(p2/100)*frac_val)} mensen
+#### {int(n*(p1/100)*(p2/100)*frac_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

@@ -1,0 +1,40 @@
+question = "Elise está aprendendo a escrever e decide continuar reescrevendo o alfabeto até saber escrevê-lo. Ela o escreve por completo duas vezes, escreve metade dele uma vez e depois reescreve tudo o que já escreveu. Quantas letras Elise escreveu ao todo?"
+
+answer = """
+Elise escreveu o alfabeto duas vezes, o que dá um total de 26*2=<<26*2=52>>52 letras.
+Em seguida, ela escreve metade do alfabeto, ou seja, 26*1/2=<<26*1/2=13>>13 letras.
+Até agora, isso dá um total de 52 + 13 = <<52+13=65>>65 letras.
+Escrever isso novamente significa que ela dobrou a quantidade de letras que já tinha escrito, então ela escreveu um total de 65 * 2 = <<65*2=130>>130 letras.
+#### 130
+"""
+
+id_orig = 546
+
+id_shuffled = 55
+
+question_annotated = """
+{name,Elise} está aprendendo a escrever e decide continuar reescrevendo o {alphabets_txt,alfabeto} até saber escrevê-lo. Ela o escreve por completo {n1_txt,twice} vezes, escreve {frac_txt,half} do {alphabets_txt,alfabeto} uma vez e depois reescreve tudo o que já escreveu. Quantas letras {name,Elise} escreveu ao todo?
+
+#init:
+- name = sample(names_female)
+- alphabets_txt, alphabets_val = sample([("alphabet", 26), ("hiragana (with 48 letters)", 48), ("farsi alphabet (with 32 letters)", 32), ("arabic abjad (with 28 letters)", 28)])
+- n1_txt, n1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)
+"""
+
+answer_annotated = """
+{name} escreveu o {alphabets_txt} {n1_txt}, o que dá um total de {alphabets_val}*{n1_val}=<<{alphabets_val}*{n1_val}={alphabets_val*n1_val}>>{alphabets_val*n1_val} letras.
+Em seguida, ela escreve {frac_txt} o {alphabets_txt}, o que é {alphabets_val}*{frac_val}=<<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} letras.
+Até agora, isso dá um total de {alphabets_val*n1_val} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1_val}+{int(alphabets_val*frac_val)}={alphabets_val*n1_val + int(alphabets_val*frac_val)}>>{alphabets_val*n1_val + int(alphabets_val*frac_val)} letras.
+Reescrever isso novamente significa que ela dobrou a quantidade de letras que já tinha escrito, então ela escreveu um total de {alphabets_val*n1_val + int(alphabets_val*frac_val)} * 2 = <<{alphabets_val*n1_val + int(alphabets_val*frac_val)}*2={2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1_val + int(alphabets_val*frac_val))} letras.
+#### {2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "por"

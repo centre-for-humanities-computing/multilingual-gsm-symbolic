@@ -1,0 +1,44 @@
+question = "Allan har dobbelt så mye mais som bananer. Han har i alt 40 bananer i huset sitt. Allan kjøpte 60 flere bananer i butikken og 40 færre mais enn antallet bananer. Finn det samlede antallet mais og bananer Allan har i huset?"
+
+answer = """
+Før han kjøpte noe mais og bananer, hadde Allan dobbelt så mye mais som bananer, som er 2*40 = <<2*40=80>>80 mais
+Det samlede antallet mais og bananer som Allan hadde før, er 80 mais + 40 bananer = <<80+40=120>>120 gjenstander
+Siden han kjøpte 40 færre mais enn bananer, kjøpte han 60 - 40 = <<60-40=20>>20 mais
+I alt kjøpte han 20 mais + 60 bananer = <<20+60=80>>80 gjenstander
+Etter kjøpene har Allan 120 gjenstander + 80 gjenstander = <<120+80=200>>200 mais og bananer totalt til sammen.
+#### 200
+"""
+
+id_orig = 406
+
+id_shuffled = 91
+
+question_annotated = """
+{name, Allan} har {mult_txt,dobbelt} så mye {food1, mais} som {food2, bananer}. Han har i alt {n, 40} {food2, bananer} i huset sitt. {name, Allan} kjøpte {m, 60} flere {food2, bananer} i butikken og {k, 40} færre {food1, mais} enn antallet {food2, bananer}. Finn det samlede antallet {food1, mais} og {food2, bananer} {name, Allan} har i huset?
+
+#init:
+- name = sample(names_male)
+- food1, food2 = sample(["pærer", "epler", "appelsiner", "sitroner", "fiken", "nektariner", "plommer", "jordbær", "kiwier", "blåbær"], 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(20, 100)
+- $m = range(30, 100)
+- $k = range(10, 50)
+
+#conditions:
+- m > k
+
+#answer: mult_val*n + n + m + (m-k)
+"""
+
+answer_annotated = """
+Før han kjøpte noe {food1} og {food2}, hadde {name} {mult_txt} så mye {food1} som {food2}, som er {mult_val}*{n} = <<{mult_val}*{n}={n*mult_val}>>{n*mult_val} {food1}
+Det samlede antallet {food1} og {food2} som {name} hadde før, er {n*mult_val} {food1} + {n} {food2} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} gjenstander
+Siden han kjøpte {k} færre {food1} enn {food2}, kjøpte han {m} - {k} = <<{m}-{k}={m-k}>>{m-k} {food1}
+I alt kjøpte han {m-k} {food1} + {m} {food2} = <<{m-k}+{m}={2*m-k}>>{2*m-k} gjenstander
+Etter kjøpene har {name} {n*mult_val+n} gjenstander + {2*m-k} gjenstander = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} {food1} og {food2} totalt til sammen.
+#### {n*mult_val+n+2*m-k}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

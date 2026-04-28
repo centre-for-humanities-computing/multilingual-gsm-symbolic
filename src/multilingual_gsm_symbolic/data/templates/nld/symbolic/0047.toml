@@ -1,0 +1,52 @@
+question = "Carl verstopte gisteren 3 dozijn eieren in de tuin voor de paaseierenjacht. Liam vindt 5 eieren. Sofia vindt twee keer zoveel als Liam. Jacob vindt 2 minder dan Sofia. En Maj vindt de helft van Jacobs aantal. Hoeveel eieren zijn er nog steeds verstopt in de tuin?"
+
+answer = """
+Carl verstopte 3*12 = <<3*12=36>>36 eieren.
+Liam vindt 5 eieren.
+Sofia vindt 5*2=<<5*2=10>>10 eieren.
+Jacob vindt 10 - 2 = <<10-2=8>>8 eieren.
+Maj vindt 8*1/2=<<8*1/2=4>>4 eieren.
+De kinderen vinden in totaal 5 + 10 + 8 + 4 = <<5+10+8+4=27>>27 eieren.
+Het totale aantal eieren dat nog steeds in de tuin is, is 36 - 27 = <<36-27=9>>9 eieren.
+#### 9
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,Carl} verstopte gisteren {n,3} dozijn eieren in de tuin voor de paaseierenjacht. {name2,Liam} vindt {x,5} eieren. {name3,Sofia} vindt {mult1_txt,twee keer} zoveel als {name2,Liam}. {name4,Jacob} vindt {y,2} minder dan {name3,Sofia}. En {name5,Maj} vindt {frac_txt,de helft} van {name4,Jacob}s aantal. Hoeveel eieren zijn er nog steeds verstopt in de tuin?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} verstopte {n}*12 = <<{n}*12={n*12}>>{n*12} eieren.
+{name2} vindt {x} eieren.
+{name3} vindt {x}*{mult1_val}=<<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} eieren.
+{name4} vindt {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} eieren.
+{name5} vindt {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} eieren.
+De kinderen vinden in totaal {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} eieren.
+Het totale aantal eieren dat nog steeds in de tuin is, is {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} eieren.
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

@@ -1,0 +1,46 @@
+question = "Un ospedale ha una capacità di 1000 letti con 1/5 occupato. A causa dell'epidemia di coronavirus, 50 pazienti vengono ricoverati in ospedale ogni giorno. Calcola il numero totale di letti liberi nell'ospedale dopo due settimane."
+
+answer = """
+Se 1/5 della capacità totale di letti è occupato, significa che 1/5 * 1000 = <<1000*1/5=200>>200 letti hanno pazienti che li occupano.
+Il numero totale di letti nell'ospedale senza nuovi ricoveri è 1000 letti - 200 letti = <<1000-200=800>>800 letti.
+Se 50 persone vengono ricoverate ogni giorno, il numero totale di pazienti nell'ospedale dopo una settimana è 50 pazienti/giorno * 7 giorni/settimana = 350 pazienti.
+Dopo due settimane, il numero totale di pazienti ricoverati nell'ospedale è 350 pazienti/settimana*2 settimane = <<350*2=700>>700 pazienti, ognuno dei quali usa un letto.
+Se c'erano 800 letti liberi nell'ospedale prima dei nuovi ricoveri, il numero totale si riduce a 800 letti - 700 letti = <<800-700=100>>100 letti liberi.
+#### 100
+"""
+
+id_orig = 955
+
+id_shuffled = 28
+
+question_annotated = """
+A {facility_article, un} {facility, ospedale} ha una capacità di {total, 1000} {item, letto}s con {frac, 1/5} occupato. A causa di {event, epidemia di coronavirus}, {daily, 50} pazienti vengono ricoverati in {facility_definite, ospedale} ogni giorno. Calcola il numero totale di {item_plural, letti} liberi in {facility_definite, ospedale} dopo {period, 2} settimane.
+
+#init:
+- facility = sample(["ospedale", "clinica", "centro medico", "struttura di assistenza"])
+- item = sample(["letto", "stanza", "reparto"])
+- event = sample(["epidemia di coronavirus", "stagione influenzale", "disastro naturale", "grave incidente", "pandemia"])
+- $total = range(500, 2000, 100)
+- $frac = sample(fractions)
+- $daily = range(20, 100, 5)
+- $period = range(2, 5)
+
+#conditions:
+- is_int(total * frac)
+- total * frac + daily * period * 7 < total
+
+#answer: total - (total * frac + daily * period * 7)
+"""
+
+answer_annotated = """
+Se {frac} della capacità totale di {facility_definite} {item}s è occupato, significa che {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item}s hanno pazienti che li occupano.
+Il numero totale di {item}s in {facility_definite} senza nuovi ricoveri è {total} {item}s - {int(total*frac)} {item}s = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item}s.
+Se {daily} persone vengono ricoverate ogni giorno, il numero totale di pazienti in {facility_definite} dopo una settimana è {daily} pazienti/giorno * 7 giorni/settimana = {daily*7} pazienti.
+Dopo {period} settimane, il numero totale di pazienti ricoverati in {facility_definite} è {daily*7} pazienti/settimana*{period} settimane = <<{daily*7}*{period}={daily*period*7}>>{daily*period*7} pazienti, ognuno dei quali usa un {item}.
+Se c'erano {total-int(total*frac)} {item}s liberi in {facility_definite} prima dei nuovi ricoveri, il numero totale si riduce a {total-int(total*frac)} {item}s - {daily*period*7} {item}s = <<{total-int(total*frac)}-{daily*period*7}={total - (total * frac + daily * period * 7)}>>{total - (total * frac + daily * period * 7)} {item}s liberi.
+#### {total - (total * frac + daily * period * 7)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "ita"

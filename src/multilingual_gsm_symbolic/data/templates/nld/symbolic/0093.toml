@@ -1,0 +1,46 @@
+question = "Als het water koud is zwemt Ray een mijl in 16 minuten. Als het water warm is zwemt Ray een mijl in 2 minuten meer dan tweemaal zo lang. Hoeveel langer doet Ray erover om 3 mijl te zwemmen op een warme dag dan op een koude dag?"
+
+answer = """
+Mijl koud water = <<16=16>>16 minuten
+Mijl warm water = 2+2*16=34 minuten
+3 mijl in koud water: 3(16)=<<3*16=48>>48 minuten
+3 mijl in warm water: 3(34)=<<3*34=102>>102 minuten
+Ray doet er 102-48=<<102-48=54>>54 minuten langer over
+#### 54
+"""
+
+id_orig = 554
+
+id_shuffled = 93
+
+question_annotated = """
+Als het water koud is zwemt {name,Ray} een {unit,mijl} in {t1,16} minuten. Als het water warm is zwemt {name,Ray} een {unit,mijl} in {n,2} minuten meer dan {mult_txt,twice} zo lang. Hoeveel langer doet {name,Ray} erover om {d,3} {unit,mijl} te zwemmen op een warme dag dan op een koude dag?
+
+#init:
+- name = sample(names)
+- unit = sample(['mile', 'kilometer'])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- mult_txt, mult_val = sample(multi_times)
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+
+answer_annotated = """
+Mijl koud water {unit} = <<{t1}={t1}>>{t1} minuten
+Mijl warm water {unit} = {n}+{mult_val}*{t1}={n + mult_val * t1} minuten
+{d} {unit}s in koud water: {d}({t1})=<<{d}*{t1}={d*t1}>>{d*t1} minuten
+{d} {unit}s in warm water: {d}({n + mult_val * t1})=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minuten
+{name} doet er {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} minuten langer over
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

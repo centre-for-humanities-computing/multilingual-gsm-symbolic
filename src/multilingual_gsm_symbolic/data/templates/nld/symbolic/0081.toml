@@ -1,0 +1,40 @@
+question = "Het team van de paaseierenjacht verstopte 100 eieren. De tweeling Smith vond elk 30 eieren. Alle andere eieren behalve 10 werden door hun vrienden gevonden. Hoeveel eieren vonden de vrienden?"
+
+answer = """
+De tweeling Smith vond, 30 * 2 = <<30*2=60>>60 eieren.
+Het aantal dat verstopt bleef was 100 - 60 = <<100-60=40>>40 eieren
+Omdat 10 eieren niet werden gevonden, betekent dit dat de vrienden 40 - 10 = 30 eieren vonden.
+#### 30
+"""
+
+id_orig = 1025
+
+id_shuffled = 81
+
+question_annotated = """
+Het {event,paaseierenjacht} team verstopte {total,100} {item,eieren}. De {family,Smith} tweeling vond elk {n,30} {item,eieren}. Alle andere {item,eieren} behalve {m,10} werden door hun vrienden gevonden. Hoeveel {item,eieren} vonden de vrienden?
+
+#init:
+- event = sample(["Halloween candy hunt", "Treasure hunt", "Scavenger hunt", "Charity fundraiser"])
+- item = sample(["eggs", "treats", "toys", "coins", "tokens", "balls", "candies", "goodies"])
+- family = sample(["Johnson", "Williams", "Mirzakhani", "Lopez", "Garcia", "Lee", ])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+
+answer_annotated = """
+De {family} tweeling vond, {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
+Het aantal dat verstopt bleef was {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
+Omdat {m} {item} niet werden gevonden, betekent dit dat de vrienden {total-2*n} - {m} = {total - 2*n - m} {item} vonden.
+#### {total - 2*n - m}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

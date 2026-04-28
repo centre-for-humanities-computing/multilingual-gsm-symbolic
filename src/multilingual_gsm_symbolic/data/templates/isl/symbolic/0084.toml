@@ -1,0 +1,45 @@
+question = "Maria kaupir 8 hlutabréf í hlutabréfi á 8 kr hvert. Gengi hlutabréfsins hækkar um 50% fyrsta árið sem Maria á þau og lækkar síðan um 25% annað árið. Hvert er lokaverðmæti allra hlutabréfa Maria?"
+
+answer = """
+Fyrst finnum við upphaflegt heildarverðmæti kaupa Marias: 8 hlutabréf * 8 kr/hlutabréf = <<8*8=64>>64 kr
+Síðan finnum við upphæð fyrstu verðhækkunarinnar: 64 kr*0,5 = <<64*0,5=32>>32 kr
+Leggðu þá upphæð við upphaflega verðmætið til að finna verðmætið eftir fyrsta árið: 64 kr + 32 kr = <<64+32=96>>96 kr
+Síðan margföldum við þá upphæð með 25% til að finna lækkunina á öðru árinu: 96 kr * 25% = <<96*25*0,01=24>>24 kr
+Dragðu síðan þá upphæð frá verðmætinu eftir fyrsta árið til að finna lokaverðmætið: 96 kr - 24 kr = <<96-24=72>>72 kr
+#### 72
+"""
+
+id_orig = 336
+
+id_shuffled = 84
+
+question_annotated = """
+{name,Maria} kaupir {n,8} hlutabréf í hlutabréfi á {p,8} {cur,kr} hvert. Gengi hlutabréfsins hækkar um {r1,50}% fyrsta árið sem {name,Maria} á þau og lækkar síðan um {r2,25}% annað árið. Hvert er lokaverðmæti allra hlutabréfa {name,Maria}?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $n = range(5, 20)
+- $p = range(5, 100)
+- $r1 = range(10, 100, 5)
+- $r2 = range(5, 50, 5)
+
+#conditions:
+- is_int(n * p * r1/100)
+- is_int(n * p * (1 + r1/100) * (1 - r2/100))
+
+#answer: int(n * p * (1 + r1/100) * (1 - r2/100))
+"""
+
+answer_annotated = """
+Fyrst finnum við upphaflegt heildarverðmæti kaupa {name}s: {n} hlutabréf * {p} {cur}/hlutabréf = <<{n}*{p}={n*p}>>{n*p} {cur}
+Síðan finnum við upphæð fyrstu verðhækkunarinnar: {n*p} {cur}*{r1/100} = <<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)} {cur}
+Leggðu þá upphæð við upphaflega verðmætið til að finna verðmætið eftir fyrsta árið: {n*p} {cur} + {n*p*r1/100} {cur} = <<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))} {cur}
+Síðan margföldum við þá upphæð með {r2}% til að finna lækkunina á öðru árinu: {n*p*(1+r1/100)} {cur} * {r2}% = <<{n*p*(1+r1/100)}*{r2}*0.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)} {cur}
+Dragðu síðan þá upphæð frá verðmætinu eftir fyrsta árið til að finna lokaverðmætið: {int(n*p*(1+r1/100))} {cur} - {int(n*p*(1+r1/100)*r2/100)} {cur} = <<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={int(n*p*(1+r1/100)*(1-r2/100))}>>{int(n*p*(1+r1/100)*(1-r2/100))} {cur}
+#### {int(n*p*(1+r1/100)*(1-r2/100))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

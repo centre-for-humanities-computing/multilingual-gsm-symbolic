@@ -1,0 +1,40 @@
+question = "Jakob e Jens têm 30 minutos para ir juntos até à escola. Eles levam 6 minutos para chegar à esquina onde fica a biblioteca. Levam mais 13 minutos para chegar ao quartel dos bombeiros. Quanto tempo lhes resta para chegar à escola sem se atrasarem?"
+
+answer = """
+Jakob e Jens chegam à biblioteca com 30 - 6 = <<30-6=24>>24 minutos restantes para chegar ao quartel dos bombeiros.
+Depois, chegam ao quartel dos bombeiros e têm 24 - 13 = <<24-13=11>>11 minutos restantes para chegar à escola sem se atrasarem.
+#### 11
+"""
+
+id_orig = 684
+
+id_shuffled = 14
+
+question_annotated = """
+{n1,Jakob} e {n2,Jens} têm {t,30} minutos para ir juntos até {loc1,à escola}. Eles levam {t1,6} minutos para chegar à esquina onde fica {loc2,a biblioteca}. Levam mais {t2,13} minutos para chegar {loc3,ao quartel dos bombeiros}. Quanto tempo lhes resta para chegar {loc1,à escola} sem se atrasarem?
+
+#init:
+- n1, n2 = sample(names, 2)
+- loc1, loc2, loc3 = sample(['skolen', 'indkøbscenteret', 'biblioteket', 'parken', 'fitnesscenteret', 'banken', 'brandstationen'], 3)
+- $t1 = range(6, 30)
+- $t2 = range(10, 70)
+- $t = range(30, 140)
+
+#conditions:
+- not divides(t1, 5)
+- not divides(t2, 5)
+- not divides(t, 5)
+- t > t1 + t2
+
+#answer: t - t1 - t2
+"""
+
+answer_annotated = """
+{n1} e {n2} chegam à {loc2} com {t} - {t1} = <<{t}-{t1}={t-t1}>>{t-t1} minutos restantes para chegar {loc3}.
+Depois, chegam {loc3} e têm {t-t1} - {t2} = <<{t-t1}-{t2}={t-t1-t2}>>{t-t1-t2} minutos restantes para chegar {loc1} sem se atrasarem.
+#### {t-t1-t2}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "por"

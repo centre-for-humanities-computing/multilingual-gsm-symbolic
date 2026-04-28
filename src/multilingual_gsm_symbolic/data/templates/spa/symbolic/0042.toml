@@ -1,0 +1,47 @@
+question = "Roger va a la tienda para comprar algo de {item,coffee}. La marca normal de {item,coffee} que compra cuesta {cur,$}{price,5} por {unit,pound}. Tuvo que comprar una marca más cara que cuesta un {percent,20}% más porque se había agotado su marca favorita. Decide comprar una semana de {item,coffee} y usa {usage,1} {unit,pound} de {item,coffee} por día. También decidió comprarse un {extra_item,donut} por {cur,$}{extra_price,2}. ¿Cuánto costó todo?"
+
+answer = """
+El {item} que compró era {price}*{percent/100}={cur}<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} más caro por {unit} que lo que normalmente compra
+Así que le costó {price}+{price*percent//100}={cur}<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} por {unit}
+Consume {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {unit}s de {item} en una semana
+Entonces pagó {price+price*percent/100}*{usage*7}={cur}<<{price+price*percent/100}*{usage*7}={int((price+price*percent/100)*usage*7)}>>{int((price+price*percent/100)*usage*7)} por {item}
+Eso significa que su cuenta total fue {int((price+price*percent/100)*usage*7)}+{extra_price}={cur}<<{int((price+price*percent/100)*usage*7)}+{extra_price}={int((price+price*percent/100)*usage*7)+extra_price}>>{int((price+price*percent/100)*usage*7)+extra_price}
+#### {int((price+price*percent/100)*usage*7)+extra_price}
+"""
+
+id_orig = 661
+
+id_shuffled = 42
+
+question_annotated = """
+{name,Roger} va a la tienda para comprar algo de {item,coffee}. La marca normal de {item,coffee} que compra cuesta {cur,$}{price,5} por {unit,pound}. Tuvo que comprar una marca más cara que cuesta un {percent,20}% más porque se había agotado su marca favorita. Decide comprar una semana de {item,coffee} y usa {usage,1} {unit,pound} de {item,coffee} por día. También decidió comprarse un {extra_item,donut} por {cur,$}{extra_price,2}. ¿Cuánto costó todo?
+
+#init:
+- name = sample(names_male)
+- item = sample(['tea', 'sugar', 'flour', 'rice'])
+- cur = sample(currencies_sym)
+- unit = sample(['kilogram', 'kg'])
+- extra_item = sample(['cookie', 'muffin', 'bagel'])
+- $price = range(3, 25)
+- $percent = range(10, 50, 5)
+- $usage = range(1, 3)
+- $extra_price = range(1, 5)
+
+#conditions:
+- is_int(price * percent / 100)
+
+#answer: (price + price * percent / 100) * 7 * usage + extra_price
+"""
+
+answer_annotated = """
+El {item} que compró era {price}*{percent/100}={cur}<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} más caro por {unit} que lo que normalmente compra
+Así que le costó {price}+{price*percent//100}={cur}<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} por {unit}
+Consume {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {unit}s de {item} en una semana
+Entonces pagó {price+price*percent/100}*{usage*7}={cur}<<{price+price*percent/100}*{usage*7}={int((price+price*percent/100)*usage*7)}>>{int((price+price*percent/100)*usage*7)} por {item}
+Eso significa que su cuenta total fue {int((price+price*percent/100)*usage*7)}+{extra_price}={cur}<<{int((price+price*percent/100)*usage*7)}+{extra_price}={int((price+price*percent/100)*usage*7)+extra_price}>>{int((price+price*percent/100)*usage*7)+extra_price}
+#### {int((price+price*percent/100)*usage*7)+extra_price}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "spa"

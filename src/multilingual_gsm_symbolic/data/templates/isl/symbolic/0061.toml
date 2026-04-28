@@ -1,0 +1,44 @@
+question = "Bertram er með poka með kúlur með 10 í. Hann hrasaði um stein á meðan hann bar hann og missti helmingur af þeim. Hann flýtti sér að leita að þeim, en fann aðeins 3. Þegar hann kom heim, skoðaði hann kúlurnar nánar. Tveir þeirra sem hann tíndi upp voru ekki kúlur, heldur í raun trékúlur, svo hann henti þeim. Hversu margar kúlur endaði Bertram með?"
+
+answer = """
+Bertram missti kúlurnar sínar og var eftir með 10*1/2=<<10*1/2=5>>5 kúlur.
+Hann leitaði og fann nokkrar af týndu kúlurnum sínum, sem færði hann aftur upp í 5+3=<<5+3=8>>8 kúlur.
+Hann fór heim og fjarlægði trékúlurnar, sem skildi hann eftir með 8-2=<<8-2=6>>6 kúlur.
+#### 6
+"""
+
+id_orig = 1247
+
+id_shuffled = 61
+
+question_annotated = """
+{name,Bertram} er með poka með {objects,kúlur} með {n,10} í. Hann hrasaði um {obstacle,stein} á meðan hann bar hann og missti {frac_txt,helmingur} af þeim. Hann flýtti sér að leita að þeim, en fann aðeins {k,3}. Þegar hann kom heim, skoðaði hann {objects,kúlur}nar nánar. {fake_num_txt,tveir} þeirra sem hann tíndi upp voru ekki {objects,kúlur}, heldur í raun {fake_object,trékúlur}, svo hann henti þeim. Hversu margar {objects,kúlur} endaði {name,Bertram} með?
+
+#init:
+- name = sample(names_male)
+- objects = sample(['kugler', 'mønter', 'knapper', 'perler'])
+- obstacle = sample(['sten', 'gren', 'rod', 'kæp'])
+- fake_object = sample(['glaskugle', 'træperle', 'småsten'])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+
+answer_annotated = """
+{name} missti {objects}nar sínar og var eftir með {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects}.
+Hann leitaði og fann nokkrar af týndu {objects}num sínum, sem færði hann aftur upp í {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects}.
+Hann fór heim og fjarlægði {fake_object}nar, sem skildi hann eftir með {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects}.
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

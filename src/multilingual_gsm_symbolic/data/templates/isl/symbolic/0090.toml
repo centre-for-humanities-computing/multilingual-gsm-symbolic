@@ -1,0 +1,38 @@
+question = "Carl á þrisvar sinnum fleiri Facebook-vini en Diana. Johannes á fjórum sinnum fleiri vini á Facebook en Diana. Ef Carl á 12 vini á Facebook, hversu marga Facebook-vini á Johannes?"
+
+answer = """
+Diana á 12/3=<<12/3=4>>4 Facebook-vini.
+Johannes á 4*4=<<4*4=16>>16 Facebook-vini.
+#### 16
+"""
+
+id_orig = 149
+
+id_shuffled = 90
+
+question_annotated = """
+{name1,Carl} á {mult1_txt,þrisvar sinnum} fleiri {platform,Facebook}-vini en {name2,Diana}. {name3,Johannes} á {mult2_txt,fjórum sinnum} fleiri vini á {platform,Facebook} en {name2,Diana}. Ef {name1,Carl} á {n,12} vini á {platform,Facebook}, hversu marga {platform,Facebook}-vini á {name3,Johannes}?
+
+#init:
+- name1, name2, name3 = sample(names, 3)
+- platform = sample(["Instagram", "Twitter", "LinkedIn", "TikTok", "Snapchat"])
+- mult1_txt, mult1_val = sample(multi_times)
+- mult2_txt, mult2_val = sample(multi_times)
+- $n = range(10, 201)
+
+#conditions:
+- mult2_val != mult1_val
+- is_int(n / mult1_val)
+
+#answer: int((n / mult1_val) * mult2_val)
+"""
+
+answer_annotated = """
+{name2} á {n}/{mult1_val}=<<{n}/{mult1_val}={n//mult1_val}>>{n//mult1_val} {platform}-vini.
+{name3} á {mult2_val}*{n//mult1_val}=<<{mult2_val}*{n//mult1_val}={int((n / mult1_val) * mult2_val)}>>{int((n / mult1_val) * mult2_val)} {platform}-vini.
+#### {int((n / mult1_val) * mult2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

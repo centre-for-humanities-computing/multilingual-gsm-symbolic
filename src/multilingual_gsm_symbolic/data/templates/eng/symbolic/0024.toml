@@ -1,0 +1,46 @@
+question = "According to its nutritional info, a bag of chips has 250 calories per serving. If a 300 gram bag has 5 servings, how many grams can you eat if your daily calorie target is 2000 and you have already consumed 1800 calories?"
+
+answer = """
+If the total calorie target is 2000 and I have consumed 1800 calories then I have 2000-1800 = <<2000-1800=200>>200 calories left to eat
+If each serving of chips has 250 calories and I only have 200 calories left to eat, then I can only eat 200/250 of a serving = 4/5 of a serving
+We also know that a 300 gram bag of chips has 5 servings, hence each serving has 300 gram/5 = <<300/5=60>>60 grams
+If I can only eat 4/5 of a serving, then I can eat only 60 gram * 4/5 = 48 grams
+#### 48
+"""
+
+id_orig = 43
+
+id_shuffled = 24
+
+question_annotated = """
+According to its nutritional info, a bag of {food,chips} has {cal,250} calories per serving. If a {size,300} {unit,gram} bag has {n,5} servings, how many {unit,gram}s can you eat if your daily calorie target is {total,2000} and you have already consumed {spent,1800} calories?
+
+#init:
+- food = sample(["popcorn", "breads",  "cookies"])
+- unit = sample(["grams", "ounces", "oz"])
+- $cal = range(150, 500, 25)
+- $size = range(100, 400, 25)
+- $n = range(4, 8)
+- $total = range(1900, 2500, 5)
+- $spent = range(600, 1900, 25)
+
+#conditions:
+- spent < total
+- is_int( 5 * (total - spent) / cal)
+- divides(size, n)
+- divides(size//n, (total-spent)/cal)
+
+#answer: size//n * Fraction((total-spent)/cal)
+"""
+
+answer_annotated = """
+If the total calorie target is {total} and I have consumed {spent} calories then I have {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} calories left to eat
+If each serving of {food} has {cal} calories and I only have {total-spent} calories left to eat, then I can only eat {total-spent}/{cal} of a serving = {Fraction((total-spent)/cal)} of a serving
+We also know that a {size} {unit} bag of {food} has {n} servings, hence each serving has {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit}s
+If I can only eat {Fraction((total-spent)/cal)} of a serving, then I can eat only {size//n} {unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit}s
+#### {size//n * (total-spent)/cal}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

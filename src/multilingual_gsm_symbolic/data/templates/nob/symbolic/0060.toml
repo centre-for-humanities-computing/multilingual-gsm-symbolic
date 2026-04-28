@@ -1,0 +1,45 @@
+question = "William jobber en 10-timers vakt hver dag, fem dager i uken. Han tjener 10 kr i timen og får en bonus på 300 kr hver uke hvis bedriften gjør det bra. Hvor mye penger tjente William i april, hvis bedriften gjorde det veldig bra hele måneden?"
+
+answer = """
+På en dag tjener William 10 * 10 = <<10*10=100>>100 kr
+Hvis han jobber fem dager i uken, er det samlede antallet dager for hele måneden 5*4 = <<5*4=20>>20 dager.
+Siden han tjener 100 kr om dagen, er det samlede beløpet for hele måneden 20 * 100 = <<20*100=2000>>2000 kr.
+Han fikk også en 300 * 4 = <<300*4=1200>>1200 kr bonus, fordi bedriften gjorde det bra i alle ukene i april.
+Ved slutten av april hadde han tjent 2000 + 1200 = <<2000+1200=3200>>3200 kr.
+#### 3200
+"""
+
+id_orig = 304
+
+id_shuffled = 60
+
+question_annotated = """
+{name,William} jobber en {h,10}-timers vakt hver dag, {d_txt,fem} dager i uken. Han tjener {r,10} {cur,kr} i timen og får en bonus på {b,300} {cur,kr} hver uke hvis bedriften gjør det bra. Hvor mye penger tjente {name,William} i {month,april}, hvis bedriften gjorde det veldig bra hele måneden?
+
+#init:
+- name = sample(names_male)
+- month = sample(["januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november", "december"])
+- cur = sample(currencies_sym)
+- $h = range(6, 13)
+- d_txt, d_val = range_str(3, 7, 1, numbers)
+- $r = range(8, 31)
+- $b = range(100, 601)
+
+#conditions:
+- is_int(h * r)
+
+#answer: h * r * d_val * 4 + b * 4
+"""
+
+answer_annotated = """
+På en dag tjener {name} {h} * {r} = <<{h}*{r}={h*r}>>{h*r} {cur}
+Hvis han jobber {d_txt} dager i uken, er det samlede antallet dager for hele måneden {d_val}*4 = <<{d_val}*4={d_val*4}>>{d_val*4} dager.
+Siden han tjener {h*r} {cur} om dagen, er det samlede beløpet for hele måneden {d_val*4} * {h*r} = <<{d_val*4}*{h*r}={d_val*4*h*r}>>{d_val*4*h*r} {cur}.
+Han fikk også en {b} * 4 = <<{b}*4={b*4}>>{b*4} {cur} bonus, fordi bedriften gjorde det bra i alle ukene i {month}.
+Ved slutten av {month} hadde han tjent {d_val*4*h*r} + {b*4} = <<{d_val*4*h*r}+{b*4}={d_val*4*h*r+b*4}>>{d_val*4*h*r+b*4} {cur}.
+#### {d_val*4*h*r+b*4}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

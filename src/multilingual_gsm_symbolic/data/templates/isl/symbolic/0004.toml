@@ -1,0 +1,46 @@
+question = "Sara býr til poppkorn sem snarl. Þegar pönnuna með maískjörnunum hitnar byrja kjarna að poppa hraðar. 20 poppa á fyrstu 30 sekúndum eldunarinnar, síðan þrír sinnum þann fjölda á næstu 30 sekúndum. Kjarnarnir aukast í fjórir faldan upphaflegan popphraða á næstu 30 sekúndum, en á síðustu 30 sekúndunum minnkar popphraðinn niður í helming hraðans á fyrri 30 sekúndunum. Eftir að Sara hefur tekið pönnuna af hitanum poppar fjórðungur af þeim fjölda kjarna sem poppuðu á síðustu 30 sekúndum eldunarinnar vegna afgangshitans. Hversu mikið af poppkorni hefur Sara til að borða?"
+
+answer = """
+Á öðrum 30 sekúndum eldunarinnar poppa 3*20=<<3*20=60>>60 kjarnar.
+Á þriðju 30 sekúndunum poppa 4*20=<<4*20=80>>80 kjarnar.
+Á síðustu 30 sekúndunum poppa 80/2=<<80/2=40>>40 kjarnar.
+Eftir eldunina veldur afgangshitinn því að 40/4=<<40/4=10>>10 kjarnar poppa.
+Þannig hefur Sara 20 + 60 + 80 + 40 + 10 = <<20+60+80+40+10=210>>210 poppkorn til að borða.
+#### 210
+"""
+
+id_orig = 1264
+
+id_shuffled = 4
+
+question_annotated = """
+{name,Sara} býr til poppkorn sem snarl. Þegar {p,panna} með maískjörnunum hitnar byrja kjarna að poppa hraðar. {n,20} poppa á fyrstu {s,30} sekúndum eldunarinnar, síðan {k_2_txt,þrír} sinnum þann fjölda á næstu {s,30} sekúndum. Kjarnarnir aukast í {k_3_txt,fjórir} faldan upphaflegan popphraða á næstu {s,30} sekúndum, en á síðustu {s,30} sekúndunum minnkar popphraðinn niður í helming hraðans á fyrri {s,30} sekúndunum. Eftir að {name,Sara} hefur tekið {p,pönnuna} af hitanum poppar fjórðungur af þeim fjölda kjarna sem poppuðu á síðustu {s,30} sekúndum eldunarinnar vegna afgangshitans. Hversu mikið af poppkorni hefur {name,Sara} til að borða?
+
+
+#init:
+- name = sample(names)
+- p = sample(['panden', 'gryden'])
+- $n = range(10, 101, 10)
+- $s = range(10, 31, 2)
+- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)
+- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)
+
+#conditions:
+- k_3_val > k_2_val
+- divides(k_3_val * n, 8)
+
+#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)
+"""
+
+answer_annotated = """
+Á öðrum {s} sekúndum eldunarinnar poppa {k_2_val}*{n}=<<{k_2_val}*{n}={k_2_val*n}>>{k_2_val*n} kjarnar.
+Á þriðju {s} sekúndunum poppa {k_3_val}*{n}=<<{k_3_val}*{n}={k_3_val*n}>>{k_3_val*n} kjarnar.
+Á síðustu {s} sekúndunum poppa {k_3_val*n}/2=<<{k_3_val*n}/2={k_3_val*n//2}>>{k_3_val*n//2} kjarnar.
+Eftir eldunina veldur afgangshitinn því að {k_3_val*n//2}/4=<<{k_3_val*n//2}/4={k_3_val*n//8}>>{k_3_val*n//8} kjarnar poppa.
+Þannig hefur {name} {n} + {k_2_val * n} + {k_3_val * n} + {k_3_val * n // 2} + {k_3_val * n // 8} = <<{n}+{k_2_val * n}+{k_3_val * n}+{k_3_val * n // 2}+{k_3_val * n // 8}={n+(k_2_val * n + k_3_val * n)+(k_3_val * n // 2) + (k_3_val * n // 8)}>>{n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)} poppkorn til að borða.
+#### {n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

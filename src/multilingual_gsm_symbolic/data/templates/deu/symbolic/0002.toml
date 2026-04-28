@@ -1,0 +1,43 @@
+question = "Anders wirft einen sechsseitigen Würfel. Um wie viel wahrscheinlicher ist es (in Prozent ausgedrückt), dass er eine Zahl größer als 3 würfelt, als dass er zweimal hintereinander eine gerade Zahl würfelt?"
+
+answer = """
+Es gibt 3 Zahlen größer als 3 auf dem Würfel, also beträgt die Wahrscheinlichkeit, eine davon zu würfeln, 3/6=50%.
+Die Wahrscheinlichkeit, eine gerade Zahl zu würfeln, beträgt 50%, also beträgt die Wahrscheinlichkeit, zweimal hintereinander eine zu würfeln, 50% * 50% = 25%.
+Die Differenz zwischen diesen beiden Wahrscheinlichkeiten ist 50% - 25% = 25%.
+#### 25
+"""
+
+id_orig = 184
+
+id_shuffled = 2
+
+question_annotated = """
+{name,Anders} wirft einen {sides_txt,sechsseitigen} Würfel. Um wie viel wahrscheinlicher ist es (in Prozent ausgedrückt), dass er eine Zahl größer als {target,3} würfelt, als dass er zweimal hintereinander eine {z,gerade} Zahl würfelt?
+
+#init:
+- name=sample(names_male)
+- sides_txt, sides_val = sample([("fire-sidet", 4), ("seks-sidet", 6), ("ti-sidet", 10), ("12-sidet", 12), ("tyve-sidet", 20), ("d4", 4),  ("d6", 6), ("d8", 8), ("d10", 10), ("d12", 12), ("d20", 20), ("4-sidet", 4),  ("6-sidet", 6), ("8-sidet", 8), ("10-sidet", 10), ("12-sidet", 12), ("20-sidet", 20) ] * 3)
+- $target = range(1, 20)
+- z = sample(["lige", "ulige"])
+
+#conditions: 
+- target < sides_val
+- divides(sides_val-target, target)
+- is_int((sides_val-target)/sides_val * 100)
+-  int((sides_val-target)/sides_val * 100) > 25
+
+#answer: int((sides_val-target)/sides_val * 100) - 25
+"""
+
+answer_annotated = """
+Es gibt {sides_val-target} Zahlen größer als {target} auf dem Würfel, also beträgt die Wahrscheinlichkeit, eine davon zu würfeln, {sides_val-target}/{sides_val}={int((sides_val-target)/sides_val * 100)}%.
+Die Wahrscheinlichkeit, eine {z} Zahl zu würfeln, beträgt 50%, also beträgt die Wahrscheinlichkeit, zweimal hintereinander eine zu würfeln, 50% * 50% = 25%.
+Die Differenz zwischen diesen beiden Wahrscheinlichkeiten ist {int((sides_val-target)/sides_val * 100)}% - 25% = { int((sides_val-target)/sides_val * 100) - 25}%.
+#### { int((sides_val-target)/sides_val * 100) - 25}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"
+
+ignore = true

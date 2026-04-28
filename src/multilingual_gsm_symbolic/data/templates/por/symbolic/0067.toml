@@ -1,0 +1,44 @@
+question = "O carro de John avaria. O carro pesa 1200 libras e ele tem bagagem nele pesando 250 libras. Ele também tem seus dois filhos pequenos que pesam 75 libras cada. Se a força para mover o carro é 1% do peso, quanta força ele precisa para empurrar o carro?"
+
+answer = """
+Os dois filhos pesam 75*2=<<75*2=150>>150 libras
+Então o peso total do carro e de tudo é 1200+250+150=<<1200+250+150=1600>>1600 libras
+Então ele precisa gerar 1600*0.01=<<1600*0.01=16>>16 libras
+#### 16
+"""
+
+id_orig = 1275
+
+id_shuffled = 67
+
+question_annotated = """
+{name,John}'s {vehicle,car} avaria. O {vehicle,car} pesa {weight_vehicle,1200} {unit,pounds} e ele tem {item,luggage} nele pesando {weight_item,250} {unit,pounds}. Ele também tem seus {num_passengers_txt,two} jovens {passenger_type,children} que pesam {weight_passenger,75} {unit,pounds} cada nele. Se a força para mover o {vehicle,car} é {force_percent,1}% do peso, quanta força ele precisa para empurrar o {vehicle,car}?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(['car', 'van', 'truck', 'SUV'])
+- item = sample(['luggage', 'groceries', 'equipment', 'furniture'])
+- passenger_type = sample(['children', 'friends', 'colleagues', 'teammates'])
+- unit = sample(['pounds', 'kilograms'])
+- $weight_vehicle = range(1000, 3000, 50)
+- $weight_item = range(100, 500, 25)
+- $weight_passenger = range(50, 100, 5)
+- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- $force_percent = range(1, 6)
+
+#conditions:
+- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+
+#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+"""
+
+answer_annotated = """
+Os {num_passengers_txt} {passenger_type} pesam {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
+Então o peso total do {vehicle} e de tudo é {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
+Então ele precisa gerar {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}
+#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "por"

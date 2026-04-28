@@ -1,0 +1,46 @@
+question = "I starten af festen var der 25 mænd og 15 kvinder. Efter en time forlod 1/4 af det samlede antal personer. Hvor mange kvinder er tilbage, hvis 22 mænd blev til festen?"
+
+answer = """
+Der var i alt 25 mænd + 15 kvinder = <<25+15=40>>40 personer, der deltog i festen.
+Efter en time forlod 40 personer*1/4 = <<40*1/4=10>>10 personer forlod festen.
+Dette betyder, at 40 personer - 10 personer = <<40-10=30>>30 personer blev.
+Ud af de 30, der blev, var 30 personer - 22 mænd = <<30-22=8>>8 kvinder.
+#### 8
+"""
+
+id_orig = 320
+
+id_shuffled = 82
+
+question_annotated = """
+I starten af {event,festen} var der {m,25} {group1,mænd} og {w,15} {group2,kvinder}. Efter {t,en time} forlod {frac,1/4} af det samlede antal personer. Hvor mange {group2,kvinder} er tilbage, hvis {m_left,22} {group1,mænd} blev til {event,festen}?
+
+#init:
+- event = sample(['festen', 'fejringen', 'fødselsdagen', 'konferencen', 'samlingen', 'eventet'])
+- group1, group2 = sample([ "lærere", "læger", "ingeniører", "sygeplejersker", "kunstnere", "advokater",], 2)
+- t = sample(['en time', 'to timer', 'en halv time', '45 minutter'])
+- $frac = sample(fractions)
+- $m = range(20, 75)
+- $w = range(10, 80)
+- $m_left = range(15, 35)
+
+#conditions:
+- m_left < m
+- is_int((m + w) * frac)
+- (m + w) * (1-frac) > m_left
+- m + w - (m + w) * frac > m_left
+
+#answer: m + w - int((m + w) * frac) - m_left
+"""
+
+answer_annotated = """
+Der var i alt {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} personer, der deltog i {event}.
+Efter {t} forlod {m+w} personer*{frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} personer forlod {event}.
+Dette betyder, at {m+w} personer - {int((m+w)*frac)} personer = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} personer blev.
+Ud af de {m+w-int((m+w)*frac)}, der blev, var {m+w-int((m+w)*frac)} personer - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {group2}.
+#### {m+w-int((m+w)*frac)-m_left}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

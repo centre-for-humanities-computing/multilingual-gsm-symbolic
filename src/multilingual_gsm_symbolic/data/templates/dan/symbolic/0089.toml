@@ -1,0 +1,51 @@
+question = "Jakob lejer en hestevogn fra kl. 17 til kl. 21. Han får 1 time gratis. Den første betalte time koster 15 kr og hver efterfølgende time koster to gange så meget. Hvor meget betalte han?"
+
+answer = """
+Han havde den i 21-17=<<21-17=4>>4 timer
+Han betaler for 4-1=<<4-1=3>>3 timer
+Den første time koster 1*15=<<1*15=15>>15 kr
+De andre 3-1=2 timer er dyrere
+De koster 15*2=<<15*2=30>>30 kr per time
+Så de 2 timer koster 2*30=<<2*30=60>>60 kr
+Så han betaler 60+15=<<60+15=75>>75 kr for timerne
+#### 75
+"""
+
+id_orig = 652
+
+id_shuffled = 89
+
+question_annotated = """
+{name,Jakob} lejer en {vehicle,hestevogn} fra kl. {start_time,17} til kl. {end_time,21}. Han får {free_hours,1} time gratis. Den første betalte time koster {first_hour_cost,15} {cur,kr} og hver efterfølgende time koster {multiplier_txt,to gange} så meget. Hvor meget betalte han?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(["limousine", "partybus", "båd", "sportsvogn"])
+- $start_time = range(13, 20)
+- $end_time = range(15, 24)
+- $free_hours = range(1, 3)
+- cur = sample(currencies_sym)
+- $first_hour_cost = range(10, 51)
+- multiplier_txt, multiplier_val = sample(multi_times)
+
+#conditions:
+- end_time - start_time > free_hours + 1
+- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)
+
+#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val
+"""
+
+answer_annotated = """
+Han havde den i {end_time}-{start_time}=<<{end_time}-{start_time}={end_time-start_time}>>{end_time-start_time} timer
+Han betaler for {end_time-start_time}-{free_hours}=<<{end_time-start_time}-{free_hours}={end_time-start_time-free_hours}>>{end_time-start_time-free_hours} timer
+Den første time koster 1*{first_hour_cost}=<<1*{first_hour_cost}={first_hour_cost}>>{first_hour_cost} {cur}
+De andre {end_time-start_time-free_hours}-1={end_time-start_time-free_hours-1} timer er dyrere
+De koster {first_hour_cost}*{multiplier_val}=<<{first_hour_cost}*{multiplier_val}={first_hour_cost*multiplier_val}>>{first_hour_cost*multiplier_val} {cur} per time
+Så de {end_time-start_time-free_hours-1} timer koster {end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}=<<{end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}={(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}>>{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val} {cur}
+Så han betaler {(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}=<<{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}={first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}>>{first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val} {cur} for timerne
+#### {first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

@@ -1,0 +1,40 @@
+question = "El cometa Halley orbita el sol cada 75 años. El padre de Bill vio el cometa cuando tenía 30 años. Bill vio el cometa por segunda vez cuando tenía tres veces la edad que su padre tenía cuando vio el cometa. ¿Qué edad tenía Bill cuando vio el cometa por primera vez?"
+
+answer = """
+Bill vio el cometa por segunda vez cuando tenía 30 años * 3= <<30*3=90>>90 años.
+El cometa Halley se puede ver cada 75 años, así que Bill vio el cometa por primera vez cuando tenía 90 años - 75 años = <<90-75=15>>15 años.
+#### 15
+"""
+
+id_orig = 991
+
+id_shuffled = 73
+
+question_annotated = """
+El cometa {comet_name,Halley} orbita el sol cada {orbit_period,75} años. {name,Bill}'s {relative,dad} vio el cometa cuando tenía {relative_age,30} años. {name,Bill} vio el cometa por segunda vez cuando tenía {multiple_txt,three} veces la edad de su {relative,dad} cuando vio el cometa. ¿Qué edad tenía {name,Bill} cuando vio el cometa por primera vez?
+
+#init:
+- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])
+- name = sample(names_male)
+- relative = sample(['dad', 'father', 'uncle', 'grandfather'])
+- $orbit_period = range(50, 101, 5)
+- $relative_age = range(20, 51)
+- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)
+
+#conditions:
+- multiple_val * relative_age < 100
+- multiple_val * relative_age > orbit_period
+- is_int(multiple_val * relative_age - orbit_period)
+
+#answer: multiple_val * relative_age - orbit_period
+"""
+
+answer_annotated = """
+{name} vio el cometa por segunda vez cuando tenía {relative_age} años * {multiple_val}= <<{relative_age}*{multiple_val}={relative_age*multiple_val}>>{relative_age*multiple_val} años.
+El cometa {comet_name} se puede ver cada {orbit_period} años, así que {name} vio el cometa por primera vez cuando tenía {relative_age*multiple_val} años - {orbit_period} años = <<{relative_age*multiple_val}-{orbit_period}={relative_age*multiple_val-orbit_period}>>{relative_age*multiple_val-orbit_period} años.
+#### {relative_age*multiple_val-orbit_period}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "spa"

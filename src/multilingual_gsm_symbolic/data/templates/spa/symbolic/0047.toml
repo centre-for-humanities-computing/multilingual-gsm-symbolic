@@ -1,0 +1,52 @@
+question = "Cole escondió 3 docenas de huevos en el patio para la búsqueda de huevos de Pascua. Lamar encuentra 5 huevos. Stacy encuentra el doble de los que encuentra Lamar. Charlie encuentra 2 menos que Stacy, y Mei encuentra la mitad de los que encuentra Charlie. ¿Cuántos huevos siguen escondidos en el patio?"
+
+answer = """
+Cole esconde 3*12 = <<3*12=36>>36 huevos.
+Lamar encuentra 5 huevos.
+Stacy encuentra 5*2 = <<5*2=10>>10 huevos.
+Charlie encuentra 10 - 2 = <<10-2=8>>8 huevos.
+Mei encuentra 8*1/2=<<8*1/2=4>>4 huevos.
+Los niños encuentran un total de 5 + 10 + 8 + 4 = <<5+10+8+4=27>>27 huevos.
+El número total de huevos escondidos que aún quedan en el patio es 36 - 27 = <<36-27=9>>9 huevos.
+#### 9
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,Cole} escondió {n,3} docenas de huevos en el patio para la búsqueda de huevos de Pascua. {name2,Lamar} encuentra {x,5} huevos. {name3,Stacy} encuentra {mult1_txt,twice} de la cantidad que encuentra {name2,Lamar}. {name4,Charlie} encuentra {y,2} menos que {name3,Stacy}, y {name5,Mei} encuentra {frac_txt,la mitad} de la cantidad que encuentra {name4,Charlie}. ¿Cuántos huevos siguen escondidos en el patio?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} esconde {n}*12 = <<{n}*12={n*12}>>{n*12} huevos.
+{name2} encuentra {x} huevos.
+{name3} encuentra {x}*{mult1_val} = <<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} huevos.
+{name4} encuentra {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} huevos.
+{name5} encuentra {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} huevos.
+Los niños encuentran un total de {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} huevos.
+El número total de huevos escondidos que aún quedan en el patio es {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} huevos.
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "spa"

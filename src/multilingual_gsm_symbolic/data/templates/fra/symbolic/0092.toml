@@ -1,0 +1,47 @@
+question = "Le prince Thaddeus a abattu 100 dragons avec son épée puissante, tandis que le prince Arthur, utilisant une lance, a abattu les trois quarts autant de dragons que le prince Thaddeus. Avec une hache en fer rouillée, le prince Walter a abattu deux fois autant de dragons que le prince Arthur. Mais le prince Bruce, ayant oublié son épée à la maison, a abattu un cinquième des dragons que le prince Walter a abattus en utilisant une lime à clous. Combien de dragons le prince Bruce a-t-il abattus ?"
+
+answer = """
+Le prince Arthur a abattu les trois quarts autant de dragons que le prince Thaddeus, soit 100*3/4=<<100*3/4=75>>75 dragons.
+Le prince Walter a abattu deux fois autant de dragons que le prince Arthur, soit 2*75=<<2*75=150>>150 dragons.
+Le prince Bruce a abattu un cinquième des dragons que le prince Walter a abattus, soit 150*1/5=<<150*1/5=30>>30 dragons.
+#### 30
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+Le prince {name1,Thaddeus} a abattu {n1,100} {creature,dragons} avec sa puissante {weapon1,épée}, tandis que le prince {name2,Arthur}, en utilisant une {weapon2,lance}, a abattu {frac1_txt,three quarters} autant de {creature,dragons} que le prince {name1,Thaddeus}. En utilisant une {weapon3,hache en fer rouillée}, le prince {name3,Walter} a abattu {mult1_txt,deux fois} autant de {creature,dragons} que le prince {name2,Arthur}. Mais le prince {name4,Bruce}, ayant oublié sa {weapon4,épée} à la maison, a abattu {frac2_txt,one fifth} autant de {creature,dragons} que le prince {name3,Walter} en utilisant une {weapon5, lime à clous}. Combien de {creature,dragons} le prince {name4,Bruce} a-t-il abattus ?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["ogres", "trolls", "gobelins", "orcs", "géants"])
+- weapon1 = sample(["épée", "masse", "hache de bataille", "marteau de guerre"])
+- weapon2 = sample(["lance", "javelot", "javelot", "hallebarde"])
+- weapon3 = sample(["hache en fer rouillée", "massue en bois", "marteau en pierre", "dague en os"])
+- weapon4 = sample(["épée", "hache", "masse", "marteau"])
+- weapon5 = sample(["lime à clous", "couteau à beurre", "cuillère en bois", "plume"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+Le prince {name2} a abattu {frac1_txt} autant de {creature} que le prince {name1}, soit {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+Le prince {name3} a abattu {mult1_txt} autant de {creature} que le prince {name2}, soit {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+Le prince {name4} a abattu {frac2_txt} autant de {creature} que le prince {name3}, soit {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

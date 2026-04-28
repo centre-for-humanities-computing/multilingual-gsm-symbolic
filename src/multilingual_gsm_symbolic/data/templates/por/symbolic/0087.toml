@@ -1,0 +1,44 @@
+question = "O maior tobogã aquático do Five Flags tem 300 pés de comprimento, e as pessoas deslizam a 60 pés/minuto. O segundo maior tobogã aquático tem 240 pés de comprimento, mas é mais íngreme, então as pessoas deslizam a 80 pés/minuto. Quanto tempo a mais leva para descer o maior tobogã em comparação com o segundo maior?"
+
+answer = """
+Primeiro encontre o tempo de descida do maior tobogã: 300 pés / 60 pés/minuto = <<300/60=5>>5 minutos
+Depois encontre o tempo de descida do segundo maior tobogã: 240 pés / 80 pés/minuto = <<240/80=3>>3 minutos
+Então subtraia o tempo de descida do segundo maior tobogã do tempo de descida do maior para encontrar a diferença: 5 minutos - 3 minutos = <<5-3=2>>2 minutos
+#### 2
+"""
+
+id_orig = 1099
+
+id_shuffled = 87
+
+question_annotated = """
+O maior tobogã aquático do {park_name,Five Flags} tem {l1,300} {unit,pés} de comprimento, e as pessoas deslizam a {s1,60} {unit,pés}/minuto. O segundo maior tobogã aquático tem {l2,240} {unit,pés} de comprimento, mas é mais íngreme, então as pessoas deslizam a {s2,80} {unit,pés}/minuto. Quanto tempo a mais leva para descer o maior tobogã em comparação com o segundo maior?
+
+#init:
+- park_name = sample(["Splash World", "Aqua Adventure", "Water Wonderland", "Neptunes Kingdom"])
+- unit = sample(['jardas', 'metros'])
+- $l1 = range(250, 401, 10)
+- $l2 = range(200, 301, 10)
+- $s1 = range(40, 81, 5)
+- $s2 = range(60, 101, 5)
+
+#conditions:
+- l1 > l2
+- s2 > s1
+- is_int(l1/s1)
+- is_int(l2/s2)
+- l1/s1 > l2/s2
+
+#answer: l1/s1 - l2/s2
+"""
+
+answer_annotated = """
+Primeiro encontre o tempo de descida do maior tobogã: {l1} {unit} / {s1} {unit}/minuto = <<{l1}/{s1}={l1//s1}>>{l1//s1} minutos
+Depois encontre o tempo de descida do segundo maior tobogã: {l2} {unit} / {s2} {unit}/minuto = <<{l2}/{s2}={l2//s2}>>{l2//s2} minutos
+Então subtraia o tempo de descida do segundo maior tobogã do tempo de descida do maior para encontrar a diferença: {l1//s1} minutos - {l2//s2} minutos = <<{l1//s1}-{l2//s2}={l1//s1 - l2//s2}>>{l1//s1 - l2//s2} minutos
+#### {l1//s1 - l2//s2}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "por"

@@ -1,0 +1,40 @@
+question = "Marie har 6 krukker krymmel i sit spisekammer. Hver krukke krymmel kan dekorere 8 muffins. Marie vil bage nok muffins til at bruge al hendes krymmel. Hvis hver bageform rummer 12 muffins, hvor mange bageforme skal hun bage?"
+
+answer = """
+Hun har nok krymmel til 6 * 8 = <<6*8=48>>48 muffins.
+Hun har brug for 48 / 12 = <<48/12=4>>4 bageforme for at bage alle muffins.
+#### 4
+"""
+
+id_orig = 469
+
+id_shuffled = 64
+
+question_annotated = """
+{name,Marie} har {n,6} krukker {item,krymmel} i sit {location,spisekammer}. Hver krukke {item,krymmel} kan dekorere {m,8} {food,muffins}. {name,Marie} vil bage nok {food,muffins} til at bruge al hendes {item,krymmel}. Hvis hver {container, bageform} rummer {k,12} {food,muffins}, hvor mange {container_plural,bageforme} skal hun bage?
+
+#init:
+- name = sample(names_female)
+- item = sample(["krymmel", "frosting", "glasur", "chokoladeknapper"])
+- food = sample(["cupcakes", "cookies", "brownies", "muffins"])
+- location = sample(["spisekammer", "skab", "køkkenskab", "opbevaringsrum"])
+- container, container_plural = sample([("pande", "pander"), ("bakke","bakker"), ("bageplade","bageplader"), ("stativ","stativer"), ("bageform", "bageforme")])
+- $n = range(3, 15)
+- $m = range(6, 20)
+- $k = range(6, 24)
+
+#conditions:
+- divides(n*m, k)
+
+#answer: (n*m)//k
+"""
+
+answer_annotated = """
+Hun har nok {item} til {n} * {m} = <<{n}*{m}={n*m}>>{n*m} {food}.
+Hun har brug for {n*m} / {k} = <<{n*m}/{k}={(n*m)//k}>>{(n*m)//k} {container_plural} for at bage alle {food}.
+#### {(n*m)//k}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

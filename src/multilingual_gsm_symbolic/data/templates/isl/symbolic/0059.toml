@@ -1,0 +1,47 @@
+question = "Ég er með 10 lítra af appelsínudrykk sem er tveir þriðju vatn og ég vil bæta honum við 15 lítra af ananasdrykk sem er þrír fimmtu vatn. En þegar ég helli því, helli ég niður fjórir lítrum af appelsínudrykknum. Hversu mikið vatn er í þeim 24 lítrum sem eftir eru?"
+
+answer = """
+Það eru 15*3/5=<<15*3/5=9>>9 lítrar af vatni úr 15 lítrum af ananasdrykk.
+Eftir að fjórir lítrum af appelsínudrykknum var hellt niður, voru 10-4=<<10-4=6>>6 lítrar af appelsínudrykk eftir.
+Af þessum 6 lítrum eru 6*2/3=<<6*2/3=4>>4 lítrar vatn.
+Því eru alls 9 + 4 = <<9+4=13>>13 lítrar af vatni af þessum 24 lítrum.
+#### 13
+"""
+
+id_orig = 20
+
+id_shuffled = 59
+
+question_annotated = """
+Ég er með {n1,10} lítra af {fruit1,appelsínu}drykk sem er {frac1_txt,tveir þriðju} vatn og ég vil bæta honum við {n2,15} lítra af {fruit2,ananas}drykk sem er {frac2_txt,þrír fimmtu} vatn. En þegar ég helli því, helli ég niður {spill_txt,fjórir} lítrum af {fruit1,appelsínu}drykknum. Hversu mikið vatn er í þeim {total,24} lítrum sem eftir eru?
+
+#init:
+- fruit1, fruit2 = sample(["æble", "vindrue", "mango", "fersken", "citron"], 2)
+- $n1 = range(9, 21)
+- $n2 = range(12, 31)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+- spill_txt, spill_val = range_str(3, 7, 1, numbers)
+- $total = range(20, 51)
+
+#conditions:
+- spill_val < n1
+- n1 + n2 - spill_val == total
+- is_int(n2 * frac2_val)
+- is_int((n1 - spill_val) * frac1_val)
+- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+
+#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+"""
+
+answer_annotated = """
+Það eru {n2}*{frac2_val}=<<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val} lítrar af vatni úr {n2} lítrum af {fruit2}drykk.
+Eftir að {spill_txt} lítrum af {fruit1}drykknum var hellt niður, voru {n1}-{spill_val}=<<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} lítrar af {fruit1}drykk eftir.
+Af þessum {n1-spill_val} lítrum eru {n1-spill_val}*{frac1_val}=<<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} lítrar vatn.
+Því eru alls {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} lítrar af vatni af þessum {total} lítrum.
+#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

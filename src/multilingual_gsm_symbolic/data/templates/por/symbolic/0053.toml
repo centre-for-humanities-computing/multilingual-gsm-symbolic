@@ -1,0 +1,41 @@
+question = "Pierson marcou 278 pontos em uma partida de boliche. Nikita marcou 11 pontos a mais do que metade da pontuação de Pierson. Quantos pontos Pierson e Nikita marcaram no total?"
+
+answer = """
+Pierson = <<278=278>>278 pontos
+Nikita = 1/2*278 + 11 = 150 pontos
+278 + 150 = <<278+150=428>>428 pontos
+Juntos, Pierson e Nikita marcaram 428 pontos.
+#### 428
+"""
+
+id_orig = 800
+
+id_shuffled = 53
+
+question_annotated = """
+{name1,Pierson} marcou {n1,278} pontos em uma partida de {game,boliche}. {name2,Nikita} marcou {n2,11} pontos a mais do que {frac_txt,metade} da pontuação de {name1,Pierson}. Quantos pontos {name1,Pierson} e {name2,Nikita} marcaram no total?
+
+#init:
+- name1, name2 = sample(names, 2)
+- game = sample(["boliche", "dardos", "arco e flecha", "basquete", "tênis"])
+- $n1 = range(200, 500)
+- $n2 = range(5, 50)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(frac_val * n1)
+
+#answer: n1 + int(frac_val * n1 + n2)
+"""
+
+answer_annotated = """
+{name1} = <<{n1}={n1}>>{n1} pontos
+{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} pontos
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} pontos
+Juntos, {name1} e {name2} marcaram {n1 + int(frac_val * n1 + n2)} pontos.
+#### {n1 + int(frac_val * n1 + n2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "por"

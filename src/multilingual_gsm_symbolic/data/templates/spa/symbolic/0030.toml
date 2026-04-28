@@ -1,0 +1,41 @@
+question = "David tiene 85,5 kr y quiere comprar 16 pernos de una caja en la ferretería. Cada perno cuesta 0,2 kr. ¿Cuánto dinero le queda a David después de pagar los pernos?"
+
+answer = """
+David pagó 16*0,2 kr = <<16*0,2=3,2>>3,2 kr por los pernos.
+A David le quedan 85,5 kr - 3,2 kr = 82,3 kr.
+#### 82,3
+"""
+
+id_orig = 873
+
+id_shuffled = 30
+
+question_annotated = """
+{name,David} tiene {initial_amount,85.5} {cur,kr} y quiere comprar {quantity,16} {item_plural,pernos} de una caja en la {store_type,ferretería}. Cada {item,perno} cuesta {unit_price,0.2} {cur,kr}. ¿Cuánto dinero le queda a {name,David} después de pagar los {item_plural,pernos}?
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- item, item_plural = sample([("bolt", "bolte"),("skrue", "skruer"), ("spændeskive", "spændeskiver"), ("møtrik", "møtrikker"), ("anker", "ankre")])
+- store_type = sample(["byggemarked", "isenkræmmer"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(85.5, 175, 5.5)
+- $unit_price = arange(0.2, 4.8, 0.1)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: int(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name} pagó {quantity} * {cur}{round(unit_price,2)} = {cur}<<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} por los {item_plural}.
+{name} tiene {cur}{initial_amount} - {cur}{round(quantity*unit_price,2)} = {cur}{int(initial_amount - quantity * unit_price)} le quedan.
+#### {int(initial_amount - quantity * unit_price) }
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "spa"

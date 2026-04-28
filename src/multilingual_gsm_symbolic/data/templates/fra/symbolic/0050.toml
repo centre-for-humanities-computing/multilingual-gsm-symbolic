@@ -1,0 +1,39 @@
+question = "La superficie de la chambre rectangulaire de Billie est de 360 pieds carrés. Si la longueur de sa chambre est de 3 verge(s), quel est le périmètre de la chambre en pieds ?"
+
+answer = """
+La longueur de la chambre est de 3 verge(s) * (3 pieds / 1 verge(s)) = <<3*(3/1)=9>>9 pieds.
+La largeur de la chambre est de 360 pieds carrés / 9 pieds = <<360/9=40>>40 pieds.
+Le périmètre de la chambre est 2(40+9) = 98
+#### 98
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+La superficie de {name,Billie}'s {room_type,bedroom} rectangulaire est de {area,360} pieds carrés. Si la longueur de sa chambre est de {length,3} verge(s), quel est le périmètre de la chambre en pieds ?
+
+#init:
+- name = sample(names_male)
+- room_type = sample(["salon", "bureau", "salle à manger", "salle de séjour"])
+- $area = range(200, 1200)
+- $length = range(3, 44)
+
+#conditions:
+- is_int(area / (length * 3))
+- area / (length * 3) > length * 3
+
+#answer: 2 * (area // (length * 3) + length * 3)
+"""
+
+answer_annotated = """
+La longueur de la chambre est de {length} verge(s) * (3 pieds / 1 verge(s)) = <<{length}*(3/1)={length*3}>>{length * 3} pieds.
+La largeur de la chambre est de {area} pieds carrés / {length * 3} pieds = <<{area}/{length * 3}={area // (length * 3)}>>{area // (length * 3)} pieds.
+Le périmètre de la chambre est 2({area // (length * 3)}+{length * 3}) = {2 * (area // (length * 3) + length * 3)}
+#### {2 * (area // (length * 3) + length * 3)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

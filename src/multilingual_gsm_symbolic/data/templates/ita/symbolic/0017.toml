@@ -1,0 +1,33 @@
+question = "La nonna percorre 3 chilometri ogni giorno sul suo sentiero preferito, che include 2 chilometri sulla spiaggia e 1 chilometro sul marciapiede. Sul marciapiede, la nonna cammina a una velocità doppia rispetto a quella che ha sulla spiaggia. Se 40 minuti della sua camminata vengono trascorsi sulla spiaggia, quanto tempo impiega a completare l'intero percorso di 3 chilometri, in minuti?"
+
+answer = "Sulla spiaggia, la nonna cammina a una velocità di 2 chilometri ogni 40 minuti, cioè 2/40 = 1/20 chilometri al minuto. Sul marciapiede, cammina al doppio della velocità rispetto a quando è sulla sabbia, cioè 2*1/20 = 1/10 chilometri al minuto. Per percorrere 1 chilometro sul marciapiede, impiega 1/(1/10)=<<1/(1/10)=10>>10 minuti. Quindi in totale la nonna impiega 40+10=<<40+10=50>>50 minuti per percorrere il suo percorso preferito. #### 50"
+
+id_orig = 1133
+
+id_shuffled = 17
+
+question_annotated = """
+{name,la nonna} percorre {n,3} {unit,chilometri} ogni giorno sul suo sentiero preferito, che include {m,2} {unit,chilometri} sulla spiaggia e {k,1} {unit,chilometro} sul marciapiede. Sul marciapiede, {name,la nonna} cammina a una velocità {mult_txt,doppia} rispetto a quella che ha sulla spiaggia. Se {t,40} minuti della sua camminata vengono trascorsi sulla spiaggia, quanto tempo impiega a completare l'intero percorso di {n,3}-{unit, chilometri}, in minuti?
+
+#init:
+- name = sample(names_female)
+- unit = sample(length_lg)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(3, 40)
+- $m = range(2, 20)
+- $k = range(1, 20)
+- $t = range(40, 70)
+#conditions:
+- m + k == n
+- m < t
+- mult_val *m < t
+- divides(t, m)
+- is_int(k / mult_val*m/t)
+#answer: {t+(k/mult_val*m/t)} 
+"""
+
+answer_annotated = "Sulla spiaggia, {name} cammina a una velocità di {m} {unit}s ogni {t} minuti, cioè {m}/{t} = {Fraction(m/t)} {unit}s al minuto. Sul marciapiede, cammina al {mult_txt} della velocità rispetto a quando è sulla sabbia, cioè {mult_val}*{Fraction(m/t)} = {mult_val*m/t} {unit}s al minuto. Per percorrere {k} {unit}(s) sul marciapiede, impiega {k}/{mult_val*m/t} = <<{k}/{mult_val*m/t}={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minuti. Quindi in totale, {name} impiega {t}+{k/(mult_val*m/t)} = <<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minuti per percorrere il suo percorso preferito. #### {t+(k/(mult_val*m/t))}"
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "ita"

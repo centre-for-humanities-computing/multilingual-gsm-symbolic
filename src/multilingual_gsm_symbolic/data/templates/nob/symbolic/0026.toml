@@ -1,0 +1,38 @@
+question = "En mann spiser 5 sandwicher om dagen, kona hans spiser 4 sandwicher om dagen og sønnen deres spiser 2 sandwicher om dagen. Hvor mange sandwicher spiser denne familien på en uke?"
+
+answer = """
+Antallet sandwicher de spiser på en dag, er 5 + 4 + 2 = <<5+4+2=11>>11 sandwicher.
+Antallet sandwicher de spiser på en uke, er 11 * 7 = <<11*7=77>>77 sandwicher.
+#### 77
+"""
+
+id_orig = 1023
+
+id_shuffled = 26
+
+question_annotated = """
+{name1,en mann} spiser {n1,5} {food,sandwicher} om {time_unit,dag}en, {name2,kona hans} spiser {n2,4} {food,sandwicher} om {time_unit,dag}en og {relation,sønnen deres} spiser {n3,2} {food,sandwicher} om {time_unit,dag}en. Hvor mange {food,sandwicher} spiser denne familien på en {time_period,uke}?
+
+#init:
+- name1 = sample(["En far", "En bedstefar", "En onkel"])
+- name2 = sample(["hans kone", "hans partner", "hans ægtefælle"])
+- relation = sample(["datter", "søn", "barnebarn"])
+- food = sample(["pizzaer", "burritos", "tacos", "sushi-ruller", "hamburgere"])
+- time_unit = sample(["dag"])
+- time_period = sample(["uge", "måned"])
+- $n1 = range(2, 9)
+- $n2 = range(2, 9)
+- $n3 = range(2, 9)
+
+#answer: (n1 + n2 + n3) * (7 if time_period == "week" else 30)
+"""
+
+answer_annotated = """
+Antallet {food} de spiser på en {time_unit}, er {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food}.
+Antallet {food} de spiser på en {time_period}, er {n1+n2+n3} * {7 if time_period == "uke" else 30} = <<{n1+n2+n3}*{7 if time_period == "uke" else 30}={(n1+n2+n3)*(7 if time_period == "uke" else 30)}>>{(n1+n2+n3)*(7 if time_period == "uke" else 30)} {food}.
+#### {(n1+n2+n3)*(7 if time_period == "uke" else 30)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

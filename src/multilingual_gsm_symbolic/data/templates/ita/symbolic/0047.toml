@@ -1,0 +1,52 @@
+question = "Cole ha nascosto 3 dozzine di uova nel cortile per la caccia alle uova di Pasqua. Lamar trova 5 uova. Stacy trova il doppio di quelle trovate da Lamar. Charlie trova 2 in meno di quelle trovate da Stacy, e Mei trova la metà di quelle trovate da Charlie. Quante uova sono ancora nascoste nel cortile?"
+
+answer = """
+Cole nasconde 3*12 = <<3*12=36>>36 uova.
+Lamar trova 5 uova.
+Stacy trova 5*2 = <<5*2=10>>10 uova.
+Charlie trova 10 - 2 = <<10-2=8>>8 uova.
+Mei trova 8*1/2=<<8*1/2=4>>4 uova.
+I bambini trovano in totale 5 + 10 + 8 + 4 = <<5+10+8+4=27>>27 uova.
+Il numero totale di uova nascoste ancora nel cortile è 36 - 27 = <<36-27=9>>9 uova.
+#### 9
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,Cole} ha nascosto {n,3} dozzine di uova nel cortile per la caccia alle uova di Pasqua. {name2,Lamar} trova {x,5} uova. {name3,Stacy} trova {mult1_txt,twice} tante uova di quelle trovate da {name2,Lamar}. {name4,Charlie} trova {y,2} in meno di quelle trovate da {name3,Stacy}, e {name5,Mei} trova {frac_txt,half} tante uova di quelle trovate da {name4,Charlie}. Quante uova sono ancora nascoste nel cortile?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} nasconde {n}*12 = <<{n}*12={n*12}>>{n*12} uova.
+{name2} trova {x} uova.
+{name3} trova {x}*{mult1_val} = <<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} uova.
+{name4} trova {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} uova.
+{name5} trova {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} uova.
+I bambini trovano in totale {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} uova.
+Il numero totale di uova nascoste ancora nel cortile è {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} uova.
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

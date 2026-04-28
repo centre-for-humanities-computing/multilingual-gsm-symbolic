@@ -1,0 +1,46 @@
+question = "When the water is cold Ray swims a mile in 16 minutes. When the water is warm Ray swims a mile in 2 minutes more than twice as long. How much longer does Ray take to swim 3 miles on a hot day than a cold day?"
+
+answer = """
+Cold water mile = <<16=16>>16 minutes
+Warm water mile = 2+2*16=34 minutes
+3 miles in cold water: 3(16)=<<3*16=48>>48 minutes
+3 miles in warm water: 3(34)=<<3*34=102>>102 minutes
+Ray takes 102-48=<<102-48=54>>54 minutes longer
+#### 54
+"""
+
+id_orig = 554
+
+id_shuffled = 93
+
+question_annotated = """
+When the water is cold {name,Ray} swims a {unit,mile} in {t1,16} minutes. When the water is warm {name,Ray} swims a {unit,mile} in {n,2} minutes more than {mult_txt,twice} as long. How much longer does {name,Ray} take to swim {d,3} {unit,mile}s on a hot day than a cold day?
+
+#init:
+- name = sample(names)
+- unit = sample(['mile', 'kilometer'])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- mult_txt, mult_val = sample(multi_times)
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+
+answer_annotated = """
+Cold water {unit} = <<{t1}={t1}>>{t1} minutes
+Warm water {unit} = {n}+{mult_val}*{t1}={n + mult_val * t1} minutes
+{d} {unit}s in cold water: {d}({t1})=<<{d}*{t1}={d*t1}>>{d*t1} minutes
+{d} {unit}s in warm water: {d}({n + mult_val * t1})=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minutes
+{name} takes {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} minutes longer
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

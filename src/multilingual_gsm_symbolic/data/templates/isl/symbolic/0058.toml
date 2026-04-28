@@ -1,0 +1,47 @@
+question = "Dvergur getur unnið 12 kg af málmgrýti á dag með berum höndum. Hann getur unnið tvisvar sinnum meira með járnhakki og 50% meira með stálhakka en með járnhakki. Hve mörg kg af málmgrýti geta 40 dvergar með stálhakka unnið á mánuði með 30 dögum?"
+
+answer = """
+Finndu fyrst út hversu mikið málmgrýti einn dvergur getur unnið með járnhakki: 12 kg/dag*2=<<12*2=24>>24 kg/dag
+Margfaldaðu síðan þá tölu með 150% til að finna út hversu mikið málmgrýti einn dvergur getur unnið með stálhakka: 24 kg/dag * 150% = <<24*150*.01=36>>36 kg/dag
+Margfaldaðu síðan það sem einn dvergur getur unnið á einum degi með stálhakka með fjölda dverga: 36 kg/dag/dvergur * 40 dvergar = <<36*40=1440>>1440 kg/dag
+Margfaldaðu síðan daglegt magn málmgrýtis með fjölda daga til að finna heildarmagnið sem unnið er á einum mánuði: 1440 kg/dag * 30 dagar = <<1440*30=43200>>43.200 kg/dag
+#### 43200
+"""
+
+id_orig = 1026
+
+id_shuffled = 58
+
+question_annotated = """
+{worker,dvergur} getur unnið {base,12} {unit,kg} af málmgrýti á dag með {tool1,berum höndum}. Hann getur unnið {mult1_txt,tvisvar sinnum} meira með {tool2,járnhakki} og {mult2,50}% meira með {tool3,stálhakki} en með {tool2,járnhakki}. Hve mörg {unit,kg} af málmgrýti geta {n,40} {worker_plural,dvergar} með {tool3,stálhakka} unnið á mánuði með {days,30} dögum?
+
+#init:
+- worker, worker_plural = sample([("dværg", "dværge"), ("goblin", "gobliner"), ("gnom", "gnomer"), ("trold", "trolde")])
+- tool1 = sample(["bare hænder", "skovl", "træhakke"])
+- unit = sample(["kg", "g"])
+- tool2 = sample(["nikkelhakke", "bronzehakke", "sølvhakke"])
+- tool3 = sample(["stålhakke", "diamanthakke", "mithril hakke", "titaniumhakke"])
+- $base = range(5, 20)
+- mult1_txt, mult1_val = sample(multi_times)
+- $mult2 = range(30, 80, 5)
+- $n = range(20, 50)
+- $days = range(28, 32)
+
+#conditions:
+- is_int(mult2/100*base*mult1_val)
+- int(base * mult1_val * (1 + mult2/100) * n * days) < 10000
+
+#answer: int(base * mult1_val * (1 + mult2/100) * n * days)
+"""
+
+answer_annotated = """
+Finndu fyrst út hversu mikið málmgrýti einn {worker} getur unnið með {tool2}: {base} {unit}/dag*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/dag
+Margfaldaðu síðan þá tölu með {100+mult2}% til að finna út hversu mikið málmgrýti einn {worker} getur unnið með {tool3}: {base*mult1_val} {unit}/dag * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/dag
+Margfaldaðu síðan það sem einn {worker} getur unnið á einum degi með {tool3} með fjölda dverga: {int(base*mult1_val*(1+mult2/100))} {unit}/dag/{worker} * {n} {worker_plural} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag
+Margfaldaðu síðan daglegt magn málmgrýtis með fjölda daga til að finna heildarmagnið sem unnið er á einum mánuði: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag * {days} dagar = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}/dag
+#### {int(base*mult1_val*(1+mult2/100)*n*days)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

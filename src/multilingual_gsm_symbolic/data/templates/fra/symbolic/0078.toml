@@ -1,0 +1,47 @@
+question = "Il y a 6 périodes dans la journée pour un élève normal, mais John doit suivre 2 cours supplémentaires. Chaque cours dure 40 minutes. Il va en cours 5 jours par semaine. Il consacre ensuite 1/16 de ses minutes hebdomadaires chaque samedi et chaque dimanche à un apprentissage supplémentaire. Combien d’heures par semaine passe-t-il à apprendre ?"
+
+answer = """
+Il suit 6+2=<<6+2=8>>8 cours par jour
+Donc il passe 40*8=<<40*8=320>>320 minutes par jour en classe
+Ainsi, il passe 320*5=<<320*5=1600>>1600 minutes par semaine en classe
+Cela signifie qu’il passe 1600*1/16=<<1600*1/16=100>>100 minutes chaque samedi et chaque dimanche pour apprendre en plus.
+Donc il passe 1600+100+100=<<1600+100+100=1800>>1800 minutes par semaine.
+Ainsi, il passe 1800/60=<<1800/60=30>>30 heures par semaine.
+#### 30
+"""
+
+id_orig = 1088
+
+id_shuffled = 78
+
+question_annotated = """
+Il y a {n1,6} périodes dans la journée pour un élève normal, mais {name,John} doit suivre {n2,2} cours supplémentaires. Chaque cours dure {t,40} minutes. Il va en cours {d,5} jours par semaine. Il consacre ensuite {frac,1/16} de ses minutes hebdomadaires chaque samedi et chaque dimanche à un apprentissage supplémentaire. Combien d’heures par semaine passe-t-il à apprendre ?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(5, 10)
+- $n2 = range(1, 5)
+- $t = range(30, 61, 5)
+- $d = range(4, 7)
+- $frac = sample(fractions)
+
+#conditions:
+- is_int((n1 + n2) * t * d * frac)
+- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)
+
+#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60
+"""
+
+answer_annotated = """
+Il suit {n1}+{n2}=<<{n1}+{n2}={n1+n2}>>{n1+n2} cours par jour
+Donc il passe {t}*{n1+n2}=<<{t}*{n1+n2}={t*(n1+n2)}>>{t*(n1+n2)} minutes par jour en classe
+Ainsi, il passe {t*(n1+n2)}*{d}=<<{t*(n1+n2)}*{d}={t*(n1+n2)*d}>>{t*(n1+n2)*d} minutes par semaine en classe
+Cela signifie qu’il passe {t*(n1+n2)*d}*{frac}=<<{t*(n1+n2)*d}*{frac}={int((n1 + n2) * t * d * frac)}>>{int((n1 + n2) * t * d * frac)} minutes chaque samedi et chaque dimanche pour apprendre en plus.
+Donc il passe {t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}=<<{t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}={t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}>>{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)} minutes par semaine.
+Ainsi, il passe {t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60=<<{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60={((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}>>{((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60} heures par semaine.
+#### {((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

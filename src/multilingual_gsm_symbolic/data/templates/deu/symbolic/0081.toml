@@ -1,0 +1,40 @@
+question = "Das Ostereiersuchteam versteckte 100 Eier. Die Jensen-Zwillinge fanden jeweils 30 Eier. Alle anderen Eier außer 10 wurden von ihren Freunden gefunden. Wie viele Eier fanden die Freunde?"
+
+answer = """
+Die Jensen-Zwillinge fanden 30 * 2 = <<30*2=60>>60 Eier.
+Die Anzahl, die versteckt blieb, war 100 - 60 = <<100-60=40>>40 Eier
+Da 10 Eier nicht gefunden wurden, bedeutet das, dass die Freunde 40 - 10 = 30 Eier fanden.
+#### 30
+"""
+
+id_orig = 1025
+
+id_shuffled = 81
+
+question_annotated = """
+Das Ostereier{event,suchteam} versteckte {total,100} {item,Eier}. Die {family,Jensen}-Zwillinge fanden jeweils {n,30} {item,Eier}. Alle anderen {item,Eier} außer {m,10} wurden von ihren Freunden gefunden. Wie viele {item,Eier} fanden die Freunde?
+
+#init:
+- event = sample(["jægerne", "skattejægerne", "deltagerne"])
+- item = sample(["æg", "godter", "legetøj", "mønter", "slik", "goder"])
+- family = sample(["Madsen", "Hansen", "Æbelgaard", "Poulsen", "Christensen"])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+
+answer_annotated = """
+Die {family}-Zwillinge fanden {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
+Die Anzahl, die versteckt blieb, war {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
+Da {m} {item} nicht gefunden wurden, bedeutet das, dass die Freunde {total-2*n} - {m} = {total - 2*n - m} {item} fanden.
+#### {total - 2*n - m}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"

@@ -1,0 +1,44 @@
+question = "Niels fôrer husdyrene sine med høy. Hver geit trenger 5 kg, og hver sau trenger 3 kg mindre enn det dobbelte av det hver geit trenger. Hvis det er 15 geiter og 12 sauer, hvor mange kg høy trenger Niels?"
+
+answer = """
+Først finn ut hvor mye høy hver sau trenger: 5 kg * 2 - 3 = <<5*2-3=7>>7 kg/sau
+Så regn ut hvor mye høy sauene trenger til sammen: 7 kg/sau * 12 sauer = <<7*12=84>>84 kg
+Deretter regn ut hvor mye høy geitene trenger til sammen: 5 kg/geit * 15 geiter = <<5*15=75>>75 kg
+Til slutt legger du de to mengdene høy sammen for å finne totalen: 84 kg + 75 kg = <<84+75=159>>159 kg
+#### 159
+"""
+
+id_orig = 937
+
+id_shuffled = 71
+
+question_annotated = """
+{name,Niels} fôrer husdyrene sine med {food,høy}. Hver {animal1,geit} trenger {n1,5} {unit,kg}, og hver {animal2,sau} trenger {n2,3} {unit,kg} mindre enn det dobbelte av det hver {animal1,geit} trenger. Hvis det er {k1,15} {animal1,geit}er og {k2,12} {animal2,sau}er, hvor mange {unit,kg} {food,høy} trenger {name,Niels}?
+
+#init:
+- name = sample(names_male)
+- food = sample(["hø", "korn", "foder", "halm"])
+- animal1, animal2 = sample(["ged", "ko", "hest", "æsel", "lama", "alpaka", "gris", "kalkun", "and"], 2)
+- unit = sample(["kg", "kilogram"])
+- $n1 = range(3, 15)
+- $n2 = range(1, 10)
+- $k1 = range(10, 50)
+- $k2 = range(10, 50)
+
+#conditions:
+- 2*n1 - n2 > 0
+
+#answer: k1*n1 + k2*(2*n1 - n2)
+"""
+
+answer_annotated = """
+Først finn ut hvor mye {food} hver {animal2} trenger: {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2}
+Så regn ut hvor mye {food} {animal2}ene trenger til sammen: {2*n1-n2} {unit}/{animal2} * {k2} {animal2}er = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
+Deretter regn ut hvor mye {food} {animal1}ene trenger til sammen: {n1} {unit}/{animal1} * {k1} {animal1}er = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
+Til slutt legger du de to mengdene {food} sammen for å finne totalen: {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
+#### {k1*n1 + k2*(2*n1 - n2)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

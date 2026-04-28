@@ -1,0 +1,49 @@
+question = "Un conserje tiene que limpiar una escuela con 80 aulas. Tiene 5 días para hacerlo. Le toma 15 minutos por aula. Si trabaja 8 horas al día, ¿qué porcentaje de su día, en promedio, dedica a limpiar aulas?"
+
+answer = """
+Tiene que limpiar 16 aulas al día, porque 80/5 = <<80/5=16>>16
+Dedica 240 minutos a limpiar al día, porque 16*15 = <<16*15=240>>240
+Dedica 4 horas al día, porque 240 / 60 = <<240/60=4>>4
+Dedica 1/2 de su día a limpiar aulas, porque 4 / 8 = <<4/8=0,5>>0,5
+Dedica el 50% de su día a limpiar aulas, porque 0,5*100 = <<0,5*100=50>>50
+#### 50
+"""
+
+id_orig = 1239
+
+id_shuffled = 39
+
+question_annotated = """
+Un {job,conserje} tiene que limpiar una {building,escuela} con {n,80} {room_plural,aulas}. Tiene {d,5} días para hacerlo. Le toma {t,15} minutos por {room,aula}. Si trabaja {h,8} horas al día, ¿qué porcentaje de su día, en promedio, dedica a limpiar {room_plural,aulas}?
+
+#init:
+- job = sample(["vicevært", "rengøringsmedarbejder", "pedel"])
+- building = sample(["kontorbygning", "hospital", "universitet",])
+- room, room_plural = sample([("klasselokale", "klasselokaler"), ("rum", "rum"), ("etage", "etager")])
+- $n = range(50, 221, 5)
+- $d = range(3, 12)
+- $t = range(10, 46, 5)
+- $h = range(6, 17)
+
+#conditions:
+- divides(n, d)
+- divides(60, t)
+- (n/d) * t < h * 60
+- is_int( 10 * (n/d) * t / (h * 60))
+- is_int(100 * (n/d) * t / (h * 60))
+
+#answer: int(100 * (n/d) * t / (h * 60))
+"""
+
+answer_annotated = """
+Tiene que limpiar {n//d} {room_plural} al día, porque {n}/{d} = <<{n}/{d}={n//d}>>{n//d}
+Dedica {(n//d)*t} minutos a limpiar al día, porque {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
+Dedica {(n//d)*t/60} horas al día, porque {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
+Dedica {Fraction((n//d)*t/(h*60))} de su día a limpiar {room_plural}, porque {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
+Dedica el {int(100 * (n/d) * t / (h * 60))}% de su día a limpiar {room_plural}, porque {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
+#### {int(100 * (n/d) * t / (h * 60))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "spa"

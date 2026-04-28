@@ -1,0 +1,44 @@
+question = "Brendan ha una borsa di biglie con 10 dentro. Si è inciampato su un sasso mentre le portava e ne ha lasciate cadere metà. Si è messo a cercarle ma ne ha trovate solo 3. Quando è tornato a casa, ha controllato meglio le biglie. Due di quelle che aveva raccolto non erano biglie, ma in realtà perline, quindi le ha buttate via. Quante biglie è riuscito ad avere Brendan alla fine?"
+
+answer = """
+Brendan ha lasciato cadere le sue biglie e ne è rimasto con 10*1/2=<<10*1/2=5>>5 biglie.
+Ha cercato e ha trovato alcune delle sue biglie perdute, facendogli tornare a 5+3=<<5+3=8>>8 biglie.
+È andato a casa e ha tolto due perline, rimanendo con 8-2=<<8-2=6>>6 biglie.
+#### 6
+"""
+
+id_orig = 1247
+
+id_shuffled = 61
+
+question_annotated = """
+{name,Brendan} ha una borsa di {objects,marbles} con {n,10} dentro. È inciampato su un {obstacle,pebble} mentre le portava e ne ha lasciate cadere {frac_txt,half} di loro. Si è messo a cercarle ma ne ha trovate solo {k,3}. Quando è tornato a casa, ha controllato meglio le {objects,marbles}. {fake_num_txt,two} di quelle che ha raccolto non erano {objects,marbles}, ma in realtà {fake_object,beads} quindi le ha buttate via. Quante {objects,marbles} {name,Brendan} ha avuto alla fine?
+
+#init:
+- name = sample(names_male)
+- objects = sample(['marbles', 'coins', 'buttons', 'beads', 'pebbles'])
+- obstacle = sample(['rock', 'stick', 'toy', 'root'])
+- fake_object = sample(['buttons', 'coins', 'pebbles', 'beads'])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+
+answer_annotated = """
+{name} ha lasciato cadere le sue {objects} e ne è rimasto con {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects}.
+Ha cercato e ha trovato alcune delle sue {objects} perdute, facendogli tornare a {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects}.
+È andato a casa e ha tolto {fake_num_txt} {fake_object}, rimanendo con {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects}.
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

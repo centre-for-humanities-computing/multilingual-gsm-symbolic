@@ -1,0 +1,42 @@
+question = "Elísa er að læra að skrifa og ákveður að skrifa upp stafrófið aftur og aftur þar til hún kann það. Hún skrifar það allt tvisvar, skrifar helminginn af því einu sinni og skrifar síðan aftur allt sem hún hefur þegar skrifað. Hversu marga stafi hefur Elísa skrifað alls?"
+
+answer = """
+Elísa hefur skrifað stafrófið tvisvar, sem er alls 28*2=<<28*2=56>>56 stafir.
+Síðan skrifar hún helminginn af stafrófinu, sem eru 28*1/2=<<28*1/2=14>>14 stafir.
+Hingað til eru þetta alls 56 + 14 = <<56+14=70>>70 stafir.
+Ef hún skrifar þetta aftur, þýðir það að hún hefur tvöfaldað fjölda stafa sem hún hefur skrifað, þannig að hún hefur skrifað alls 70 * 2 = <<70*2=140>>140 stafi.
+#### 140
+"""
+
+id_orig = 546
+
+id_shuffled = 55
+
+question_annotated = """
+{name,Elísa} er að læra að skrifa og ákveður að skrifa upp {alphabets_txt,stafrófið} aftur og aftur þar til hún kann það. Hún skrifar það allt {n1_txt,tvisvar}, skrifar {frac_txt,helminginn} af því einu sinni og skrifar síðan aftur allt sem hún hefur þegar skrifað. Hversu marga stafi hefur {name,Elísa} skrifað alls?
+
+#init:
+- name = sample(names_female)
+- alphabets_txt, alphabets_val = sample([("alfabetet", 28), ("Hiragana (med 48 bogstaver)", 48), ("farsi alfabet (med 32 bogstaver)", 32), ("det arabiske alfabet (med 28 bogstaver)", 28)])
+- n1_txt, n1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)
+"""
+
+answer_annotated = """
+{name} hefur skrifað {alphabets_txt} {n1_txt}, sem er alls {alphabets_val}*{n1_val}=<<{alphabets_val}*{n1_val}={alphabets_val*n1_val}>>{alphabets_val*n1_val} stafir.
+Síðan skrifar hún {frac_txt} af {alphabets_txt}, sem eru {alphabets_val}*{frac_val}=<<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} stafir.
+Hingað til eru þetta alls {alphabets_val*n1_val} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1_val}+{int(alphabets_val*frac_val)}={alphabets_val*n1_val + int(alphabets_val*frac_val)}>>{alphabets_val*n1_val + int(alphabets_val*frac_val)} stafir.
+Ef hún skrifar þetta aftur, þýðir það að hún hefur tvöfaldað fjölda stafa sem hún hefur skrifað, þannig að hún hefur skrifað alls {alphabets_val*n1_val + int(alphabets_val*frac_val)} * 2 = <<{alphabets_val*n1_val + int(alphabets_val*frac_val)}*2={2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1_val + int(alphabets_val*frac_val))} stafi.
+#### {2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"
+
+ignore = true

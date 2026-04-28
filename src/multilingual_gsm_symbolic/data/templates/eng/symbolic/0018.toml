@@ -1,0 +1,42 @@
+question = "Raphael went to buy some school supplies. He bought 4 pens which cost $1.5 each, 2 notebooks which cost $4 each, and a rim of bond paper which cost $20. How much did Raphael spend on everything?"
+
+answer = """
+Raphael spent 4*$1.5 = $<<4*1.5=6>>6 for the pens.
+He also spent 2*$4 = $<<2*4=8>>8 for the notebooks.
+Therefore, Raphael spent a total of $6 + $8 + $20 = $<<6+8+20=34>>34 for the school supplies.
+#### 34
+"""
+
+id_orig = 158
+
+id_shuffled = 18
+
+question_annotated = """
+{name,Raphael} went to buy some school supplies. He bought {n1,4} {obj1,pens} which cost {cur,$}{c1,1.5} each, {n2,2} {obj2,notebooks} which cost {cur,$}{c2,4} each, and a rim of bond paper which cost {cur,$}{c3,20}. How much did {name,Raphael} spend on everything?
+
+#init:
+- name = sample(names_male)
+- obj1, obj2 = sample(["notebooks", "pencils", "erasers", "crayons", "colored pencils", "markers", "rulers", "folders"], 2)
+- cur = sample(currencies_sym)
+- $n1 = range(4, 25, 2)
+- $c1 = arange(1.5, 11.5, 0.25)
+- $n2 = range(2, 15, 2)
+- $c2 = arange(4, 19.5, 0.25)
+- $c3 = range(10, 25)
+
+#conditions:
+- is_int(n1 * c1)
+- is_int(n2 * c2)
+#answer: int(n1*c1 + n2*c2 + c3)
+"""
+
+answer_annotated = """
+{name} spent {n1}*{cur}{c1} = {cur}<<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} for the {obj1}.
+He also spent {n2}*{cur}{c2} = {cur}<<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} for the {obj2}.
+Therefore, {name} spent a total of {cur}{int(n1*c1)} + {cur}{int(n2*c2)} + {cur}{c3} = {cur}<<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} for the school supplies.
+#### {int(n1*c1+n2*c2+c3)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = "Brian har 4 tuber blå maling og 3 tuber gul maling. Jesper har halvparten så mange tuber blå maling som Brian og tre ganger så mange tuber gul maling som Brian. Hvor mange tuber maling har Jesper?"
+
+answer = """
+Jesper har 4*1/2= <<4*1/2=2>>2 tuber blå maling
+Jesper har 3*3=<<3*3=9>>9 tuber gul maling
+Jesper har i alt 2+9 =<<2+9=11>>11 tuber maling
+#### 11
+"""
+
+id_orig = 480
+
+id_shuffled = 57
+
+question_annotated = """
+{name1,Brian} har {n1,4} tuber {color1,blå} maling og {n2,3} tuber {color2,gul} maling. {name2,Jesper} har {frac1_txt,halvparten} så mange tuber {color1,blå} maling som {name1,Brian} og {mult1_txt,tre ganger} så mange tuber {color2,gul} maling som {name1,Brian}. Hvor mange tuber maling har {name2,Jesper}?
+
+#init:
+- name1, name2 = sample(names_male, 2)
+- color1, color2 = sample(colors, 2)
+- $n1 = range(2, 20)
+- $n2 = range(2, 20)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n2 * mult1_val)
+
+#answer: int(n1 * frac1_val + n2 * mult1_val)
+"""
+
+answer_annotated = """
+{name2} har {n1}*{frac1_val}= <<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} tuber {color1} maling
+{name2} har {n2}*{mult1_val}=<<{n2}*{mult1_val}={n2*mult1_val}>>{n2*mult1_val} tuber {color2} maling
+{name2} har i alt {int(n1*frac1_val)}+{n2*mult1_val} =<<{int(n1*frac1_val)}+{n2*mult1_val}={int(n1*frac1_val)+n2*mult1_val}>>{int(n1*frac1_val)+n2*mult1_val} tuber maling
+#### {int(n1*frac1_val)+n2*mult1_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

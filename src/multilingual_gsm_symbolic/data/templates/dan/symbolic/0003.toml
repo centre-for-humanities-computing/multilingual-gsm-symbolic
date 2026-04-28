@@ -1,0 +1,40 @@
+question = "En klasse på 50 elever har forskellige hobbyer. 10 kan lide at bage, 5 kan lide at spille fodbold og resten kan lide enten at spille videospil eller spille musik. Hvor mange kan lide at spille videospil, hvis antallet, der kan lide at spille musik, er to gange så mange som dem, der foretrækker at spille fodbold?"
+
+answer = """
+Antallet af elever, der kan lide at spille musik, er to gange så mange som dem, der kan lide fodbold, så 2 * 5 = <<2*5=10>>10
+Antallet, der kan lide at spille videospil, er 50 elever i alt - 10 der kan lide at bage - 5 der kan lide at spille fodbold - 10 der kan lide at spille musik = <<50-10-5-10=25>>25
+#### 25
+"""
+
+id_orig = 740
+
+id_shuffled = 3
+
+question_annotated = """
+En {g,klasse} på {n, 50} elever har forskellige hobbyer. {n_1,10} kan lide at {h_1, bage}, {n_2,5} kan lide at spille {h_2,fodbold} og resten kan lide enten at {h_3,spille videospil} eller {h_4,spille musik}. Hvor mange kan lide at {h_3,spille videospil}, hvis antallet, der kan lide at {h_4,spille musik}, er to gange så mange som dem, der foretrækker at spille {h_2, fodbold}?
+
+#init:
+- g = sample(["gruppe", "klasse"])
+- h_2 = sample(sports)
+- h_1, h_3, h_4 = sample(['læse', 'male', 'vandre', 'danse', 'bage', 'spille videospil', 'spille musik'], 3)
+- $n = range(5, 200)
+- $n_1 = range(2, 200)
+- $n_2 = range(2, 200)
+
+#conditions:
+- n_1 < n
+- n_2 < n
+- n - (n_1 + n_2) - (2 * n_2) > 0
+
+#answer: int(n - (n_1 + n_2) - (2 * n_2))
+"""
+
+answer_annotated = """
+Antallet af elever, der kan lide at {h_4}, er to gange så mange som dem, der kan lide {h_2}, så 2 * {n_2} = <<2*{n_2}={2*n_2}>>{2*n_2}
+Antallet, der kan lide at {h_3}, er {n} elever i alt - {n_1} der kan lide at {h_1} - {n_2} der kan lide at spille {h_2} - {2*n_2} der kan lide at {h_4} = <<{n}-{n_1}-{n_2}-{2*n_2}={n-n_1-n_2-2*n_2}>>{n-n_1-n_2-2*n_2}
+#### {n-n_1-n_2-2*n_2}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

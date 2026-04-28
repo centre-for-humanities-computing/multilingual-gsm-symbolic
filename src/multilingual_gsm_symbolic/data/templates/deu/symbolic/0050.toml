@@ -1,0 +1,39 @@
+question = "Die Fläche von Björns rechteckigem Schlafzimmer beträgt 33 Quadratmeter. Wenn die Länge seines Zimmers 300 cm beträgt, wie groß ist der Umfang des Zimmers in Meter?"
+
+answer = """
+Die Länge des Zimmers beträgt 300 cm * 1/100 Meter/cm = <<300*(1/100)=3>>3 Meter.
+Die Breite des Zimmers beträgt 33 Quadratmeter / 3 Meter = <<33/3=11>>11 Meter.
+Der Umfang des Zimmers ist 2*(11+3) = 28 Meter
+#### 28
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+Die Fläche von {name,Björn}s rechteckigem {room_type,Schlafzimmer} beträgt {area,33} Quadratmeter. Wenn die Länge seines Zimmers {length,300} cm beträgt, wie groß ist der Umfang des Zimmers in Meter?
+
+#init:
+- name = sample(names_male)
+- room_type = sample(["Wohnzimmer", "Arbeitszimmer", "Esszimmer", "Kinderzimmer"])
+- $area = range(18, 110)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+
+answer_annotated = """
+Die Länge des Zimmers beträgt {length} cm * 1/100 Meter/cm = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} Meter.
+Die Breite des Zimmers beträgt {area} Quadratmeter / {length * (1/100)} Meter = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} Meter.
+Der Umfang des Zimmers ist 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} Meter
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "deu"

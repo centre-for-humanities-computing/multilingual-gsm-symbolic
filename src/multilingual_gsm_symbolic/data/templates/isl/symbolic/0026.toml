@@ -1,0 +1,38 @@
+question = "Maður borðar 5 samlokur á dag, konan hans borðar 4 samlokur á dag og sonur þeirra borðar 2 samlokur á dag. Hversu margar samlokur borðar þessi fjölskylda á einni viku?"
+
+answer = """
+Fjöldi samloka sem þau borða á einum dag er 5 + 4 + 2 = <<5+4+2=11>>11 samlokur.
+Fjöldi samloka sem þau borða á einni viku er 11 * 30 = <<11*30=330>>330 samlokur.
+#### 330
+"""
+
+id_orig = 1023
+
+id_shuffled = 26
+
+question_annotated = """
+{name1,maður} borðar {n1,5} {food,samlokur} á {time_unit,dag}, {name2,konan hans} borðar {n2,4} {food,samlokur} á {time_unit,dag} og {relation,sonur} þeirra borðar {n3,2} {food,samlokur} á {time_unit,dag}. Hversu margar {food,samlokur} borðar þessi fjölskylda á einni {time_period,viku}?
+
+#init:
+- name1 = sample(["En far", "En bedstefar", "En onkel"])
+- name2 = sample(["hans kone", "hans partner", "hans ægtefælle"])
+- relation = sample(["datter", "søn", "barnebarn"])
+- food = sample(["pizzaer", "burritos", "tacos", "sushi-ruller", "hamburgere"])
+- time_unit = sample(["dag"])
+- time_period = sample(["uge", "måned"])
+- $n1 = range(2, 9)
+- $n2 = range(2, 9)
+- $n3 = range(2, 9)
+
+#answer: (n1 + n2 + n3) * (7 if time_period == "week" else 30)
+"""
+
+answer_annotated = """
+Fjöldi samloka sem þau borða á einum {time_unit} er {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food}.
+Fjöldi samloka sem þau borða á einni {time_period} er {n1+n2+n3} * {7 if time_period == "uge" else 30} = <<{n1+n2+n3}*{7 if time_period == "uge" else 30}={(n1+n2+n3)*(7 if time_period == "uge" else 30)}>>{(n1+n2+n3)*(7 if time_period == "uge" else 30)} {food}.
+#### {(n1+n2+n3)*(7 if time_period == "uge" else 30)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

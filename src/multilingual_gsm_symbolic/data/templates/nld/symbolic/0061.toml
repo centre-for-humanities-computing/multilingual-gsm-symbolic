@@ -1,0 +1,44 @@
+question = "Brendan heeft een zak met {objects,parels} met 10 erin. Hij struikelde over een {obstacle,kiezel} terwijl hij hem droeg en liet de helft van ze vallen. Hij probeerde ze terug te zoeken, maar hij vond er maar 3. Toen hij terug naar huis ging, bekeek hij de {objects,parels} verder. Twee van de dingen die hij oppakte waren geen {objects,parels}, maar eigenlijk {fake_object,parels}, dus hij gooide ze weg. Hoeveel {objects,parels} hield Brendan uiteindelijk over?"
+
+answer = """
+Brendan liet zijn {objects} vallen en had er nog {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects} over.
+Hij zocht en vond een deel van zijn verloren {objects}, waardoor hij weer terugkwam op {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects}.
+Hij ging naar huis en verwijderde {fake_num_txt} {fake_object}, waardoor hij overhield {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects}.
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+id_orig = 1247
+
+id_shuffled = 61
+
+question_annotated = """
+{name,Brendan} heeft een zak met {objects,kralen} met {n,10} erin. Hij struikelde over een {obstacle,kiezel} terwijl hij hem droeg en liet {frac_txt,half} van ze vallen. Hij probeerde ze terug te zoeken, maar hij vond er maar {k,3}. Toen hij terug naar huis ging, bekeek hij de {objects,kralen} verder. {fake_num_txt,twee} van de dingen die hij oppakte waren geen {objects,kralen}, maar eigenlijk {fake_object,kralen}, dus hij gooide ze weg. Hoeveel {objects,kralen} hield {name,Brendan} uiteindelijk over?
+
+#init:
+- name = sample(names_male)
+- objects = sample(['kralen', 'munten', 'knopen', 'parels', 'kiezelstenen'])
+- obstacle = sample(['steen', 'stok', 'speelgoed', 'wortel'])
+- fake_object = sample(['knopen', 'munten', 'parels', 'kralen'])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+
+answer_annotated = """
+{name} liet zijn {objects} vallen en had er nog {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects} over.
+Hij zocht en vond een deel van zijn verloren {objects}, waardoor hij weer terugkwam op {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects}.
+Hij ging naar huis en verwijderde {fake_num_txt} {fake_object}, waardoor hij overhield {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects}.
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

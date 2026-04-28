@@ -1,0 +1,41 @@
+question = "Dorte skar epli í 16 bita. Hún borðaði 2 sneiðar, systir hennar borðaði 3 fleiri en hún og bróðir hennar borðaði 2 fleiri en systir hans. Hversu margar eplasneiðar borðuðu þau öll?"
+
+answer = """
+Systir hennar borðaði 2 + 3 = <<2+3=5>>5 sneiðar.
+Bróðir hennar borðaði 5 + 2 = <<5+2=7>>7 sneiðar.
+Samtals borðuðu þau 2 + 5 + 7 = <<2+5+7=14>>14 sneiðar.
+#### 14
+"""
+
+id_orig = 1189
+
+id_shuffled = 54
+
+question_annotated = """
+{name,Dorte} skar {fruit,epli} í {total,16} bita. Hún borðaði {n1,2} sneiðar, {sibling1,systir} hennar borðaði {n2,3} fleiri en hún og {sibling2,bróðir} hennar borðaði {n3,2} fleiri en {sibling1,systir} hans. Hversu margar eplasneiðar borðuðu þau öll?
+
+#init:
+- name = sample(names_female)
+- fruit = sample(["appelsin", "pære", "fersken", "mango", "kiwi"])
+- sibling1, sibling2 = sample(["bror", "søster", "kusine", "fætter", "ven", "veninde"], 2)
+- $total = range(6, 33)
+- $n1 = range(2, 15)
+- $n2 = range(2, 13)
+- $n3 = range(2, 14)
+
+#conditions:
+- n1 + (n1 + n2) + (n1 + n2 + n3) <= total
+
+#answer: n1 + (n1 + n2) + (n1 + n2 + n3)
+"""
+
+answer_annotated = """
+{sibling1} hennar borðaði {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} sneiðar.
+{sibling2} hennar borðaði {n1+n2} + {n3} = <<{n1+n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} sneiðar.
+Samtals borðuðu þau {n1} + {n1+n2} + {n1+n2+n3} = <<{n1}+{n1+n2}+{n1+n2+n3}={n1 + (n1 + n2) + (n1 + n2 + n3)}>>{n1 + (n1 + n2) + (n1 + n2 + n3)} sneiðar.
+#### {n1 + (n1 + n2) + (n1 + n2 + n3)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

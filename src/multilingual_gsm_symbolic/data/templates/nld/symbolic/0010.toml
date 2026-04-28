@@ -1,0 +1,45 @@
+question = "Om te bellen vanuit een telefooncel, moet je 0,25 kronen betalen voor elke minuut van je gesprek. Na 16 minuten daalt de prijs naar 0,2 kronen per minuut. Hoeveel zou een gesprek van 36 minuten kosten?"
+
+answer = """
+De eerste 16 minuten zouden 16 * 0,25 = <<16*0,25=4>>4 kronen kosten.
+Daarna zijn er 36 - 16 = <<36-16=20>>20 minuten van het gesprek over.
+En deze 20 minuten kosten 20 * 0,2 = <<20*0,2=4>>4 kronen.
+Dus in totaal zou het gesprek van 36 minuten 4 + 4 = 8 kronen kosten.
+#### 8
+"""
+
+id_orig = 1223
+
+id_shuffled = 10
+
+question_annotated = """
+Om te bellen vanuit een {dev,telefooncel}, moet je {frac1,0.25} {currency,kronen} betalen voor elke minuut van je gesprek. Na {t,16} minuten daalt de prijs naar {frac2,0.2} {currency,kronen} per minuut. Hoeveel zou een gesprek van {total,36} minuten kosten?
+
+#init:
+- dev = sample(['phone booth', 'hotel room phone'])
+- currency = sample(currencies_sym)
+- $frac1 = sample(fraction_decimals)
+- $frac2 = sample(fraction_decimals)
+- $t = range(10, 50)
+- $total = range(36, 100)
+
+#conditions:
+- is_int(frac1 * t)
+- is_int((total-t) * frac2)
+- frac2 < frac1
+- t < total
+
+#answer: int((frac1 * t) + frac2*(total-t))
+"""
+
+answer_annotated = """
+De eerste {t} minuten zouden {t} * {frac1} = <<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} {currency} kosten.
+Daarna zijn er {total} - {t} = <<{total}-{t}={total-t}>>{total-t} minuten van het gesprek over.
+En deze {total-t} minuten kosten {total-t} * {frac2} = <<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)} {currency}.
+Dus in totaal zou het gesprek van {total} minuten {int(t*frac1)} + {int((total-t)*frac2)} = {int(frac1 * t) + int(frac2*(total-t))} {currency} kosten.
+#### {int((frac1 * t) + frac2*(total-t))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nld"

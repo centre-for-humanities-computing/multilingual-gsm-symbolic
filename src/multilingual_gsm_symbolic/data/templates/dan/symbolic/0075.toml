@@ -1,0 +1,43 @@
+question = "Der er i øjeblikket 3 røde bolde, 11 blå bolde og 25 grønne bolde i butikken. Røde bolde koster 9 kr, blå bolde koster 5 kr og grønne bolde koster 3 kr. Hvor meget vil butikken have modtaget efter alle boldene er solgt?"
+
+answer = """
+For de røde bolde, 3 bolde*9 kr/bold = <<3*9=27>>27 kr.
+For de blå bolde, 11 bolde*5 kr/bold = <<11*5=55>>55 kr.
+For de grønne bolde, 25 bolde*3 kr/bold = <<25*3=75>>75 kr.
+For alle bolde, 27 kr + 55 kr + 75 kr = <<27+55+75=157>>157 kr.
+#### 157
+"""
+
+id_orig = 1111
+
+id_shuffled = 75
+
+question_annotated = """
+Der er i øjeblikket {n1,3} {c1,røde} bolde, {n2,11} {c2,blå} bolde og {n3,25} {c3,grønne} bolde i {place,butikken}. {c1,røde} bolde koster {p1,9} {cur,kr}, {c2,blå} bolde koster {p2,5} {cur,kr} og {c3,grønne} bolde koster {p3,3} {cur,kr}. Hvor meget vil {place,butikken} have modtaget efter alle boldene er solgt?
+
+#init:
+- place = sample(["butik", "supermarked", "marked", "kiosk"])
+- c1, c2, c3 = sample(["rød", "blå", "grøn", "gul", "lilla", "orange", "pink"], 3)
+- cur = sample(currencies_sym)
+- $n1 = range(3, 20)
+- $n2 = range(5, 30)
+- $n3 = range(15, 50)
+- $p1 = range(5, 15)
+- $p2 = range(3, 10)
+- $p3 = range(2, 8)
+
+
+#answer: n1*p1 + n2*p2 + n3*p3
+"""
+
+answer_annotated = """
+For de {c1} bolde, {n1} bolde*{p1} {cur}/bold = <<{n1}*{p1}={n1*p1}>>{n1*p1} {cur}.
+For de {c2} bolde, {n2} bolde*{p2} {cur}/bold = <<{n2}*{p2}={n2*p2}>>{n2*p2} {cur}.
+For de {c3} bolde, {n3} bolde*{p3} {cur}/bold = <<{n3}*{p3}={n3*p3}>>{n3*p3} {cur}.
+For alle bolde, {n1*p1} {cur} + {n2*p2} {cur} + {n3*p3} {cur} = <<{n1*p1}+{n2*p2}+{n3*p3}={n1*p1 + n2*p2 + n3*p3}>>{n1*p1 + n2*p2 + n3*p3} {cur}.
+#### {n1*p1 + n2*p2 + n3*p3}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

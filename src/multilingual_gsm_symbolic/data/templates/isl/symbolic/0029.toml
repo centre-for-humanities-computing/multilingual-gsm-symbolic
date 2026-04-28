@@ -1,0 +1,38 @@
+question = "Bo er 14 ára gamall. Eftir fjórir ár verður systir hans Anna þrír sinnum jafn gömul og Bo er núna. Hvað er Anna gömul núna?"
+
+answer = """
+Eftir fjórir ár verður Anna 14*3=<<14*3=42>>42.
+Núna er Anna 42-4=<<42-4=38>>38 ára gömul.
+#### 38
+"""
+
+id_orig = 496
+
+id_shuffled = 29
+
+question_annotated = """
+{name1,Bo} er {age1,14} ára gamall. Eftir {years_txt,fjórir} ár verður {relation_type,systir} hans {name2,Anna} {mult_txt,þrír} sinnum jafn gömul og {name1,Bo} er núna. Hvað er {name2,Anna} gömul núna?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_female)
+- relation_type = sample(['søster', 'kusine'])
+- $age1 = range(8, 25)
+- years_txt, years_val = range_str(2, 10, 1, numbers)
+- mult_txt, mult_val = range_str(2, 5, 1, numbers)
+
+#conditions:
+- age1 * mult_val - years_val > 0
+
+#answer: age1 * mult_val - years_val
+"""
+
+answer_annotated = """
+Eftir {years_txt} ár verður {name2} {age1}*{mult_val}=<<{age1}*{mult_val}={age1*mult_val}>>{age1*mult_val}.
+Núna er {name2} {age1*mult_val}-{years_val}=<<{age1*mult_val}-{years_val}={age1*mult_val-years_val}>>{age1*mult_val-years_val} ára gömul.
+#### {age1*mult_val-years_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

@@ -1,0 +1,46 @@
+question = "Um hospital tem uma capacidade de 1000 camas, com 1/5 ocupadas. Devido ao surto de coronavírus, 50 pacientes são internados no hospital todos os dias. Calcule o número total de camas livres no hospital após duas semanas."
+
+answer = """
+Se 1/5 da capacidade total de camas está ocupada, isso significa que 1/5 * 1000 = <<1000*1/5=200>>200 camas têm pacientes a usá-las.
+O número total de camas no hospital sem novas internações é 1000 camas - 200 camas = <<1000-200=800>>800 camas.
+Se 50 pessoas são internadas todos os dias, o número total de pacientes no hospital após uma semana é 50 pacientes/dia * 7 dias/semana = 350 pacientes.
+Após duas semanas, o número total de pacientes internados no hospital é 350 pacientes/semana*2 semanas = <<350*2=700>>700 pacientes, cada um usando uma cama.
+Se havia 800 camas livres no hospital antes das novas internações, o total é reduzido para 800 camas - 700 camas = <<800-700=100>>100 camas livres.
+#### 100
+"""
+
+id_orig = 955
+
+id_shuffled = 28
+
+question_annotated = """
+A {facility,hospital} tem uma capacidade de {total,1000} {item,bed}s com {frac,1/5} ocupadas. Devido ao {event,coronavirus outbreak}, {daily,50} pacientes são internados no {facility,hospital} todos os dias. Calcule o número total de {item,bed}s livres no {facility,hospital} após {period,2} semanas.
+
+#init:
+- facility = sample(["hospital", "clinic", "medical center", "care facility"])
+- item = sample(["bed", "room", "ward"])
+- event = sample(["flu season", "natural disaster", "major accident", "pandemic"])
+- $total = range(500, 2000, 100)
+- $frac = sample(fractions)
+- $daily = range(20, 100, 5)
+- $period = range(2, 5)
+
+#conditions:
+- is_int(total * frac)
+- total * frac + daily * period * 7 < total
+
+#answer: total - (total * frac + daily * period * 7)
+"""
+
+answer_annotated = """
+Se {frac} da capacidade total de {facility} {item}s estiver ocupada, isso significa que {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item}s têm pacientes a usá-las.
+O número total de {item}s no {facility} sem novas internações é {total} {item}s - {int(total*frac)} {item}s = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item}s.
+Se {daily} pessoas forem internadas todos os dias, o número total de pacientes no {facility} após uma semana é {daily} pacientes/dia * 7 dias/semana = {daily*7} pacientes.
+Após {period} semanas, o número total de pacientes internados no {facility} é {daily*7} pacientes/semana * {period} semanas = <<{daily*7}*{period}={daily*period*7}>>{daily*period*7} pacientes, cada um usando uma {item}.
+Se havia {total-int(total*frac)} {item}s livres no {facility} antes das novas internações, o total é reduzido para {total-int(total*frac)} {item}s - {daily*period*7} {item}s = <<{total-int(total*frac)}-{daily*period*7}={total - (total * frac + daily * period * 7)}>>{total - (total * frac + daily * period * 7)} {item}s livres.
+#### {total - (total * frac + daily * period * 7)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "por"

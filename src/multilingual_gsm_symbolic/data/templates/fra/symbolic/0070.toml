@@ -1,0 +1,37 @@
+question = "Un ouvrier travaille 4 semaines chaque mois et 6 jours chaque semaine. S’il est payé 50 $ par jour, combien gagne-t-il s’il travaille pendant un an ?"
+
+answer = """
+L’ouvrier travaille 6 jours chaque semaine et travaille 4 semaines chaque mois, donc il travaille 6 jours/semaine * 4 semaines/mois = <<6*4=24>>24 jours/mois
+S’il gagne 50 $ par jour, alors il gagne 50 $/jour * 24 jours/mois = $<<50*24=1200>>1200/mois
+Une année correspond à 12 mois, donc chaque année il gagne 1200 $/mois * 12 mois/année = $<<1200*12=14400>>14,400
+#### 14400
+"""
+
+id_orig = 401
+
+id_shuffled = 70
+
+question_annotated = """
+Un {occupation,ouvrier} travaille {w,4} semaines chaque mois et {d,6} jours chaque semaine. S’il est payé {cur,$}{p,50} par jour, combien gagne-t-il s’il travaille pendant un an ?
+
+#init:
+- occupation = sample(["plombier", "électricien", "peintre", "menuisier", "paysagiste"])
+- cur = sample(currencies_sym)
+- $w = range(2, 5)
+- $d = range(4, 7)
+- $p = range(40, 200, 5)
+
+
+#answer: w * d * p * 12
+"""
+
+answer_annotated = """
+L’{occupation} travaille {d} jours chaque semaine et travaille {w} semaines chaque mois, donc il travaille {d} jours/semaine * {w} semaines/mois = <<{d}*{w}={d*w}>>{d*w} jours/mois
+S’il gagne {cur}{p} par jour, alors il gagne {cur}{p}/jour * {d*w} jours/mois = {cur}<<{p}*{d*w}={p*d*w}>>{p*d*w}/mois
+Une année correspond à 12 mois, donc chaque année il gagne {cur}{p*d*w}/mois * 12 mois/année = {cur}<<{p*d*w}*12={p*d*w*12}>>{p*d*w*12}
+#### {p*d*w*12}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "fra"

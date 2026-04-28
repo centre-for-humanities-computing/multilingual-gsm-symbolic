@@ -70,7 +70,7 @@ def _write_language_cache(
 
 def _sync_language_cache(language: str) -> tuple[list[tuple[Path, AnnotatedQuestion]], dict[str, int]]:
     templates = [
-        (path, AnnotatedQuestion.from_json(path)) for path in sorted(_active_template_files(_DATA_ROOT / language))
+        (path, AnnotatedQuestion.from_toml(path)) for path in sorted(_active_template_files(_DATA_ROOT / language))
     ]
     original_cache = _load_language_cache(language)
     valid_questions = {template.question_annotated for _, template in templates}

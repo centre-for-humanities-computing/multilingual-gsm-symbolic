@@ -1,0 +1,46 @@
+question = "Al comienzo de la fiesta, había 25 hombres y 15 mujeres. Después de una hora, se fue 1/4 del número total de personas. ¿Cuántas mujeres quedan si 22 hombres se quedaron en la fiesta?"
+
+answer = """
+Había un total de 25 hombres + 15 mujeres = <<25+15=40>>40 personas que asistieron a la fiesta.
+Después de una hora, 40 personas * 1/4 = <<40*1/4=10>>10 personas se fueron de la fiesta.
+Esto significa que 40 personas - 10 personas = <<40-10=30>>30 personas se quedaron.
+De las 30 que se quedaron, 30 personas - 22 hombres = <<30-22=8>>8 eran mujeres.
+#### 8
+"""
+
+id_orig = 320
+
+id_shuffled = 82
+
+question_annotated = """
+Al comienzo de la {event,fiesta}, había {m,25} {group1,hombres} y {w,15} {group2,mujeres}. Después de {t,una hora}, {frac,1/4} del número total de personas se fue. ¿Cuántas {group2,mujeres} quedan si {m_left,22} {group1,hombres} se quedaron en la {event,fiesta}?
+
+#init:
+- event = sample(['party', 'meeting', 'conference', 'gathering', 'celebration'])
+- group1, group2 = sample([ "teachers", "doctors", "engineers", "nurses", "artists", "lawyers",], 2)
+- t = sample(['an hour', 'two hours', 'half an hour', '45 minutes'])
+- $frac = sample(fractions)
+- $m = range(20, 75)
+- $w = range(10, 80)
+- $m_left = range(15, 35)
+
+#conditions:
+- m_left < m
+- is_int((m + w) * frac)
+- (m + w) * (1-frac) > m_left
+- m + w - (m + w) * frac > m_left
+
+#answer: m + w - int((m + w) * frac) - m_left
+"""
+
+answer_annotated = """
+Había un total de {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} personas que asistieron a la {event}.
+Después de {t}, {m+w} personas * {frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} personas se fueron de la {event}.
+Esto significa que {m+w} personas - {int((m+w)*frac)} personas = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} personas se quedaron.
+De las {m+w-int((m+w)*frac)} que se quedaron, {m+w-int((m+w)*frac)} personas - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} eran {group2}.
+#### {m+w-int((m+w)*frac)-m_left}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "spa"

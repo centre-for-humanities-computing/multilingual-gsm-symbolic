@@ -1,0 +1,48 @@
+question = "De vader van Morgan zei dat ze $90 had begroot voor haar verjaardagsfeest. Ze wil ervoor zorgen dat zij en haar vrienden allemaal één ronde minigolf kunnen spelen, $5 aan arcadetokens hebben en twee keer met de karts mogen rijden. Een ronde minigolf kost $5. De karts kosten $10 per rit. Hoeveel vrienden kan ze uitnodigen?"
+
+answer = """
+De karts zullen $20 per persoon kosten omdat 10*2 = <<10*2=20>>20
+Elke persoon kost $30 omdat 5 + 5 + 20 = <<5+5+20=30>>30
+Er kunnen 3 in totaal personen aanwezig zijn omdat 90 / 30 = <<90/30=3>>3
+Ze kan 2 vrienden uitnodigen omdat 3 - 1 =<<3-1=2>>2
+#### 2
+"""
+
+id_orig = 357
+
+id_shuffled = 96
+
+question_annotated = """
+{name,Morgan}'s {parent,vader} zei dat ze {cur,$}{budget,90} had begroot voor haar verjaardagsfeest. Ze wil ervoor zorgen dat zij en haar vrienden allemaal één ronde {activity1,minigolf} kunnen spelen, {cur,$}{tokens,5} hebben in {activity2,arcadetokens} en twee keer met de {activity3,karts} {times_txt,twice} mogen rijden. Een ronde {activity1,minigolf} kost {cur,$}{cost1,5}. De {activity3,karts} kosten {cur,$}{cost2,10} per rit. Hoeveel vrienden kan ze uitnodigen?
+
+#init:
+- name = sample(names_female)
+- parent = sample(["moeder", "vader", "tante", "oom"])
+- activity1 = sample(["minigolf", "bowling", "lasergame"])
+- activity2 = sample(["arcade", "spelhal", "flipperkast"])
+- activity3 = sample(["karts", "botsauto's", "achtbaan"])
+- cur = sample(currencies_sym)
+- times_txt, times_val = sample(multi_times)
+- $budget = range(50, 301, 10)
+- $tokens = range(3, 11)
+- $cost1 = range(3, 11)
+- $cost2 = range(5, 21)
+
+#conditions:
+- budget % (tokens + cost1 + cost2 * times_val) == 0
+- budget // (tokens + cost1 + cost2 * times_val) > 1
+
+#answer: budget // (tokens + cost1 + cost2 * times_val) - 1
+"""
+
+answer_annotated = """
+De {activity3} zullen {cur}{cost2 * times_val} per persoon kosten omdat {cost2}*{times_val} = <<{cost2}*{times_val}={cost2*times_val}>>{cost2*times_val}
+Elke persoon kost {cur}{tokens + cost1 + cost2*times_val} omdat {tokens} + {cost1} + {cost2*times_val} = <<{tokens}+{cost1}+{cost2*times_val}={tokens + cost1 + cost2*times_val}>>{tokens + cost1 + cost2*times_val}
+{budget // (tokens + cost1 + cost2 * times_val)} totaal personen kunnen aanwezig zijn omdat {budget} / {tokens + cost1 + cost2*times_val} = <<{budget}/{tokens + cost1 + cost2*times_val}={budget // (tokens + cost1 + cost2 * times_val)}>>{budget // (tokens + cost1 + cost2 * times_val)}
+Ze kan {budget // (tokens + cost1 + cost2 * times_val) - 1} vrienden uitnodigen omdat {budget // (tokens + cost1 + cost2 * times_val)} - 1 =<<{budget // (tokens + cost1 + cost2 * times_val)}-1={budget // (tokens + cost1 + cost2 * times_val) - 1}>>{budget // (tokens + cost1 + cost2 * times_val) - 1}
+#### {budget // (tokens + cost1 + cost2 * times_val) - 1}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "nld"

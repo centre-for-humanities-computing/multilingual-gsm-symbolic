@@ -1,0 +1,37 @@
+question = "Jonas plukker 4 bananer på onsdag. Så plukker han 6 bananer på torsdag. På fredag plukker han tre ganger så mange bananer som han gjorde på onsdag. Hvor mange bananer har Jonas?"
+
+answer = """
+Onsdag og torsdag til sammen har Jonas 4 bananer + 6 bananer = <<4+6=10>>10 bananer.
+På fredag plukker han 3*4 bananer = <<3*4=12>>12 bananer.
+Til sammen har Jonas 10 bananer + 12 bananer = <<10+12=22>>22 bananer.
+#### 22
+"""
+
+id_orig = 1020
+
+id_shuffled = 20
+
+question_annotated = """
+{name,Jonas} plukker {n1,4} {fruit_plural,bananer} på {d1,onsdag}. Så plukker han {n2,6} {fruit_plural,bananer} på {d2,torsdag}. På {d3,fredag} plukker han {mult_txt,tre ganger} så mange {fruit_plural,bananer} som han gjorde på {d1,onsdag}. Hvor mange {fruit_plural,bananer} har {name,Jonas}?
+
+#init:
+- name = sample(names_male)
+- d1, d2, d3 = sample_sequential(weekdays, 3)
+- fruit, fruit_plural = sample(fruits)
+- $n1 = range(30, 400)
+- $n2 = range(50, 400)
+- mult_txt, mult_val = sample(multi_times)
+
+#answer: n1 + n2 + mult_val * n1
+"""
+
+answer_annotated = """
+{d1} og {d2} til sammen har {name} {n1} {fruit_plural} + {n2} {fruit_plural} = <<{n1}+{n2}={n1+n2}>>{n1+n2} {fruit_plural}.
+På {d3} plukker han {mult_val}*{n1} {fruit_plural} = <<{mult_val}*{n1}={mult_val*n1}>>{mult_val*n1} {fruit_plural}.
+Til sammen har {name} {n1+n2} {fruit_plural} + {mult_val*n1} {fruit_plural} = <<{n1+n2}+{n1*mult_val}={n1 + n2 + mult_val * n1}>>{n1 + n2 + mult_val * n1} {fruit_plural}.
+#### {n1 + n2 + mult_val * n1}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

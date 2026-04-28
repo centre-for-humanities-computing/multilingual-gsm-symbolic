@@ -1,0 +1,47 @@
+question = "Mrs. Cruz is looking for a house that will not go beyond her $400,000 budget. She saw a property that has a selling price of $350,000. On top of that, the buyer has to pay a brokerage fee which is 5% of the selling price, and also the transfer fee that is 12% of the selling price. How much more is the total price of the house than Mrs. Cruz's budget?"
+
+answer = """
+The brokerage fee is $350,000*5/100 = $<<350000*5/100=17500>>17,500.
+The transfer fee is $350,000*12/100 = $<<350000*12/100=42000>>42,000.
+The total price of the house is $350,000 + $17,500 + $42,000 = $409,500.
+So, it is $409,500 - $400,000 = $<<409500-400000=9500>>9500 more than Mrs. Cruz's budget.
+#### 9500
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name, Mrs. Cruz} is looking for a {property_type, house} that will not go beyond her ${budget, 400000} budget. She saw a property that has a selling price of ${price, 350000}. On top of that, the buyer has to pay a brokerage fee which is {brokerage_fee, 5}% of the selling price, and also the transfer fee that is {transfer_fee, 12}% of the selling price. How much more is the total price of the {property_type, house} than {name, Mrs. Cruz}'s budget?
+
+#init:
+- name = sample(['Mrs. Smith', 'Ms. Johnson', 'Dr. Patel', 'Mrs. Lee'])
+- property_type = sample(['house', 'apartment', 'condo', 'townhouse'])
+- $budget = range(300000, 500000, 10000)
+- $price = range(250000, 450000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price * (1 + brokerage_fee/100 + transfer_fee/100) > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)
+"""
+
+answer_annotated = """
+The brokerage fee is ${price}*{brokerage_fee}/100 = $<<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)}.
+The transfer fee is ${price}*{transfer_fee}/100 = $<<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)}.
+The total price of the {property_type} is ${price} + ${int(price*brokerage_fee/100)} + ${int(price*transfer_fee/100)} = ${int(price * (1 + brokerage_fee/100 + transfer_fee/100))}.
+So, it is ${int(price * (1 + brokerage_fee/100 + transfer_fee/100))} - ${budget} = $<<{int(price * (1 + brokerage_fee/100 + transfer_fee/100))}-{budget}={int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)}>>{int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)} more than {name}'s budget.
+#### {int(price * (1 + brokerage_fee/100 + transfer_fee/100) - budget)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

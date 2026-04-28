@@ -1,0 +1,39 @@
+question = "L’area della camera da letto rettangolare di Billie è 360 piedi quadrati. Se la lunghezza della sua stanza è 3 iarda(e), qual è il perimetro della stanza in piedi?"
+
+answer = """
+La lunghezza della stanza è 3 iarda(e) * (3 piedi / 1 iarda(e)) = <<3*(3/1)=9>>9 piedi.
+La larghezza della stanza è 360 piedi quadrati / 9 piedi = <<360/9=40>>40 piedi.
+Il perimetro della stanza è 2(40+9) = 98
+#### 98
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+L’area della {name,Billie}'s {room_type,camera da letto} rettangolare è {area,360} piedi quadrati. Se la lunghezza della sua stanza è {length,3} iarda(e), qual è il perimetro della stanza in piedi?
+
+#init:
+- name = sample(names_male)
+- room_type = sample(["soggiorno", "studio", "sala da pranzo", "cucina"])
+- $area = range(200, 1200)
+- $length = range(3, 44)
+
+#conditions:
+- is_int(area / (length * 3))
+- area / (length * 3) > length * 3
+
+#answer: 2 * (area // (length * 3) + length * 3)
+"""
+
+answer_annotated = """
+La lunghezza della stanza è {length} iarda(e) * (3 piedi / 1 iarda(e)) = <<{length}*(3/1)={length*3}>>{length * 3} piedi.
+La larghezza della stanza è {area} piedi quadrati / {length * 3} piedi = <<{area}/{length * 3}={area // (length * 3)}>>{area // (length * 3)} piedi.
+Il perimetro della stanza è 2({area // (length * 3)}+{length * 3}) = {2 * (area // (length * 3) + length * 3)}
+#### {2 * (area // (length * 3) + length * 3)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

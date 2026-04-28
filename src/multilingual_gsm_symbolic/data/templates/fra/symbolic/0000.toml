@@ -1,0 +1,44 @@
+question = "Henri a vu un requin de 3 mètres de long avec 2 marques de 15 cm chacune sur le côté. Quel pourcentage de la longueur du corps du requin représente la longueur totale des marques ?"
+
+answer = """
+D'abord, trouve la longueur totale des marques en cm : 15 cm/marque * 2 marques = <<15*2=30>>30 cm.
+Ensuite, divise ce nombre par 100 pour le convertir en mètres : 30 cm / 100 cm/m = <<30/100=0,3>>0,3 m.
+Ensuite, divise la longueur totale des marques en mètres par la longueur du requin et multiplie par 100 % pour exprimer la réponse en pourcentage : 0,3/3 mètre * 100% = 10%
+
+#### 10
+"""
+
+id_orig = 473
+
+id_shuffled = 0
+
+question_annotated = """
+{n,Henri} a vu un {big_fish,requin} de {x,3} mètres de long avec {k,2} marques de {y,15} cm chacune sur le côté. Quel pourcentage de la longueur du corps du {big_fish,requin} représente la longueur totale des marques ?
+
+#init:
+- n = sample(names)
+- big_fish = sample(["delfin", "hval", "haj"])
+- $x = range(2, 10, 1)
+- $k = range(2, 10)
+- $y = range(2, 100)
+
+#conditions:
+- k * y  < x* 100
+- divides(k*y,100)
+- divides(x * 100, k*y)
+- divides(100, x * 100 / (k*y))
+
+#answer: int((k * y)/(x * 100) * 100)
+"""
+
+answer_annotated = """
+D'abord, trouve la longueur totale des marques en cm : {y} cm/marque * {k} marques = <<{y}*{k}={k*y}>>{k*y} cm.
+Ensuite, divise ce nombre par 12 pour le convertir en mètres : {k*y} cm / 12 cm/m = <<{k*y}/12={k*y//12}>>{k*y//12} m.
+Ensuite, divise la longueur totale des marques en mètres par la longueur du {big_fish} et multiplie par 100 % pour exprimer la réponse en pourcentage : {k*y//12} mètre / {x} mètre * 100% = {int(k*y/(12*x)*100)}%
+
+#### {int(k*y/(12*x)*100)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fra"

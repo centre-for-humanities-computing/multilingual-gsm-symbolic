@@ -1,0 +1,39 @@
+question = "Flatarmál rétthyrnds svefnherbergis Björns er 33 fermetrar. Ef lengd herbergisins hans er 300 cm, hvert er ummál herbergisins í metrum?"
+
+answer = """
+Lengd herbergisins er 300 cm * 1/100 metrum/cm = <<300*(1/100)=3>>3 metrar.
+Breidd herbergisins er 33 fermetrar / 3 metrar = <<33/3=11>>11 metrar.
+Ummál herbergisins er 2*(11+3) = 28 metrar
+#### 28
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+Flatarmál rétthyrnds {room_type,svefnherbergis} {name,Björns} er {area,33} fermetrar. Ef lengd herbergisins hans er {length,300} cm, hvert er ummál herbergisins í metrum?
+
+#init:
+- name = sample(names_male)
+- room_type = sample(["stofu", "skrifstofu", "herbergis", "eldhúss"])
+- $area = range(18, 110)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+
+answer_annotated = """
+Lengd herbergisins er {length} cm * 1/100 metrum/cm = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} metrar.
+Breidd herbergisins er {area} fermetrar / {length * (1/100)} metrar = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} metrar.
+Ummál herbergisins er 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} metrar
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "isl"

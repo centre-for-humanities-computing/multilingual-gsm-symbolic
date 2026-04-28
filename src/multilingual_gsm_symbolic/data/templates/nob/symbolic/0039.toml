@@ -1,0 +1,49 @@
+question = "En vaktmester skal gjøre rent på en skole med 80 klasserom. De har 5 dager til å få det gjort. Det tar dem 15 minutter per klasserom. Hvis de jobber 8 timer om dagen, hvor stor prosentandel av dagen deres går i gjennomsnitt til å rengjøre klasserom?"
+
+answer = """
+De skal gjøre rent 16 klasserom om dagen, fordi 80/5 = <<80/5=16>>16
+De bruker 240 minutter på å gjøre rent om dagen, fordi 16*15 = <<16*15=240>>240
+De bruker 4 timer om dagen, fordi 240 / 60 = <<240/60=4>>4
+De bruker 1/2 av dagen sin på å rengjøre klasserom, fordi 4 / 8 = <<4/8=0,5>>0,5
+De bruker 50% av dagen sin på å rengjøre klasserom, fordi 0,5*100 = <<0,5*100=50>>50
+#### 50
+"""
+
+id_orig = 1239
+
+id_shuffled = 39
+
+question_annotated = """
+En {job,vaktmester} skal gjøre rent på en {building,skole} med {n,80} {room_plural,klasserom}. De har {d,5} dager til å få det gjort. Det tar dem {t,15} minutter per {room,klasserom}. Hvis de jobber {h,8} timer om dagen, hvor stor prosentandel av dagen deres går i gjennomsnitt til å rengjøre {room_plural,klasserom}?
+
+#init:
+- job = sample(["vicevært", "rengøringsmedarbejder", "pedel"])
+- building = sample(["kontorbygning", "hospital", "universitet",])
+- room, room_plural = sample([("klasselokale", "klasselokaler"), ("rum", "rum"), ("etage", "etager")])
+- $n = range(50, 221, 5)
+- $d = range(3, 12)
+- $t = range(10, 46, 5)
+- $h = range(6, 17)
+
+#conditions:
+- divides(n, d)
+- divides(60, t)
+- (n/d) * t < h * 60
+- is_int( 10 * (n/d) * t / (h * 60))
+- is_int(100 * (n/d) * t / (h * 60))
+
+#answer: int(100 * (n/d) * t / (h * 60))
+"""
+
+answer_annotated = """
+De skal gjøre rent {n//d} {room_plural} om dagen, fordi {n}/{d} = <<{n}/{d}={n//d}>>{n//d}
+De bruker {(n//d)*t} minutter på å gjøre rent om dagen, fordi {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
+De bruker {(n//d)*t/60} timer om dagen, fordi {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
+De bruker {Fraction((n//d)*t/(h*60))} av dagen sin på å rengjøre {room_plural}, fordi {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
+De bruker {int(100 * (n/d) * t / (h * 60))}% av dagen sin på å rengjøre {room_plural}, fordi {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
+#### {int(100 * (n/d) * t / (h * 60))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

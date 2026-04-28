@@ -1,0 +1,49 @@
+question = "Automatene selger chips for 40 øre og sjokoladebarer for 75 øre. George brukte 5 kr og fikk 3 poser chips og hadde 1% av pengene sine igjen i vekslepenger. Hvor mange sjokoladebarer kjøpte han?"
+
+answer = """
+George fikk 0,05 kr i vekslepenger fordi 5*1/100 = <<5*1/100=0,05>>0,05
+George brukte 4,95 kr fordi 5 - 0,05 = <<5-0,05=4,95>>4,95
+George brukte 1,2 kr på chips fordi 3*0,4 = <<3*0,4=1,2>>1,2
+George brukte 3,75 kr på sjokoladebarer fordi 4,95 - 1,2 = <<4,95-1,2=3,75>>3,75
+George kjøpte 5 sjokoladebarer fordi 3,75 / 0,75 = <<5=5>>5
+#### 5
+"""
+
+id_orig = 434
+
+id_shuffled = 80
+
+question_annotated = """
+Automatene selger {item1,chips} for {price1,40} øre og {item2,sjokoladebarer} for {price2,75} øre. {name,George} brukte {total,5} {cur,kr} og fikk {n1,3} poser {item1,chips} og hadde {p,1}% av pengene sine igjen i vekslepenger. Hvor mange {item2,sjokoladebarer} kjøpte han?
+
+#init:
+- name = sample(names_male)
+- item1, item2 = sample(['chokoladebarer', 'tyggegummi', 'cookies', 'muffins', 'kiks'], 2)
+- cur = sample(currencies_sym)
+- $price1 = range(25, 100, 5)
+- $price2 = range(50, 150, 5)
+- $total = range(5, 15)
+- $n1 = range(1, 10)
+- $p = range(1, 10)
+
+#conditions:
+- price2 > price1
+- is_int(total * p /100)
+- is_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))
+- (total * (100 - p) / 100 - n1 * price1 / 100) % (price2 / 100) == 0
+
+#answer: int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))
+"""
+
+answer_annotated = """
+{name} fikk {total * p / 100} {cur} i vekslepenger fordi {total}*{p}/100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}
+{name} brukte {total * (100 - p) / 100} {cur} fordi {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}
+{name} brukte {n1 * price1 / 100} {cur} på {item1} fordi {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}
+{name} brukte {(total * (100 - p) / 100 - n1 * price1 / 100)} {cur} på {item2} fordi {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}
+{name} kjøpte {int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} {item2} fordi {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}={int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}>>{int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+#### {int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

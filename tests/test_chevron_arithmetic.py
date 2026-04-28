@@ -52,6 +52,6 @@ def _check_answer(answer: str, template_name: str) -> list[str]:
 
 @pytest.mark.parametrize("template_file", get_template_files())
 def test_chevron_arithmetic(template_file):
-    aq = AnnotatedQuestion.from_json(template_file)
+    aq = AnnotatedQuestion.from_toml(template_file)
     errors = _check_answer(aq.answer, template_file.name)
     assert not errors, f"{template_file.name} has incorrect <<lhs=rhs>> computations:\n" + "\n".join(errors)

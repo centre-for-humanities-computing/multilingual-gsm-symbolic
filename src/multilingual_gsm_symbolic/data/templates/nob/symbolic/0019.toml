@@ -1,0 +1,48 @@
+question = "I en quiz med 60 spørsmål er 40% av spørsmålene lette, og resten er likt fordelt mellom gjennomsnittlige og vanskelige spørsmål. Hvis Alma er sikker på å få 75% av de lette spørsmålene riktige og halvparten av de gjennomsnittlige og vanskelige spørsmålene riktige, hvor mange poeng er hun sikker på å få?"
+
+answer = """
+De gjennomsnittlige og vanskelige spørsmålene utgjør 100% - 40% = 60% av quizen.
+Det er 60 spørsmål*40/100 = <<60*40/100=24>>24 lette spørsmål.
+Det er i alt 60 spørsmål*60/100 = <<60*60/100=36>>36 gjennomsnittlige og vanskelige spørsmål.
+Hvis Alma er sikker på å få 75% av de lette spørsmålene, betyr det at hun er sikker på 24 spørsmål*75/100 = <<24*75/100=18>>18 poeng.
+Fra de gjennomsnittlige og vanskelige spørsmålene er hun sikker på å få halvparten riktige, så det er 36 spørsmål*1/2 = <<36*1/2=18>>18 poeng.
+Dermed er hun sikker på å få 18 poeng + 18 poeng = <<18+18=36>>36 poeng i quizen sin.
+#### 36
+"""
+
+id_orig = 1021
+
+id_shuffled = 19
+
+question_annotated = """
+I en quiz med {n,60} spørsmål er {p1,40}% av spørsmålene {s1,lette}, og resten er likt fordelt mellom {s2,gjennomsnittlige} og {s3,vanskelige} spørsmål. Hvis {name,Alma} er sikker på å få {r1,75}% av de {s1,lette} spørsmålene riktige og {frac_txt,halvparten} av de {s2,gjennomsnittlige} og {s3,vanskelige} spørsmålene riktige, hvor mange poeng er hun sikker på å få?
+
+#init:
+- s1, s2, s3 = sample(["historie", "geografi", "biologi", "kemi", "fysik", "økonomi", "litteratur", "algebra", "geometri"], 3)
+- name = sample(names_female)
+- $frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(5, 71, 5)
+- $r1 = range(5, 101, 5)
+- $n = range(10, 151, 10)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (r1/100))
+- is_int(n*(1-(p1/100))*frac_val)
+
+#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)
+"""
+
+answer_annotated = """
+De {s2} og {s3} spørsmålene utgjør 100% - {p1}% = {100-p1}% av quizen.
+Det er {n} spørsmål*{p1}/100 = <<{n}*{p1}/100={int(n * (p1/100))}>>{int(n * (p1/100))} {s1} spørsmål.
+Det er i alt {n} spørsmål*{100-p1}/100 = <<{n}*{100-p1}/100={int(n*(1-(p1/100)))}>>{int(n*(1-(p1/100)))} {s2} og {s3} spørsmål.
+Hvis {name} er sikker på å få {r1}% av de {s1} spørsmålene, betyr det at hun er sikker på {int(n * (p1/100))} spørsmål*{r1}/100 = <<{int(n * (p1/100))}*{r1}/100={int(n * (p1/100) * (r1/100))}>>{int(n * (p1/100) * (r1/100))} poeng.
+Fra de {s2} og {s3} spørsmålene er hun sikker på å få {frac_txt} riktige, så det er {int(n*(1-(p1/100)))} spørsmål*{frac_val} = <<{int(n*(1-(p1/100)))}*{frac_val}={int(n*(1-(p1/100))*frac_val)}>>{int(n*(1-(p1/100))*frac_val)} poeng.
+Dermed er hun sikker på å få {int(n * (p1/100) * (r1/100))} poeng + {int(n*(1-(p1/100))*frac_val)} poeng = <<{int(n * (p1/100) * (r1/100))}+{int(n*(1-(p1/100))*frac_val)}={int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)}>>{int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)} poeng i quizen sin.
+#### {int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "nob"

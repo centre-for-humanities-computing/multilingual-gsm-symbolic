@@ -1,0 +1,45 @@
+question = "Maria compra 8 azioni di un titolo per 8 dollari ciascuna. Il prezzo del titolo aumenta del 50% nel primo anno in cui Maria lo possiede, poi diminuisce del 25% nel secondo anno. Qual è il valore finale di tutte le azioni di Maria?"
+
+answer = """
+Prima trova il valore totale iniziale dell’acquisto di Maria: 8 azioni * 8 dollari/azione = $<<8*8=64>>64
+Poi trova l’importo del primo aumento di prezzo: $64 * 0.5 = $<<64*0.5=32>>32
+Somma quell’importo al valore iniziale per ottenere il valore dopo il primo anno: $64 + $32 = $<<64+32=96>>96
+Poi moltiplica quell’importo per il 25% per trovare l’importo della diminuzione del secondo anno: $96 * 25% = $<<96*25*.01=24>>24
+Infine sottrai quell’importo dal valore dopo il primo anno per trovare il valore finale: $96 - $24 = $<<96-24=72>>72
+#### 72
+"""
+
+id_orig = 336
+
+id_shuffled = 84
+
+question_annotated = """
+{name,Maria} compra {n,8} azioni di un titolo per {cur,$}{p,8} ciascuna. Il prezzo del titolo aumenta del {r1,50}% nel primo anno in cui {name,Maria} lo possiede, poi diminuisce del {r2,25}% nel secondo anno. Qual è il valore finale di tutte le azioni di {name,Maria}?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $n = range(5, 20)
+- $p = range(5, 100)
+- $r1 = range(10, 100, 5)
+- $r2 = range(5, 50, 5)
+
+#conditions:
+- is_int(n * p * r1/100)
+- is_int(n * p * (1 + r1/100) * (1 - r2/100))
+
+#answer: int(n * p * (1 + r1/100) * (1 - r2/100))
+"""
+
+answer_annotated = """
+Prima trova il valore totale iniziale dell’acquisto di {name}: {n} azioni * {cur}{p}/azione = {cur}<<{n}*{p}={n*p}>>{n*p}
+Poi trova l’importo del primo aumento di prezzo: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}
+Somma quell’importo al valore iniziale per ottenere il valore dopo il primo anno: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}
+Poi moltiplica quell’importo per il {r2}% per trovare l’importo della diminuzione del secondo anno: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}
+Infine sottrai quell’importo dal valore dopo il primo anno per trovare il valore finale: {cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={int(n*p*(1+r1/100)*(1-r2/100))}>>{int(n*p*(1+r1/100)*(1-r2/100))}
+#### {int(n*p*(1+r1/100)*(1-r2/100))}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

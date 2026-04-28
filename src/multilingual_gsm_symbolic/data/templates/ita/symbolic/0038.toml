@@ -1,0 +1,42 @@
+question = "Un filone di pane in panetteria costa $2. I bagel costano $1 ciascuno. Quanto costa in più 3 filoni di pane rispetto a 2 bagel?"
+
+answer = """
+3 filoni di pane costano 3 * $2 = $<<3*2=6>>6.
+2 bagel costano 2 * $1 = $<<2*1=2>>2.
+I filoni di pane costano $6 - $2 = $<<6-2=4>>4 in più rispetto ai bagel.
+#### 4
+"""
+
+id_orig = 799
+
+id_shuffled = 38
+
+question_annotated = """
+Un filone di {item1,pane} presso la {shop,panetteria} costa {currency,$}{price1,2}. {item2,Bagel}s costano {currency,$}{price2,1} ciascuno. Di quanto {n1,3} filoni di {item1,pane} costano in più rispetto a {n2,2} {item2,bagel}s?
+
+#init:
+- item1 = sample(["pane", "sourdough"])
+- item2 = sample(["bagel", "muffin", "croissant", "biscuit"])
+- shop = sample(["bakery", "cafe", "store", "market"])
+- currency = sample(currencies_sym)
+- $price1 = range(2, 10)
+- $price2 = range(1, 5)
+- $n1 = range(2, 10)
+- $n2 = range(2, 10)
+
+#conditions:
+- n1 * price1 > n2 * price2
+
+#answer: n1 * price1 - n2 * price2
+"""
+
+answer_annotated = """
+{n1} filoni di {item1} costano {n1} * {currency}{price1} = {currency}<<{n1}*{price1}={n1*price1}>>{n1*price1}.
+{n2} {item2}s costano {n2} * {currency}{price2} = {currency}<<{n2}*{price2}={n2*price2}>>{n2*price2}.
+I filoni di {item1} costano {currency}{n1*price1} - {currency}{n2*price2} = {currency}<<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} in più rispetto ai {item2}s.
+#### {n1*price1-n2*price2}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

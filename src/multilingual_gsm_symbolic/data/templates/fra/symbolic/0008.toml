@@ -1,0 +1,38 @@
+question = "Un jongleur peut jongler avec 16 balles. La moitié des balles sont des balles de golf et la moitié des balles de golf sont bleues. Combien y a-t-il de balles de golf bleues ?"
+
+answer = """
+Balles de golf : 16*1/2=<<16*1/2=8>>8.
+Balles de golf bleues : 8*1/2=<<8*1/2=4>>4 balles
+#### 4
+"""
+
+id_orig = 269
+
+id_shuffled = 8
+
+question_annotated = """
+Un jongleur peut jongler avec {n, 16} balles. {frac_1_txt,la moitié} des balles sont des balles de {ball_type,golf} et {frac_2_txt,la moitié} des balles de {ball_type,golf} sont {color,bleues}. Combien y a-t-il de balles de {ball_type,golf} {color,bleues} ?
+
+#init:
+- ball_type = sample(["golf", "tennis"])
+- color = sample(colors)
+- $frac_1_txt, frac_1_val = sample(fraction_alnum)
+- $frac_2_txt, frac_2_val = sample(fraction_alnum)
+- $n = range(16, 100, 2)
+
+#conditions:
+- is_int(n * frac_1_val)
+- is_int(n * frac_1_val * frac_2_val)
+
+#answer: int(n * frac_1_val * frac_2_val)
+"""
+
+answer_annotated = """
+Balles de {ball_type} : {n}*{frac_1_val}=<<{n}*{frac_1_val}={n*frac_1_val}>>{int(n*frac_1_val)}.
+Balles de {ball_type} {color} : {int(n*frac_1_val)}*{frac_2_val}=<<{int(n*frac_1_val)}*{frac_2_val}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} balles
+#### {int(n*frac_1_val*frac_2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fra"

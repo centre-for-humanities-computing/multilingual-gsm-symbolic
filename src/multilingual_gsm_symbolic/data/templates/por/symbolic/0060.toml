@@ -1,0 +1,45 @@
+question = "Watson trabalha um turno de 10 horas por dia, cinco dias por semana. Ele ganha US$ 10 por hora e recebe um bônus de US$ 300 cada semana se a empresa for bem. Quanto dinheiro Watson fez em abril se a empresa foi muito bem durante todo o mês?"
+
+answer = """
+Em um dia, Watson ganha 10 * 10 = US$<<10*10=100>>100
+Se ele trabalha cinco dias por semana, o número total de dias do mês inteiro é 5*4=<<5*4=20>>20 dias.
+Como ele ganha US$100 por dia, o valor total do mês inteiro é 20 * 100= US$<<20*100=2000>>2000.
+Ele também recebeu um bônus de 300 * 4 = US$<<300*4=1200>>1200 porque a empresa foi bem em todas as semanas de abril.
+No fim de abril, ele ganhou 2000 + 1200 = US$<<2000+1200=3200>>3200.
+#### 3200
+"""
+
+id_orig = 304
+
+id_shuffled = 60
+
+question_annotated = """
+{name,Watson} trabalha um turno de {h,10} horas por dia, {d_txt,five} dias por semana. Ele ganha {cur,$}{r,10} por hora e recebe um bônus de {cur,$}{b,300} cada semana se a empresa for bem. Quanto dinheiro {name,Watson} fez em {month,April} se a empresa foi muito bem durante todo o mês?
+
+#init:
+- name = sample(names_male)
+- month = sample(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+- cur = sample(currencies_sym)
+- $h = range(6, 13)
+- d_txt, d_val = range_str(3, 7, 1, numbers)
+- $r = range(8, 31)
+- $b = range(100, 601)
+
+#conditions:
+- is_int(h * r)
+
+#answer: h * r * d_val * 4 + b * 4
+"""
+
+answer_annotated = """
+Em um dia, {name} ganha {h} * {r} = {cur}<<{h}*{r}={h*r}>>{h*r}
+Se ele trabalha {d_txt} dias por semana, o número total de dias do mês inteiro é {d_val}*4=<<{d_val}*4={d_val*4}>>{d_val*4} dias.
+Como ele ganha {cur}{h*r} por dia, o valor total do mês inteiro é {d_val*4} * {h*r}= {cur}<<{d_val*4}*{h*r}={d_val*4*h*r}>>{d_val*4*h*r}.
+Ele também recebeu um bônus de {b} * 4 = {cur}<<{b}*4={b*4}>>{b*4} porque a empresa foi bem em todas as semanas de {month}.
+No fim de {month}, ele ganhou {d_val*4*h*r} + {b*4} = {cur}<<{d_val*4*h*r}+{b*4}={d_val*4*h*r+b*4}>>{d_val*4*h*r+b*4}.
+#### {d_val*4*h*r+b*4}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "por"

@@ -1,0 +1,44 @@
+question = "Den største vandrutsjebane i Djurs Sommerland er 300 cm lang og folk glider ned med 60 cm/minut. Den næststørste vandrutsjebane er 240 cm lang, men stejlere, så folk glider ned med 80 cm/minut. Hvor meget længere tager det at køre på den største rutsjebane sammenlignet med den næststørste?"
+
+answer = """
+Først skal du finde køretiden på den største rutsjebane: 300 cm / 60 cm/minut = <<300/60=5>>5 minutter
+Så skal du finde køretiden på den næststørste rutsjebane: 240 cm / 80 cm/minut = <<240/80=3>>3 minutter
+Træk derefter køretiden på den næstlængste rutsjebane fra den længste for at finde forskellen: 5 minutter - 3 minutter = <<5-3=2>>2 minutter
+#### 2
+"""
+
+id_orig = 1099
+
+id_shuffled = 87
+
+question_annotated = """
+Den største vandrutsjebane i {park_name,Djurs Sommerland} er {l1,300} {unit,cm} lang og folk glider ned med {s1,60} {unit,cm}/minut. Den næststørste vandrutsjebane er {l2,240} {unit,cm} lang, men stejlere, så folk glider ned med {s2,80} {unit,cm}/minut. Hvor meget længere tager det at køre på den største rutsjebane sammenlignet med den næststørste?
+
+#init:
+- park_name = sample(["Fårup Sommerland", "Aqua Park", "vandlandet", "Legoland"])
+- unit = sample(['centimeter', 'cm', 'meter', 'm'])
+- $l1 = range(250, 401, 10)
+- $l2 = range(200, 301, 10)
+- $s1 = range(40, 81, 5)
+- $s2 = range(60, 101, 5)
+
+#conditions:
+- l1 > l2
+- s2 > s1
+- is_int(l1/s1)
+- is_int(l2/s2)
+- l1/s1 > l2/s2
+
+#answer: l1/s1 - l2/s2
+"""
+
+answer_annotated = """
+Først skal du finde køretiden på den største rutsjebane: {l1} {unit} / {s1} {unit}/minut = <<{l1}/{s1}={l1//s1}>>{l1//s1} minutter
+Så skal du finde køretiden på den næststørste rutsjebane: {l2} {unit} / {s2} {unit}/minut = <<{l2}/{s2}={l2//s2}>>{l2//s2} minutter
+Træk derefter køretiden på den næstlængste rutsjebane fra den længste for at finde forskellen: {l1//s1} minutter - {l2//s2} minutter = <<{l1//s1}-{l2//s2}={l1//s1 - l2//s2}>>{l1//s1 - l2//s2} minutter
+#### {l1//s1 - l2//s2}
+"""
+
+creation = "machine-translated from English, localized and validated by humans, computationally validated"
+
+language = "dan"

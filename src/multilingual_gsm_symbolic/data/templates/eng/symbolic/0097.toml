@@ -1,0 +1,38 @@
+question = "Julie operates the cash register exactly twice as fast as her less-experienced colleague Jewel. Daily, Jewel processes 50 customers. What is the total weekly production for the two if they work all days of the week?"
+
+answer = """
+While Jewel is processing 50 orders in a day, Julie processes 50 orders/day*2=<<50*2=100>>100 orders/day.
+In a day, they process 100 orders/day + 50 orders/day = <<100+50=150>>150 orders together.
+The total number of orders the two processes in a week is 150 orders/day * 7 days/week = <<150*7=1050>>1050 orders
+#### 1050
+"""
+
+id_orig = 636
+
+id_shuffled = 97
+
+question_annotated = """
+{name1,Julie} operates the cash register exactly {mult_txt,twice} as fast as her less-experienced colleague {name2,Jewel}. Daily, {name2,Jewel} processes {n,50} customers. What is the total weekly production for the two if they work all days of the week?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- mult_txt, mult_var = sample(multi_times)
+- $n = range(30, 100)
+
+#conditions:
+- is_int(n * mult_var)
+- is_int((n + n * mult_var) * 7)
+
+#answer: (n + n * mult_var) * 7
+"""
+
+answer_annotated = """
+While {name2} is processing {n} orders in a day, {name1} processes {n} orders/day*{mult_var}=<<{n}*{mult_var}={n*mult_var}>>{n*mult_var} orders/day.
+In a day, they process {n*mult_var} orders/day + {n} orders/day = <<{n*mult_var}+{n}={n+n*mult_var}>>{n+n*mult_var} orders together.
+The total number of orders the two processes in a week is {n+n*mult_var} orders/day * 7 days/week = <<{n+n*mult_var}*7={(n+n*mult_var)*7}>>{(n+n*mult_var)*7} orders
+#### {(n+n*mult_var)*7}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

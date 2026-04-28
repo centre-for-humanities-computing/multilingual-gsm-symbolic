@@ -1,0 +1,41 @@
+question = "Pierson scored 278 points in one game of bowling. Nikita scored 11 points more than half as many as Pierson. How many points did Pierson and Nikita have in total?"
+
+answer = """
+Pierson = <<278=278>>278 points
+Nikita = 1/2*278 + 11 = 150 points
+278 + 150 = <<278+150=428>>428 points
+Together, Pierson and Nikita scored 428 points.
+#### 428
+"""
+
+id_orig = 800
+
+id_shuffled = 53
+
+question_annotated = """
+{name1,Pierson} scored {n1,278} points in one game of {game,bowling}. {name2,Nikita} scored {n2,11} points more than {frac_txt,half} as many as {name1,Pierson}. How many points did {name1,Pierson} and {name2,Nikita} have in total?
+
+#init:
+- name1, name2 = sample(names, 2)
+- game = sample(["bowling", "darts", "archery", "basketball", "tennis"])
+- $n1 = range(200, 500)
+- $n2 = range(5, 50)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(frac_val * n1)
+
+#answer: n1 + int(frac_val * n1 + n2)
+"""
+
+answer_annotated = """
+{name1} = <<{n1}={n1}>>{n1} points
+{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} points
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} points
+Together, {name1} and {name2} scored {n1 + int(frac_val * n1 + n2)} points.
+#### {n1 + int(frac_val * n1 + n2)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"
