@@ -150,6 +150,11 @@
     "count": 100
   },
   {
+    "id": 30,
+    "question_annotated": "{name,David} har {initial_amount,85.5} {cur,kr} og ønsker å kjøpe {quantity,16} {item_plural,bolter} fra en kasse i {store_type,byggevarehuset}. Hver {item,bolt} koster {unit_price,0.2} {cur,kr}. Hvor mye penger har {name,David} igjen etter å ha betalt for {item_plural_def,boltene}?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item, item_plural = sample([(\"bolt\", \"bolte\"),(\"skrue\", \"skruer\"), (\"spændeskive\", \"spændeskiver\"), (\"møtrik\", \"møtrikker\"), (\"anker\", \"ankre\")])\n- store_type = sample([\"byggemarked\", \"isenkræmmer\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(85.5, 175, 5.5)\n- $unit_price = arange(0.2, 4.8, 0.1)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: int(initial_amount - quantity * unit_price)",
+    "count": 100
+  },
+  {
     "id": 31,
     "question_annotated": "Det er for øyeblikket {age_diff,16} år mellom {name1,Mia} og {name2,Emma}. Hvis {name1,Mia}, som er yngre enn {name2,Emma}, er {age1,40} år gammel, hva er gjennomsnittet av alderen deres?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
     "count": 100
@@ -172,6 +177,11 @@
   {
     "id": 35,
     "question_annotated": "{name,Niels} samler inn penger til en {event,skoletur}. Han har søkt om hjelp fra {organization,skole}n, som har bestemt seg for å dekke {fraction_txt,halvparten} av kostnadene til {event,skoletur}en. Hvor mye penger mangler {name,Niels}, hvis han har {current,350} {cur,kr} og {event,skoletur}en koster {total,2000} {cur,kr}?\n\n#init:\n- name = sample(names_male)\n- event = sample([\"ekskursion\", \"sportsturnering\", \"konference\", \"festival\", \"videnskabsmesse\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"skole\", \"kommune\", \"lokale velgørenhedsorganisation\", \"ungdomsklub\", \"forældre\"])\n- $fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(50, 1350, 50)\n- $total = range(1350, 7000, 50)\n\n#conditions:\n- total > current\n- is_int(total * (fraction_val))\n- is_int(total - (total * (fraction_val) + current))\n\n#answer: total - (total * (fraction_val) + current)",
+    "count": 100
+  },
+  {
+    "id": 36,
+    "question_annotated": "{name,Tove} gikk til {shop,bakeren} og kjøpte forskjellige typer {item,kaker}. Hun kjøpte {n1,3} dusin {item1,donuts}, som kostet {p1,460} kr per dusin, {n2,2} dusin {item2,mini-cupcakes}, som kostet {p2,540} kr per dusin og {n3,6} dusin {item3,mini-cheesecakes} for {p3,370} kr per dusin. Hvor mye var de samlede kostnadene?\n\n#init:\n- name = sample(names_female)\n- shop = sample([\"bageren\", \"konditoriet\", \"cafeen\", \"supermarkedet\"])\n- item, item_def = sample([(\"kaker\", \"kakene\"), (\"boller\", \"bollene\"), (\"desserter\", \"dessertene\"), (\"konditorvarer\", \"konditorvarene\")])\n- item1 = sample([\"donuts\", \"croissanter\", \"brunsviger\", \"kanelsnegle\"])\n- item2 = sample([\"småkager\", \"napoleonshatte\", \"cookies\", \"hindbærsnitter\"])\n- item3 = sample([\"banankager\", \"brownies\", \"muffins\", \"scones\"])\n- $n1 = range(1, 10)\n- $n2 = range(4, 10)\n- $n3 = range(2, 10)\n- $p1 = range(75, 142)\n- $p2 = range(495, 610)\n- $p3 = range(760, 815)\n\n#answer: n1 * p1 + n2 * p2 + n3 * p3",
     "count": 100
   },
   {
@@ -292,6 +302,11 @@
   {
     "id": 60,
     "question_annotated": "{name,William} jobber en {h,10}-timers vakt hver dag, {d_txt,fem} dager i uken. Han tjener {r,10} {cur,kr} i timen og får en bonus på {b,300} {cur,kr} hver uke hvis bedriften gjør det bra. Hvor mye penger tjente {name,William} i {month,april}, hvis bedriften gjorde det veldig bra hele måneden?\n\n#init:\n- name = sample(names_male)\n- month = sample([\"januar\", \"februar\", \"marts\", \"april\", \"maj\", \"juni\", \"juli\", \"august\", \"september\", \"oktober\", \"november\", \"december\"])\n- cur = sample(currencies_sym)\n- $h = range(6, 13)\n- d_txt, d_val = range_str(3, 7, 1, numbers)\n- $r = range(8, 31)\n- $b = range(100, 601)\n\n#conditions:\n- is_int(h * r)\n\n#answer: h * r * d_val * 4 + b * 4",
+    "count": 100
+  },
+  {
+    "id": 61,
+    "question_annotated": "{name,Bertram} har en pose med {objects,kuler} med {n,10} inni. Han snublet over en {obstacle,stein} mens han bar den og mistet {frac_txt,halvparten} av dem. Han skyndte seg å lete etter dem, men fant bare {k,3}. Da han kom hjem, undersøkte han kulene nærmere. {fake_num_txt,to} av dem han plukket opp, var ikke {objects,kuler}, men faktisk {fake_object,treperler}, så han kastet dem. Hvor mange {objects,kuler} endte {name,Bertram} opp med?\n\n#init:\n- name = sample(names_male)\n- objects = sample(['kugler', 'mønter', 'knapper', 'perler'])\n- obstacle = sample(['sten', 'gren', 'rod', 'kæp'])\n- fake_object, fake_object_def = sample([('treperler', 'treperlene'), ('glasskuler', 'glasskulene'), ('småsteiner', 'småsteinene')])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val",
     "count": 100
   },
   {

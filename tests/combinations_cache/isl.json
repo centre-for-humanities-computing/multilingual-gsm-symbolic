@@ -40,6 +40,11 @@
     "count": 100
   },
   {
+    "id": 8,
+    "question_annotated": "Trúður getur haldið {n, 16} boltum á lofti. {frac_1_txt,helmingurinn} af boltunum eru {ball_type, golf}boltar og {frac_2_txt,helmingurinn} af {ball_type, golf}boltunum er {color, blár}. Hvað eru margir bláir {ball_type, golf}boltar?\n\n#init:\n- ball_type = sample([\"golf\", \"tennis\"])\n- color = sample(colors)\n- $frac_1_txt, frac_1_val = sample(fraction_alnum)\n- $frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer: int(n * frac_1_val * frac_2_val)",
+    "count": 100
+  },
+  {
     "id": 9,
     "question_annotated": "Þegar {navn, Sofía} passar {familie,frænda} sinn, tekur hún fram ýmis leikföng handa honum. Pokinn með kubbum inniheldur {x,31} kubba. Karfan með tuskudýrum hefur {y,8} tuskudýr í sér. Turninn með stöflunarhringjum hefur {z,9} marglita hringi á sér. {navn, Sofía} keypti nýlega rör með skoppuboltum, sem færir heildarfjölda leikfanga hennar handa {familie,frænda} sínum upp í {total,62}. Hvað voru margir skoppuboltar í rörinu?\n\n#init:\n- navn = sample(names_female)\n- familie = sample([\"nevø\", \"fætter\", \"bror\"])\n- $x = range(31, 75)\n- $y = range(8, 50)\n- $z = range(9, 35)\n- $total = range(60, 250)\n\n#conditions:\n- (total-(x+y+z)) > 0\n\n#answer: (total-(x+y+z))",
     "count": 100
@@ -47,6 +52,11 @@
   {
     "id": 10,
     "question_annotated": "Til að hringja úr {dev,símaklefa} þarftu að borga {frac1,0.25} {currency,krónur} fyrir hverja mínútu símtalsins. Eftir {t,16} mínútur lækkar verðið í {frac2,0.2} {currency,krónur} á mínútu. Hvað myndi {total,36} mínútna símtal kosta?\n\n#init:\n- dev = sample(['phone booth', 'hotel room phone'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "count": 100
+  },
+  {
+    "id": 11,
+    "question_annotated": "{name, Pétur} vill búa til ísmola af mismunandi stærðum með {n,32} {unit,grömmum} af vatni. Hann getur búið til stóra ísmola sem nota {w1,4} grömm á hvern mola, meðalstóra ísmola sem nota {w2,2} grömm og litla ísmola sem nota {w3,1/2} gramm. Ef hann býr til {n1,3} stóra ísmola, {n2,7} meðalstóra ísmola og {n3,8} litla ísmola, hversu mörg grömm af vatni á hann eftir?\n\n#init:\n- name = sample(names_male)\n- unit = sample(weights_sm)\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
     "count": 100
   },
   {
@@ -70,6 +80,11 @@
     "count": 100
   },
   {
+    "id": 16,
+    "question_annotated": "{name, Kristian} selur {food,hunangskökur} og {fruit,epli}bökur fyrir fjáröflunarátak. Á {d1,laugardag}inn seldi hann {n1,10} kassa af hunangskökum og {m1,4} færri kassa af {fruit_plural,epla}bökum en á {d2,sunnudag}inn. Á {d2,sunnudag}inn seldi hann {n2,5} kössum meira af hunangskökum en á {d1,laugardag}inn og {m2,15} kassa af {fruit_plural,epla}bökum. Ef {food,hunangskökur} kosta {cn,6} {cur,krónur} og {fruit_plural,epla}bökur kosta {cm,15} {cur,krónur}, hversu mikið þénaði {name,Kristian} á tveimur dögum?\n\n#init:\n- name = sample(names_male)\n- fruit, fruit_plural = sample(fruits)\n- cur = sample(currencies_sym)\n- food = sample([ \"honningkager\", \"brownies\", \"kanelsnegle\", \"wienerbrød\",])\n- d1, d2 = sample_sequential(weekdays, 2)\n- $n1 = range(21, 30)\n- $n2 = range(11, 15)\n- $m1 = range(2, 20)\n- $m2 = range(15, 30)\n- $cn = range(7, 13)\n- $cm = range(20, 33)\n\n#conditions:\n- m1 < m2\n\n#answer: (2*n1+n2)*cn + (2*m2-m1)*cm",
+    "count": 100
+  },
+  {
     "id": 17,
     "question_annotated": "{name,Amma} gengur {n,3} {unit,kílómetra} á hverjum degi á uppáhalds gönguleiðinni sinni, sem felur í sér {m,2} {unit,kílómetra} á ströndinni og {k,1} {unit,kílómetra} á gangstéttinni. Á gangstéttinni gengur {name,Amma} {mult_txt,tvisvar} hraðar en hún gerir á ströndinni. Ef {t,40} mínútur af göngutúrnum hennar eru á ströndinni, hversu langan tíma tekur það hana að ljúka allri {n,3}-{unit, kílómetra} gönguleiðinni, í mínútum?\n\n#init:\n- name = sample(names_female)\n- unit = sample(length_lg)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 40)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: {t+(k/(mult_val*m/t))} ",
     "count": 100
@@ -77,6 +92,16 @@
   {
     "id": 18,
     "question_annotated": "{name,Rasmus} fór að kaupa skólavörur. Hann keypti {n1,4} {obj1,penna} sem kostuðu {c1,1.5} {cur,krónur} hver, {n2,2} {obj2,stílabækur} sem kostuðu {c2,4} {cur,krónur} hver og einn pappírspakka sem kostaði {c3,20} {cur,krónur}. Hversu miklu eyddi {name,Rasmus} samtals?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"notesbøger\", \"blyanter\", \"farveblyanter\", \"tuscher\", \"linealer\", \"mapper\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
+    "count": 100
+  },
+  {
+    "id": 19,
+    "question_annotated": "Í spurningakeppni með {n,60} spurningum eru {p1,40}% spurninganna {s1,auðveldar} og afganginum er skipt jafnt í {s2,miðlungsþungar} og {s3,erfiðar} spurningar. Ef {name,Alma} er viss um að svara {r1,75}% af auðveldu spurningunum rétt og {frac_txt,helminginn} af miðlungsþungu og erfiðu spurningunum rétt, hversu mörg stig er hún viss um að fá?\n\n#init:\n- s1, s2, s3 = sample([\"historie\", \"geografi\", \"biologi\", \"kemi\", \"fysik\", \"økonomi\", \"litteratur\", \"algebra\", \"geometri\"], 3)\n- name = sample(names_female)\n- $frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)",
+    "count": 100
+  },
+  {
+    "id": 20,
+    "question_annotated": "{name,Jónas} tínir {n1,4} {fruit_plural,bananar} á {d1,miðvikudag}inn. Síðan tínir hann {n2,6} {fruit_plural,bananar} á {d2,fimmtudag}inn. Á {d3,föstudag}inn tínir hann {mult_txt,þrisvar sinnum} jafn marga banana og hann gerði á {d1,miðvikudag}inn. Hvað á {name,Jónas} marga banana?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3 = sample_sequential(weekdays, 3)\n- fruit, fruit_plural = sample(fruits)\n- $n1 = range(30, 400)\n- $n2 = range(50, 400)\n- mult_txt, mult_val = sample(multi_times)\n\n#answer: n1 + n2 + mult_val * n1",
     "count": 100
   },
   {
@@ -115,8 +140,18 @@
     "count": 100
   },
   {
+    "id": 28,
+    "question_annotated": "{facility_article, eitt} {facility, sjúkrahús} hefur afkastagetu upp á {total, 1000} {item_plural, rúm} og {frac, 1/5} er upptekið. Vegna {event, kórónuveirufaraldursins} leggjast {daily, 50} sjúklingar inn á {facility_definite, sjúkrahúsið} á hverjum degi. Reiknaðu heildarfjölda lausra {item_plural, rúm} á {facility_definite, sjúkrahúsið} eftir {period_txt,tveir} vikur.\n\n#init:\n- facility, facility_article, facility_definite = sample([(\"sjúkrahús\", \"eitt\", \"sjúkrahúsið\"), (\"læknastofa\", \"ein\", \"læknastofan\"), (\"heilsugæsla\", \"ein\", \"heilsugæslan\"), (\"hjúkrunarheimili\", \"eitt\", \"hjúkrunarheimilið\")])\n- item, item_plural = sample([(\"rúm\",\"rúm\"), (\"herbergi\",\"herbergi\"), (\"deild\",\"deildir\")])\n- event = sample([\"COVID-19 faraldurinn\", \"inflúensutímabilið\", \"náttúruhamfarirnar\", \"stórt slys\", \"heimsfaraldurinn\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- period_txt, period_val = range_str(2, 5, 1, numbers)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period_val * 7 < total\n\n#answer: total - (total * frac + daily * period_val * 7)",
+    "count": 100
+  },
+  {
     "id": 29,
     "question_annotated": "{name1,Bo} er {age1,14} ára gamall. Eftir {years_txt,fjórir} ár verður {relation_type,systir} hans {name2,Anna} {mult_txt,þrír} sinnum jafn gömul og {name1,Bo} er núna. Hvað er {name2,Anna} gömul núna?\n\n#init:\n- name1 = sample(names_male)\n- name2 = sample(names_female)\n- relation_type = sample(['søster', 'kusine'])\n- $age1 = range(8, 25)\n- years_txt, years_val = range_str(2, 10, 1, numbers)\n- mult_txt, mult_val = range_str(2, 5, 1, numbers)\n\n#conditions:\n- age1 * mult_val - years_val > 0\n\n#answer: age1 * mult_val - years_val",
+    "count": 100
+  },
+  {
+    "id": 30,
+    "question_annotated": "{name,David} á {initial_amount,85.5} {cur,kr} og vill kaupa {quantity,16} {item_plural,bolta} úr kassa í {store_type,byggingavöruversluninni}. Hver {item,bolti} kostar {unit_price,0.2} {cur,kr}. Hversu mikið fé á {name,David} eftir eftir að hafa greitt fyrir {item_plural,bolta}na?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item, item_plural = sample([(\"bolt\", \"bolte\"),(\"skrue\", \"skruer\"), (\"spændeskive\", \"spændeskiver\"), (\"møtrik\", \"møtrikker\"), (\"anker\", \"ankre\")])\n- store_type = sample([\"byggemarked\", \"isenkræmmer\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(85.5, 175, 5.5)\n- $unit_price = arange(0.2, 4.8, 0.1)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: int(initial_amount - quantity * unit_price)",
     "count": 100
   },
   {
@@ -167,6 +202,16 @@
   {
     "id": 40,
     "question_annotated": "Sarah fór í frí til strandarinnar. Foreldrar hennar gáfu henni {total,75} kr til að kaupa nákvæmlega það sem hún vildi. Í sjoppunni voru karamellur til sölu á tilboðinu „Kauptu {n1,500} grömm fyrir {p1,20} kr, fáðu {n2,500} grömm á {discount,1/2} verði.“ Hún tók {n12,1100} grömm. Hún keypti líka blandaðan poka með skeljum sem kostaði {p2,17} kr og {n3,4} segla sem kostuðu {p3,2} kr stykkið. Hversu mikla peninga á Sarah eftir?\n\n#init:\n- $total = range(30, 100, 15)\n- $n1 = range(200, 651, 150)\n- $n2 = range(200, 651, 150)\n- $n12 = range(650, 1301, 150)\n- $n3 = range(4, 15, 2)\n- $p1 = range(20, 55, 5)\n- $p2 = range(17, 40, 4)\n- $p3 = range(2, 35, 3)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- p1 + n2/n1 * (1-discount) * p1 + (n12 - n1 - n2)/n1 * p1 + p2 + n3 * p3 < total\n\n#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)",
+    "count": 100
+  },
+  {
+    "id": 41,
+    "question_annotated": "{structure,turn} er byggður úr {n1,4} {color1,bláum} {obj,kubbum}, {mult_txt,tvöfalt} fleiri {color2,gulum} {obj,kubbum} og óþekktum fjölda {color3,rauðra} {obj,kubba}. Ef alls eru {total,32} {obj,kubbar} í {structure_definite,turninum}, hversu margir {color3,rauðir} {obj,kubbar} eru þá?\n\n#init:\n- structure, structure_definite = sample([(\"tårn\", \"tårnet\"), (\"bygning\", \"bygningen\"), (\"pyramide\", \"pyramiden\"), (\"stak\", \"stakken\")])\n- obj = sample([\"mursten\", \"tegl\", \"fliser\"])\n- color1, color2, color3 = sample([\"grønne\", \"lilla\", \"orange\", \"pink\", \"hvide\", \"sorte\"], 3)\n- $n1 = range(2, 10)\n- mult_txt, mult_var = sample(multi_times)\n- $total = range(20, 50)\n\n#conditions:\n- total > n1 + mult_var * n1\n\n#answer: total - n1 - mult_var * n1",
+    "count": 100
+  },
+  {
+    "id": 42,
+    "question_annotated": "{name,Rasmus} fer í búðina til að kaupa sér {item,kaffe}. Venjulega kaffitegundin sem hann kaupir kostar {price,35} {cur,kr} á hver 500 {unit,grömm}. Hann þurfti að kaupa dýrari tegund sem kostaði {percent,20}% meira, þar sem uppáhaldstegundin hans var uppseld. Hann ákveður að kaupa {item,kaffe} fyrir eina viku og hann notar {usage,500} {unit,grömm} af {item,kaffe} á dag. Hann ákvað líka að kaupa {extra_item,kleinuhring} fyrir {extra_price,15} {cur,kr}. Hvað kostaði þetta allt saman?\n\n#init:\n- name = sample(names_male)\n- item, item_definite = sample([(\"kaffe\", \"kaffen\"),(\"te\", \"teen\"), (\"sukker\", \"sukkeret\"), (\"mel\", \"melet\"), (\"ris\", \"risen\")])\n- cur = sample(currencies_sym)\n- unit = sample(['g', 'kilogram', 'kg'])\n- extra_item = sample(['cookie', 'muffin', 'bagel'])\n- $price = range(20, 160)\n- $percent = range(10, 50, 5)\n- $usage = range(500, 1000)\n- $extra_price = range(8, 35)\n\n#conditions:\n- is_int(price * percent / 100)\n\n#answer: (price + price * percent / 100) * 7 * usage + extra_price",
     "count": 100
   },
   {
@@ -230,6 +275,11 @@
     "count": 100
   },
   {
+    "id": 55,
+    "question_annotated": "{name,Elísa} er að læra að skrifa og ákveður að skrifa upp {alphabets_txt,alfabetet} aftur og aftur þar til hún kann það. Hún skrifar það allt {n1_txt,tvisvar}, skrifar {frac_txt,helminginn} af því einu sinni og skrifar síðan aftur allt sem hún hefur þegar skrifað. Hversu marga stafi hefur {name,Elísa} skrifað alls?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"alfabetet\", 28), (\"Hiragana (med 48 bogstaver)\", 48), (\"farsi alfabet (med 32 bogstaver)\", 32), (\"det arabiske alfabet (med 28 bogstaver)\", 28)])\n- n1_txt, n1_val = sample([(\"tvisvar\", 2), (\"þrisvar\", 3), (\"fjórum sinnum\", 4), (\"fimm sinnum\", 5), (\"sex sinnum\", 6), (\"sjö sinnum\", 7), (\"átta sinnum\", 8), (\"níu sinnum\", 9), (\"tíu sinnum\", 10), (\"ellefu sinnum\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
+    "count": 100
+  },
+  {
     "id": 56,
     "question_annotated": "{container,glas} inniheldur {vol,8} {unit,ml} af {liquid,mjólk}. {name,Jonas} drekkur {num,2} glös af {liquid,mjólk}. Ef {liquid,mjólk} hefur {cal,3} hitaeiningar á {unit,ml}, hversu margar hitaeiningar innbyrti hann?\n\n#init:\n- name = sample(names_male)\n- container = sample([\"kop\", \"flaske\", \"karton\"])\n- liquid = sample([\"juice\", \"sodavand\", \"danskvand\", \"te\", \"lemonade\"])\n- unit = sample([\"ml\", \"dl\", \"l\", \"mililiter\", \"liter\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
     "count": 100
@@ -272,6 +322,11 @@
   {
     "id": 64,
     "question_annotated": "{name,Marie} á {n,6} krukkur af {item,strái} í {location,búrinu} sínu. Hver krukka af {item,strái} getur skreytt {m,8} {food,muffins}. {name,Marie} vill baka nóg af {food,muffins} til að nota allt {item,strái}ð sitt. Ef hvert {container,bökunarform} rúmar {k,12} {food,muffins}, hversu mörg {container_plural,bökunarform} þarf hún að baka?\n\n#init:\n- name = sample(names_female)\n- item = sample([\"krymmel\", \"frosting\", \"glasur\", \"chokoladeknapper\"])\n- food = sample([\"cupcakes\", \"cookies\", \"brownies\", \"muffins\"])\n- location = sample([\"spisekammer\", \"skab\", \"køkkenskab\", \"opbevaringsrum\"])\n- container, container_plural = sample([(\"pande\", \"pander\"), (\"bakke\",\"bakker\"), (\"bageplade\",\"bageplader\"), (\"stativ\",\"stativer\"), (\"bageform\", \"bageforme\")])\n- $n = range(3, 15)\n- $m = range(6, 20)\n- $k = range(6, 24)\n\n#conditions:\n- divides(n*m, k)\n\n#answer: (n*m)//k",
+    "count": 100
+  },
+  {
+    "id": 65,
+    "question_annotated": "{name,Josefine} er að velta því fyrir sér hvort hún eigi að gera {task,skattframtalið sitt} sjálf eða ráða {profession,endurskoðanda}. Ef hún gerir það sjálf mun hún geta unnið {n,3} færri tíma í {work_type,lausa}vinnu, sem veldur tekjutapi upp á {rate,35} {cur,kr}/klst. {profession_definite,endurskoðandinn} tekur {fee,90} {cur,kr}. Hversu miklu meiri peninga mun hún hafa ef hún ræður {profession,endurskoðanda}?\n\n#init:\n- name = sample(names_female)\n- task = sample([\"sine skatter\", \"sin finansielle planlægning\", \"sit forretningsregnskab\"])\n- profession, profession_definite = sample([(\"revisor\", \"revisoren\"), (\"finansiel rådgiver\", \"den finansielle rådgiver\"), (\"skattekonsulent\", \"skattekonsulenten\"), (\"bogholder\", \"bogholderen\")])\n- work_type = sample([\"freelance\", \"konsulent\", \"deltids\", \"kontrakt\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 14)\n- $rate = range(20, 100)\n- $fee = range(50, 200)\n\n#conditions:\n- n * rate > fee\n\n#answer: n * rate - fee",
     "count": 100
   },
   {
@@ -322,6 +377,11 @@
   {
     "id": 75,
     "question_annotated": "Það eru núna {n1,3} {c1,rauðir} boltar, {n2,11} {c2,bláir} boltar og {n3,25} {c3,grænir} boltar í {place,búðinni}. {c1,rauðir} boltar kosta {p1,9} {cur,kr}, {c2,bláir} boltar kosta {p2,5} {cur,kr} og {c3,grænir} boltar kosta {p3,3} {cur,kr}. Hversu mikið mun búðin hafa fengið eftir að allir boltarnir hafa verið seldir?\n\n#init:\n- place = sample([\"butik\", \"supermarked\", \"marked\", \"kiosk\"])\n- c1, c2, c3 = sample([\"rød\", \"blå\", \"grøn\", \"gul\", \"lilla\", \"orange\", \"pink\"], 3)\n- cur = sample(currencies_sym)\n- $n1 = range(3, 20)\n- $n2 = range(5, 30)\n- $n3 = range(15, 50)\n- $p1 = range(5, 15)\n- $p2 = range(3, 10)\n- $p3 = range(2, 8)\n\n\n#answer: n1*p1 + n2*p2 + n3*p3",
+    "count": 100
+  },
+  {
+    "id": 76,
+    "question_annotated": "{name,Dennis} veiddi {n,3} {fish,túnfiskar} á {day,mánudag}, fyrsti túnfiskurinn sem hann veiddi vegur {w1,56} {unit,kílógrömm}, annar túnfiskurinn sem hann veiddi vegur {w2,46} {unit,kílógrömm} og síðasti túnfiskurinn sem hann veiddi vegur {w3,26} {unit,kílógrömm}. Ef eitt {unit,kílógramm} af {fish,túnfiski} kostar {price,0.5} {cur,kr}, hversu mikið mun hann græða eftir að hafa selt alla túnfiskana á markaðnum?\n\n#init:\n- name = sample(names_male)\n- fish = sample([\"tun\", \"laks\", \"torsk\", \"ørred\", \"pigvar\"])\n- day = sample(weekdays)\n- unit = sample([\"kilogram\", \"kg\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)",
     "count": 100
   },
   {
