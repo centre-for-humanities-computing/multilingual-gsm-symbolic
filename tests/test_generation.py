@@ -1,3 +1,5 @@
+from random import Random
+
 import pytest
 from conftest import get_lightly_constrained_template_files, get_unconstrained_template_files
 
@@ -141,3 +143,61 @@ def test_generate_questions_ids(template_file):
     for q in questions:
         assert q.id_orig == template.id_orig
         assert q.id_shuffled == template.id_shuffled
+
+
+
+def _repro_template() -> AnnotatedQuestion:
+    """A small self-contained template with both constrained and unconstrained vars."""
+    return AnnotatedQuestion(
+        question="A shop sells apples for $2 each.",
+        answer="Total: $6",
+        id_orig=0,
+        id_shuffled=0,
+        question_annotated=(
+            "A {shop,store} sells {item,apples} for ${price,2} each.\n"
+            "#init:\n"
+            "- shop = sample([\"store\", \"market\", \"kiosk\"])\n"
+            "- item = sample([\"apples\", \"oranges\", \"pears\"])\n"
+            "- $price = range(1, 10)\n"
+            "- $n = range(2, 8)\n"
+            "#conditions:\n"
+            "- price * n < 30\n"
+            "#answer: price * n"
+        ),
+        answer_annotated="Total: ${price * n}",
+    )
+
+
+def test_same_seed_produces_identical_questions():
+    """The same seed must always produce identical questions."""
+    t = _repro_template()
+    assert (
+        [(q.question, q.answer) for q in t.generate_questions(n=10, seed=42, verbose=False)]
+        == [(q.question, q.answer) for q in t.generate_questions(n=10, seed=42, verbose=False)]
+    )
+
+
+def test_same_rng_state_produces_identical_questions():
+    """Passing a Random instance with the same state must reproduce results."""
+    t = _repro_template()
+    assert (
+        [(q.question, q.answer) for q in t.generate_questions(n=10, rng=Random(99), verbose=False)]
+        == [(q.question, q.answer) for q in t.generate_questions(n=10, rng=Random(99), verbose=False)]
+    )
+
+
+def test_different_seeds_produce_different_questions():
+    """Different seeds should produce at least one different question across 20 draws."""
+    t = _repro_template()
+    assert (
+        [(q.question, q.answer) for q in t.generate_questions(n=20, seed=1, verbose=False)]
+        != [(q.question, q.answer) for q in t.generate_questions(n=20, seed=2, verbose=False)]
+    )
+
+
+def test_multiple_questions_are_not_all_identical():
+    """Generating n>1 questions should produce more than one distinct output."""
+    t = _repro_template()
+    questions = t.generate_questions(n=20, seed=0, verbose=False)
+    unique = {(q.question, q.answer) for q in questions}
+    assert len(unique) > 1, "All 20 generated questions were identical"

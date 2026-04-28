@@ -5,10 +5,10 @@ import json
 import logging
 import math
 import operator as _operator
-import random
 import re
 import tomllib
 import warnings
+from random import Random
 from dataclasses import asdict, dataclass
 from fractions import Fraction
 from functools import cached_property
@@ -114,28 +114,86 @@ def divides(a: int | float, b: int | float) -> bool:
     return a % b == 0
 
 
+def _make_sample(rng: Random):
+    def sample(items: list, n: int = 1) -> Any:
+        if n == 1:
+            return rng.choice(items)
+        return rng.sample(items, n)
+    return sample
+
+
+def _make_range_sample(rng: Random):
+    def range_sample(start: int, end: int, step: int = 1) -> int:
+        if start > end:
+            raise ValueError(f"Start ({start}) must be less than or equal to end ({end}).")
+        return rng.choice(list(range(start, end + 1, step)))
+    return range_sample
+
+
+def _make_range_str(rng: Random):
+    def range_str(start: int, end: int, step: int, numbers: list) -> tuple:
+        if start > end:
+            return ()
+        candidates = [(numbers[i - 1], i) for i in range(start, end + 1, step) if 0 < i <= len(numbers)]
+        return rng.choice(candidates)
+    return range_str
+
+
+def _make_sample_sequential(rng: Random):
+    def sample_sequential(items: list, n: int) -> list:
+        start_idx = rng.randint(0, len(items) - 1)
+        return [items[(start_idx + i) % len(items)] for i in range(n)]
+    return sample_sequential
+
+
+def _make_arange_sample(rng: Random):
+    def arange_sample(start: float, end: float, step: float = 1) -> str:
+        if start > end:
+            return ""
+        values = np.linspace(start, end, round((end - start) / step) + 1)
+        precision = _step_precision(step)
+        return str(round(float(rng.choice(values)), precision))
+    return arange_sample
+
+
+def _build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, Any]:
+    """Build an eval context with rng-bound sampling functions."""
+    return {
+        "is_int": is_int,
+        "divides": divides,
+        "int": int,
+        "float": float,
+        "round": round,
+        "str": str,
+        "len": len,
+        "sample": _make_sample(rng),
+        "sample_sequential": _make_sample_sequential(rng),
+        "list": list,
+        "range": _make_range_sample(rng),
+        "range_list": range_possibilities,
+        "range_str": _make_range_str(rng),
+        "arange": _make_arange_sample(rng),
+        "Fraction": frac_format,
+        **replacements,
+    }
+
+
+# Keep module-level stubs so templates evaluated outside generate_questions still work.
 def sample(items: list, n: int = 1) -> Any:
-    if n == 1:
-        return random.choice(items)
-    return random.sample(items, n)
+    return _make_sample(Random())(items, n)
 
 
 def range_sample(start: int, end: int, step: int = 1) -> int:
-    if start > end:
-        raise ValueError(f"Start ({start}) must be less than or equal to end ({end}).")
-    return random.choice(list(range(start, end + 1, step)))
+    return _make_range_sample(Random())(start, end, step)
 
 
 def range_str(start: int, end: int, step: int, numbers: list) -> tuple:
-    if start > end:
-        return ()
-    candidates = [(numbers[i - 1], i) for i in range(start, end + 1, step) if 0 < i <= len(numbers)]
-    return random.choice(candidates)
+    return _make_range_str(Random())(start, end, step, numbers)
 
 
 def sample_sequential(items: list, n: int) -> list:
-    start_idx = random.randint(0, len(items) - 1)
-    return [items[(start_idx + i) % len(items)] for i in range(n)]
+    return _make_sample_sequential(Random())(items, n)
+
 
 
 def _step_precision(step: float) -> int:
@@ -148,7 +206,11 @@ def arange_sample(start: float, end: float, step: float = 1) -> str:
         return ""
     values = np.linspace(start, end, round((end - start) / step) + 1)
     precision = _step_precision(step)
-    return str(round(float(random.choice(values)), precision))
+    # standalone arange_sample (used outside generate_questions)
+    rng = Random()
+    values = np.linspace(start, end, round((end - start) / step) + 1)
+    precision = _step_precision(step)
+    return str(round(float(rng.choice(values)), precision))
 
 
 def frac_format(value: Any) -> str:
@@ -193,7 +255,8 @@ def strip_elements(lst: list[str]) -> list[str]:
     return [s.strip() for s in lst]
 
 
-EVAL_CONTEXT_HELPERS: dict[str, Any] = {
+# Non-random helpers shared by both eval contexts and combination enumeration.
+_BASE_HELPERS: dict[str, Any] = {
     "is_int": is_int,
     "divides": divides,
     "int": int,
@@ -201,15 +264,12 @@ EVAL_CONTEXT_HELPERS: dict[str, Any] = {
     "round": round,
     "str": str,
     "len": len,
-    "sample": sample,
-    "sample_sequential": sample_sequential,
     "list": list,
-    "range": range_sample,
-    "range_list": range_possibilities,
-    "range_str": range_str,
-    "arange": arange_sample,
     "Fraction": frac_format,
 }
+
+# Legacy alias used by condition evaluation and answer formatting (no sampling needed there).
+EVAL_CONTEXT_HELPERS: dict[str, Any] = _BASE_HELPERS
 
 COMBINATION_HELPERS: dict[str, Any] = {
     "range": range_possibilities,
@@ -704,20 +764,21 @@ class AnnotatedQuestion:
     def _generate_question(
         self,
         replacements: dict[str, Any],
+        rng: Random,
         valid_combinations: list[dict] | None = None,
         unconstrained_choices: list[list[dict]] | None = None,
     ) -> Question:
         if unconstrained_choices is not None:
-            unconstrained_assignments = [random.choice(choices) for choices in unconstrained_choices]
+            unconstrained_assignments = [rng.choice(choices) for choices in unconstrained_choices]
         else:
             unconstrained_assignments = [
-                self._evaluate_unconstrained_init_line(line, replacements) for line in self.unconstrained_lines
+                self._evaluate_unconstrained_init_line(line, replacements, rng) for line in self.unconstrained_lines
             ]
         logger.debug(f"Unconstrained assignments: {unconstrained_assignments}")
         if self.constrained_lines:
             if valid_combinations is None:
                 valid_combinations = self._evaluate_constrained_init_lines(self.constrained_lines, replacements)
-            constrained_assignments = random.choice(valid_combinations)
+            constrained_assignments = rng.choice(valid_combinations)
         else:
             constrained_assignments = {}
         logger.debug(f"Constrained assignments: {constrained_assignments}")
@@ -731,10 +792,11 @@ class AnnotatedQuestion:
         logger.info(f"Formatted answer: {formatted_answer}")
         return Question(formatted_question, formatted_answer, self.id_orig, self.id_shuffled)
 
-    def _evaluate_unconstrained_init_line(self, init_line: str, replacements: dict[str, Any]) -> dict[str, Any]:
+    def _evaluate_unconstrained_init_line(self, init_line: str, replacements: dict[str, Any], rng: Random | None = None) -> dict[str, Any]:
         variable_part, definition_part = init_line.split("=", 1)
         variables = strip_elements(variable_part.strip("$").split(","))
-        values = _eval_node(_parse_expr(definition_part.strip()), EVAL_CONTEXT_HELPERS | replacements)
+        ctx = _build_eval_context(rng or Random(), replacements)
+        values = _eval_node(_parse_expr(definition_part.strip()), ctx)
         if not isinstance(values, (list, tuple)):
             values = [values]
         if len(values) != len(variables):
@@ -747,6 +809,7 @@ class AnnotatedQuestion:
         n: int,
         replacements: dict[str, Any] | None = None,
         seed: int | None = None,
+        rng: Random | None = None,
         verbose: bool = True,
         fixed: dict[str, Any] | None = None,
     ) -> list[Question]:
@@ -755,7 +818,10 @@ class AnnotatedQuestion:
         Args:
             n: Number of questions to generate.
             replacements: Replacement values; loaded automatically if omitted.
-            seed: Random seed for reproducibility.
+            seed: Random seed for reproducibility. Ignored if ``rng`` is supplied.
+            rng: A :class:`random.Random` instance to use for all sampling.
+                Allows full control over the RNG state (e.g. for reproducible
+                multi-template experiments). Takes precedence over ``seed``.
             verbose: Show warnings for slow generation.
             fixed: Variables to hold constant; only remaining variables are sampled.
 
@@ -766,8 +832,12 @@ class AnnotatedQuestion:
             from multilingual_gsm_symbolic.load_data import load_replacements
 
             replacements = load_replacements(self.language)
-        if seed is not None:
-            random.seed(seed)
+        if rng is not None:
+            _rng = rng
+        elif seed is not None:
+            _rng = Random(seed)
+        else:
+            _rng = Random()
         if verbose and self.constrained_variables:
             warnings.warn(
                 f"Template {self.id_shuffled} has constrained variables {self.constrained_variables}. "
@@ -780,4 +850,4 @@ class AnnotatedQuestion:
             else None
         )
         unconstrained_choices = self._precompute_unconstrained(replacements, fixed)
-        return [self._generate_question(replacements, valid_combinations, unconstrained_choices) for _ in range(n)]
+        return [self._generate_question(replacements, _rng, valid_combinations, unconstrained_choices) for _ in range(n)]
