@@ -398,5 +398,45 @@
     "id": 91,
     "question_annotated": "Hjá {name, Allan} er {mult_txt,tvöfalt} meira af {food1, maís} en {food2,banana}. Hann hefur alls {n, 40} {food2,banana} í húsinu sínu. {name, Allan} keypti {m, 60} fleiri {food2,banana} í búðinni og {k, 40} færri {food1,maís} en fjöldi {food2,banana}. Finndu heildarfjölda {food1,maís} og {food2,banana} sem {name, Allan} hefur í húsinu?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"pærer\", \"æbler\", \"appelsiner\", \"citroner\", \"figner\", \"nektariner\", \"blommer\", \"jordbær\", \"kiwier\", \"blåbær\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)",
     "count": 100
+  },
+  {
+    "id": 92,
+    "question_annotated": "Prins {name1,Theodor} drap {n1,100} {creature,dreka} með voldugu {weapon1,sverði} sínu, en prins {name2,Arthur}, sem notaði {weapon2,spjót}, drap {frac1_txt,þrír fjórðu} af jafn mörgum {creature,drekum} og prins {name1,Theodor}. Með {weapon3,ryðgaðri járnöxi} drap prins {name3,Wilhelm} {mult1_txt,tvöfalt} fleiri {creature,dreka} en prins {name2,Arthur}. En prins {name4,Stefan}, sem hafði gleymt {weapon4,sverði} sínu heima, drap {frac2_txt,einn fimmti} af jafn mörgum {creature,drekum} og prins {name3,Wilhelm} með {weapon5,naglaþjöl}. Hversu marga {creature,dreka} drap prins {name4,Stefan}?\n\n#init:\n- name1, name2, name3, name4 = sample(names_male, 4)\n- creature = sample([\"orker\", \"trolde\", \"gobliner\", \"giganter\"])\n- weapon1 = sample([\"sværd\", \"kampøkse\", \"krigshammer\"])\n- weapon2 = sample([\"spyd\", \"lanse\", \"hellebard\"])\n- weapon3 = sample([\"rusten jernøkse\", \"sten hammer\", \"træ hammer\"])\n- weapon4 = sample([\"sværd\", \"økse\", \"hammer\"])\n- weapon5 = sample([\"neglefil\", \"smørkniv\", \"ske\", \"fjer\"])\n- $n1 = range(50, 501, 50)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n1 * frac1_val * mult1_val)\n- is_int(n1 * frac1_val * mult1_val * frac2_val)\n\n#answer: int(n1 * frac1_val * mult1_val * frac2_val)",
+    "count": 100
+  },
+  {
+    "id": 93,
+    "question_annotated": "Þegar vatnið er kalt syndir {name,Rasmus} einn {unit,km} á {t1,16} mínútum. Þegar vatnið er heitt syndir {name,Rasmus} einn {unit,km} á {n,2} mínútum meira en {mult_txt,tvisvar} svo langan tíma. Hversu miklu lengri tíma tekur það {name,Rasmus} að synda {d,3} {unit,km} á heitum degi en á köldum degi?\n\n#init:\n- name = sample(names)\n- unit = sample(['km', 'kilometer'])\n- $t1 = range(10, 50)\n- $n = range(1, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $d = range(2, 10)\n\n#conditions:\n- t1 < 60\n- n + mult_val * t1 < 60\n- d * (n + mult_val * t1) - d * t1 > 0\n\n#answer: d * (n + mult_val * t1) - d * t1",
+    "count": 100
+  },
+  {
+    "id": 94,
+    "question_annotated": "{n,100} manns sækja um starf hjá {company,Google}. Af þeim sem sækja um fá aðeins {p1,30}% boð í viðtal. Af þeim sem fá viðtal fá {p2,20}% atvinnutilboð. Af þeim sem fá atvinnutilboð samþykkir {frac_txt,þriðjungur} einstaklinganna starfið. Hversu margir einstaklingar samþykkja starfið?\n\n#init:\n- company = sample([\"Salling Group\", \"LEGO\", \"Søstrene Grene\", \"Facebook\", \"Apple\", \"Rema1000\", \"Hatting\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: int(n * (p1/100) * (p2/100) * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 95,
+    "question_annotated": "Það eru {n1,6} nemendur sem stunda {sport1,tennis} og {mult_txt,tvisvar sinnum} fleiri sem stunda {sport2,handbolta}. Það eru {n2,16} strákar og {n3,22} stelpur sem stunda {sport3,fótbolta}. Ef hver nemandi tekur aðeins þátt í einum hópi, hversu margir nemendur eru alls?\n\n#init:\n- sport1, sport2, sport3 = sample(['badminton', 'sejlsport', 'bordtennis',  'fodbold', 'håndbold', 'atletik'], 3)\n- mult_txt, mult_val = sample(multi_times)\n- $n1 = range(4, 21)\n- $n2 = range(10, 31)\n- $n3 = range(10, 31)\n\n#conditions:\n- n1 * mult_val + n2 + n3 <= 250\n\n#answer: n1 + n1 * mult_val[1] + n2 + n3",
+    "count": 100
+  },
+  {
+    "id": 96,
+    "question_annotated": "{parent,faðir} {name,Maríu} sagði að hún hefði gert ráð fyrir {budget,90} {cur,kr} í afmælisveisluna sína. Hún vill tryggja að hún og vinir hennar fái öll að spila einn hring í {activity1,minigolfi}, fá {tokens,5} {cur,kr} í {activity2,spilasalar}mynt og fara {times_txt,tvisvar} á {activity3,go-kart}. Einn hringur í {activity1,minigolfi} kostar {cost1,5} {cur,kr}. {activity3,go-kart} kostar {cost2,10} {cur,kr} fyrir hverja ferð. Hversu mörgum vinum getur hún boðið?\n\n#init:\n- name = sample(names_female)\n- parent = sample([\"mor\", \"far\", \"moster\", \"tante\", \"onkel\"])\n- activity1 = sample([\"minigolf\", \"bowling\", \"dart\"])\n- activity2 = sample([\"arkade\", \"spillerums\"])\n- activity3 = sample([\"go-karts\", \"radiobil\", \"rutsjebane\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1",
+    "count": 100
+  },
+  {
+    "id": 97,
+    "question_annotated": "{name1,Julie} afgreiðir kassann nákvæmlega {mult_txt,tvisvar} hraðar en minna reyndi samstarfsfélagi hennar {name2,Sofie}. {name2,Sofie} afgreiðir {n,50} viðskiptavini á dag. Hver er samanlögð vikuleg afköst þeirra tveggja ef þær vinna alla daga vikunnar?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_val)\n- is_int((n + n * mult_val) * 7)\n\n#answer: (n + n * mult_val) * 7",
+    "count": 100
+  },
+  {
+    "id": 98,
+    "question_annotated": "Ný {sygdom,pest} sýkir {n0_txt,tíu} manns. Á hverjum degi smitar hver sýktur einstaklingur {r_txt,sex} aðra. Hversu margir eru sýktir eftir {d_txt,þrír} daga?\n\n#init:\n- sygdom = sample(['virus', 'bakterie', 'parasit', 'infektion'])\n- n0_txt, n0_val = range_str(5, 21, 1, numbers)\n- r_txt, r_val = range_str(2, 8, 1, numbers)\n- d_txt, d_val = range_str(3, 5, 1, numbers)\n\n#conditions:\n- n0_val * (r_val + 1)**d_val < 20000\n\n#answer: n0_val * (r_val + 1)**d_val",
+    "count": 100
+  },
+  {
+    "id": 99,
+    "question_annotated": "Ef {name,Kasper} borðar {n1,3} egg á dag í {d1,30} daga og eykur það síðan í {n2,5} egg á dag í {d2,30} daga, hversu mörg tylft egg mun {name,Kasper} þurfa í {d3,60} daga?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
+    "count": 100
   }
 ]
