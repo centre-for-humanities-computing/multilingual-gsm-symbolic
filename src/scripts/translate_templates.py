@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["openai"]
+# dependencies = ["openai", "tomli-w"]
 # ///
 """Translate symbolic templates and replacements between languages using GPT.
 
@@ -18,7 +18,10 @@ import logging
 import re
 import sys
 import time
+import tomllib
 from pathlib import Path
+
+import tomli_w
 
 sys.path.insert(0, str(Path(__file__).parents[2] / "src"))
 
@@ -299,19 +302,19 @@ def main() -> None:
     tgt_replacements = json.loads(rep_tgt.read_text(encoding="utf-8")) if rep_tgt.exists() else {}
 
     # Translate / fix templates
-    template_files = sorted((src_dir / "symbolic").glob("*.json"))
+    template_files = sorted((src_dir / "symbolic").glob("*.toml"))
     errors: list[tuple[str, list[str]]] = []
 
     for i, src_file in enumerate(template_files):
         tgt_file = tgt_symbolic / src_file.name
 
-        with src_file.open(encoding="utf-8") as f:
-            src_data = json.load(f)
+        with src_file.open("rb") as f:
+            src_data = tomllib.load(f)
 
         # If translation already exists, validate it first; only redo if broken.
         if tgt_file.exists() and not args.overwrite:
-            with tgt_file.open(encoding="utf-8") as f:
-                tgt_data = json.load(f)
+            with tgt_file.open("rb") as f:
+                tgt_data = tomllib.load(f)
             issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
             if not issues:
                 logger.info("[%d/%d] %s OK (skipping)", i + 1, len(template_files), src_file.name)
@@ -348,8 +351,9 @@ def main() -> None:
         else:
             logger.info("  OK")
 
-        with tgt_file.open("w", encoding="utf-8") as f:
-            json.dump(tgt_data, f, ensure_ascii=False, indent=2)
+        with tgt_file.open("wb") as f:
+            f.write(tomli_w.dumps(tgt_data).encode("utf-8"))
+        logger.info("Written %s", tgt_file)
 
     if errors:
         logger.warning("\n%d templates had unresolved issues:", len(errors))
