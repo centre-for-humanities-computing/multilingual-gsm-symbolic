@@ -18,7 +18,7 @@ lint-check:
 	uv run ruff format . --check                    # running ruff formatting
 	uv run ruff check .                             # running ruff linting
 
-type-check:
+typecheck:
 	@echo "--- 🔍 Running type checker ---"
 	uv run ty check src/multilingual_gsm_symbolic
 
