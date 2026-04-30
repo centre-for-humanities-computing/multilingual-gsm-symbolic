@@ -14,31 +14,31 @@ id_orig = 955
 id_shuffled = 28
 
 question_annotated = """
-A {facility_article, un} {facility, ospedale} ha una capacità di {total, 1000} {item, letto}s con {frac, 1/5} occupato. A causa di {event, epidemia di coronavirus}, {daily, 50} pazienti vengono ricoverati in {facility_definite, ospedale} ogni giorno. Calcola il numero totale di {item_plural, letti} liberi in {facility_definite, ospedale} dopo {period, 2} settimane.
+{facility_article_cap, Un} {facility, ospedale} ha una capacità di {total, 1000} {item_plural, letti} con {frac, 1/5} occupato. A causa {event, dell'epidemia di coronavirus}, {daily, 50} pazienti vengono ricoverati {facility_prep, nell'ospedale} ogni giorno. Calcola il numero totale di {item_plural, letti} liberi {facility_prep, nell'ospedale} dopo {period_txt,due} settimane.
 
 #init:
-- facility = sample(["ospedale", "clinica", "centro medico", "struttura di assistenza"])
-- item = sample(["letto", "stanza", "reparto"])
-- event = sample(["epidemia di coronavirus", "stagione influenzale", "disastro naturale", "grave incidente", "pandemia"])
+- facility, facility_article_cap, facility_prep = sample([("ospedale", "Un", "nell'ospedale"), ("clinica", "Una", "nella clinica"), ("centro medico", "Un", "nel centro medico"), ("struttura di assistenza", "Una", "nella struttura di assistenza")])
+- item, item_plural, item_article = sample([("letto", "letti", "un"), ("stanza", "stanze", "una"), ("reparto", "reparti", "un")])
+- event = sample(["dell'epidemia di coronavirus", "della stagione influenzale", "di un disastro naturale", "di un grave incidente", "della pandemia"])
 - $total = range(500, 2000, 100)
 - $frac = sample(fractions)
 - $daily = range(20, 100, 5)
-- $period = range(2, 5)
+- period_txt, period_val = range_str(2, 5, 1, numbers)
 
 #conditions:
 - is_int(total * frac)
-- total * frac + daily * period * 7 < total
+- total * frac + daily * period_val * 7 < total
 
-#answer: total - (total * frac + daily * period * 7)
+#answer: total - (total * frac + daily * period_val * 7)
 """
 
 answer_annotated = """
-Se {frac} della capacità totale di {facility_definite} {item}s è occupato, significa che {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item}s hanno pazienti che li occupano.
-Il numero totale di {item}s in {facility_definite} senza nuovi ricoveri è {total} {item}s - {int(total*frac)} {item}s = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item}s.
-Se {daily} persone vengono ricoverate ogni giorno, il numero totale di pazienti in {facility_definite} dopo una settimana è {daily} pazienti/giorno * 7 giorni/settimana = {daily*7} pazienti.
-Dopo {period} settimane, il numero totale di pazienti ricoverati in {facility_definite} è {daily*7} pazienti/settimana*{period} settimane = <<{daily*7}*{period}={daily*period*7}>>{daily*period*7} pazienti, ognuno dei quali usa un {item}.
-Se c'erano {total-int(total*frac)} {item}s liberi in {facility_definite} prima dei nuovi ricoveri, il numero totale si riduce a {total-int(total*frac)} {item}s - {daily*period*7} {item}s = <<{total-int(total*frac)}-{daily*period*7}={total - (total * frac + daily * period * 7)}>>{total - (total * frac + daily * period * 7)} {item}s liberi.
-#### {total - (total * frac + daily * period * 7)}
+Se {frac} della capacità totale di {item_plural} è occupato, significa che {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} hanno pazienti che li occupano.
+Il numero totale di {item_plural} {facility_prep} senza nuovi ricoveri è {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
+Se {daily} persone vengono ricoverate ogni giorno, il numero totale di pazienti {facility_prep} dopo una settimana è {daily} pazienti/giorno * 7 giorni/settimana = {daily*7} pazienti.
+Dopo {period_txt} settimane, il numero totale di pazienti ricoverati {facility_prep} è {daily*7} pazienti/settimana*{period_val} settimane = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} pazienti, ognuno dei quali usa {item_article} {item}.
+Se c'erano {total-int(total*frac)} {item_plural} liberi {facility_prep} prima dei nuovi ricoveri, il numero totale si riduce a {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} {item_plural} liberi.
+#### {total - (total * frac + daily * period_val * 7)}
 """
 
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"

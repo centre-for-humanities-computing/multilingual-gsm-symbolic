@@ -14,31 +14,31 @@ id_orig = 955
 id_shuffled = 28
 
 question_annotated = """
-Een {facility_article, een} {facility, ziekenhuis} heeft een capaciteit van {total, 1000} {item_plural, bedden} met {frac, 1/5} bezet. Door {event, de uitbraak van het coronavirus} worden er elke dag {daily, 50} patiënten opgenomen in {facility_definite, het ziekenhuis}. Bereken het totale aantal vrije {item_plural, bedden} in {facility_definite, het ziekenhuis} na {period, twee} weken.
+{facility_article_cap, Een} {facility, ziekenhuis} heeft een capaciteit van {total, 1000} {item_plural, bedden}, waarvan {frac, 1/5} bezet is. Door {event, de uitbraak van het coronavirus} worden er elke dag {daily, 50} patiënten opgenomen in {facility_definite, het ziekenhuis}. Bereken het totale aantal vrije {item_plural, bedden} in {facility_definite, het ziekenhuis} na {period_txt,twee} weken.
 
 #init:
-- facility = sample(["hospital", "clinic", "medical center", "care facility"])
-- item = sample(["bed", "room", "ward"])
-- event = sample(["flu season", "natural disaster", "major accident", "pandemic"])
+- facility, facility_article_cap, facility_definite = sample([("ziekenhuis", "Een", "het ziekenhuis"), ("kliniek", "Een", "de kliniek"), ("medisch centrum", "Een", "het medische centrum"), ("zorginstelling", "Een", "de zorginstelling")])
+- item, item_plural = sample([("bed","bedden"), ("kamer","kamers"), ("afdeling","afdelingen")])
+- event = sample(["de uitbraak van het coronavirus", "het griepseizoen", "een natuurramp", "een zwaar ongeval", "de pandemie"])
 - $total = range(500, 2000, 100)
 - $frac = sample(fractions)
 - $daily = range(20, 100, 5)
-- $period = range(2, 5)
+- period_txt, period_val = range_str(2, 5, 1, numbers)
 
 #conditions:
 - is_int(total * frac)
-- total * frac + daily * period * 7 < total
+- total * frac + daily * period_val * 7 < total
 
-#answer: total - (total * frac + daily * period * 7)
+#answer: total - (total * frac + daily * period_val * 7)
 """
 
 answer_annotated = """
 Als {frac} van de totale capaciteit aan {item_plural} bezet is, betekent dit dat {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} door patiënten worden gebruikt.
 Het totale aantal {item_plural} in {facility_definite} zonder nieuwe opnames is {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
 Als er elke dag {daily} personen worden opgenomen, is het totale aantal patiënten in {facility_definite} na een week {daily} patiënten/dag * 7 dagen/week = {daily*7} patiënten.
-Na {period} weken is het totale aantal patiënten dat is opgenomen in {facility_definite} {daily*7} patiënten/week * {period} weken = <<{daily*7}*{period}={daily*period*7}>>{daily*period*7} patiënten, die elk één {item} gebruiken.
-Als er vóór de nieuwe opnames {total-int(total*frac)} vrije {item_plural} in {facility_definite} waren, wordt het totale aantal verminderd tot {total-int(total*frac)} {item_plural} - {daily*period*7} {item_plural} = <<{total-int(total*frac)}-{daily*period*7}={total - (total * frac + daily * period * 7)}>>{total - (total * frac + daily * period * 7)} vrije {item_plural}.
-#### {total - (total * frac + daily * period * 7)}
+Na {period_txt} weken is het totale aantal patiënten dat is opgenomen in {facility_definite} {daily*7} patiënten/week * {period_val} weken = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} patiënten, die elk één {item} gebruiken.
+Als er vóór de nieuwe opnames {total-int(total*frac)} vrije {item_plural} in {facility_definite} waren, wordt het totale aantal verminderd tot {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} vrije {item_plural}.
+#### {total - (total * frac + daily * period_val * 7)}
 """
 
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
