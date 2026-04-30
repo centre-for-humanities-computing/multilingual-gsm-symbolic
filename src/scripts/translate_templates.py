@@ -1,5 +1,7 @@
 # /// script
-# dependencies = ["openai", "tomli-w"]
+# dependencies = ["openai", "tomli-w", "multilingual-gsm-symbolic"]
+# [tool.uv.sources]
+# multilingual-gsm-symbolic = { path = "../..", editable = true }
 # ///
 """Translate symbolic templates and replacements between languages using GPT.
 
@@ -16,15 +18,11 @@ import argparse
 import json
 import logging
 import re
-import sys
 import time
 import tomllib
 from pathlib import Path
 
 import tomli_w
-
-sys.path.insert(0, str(Path(__file__).parents[2] / "src"))
-
 from openai import OpenAI
 
 from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
@@ -50,6 +48,7 @@ _LANGUAGE_NAMES = {
     "pol": "Polish",
     "por": "Portuguese",
     "rus": "Russian",
+    "ukr": "Ukrainian",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")
