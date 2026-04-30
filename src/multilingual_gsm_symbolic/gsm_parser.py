@@ -8,11 +8,11 @@ import operator as _operator
 import re
 import tomllib
 import warnings
-from random import Random
 from dataclasses import asdict, dataclass
 from fractions import Fraction
 from functools import cached_property
 from pathlib import Path
+from random import Random
 from typing import Any, Self
 
 import numpy as np
@@ -119,6 +119,7 @@ def _make_sample(rng: Random):
         if n == 1:
             return rng.choice(items)
         return rng.sample(items, n)
+
     return sample
 
 
@@ -127,6 +128,7 @@ def _make_range_sample(rng: Random):
         if start > end:
             raise ValueError(f"Start ({start}) must be less than or equal to end ({end}).")
         return rng.choice(list(range(start, end + 1, step)))
+
     return range_sample
 
 
@@ -136,6 +138,7 @@ def _make_range_str(rng: Random):
             return ()
         candidates = [(numbers[i - 1], i) for i in range(start, end + 1, step) if 0 < i <= len(numbers)]
         return rng.choice(candidates)
+
     return range_str
 
 
@@ -143,6 +146,7 @@ def _make_sample_sequential(rng: Random):
     def sample_sequential(items: list, n: int) -> list:
         start_idx = rng.randint(0, len(items) - 1)
         return [items[(start_idx + i) % len(items)] for i in range(n)]
+
     return sample_sequential
 
 
@@ -153,6 +157,7 @@ def _make_arange_sample(rng: Random):
         values = np.linspace(start, end, round((end - start) / step) + 1)
         precision = _step_precision(step)
         return str(round(float(rng.choice(values)), precision))
+
     return arange_sample
 
 
@@ -193,7 +198,6 @@ def range_str(start: int, end: int, step: int, numbers: list) -> tuple:
 
 def sample_sequential(items: list, n: int) -> list:
     return _make_sample_sequential(Random())(items, n)
-
 
 
 def _step_precision(step: float) -> int:
@@ -772,9 +776,7 @@ class AnnotatedQuestion:
             if only_numeric and unconstrained_choices:
                 # Check whether any unconstrained line contributes numeric values
                 sample_combo = {k: v for d in [c[0] for c in unconstrained_choices] for k, v in d.items()}
-                sample_proj = self._project_assignment(
-                    dict(constrained_assignment) | sample_combo, only_numeric=True
-                )
+                sample_proj = self._project_assignment(dict(constrained_assignment) | sample_combo, only_numeric=True)
                 constrained_proj = self._project_assignment(constrained_assignment, only_numeric=True)
                 unconstrained_adds_numeric = set(sample_proj) != set(constrained_proj)
             else:
@@ -833,7 +835,9 @@ class AnnotatedQuestion:
         logger.info(f"Formatted answer: {formatted_answer}")
         return Question(formatted_question, formatted_answer, self.id_orig, self.id_shuffled)
 
-    def _evaluate_unconstrained_init_line(self, init_line: str, replacements: dict[str, Any], rng: Random | None = None) -> dict[str, Any]:
+    def _evaluate_unconstrained_init_line(
+        self, init_line: str, replacements: dict[str, Any], rng: Random | None = None
+    ) -> dict[str, Any]:
         variable_part, definition_part = init_line.split("=", 1)
         variables = strip_elements(variable_part.strip("$").split(","))
         ctx = _build_eval_context(rng or Random(), replacements)
@@ -891,4 +895,6 @@ class AnnotatedQuestion:
             else None
         )
         unconstrained_choices = self._precompute_unconstrained(replacements, fixed)
-        return [self._generate_question(replacements, _rng, valid_combinations, unconstrained_choices) for _ in range(n)]
+        return [
+            self._generate_question(replacements, _rng, valid_combinations, unconstrained_choices) for _ in range(n)
+        ]
