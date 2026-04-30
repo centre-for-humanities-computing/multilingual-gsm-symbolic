@@ -14,12 +14,12 @@ id_orig = 955
 id_shuffled = 28
 
 question_annotated = """
-Ein {facility, hospital} hat eine Kapazität von {total, 1000} {item_plural, senge}, von denen {frac, 1/5} belegt ist. Aufgrund des {event, coronavirus-udbruddet} werden jeden Tag {daily, 50} Patienten ins {facility, hospital} eingeliefert. Berechne die Gesamtzahl der freien {item_plural, senge} im {facility, hospital} nach {period_txt,zwei} Wochen.
+{facility_article_cap, Ein} {facility, Krankenhaus} hat eine Kapazität von {total, 1000} {item_plural, Betten}, von denen {frac, 1/5} belegt ist. Aufgrund {event, des Coronavirus-Ausbruchs} werden jeden Tag {daily, 50} Patienten in {facility_definite, das Krankenhaus} eingeliefert. Berechne die Gesamtzahl der freien {item_plural, Betten} in {facility_definite, das Krankenhaus} nach {period_txt,zwei} Wochen.
 
 #init:
-- facility, facility_article, facility_definite = sample([("hospital", "et", "hospitalet"), ("klinik", "en", "klinikken"), ("medicinsk center", "et", "det medicinske center"), ("plejefacilitet", "en", "plejefaciliteten")])
-- item, item_plural = sample([("seng","senge"), ("rum","rum"), ("afdeling","afdelinger")])
-- event = sample(["coronavirus-udbruddet", "influenza sæsonen", "en naturlig katastrofe", "en stor ulykke", "pandemien"])
+- facility, facility_article_cap, facility_definite = sample([("Krankenhaus", "Ein", "das Krankenhaus"), ("Klinik", "Eine", "die Klinik"), ("medizinisches Zentrum", "Ein", "das medizinische Zentrum"), ("Pflegeeinrichtung", "Eine", "die Pflegeeinrichtung")])
+- item, item_plural, item_acc_article = sample([("Bett","Betten","ein"), ("Zimmer","Zimmer","ein"), ("Station","Stationen","eine")])
+- event = sample(["des Coronavirus-Ausbruchs", "des Beginns der Grippesaison", "einer Naturkatastrophe", "eines schweren Unfalls", "der Pandemie"])
 - $total = range(500, 2000, 100)
 - $frac = sample(fractions)
 - $daily = range(20, 100, 5)
@@ -33,16 +33,14 @@ Ein {facility, hospital} hat eine Kapazität von {total, 1000} {item_plural, sen
 """
 
 answer_annotated = """
-Wenn {frac} der gesamten Bettenkapazität belegt ist, bedeutet das, dass {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} von Patienten genutzt werden.
-Die Gesamtzahl der {item_plural} im {facility} ohne neue Einlieferungen beträgt {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
-Wenn jeden Tag {daily} Personen eingeliefert werden, beträgt die Gesamtzahl der Patienten im {facility} nach einer Woche {daily} Patienten/Tag * 7 Tage/Woche = {daily*7} Patienten.
-Nach {period_txt} Wochen beträgt die Gesamtzahl der ins {facility} eingelieferten Patienten {daily*7} Patienten/Woche*{period_val} Wochen = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} Patienten, von denen jeder ein {item} benutzt.
-Wenn es vor den neuen Einlieferungen {total-int(total*frac)} freie {item_plural} im {facility} gab, verringert sich die Gesamtzahl auf {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} freie {item_plural}.
+Wenn {frac} der gesamten Kapazität an {item_plural} belegt ist, bedeutet das, dass {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} von Patienten genutzt werden.
+Die Gesamtzahl der {item_plural} in {facility_definite} ohne neue Einlieferungen beträgt {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
+Wenn jeden Tag {daily} Personen eingeliefert werden, beträgt die Gesamtzahl der Patienten in {facility_definite} nach einer Woche {daily} Patienten/Tag * 7 Tage/Woche = {daily*7} Patienten.
+Nach {period_txt} Wochen beträgt die Gesamtzahl der in {facility_definite} eingelieferten Patienten {daily*7} Patienten/Woche*{period_val} Wochen = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} Patienten, von denen jeder {item_acc_article} {item} benutzt.
+Wenn es vor den neuen Einlieferungen {total-int(total*frac)} freie {item_plural} in {facility_definite} gab, verringert sich die Gesamtzahl auf {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} freie {item_plural}.
 #### {total - (total * frac + daily * period_val * 7)}
 """
 
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
 
 language = "deu"
-
-ignore = true
