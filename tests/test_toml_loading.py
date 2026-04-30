@@ -1,6 +1,8 @@
 """Test that TOML and JSON template fixtures produce identical AnnotatedQuestion objects."""
-import pytest
+
 from pathlib import Path
+
+import pytest
 
 from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
 
@@ -8,10 +10,7 @@ _FIXTURES = Path(__file__).parent / "test_templates"
 
 # Every (json, toml) pair present in tests/fixtures/
 _PAIRS = sorted(
-    [
-        (_FIXTURES / p.name.replace(".toml", ".json"), p)
-        for p in _FIXTURES.glob("*.toml")
-    ],
+    [(_FIXTURES / p.name.replace(".toml", ".json"), p) for p in _FIXTURES.glob("*.toml")],
     key=lambda t: t[0].name,
 )
 

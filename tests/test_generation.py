@@ -145,7 +145,6 @@ def test_generate_questions_ids(template_file):
         assert q.id_shuffled == template.id_shuffled
 
 
-
 def _repro_template() -> AnnotatedQuestion:
     """A small self-contained template with both constrained and unconstrained vars."""
     return AnnotatedQuestion(
@@ -156,8 +155,8 @@ def _repro_template() -> AnnotatedQuestion:
         question_annotated=(
             "A {shop,store} sells {item,apples} for ${price,2} each.\n"
             "#init:\n"
-            "- shop = sample([\"store\", \"market\", \"kiosk\"])\n"
-            "- item = sample([\"apples\", \"oranges\", \"pears\"])\n"
+            '- shop = sample(["store", "market", "kiosk"])\n'
+            '- item = sample(["apples", "oranges", "pears"])\n'
             "- $price = range(1, 10)\n"
             "- $n = range(2, 8)\n"
             "#conditions:\n"
@@ -171,28 +170,25 @@ def _repro_template() -> AnnotatedQuestion:
 def test_same_seed_produces_identical_questions():
     """The same seed must always produce identical questions."""
     t = _repro_template()
-    assert (
-        [(q.question, q.answer) for q in t.generate_questions(n=10, seed=42, verbose=False)]
-        == [(q.question, q.answer) for q in t.generate_questions(n=10, seed=42, verbose=False)]
-    )
+    assert [(q.question, q.answer) for q in t.generate_questions(n=10, seed=42, verbose=False)] == [
+        (q.question, q.answer) for q in t.generate_questions(n=10, seed=42, verbose=False)
+    ]
 
 
 def test_same_rng_state_produces_identical_questions():
     """Passing a Random instance with the same state must reproduce results."""
     t = _repro_template()
-    assert (
-        [(q.question, q.answer) for q in t.generate_questions(n=10, rng=Random(99), verbose=False)]
-        == [(q.question, q.answer) for q in t.generate_questions(n=10, rng=Random(99), verbose=False)]
-    )
+    assert [(q.question, q.answer) for q in t.generate_questions(n=10, rng=Random(99), verbose=False)] == [
+        (q.question, q.answer) for q in t.generate_questions(n=10, rng=Random(99), verbose=False)
+    ]
 
 
 def test_different_seeds_produce_different_questions():
     """Different seeds should produce at least one different question across 20 draws."""
     t = _repro_template()
-    assert (
-        [(q.question, q.answer) for q in t.generate_questions(n=20, seed=1, verbose=False)]
-        != [(q.question, q.answer) for q in t.generate_questions(n=20, seed=2, verbose=False)]
-    )
+    assert [(q.question, q.answer) for q in t.generate_questions(n=20, seed=1, verbose=False)] != [
+        (q.question, q.answer) for q in t.generate_questions(n=20, seed=2, verbose=False)
+    ]
 
 
 def test_multiple_questions_are_not_all_identical():
