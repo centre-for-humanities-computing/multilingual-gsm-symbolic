@@ -14,11 +14,12 @@ id_orig = 955
 id_shuffled = 28
 
 question_annotated = """
-{facility_article_cap, Un} {facility, ospedale} ha una capacità di {total, 1000} {item_plural, letti} con {frac, 1/5} occupato. A causa {event, dell'epidemia di coronavirus}, {daily, 50} pazienti vengono ricoverati {facility_prep, nell'ospedale} ogni giorno. Calcola il numero totale di {item_plural, letti} liberi {facility_prep, nell'ospedale} dopo {period_txt,due} settimane.
+{facility_article_cap, Un} {facility, ospedale} ha una capacità di {total, 1000} {item_plural, letti} con {frac, 1/5} occupato. A causa {event, dell'epidemia di coronavirus}, {daily, 50} pazienti vengono ricoverati {facility_admit, in ospedale} ogni giorno. Calcola il numero totale di {item_plural, letti} liberi {facility_loc, nell'ospedale} dopo {period_txt,due} settimane.
 
 #init:
-- facility, facility_article_cap, facility_prep = sample([("ospedale", "Un", "nell'ospedale"), ("clinica", "Una", "nella clinica"), ("centro medico", "Un", "nel centro medico"), ("struttura di assistenza", "Una", "nella struttura di assistenza")])
-- item, item_plural, item_article = sample([("letto", "letti", "un"), ("stanza", "stanze", "una"), ("reparto", "reparti", "un")])
+- facility, facility_article_cap, facility_admit, facility_loc = sample([("ospedale", "Un", "in ospedale", "nell'ospedale"), ("clinica", "Una", "in clinica", "nella clinica"), ("centro medico", "Un", "nel centro medico", "nel centro medico"), ("struttura di assistenza", "Una", "nella struttura di assistenza", "nella struttura di assistenza")])
+- item, item_plural = sample([("letto", "letti"), ("stanza", "stanze"), ("reparto", "reparti")])
+- item_plural, item_article = sample([("letti", "un"), ("stanze", "una"), ("reparti", "un")])
 - event = sample(["dell'epidemia di coronavirus", "della stagione influenzale", "di un disastro naturale", "di un grave incidente", "della pandemia"])
 - $total = range(500, 2000, 100)
 - $frac = sample(fractions)
@@ -34,10 +35,10 @@ question_annotated = """
 
 answer_annotated = """
 Se {frac} della capacità totale di {item_plural} è occupato, significa che {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} hanno pazienti che li occupano.
-Il numero totale di {item_plural} {facility_prep} senza nuovi ricoveri è {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
-Se {daily} persone vengono ricoverate ogni giorno, il numero totale di pazienti {facility_prep} dopo una settimana è {daily} pazienti/giorno * 7 giorni/settimana = {daily*7} pazienti.
-Dopo {period_txt} settimane, il numero totale di pazienti ricoverati {facility_prep} è {daily*7} pazienti/settimana*{period_val} settimane = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} pazienti, ognuno dei quali usa {item_article} {item}.
-Se c'erano {total-int(total*frac)} {item_plural} liberi {facility_prep} prima dei nuovi ricoveri, il numero totale si riduce a {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} {item_plural} liberi.
+Il numero totale di {item_plural} {facility_loc} senza nuovi ricoveri è {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
+Se {daily} persone vengono ricoverate ogni giorno, il numero totale di pazienti {facility_loc} dopo una settimana è {daily} pazienti/giorno * 7 giorni/settimana = {daily*7} pazienti.
+Dopo {period_txt} settimane, il numero totale di pazienti ricoverati {facility_loc} è {daily*7} pazienti/settimana*{period_val} settimane = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} pazienti, ognuno dei quali usa {item_article} {item}.
+Se c'erano {total-int(total*frac)} {item_plural} liberi {facility_loc} prima dei nuovi ricoveri, il numero totale si riduce a {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} {item_plural} liberi.
 #### {total - (total * frac + daily * period_val * 7)}
 """
 

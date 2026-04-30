@@ -46,6 +46,7 @@ _LANGUAGE_NAMES = {
     "ita": "Italian",
     "pol": "Polish",
     "por": "Portuguese",
+    "rus": "Russian",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")
@@ -62,11 +63,10 @@ Rules:
    - Variable placeholders have the form {{varname,default}} — keep the {{varname,...}} syntax but translate the default value. E.g. {{animal,haj}} → {{animal,hai}} when translating to Norwegian. Default values are mid-sentence fragments: use lowercase and the uninflected/indefinite form (e.g. {{unit,måned}} not {{unit,Måned}} or {{unit,måneden}}).
    - Bare variable references {{varname}} (no default) — leave completely unchanged.
    - Init / conditions / answer blocks: lines starting with #init:, #conditions:, #answer: — do NOT alter these lines at all.
-   - Init expressions: range(...), sample(...), arange(...), etc. — do NOT alter.
+   - Init expressions: range(...), sample(...), arange(...), etc. — do NOT alter, except for when it is a list of words e.g. ["chair", "table"] — translate the words but keep the list syntax. E.g. ["stol", "bord"] in Danish.
    - Condition expressions: is_int(...), divides(...), True, etc. — do NOT alter.
    - Inline calc tags in answers: <<expr=result>> — copy them EXACTLY as they appear in the source, character for character.
    - The #### answer marker and its number — do NOT alter.
-   - Numbers, units, currency symbols, fractions — do NOT alter.
 2. Use natural, idiomatic {tgt_name} phrasing.
 3. Return ONLY valid JSON — no markdown fences, no explanation.
 """
