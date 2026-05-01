@@ -4,10 +4,10 @@ answer = """
 Seja E o número de episódios que ele assistiu na quarta-feira.
 Depois de segunda-feira, ele tinha 7 - 1 = <<7-1=6>>6 horas de TV restantes.
 Depois de terça-feira, ele tinha 6 - 1 = <<6-1=5>>5 horas de TV restantes.
-Depois de quinta-feira, ele tinha 5 - 1 - 0,5 = 3,5 horas de TV restantes.
-Depois de sexta-feira, ele tinha 3,5 - 2 = 1,5 horas de TV restantes.
-Cada episódio de 30 minutos dura 0,5 hora.
-Assim, E = 1,5/0,5 = 3 episódios.
+Depois de quinta-feira, ele tinha 5 - 1 - 0.5 = 3.5 horas de TV restantes.
+Depois de sexta-feira, ele tinha 3.5 - 2 = 1.5 horas de TV restantes.
+Cada episódio de 30 minutos dura 1/2 hora.
+Assim, E = 1.5/0.5 = 3 episódios.
 #### 3
 """
 
@@ -32,10 +32,11 @@ question_annotated = """
 #conditions: 
 - divides(m1, 15)
 - divides(m2, 15)
+- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)
 - (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0
 - (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 
 
-#answer: (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1
+#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)
 """
 
 answer_annotated = """
@@ -45,8 +46,8 @@ Depois de {d2}, ele tinha {total-h1} - {h1} = <<{total-h1}-{h1}={total-2*h1}>>{t
 Depois de {d4}, ele tinha {total-2*h1} - {h2} - {m2/60} = {total-2*h1-h2- m2/60} horas de TV restantes.
 Depois de {d5}, ele tinha {total-2*h1-h2-m2/60} - {n2_val*h3} = {total-2*h1-h2-m2/60-n2_val*h3} horas de TV restantes.
 Cada episódio de {m1} minutos dura {Fraction(m1/60)} hora.
-Assim, E = {total-2*h1-h2-m2/60-n2_val*h3}/{m1/60} = {(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1} episódios.
-#### {(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1}
+Assim, E = {total-2*h1-h2-m2/60-n2_val*h3}/{m1/60} = {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)} episódios.
+#### {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)}
 """
 
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
