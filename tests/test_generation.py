@@ -195,7 +195,28 @@ def test_different_seeds_produce_different_questions():
 def _extract_final_answer(answer: str) -> float:
     return float(answer.split("####")[-1].strip())
 
-@pytest.skip(reason="A bit slow to run, so skipping by default. Left in in case we want to re-enable for regression testing.")
+
+def test_example_30_floating_point_answer_is_clean_integer():
+    """Regression: initial_amount=130.2, quantity=24, unit_price=1.3 gives
+    int(130.2 - 24*1.3) = int(98.99999999999999) = 98 (wrong) or shows
+    '98.99999999999999' in the answer body.
+    """
+
+    template_path = (
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/dan/symbolic/0030.toml"
+    )
+    template = AnnotatedQuestion.from_toml(template_path)
+    questions = template.generate_questions(
+        n=1,
+        fixed={"initial_amount": "130.2", "quantity": 24, "unit_price": "1.3"},
+        verbose=False,
+    )
+    assert len(questions) == 1
+    final_str = questions[0].answer.split("####")[-1].strip()
+    assert final_str == "99", f"Expected clean integer '99' but got {final_str!r}; full answer:\n{questions[0].answer}"
+
+
+@pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
 def test_example_40_never_produces_negative_answer():
     """Regression: example 40 had a condition/answer formula mismatch that allowed
     negative left-over money when discount > 0.5. Generate a large sample and assert
