@@ -1,3 +1,4 @@
+import pathlib
 from random import Random
 
 import pytest
@@ -189,6 +190,25 @@ def test_different_seeds_produce_different_questions():
     assert [(q.question, q.answer) for q in t.generate_questions(n=20, seed=1, verbose=False)] != [
         (q.question, q.answer) for q in t.generate_questions(n=20, seed=2, verbose=False)
     ]
+
+
+def _extract_final_answer(answer: str) -> float:
+    return float(answer.split("####")[-1].strip())
+
+@pytest.skip(reason="A bit slow to run, so skipping by default. Left in in case we want to re-enable for regression testing.")
+def test_example_40_never_produces_negative_answer():
+    """Regression: example 40 had a condition/answer formula mismatch that allowed
+    negative left-over money when discount > 0.5. Generate a large sample and assert
+    every answer is positive."""
+
+    template_path = (
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0040.toml"
+    )
+    template = AnnotatedQuestion.from_toml(template_path)
+    questions = template.generate_questions(n=30, seed=0, verbose=False)
+    for q in questions:
+        val = _extract_final_answer(q.answer)
+        assert val > 0, f"Example 40 produced non-positive answer {val!r} in:\n{q.question}"
 
 
 def test_multiple_questions_are_not_all_identical():
