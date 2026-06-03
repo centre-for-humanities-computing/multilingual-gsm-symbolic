@@ -179,6 +179,8 @@ def _build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, 
         "range_str": _make_range_str(rng),
         "arange": _make_arange_sample(rng),
         "Fraction": frac_format,
+        "ukr_pluralize": ukr_pluralize,
+        "range_seq": range_seq,
         **replacements,
     }
 
@@ -259,6 +261,23 @@ def strip_elements(lst: list[str]) -> list[str]:
     return [s.strip() for s in lst]
 
 
+
+
+# Ukrainian Specific
+def ukr_pluralize(n, one, few, many):
+    n = abs(int(n))
+    if n % 10 == 1 and n % 100 != 11:
+        return one
+    elif n % 10 in [2,3,4] and n % 100 not in [12,13,14]:
+        return few
+    else:
+        return many
+
+# Ukrainian Specific
+def range_seq(start, end, n):
+    return list(range(start, end, n))
+
+
 # Non-random helpers shared by both eval contexts and combination enumeration.
 _BASE_HELPERS: dict[str, Any] = {
     "is_int": is_int,
@@ -292,6 +311,9 @@ COMBINATION_HELPERS: dict[str, Any] = {
     "is_int": is_int,
     "divides": divides,
     "Fraction": frac_format,
+    "ukr_pluralize": ukr_pluralize,
+    "range_seq": range_seq
+
 }
 
 # Pre-compiled regex patterns used in hot paths
@@ -898,3 +920,4 @@ class AnnotatedQuestion:
         return [
             self._generate_question(replacements, _rng, valid_combinations, unconstrained_choices) for _ in range(n)
         ]
+
