@@ -1,0 +1,45 @@
+question = "Ann is cutting fabric to make curtains. She cuts a 4 foot by 6 foot rectangle for the living room, and a 2 foot by 4 foot rectangle for the bedroom. If the bolt of fabric is 16 feet by 12 feet, how much fabric is left in square feet?"
+
+answer = """
+First figure out how many square feet the original bolt of fabric was: 16 feet * 12 feet = <<16*12=192>>192 square feet
+Then figure out how much fabric Ann took for the living room curtains: 4 feet * 6 feet = <<4*6=24>>24 square feet
+Then figure out how much fabric Ann took for the bathroom curtains: 2 feet * 4 feet = <<2*4=8>>8 square feet
+Finally, subtract the square footage of both sets of curtains from the total square footage: 192 - 24 - 8 = <<192-24-8=160>>160 square feet
+#### 160"""
+
+id_orig = 51
+
+id_shuffled = 51
+
+question_annotated = """
+{name,Ann} is cutting fabric to make curtains. She cuts a {l_a,4} foot by {l_b,6} foot rectangle for the living room, and a {b_a,2} foot by {b_b,4} foot rectangle for the bedroom. If the bolt of fabric is {bolt_w,16} feet by {bolt_h,12} feet, how much fabric is left in square feet?
+
+#init:
+- name = "Ann"
+- $l_a = range(3, 9)
+- $l_b = range(4, 11)
+- $b_a = range(1, 5)
+- $b_b = range(2, 7)
+- $bolt_w = range(12, 19)
+- $bolt_h = range(10, 15)
+
+#conditions:
+- bolt_w >= l_a
+- bolt_w >= b_a
+- bolt_h >= l_b
+- bolt_h >= b_b
+- bolt_w*bolt_h - l_a*l_b - b_a*b_b > 0
+
+#answer: bolt_w*bolt_h - l_a*l_b - b_a*b_b
+"""
+
+answer_annotated = """
+First figure out how many square feet the original bolt of fabric was: {bolt_w} feet * {bolt_h} feet = <<{bolt_w}*{bolt_h}={bolt_w*bolt_h}>>{bolt_w*bolt_h} square feet
+Then figure out how much fabric {name} took for the living room curtains: {l_a} feet * {l_b} feet = <<{l_a}*{l_b}={l_a*l_b}>>{l_a*l_b} square feet
+Then figure out how much fabric {name} took for the bathroom curtains: {b_a} feet * {b_b} feet = <<{b_a}*{b_b}={b_a*b_b}>>{b_a*b_b} square feet
+Finally, subtract the square footage of both sets of curtains from the total square footage: {bolt_w*bolt_h} - {l_a*l_b} - {b_a*b_b} = <<{bolt_w*bolt_h}-{l_a*l_b}-{b_a*b_b}={bolt_w*bolt_h - l_a*l_b - b_a*b_b}>>{bolt_w*bolt_h - l_a*l_b - b_a*b_b} square feet
+#### {bolt_w*bolt_h - l_a*l_b - b_a*b_b}"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

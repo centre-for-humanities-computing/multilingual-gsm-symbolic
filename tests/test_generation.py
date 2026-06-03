@@ -203,7 +203,7 @@ def test_example_32_compound_formula_floating_point():
     Fix: compute each fee separately (price*bfe/100 + price*tfe/100) which is exact
     because is_int conditions guarantee integer fees."""
     template = AnnotatedQuestion.from_toml(
-        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/dan/symbolic/0032.toml"
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/dan/test/0032.toml"
     )
     questions = template.generate_questions(
         n=1,
@@ -222,7 +222,7 @@ def test_example_30_floating_point_answer_is_clean_integer():
     """
 
     template_path = (
-        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/dan/symbolic/0030.toml"
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/dan/test/0030.toml"
     )
     template = AnnotatedQuestion.from_toml(template_path)
     questions = template.generate_questions(
@@ -242,7 +242,7 @@ def test_example_40_never_produces_negative_answer():
     every answer is positive."""
 
     template_path = (
-        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0040.toml"
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/test/0040.toml"
     )
     template = AnnotatedQuestion.from_toml(template_path)
     questions = template.generate_questions(n=30, seed=0, verbose=False)

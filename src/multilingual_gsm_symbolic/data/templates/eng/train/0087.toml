@@ -1,0 +1,35 @@
+question = "John's cow weighs 400 pounds.  It increased its weight to 1.5 times its starting weight.  He is able to sell the cow for $3 per pound.  How much more is it worth after gaining the weight?"
+
+answer = """
+The cow initially weighs 400*1.5=<<400*1.5=600>>600 pounds
+So it gained 600 - 400 = <<600-400=200>>200 pounds
+So its value increased by 200*$3 = $<<200*3=600>>600
+#### 600
+"""
+
+id_orig = 87
+
+id_shuffled = 87
+
+question_annotated = """
+John's cow weighs {w0,400} pounds.  It increased its weight to {mul,1.5} times its starting weight.  He is able to sell the cow for {currency,$}{price,3} per pound.  How much more is it worth after gaining the weight?
+#init:
+- currency = sample(currencies_sym)
+- $w0 = range(200, 1001, 10)
+- $price = range(1, 21)
+- $mul = 1.5
+
+#conditions:
+- w0 % 2 == 0
+"""
+
+answer_annotated = """
+The cow initially weighs {w0}*{mul}=<<{w0}*{mul}={int(w0*mul)}>>{int(w0*mul)} pounds
+So it gained {int(w0*mul)} - {w0} = <<{int(w0*mul)}-{w0}={int(w0*mul)-w0}>>{int(w0*mul)-w0} pounds
+So its value increased by {int(w0*mul)-w0}*{currency}{price} = {currency}<<{int(w0*mul)-w0}*{price}={(int(w0*mul)-w0)*price}>>{(int(w0*mul)-w0)*price}
+#### {(int(w0*mul)-w0)*price}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = "Dale and Andrew had breakfast at a cafe. A slice of toast costs £1, and eggs cost £3 each. Dale had 2 slices of toast and 2 eggs. Andrew had 1 slice of toast and 2 eggs. How much did their breakfast cost?"
+
+answer = """
+The cost of Dale's toast is 2 × $1 = $<<2*1=2>>2.
+The cost of Andrew's toast is 1 × $1 = $<<1*1=1>>1.
+The cost of Dale's eggs is 2 × $3 = $<<2*3=6>>6.
+The cost of Andrew's eggs is 2 × $3 = $<<2*3=6>>6.
+Their breakfast cost $2 + $1 + $6 + $6 = $<<2+1+6+6=15>>15.
+#### 15
+"""
+
+id_orig = 75
+
+id_shuffled = 75
+
+question_annotated = """
+Dale and Andrew had breakfast at a cafe. A slice of toast costs {toast_symbol,£}{toast_price,1}, and eggs cost {toast_symbol,£}{egg_price,3} each. Dale had {dale_toast_slices,2} slices of toast and {dale_eggs,2} eggs. Andrew had {andrew_toast_slices,1} slice of toast and {andrew_eggs,2} eggs. How much did their breakfast cost?
+
+#init:
+- $toast_price = range(1, 6)
+- $egg_price = range(1, 9)
+- $dale_toast_slices = range(1, 6)
+- $dale_eggs = range(1, 6)
+- $andrew_toast_slices = range(1, 6)
+- $andrew_eggs = range(1, 6)
+- toast_symbol = "£"
+
+#conditions:
+- andrew_toast_slices == 1
+
+#answer: dale_toast_slices*toast_price + andrew_toast_slices*toast_price + dale_eggs*egg_price + andrew_eggs*egg_price
+"""
+
+answer_annotated = """
+The cost of Dale's toast is {dale_toast_slices} × ${toast_price} = $<<{dale_toast_slices}*{toast_price}={dale_toast_slices*toast_price}>>{dale_toast_slices*toast_price}.
+The cost of Andrew's toast is {andrew_toast_slices} × ${toast_price} = $<<{andrew_toast_slices}*{toast_price}={andrew_toast_slices*toast_price}>>{andrew_toast_slices*toast_price}.
+The cost of Dale's eggs is {dale_eggs} × ${egg_price} = $<<{dale_eggs}*{egg_price}={dale_eggs*egg_price}>>{dale_eggs*egg_price}.
+The cost of Andrew's eggs is {andrew_eggs} × ${egg_price} = $<<{andrew_eggs}*{egg_price}={andrew_eggs*egg_price}>>{andrew_eggs*egg_price}.
+Their breakfast cost ${dale_toast_slices*toast_price} + ${andrew_toast_slices*toast_price} + ${dale_eggs*egg_price} + ${andrew_eggs*egg_price} = $<<{dale_toast_slices*toast_price}+{andrew_toast_slices*toast_price}+{dale_eggs*egg_price}+{andrew_eggs*egg_price}={dale_toast_slices*toast_price+andrew_toast_slices*toast_price+dale_eggs*egg_price+andrew_eggs*egg_price}>>{dale_toast_slices*toast_price+andrew_toast_slices*toast_price+dale_eggs*egg_price+andrew_eggs*egg_price}.
+#### {dale_toast_slices*toast_price+andrew_toast_slices*toast_price+dale_eggs*egg_price+andrew_eggs*egg_price}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = "Brennan was researching his school project and had to download files from the internet to his computer to use for reference. After downloading 800 files, he deleted 70% of them because they were not helpful. He downloaded 400 more files but again realized that 3/5 of them were irrelevant. How many valuable files was he left with after deleting the unrelated files he downloaded in the second round?"
+
+answer = """
+The number of non-valuable files Brennan downloaded in the first round is 70/100*800 = <<70/100*800=560>>560 files.
+The number of valuable files Brennan downloaded in the first round is 800-560 = <<800-560=240>>240
+When he downloaded 400 new files, there were 3/5*400= <<3/5*400=240>>240 non-useful files, which he deleted again.
+The total number of valuable files he downloaded in the second round is 400-240 = <<400-240=160>>160
+To write his research, Brennan had 160+240 = <<160+240=400>>400 useful files to reference to write his research.
+#### 400
+"""
+
+id_orig = 27
+
+id_shuffled = 27
+
+question_annotated = """
+{name,Brennan} was researching his school project and had to download files from the internet to his computer to use for reference. After downloading {files1,800} files, he deleted {del_percent,70}% of them because they were not helpful. He downloaded {files2,400} more files but again realized that {irr_num,3}/{irr_den,5} of them were irrelevant. How many valuable files was he left with after deleting the unrelated files he downloaded in the second round?
+#init:
+- name = sample(["Brennan", "Logan", "Ethan", "Noah", "Oliver", "Lucas", "Mason", "James", "Henry", "Samuel"])
+- $files1 = range(300, 1000, 50)
+- $del_percent = range(10, 90)
+- $files2 = range(100, 900, 50)
+- $irr_num = range(1, 5)
+- $irr_den = range(2, 9)
+#conditions:
+- del_percent < 100
+- irr_num < irr_den
+- divides(del_percent * files1, 100)
+- divides(irr_num * files2, irr_den)
+- files1 - (del_percent * files1 // 100) > 0
+- files2 - (irr_num * files2 // irr_den) > 0
+"""
+
+answer_annotated = """
+The number of non-valuable files {name} downloaded in the first round is {del_percent}/100*{files1} = <<{del_percent}/100*{files1}={del_percent*files1//100}>>{del_percent*files1//100} files.
+The number of valuable files {name} downloaded in the first round is {files1}-{del_percent*files1//100} = <<{files1}-{del_percent*files1//100}={files1-del_percent*files1//100}>>{files1-del_percent*files1//100}
+When he downloaded {files2} new files, there were {irr_num}/{irr_den}*{files2}= <<{irr_num}/{irr_den}*{files2}={irr_num*files2//irr_den}>>{irr_num*files2//irr_den} non-useful files, which he deleted again.
+The total number of valuable files he downloaded in the second round is {files2}-{irr_num*files2//irr_den} = <<{files2}-{irr_num*files2//irr_den}={files2-irr_num*files2//irr_den}>>{files2-irr_num*files2//irr_den}
+To write his research, {name} had {files2-irr_num*files2//irr_den}+{files1-del_percent*files1//100} = <<{files2-irr_num*files2//irr_den}+{files1-del_percent*files1//100}={files2-irr_num*files2//irr_den + (files1-del_percent*files1//100)}>>{files2-irr_num*files2//irr_den + (files1-del_percent*files1//100)} useful files to reference to write his research.
+#### {files2-irr_num*files2//irr_den + (files1-del_percent*files1//100)}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"

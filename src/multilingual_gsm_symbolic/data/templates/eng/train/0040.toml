@@ -1,0 +1,48 @@
+question = "A concert ticket costs $40. Mr. Benson bought 12 tickets and received a 5% discount for every ticket bought that exceeds 10. How much did Mr. Benson pay in all?"
+
+answer = """
+Mr. Benson had a 5% discount for each of the 12 - 10 = <<12-10=2>>2 tickets.
+So, those two tickets had a $40 x 5/100 = $<<40*5/100=2>>2 discount each.
+Hence, each ticket cost $40 - $2 = $<<40-2=38>>38 each.
+Thus, two discounted tickets amount to $38 x 2 = $<<38*2=76>>76.
+And the other ten tickets amount to $40 x 10 = $<<40*10=400>>400.
+Hence, Mr. Benson paid a total of $400 + $76 = $<<400+76=476>>476.
+#### 476
+"""
+
+id_orig = 40
+
+id_shuffled = 40
+
+question_annotated = """
+A concert ticket costs {currency,$}$ {price,40}. {name,Mr. Benson} bought {n,12} tickets and received a {disc_txt,5}% discount for every ticket bought that exceeds {thr,10}. How much did {name,Mr. Benson} pay in all?
+
+#init:
+- $currency = "$"
+- $name = "Mr. Benson"
+- $price = range(20, 101)
+- $disc_txt = range(1, 26)
+- $n = 12
+- $thr = 10
+
+#conditions:
+- divides(price * disc_txt, 100)
+- disc_txt > 0
+- price - (price * disc_txt // 100) > 0
+
+#answer: thr * price + (price - (price * disc_txt // 100)) * (n - thr)
+"""
+
+answer_annotated = """
+Mr. Benson had a {disc_txt}% discount for each of the {n} - {thr} = <<{n}-{thr}={n-thr}>>{n-thr} tickets.
+So, those two tickets had a ${price} x {disc_txt}/100 = $<<{price}*{disc_txt}/100={(price*disc_txt)//100}>>{(price*disc_txt)//100} discount each.
+Hence, each ticket cost ${price} - ${(price*disc_txt)//100} = $<<{price}-${(price*disc_txt)//100}={price-(price*disc_txt//100)}>>{price-(price*disc_txt//100)} each.
+Thus, two discounted tickets amount to ${price-(price*disc_txt//100)} x {n-thr} = $<<{price-(price*disc_txt//100)}*{n-thr}={ (price-(price*disc_txt//100))*(n-thr) }>>{ (price-(price*disc_txt//100))*(n-thr) }.
+And the other ten tickets amount to ${price} x {thr} = $<<{price}*{thr}={price*thr}>>{price*thr}.
+Hence, Mr. Benson paid a total of ${price*thr} + {(price-(price*disc_txt//100))*(n-thr)} = $<<{price*thr}+{(price-(price*disc_txt//100))*(n-thr)}={price*thr+(price-(price*disc_txt//100))*(n-thr)}>>{price*thr+(price-(price*disc_txt//100))*(n-thr)}.
+#### {price*thr+(price-(price*disc_txt//100))*(n-thr)}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"

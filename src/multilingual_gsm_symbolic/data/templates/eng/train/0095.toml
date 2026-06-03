@@ -1,0 +1,47 @@
+question = "Alice has 20 quarters. She wants to exchange them for nickels and so she goes to the bank. After getting back from the bank, she discovers that 20% of the nickels are iron nickels worth $3 each. What is the total value of her money now?"
+
+answer = """
+A quarter is worth five nickels because .25 / .05 = <<.25/.05=5>>5
+She gets 100 nickels from the bank because 20 x 5 = <<20*5=100>>100
+20 of the nickels are iron nickels because 100 x .20 = <<100*.20=20>>20
+80 of the nickels are regular because 100 - 20 = <<100-20=80>>80
+The iron nickels are worth $60 because 20 x 3 = <<20*3=60>>60
+The regular nickels are worth $4 because 80 x .05 = <<80*.05=4>>4
+Her money is now worth $64 because 60 + 4 = <<60+4=64>>64
+#### 64"""
+
+id_orig = 95
+
+id_shuffled = 95
+
+question_annotated = """
+{name,Alice} has {q,20} quarters. She wants to exchange them for nickels and so she goes to the bank. After getting back from the bank, she discovers that {p_pct,20}% of the nickels are iron nickels worth ${iron_val,3} each. What is the total value of her money now?
+
+#init:
+- name = sample(["Alice", "Emma", "Olivia", "Sophia", "Mia"])
+- $q = range(4, 101, 4)
+- $p_pct = range(10, 51, 10)
+- $iron_val = sample([2, 3, 4, 5, 6])
+
+#conditions:
+- p_pct < 100
+- is_int(q * 5 * p_pct / 100)
+- divides(q * 5 * (100 - p_pct), 2000)
+
+#answer: (q * 5 * p_pct // 100) * iron_val + (q * 5 - q * 5 * p_pct // 100) // 20
+"""
+
+answer_annotated = """
+A quarter is worth five nickels because 25/5 = <<25/5=5>>5.
+She gets {q}*5 = <<{q}*5={q*5}>>{q*5} nickels from the bank.
+{q*5*p_pct}/100 = <<{q*5*p_pct}/100={q*5*p_pct//100}>>{q*5*p_pct//100} of the nickels are iron nickels.
+The remaining nickels are regular: {q*5} - {q*5*p_pct//100} = <<{q*5}-{q*5*p_pct//100}={q*5-q*5*p_pct//100}>>{q*5-q*5*p_pct//100}.
+The iron nickels are worth {q*5*p_pct//100} * ${iron_val} = <<{q*5*p_pct//100}*{iron_val}={q*5*p_pct//100*iron_val}>>${q*5*p_pct//100*iron_val}.
+The regular nickels are worth {q*5-q*5*p_pct//100} * 0.05 = <<{q*5-q*5*p_pct//100}*0.05={(q*5-q*5*p_pct//100)//20}>>${(q*5-q*5*p_pct//100)//20}.
+Her money is now worth {q*5*p_pct//100*iron_val} + {(q*5-q*5*p_pct//100)//20} = <<{q*5*p_pct//100*iron_val}+{(q*5-q*5*p_pct//100)//20}={(q*5*p_pct//100)*iron_val+(q*5-q*5*p_pct//100)//20}>>${(q*5*p_pct//100)*iron_val+(q*5-q*5*p_pct//100)//20}.
+#### {(q*5*p_pct//100)*iron_val+(q*5-q*5*p_pct//100)//20}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"

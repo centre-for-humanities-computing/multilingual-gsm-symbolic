@@ -1,0 +1,36 @@
+question = "Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?"
+
+answer = """
+Weng earns 12/60 = $<<12/60=0.2>>0.2 per minute.
+Working 50 minutes, she earned 0.2 x 50 = $<<0.2*50=10>>10.
+#### 10
+"""
+
+id_orig = 1
+
+id_shuffled = 1
+
+question_annotated = """
+{name,Weng} earns {cur,$}{hourly,12} an hour for babysitting. Yesterday, she just did {minutes,50} minutes of babysitting. How much did she earn?
+#init:
+- name = sample(["Weng"])
+- cur = sample(currencies_sym)
+- $hourly = range(6, 51, 3)
+- $minutes = range(10, 101, 5)
+
+#conditions:
+- divides(hourly * minutes, 60)
+- divides(hourly * 100, 60)
+
+#answer: (hourly/60)*minutes
+"""
+
+answer_annotated = """
+{name} earns {hourly}/60 = {cur}<<{hourly}/60={(hourly*100//60)/100}>>{(hourly*100//60)/100} per minute.
+Working {minutes} minutes, she earned {(hourly*100//60)/100} x {minutes} = {cur}<<{(hourly*100//60)/100}*{minutes}={int(hourly*minutes//60)}>>{int(hourly*minutes//60)}.
+#### {int(hourly*minutes//60)}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"

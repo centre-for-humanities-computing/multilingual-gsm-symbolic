@@ -12,14 +12,26 @@ _DATA_ROOT = Path(__file__).parent / "data" / "templates"
 logger = logging.getLogger(__name__)
 
 
-def _active_template_files(lang_dir: Path) -> list[Path]:
+def _active_toml_files(directory: Path) -> list[Path]:
     files = []
-    for f in sorted((lang_dir / "symbolic").glob("*.toml")):
+    for f in sorted(directory.glob("*.toml")):
         with f.open("rb") as fp:
             data = tomllib.load(fp)
         if not data.get("ignore"):
             files.append(f)
     return files
+
+
+def _active_template_files(lang_dir: Path) -> list[Path]:
+    """Return active templates from a language, split or directory."""
+    lang_dir = Path(lang_dir)
+    if list(lang_dir.glob("*.toml")):
+        return _active_toml_files(lang_dir)
+    for split in ("test", "train"):
+        split_dir = lang_dir / split
+        if split_dir.exists():
+            return _active_toml_files(split_dir)
+    return []
 
 
 def available_languages() -> dict[str, dict]:
@@ -31,7 +43,11 @@ def available_languages() -> dict[str, dict]:
     return {
         lang.name: {"number of samples": len(_active_template_files(lang))}
         for lang in sorted(_DATA_ROOT.iterdir())
-        if lang.is_dir() and (lang / "symbolic").exists() and not (lang / "ignore").exists()
+        if (
+            lang.is_dir()
+            and ((lang / "test").exists() or (lang / "train").exists())
+            and not (lang / "ignore").exists()
+        )
     }
 
 
@@ -60,12 +76,7 @@ def load_data(language: str = "eng", directory: str | Path | None = None) -> lis
         The loaded templates as AnnotatedQuestion objects.
     """
     if directory is not None:
-        lang_dir = Path(directory).parent if Path(directory).name == "symbolic" else Path(directory)
-        template_files = (
-            _active_template_files(lang_dir)
-            if (lang_dir / "symbolic").exists()
-            else list(Path(directory).glob("*.toml"))
-        )
+        template_files = _active_template_files(Path(directory))
     else:
         template_files = _active_template_files(_DATA_ROOT / language)
     return [AnnotatedQuestion.from_toml(f) for f in template_files]

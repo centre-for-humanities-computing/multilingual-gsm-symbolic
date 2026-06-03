@@ -1,0 +1,55 @@
+question = "Jesse and Mia are competing in a week long race. They have one week to run 30 miles. On the first three days Jesse averages (2/3) of a mile. On day four she runs 10 miles. Mia averages 3 miles a day over the first 4 days. What is the average of their average that they have to run over the final three days?"
+
+answer = """
+Jesse runs 2 miles in the first three days because 3 x (2/3) = <<3*(2/3)=2>>2
+Jesse has 18 miles left to run because 30 - 10 - 2 = <<30-10-2=18>>18
+Jesse has to run an average of 6 miles a day because 18 / 3 = <<18/3=6>>6
+Mia runs 12 miles over the first four days because 4 x 3 = <<4*3=12>>12
+She has 18 miles left to run because 30 - 12 = <<30-12=18>>18
+She has to run six miles a day because 18 / 3 = <<18/3=6>>6
+The total they both have to run is <<12=12>>12 miles a day
+The average they have to run per day on average is 6 miles because 12 / 2 = <<12/2=6>>6
+#### 6"""
+
+id_orig = 67
+
+id_shuffled = 67
+
+question_annotated = """
+Jesse and Mia are competing in a week long race. They have one week to run {T,30} miles. On the first three days Jesse averages ({p,2}/{q,3}) of a mile. On day four she runs {day4,10} miles. Mia averages {m,3} miles a day over the first 4 days. What is the average of their average that they have to run over the final three days?
+
+#init:
+- $T = range(25, 66)
+- $day4 = range(6, 26)
+- $q = range(2, 7)
+- $p = range(1, 6)
+- $m = range(1, 6)
+
+#conditions:
+- p < q
+- divides(3*p, q)
+- day4 < T
+- T - day4 - (3*p//q) > 0
+- T - 4*m > 0
+- divides(T - day4 - (3*p//q), 3)
+- divides(T - 4*m, 3)
+- ((T - day4 - (3*p//q))//3 + (T - 4*m)//3) % 2 == 0
+
+#answer: ((T - day4 - (3*p//q))//3 + (T - 4*m)//3)//2
+"""
+
+answer_annotated = """
+Jesse runs {3*p//q} miles in the first three days because 3 x ({p}/{q}) = <<3*({p}/{q})={3*p//q}>>{3*p//q}
+Jesse has {T - day4 - (3*p//q)} miles left to run because {T} - {day4} - {3*p//q} = <<{T}-{day4}-{3*p//q}={T-day4-(3*p//q)}>>{T-day4-(3*p//q)}
+Jesse has to run an average of {(T - day4 - (3*p//q))//3} miles a day because {T - day4 - (3*p//q)} / 3 = <<{T-day4-(3*p//q)}/3={(T - day4 - (3*p//q))//3}>>{(T - day4 - (3*p//q))//3}
+Mia runs {4*m} miles over the first four days because 4 x {m} = <<4*{m}={4*m}>>{4*m}
+She has {T - 4*m} miles left to run because {T} - {4*m} = <<{T}-{4*m}={T-4*m}>>{T-4*m}
+She has to run {(T - 4*m)//3} miles a day because {T - 4*m} / 3 = <<{T-4*m}/3={(T - 4*m)//3}>>{(T - 4*m)//3}
+The total they both have to run is <<{((T - day4 - (3*p//q))//3 + (T - 4*m)//3)}={((T - day4 - (3*p//q))//3 + (T - 4*m)//3)}>>{((T - day4 - (3*p//q))//3 + (T - 4*m)//3)} miles a day
+The average they have to run per day on average is {((T - day4 - (3*p//q))//3 + (T - 4*m)//3)//2} miles because {((T - day4 - (3*p//q))//3 + (T - 4*m)//3)} / 2 = <<{((T - day4 - (3*p//q))//3 + (T - 4*m)//3)}/2={((T - day4 - (3*p//q))//3 + (T - 4*m)//3)//2}>>{((T - day4 - (3*p//q))//3 + (T - 4*m)//3)//2}
+#### {((T - day4 - (3*p//q))//3 + (T - 4*m)//3)//2}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"

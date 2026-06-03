@@ -1,0 +1,44 @@
+question = "Noah is a painter. He paints pictures and sells them at the park. He charges $60 for a large painting and $30 for a small painting. Last month he sold eight large paintings and four small paintings. If he sold twice as much this month, how much is his sales for this month?"
+
+answer = """
+Noah earned $60/large painting x 8 large paintings = $<<60*8=480>>480 for the large paintings.
+He also earned $30/small painting x 4 small paintings = $<<30*4=120>>120 for the small paintings.
+His total sales last month were $480 + $120 = $<<480+120=600>>600.
+So, his sales this month are $600 x 2 = $<<600*2=1200>>1200.
+#### 1200
+"""
+
+id_orig = 31
+
+id_shuffled = 31
+
+question_annotated = """
+{name,Noah} is a painter. He paints pictures and sells them at the park. He charges ${large_price,60} for a large painting and ${small_price,30} for a small painting. Last month he sold {large_count_txt,eight} large paintings and {small_count_txt,four} small paintings. If he sold {mult_txt,twice} as much this month, how much is his sales for this month?
+#init:
+- name = "Noah"
+- $large_price = range(20, 101, 10)
+- $small_price = range(10, 81, 10)
+- large_count_txt, $large_count = range_str(2, 16, 1, numbers)
+- small_count_txt, $small_count = range_str(2, 16, 1, numbers)
+- mult_txt, $mult_val = sample([("twice", 2), ("three times", 3), ("four times", 4), ("five times", 5)])
+
+#conditions:
+- large_price > small_price
+- mult_val >= 2
+
+#answer: (large_price * large_count + small_price * small_count) * mult_val
+"""
+
+answer_annotated = """
+{name} earned ${large_price}/large painting x {large_count} large paintings = $<<{large_price}*{large_count}={large_price*large_count}>>{large_price*large_count} for the large paintings.
+He also earned ${small_price}/small painting x {small_count} small paintings = $<<{small_price}*{small_count}={small_price*small_count}>>{small_price*small_count} for the small paintings.
+His total sales last month were {large_price*large_count} + {small_price*small_count} = $<<{large_price*large_count}+{small_price*small_count}={(large_price*large_count)+(small_price*small_count)}>>{(large_price*large_count)+(small_price*small_count)}.
+So, his sales this month are ${(large_price*large_count)+(small_price*small_count)} x {mult_val} = $<<{((large_price*large_count)+(small_price*small_count))}*{mult_val}={((large_price*large_count)+(small_price*small_count))*mult_val}>>{((large_price*large_count)+(small_price*small_count))*mult_val}.
+#### {((large_price*large_count)+(small_price*small_count))*mult_val}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"
+
+ignore = true  # failed after 3 attempts: name 'mult_val' is not defined

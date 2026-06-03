@@ -1,0 +1,45 @@
+question = "A Statistics student wants to find out the average daily allowance of the middle school students. According to his survey, 2/3 of the students receive an average of $6 allowance per day while the rest gets an average of $4 a day. If he surveyed 60 students, what is the total amount of money those 60 students get in a day?"
+
+answer = """
+There are 60 students x 2/3 = <<60*2/3=40>>40 students who have a $6 daily allowance.
+While there are 60 students - 40 students = <<60-40=20>>20 students who have a $4 daily allowance.
+The sum of the allowances of the 40 students who received $6 daily is 40 students x $6/day = $<<40*6=240>>240.
+The sum of the allowances of the 20 students who received $4 daily is 20 students x $4/day = $<<20*4=80>>80.
+The total daily amount of money of those 60 students is $240 + $80 = $<<240+80=320>>320.
+#### 320
+"""
+
+id_orig = 58
+
+id_shuffled = 58
+
+question_annotated = """
+A Statistics student wants to find out the average daily allowance of the middle school students. According to his survey, {num,2}/{den,3} of the students receive an average of ${allow1,6} allowance per day while the rest gets an average of ${allow2,4} a day. If he surveyed {n_total,60} students, what is the total amount of money those {n_total,60} students get in a day?
+
+#init:
+- $n_total = range(30, 180, 3)
+- $num = range(1, 5)
+- $den = range(2, 6)
+- $allow1 = range(3, 11)
+- $allow2 = range(1, 10)
+
+#conditions:
+- num < den
+- allow1 > allow2
+- divides(n_total * num, den)
+
+#answer: (n_total * num // den) * allow1 + (n_total - (n_total * num // den)) * allow2
+"""
+
+answer_annotated = """
+There are {n_total} students x {num}/{den} = <<{n_total}*{num}/{den}={n_total*num//den}>>{n_total*num//den} students who have a ${allow1} daily allowance.
+While there are {n_total} students - {n_total*num//den} students = <<{n_total}-{n_total*num//den}={n_total-(n_total*num//den)}>>{n_total-(n_total*num//den)} students who have a ${allow2} daily allowance.
+The sum of the allowances of the {n_total*num//den} students who received ${allow1} daily is {n_total*num//den} students x ${allow1}/day = $<<{n_total*num//den}*{allow1}={(n_total*num//den)*allow1}>>{(n_total*num//den)*allow1}.
+The sum of the allowances of the {n_total-(n_total*num//den)} students who received ${allow2} daily is {n_total-(n_total*num//den)} students x ${allow2}/day = $<<{n_total-(n_total*num//den)}*{allow2}={(n_total-(n_total*num//den))*allow2}>>{(n_total-(n_total*num//den))*allow2}.
+The total daily amount of money of those {n_total} students is ${((n_total*num//den)*allow1)} + ${((n_total-(n_total*num//den))*allow2)} = $<<{((n_total*num//den)*allow1)}+{((n_total-(n_total*num//den))*allow2)}={(n_total*num//den)*allow1 + (n_total-(n_total*num//den))*allow2}>>{(n_total*num//den)*allow1 + (n_total-(n_total*num//den))*allow2}.
+#### {(n_total*num//den)*allow1 + (n_total-(n_total*num//den))*allow2}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"

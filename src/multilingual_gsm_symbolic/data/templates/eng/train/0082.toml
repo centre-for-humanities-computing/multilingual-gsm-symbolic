@@ -1,0 +1,38 @@
+question = "Irene earns $500 if she works for 40 hours a week and gets an extra $20 for every hour of overtime. If she worked 50 hours last week, calculate her total income."
+
+answer = """If Irene worked 50 hours last week, the total number of hours counting as overtime is 50-40 = <<50-40=10>>10 hours.
+Since she's given $20 for every hour of overtime, she earned 10*$20 = $<<10*20=200>>200 in overtime.
+Her total income, including the overtime, is $500+$200= $<<500+200=700>>700
+#### 700"""
+
+id_orig = 82
+
+id_shuffled = 82
+
+question_annotated = """
+{name,Irene} earns {cur,$}{base_pay,500} if she works for {base_hours,40} hours a week and gets an extra {cur,$}{ot_rate,20} for every hour of overtime. If she worked {hours_worked,50} hours last week, calculate her total income?
+
+#init:
+- name = sample(["Irene", "Maya", "Chloe", "Natalie", "Grace"])
+- cur = sample(currencies_sym)
+- $base_pay = range(300, 1051, 50)
+- $base_hours = range(30, 61, 5)
+- $ot_rate = range(5, 51, 5)
+- $hours_worked = range(35, 101, 5)
+
+#conditions:
+- hours_worked > base_hours
+
+#answer: base_pay + (hours_worked - base_hours) * ot_rate
+"""
+
+answer_annotated = """
+If {name} worked {hours_worked} hours last week, the total number of hours counting as overtime is {hours_worked}-{base_hours} = <<{hours_worked}-{base_hours}={hours_worked-base_hours}>>{hours_worked-base_hours} hours.
+Since she's given {cur}{ot_rate} for every hour of overtime, she earned {(hours_worked-base_hours)}*{cur}{ot_rate} = {cur}<<{(hours_worked-base_hours)}*{ot_rate}={(hours_worked-base_hours)*ot_rate}>>{(hours_worked-base_hours)*ot_rate} in overtime.
+Her total income, including the overtime, is {cur}{base_pay}+{cur}{(hours_worked-base_hours)*ot_rate}= {cur}<<{base_pay}+{(hours_worked-base_hours)*ot_rate}={base_pay+(hours_worked-base_hours)*ot_rate}>>{base_pay+(hours_worked-base_hours)*ot_rate}
+#### {base_pay+(hours_worked-base_hours)*ot_rate}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"

@@ -1,0 +1,40 @@
+question = "Peter goes to the store to buy a soda. The soda costs $.25 an ounce. He brought $2 with him and leaves with $.50. How many ounces of soda did he buy?"
+
+answer = """
+He spend $1.5 on soda because 2 - .5 = <<2-.5=1.5>>1.5
+He bought 6 ounces of soda because 1.5 / .25 = <<6=6>>6
+#### 6
+"""
+
+id_orig = 86
+
+id_shuffled = 86
+
+question_annotated = """
+{name,Peter} goes to the store to buy a soda. The soda costs ${price_txt,.25} an ounce. He brought ${start_dollars,2} with him and leaves with ${end_txt_long,.50}. How many ounces of soda did {name} buy?
+
+#init:
+- name = sample(names_male)
+- price_txt, $price_cents = sample([(".10",10), (".15",15), (".20",20), (".25",25), (".30",30), (".40",40), (".50",50)])
+- $start_dollars = range(2, 20)
+- end_txt_long, end_txt_short, $end_cents = sample([(".10",".1",10), (".15",".15",15), (".20",".2",20), (".25",".25",25), (".50",".5",50), (".75",".75",75)])
+
+#conditions:
+- start_dollars * 100 > end_cents
+- divides(start_dollars * 100 - end_cents, price_cents)
+- (start_dollars * 100 - end_cents) / price_cents <= 200
+
+#answer: (start_dollars * 100 - end_cents) // price_cents
+"""
+
+answer_annotated = """
+He spend ${(start_dollars * 100 - end_cents) / 100} on soda because {start_dollars} - {end_txt_short} = <<{start_dollars}-{end_txt_short}={(start_dollars * 100 - end_cents) / 100}>>{(start_dollars * 100 - end_cents) / 100}
+He bought {(start_dollars * 100 - end_cents) // price_cents} ounces of soda because {(start_dollars * 100 - end_cents) / 100} / {price_txt} = <<{(start_dollars * 100 - end_cents) // price_cents}={(start_dollars * 100 - end_cents) // price_cents}>>{(start_dollars * 100 - end_cents) // price_cents}
+#### {(start_dollars * 100 - end_cents) // price_cents}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"
+
+ignore = true  # failed after 3 attempts: question_annotated has bare question placeholder missing a default value: {name}; include a default value like {name,default} or remove the placeholder.

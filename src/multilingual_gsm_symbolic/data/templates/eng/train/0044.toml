@@ -1,0 +1,46 @@
+question = "James is a first-year student at a University in Chicago. He has a budget of $1000 per semester. He spends 30% of his money on food, 15% on accommodation, 25% on entertainment, and the rest on coursework materials. How much money does he spend on coursework materials?"
+
+answer = """
+Accommodation is 15% * $1000=$<<15*.01*1000=150>>150
+Food is          30% * $1000=$<<30*.01*1000=300>>300
+Entertainment is   25% * $1000=$<<25*.01*1000=250>>250
+Coursework materials are thus $1000-($150+$300+$250) = $300
+#### 300
+"""
+
+id_orig = 44
+
+id_shuffled = 44
+
+question_annotated = """
+{name,James} is a first-year student at a {school,University} in {city,Chicago}. He has a budget of ${budget,1000} per semester. He spends {food_pct,30}% of his money on food, {accommodation_pct,15}% on accommodation, {entertainment_pct,25}% on entertainment, and the rest on coursework materials. How much money does he spend on coursework materials?
+
+#init:
+- name = "James"
+- school = "University"
+- city = "Chicago"
+- $budget = range(100, 5001, 100)
+- $food_pct = range(10, 61)
+- $accommodation_pct = range(5, 41)
+- $entertainment_pct = range(5, 41)
+
+#conditions:
+- divides(budget, 100)
+- food_pct + accommodation_pct + entertainment_pct < 100
+
+#answer: (budget - (accommodation_pct*budget//100 + food_pct*budget//100 + entertainment_pct*budget//100))
+"""
+
+answer_annotated = """
+Accommodation is {accommodation_pct}% * ${budget}=${<<accommodation_pct*budget//100={accommodation_pct*budget//100}>>{accommodation_pct*budget//100}
+Food is          {food_pct}% * ${budget}=${<<food_pct*budget//100={food_pct*budget//100}>>{food_pct*budget//100}
+Entertainment is   {entertainment_pct}% * ${budget}=${<<entertainment_pct*budget//100={entertainment_pct*budget//100}>>{entertainment_pct*budget//100}
+Coursework materials are thus ${budget}-(${accommodation_pct*budget//100}+${food_pct*budget//100}+${entertainment_pct*budget//100}) = ${budget-(accommodation_pct*budget//100+food_pct*budget//100+entertainment_pct*budget//100)}
+#### {budget-(accommodation_pct*budget//100+food_pct*budget//100+entertainment_pct*budget//100)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"
+
+ignore = true  # failed after 3 attempts: invalid syntax (<unknown>, line 1)

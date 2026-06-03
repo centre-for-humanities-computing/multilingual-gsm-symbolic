@@ -1,0 +1,38 @@
+question = "Alexis is applying for a new job and bought a new set of business clothes to wear to the interview. She went to a department store with a budget of $200 and spent $30 on a button-up shirt, $46 on suit pants, $38 on a suit coat, $11 on socks, and $18 on a belt. She also purchased a pair of shoes, but lost the receipt for them. She has $16 left from her budget. How much did Alexis pay for the shoes?"
+
+answer = "Let S be the amount Alexis paid for the shoes.\nShe spent S + 30 + 46 + 38 + 11 + 18 = S + <<+30+46+38+11+18=143>>143.\nShe used all but $16 of her budget, so S + 143 = 200 - 16 = 184.\nThus, Alexis paid S = 184 - 143 = $<<184-143=41>>41 for the shoes.\n#### 41"
+
+id_orig = 8
+
+id_shuffled = 8
+
+question_annotated = """
+{name,Alexis} is applying for a new job and bought a new set of business clothes to wear to the interview. She went to a department store with a budget of ${budget,200} and spent ${shirt,30} on a button-up shirt, ${pants,46} on suit pants, ${coat,38} on a suit coat, ${socks,11} on socks, and ${belt,18} on a belt. She also purchased a pair of shoes, but lost the receipt for them. She has ${left,16} left from her budget. How much did {name,Alexis} pay for the shoes?
+
+#init:
+- name = sample(["Alexis"])
+- $budget = range(200,201)
+- $left = range(16,17)
+- $shirt = sample([20,25,30,35,40])
+- $pants = sample([35,40,45,46,50,55])
+- $coat = sample([20,25,30,38,40,45])
+- $socks = sample([5,8,10,11,12,15])
+- $belt = sample([10,12,15,18,20])
+
+#conditions:
+- budget - left - (shirt + pants + coat + socks + belt) > 0
+
+#answer: budget - left - (shirt + pants + coat + socks + belt)
+"""
+
+answer_annotated = """
+Let S be the amount {name} paid for the shoes.
+She spent S + {shirt} + {pants} + {coat} + {socks} + {belt} = S + <<+{shirt}+{pants}+{coat}+{socks}+{belt}={shirt+pants+coat+socks+belt}>>{shirt+pants+coat+socks+belt}.
+She used all but ${left} of her budget, so S + {shirt+pants+coat+socks+belt} = {budget} - {left} = {budget-left}.
+Thus, {name} paid S = {budget-left} - {shirt+pants+coat+socks+belt} = $<<{budget-left}-{shirt+pants+coat+socks+belt}={budget-left-(shirt+pants+coat+socks+belt)}>>{budget-left-(shirt+pants+coat+socks+belt)} for the shoes.
+#### {budget-left-(shirt+pants+coat+socks+belt)}
+"""
+
+creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+
+language = "eng"
