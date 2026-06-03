@@ -1,0 +1,52 @@
+question = "Cole hid 3 dozen eggs in the yard for the Easter egg hunt. Lamar finds 5 eggs. Stacy finds twice as many as Lamar. Charlie finds 2 less than Stacy, and Mei finds half as many as Charlie. How many eggs are still hidden in the yard?"
+
+answer = """
+Cole hides 3*12 = <<3*12=36>>36 eggs.
+Lamar finds 5 eggs.
+Stacy finds 5*2 = <<5*2=10>>10 eggs.
+Charlie finds 10 - 2 = <<10-2=8>>8 eggs.
+Mei finds 8*1/2=<<8*1/2=4>>4 eggs.
+The children find a total of 5 + 10 + 8 + 4 = <<5+10+8+4=27>>27 eggs.
+The total number of hidden eggs still in the yard is 36 - 27 = <<36-27=9>>9 eggs.
+#### 9
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,Cole} hid {n,3} dozen eggs in the yard for the Easter egg hunt. {name2,Lamar} finds {x,5} eggs. {name3,Stacy} finds {mult1_txt,twice} as many as {name2,Lamar}. {name4,Charlie} finds {y,2} less than {name3,Stacy}, and {name5,Mei} finds {frac_txt,half} as many as {name4,Charlie}. How many eggs are still hidden in the yard?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} hides {n}*12 = <<{n}*12={n*12}>>{n*12} eggs.
+{name2} finds {x} eggs.
+{name3} finds {x}*{mult1_val} = <<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} eggs.
+{name4} finds {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} eggs.
+{name5} finds {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} eggs.
+The children find a total of {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} eggs.
+The total number of hidden eggs still in the yard is {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} eggs.
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

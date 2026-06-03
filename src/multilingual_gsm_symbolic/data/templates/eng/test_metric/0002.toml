@@ -1,0 +1,41 @@
+question = "Jerry is rolling a six-sided die. How much more likely is it (expressed as percentage points) that he rolls a number greater than 3 than that he rolls two even numbers in a row?"
+
+answer = """
+There are 3 numbers greater than 3 on the dice, so the chances of rolling one of them are 3/6=50%.
+The chance of rolling one even number is 50%, so the chance of rolling two in a row is 50% * 50% = 25%.
+The difference between these two probabilities is 50% - 25% = 25%.
+#### 25
+"""
+
+id_orig = 184
+
+id_shuffled = 2
+
+question_annotated = """
+{name,Jerry} is rolling a {sides_txt,six-sided} die. How much more likely is it (expressed as percentage points) that he rolls a number greater than {target,3} than that he rolls two {z,even} numbers in a row?
+
+#init:
+- name=sample(names_male)
+- sides_txt, sides_val = sample([("4-sided", 4), ("six-sided", 6), ("8-sided", 8), ("10-sided", 10), ("12-sided", 12), ("14-sided", 14), ("16-sided", 16), ("18-sided", 18), ("20-sided", 20), ("22-sided", 22), ("24-sided", 24), ("26-sided", 26), ("28-sided", 28), ("30-sided", 30), ("32-sided", 32), ("34-sided", 34), ("36-sided", 36), ("38-sided", 38), ("40-sided", 40), ("42-sided", 42), ("44-sided", 44), ("46-sided", 46), ("48-sided", 48), ("50-sided", 50), ("52-sided", 52), ("54-sided", 54), ("56-sided", 56), ("58-sided", 58), ("60-sided", 60), ("62-sided", 62), ("64-sided", 64), ("66-sided", 66), ("68-sided", 68), ("70-sided", 70), ("72-sided", 72), ("74-sided", 74), ("76-sided", 76), ("78-sided", 78), ("80-sided", 80), ("82-sided", 82), ("84-sided", 84), ("86-sided", 86), ("88-sided", 88), ("90-sided", 90), ("92-sided", 92), ("94-sided", 94), ("96-sided", 96), ("98-sided", 98), ("100-sided", 100)])
+- $target = range(1, 100)
+- z = sample(["even", "odd"])
+
+#conditions: 
+- target < sides_val
+- divides(sides_val-target, target)
+- is_int((sides_val-target)/sides_val * 100)
+-  int((sides_val-target)/sides_val * 100) > 25
+
+#answer: int((sides_val-target)/sides_val * 100) - 25
+"""
+
+answer_annotated = """
+There are {sides_val-target} numbers greater than {target} on the dice, so the chances of rolling one of them are {sides_val-target}/{sides_val}={int((sides_val-target)/sides_val * 100)}%.
+The chance of rolling one {z} number is 50%, so the chance of rolling two in a row is 50% * 50% = 25%.
+The difference between these two probabilities is {int((sides_val-target)/sides_val * 100)}% - 25% = { int((sides_val-target)/sides_val * 100) - 25}%.
+#### { int((sides_val-target)/sides_val * 100) - 25}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"
