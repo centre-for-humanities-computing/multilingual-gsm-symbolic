@@ -44,9 +44,7 @@ def available_languages() -> dict[str, dict]:
         lang.name: {"number of samples": len(_active_template_files(lang))}
         for lang in sorted(_DATA_ROOT.iterdir())
         if (
-            lang.is_dir()
-            and ((lang / "test").exists() or (lang / "train").exists())
-            and not (lang / "ignore").exists()
+            lang.is_dir() and ((lang / "test").exists() or (lang / "train").exists()) and not (lang / "ignore").exists()
         )
     }
 

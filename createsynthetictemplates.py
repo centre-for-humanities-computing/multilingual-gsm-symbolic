@@ -184,7 +184,14 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> str:
         return response.output_text
 
     print(f"Error generating questions after {MAX_TEMPLATE_ATTEMPTS} attempts: {last_error}")
-    return response.output_text + "\n\n" + "ignore = true  # failed after " + str(MAX_TEMPLATE_ATTEMPTS) + " attempts: " + str(last_error)
+    return (
+        response.output_text
+        + "\n\n"
+        + "ignore = true  # failed after "
+        + str(MAX_TEMPLATE_ATTEMPTS)
+        + " attempts: "
+        + str(last_error)
+    )
 
 
 gsm8k_train = load_dataset(GSM8K_DATASET, GSM8K_CONFIG, split=GSM8K_SPLIT)
