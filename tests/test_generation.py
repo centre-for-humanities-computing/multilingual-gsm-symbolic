@@ -235,6 +235,23 @@ def test_example_30_floating_point_answer_is_clean_integer():
     assert final_str == "99", f"Expected clean integer '99' but got {final_str!r}; full answer:\n{questions[0].answer}"
 
 
+def test_example_80_uses_ensure_int_for_integral_float_answer():
+    """Regression: 10.45 / 0.55 can evaluate to 18.999999999999996."""
+
+    template_path = (
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0080.toml"
+    )
+    template = AnnotatedQuestion.from_toml(template_path)
+    questions = template.generate_questions(
+        n=1,
+        fixed={"price1": 30, "price2": 55, "total": 20, "n1": 1, "p": 5},
+        verbose=False,
+    )
+    assert len(questions) == 1
+    final_str = questions[0].answer.split("####")[-1].strip()
+    assert final_str == "34", f"Expected clean integer '34' but got {final_str!r}; full answer:\n{questions[0].answer}"
+
+
 @pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
 def test_example_40_never_produces_negative_answer():
     """Regression: example 40 had a condition/answer formula mismatch that allowed
