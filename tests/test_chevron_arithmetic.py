@@ -18,7 +18,7 @@ import re
 import pytest
 from conftest import get_template_files
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 _RE_CHEVRON = re.compile(r"<<([^>]+)>>")
 _RE_PURE_ARITHMETIC = re.compile(r"^[\d+\-*/().\s]+$")
