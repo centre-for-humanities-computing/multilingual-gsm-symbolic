@@ -71,18 +71,18 @@ def load_replacements(language: str = "eng") -> dict:
         return json.load(f)
 
 
-def load_data(language: str = "eng", directory: str | Path | None = None) -> list[AnnotatedQuestion]:
+def load_data(language: str = "eng", split: str = "test") -> list[AnnotatedQuestion]:
     """Load symbolic templates.
 
     Args:
         language: Language code, e.g. "eng" (default).
-        directory: Override the bundled data; load templates from this path instead.
+        split: The data split to load "test", "train" or "both".
 
     Returns:
         The loaded templates as AnnotatedQuestion objects.
     """
-    if directory is not None:
-        template_files = _active_template_files(Path(directory))
+    if split is not None and split != "both":
+        template_files = _active_template_files(_DATA_ROOT / language / split)
     else:
         template_files = _active_template_files(_DATA_ROOT / language)
     return [AnnotatedQuestion.from_toml(f) for f in template_files]

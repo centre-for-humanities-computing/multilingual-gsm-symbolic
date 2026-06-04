@@ -251,11 +251,11 @@ print(available_languages())
 # {'eng': {'number of samples': 192, 'test': 100, 'train': 7500}, 'dan': {'number of samples': 100, 'test': 100, 'train': 0}, ...}
 
 # example creation strategy:
-templates = load_data("dan")
+templates = load_data("eng", "test")
 templates[0].creation
 # machine-translated from English, localized and validated by humans, computationally validated
 
-templates = load_data("isl")
+templates = load_data("isl", "test")
 templates[0].creation
 # machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated
 ```
