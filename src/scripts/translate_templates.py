@@ -25,7 +25,7 @@ from pathlib import Path
 import tomli_w
 from openai import OpenAI
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
