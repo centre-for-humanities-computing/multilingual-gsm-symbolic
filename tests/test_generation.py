@@ -324,6 +324,17 @@ def test_example_19_uses_ensure_int_for_integral_float_answer():
     assert value == 42
 
 
+def test_example_10_uses_ensure_int_for_integral_float_answer():
+    """Regression: 0.58 * 50 can evaluate to 28.999999999999996."""
+
+    env = build_eval_context(
+        Random(0),
+        {"frac1": 0.60, "frac2": 0.58, "t": 10, "total": 60},
+    )
+    value = eval_node(parse_expr("ensure_int(frac1 * t) + ensure_int(frac2*(total-t))"), env)
+    assert value == 35
+
+
 @pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
 def test_example_40_never_produces_negative_answer():
     """Regression: example 40 had a condition/answer formula mismatch that allowed
