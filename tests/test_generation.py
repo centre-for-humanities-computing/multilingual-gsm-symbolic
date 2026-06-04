@@ -308,6 +308,22 @@ def test_example_27_uses_ensure_int_for_integral_float_answer():
     assert value == 190
 
 
+def test_example_19_uses_ensure_int_for_integral_float_answer():
+    """Regression: 60 * 0.45 * (1/3) can evaluate to 8.999999999999998."""
+
+    from fractions import Fraction
+
+    env = build_eval_context(
+        Random(0),
+        {"n": 60, "p1": 55, "r1": 100, "frac_txt": "one-third", "frac_val": Fraction(1, 3)},
+    )
+    value = eval_node(
+        parse_expr("ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)"),
+        env,
+    )
+    assert value == 42
+
+
 @pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
 def test_example_40_never_produces_negative_answer():
     """Regression: example 40 had a condition/answer formula mismatch that allowed
