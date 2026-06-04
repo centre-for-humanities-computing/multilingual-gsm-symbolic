@@ -233,7 +233,7 @@ from multilingual_gsm_symbolic import available_languages
 
 # see possible languages
 print(available_languages())
-# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
+# {'eng': {'number of samples': 192, 'test': 100, 'train': 7500}, 'dan': {'number of samples': 100, 'test': 100, 'train': 0}, ...}
 ```
 
 And 
@@ -248,7 +248,7 @@ from multilingual_gsm_symbolic import load_data, available_languages
 
 # see possible languages
 print(available_languages())
-# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
+# {'eng': {'number of samples': 192, 'test': 100, 'train': 7500}, 'dan': {'number of samples': 100, 'test': 100, 'train': 0}, ...}
 
 # example creation strategy:
 templates = load_data("dan")

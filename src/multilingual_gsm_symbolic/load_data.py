@@ -27,11 +27,12 @@ def _active_template_files(lang_dir: Path) -> list[Path]:
     lang_dir = Path(lang_dir)
     if list(lang_dir.glob("*.toml")):
         return _active_toml_files(lang_dir)
+    pathlist: list[Path] = []
     for split in ("test", "train"):
         split_dir = lang_dir / split
         if split_dir.exists():
-            return _active_toml_files(split_dir)
-    return []
+            pathlist.extend(_active_toml_files(split_dir))
+    return pathlist
 
 
 def available_languages() -> dict[str, dict]:
@@ -40,8 +41,15 @@ def available_languages() -> dict[str, dict]:
     Returns:
         Mapping of language code to metadata (e.g., {'dan': {'number of samples': 100}}).
     """
+
     return {
-        lang.name: {"number of samples": len(_active_template_files(lang))}
+        lang.name: {
+            "number of samples": len(_active_template_files(lang)),
+            **{
+                "test": len(_active_toml_files(Path(lang) / "test")) or 0,
+                "train": len(_active_toml_files(Path(lang) / "train")) or 0,
+            },
+        }
         for lang in sorted(_DATA_ROOT.iterdir())
         if (
             lang.is_dir() and ((lang / "test").exists() or (lang / "train").exists()) and not (lang / "ignore").exists()
