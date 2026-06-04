@@ -4,7 +4,13 @@ from random import Random
 import pytest
 from conftest import get_lightly_constrained_template_files, get_unconstrained_template_files
 
-from multilingual_gsm_symbolic._helpers import build_eval_context, eval_node, parse_expr, range_possibilities_str, range_str
+from multilingual_gsm_symbolic._helpers import (
+    build_eval_context,
+    eval_node,
+    parse_expr,
+    range_possibilities_str,
+    range_str,
+)
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion, Question
 
 

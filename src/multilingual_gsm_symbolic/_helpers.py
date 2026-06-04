@@ -156,11 +156,13 @@ def _make_arange_sample(rng: Random):
 
     return arange_sample
 
+
 def ensure_int(value: Any) -> int:
     """Convert a value to int if it's a float representing an integer, else return an error"""
     if is_int(value):
         return round(value)
     raise ValueError(f"Value {value} cannot be converted to int.")
+
 
 def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, Any]:
     """Build an eval context with rng-bound sampling functions."""
