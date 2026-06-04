@@ -4,7 +4,8 @@ from random import Random
 import pytest
 from conftest import get_lightly_constrained_template_files, get_unconstrained_template_files
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion, Question
+from multilingual_gsm_symbolic._helpers import range_possibilities_str, range_str
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion, Question
 
 
 def _multi_var_constrained_template() -> AnnotatedQuestion:
@@ -54,7 +55,6 @@ def test_range_str_tuple_order_matches_range_possibilities_str():
     Bug: range_possibilities_str returned (numbers[i-1], i) while range_str returned (i, numbers[i-1]).
     Templates like `d_val, d_txt = range_str(...)` rely on the first element being the int.
     """
-    from multilingual_gsm_symbolic.gsm_parser import range_possibilities_str, range_str
 
     numbers = ["en", "to", "tre", "fire", "fem"]
     possibilities = range_possibilities_str(1, 6, 1, numbers)
@@ -257,3 +257,26 @@ def test_multiple_questions_are_not_all_identical():
     questions = t.generate_questions(n=20, seed=0, verbose=False)
     unique = {(q.question, q.answer) for q in questions}
     assert len(unique) > 1, "All 20 generated questions were identical"
+
+
+def test_number_agreement_derived_variable():
+    """Regression for issue #15: a word form that must agree with a sampled number
+    requires a derived init variable.
+
+    'coin_word = plural(n, "coin", "coins")' is a derived variable: its RHS references
+    another init variable (n), so it is evaluated after n is assigned. Before the fix it
+    was classified as unconstrained and evaluated without 'n' in scope, raising
+    NameError: name 'n' is not defined.
+
+    This is the English analogue of the Ukrainian case where a noun/verb form depends on the
+    grammatical number (e.g. 1 рік / 2 роки / 5 років).
+    """
+    template = AnnotatedQuestion.from_toml(
+        pathlib.Path(__file__).parent / "test_templates" / "eng_number_agreement.toml"
+    )
+    # n == 1 must produce the singular form, n > 1 the plural form.
+    singular = template.generate_questions(n=1, fixed={"n": 1}, verbose=False)[0]
+    assert "1 coin." in singular.question and "1 coins" not in singular.question
+
+    plural_q = template.generate_questions(n=1, fixed={"n": 5}, verbose=False)[0]
+    assert "5 coins" in plural_q.question

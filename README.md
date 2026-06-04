@@ -191,7 +191,7 @@ Distance = speed × time = {speed} × {hours} = {speed * hours} miles.
 Save it as a `.toml` file and load it directly:
 
 ```python
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 template = AnnotatedQuestion.from_toml("my_template.toml")
 questions = template.generate_questions(n=5)
