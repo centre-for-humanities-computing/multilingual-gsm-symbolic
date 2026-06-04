@@ -297,6 +297,13 @@ def test_example_58_uses_ensure_int_for_integral_float_answer():
     assert value == 1960
 
 
+
+    env = build_eval_context(
+        Random(0),
+        {"n": 50, "p": 5, "d": 4},
+    )
+    value = eval_node(parse_expr("ensure_int(d * (n * (100 - p) / 100))"), env)
+    assert value == 190
 @pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
 def test_example_40_never_produces_negative_answer():
     """Regression: example 40 had a condition/answer formula mismatch that allowed
