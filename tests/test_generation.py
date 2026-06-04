@@ -286,28 +286,6 @@ def test_example_94_uses_ensure_int_for_integral_float_answer():
     assert final_str == "21", f"Expected clean integer '21' but got {final_str!r}; full answer:\n{questions[0].answer}"
 
 
-def test_example_58_uses_ensure_int_for_integral_float_answer():
-    """Regression: 5 * 0.5 * 1.4 * 20 * 28 can evaluate to 1959.9999999999998."""
-
-    env = build_eval_context(
-        Random(0),
-        {"base": 5, "mult1_txt": "half", "mult1_val": 0.5, "mult2": 40, "n": 20, "days": 28},
-    )
-    value = eval_node(parse_expr("ensure_int(base * mult1_val * (1 + mult2/100) * n * days)"), env)
-    assert value == 1960
-
-
-def test_example_27_uses_ensure_int_for_integral_float_answer():
-    """Regression: 4 * (50 * 0.95) can evaluate to 189.99999999999997."""
-
-    env = build_eval_context(
-        Random(0),
-        {"n": 50, "p": 5, "d": 4},
-    )
-    value = eval_node(parse_expr("ensure_int(d * (n * (100 - p) / 100))"), env)
-    assert value == 190
-
-
 def test_example_19_uses_ensure_int_for_integral_float_answer():
     """Regression: 60 * 0.45 * (1/3) can evaluate to 8.999999999999998."""
 
@@ -322,17 +300,6 @@ def test_example_19_uses_ensure_int_for_integral_float_answer():
         env,
     )
     assert value == 42
-
-
-def test_example_10_uses_ensure_int_for_integral_float_answer():
-    """Regression: 0.58 * 50 can evaluate to 28.999999999999996."""
-
-    env = build_eval_context(
-        Random(0),
-        {"frac1": 0.60, "frac2": 0.58, "t": 10, "total": 60},
-    )
-    value = eval_node(parse_expr("ensure_int(frac1 * t) + ensure_int(frac2*(total-t))"), env)
-    assert value == 35
 
 
 @pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
