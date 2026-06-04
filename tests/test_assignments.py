@@ -1,13 +1,13 @@
 import pytest
 from conftest import get_template_files
 
-from multilingual_gsm_symbolic.gsm_parser import (
+from multilingual_gsm_symbolic._helpers import (
     EVAL_CONTEXT_HELPERS,
-    AnnotatedQuestion,
     try_parse_float,
     try_parse_fraction,
 )
 from multilingual_gsm_symbolic.load_data import load_replacements
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 
 class TestGetAllPossibleAssignments:

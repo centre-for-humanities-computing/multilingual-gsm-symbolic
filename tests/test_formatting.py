@@ -1,8 +1,9 @@
 import pytest
 from conftest import get_template_files
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion, arange_possibilities
+from multilingual_gsm_symbolic._helpers import arange_possibilities
 from multilingual_gsm_symbolic.load_data import load_replacements
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 
 @pytest.mark.parametrize("template_file", get_template_files())

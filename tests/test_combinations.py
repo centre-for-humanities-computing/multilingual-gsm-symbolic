@@ -3,13 +3,13 @@ from pathlib import Path
 
 import pytest
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
 from multilingual_gsm_symbolic.load_data import (
     _DATA_ROOT,
     _active_template_files,
     available_languages,
     load_replacements,
 )
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 
 def test_get_combinations_deduplicates_numeric_solutions():
