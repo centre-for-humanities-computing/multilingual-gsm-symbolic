@@ -4,7 +4,7 @@ from random import Random
 import pytest
 from conftest import get_lightly_constrained_template_files, get_unconstrained_template_files
 
-from multilingual_gsm_symbolic._helpers import range_possibilities_str, range_str
+from multilingual_gsm_symbolic._helpers import build_eval_context, eval_node, parse_expr, range_possibilities_str, range_str
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion, Question
 
 
@@ -284,6 +284,17 @@ def test_example_94_uses_ensure_int_for_integral_float_answer():
     assert len(questions) == 1
     final_str = questions[0].answer.split("####")[-1].strip()
     assert final_str == "21", f"Expected clean integer '21' but got {final_str!r}; full answer:\n{questions[0].answer}"
+
+
+def test_example_58_uses_ensure_int_for_integral_float_answer():
+    """Regression: 5 * 0.5 * 1.4 * 20 * 28 can evaluate to 1959.9999999999998."""
+
+    env = build_eval_context(
+        Random(0),
+        {"base": 5, "mult1_txt": "half", "mult1_val": 0.5, "mult2": 40, "n": 20, "days": 28},
+    )
+    value = eval_node(parse_expr("ensure_int(base * mult1_val * (1 + mult2/100) * n * days)"), env)
+    assert value == 1960
 
 
 @pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
