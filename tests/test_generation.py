@@ -242,7 +242,7 @@ def test_example_30_floating_point_answer_is_clean_integer():
 
 
 def test_example_80_uses_ensure_int_for_integral_float_answer():
-    """Regression: 10.45 / 0.55 can evaluate to 18.999999999999996."""
+    """Regression PR #26: 10.45 / 0.55 can evaluate to 18.999999999999996."""
 
     template_path = (
         pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0080.toml"
@@ -259,7 +259,7 @@ def test_example_80_uses_ensure_int_for_integral_float_answer():
 
 
 def test_example_84_uses_ensure_int_for_integral_float_answer():
-    """Regression: 50 * 1.8 * 0.7 can evaluate to 62.99999999999999."""
+    """Regression PR #26: 50 * 1.8 * 0.7 can evaluate to 62.99999999999999."""
 
     template_path = (
         pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0084.toml"
@@ -276,7 +276,7 @@ def test_example_84_uses_ensure_int_for_integral_float_answer():
 
 
 def test_example_94_uses_ensure_int_for_integral_float_answer():
-    """Regression: 360 * 0.35 * 0.5 * (1/3) can evaluate to 20.999999999999996."""
+    """Regression PR #26: 360 * 0.35 * 0.5 * (1/3) can evaluate to 20.999999999999996."""
 
     template_path = (
         pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0094.toml"
@@ -293,7 +293,7 @@ def test_example_94_uses_ensure_int_for_integral_float_answer():
 
 
 def test_example_19_uses_ensure_int_for_integral_float_answer():
-    """Regression: 60 * 0.45 * (1/3) can evaluate to 8.999999999999998."""
+    """Regression PR #26: 60 * 0.45 * (1/3) can evaluate to 8.999999999999998."""
 
     from fractions import Fraction
 
