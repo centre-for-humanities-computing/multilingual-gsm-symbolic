@@ -2,7 +2,7 @@ import pytest
 from conftest import get_template_files
 
 from multilingual_gsm_symbolic._helpers import arange_possibilities
-from multilingual_gsm_symbolic.load_data import load_replacements, _DATA_ROOT
+from multilingual_gsm_symbolic.load_data import _DATA_ROOT, load_replacements
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 
