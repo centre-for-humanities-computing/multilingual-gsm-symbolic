@@ -353,3 +353,20 @@ def test_number_agreement_derived_variable():
 
     plural_q = template.generate_questions(n=1, fixed={"n": 5}, verbose=False)[0]
     assert "5 coins" in plural_q.question
+
+
+def test_nested_tuple_unpacking():
+    """Regression for issue #27: tuple unpacking on the LHS of an init line.
+
+    `(num, word) = sample([["1", "one"], ["2", "two"]])` pairs two forms of the same
+    value. Before the fix the LHS parser split on commas without stripping parentheses,
+    yielding mangled names like '(num' and 'word)', so the sampled pair was never
+    unpacked and the placeholders were left unrendered.
+    """
+    template = AnnotatedQuestion.from_toml(
+        pathlib.Path(__file__).parent / "test_templates" / "eng_nested_tuple_unpacking.toml"
+    )
+    for question in template.generate_questions(n=20, seed=0, verbose=False):
+        # No placeholder may be left unrendered, and num/word must stay paired.
+        assert "{" not in question.question, f"Unrendered placeholder in: {question.question!r}"
+        assert "1 is written as one" in question.question or "2 is written as two" in question.question
