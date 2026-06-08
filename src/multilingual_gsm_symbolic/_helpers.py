@@ -156,7 +156,6 @@ def _make_arange_sample(rng: Random):
 
     return arange_sample
 
-
 # Ukrainian specific
 def ukr_month_form_on_number(num):
     num = abs(num)
@@ -197,6 +196,13 @@ def ukr_plural_measurements(number, *forms):
 def to_title(text):
     return text.title()
 
+def ensure_int(value: Any) -> int:
+    """Convert a value to int if it's a float representing an integer, else return an error"""
+    if is_int(value):
+        return round(value)
+    raise ValueError(f"Value {value} cannot be converted to int.")
+
+
 def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, Any]:
     """Build an eval context with rng-bound sampling functions."""
     return {
@@ -215,7 +221,8 @@ def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, A
         "range_str": _make_range_str(rng),
         "arange": _make_arange_sample(rng),
         "Fraction": frac_format,
-        "plural": ukr_plural,
+        "plural": plural,
+        "ensure_int": ensure_int,
         "ukr_month_form_on_number": ukr_month_form_on_number,
         "ukr_plural_measurements": ukr_plural_measurements,
         "to_title": to_title,
@@ -298,8 +305,8 @@ def sample_sequential_possibilities(items: list, n: int) -> list[list]:
 def strip_elements(lst: list[str]) -> list[str]:
     return [s.strip() for s in lst]
 
-# Ukrainian specific
-def ukr_plural(n: float, *forms: str) -> str:
+
+def plural(n: float, *forms: str) -> str:
     """Select the grammatical form that agrees with the number ``n``.
 
     Pass the forms positionally; the number of forms selects the rule:
@@ -326,11 +333,8 @@ def ukr_plural(n: float, *forms: str) -> str:
             return one
         if m % 10 in (2, 3, 4) and m % 100 not in (12, 13, 14):
             return few
-        if m % 10 == 0 or m % 10 == 5:
-            return one
         return many
     raise ValueError(f"plural() expects 2 (singular/plural) or 3 (one/few/many) forms, got {len(forms)}")
-
 
 
 # Non-random helpers shared by both eval contexts and combination enumeration.
@@ -344,8 +348,7 @@ _BASE_HELPERS: dict[str, Any] = {
     "len": len,
     "list": list,
     "Fraction": frac_format,
-    "plural": ukr_plural,
-    "ukr_plural_measurements": ukr_plural_measurements
+    "plural": plural,
 }
 
 # Legacy alias used by condition evaluation and answer formatting (no sampling needed there).
@@ -368,8 +371,7 @@ COMBINATION_HELPERS: dict[str, Any] = {
     "is_int": is_int,
     "divides": divides,
     "Fraction": frac_format,
-    "plural": ukr_plural,
-    "ukr_plural_measurements": ukr_plural_measurements
+    "plural": plural,
 }
 
 # Pre-compiled regex patterns used in hot paths

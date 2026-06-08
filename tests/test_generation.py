@@ -4,7 +4,13 @@ from random import Random
 import pytest
 from conftest import get_lightly_constrained_template_files, get_unconstrained_template_files
 
-from multilingual_gsm_symbolic._helpers import range_possibilities_str, range_str
+from multilingual_gsm_symbolic._helpers import (
+    build_eval_context,
+    eval_node,
+    parse_expr,
+    range_possibilities_str,
+    range_str,
+)
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion, Question
 
 
@@ -235,6 +241,73 @@ def test_example_30_floating_point_answer_is_clean_integer():
     assert final_str == "99", f"Expected clean integer '99' but got {final_str!r}; full answer:\n{questions[0].answer}"
 
 
+def test_example_80_uses_ensure_int_for_integral_float_answer():
+    """Regression PR #26: 10.45 / 0.55 can evaluate to 18.999999999999996."""
+
+    template_path = (
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0080.toml"
+    )
+    template = AnnotatedQuestion.from_toml(template_path)
+    questions = template.generate_questions(
+        n=1,
+        fixed={"price1": 30, "price2": 55, "total": 20, "n1": 1, "p": 5},
+        verbose=False,
+    )
+    assert len(questions) == 1
+    final_str = questions[0].answer.split("####")[-1].strip()
+    assert final_str == "34", f"Expected clean integer '34' but got {final_str!r}; full answer:\n{questions[0].answer}"
+
+
+def test_example_84_uses_ensure_int_for_integral_float_answer():
+    """Regression PR #26: 50 * 1.8 * 0.7 can evaluate to 62.99999999999999."""
+
+    template_path = (
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0084.toml"
+    )
+    template = AnnotatedQuestion.from_toml(template_path)
+    questions = template.generate_questions(
+        n=1,
+        fixed={"n": 5, "p": 10, "r1": 80, "r2": 30},
+        verbose=False,
+    )
+    assert len(questions) == 1
+    final_str = questions[0].answer.split("####")[-1].strip()
+    assert final_str == "63", f"Expected clean integer '63' but got {final_str!r}; full answer:\n{questions[0].answer}"
+
+
+def test_example_94_uses_ensure_int_for_integral_float_answer():
+    """Regression PR #26: 360 * 0.35 * 0.5 * (1/3) can evaluate to 20.999999999999996."""
+
+    template_path = (
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0094.toml"
+    )
+    template = AnnotatedQuestion.from_toml(template_path)
+    questions = template.generate_questions(
+        n=1,
+        fixed={"n": 360, "p1": 35, "p2": 50, "frac_txt": "one third", "frac_val": "1/3"},
+        verbose=False,
+    )
+    assert len(questions) == 1
+    final_str = questions[0].answer.split("####")[-1].strip()
+    assert final_str == "21", f"Expected clean integer '21' but got {final_str!r}; full answer:\n{questions[0].answer}"
+
+
+def test_example_19_uses_ensure_int_for_integral_float_answer():
+    """Regression PR #26: 60 * 0.45 * (1/3) can evaluate to 8.999999999999998."""
+
+    from fractions import Fraction
+
+    env = build_eval_context(
+        Random(0),
+        {"n": 60, "p1": 55, "r1": 100, "frac_txt": "one-third", "frac_val": Fraction(1, 3)},
+    )
+    value = eval_node(
+        parse_expr("ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)"),
+        env,
+    )
+    assert value == 42
+
+
 @pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
 def test_example_40_never_produces_negative_answer():
     """Regression: example 40 had a condition/answer formula mismatch that allowed
@@ -280,3 +353,20 @@ def test_number_agreement_derived_variable():
 
     plural_q = template.generate_questions(n=1, fixed={"n": 5}, verbose=False)[0]
     assert "5 coins" in plural_q.question
+
+
+def test_nested_tuple_unpacking():
+    """Regression for issue #27: tuple unpacking on the LHS of an init line.
+
+    `(num, word) = sample([["1", "one"], ["2", "two"]])` pairs two forms of the same
+    value. Before the fix the LHS parser split on commas without stripping parentheses,
+    yielding mangled names like '(num' and 'word)', so the sampled pair was never
+    unpacked and the placeholders were left unrendered.
+    """
+    template = AnnotatedQuestion.from_toml(
+        pathlib.Path(__file__).parent / "test_templates" / "eng_nested_tuple_unpacking.toml"
+    )
+    for question in template.generate_questions(n=20, seed=0, verbose=False):
+        # No placeholder may be left unrendered, and num/word must stay paired.
+        assert "{" not in question.question, f"Unrendered placeholder in: {question.question!r}"
+        assert "1 is written as one" in question.question or "2 is written as two" in question.question

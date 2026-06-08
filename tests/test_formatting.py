@@ -2,7 +2,7 @@ import pytest
 from conftest import get_template_files
 
 from multilingual_gsm_symbolic._helpers import arange_possibilities
-from multilingual_gsm_symbolic.load_data import load_replacements
+from multilingual_gsm_symbolic.load_data import _DATA_ROOT, load_replacements
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 
@@ -93,3 +93,18 @@ def test_format_question_arange_variable_no_noise():
     for q in questions:
         assert "1.7999" not in q.question, f"Floating-point noise in question: {q.question}"
         assert "1.7999" not in q.answer, f"Floating-point noise in answer: {q.answer}"
+
+
+def test_eng_test_metric_uses_only_metric_replacement_lists():
+    replacements = load_replacements("eng")
+    non_metric_keys = sorted(key for key in replacements if f"{key}_metric" in replacements)
+    test_metric_dir = _DATA_ROOT / "eng" / "test_metric"
+
+    violations: list[str] = []
+    for template_file in sorted(test_metric_dir.glob("*.toml")):
+        content = template_file.read_text(encoding="utf-8")
+        for key in non_metric_keys:
+            if key in content:
+                violations.append(f"{template_file.name}: found non-metric replacement list '{key}'")
+
+    assert not violations, "eng/test_metric templates must only use metric replacement lists:\n" + "\n".join(violations)

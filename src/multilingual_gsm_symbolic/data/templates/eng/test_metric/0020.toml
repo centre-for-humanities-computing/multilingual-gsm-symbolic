@@ -1,0 +1,37 @@
+question = "John picks 4 bananas on Wednesday. Then he picks 6 bananas on Thursday. On Friday, he picks three times the number of bananas he did on Wednesday. How many bananas does John have?"
+
+answer = """
+Combining Wednesday and Thursday, John has 4 bananas + 6 bananas = <<4+6=10>>10 bananas.
+On Friday, he picks 3*4 bananas = <<3*4=12>>12 bananas.
+Altogether, John has 10 bananas + 12 bananas = <<10+12=22>>22 bananas.
+#### 22
+"""
+
+id_orig = 1020
+
+id_shuffled = 20
+
+question_annotated = """
+{name,John} picks {n1,4} {fruit,banana}s on {d1,Wednesday}. Then he picks {n2,6} {fruit,banana}s on {d2,Thursday}. On {d3,Friday}, he picks {mult_txt,three} times the number of {fruit,banana}s he did on {d1,Wednesday}. How many {fruit,banana}s does {name,John} have?
+
+#init:
+- name = sample(names_male)
+- d1, d2, d3 = sample_sequential(weekdays, 3)
+- fruit = sample(fruits)
+- $n1 = range(30, 400)
+- $n2 = range(50, 400)
+- mult_txt, mult_val = range_str(2,6,1,numbers)
+
+#answer: n1 + n2 + mult_val * n1
+"""
+
+answer_annotated = """
+Combining {d1} and {d2}, {name} has {n1} {fruit}s + {n2} {fruit}s = <<{n1}+{n2}={n1+n2}>>{n1+n2} {fruit}s.
+On {d3}, he picks {mult_val}*{n1} {fruit}s = <<{mult_val}*{n1}={mult_val*n1}>>{mult_val*n1} {fruit}s.
+Altogether, {name} has {n1+n2} {fruit}s + {mult_val*n1} {fruit}s = <<{n1+n2}+{n1*mult_val}={n1 + n2 + mult_val * n1}>>{n1 + n2 + mult_val * n1} {fruit}s.
+#### {n1 + n2 + mult_val * n1}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

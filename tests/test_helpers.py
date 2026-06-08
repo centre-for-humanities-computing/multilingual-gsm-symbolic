@@ -2,7 +2,7 @@
 
 import pytest
 
-from multilingual_gsm_symbolic._helpers import plural
+from multilingual_gsm_symbolic._helpers import ensure_int, plural
 
 
 @pytest.mark.parametrize(
@@ -30,3 +30,12 @@ def test_plural_two_forms_english(n, expected):
 )
 def test_plural_three_forms_east_slavic(n, expected):
     assert plural(n, "рік", "роки", "років") == expected
+
+
+def test_ensure_int_accepts_float_near_integer():
+    assert ensure_int(4.999999999999999) == 5
+
+
+def test_ensure_int_rejects_non_integer_float():
+    with pytest.raises(ValueError):
+        ensure_int(4.5)
