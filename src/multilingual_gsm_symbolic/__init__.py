@@ -1,6 +1,6 @@
 from importlib.metadata import version
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion, Question
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion, Question
 
 __version__: str = version("multilingual-gsm-symbolic")
 from multilingual_gsm_symbolic.load_data import (

@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
 from multilingual_gsm_symbolic.load_data import _DATA_ROOT, _active_template_files, available_languages
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 
 def get_template_files() -> list[Path]:
