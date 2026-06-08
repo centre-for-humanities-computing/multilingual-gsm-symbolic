@@ -30,6 +30,7 @@ from multilingual_gsm_symbolic._helpers import (
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class Question:
     """Dataclass holding a single generated problem.
