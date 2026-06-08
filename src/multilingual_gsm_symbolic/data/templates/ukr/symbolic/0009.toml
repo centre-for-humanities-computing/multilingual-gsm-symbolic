@@ -6,25 +6,30 @@ answer = """Нехай T — кількість стрибучих м’ячик
 """
 id_orig = 930
 id_shuffled = 9
-question_annotated = """Коли {navn, Софія} доглядає за своїм {familie,племінником}, вона дістає для нього кілька іграшок. У пакеті з будівельними кубиками є {x,31} кубик. У кошику з м’якими іграшками всередині {y,8} м’яких іграшок. На пірамідці з кільцями є {z,9} різнокольорових кілець. {navn, Софія} нещодавно купила тубус зі стрибучими м’ячиками, і тепер загальна кількість іграшок для її {familie,племінник}а становить {total,62}. Скільки стрибучих м’ячиків було в тубусі?
+question_annotated = """Коли {navn, Софія} доглядає за своїм {familie,племінником}, вона дістає для нього кілька іграшок. У пакеті з кубиками є {x,31} {cube_form, кубик}. У кошику з м’якими іграшками всередині {y,8} м’яких {toy_form, іграшок}. На пірамідці з кільцями є {z,9} різнокольорових {ring_form, кілець}. {navn, Софія} нещодавно купила набір зі стрибучими м’ячиками, і тепер загальна кількість іграшок для її {familie,племінник}а становить {total,62}. Скільки стрибучих м’ячиків було в наборі?
 
 #init:
 - navn = sample(names_female)
-- familie = sample(["племінник", "двоюрідний брат", "брат"])
+- familie = sample(["племінником", "двоюрідний братом", "братом"])
 - $x = range(31, 75)
 - $y = range(8, 50)
 - $z = range(9, 35)
 - $total = range(60, 250)
+- cube_form = ukr_plural_measurements(x, "кубик", "кубики", "кубиків")
+- toy_form = ukr_plural_measurements(y, "іграшка", "іграшки", "іграшок")
+- ring_form = ukr_plural_measurements(z, "кільце", "кільця", "кілець")
+- total_toy_form = ukr_plural_measurements(total, "іграшка", "іграшки", "іграшок")
+- total_balls_form = ukr_plural_measurements(total, "мʼячик", "мʼячики", "мʼячиків")
 
 #conditions:
 - (total-(x+y+z)) > 0
 
 #answer: (total-(x+y+z))
 """
-answer_annotated = """Нехай T — кількість стрибучих м’ячиків у тубусі.
-Після купівлі тубуса з м’ячиками {navn} має {x} + {y} + {z} + T = {x+y+z} + T = {total} іграшки для свого {familie}а.
-Отже, T = {total} - {x+y+z} = <<{total}-{x+y+z}={(total-(x+y+z))}>>{(total-(x+y+z))} стрибучих м’ячиків було в тубусі.
+answer_annotated = """Нехай T — кількість стрибучих м’ячиків у наборі.
+Після купівлі тубуса з м’ячиками {navn} має {x} + {y} + {z} + T = {x+y+z} + T = {total} {total_toy_form} для свого {familie}а.
+Отже, T = {total} - {x+y+z} = <<{total}-{x+y+z}={(total-(x+y+z))}>>{(total-(x+y+z))} стрибучих {total_balls_form} було в наборі.
 #### {(total-(x+y+z))}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

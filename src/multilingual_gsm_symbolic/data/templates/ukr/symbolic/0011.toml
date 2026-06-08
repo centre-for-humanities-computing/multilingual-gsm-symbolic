@@ -8,11 +8,11 @@ answer = """Великі кубики використали 12 грамів в�
 """
 id_orig = 737
 id_shuffled = 11
-question_annotated = """{name, Петро} хоче зробити кубики льоду різного розміру, використавши {n,32} {unit,грами} води. Він може зробити великі кубики льоду, на кожен з яких потрібно {w1,4} {unit,грами}, середні кубики льоду, на кожен з яких потрібно {w2,2} {unit,грами}, і маленькі кубики льоду, на кожен з яких потрібно {w3,1/2} {unit,грами}. Якщо він зробить {n1,3} великі кубики льоду, {n2,7} середніх кубиків льоду і {n3,8} маленьких кубиків льоду, скільки {unit,грамів} води в нього залишиться?
+question_annotated = """{name, Петро} хоче зробити кубики льоду різного розміру, використавши {n,32} {n_unit,грами} води. Він може зробити великі кубики льоду, на кожен з яких потрібно {w1,4} {w1_unit,грами}, середні кубики льоду, на кожен з яких потрібно {w2,2} {w2_unit,грами}, і маленькі кубики льоду, на кожен з яких потрібно {w3,1/2} {unit_plural_1,грами}. Якщо він зробить {n1,3} великі кубики льоду, {n2,7} середніх кубиків льоду і {n3,8} маленьких кубиків льоду, скільки {unit_plural_2,грамів} води в нього залишиться?
 
 #init:
 - name = sample(names_male)
-- unit = sample(weights_sm)
+- unit, unit_plural_1, unit_plural_2 = sample(weights_med)
 - $w1 = range(4, 10)
 - $w2 = range(2, 10)
 - $w3 = sample(fractions)
@@ -20,6 +20,15 @@ question_annotated = """{name, Петро} хоче зробити кубики 
 - $n2 = range(7, 13)
 - $n3 = sample([8, 14, 24, 15])
 - $n = range(32, 240, 4)
+- n_unit = ukr_plural_measurements(n, unit, unit_plural_1, unit_plural_2)
+- w1_unit = ukr_plural_measurements(w1, unit, unit_plural_1, unit_plural_2)
+- w2_unit = ukr_plural_measurements(w2, unit, unit_plural_1, unit_plural_2)
+- n1_val_w1_unit = ukr_plural_measurements(n1*w1, unit, unit_plural_1, unit_plural_2)
+- n2_val_w2_unit = ukr_plural_measurements(n2*w2, unit, unit_plural_1, unit_plural_2)
+- n3_val_w3_unit = ukr_plural_measurements(int(w3*n3), unit, unit_plural_1, unit_plural_2)
+- usage_unit = ukr_plural_measurements(int(n3*w3+n2*w2+n1*w1), unit, unit_plural_1, unit_plural_2)
+- left_unit = ukr_plural_measurements((n - (n1*w1) - (n2*w2) - int(n3*w3)), unit, unit_plural_1, unit_plural_2)
+
 
 #conditions:
 - w3 < w2 < w1
@@ -28,12 +37,12 @@ question_annotated = """{name, Петро} хоче зробити кубики 
 
 #answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))
 """
-answer_annotated = """Великі кубики використали {n1*w1} {unit} води, тому що {n1} помножити на {w1} дорівнює <<{n1}*{w1}={n1*w1}>>{n1*w1}.
-Середні кубики використали {n2*w2} {unit} води, тому що {n2} помножити на {w2} дорівнює <<{n2}*{w2}={n2*w2}>>{n2*w2}.
-Маленькі кубики використали {int(w3*n3)} {unit} води, тому що {n3} помножити на {w3} дорівнює {int(n3*w3)}.
-Це означає, що {name} використав {int(n3*w3+n2*w2+n1*w1)} {unit} води, тому що {n1*w1} плюс {n2*w2} плюс {int(w3*n3)} дорівнює {int(n3*w3+n2*w2+n1*w1)}.
-У Петра залишилося {(n - (n1*w1) - (n2*w2) - int(n3*w3))} {unit} води, тому що {n} мінус {int(n3*w3+n2*w2+n1*w1)} дорівнює <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{(n - (n1*w1) - (n2*w2) - int(n3*w3))}.
+answer_annotated = """Великі кубики використали {n1*w1} {n1_val_w1_unit} води, тому що {n1} помножити на {w1} дорівнює <<{n1}*{w1}={n1*w1}>>{n1*w1}.
+Середні кубики використали {n2*w2} {n2_val_w2_unit} води, тому що {n2} помножити на {w2} дорівнює <<{n2}*{w2}={n2*w2}>>{n2*w2}.
+Маленькі кубики використали {int(w3*n3)} {n3_val_w3_unit} води, тому що {n3} помножити на {w3} дорівнює {int(n3*w3)}.
+Це означає, що {name} використав {int(n3*w3+n2*w2+n1*w1)} {usage_unit} води, тому що {n1*w1} плюс {n2*w2} плюс {int(w3*n3)} дорівнює {int(n3*w3+n2*w2+n1*w1)}.
+Залишилося {(n - (n1*w1) - (n2*w2) - int(n3*w3))} {left_unit} води, тому що {n} мінус {int(n3*w3+n2*w2+n1*w1)} дорівнює <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{(n - (n1*w1) - (n2*w2) - int(n3*w3))}.
 #### {(n - (n1*w1) - (n2*w2) - int(n3*w3))}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

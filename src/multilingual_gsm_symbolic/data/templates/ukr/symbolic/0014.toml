@@ -5,14 +5,19 @@ answer = """Яків і Єнс доходять до бібліотеки, ма�
 """
 id_orig = 684
 id_shuffled = 14
-question_annotated = """{n1,Яків} і {n2,Єнс} мають {t,30} хвилин, щоб разом дійти до {loc1,школи}. Їм потрібно {t1,6} хвилин, щоб дійти до рогу, де розташована {loc2,бібліотека}. Потім їм потрібно ще {t2,13} хвилин, щоб дійти до {loc3, пожежної станції}. Скільки часу в них залишилося, щоб дістатися до {loc1,школи} й не запізнитися?
+question_annotated = """{n1,Яків} і {n2,Єнс} мають {t,30} {t_min_form, хвилин}, щоб разом дійти до {loc1,школи}. Їм потрібно {t1,6} {t1_min_form, хвилин}, щоб дійти до рогу, де розташована {loc2_reg,бібліотека}. Потім їм потрібно ще {t2,13} {t2_min_form, хвилин}, щоб дійти до {loc3, пожежної станції}. Скільки часу в них залишилося, щоб дістатися до {loc1,школи} й не запізнитися?
 
 #init:
 - n1, n2 = sample(names, 2)
-- loc1, loc2, loc3 = sample(['школа', 'торговий центр', 'бібліотека', 'парк', 'фітнес-центр', 'банк', 'пожежна станція'], 3)
+- (loc1, loc1_reg), (loc2, loc2_reg), (loc3, loc3_reg) = sample([['школи', 'школа'], ['торгового центру', 'торговий центр'], ['бібліотеки','бібліотека'], ['парку', 'парк'], ['фітнес-центру', 'фітнес-центр'], ['банку', 'банк']], 3)
 - $t1 = range(6, 30)
 - $t2 = range(10, 70)
 - $t = range(30, 140)
+- t_min_form = ukr_plural_measurements(t, "хвилина", "хвилини", "хвилин")
+- t1_min_form = ukr_plural_measurements(t1, "хвилина", "хвилини", "хвилин")
+- t2_min_form = ukr_plural_measurements(t2, "хвилина", "хвилини", "хвилин")
+- t1t2_min_form = ukr_plural_measurements(t-t1, "хвилина", "хвилини", "хвилин")
+- tt1t2_min_form = ukr_plural_measurements(t-t1-t2, "хвилина", "хвилини", "хвилин")
 
 #conditions:
 - not divides(t1, 5)
@@ -22,9 +27,9 @@ question_annotated = """{n1,Яків} і {n2,Єнс} мають {t,30} хвил�
 
 #answer: t - t1 - t2
 """
-answer_annotated = """{n1} і {n2} доходять до {loc2}, маючи {t} - {t1} = <<{t}-{t1}={t-t1}>>{t-t1} хвилини, щоб дістатися до {loc3}.
-Потім вони доходять до {loc3} й мають {t-t1} - {t2} = <<{t-t1}-{t2}={t-t1-t2}>>{t-t1-t2} хвилин, щоб дістатися до {loc1} й не запізнитися.
+answer_annotated = """{n1} і {n2} доходять до {loc2}, маючи {t} - {t1} = <<{t}-{t1}={t-t1}>>{t-t1} {t1t2_min_form}, щоб дістатися до {loc3}.
+Потім вони доходять до {loc3} й мають {t-t1} - {t2} = <<{t-t1}-{t2}={t-t1-t2}>>{t-t1-t2} {tt1t2_min_form}, щоб дістатися до {loc1} й не запізнитися.
 #### {t-t1-t2}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

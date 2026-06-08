@@ -157,6 +157,46 @@ def _make_arange_sample(rng: Random):
     return arange_sample
 
 
+# Ukrainian specific
+def ukr_month_form_on_number(num):
+    num = abs(num)
+
+    if 11 <= num % 100 <= 14:
+        return "місяців"
+
+    last_digit = num % 10
+
+    if last_digit == 1:
+        return "місяць"
+    elif last_digit in (2, 3, 4):
+        return "місяці"
+    else:
+        return "місяців"
+
+def ukr_plural_measurements(number, *forms):
+    """
+    forms = [singular, paucal, plural]
+    Example:
+        ["кілограм", "кілограми", "кілограмів"]
+    """
+    number = abs(int(number))
+
+    if 11 <= number % 100 <= 14:
+        return forms[2]
+
+    last_digit = number % 10
+
+    if last_digit == 1:
+        return forms[0]
+    elif last_digit in (2, 3, 4):
+        return forms[1]
+    else:
+        return forms[2]
+
+
+def to_title(text):
+    return text.title()
+
 def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, Any]:
     """Build an eval context with rng-bound sampling functions."""
     return {
@@ -175,7 +215,10 @@ def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, A
         "range_str": _make_range_str(rng),
         "arange": _make_arange_sample(rng),
         "Fraction": frac_format,
-        "plural": plural,
+        "plural": ukr_plural,
+        "ukr_month_form_on_number": ukr_month_form_on_number,
+        "ukr_plural_measurements": ukr_plural_measurements,
+        "to_title": to_title,
         **replacements,
     }
 
@@ -255,8 +298,8 @@ def sample_sequential_possibilities(items: list, n: int) -> list[list]:
 def strip_elements(lst: list[str]) -> list[str]:
     return [s.strip() for s in lst]
 
-
-def plural(n: float, *forms: str) -> str:
+# Ukrainian specific
+def ukr_plural(n: float, *forms: str) -> str:
     """Select the grammatical form that agrees with the number ``n``.
 
     Pass the forms positionally; the number of forms selects the rule:
@@ -283,8 +326,11 @@ def plural(n: float, *forms: str) -> str:
             return one
         if m % 10 in (2, 3, 4) and m % 100 not in (12, 13, 14):
             return few
+        if m % 10 == 0 or m % 10 == 5:
+            return one
         return many
     raise ValueError(f"plural() expects 2 (singular/plural) or 3 (one/few/many) forms, got {len(forms)}")
+
 
 
 # Non-random helpers shared by both eval contexts and combination enumeration.
@@ -298,7 +344,8 @@ _BASE_HELPERS: dict[str, Any] = {
     "len": len,
     "list": list,
     "Fraction": frac_format,
-    "plural": plural,
+    "plural": ukr_plural,
+    "ukr_plural_measurements": ukr_plural_measurements
 }
 
 # Legacy alias used by condition evaluation and answer formatting (no sampling needed there).
@@ -321,7 +368,8 @@ COMBINATION_HELPERS: dict[str, Any] = {
     "is_int": is_int,
     "divides": divides,
     "Fraction": frac_format,
-    "plural": plural,
+    "plural": ukr_plural,
+    "ukr_plural_measurements": ukr_plural_measurements
 }
 
 # Pre-compiled regex patterns used in hot paths
