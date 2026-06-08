@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 _DATA_ROOT = Path(__file__).parent / "data" / "templates"
 
