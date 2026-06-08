@@ -18,14 +18,15 @@ from multilingual_gsm_symbolic._helpers import (
     EVAL_CONTEXT_HELPERS,
     RE_CURLY_EXPR,
     RE_TEMPLATE_VAR,
+    align_values_to_variables,
     build_eval_context,
     capitalize_sentences,
     eval_node,
     format_numbers_by_language,
     is_variable_mentioned,
     parse_expr,
+    parse_lhs_variables,
     parse_value,
-    strip_elements,
 )
 
 logger = logging.getLogger(__name__)
@@ -203,7 +204,7 @@ class AnnotatedQuestion:
             if "=" not in line:
                 continue
             variable_part, definition_part = line.split("=", 1)
-            variables = strip_elements(variable_part.strip("$").split(","))
+            variables = parse_lhs_variables(variable_part)
             result.append((variables, parse_expr(definition_part.strip())))
         return result
 
@@ -262,7 +263,7 @@ class AnnotatedQuestion:
         return assignments
 
     def _extract_variables_from_init_line(self, line: str) -> list[str]:
-        return strip_elements(line.split("=")[0].strip("- ").strip("$").split(","))
+        return parse_lhs_variables(line.split("=")[0].strip("- "))
 
     def _init_line_rhs_names(self, line: str) -> set[str]:
         """Return the names referenced on the right-hand side of an init line.
@@ -289,7 +290,7 @@ class AnnotatedQuestion:
         env = COMBINATION_HELPERS | replacements
         for line in init_lines:
             variable_part, definition_part = line.split("=", 1)
-            variables = strip_elements(variable_part.strip("$").split(","))
+            variables = parse_lhs_variables(variable_part)
             possible_values = eval_node(parse_expr(definition_part.strip()), env)
 
             key = ", ".join(variables)
@@ -300,7 +301,9 @@ class AnnotatedQuestion:
                     candidates = [c for c in candidates if c[var] == fixed[var]] or candidates
                 possible_assignments[key] = candidates
             elif isinstance(possible_values, list):
-                candidates = [dict(zip(variables, pos_val)) for pos_val in possible_values]
+                candidates = [
+                    dict(zip(variables, align_values_to_variables(variables, pos_val))) for pos_val in possible_values
+                ]
                 if fixed:
                     filtered = [c for c in candidates if all(c.get(k) == fixed[k] for k in fixed if k in c)]
                     candidates = filtered or candidates
@@ -421,7 +424,7 @@ class AnnotatedQuestion:
                 if fixed and var in fixed:
                     choices = [c for c in choices if c[var] == fixed[var]] or choices
             else:
-                choices = [dict(zip(variables, vals)) for vals in possible_values]
+                choices = [dict(zip(variables, align_values_to_variables(variables, vals))) for vals in possible_values]
                 if fixed:
                     filtered = [c for c in choices if all(c.get(k) == fixed[k] for k in fixed if k in c)]
                     choices = filtered or choices
@@ -544,9 +547,7 @@ class AnnotatedQuestion:
 
     def _assign_from_ast(self, variables: list[str], ast_node: ast.expr, env: dict[str, Any]) -> dict[str, Any]:
         """Evaluate one init-line expression against ``env`` and zip results to variables."""
-        values = eval_node(ast_node, env)
-        if not isinstance(values, (list, tuple)):
-            values = [values]
+        values = align_values_to_variables(variables, eval_node(ast_node, env))
         if len(values) != len(variables):
             logger.warning(f"Incompatible variables {variables} and values {values} in template {self.id_shuffled}.")
             return {}

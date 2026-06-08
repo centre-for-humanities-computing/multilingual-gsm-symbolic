@@ -1,0 +1,41 @@
+question = "Carol and Jennifer are sisters from Los Angeles who love collecting signatures from celebrities. During their summer break from school, the sisters spend every afternoon collecting signatures. After five weeks, Carol and Jennifer compare their autograph books, counting up the number of signatures each sister has collected. Carol has 20 signatures in her book, and Jennifer has 44. The sisters have three more weeks of summer break, and they decide they want to reach 100 signatures between them by the end of the break. How many signatures do the sisters need to collect to reach their goal?"
+
+answer = """
+Carol and Jennifer have already collected 20 + 44 signatures = <<20+44=64>>64 signatures.
+Since their goal is 100, they need to collect 100 - 64 signatures. 100 - 64 = <<100-64=36>>36 signatures
+#### 36
+"""
+
+id_orig = 677
+
+id_shuffled = 33
+
+question_annotated = """
+{name1,Carol} and {name2,Jennifer} are sisters from {city,Los Angeles} who love collecting signatures from {celebrity_type,celebrities}. During their {vacation_type,summer break} from school, the sisters spend every afternoon collecting signatures. After {n1_txt,five} weeks, {name1,Carol} and {name2,Jennifer} compare their autograph books, counting up the number of signatures each sister has collected. {name1,Carol} has {s1,20} signatures in her book, and {name2,Jennifer} has {s2,44}. The sisters have {n2_txt,three} more weeks of {vacation_type,summer break}, and they decide they want to reach {goal,100} signatures between them by the end of the break. How many signatures do the sisters need to collect to reach their goal?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- city = sample(cities)
+- celebrity_type = sample(["movie stars", "athletes", "musicians", "politicians", "authors"])
+- vacation_type = sample(["winter break", "spring break", "summer break", "fall break"])
+- n1_txt, n1_val = range_str(3, 8, 1, numbers)
+- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+- $s1 = range(15, 40)
+- $s2 = range(30, 60)
+- $goal = range(90, 150, 5)
+
+#conditions:
+- s1 + s2 < goal
+
+#answer: goal - (s1 + s2)
+"""
+
+answer_annotated = """
+{name1} and {name2} have already collected {s1} + {s2} signatures = <<{s1}+{s2}={s1+s2}>>{s1+s2} signatures.
+Since their goal is {goal}, they need to collect {goal} - {s1+s2} signatures. {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} signatures
+#### {goal-(s1+s2)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = "Garrett is popping popcorn for a snack. As the pan of kernels heats up, the kernels start popping faster. 20 pop in the first 30 seconds of cooking, then three times that amount in the next 30 seconds. The kernels increase to four times the initial popping rate in the next 30 seconds, but in the final 30 seconds, the popping slows down to half the rate as the past 30 seconds. After Garrett takes the pan off the heat, a quarter of the number of kernels that popped in the final 30 seconds of cooking also pop from the residual heat. How many pieces of popcorn does Garrett have to eat?"
+
+answer = """
+In the second 30 seconds of cooking, 3*20=<<3*20=60>>60 kernels pop.
+In the third 30 seconds, 4*20=<<4*20=80>>80 kernels pop.
+In the final 30 seconds, 80 / 2 = <<80/2=40>>40 kernels pop.
+After cooking, the residual heat makes 40 / 4 = <<40/4=10>>10 kernels pop.
+Thus, Garrett has 20 + 60 + 80 + 40 + 10 = <<20+60+80+40+10=210>>210 pieces of popcorn to eat.
+#### 210
+"""
+
+id_orig = 1264
+
+id_shuffled = 4
+
+question_annotated = """
+{name,Garrett} is popping popcorn for a snack. As the {p, pan} of kernels heats up, the kernels start popping faster. {n,20} pop in the first {s, 30} seconds of cooking, then {k_2_txt,three} times that amount in the next {s, 30} seconds. The kernels increase to {k_3_txt,four} times the initial popping rate in the next {s, 30} seconds, but in the final {s, 30} seconds, the popping slows down to half the rate as the past {s, 30} seconds. After {name,Garrett} takes the {p, pan} off the heat, a quarter of the number of kernels that popped in the final {s, 30} seconds of cooking also pop from the residual heat. How many pieces of popcorn does {name,Garrett} have to eat?
+
+
+#init:
+- name = sample(names)
+- p = sample(['pan', 'pot', 'skillet'])
+- $n = range(10, 101, 10)
+- $s = range(10, 31, 2)
+- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)
+- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)
+
+#conditions:
+- k_3_val > k_2_val
+- divides(k_3_val * n, 8)
+
+#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)
+"""
+
+answer_annotated = """
+In the second {s} seconds of cooking, {k_2_val}*{n}=<<{k_2_val}*{n}={k_2_val*n}>>{k_2_val*n} kernels pop.
+In the third {s} seconds, {k_3_val}*{n}=<<{k_3_val}*{n}={k_3_val * n}>>{k_3_val * n} kernels pop.
+In the final {s} seconds, {k_3_val * n} / 2 = <<{k_3_val*n}/2={k_3_val*n//2}>>{k_3_val*n//2} kernels pop.
+After cooking, the residual heat makes {k_3_val*n//2} / 4 = <<{k_3_val*n//2}/4={k_3_val*n//8}>>{k_3_val*n//8} kernels pop.
+Thus, {name} has {n} + {k_2_val * n} + {k_3_val * n} + {k_3_val * n // 2} + {k_3_val * n // 8} = <<{n}+{k_2_val * n}+{k_3_val * n}+{k_3_val * n // 2}+{k_3_val * n // 8}={n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)}>>{n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)} pieces of popcorn to eat.
+#### {n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

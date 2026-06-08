@@ -260,8 +260,49 @@ def sample_sequential_possibilities(items: list, n: int) -> list[list]:
     return [[items[(i + j) % len(items)] for j in range(n)] for i in range(len(items))]
 
 
-def strip_elements(lst: list[str]) -> list[str]:
-    return [s.strip() for s in lst]
+def parse_lhs_variables(variable_part: str) -> list[str]:
+    """Parse the variable names from the left-hand side of an init line.
+
+    Handles plain (``a, b``), ``$``-prefixed (``$a, $b``), and tuple-unpacking
+    (``(a, a_reg), (b, b_reg)``) forms, returning a flat list of clean names.
+
+    Args:
+        variable_part: The text to the left of ``=`` on an init line.
+
+    Returns:
+        The variable names, with parentheses, ``$`` markers, and surrounding
+        whitespace removed.
+    """
+    cleaned = variable_part.replace("(", "").replace(")", "").replace("$", "")
+    return [name.strip() for name in cleaned.split(",") if name.strip()]
+
+
+def align_values_to_variables(variables: list[str], values: Any) -> list:
+    """Align a sampled value sequence with a flat list of unpacking variables.
+
+    Tuple-unpacking init lines like ``(a, a_reg), (b, b_reg) = [[1, 2], [3, 4]]``
+    parse to four flat variables but only two nested value pairs. When the counts
+    disagree, flatten one level so the values zip element-wise with the variables.
+    A non-sequence value (or a string) is wrapped/kept intact rather than split.
+
+    Args:
+        variables: The flat list of variable names from the init-line LHS.
+        values: The evaluated right-hand side.
+
+    Returns:
+        A flat list of values; ``len`` equal to ``variables`` when the nesting matches.
+    """
+    if not isinstance(values, (list, tuple)):
+        return [values]
+    if len(values) == len(variables):
+        return list(values)
+    flat: list = []
+    for value in values:
+        if isinstance(value, (list, tuple)):
+            flat.extend(value)
+        else:
+            flat.append(value)
+    return flat
 
 
 def plural(n: float, *forms: str) -> str:

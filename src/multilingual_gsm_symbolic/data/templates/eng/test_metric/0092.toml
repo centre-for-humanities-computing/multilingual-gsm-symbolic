@@ -1,0 +1,47 @@
+question = "Prince Thaddeus slew 100 dragons with his mighty sword, while Prince Arthur, using a spear, slew three quarters as many dragons as Prince Thaddeus. Using a rusty iron axe, Prince Walter slew twice as many dragons as Prince Arthur. But Prince Bruce, having forgotten his sword at home, slew one fifth as many dragons as Prince Walter using a nail file. How many dragons has Prince Bruce slain?"
+
+answer = """
+Prince Arthur slew three quarters as many dragons as Prince Thaddeus, or 100*3/4=<<100*3/4=75>>75 dragons.
+Prince Walter slew twice as many dragons as Prince Arthur, or 2*75=<<2*75=150>>150 dragons.
+Prince Bruce slew one fifth as many dragons as Prince Walter, or 150*1/5=<<150*1/5=30>>30 dragons.
+#### 30
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+Prince {name1,Thaddeus} slew {n1,100} {creature,dragons} with his mighty {weapon1,sword}, while Prince {name2,Arthur}, using a {weapon2,spear}, slew {frac1_txt,three quarters} as many {creature,dragons} as Prince {name1,Thaddeus}. Using a {weapon3,rusty iron axe}, Prince {name3,Walter} slew {mult1_txt,twice} as many {creature,dragons} as Prince {name2,Arthur}. But Prince {name4,Bruce}, having forgotten his {weapon4,sword} at home, slew {frac2_txt,one fifth} as many {creature,dragons} as Prince {name3,Walter} using a {weapon5,nail file}. How many {creature,dragons} has Prince {name4,Bruce} slain?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["ogres", "trolls", "goblins", "orcs", "giants"])
+- weapon1 = sample(["sword", "mace", "battle axe", "war hammer"])
+- weapon2 = sample(["spear", "lance", "javelin", "halberd"])
+- weapon3 = sample(["rusty iron axe", "wooden club", "stone hammer", "bone dagger"])
+- weapon4 = sample(["sword", "axe", "mace", "hammer"])
+- weapon5 = sample(["nail file", "butter knife", "wooden spoon", "feather"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+Prince {name2} slew {frac1_txt} as many {creature} as Prince {name1}, or {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+Prince {name3} slew {mult1_txt} as many {creature} as Prince {name2}, or {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+Prince {name4} slew {frac2_txt} as many {creature} as Prince {name3}, or {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

@@ -1,0 +1,48 @@
+question = "Craig has 2 $20 bills. He buys six squirt guns for $2 each. He also buys 3 packs of water balloons for $3 each. How much money does he have left?"
+
+answer = """
+Craig starts off with 2 * $20 = $<<2*20=40>>40.
+Craig spends 6*$2 = $<<6*2=12>>12 on squirt guns.
+Craig spends 3 packs of water balloons * $3 = $<<3*3=9>>9 on water balloons.
+Total Craig has spent $12 + $9 = $<<12+9=21>>21.
+Craig has $40 - $21 = $<<40-21=19>>19 remaining.
+#### 19
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name,Craig} has {n,2} {cur,$}{bill,20} bills. He buys {m_txt,six} {item1,squirt gun}s for {cur,$}{p1,2} each. He also buys {k,3} packs of {item2,water balloon}s for {cur,$}{p2,3} each. How much money does he have left?
+
+#init:
+- name = sample(names_male)
+- $bill = sample([5, 10, 20, 50, 100])
+- item1 = sample(["toy car", "action figure", "coloring book", "puzzle", "board game"])
+- item2 = sample(["sticker", "candy bar", "trading card", "pencil", "eraser"])
+- cur = sample(currencies_sym)
+- $n = range(1, 10)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+
+#conditions:
+- n * int(bill) > m_val * p1 + k * p2
+
+#answer: n * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} starts off with {n} * {cur}{bill} = {cur}<<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)}.
+{name} spends {m_val}*{cur}{p1} = {cur}<<{m_val}*{p1}={m_val*p1}>>{m_val*p1} on {item1}s.
+{name} spends {k} packs of {item2}s * {cur}{p2} = {cur}<<{k}*{p2}={k*p2}>>{k*p2} on {item2}s.
+Total {name} has spent {cur}{m_val*p1} + {cur}{k*p2} = {cur}<<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2}.
+{name} has {cur}{n*int(bill)} - {cur}{m_val*p1+k*p2} = {cur}<<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} remaining.
+#### {n*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"
