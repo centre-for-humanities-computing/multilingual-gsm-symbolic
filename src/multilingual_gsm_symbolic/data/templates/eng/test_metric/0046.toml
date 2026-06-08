@@ -1,0 +1,40 @@
+question = "Apple High School is holding graduation in their Fine Arts Center this year which has space for 6000 people. After accounting for 950 seats for graduates and 300 seats for faculty attending, how many tickets would each graduate receive to give to their friends and family if the tickets are split equally?"
+
+answer = """
+Add graduate and faculty seats together. 950 + 300 = <<950+300=1250>>1250 seats for faculty and graduates
+Minus seats for faculty and graduates from total seats allowed. 6000 - 1250 = <<6000-1250=4750>>4750 remaining seats.
+Divide remaining seats by the number of graduates. 4750/950 = <<4750/950=5>>5 tickets
+#### 5
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Apple High School} is holding graduation in their {venue,Fine Arts Center} this year which has space for {total,6000} people. After accounting for {graduates,950} seats for graduates and {faculty,300} seats for faculty attending, how many tickets would each graduate receive to give to their friends and family if the tickets are split equally?
+
+#init:
+- school = sample(["Oakwood High School", "Riverside Academy", "Sunnyside High", "Greenville High School"])
+- venue = sample(["Auditorium", "Gymnasium", "Sports Arena", "Convention Center"])
+- $total = range(3000, 10000, 100)
+- $graduates = range(100, 1500, 50)
+- $faculty = range(100, 500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Add graduate and faculty seats together. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} seats for faculty and graduates
+Minus seats for faculty and graduates from total seats allowed. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} remaining seats.
+Divide remaining seats by the number of graduates. {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} tickets
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

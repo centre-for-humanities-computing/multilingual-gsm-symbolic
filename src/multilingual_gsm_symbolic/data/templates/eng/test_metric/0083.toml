@@ -1,0 +1,38 @@
+question = "The Adams family is busy making cookies. So far, they've made 7995 cookies. They have 2595 rainbow cookies, 3075 oatmeal cookies, and some chocolate chip cookies. How many chocolate chip cookies have they made?"
+
+answer = """
+The total number of pieces of rainbow and oatmeal cookies is 2595 + 3075 = <<2595+3075=5670>>5670.
+Therefore, they made 7995 - 5670 = <<7995-5670=2325>>2325 chocolate chip cookies.
+#### 2325
+"""
+
+id_orig = 1305
+
+id_shuffled = 83
+
+question_annotated = """
+The {family,Adams} family is busy making {item,cookie}s. So far, they've made {total,7995} {item,cookie}s. They have {n1,2595} {flavor1,rainbow} {item,cookie}s, {n2,3075} {flavor2,oatmeal} {item,cookie}s, and some {flavor3,chocolate chip} {item,cookie}s. How many {flavor3,chocolate chip} {item,cookie}s have they made?
+
+#init:
+- family = sample(["Smith", "Johnson", "Williams", "Brown", "Jones"])
+- item = sample(["cupcake", "muffin", "brownie", "biscuit"])
+- flavor1, flavor2, flavor3 = sample(["vanilla", "strawberry", "blueberry", "lemon", "peanut butter"], 3)
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3200, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+
+answer_annotated = """
+The total number of pieces of {flavor1} and {flavor2} {item}s is {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}.
+Therefore, they made {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {flavor3} {item}s.
+#### {total-(n1+n2)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"
