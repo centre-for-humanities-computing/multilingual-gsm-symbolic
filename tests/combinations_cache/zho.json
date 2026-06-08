@@ -21,7 +21,7 @@
   },
   {
     "id": 4,
-    "question_annotated": "{name,冠宇} 正在爆爆米花當點心。隨著裝著玉米粒的{p, 平底鍋}加熱，玉米粒開始越爆越快。前 {s, 30} 秒烹調中有 {n,20} 粒爆開，接下來的 {s, 30} 秒爆了前者的 {k_2_txt,三} 倍。再接下來的 {s, 30} 秒，玉米粒增加到最初爆裂速度的 {k_3_txt,四} 倍，但在最後 {s, 30} 秒，爆裂速度減慢為前 {s, 30} 秒的一半。{name,冠宇} 把{p, 平底鍋}從火上移開後，最後 {s, 30} 秒烹調中爆開的玉米粒數量裡，還有1/4會因為餘熱繼續爆開。{name,冠宇} 一共有多少顆爆米花可以吃？\n\n\n#init:\n- name = sample(names)\n- p = sample(['平底鍋', '鍋子', '煎鍋'])\n- $n = range(10, 101, 10)\n- $s = range(10, 31, 2)\n- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)\n- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)\n\n#conditions:\n- k_3_val > k_2_val\n- divides(k_3_val * n, 8)\n\n#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)",
+    "question_annotated": "{name,冠宇} 正在爆爆米花當點心。隨著裝著玉米粒的{p, 平底鍋}加熱，玉米粒開始越爆越快。前 {s, 30} 秒烹調中有 {n,20} 粒爆開，接下來的 {s, 30} 秒爆了前者的 {k_2_txt,三} 倍。再接下來的 {s, 30} 秒，玉米粒增加到最初爆裂速度的 {k_3_txt,四} 倍，但在最後 {s, 30} 秒，爆裂速度減慢為前 {s, 30} 秒的一半。{name,冠宇} 把{p, 平底鍋}從火上移開後，最後 {s, 30} 秒烹調中爆開的玉米粒數量裡，還有四分之一會因為餘熱繼續爆開。{name,冠宇} 一共有多少顆爆米花可以吃？\n\n\n#init:\n- name = sample(names)\n- p = sample(['平底鍋', '鍋子', '煎鍋'])\n- $n = range(10, 101, 10)\n- $s = range(10, 31, 2)\n- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)\n- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)\n\n\n#conditions:\n- k_3_val > k_2_val\n- divides(k_3_val * n, 8)\n\n#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)",
     "count": 100
   },
   {
@@ -36,7 +36,7 @@
   },
   {
     "id": 7,
-    "question_annotated": "一位農夫正在為他的{animals,馬}購買飼料。他買了各種{o1,乾草}、{o2,燕麥}、{o3,紅蘿蔔}和{o4,方糖}。由於{o4,方糖}是難得的零食，他只為整個馬廄買了{n4_txt,二}盒每盒 {w4,1} {unit,磅}的{o4,方糖}。他只想買足夠的{o3,紅蘿蔔}，在蔬菜還新鮮時餵{animals,馬}，所以他買了{n3_txt,四}袋每袋 {w3,12} {unit,磅}的{o3,紅蘿蔔}。{o1,乾草}是他的{animals,馬}的主食，所以他買了{n1_txt,四十二}包每包 {w1,75} {unit,磅}的{o1,乾草}。{o2,燕麥}是用來補充{o1,乾草}的主糧，所以他買了{n2_txt,二十}袋每袋 {w2,65} {unit,磅}的{o2,燕麥}。如果他的農場卡車一次可以載重 {total,2250} {unit,磅}，農夫需要跑幾趟才能把所有飼料運走？\n\n#init:\n- animals = sample([\"馬\", \"牛\", \"綿羊\", \"豬\", \"羊駝\"])\n- unit = sample(weights_med)\n- o1, o2, o4 = sample([\"乾草\", \"玉米\", \"燕麥\", \"蘋果\", \"小麥\"], 3)\n- o3 = sample([\"紅蘿蔔\", \"甜菜\", \"黃瓜\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
+    "question_annotated": "一位農夫正在為他的{animals,馬}購買飼料。他買了各種{o1,乾草}、{o2,燕麥}、{o3,紅蘿蔔}和{o4,方糖}。由於{o4,方糖}是難得的零食，他只為整個馬廄買了{n4_txt,兩}盒每盒 {w4,1} {unit,磅}的{o4,方糖}。他只想買足夠的{o3,紅蘿蔔}，在蔬菜還新鮮時餵{animals,馬}，所以他買了{n3_txt,四}袋每袋 {w3,12} {unit,磅}的{o3,紅蘿蔔}。{o1,乾草}是他的{animals,馬}的主食，所以他買了{n1_txt,四十二}包每包 {w1,75} {unit,磅}的{o1,乾草}。{o2,燕麥}是用來補充{o1,乾草}的主糧，所以他買了{n2_txt,二十}袋每袋 {w2,65} {unit,磅}的{o2,燕麥}。如果他的農場卡車一次可以載重 {total,2250} {unit,磅}，農夫需要跑幾趟才能把所有飼料運走？\n\n#init:\n- animals = sample([\"馬\", \"牛\", \"綿羊\", \"豬\", \"羊駝\"])\n- unit = sample(weights_med)\n- o1, o2, o4 = sample([\"乾草\", \"玉米\", \"燕麥\", \"蘋果\", \"小麥\"], 3)\n- o3 = sample([\"紅蘿蔔\", \"甜菜\", \"黃瓜\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
     "count": 100
   },
   {
@@ -86,7 +86,7 @@
   },
   {
     "id": 17,
-    "question_annotated": "{name,奶奶}每天都會在她最喜歡的步道上走 {n,3} {unit,英里}，其中包括在海灘上走 {m,2} {unit,英里}，以及在人行道上走 {k,1} {unit,英里}。在人行道上，{name,奶奶}的行走速度是她在海灘上時的 {mult_txt,兩倍}。如果她散步時有 {t,40} 分鐘是在海灘上度過的，那麼她走完整個 {n,3} {unit,英里}的路程總共要花多少分鐘？\n\n#init:\n- name = sample(names_female)\n- unit = sample(length_lg)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 60)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: t+(k/(mult_val*m/t))",
+    "question_annotated": "{name,奶奶}每天都會在她最喜歡的步道上走 {n,3} {unit,英里}，其中包括在海灘上走 {m,2} {unit,英里}，以及在人行道上走 {k,1} {unit,英里}。{name,奶奶}在人行道上的速度是海灘上的 {mult_txt,兩倍}。如果她散步時有 {t,40} 分鐘是在海灘上度過的，那麼她走完整個 {n,3} {unit,英里}的路程總共要花多少分鐘？\n\n#init:\n- name = sample(names_female)\n- unit = sample(length_lg)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 60)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: t+(k/(mult_val*m/t))",
     "count": 100
   },
   {
@@ -106,7 +106,7 @@
   },
   {
     "id": 21,
-    "question_annotated": "{name,俊傑} 每天晚上做完作業後都會看電視。在 {d1,星期一} 和 {d2,星期二}，他每晚都看一集自己最喜歡的節目，每集 {h1,1} 小時。到了 {d3,星期三}，他看了幾集一個每集 {m1,30} 分鐘的節目。在 {d4,星期四}，他提早做完作業，於是看了一集 {h2,1} 小時的節目和一個 {m2,30} 分鐘的節目。到了 {d5,星期五}，他可以晚睡，所以他看了 {n2_txt,二} 集每集 {h3,1} 小時的節目。如果他總共看了 {total,7} 小時的電視，那麼他在 {d3,星期三} 看了幾集 {m1,30} 分鐘的節目？\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)\n- $total = range(7, 33)\n- $h1 = range(1, 7)\n- $h3 = range(1, 6)\n- $m1 = range(5, 61, 5)\n- $m2 = range(5, 61, 5)\n- $h2 = range(1, 7)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n\n#conditions: \n- divides(m1, 15)\n- divides(m2, 15)\n- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 \n\n#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)",
+    "question_annotated": "{name,俊傑} 每天晚上做完作業後都會看電視。在 {d1,星期一} 和 {d2,星期二}，他每晚都看一集自己最喜歡的節目，每集 {h1,1} 小時。到了 {d3,星期三}，他看了幾集一個每集 {m1,30} 分鐘的節目。在 {d4,星期四}，他提早做完作業，於是看了一集 {h2,1} 小時的節目和一個 {m2,30} 分鐘的節目。到了 {d5,星期五}，他可以晚睡，所以他看了 {n2_txt,兩} 集每集 {h3,1} 小時的節目。如果他總共看了 {total,7} 小時的電視，那麼他在 {d3,星期三} 看了幾集 {m1,30} 分鐘的節目？\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)\n- $total = range(7, 33)\n- $h1 = range(1, 7)\n- $h3 = range(1, 6)\n- $m1 = range(5, 61, 5)\n- $m2 = range(5, 61, 5)\n- $h2 = range(1, 7)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n\n#conditions: \n- divides(m1, 15)\n- divides(m2, 15)\n- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 \n\n#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)",
     "count": 100
   },
   {
@@ -141,7 +141,7 @@
   },
   {
     "id": 28,
-    "question_annotated": "一家{facility,醫院}有 {total,1000} 張{item,病床}的容量，其中有 {frac,1/5} 已被占用。由於{event,冠狀病毒疫情爆發}，每天有 {daily,50} 位病人入住{facility,醫院}。計算 {period,2} 週後{facility,醫院}內總共有多少張未被占用的{item,病床}。\n\n#init:\n- facility = sample([\"醫院\", \"診所\", \"醫療中心\", \"照護機構\"])\n- item = sample([\"病床\", \"房間\", \"病房\"])\n- event = sample([\"流感季\", \"自然災害\", \"重大事故\", \"疫情大流行\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
+    "question_annotated": "一家{facility,醫院}有 {total,1000} 張{item,病床}的容量，其中 {frac,1/5} 已被占用。由於{event,冠狀病毒疫情爆發}，每天有 {daily,50} 位病人入住{facility,醫院}。計算 {period,2} 週後{facility,醫院}內總共有多少張未被占用的{item,病床}。\n\n#init:\n- facility = sample([\"醫院\", \"診所\", \"醫療中心\", \"照護機構\"])\n- item = sample([\"病床\", \"房間\", \"病房\"])\n- event = sample([\"流感季\", \"自然災害\", \"重大事故\", \"疫情大流行\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
     "count": 100
   },
   {
@@ -156,7 +156,7 @@
   },
   {
     "id": 31,
-    "question_annotated": "{name1,雅雯} 和 {name2,佳玲} 目前年齡相差 {age_diff,16} 歲。如果年紀比 {name2,佳玲} 小的 {name1,雅雯} 今年 {age1,40} 歲，她們年齡的平均數是多少？\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
+    "question_annotated": "{name1,雅雯} 和 {name2,佳玲} 目前年齡相差 {age_diff,16} 歲。如果比 {name2,佳玲} 年輕的 {name1,雅雯} 今年 {age1,40} 歲，她們年齡的平均數是多少？\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
     "count": 100
   },
   {
@@ -246,7 +246,7 @@
   },
   {
     "id": 49,
-    "question_annotated": "{name,約翰}從 {n,3} 個不同的公寓社區收垃圾。前 {n_first_txt,二} 個社區各有 {a,200} 間公寓，最後一個比其他 {n_first_txt,二} 個合起來還大 {p,60}%。他每週從每個地方收垃圾 {f,3} 次，而且每收一次、每間公寓可獲得 {cur,$}{r,0.4} 的報酬。他一週賺多少錢？\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "question_annotated": "{name,約翰}從 {n,3} 個不同的公寓社區收垃圾。前 {n_first_txt,兩} 個社區各有 {a,200} 間公寓，最後一個比其他 {n_first_txt,兩} 個合起來的總數多 {p,60}%。他每週從每個地方收垃圾 {f,3} 次，而且每收一次、每間公寓可獲得 {cur,$}{r,0.4} 的報酬。他一週賺多少錢？\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {
@@ -256,7 +256,7 @@
   },
   {
     "id": 51,
-    "question_annotated": "{name,冠宇} 在{location,農夫市集}有一個{product,花}攤。他賣三種{product,花}：{item1,萬壽菊}、{item2,矮牽牛}和{item3,秋海棠}。他平常以每{unit,盆} {cur,$}{p1,2.74} 賣{item1,萬壽菊}、每{unit,盆} {cur,$}{p2,1.87} 賣{item2,矮牽牛}，以及每{unit,盆} {cur,$}{p3,2.12} 賣{item3,秋海棠}。{name,冠宇} 今天沒有零錢，所以他決定把所有價格四捨五入到最接近的整數美元。如果 {name,冠宇} 賣出 {n1,12} {unit,盆}{item1,萬壽菊}、{n2,9} {unit,盆}{item2,矮牽牛}和 {n3,17} {unit,盆}{item3,秋海棠}，他會賺多少錢？\n\n#init:\n- name = sample(names_male)\n- product = sample([\"蔬菜\", \"花\", \"香草\", \"植物\"])\n- location = sample([\"地方市集\", \"社區市場\", \"街頭市集\", \"城鎮廣場\"])\n- item1, item2, item3 = sample([\"玫瑰\", \"雛菊\", \"鬱金香\", \"百合\", \"向日葵\", \"蘭花\"], 3)\n- unit = sample([\"束\", \"籃\", \"花束\", \"捆\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
+    "question_annotated": "{name,冠宇} 在{location,農夫市集}有一個{product,花}攤。他賣三種{product,花}：{item1,萬壽菊}、{item2,矮牽牛}和{item3,秋海棠}。他平常賣{item1,萬壽菊}每{unit,盆} {cur,$}{p1,2.74}、{item2,矮牽牛}每{unit,盆} {cur,$}{p2,1.87}，以及{item3,秋海棠}每{unit,盆} {cur,$}{p3,2.12}。{name,冠宇} 今天沒有零錢，所以他決定把所有價格四捨五入到最接近的整數美元。如果 {name,冠宇} 賣出 {n1,12} {unit,盆}{item1,萬壽菊}、{n2,9} {unit,盆}{item2,矮牽牛}和 {n3,17} {unit,盆}{item3,秋海棠}，他會賺多少錢？\n\n#init:\n- name = sample(names_male)\n- product = sample([\"蔬菜\", \"花\", \"香草\", \"植物\"])\n- location = sample([\"地方市集\", \"社區市場\", \"街頭市集\", \"城鎮廣場\"])\n- item1, item2, item3 = sample([\"玫瑰\", \"雛菊\", \"鬱金香\", \"百合\", \"向日葵\", \"蘭花\"], 3)\n- unit = sample([\"束\", \"籃\", \"花束\", \"捆\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
     "count": 100
   },
   {
@@ -306,7 +306,7 @@
   },
   {
     "id": 61,
-    "question_annotated": "{name,布蘭登}有一袋{objects,彈珠}，裡面有{n,10}顆。他拿著袋子時被一顆{obstacle,小石子}絆倒，掉了{frac_txt,一半}。他急忙四處尋找，但只找回了{k,3}顆。回到家後，他又仔細檢查那些{objects,彈珠}。他撿回來的裡面有{fake_num_txt,二}顆其實不是{objects,彈珠}，而是{fake_object,珠子}，所以他把它們丟掉了。{name,布蘭登}最後有多少顆{objects,彈珠}？\n\n#init:\n- name = sample(names_male)\n- objects = sample(['彈珠', '硬幣', '鈕扣', '珠子', '小石子'])\n- obstacle = sample(['石頭', '木棍', '玩具', '樹根'])\n- fake_object = sample(['鈕扣', '硬幣', '小石子', '珠子'])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val",
+    "question_annotated": "{name,布蘭登}有一袋{objects,彈珠}，裡面有{n,10}顆。他拿著袋子時被一顆{obstacle,小石子}絆倒，掉了{frac_txt,一半}。他急忙四處尋找，但只找回了{k,3}顆。回到家後，他又仔細檢查那些{objects,彈珠}。他撿回來的裡面有{fake_num_txt,兩}顆其實不是{objects,彈珠}，而是{fake_object,珠子}，所以他把它們丟掉了。{name,布蘭登}最後有多少顆{objects,彈珠}？\n\n#init:\n- name = sample(names_male)\n- objects = sample(['彈珠', '硬幣', '鈕扣', '珠子', '小石子'])\n- obstacle = sample(['石頭', '木棍', '玩具', '樹根'])\n- fake_object = sample(['鈕扣', '硬幣', '小石子', '珠子'])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val",
     "count": 100
   },
   {
@@ -336,7 +336,7 @@
   },
   {
     "id": 67,
-    "question_annotated": "{name,家豪} 的 {vehicle,汽車} 拋錨了。這輛 {vehicle,汽車} 重 {weight_vehicle,1200} {unit,磅}，車上還有重 {weight_item,250} {unit,磅} 的 {item,行李}。他的 {num_passengers_txt,二} 位年幼{passenger_type,孩子}也在車上，每位重 {weight_passenger,75} {unit,磅}。如果推動這輛 {vehicle,汽車} 所需的力是重量的 {force_percent,1}%，那麼他需要多大的力才能推動這輛 {vehicle,汽車}？\n\n#init:\n- name = sample(names_male)\n- vehicle = sample(['汽車', '廂型車', '卡車', '休旅車'])\n- item = sample(['行李', '雜貨', '設備', '家具'])\n- passenger_type = sample(['孩子', '朋友', '同事', '隊友'])\n- unit = sample(['磅', '公斤'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)",
+    "question_annotated": "{name,家豪} 的 {vehicle,汽車} 拋錨了。這輛 {vehicle,汽車} 重 {weight_vehicle,1200} {unit,磅}，車上還有重 {weight_item,250} {unit,磅} 的 {item,行李}。他的 {num_passengers_txt,兩} 位年幼{passenger_type,孩子}也在車上，每位重 {weight_passenger,75} {unit,磅}。如果推動這輛 {vehicle,汽車} 所需的力是重量的 {force_percent,1}%，那麼他需要多大的力才能推動這輛 {vehicle,汽車}？\n\n#init:\n- name = sample(names_male)\n- vehicle = sample(['汽車', '廂型車', '卡車', '休旅車'])\n- item = sample(['行李', '雜貨', '設備', '家具'])\n- passenger_type = sample(['孩子', '朋友', '同事', '隊友'])\n- unit = sample(['磅', '公斤'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)",
     "count": 100
   },
   {
