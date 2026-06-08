@@ -157,6 +157,13 @@ def _make_arange_sample(rng: Random):
     return arange_sample
 
 
+def ensure_int(value: Any) -> int:
+    """Convert a value to int if it's a float representing an integer, else return an error"""
+    if is_int(value):
+        return round(value)
+    raise ValueError(f"Value {value} cannot be converted to int.")
+
+
 def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, Any]:
     """Build an eval context with rng-bound sampling functions."""
     return {
@@ -176,6 +183,7 @@ def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, A
         "arange": _make_arange_sample(rng),
         "Fraction": frac_format,
         "plural": plural,
+        "ensure_int": ensure_int,
         **replacements,
     }
 
@@ -299,7 +307,9 @@ _BASE_HELPERS: dict[str, Any] = {
     "list": list,
     "Fraction": frac_format,
     "plural": plural,
+    "ensure_int": ensure_int,
 }
+
 
 # Legacy alias used by condition evaluation and answer formatting (no sampling needed there).
 EVAL_CONTEXT_HELPERS: dict[str, Any] = _BASE_HELPERS
