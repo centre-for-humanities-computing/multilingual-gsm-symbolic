@@ -424,9 +424,7 @@ class AnnotatedQuestion:
                 if fixed and var in fixed:
                     choices = [c for c in choices if c[var] == fixed[var]] or choices
             else:
-                choices = [
-                    dict(zip(variables, align_values_to_variables(variables, vals))) for vals in possible_values
-                ]
+                choices = [dict(zip(variables, align_values_to_variables(variables, vals))) for vals in possible_values]
                 if fixed:
                     filtered = [c for c in choices if all(c.get(k) == fixed[k] for k in fixed if k in c)]
                     choices = filtered or choices

@@ -259,6 +259,7 @@ def sample_possibilities(items: list, n: int = 1) -> list:
 def sample_sequential_possibilities(items: list, n: int) -> list[list]:
     return [[items[(i + j) % len(items)] for j in range(n)] for i in range(len(items))]
 
+
 def parse_lhs_variables(variable_part: str) -> list[str]:
     """Parse the variable names from the left-hand side of an init line.
 
