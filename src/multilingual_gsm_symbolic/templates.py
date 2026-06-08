@@ -29,6 +29,13 @@ from multilingual_gsm_symbolic._helpers import (
 )
 
 logger = logging.getLogger(__name__)
+_REQUIRED_TEMPLATE_FIELDS = ("question", "answer", "id_orig", "id_shuffled", "question_annotated", "answer_annotated")
+
+
+def _validate_template_data(data: dict[str, Any], source: str) -> None:
+    missing = [field for field in _REQUIRED_TEMPLATE_FIELDS if field not in data]
+    if missing:
+        raise ValueError(f"Template {source} is missing required field(s): {', '.join(missing)}")
 
 
 @dataclass
@@ -87,6 +94,7 @@ class AnnotatedQuestion:
         """
         with filepath.open("r", encoding="utf-8") as f:
             data = json.load(f)
+        _validate_template_data(data, str(filepath))
         return cls(**data)
 
     @classmethod
@@ -113,11 +121,23 @@ class AnnotatedQuestion:
             if key in data and isinstance(data[key], str):
                 data[key] = data[key].strip("\n")
         data.pop("ignore", None)
+        _validate_template_data(data, str(filepath))
         return cls(**data)
 
     @cached_property
     def question_template(self) -> str:
         return self.question_annotated.splitlines()[0].strip()
+
+    def _question_annotated_sections(self) -> tuple[str, str]:
+        if "#init:" not in self.question_annotated:
+            raise ValueError(
+                f"Template {self.id_shuffled} is missing '#init:' in question_annotated. "
+                "Put #init, #conditions, and #answer inside question_annotated; "
+                "answer_annotated should only contain the worked solution template."
+            )
+        if "#answer:" not in self.question_annotated:
+            raise ValueError(f"Template {self.id_shuffled} is missing '#answer:' in question_annotated.")
+        return self.question_annotated.split("#init:", 1)[1].split("#answer:", 1)
 
     @cached_property
     def variables(self) -> list[str]:
@@ -129,20 +149,16 @@ class AnnotatedQuestion:
 
     @cached_property
     def init(self) -> list[str]:
-        init_block = (
-            self.question_annotated.split("#init:")[1]
-            .split("#answer:")[0]
-            .split("#conditions:")[0]
-            .strip()
-            .splitlines()
-        )
+        init_and_conditions, _ = self._question_annotated_sections()
+        init_block = init_and_conditions.split("#conditions:", 1)[0].strip().splitlines()
         return [line.strip("- ") for line in init_block]
 
     @cached_property
     def conditions(self) -> list[str]:
         if "#conditions:" not in self.question_annotated:
             return []
-        condition_block = self.question_annotated.split("#conditions:")[1].split("#answer:")[0].strip().splitlines()
+        init_and_conditions, _ = self._question_annotated_sections()
+        condition_block = init_and_conditions.split("#conditions:", 1)[1].strip().splitlines()
         return [line.strip("- ") for line in condition_block if line.strip()]
 
     @cached_property

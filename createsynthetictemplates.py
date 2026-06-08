@@ -8,8 +8,8 @@ from pathlib import Path
 from datasets import load_dataset
 from openai import OpenAI
 
-from multilingual_gsm_symbolic.gsm_parser import AnnotatedQuestion
 from multilingual_gsm_symbolic.load_data import load_replacements
+from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 GSM8K_DATASET = "openai/gsm8k"
 GSM8K_CONFIG = "main"
@@ -26,6 +26,7 @@ template_numbers = []
 toml_text = ""
 templates_dir = Path(__file__).parent / "src" / "multilingual_gsm_symbolic" / "data" / "templates" / "eng" / "test"
 output_dir = templates_dir.parent / "train"
+log_path = output_dir / "generation_log.jsonl"
 replacements_path = templates_dir.parent / "replacements.json"
 replacement_keys = list(json.loads(replacements_path.read_text(encoding="utf-8")))
 template_text_count = 0
@@ -66,7 +67,7 @@ You are creating one new English symbolic TOML template for the multilingual-gsm
 Return plain text for only the variable middle of a single TOML template.
 Do not return `question`, `answer`, `id_orig`, `id_shuffled`, `creation`, or `language` because those are added separately.
 Return only `question_annotated` and `answer_annotated` in valid TOML format.
-Following the existing project style, #init and #conditions sections live inside answer_annotated and can be used to define variables and constraints.
+Following the existing project style, `#init`, `#conditions`, and `#answer` live inside `question_annotated`. `answer_annotated` should only contain the worked solution template.
 
 Here are existing templates to match the project style:
 {toml_text}
@@ -75,9 +76,11 @@ Here are the available English replacement list names from replacements.json. Us
 {replacement_keys}
 
 Template rules:
-- Use placeholders like {{variable,default_value}} in question_annotated. Defaults must render the exact concrete question.
+- Use placeholders like {{variable,default_value}} in question_annotated. Defaults must render the exact concrete question. Use the same default in every occurrence of that variable's placeholder even if the placeholder appears multiple times. 
+- Do not use placeholders in answer_annotated. Render the exact concrete answer in answer_annotated with no placeholders.
 - Use bare {{variable}} or Python expressions in answer_annotated. These must render the exact concrete answer.
 - In init, prefix numeric sampled variables with $, for example: "$price = range(1, 20)".
+- In init, every right-hand side must be iterable; for fixed values use `range(12, 13)` or `sample([12])`, not `12`.
 - Every placeholder must have a default value. For example, {{price,20}}. This default must be reachable from that variable's init expression. 
 - range(start, end[, step]) uses a Python-style exclusive end. Never emit range(x, x), because it has no possible values.
 - String variables can use sample([...]) or use the project replacement lists
@@ -124,10 +127,6 @@ def annotated_question_from_toml_text(text: str) -> AnnotatedQuestion:
     for key in ("question", "answer", "question_annotated", "answer_annotated"):
         if key in data and isinstance(data[key], str):
             data[key] = data[key].strip("\n")
-    if "init" in data:
-        data["init_section"] = data.pop("init")
-    if "conditions" in data:
-        data["conditions_section"] = data.pop("conditions")
     data.pop("ignore", None)
     template = AnnotatedQuestion(**data)
     validate_question_annotated_placeholders(template)
@@ -150,7 +149,7 @@ def build_template_toml(example: dict, source_id: int, id_shuffled: int, body: s
     )
 
 
-def create_template(source_id: int, example: dict, id_shuffled: int) -> str:
+def create_template(source_id: int, example: dict, id_shuffled: int) -> dict:
     api_key = os.getenv("OPENAI_API_KEY")
     if api_key:
         api_key = api_key.encode("ascii", "ignore").decode()
@@ -169,14 +168,18 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> str:
 
     last_error = None
     last_template_text = None
+    attempts = []
     for attempt in range(1, MAX_TEMPLATE_ATTEMPTS + 1):
         response = client.responses.create(
             model=MODEL,
             reasoning={"effort": "medium"},
             input=messages,
         )
-        template_text = build_template_toml(example, source_id, id_shuffled, response.output_text)
+        # strip markdown toml tags that the model may include, and also strip leading/trailing whitespace
+        body = re.sub(r"^\s*```[^\n`]*\n|\n```\s*$", "", response.output_text.strip())
+        template_text = build_template_toml(example, source_id, id_shuffled, body)
         last_template_text = template_text
+        attempt_log = {"attempt": attempt, "template_text": template_text}
 
         try:
             annotated_question_from_toml_text(template_text).generate_questions(
@@ -184,6 +187,8 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> str:
             )
         except Exception as e:
             last_error = e
+            attempt_log["error"] = str(e)
+            attempts.append(attempt_log)
             print(f"Error generating questions for id {source_id} on attempt {attempt}/{MAX_TEMPLATE_ATTEMPTS}: {e}")
             messages.append(
                 {
@@ -203,17 +208,30 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> str:
             )
             continue
 
-        return template_text
+        attempts.append(attempt_log)
+        return {
+            "template_text": template_text,
+            "log_entry": {"source_id": source_id, "id_shuffled": id_shuffled, "success": True, "attempts": attempts},
+        }
 
     print(f"Error generating questions after {MAX_TEMPLATE_ATTEMPTS} attempts: {last_error}")
-    return (
-        last_template_text
-        + "\n\n"
-        + "ignore = true  # failed after "
-        + str(MAX_TEMPLATE_ATTEMPTS)
-        + " attempts: "
-        + str(last_error)
-    )
+    return {
+        "template_text": (
+            last_template_text
+            + "\n\n"
+            + "ignore = true  # failed after "
+            + str(MAX_TEMPLATE_ATTEMPTS)
+            + " attempts: "
+            + str(last_error)
+        ),
+        "log_entry": {
+            "source_id": source_id,
+            "id_shuffled": id_shuffled,
+            "success": False,
+            "error": str(last_error),
+            "attempts": attempts,
+        },
+    }
 
 
 gsm8k_train = load_dataset(GSM8K_DATASET, GSM8K_CONFIG, split=GSM8K_SPLIT)
@@ -231,12 +249,21 @@ output_dir.mkdir(exist_ok=True)
 with ThreadPoolExecutor(max_workers=int(os.getenv("SYNTHETIC_TEMPLATE_WORKERS", "1"))) as executor:
     futures = {executor.submit(create_template, *job): job for job in jobs}
     for future in as_completed(futures):
-        _, _, id_shuffled = futures[future]
-        toml = future.result()
+        source_id, _, id_shuffled = futures[future]
+        try:
+            result = future.result()
+        except Exception as e:
+            result = {
+                "template_text": None,
+                "log_entry": {"source_id": source_id, "id_shuffled": id_shuffled, "success": False, "error": str(e)},
+            }
+        with log_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(result["log_entry"], ensure_ascii=False) + "\n")
+        toml = result["template_text"]
         if toml is None:
             print(f"Skipping template with id_shuffled={id_shuffled} due to generation error")
             continue
         (output_dir / f"{id_shuffled:04d}.toml").write_text(toml.strip() + "\n", encoding="utf-8")
         print(
-            f"Wrote {output_dir / f'{id_shuffled:04d}.toml'} for source id {futures[future][0]} and id_shuffled {id_shuffled}"
+            f"Wrote {output_dir / f'{id_shuffled:04d}.toml'} for source id {source_id} and id_shuffled {id_shuffled}"
         )
