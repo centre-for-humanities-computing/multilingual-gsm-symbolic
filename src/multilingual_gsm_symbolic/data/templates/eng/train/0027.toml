@@ -1,4 +1,6 @@
-question = "Brennan was researching his school project and had to download files from the internet to his computer to use for reference. After downloading 800 files, he deleted 70% of them because they were not helpful. He downloaded 400 more files but again realized that 3/5 of them were irrelevant. How many valuable files was he left with after deleting the unrelated files he downloaded in the second round?"
+question = """
+Brennan was researching his school project and had to download files from the internet to his computer to use for reference. After downloading 800 files, he deleted 70% of them because they were not helpful. He downloaded 400 more files but again realized that 3/5 of them were irrelevant. How many valuable files was he left with after deleting the unrelated files he downloaded in the second round?
+"""
 
 answer = """
 The number of non-valuable files Brennan downloaded in the first round is 70/100*800 = <<70/100*800=560>>560 files.
@@ -10,36 +12,37 @@ To write his research, Brennan had 160+240 = <<160+240=400>>400 useful files to 
 """
 
 id_orig = 27
-
 id_shuffled = 27
 
 question_annotated = """
-{name,Brennan} was researching his school project and had to download files from the internet to his computer to use for reference. After downloading {files1,800} files, he deleted {del_percent,70}% of them because they were not helpful. He downloaded {files2,400} more files but again realized that {irr_num,3}/{irr_den,5} of them were irrelevant. How many valuable files was he left with after deleting the unrelated files he downloaded in the second round?
+{name,Brennan} was researching his school project and had to download files from the internet to his computer to use for reference. After downloading {n1,800} files, he deleted {p1,70}% of them because they were not helpful. He downloaded {n2,400} more files but again realized that {a2,3}/{b2,5} of them were irrelevant. How many valuable files was he left with after deleting the unrelated files he downloaded in the second round?
+
 #init:
-- name = sample(["Brennan", "Logan", "Ethan", "Noah", "Oliver", "Lucas", "Mason", "James", "Henry", "Samuel"])
-- $files1 = range(300, 1000, 50)
-- $del_percent = range(10, 90)
-- $files2 = range(100, 900, 50)
-- $irr_num = range(1, 5)
-- $irr_den = range(2, 9)
+- name = sample(["Brennan"])
+- $n1 = range(100, 1001, 100)
+- $p1 = range(10, 100, 10)
+- $n2 = range(100, 1001, 100)
+- $a2 = range(1, 10)
+- $b2 = range(2, 11)
+
 #conditions:
-- del_percent < 100
-- irr_num < irr_den
-- divides(del_percent * files1, 100)
-- divides(irr_num * files2, irr_den)
-- files1 - (del_percent * files1 // 100) > 0
-- files2 - (irr_num * files2 // irr_den) > 0
+- divides(p1 * n1, 100)
+- a2 < b2
+- divides(a2 * n2, b2)
+- n1 - (p1 * n1 // 100) + n2 - (a2 * n2 // b2) > 0
+
+#answer: n1 - (p1 * n1 // 100) + n2 - (a2 * n2 // b2)
 """
 
 answer_annotated = """
-The number of non-valuable files {name} downloaded in the first round is {del_percent}/100*{files1} = <<{del_percent}/100*{files1}={del_percent*files1//100}>>{del_percent*files1//100} files.
-The number of valuable files {name} downloaded in the first round is {files1}-{del_percent*files1//100} = <<{files1}-{del_percent*files1//100}={files1-del_percent*files1//100}>>{files1-del_percent*files1//100}
-When he downloaded {files2} new files, there were {irr_num}/{irr_den}*{files2}= <<{irr_num}/{irr_den}*{files2}={irr_num*files2//irr_den}>>{irr_num*files2//irr_den} non-useful files, which he deleted again.
-The total number of valuable files he downloaded in the second round is {files2}-{irr_num*files2//irr_den} = <<{files2}-{irr_num*files2//irr_den}={files2-irr_num*files2//irr_den}>>{files2-irr_num*files2//irr_den}
-To write his research, {name} had {files2-irr_num*files2//irr_den}+{files1-del_percent*files1//100} = <<{files2-irr_num*files2//irr_den}+{files1-del_percent*files1//100}={files2-irr_num*files2//irr_den + (files1-del_percent*files1//100)}>>{files2-irr_num*files2//irr_den + (files1-del_percent*files1//100)} useful files to reference to write his research.
-#### {files2-irr_num*files2//irr_den + (files1-del_percent*files1//100)}
+The number of non-valuable files {name} downloaded in the first round is {p1}/100*{n1} = <<{p1}/100*{n1}={p1 * n1 // 100}>>{p1 * n1 // 100} files.
+The number of valuable files {name} downloaded in the first round is {n1}-{p1 * n1 // 100} = <<{n1}-{p1 * n1 // 100}={n1 - (p1 * n1 // 100)}>>{n1 - (p1 * n1 // 100)}
+When he downloaded {n2} new files, there were {a2}/{b2}*{n2}= <<{a2}/{b2}*{n2}={a2 * n2 // b2}>>{a2 * n2 // b2} non-useful files, which he deleted again.
+The total number of valuable files he downloaded in the second round is {n2}-{a2 * n2 // b2} = <<{n2}-{a2 * n2 // b2}={n2 - (a2 * n2 // b2)}>>{n2 - (a2 * n2 // b2)}
+To write his research, {name} had {n2 - (a2 * n2 // b2)}+{n1 - (p1 * n1 // 100)} = <<{n2 - (a2 * n2 // b2)}+{n1 - (p1 * n1 // 100)}={n2 - (a2 * n2 // b2) + n1 - (p1 * n1 // 100)}>>{n2 - (a2 * n2 // b2) + n1 - (p1 * n1 // 100)} useful files to reference to write his research.
+#### {n2 - (a2 * n2 // b2) + n1 - (p1 * n1 // 100)}
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"

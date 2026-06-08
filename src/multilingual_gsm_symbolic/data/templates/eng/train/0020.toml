@@ -1,4 +1,6 @@
-question = "Bella bought stamps at the post office. Some of the stamps had a snowflake design, some had a truck design, and some had a rose design. Bella bought 11 snowflake stamps. She bought 9 more truck stamps than snowflake stamps, and 13 fewer rose stamps than truck stamps. How many stamps did Bella buy in all?"
+question = """
+Bella bought stamps at the post office. Some of the stamps had a snowflake design, some had a truck design, and some had a rose design. Bella bought 11 snowflake stamps. She bought 9 more truck stamps than snowflake stamps, and 13 fewer rose stamps than truck stamps. How many stamps did Bella buy in all?
+"""
 
 answer = """
 The number of truck stamps is 11 + 9 = <<11+9=20>>20.
@@ -8,28 +10,29 @@ Bella bought 11 + 20 + 7 = <<11+20+7=38>>38 stamps in all.
 """
 
 id_orig = 20
-
 id_shuffled = 20
 
 question_annotated = """
-Bella bought stamps at the post office. Some of the stamps had a snowflake design, some had a truck design, and some had a rose design. Bella bought {snow,11} snowflake stamps. She bought {more,9} more truck stamps than snowflake stamps, and {fewer,13} fewer rose stamps than truck stamps. How many stamps did Bella buy in all?
+Bella bought stamps at the post office. Some of the stamps had a snowflake design, some had a truck design, and some had a rose design. Bella bought {snow,11} snowflake stamps. She bought {truck_more,9} more truck stamps than snowflake stamps, and {rose_less,13} fewer rose stamps than truck stamps. How many stamps did Bella buy in all?
+
 #init:
-- $snow = range(5, 26)
-- $more = range(1, 16)
-- $fewer = range(1, 16)
+- $snow = range(5, 51)
+- $truck_more = range(1, 31)
+- $rose_less = range(1, 31)
 
 #conditions:
-- fewer < snow + more
-#answer: (snow + (snow + more) + ((snow + more) - fewer))
+- snow + truck_more > rose_less
+
+#answer: snow + (snow + truck_more) + (snow + truck_more - rose_less)
 """
 
 answer_annotated = """
-The number of truck stamps is {snow} + {more} = <<{snow}+{more}={snow+more}>>{snow+more}.
-The number of rose stamps is {snow+more} − {fewer} = <<{snow+more}-{fewer}={(snow+more)-fewer}>>{(snow+more)-fewer}.
-Bella bought {snow} + {snow+more} + {(snow+more)-fewer} = <<{snow}+{snow+more}+{(snow+more)-fewer}={snow + (snow+more) + ((snow+more)-fewer)}>>{snow + (snow+more) + ((snow+more)-fewer)} stamps in all.
-#### {snow + (snow+more) + ((snow+more)-fewer)}
+The number of truck stamps is {snow} + {truck_more} = <<{snow}+{truck_more}={snow+truck_more}>>{snow+truck_more}.
+The number of rose stamps is {snow+truck_more} − {rose_less} = <<{snow+truck_more}-{rose_less}={snow+truck_more-rose_less}>>{snow+truck_more-rose_less}.
+Bella bought {snow} + {snow+truck_more} + {snow+truck_more-rose_less} = <<{snow}+{snow+truck_more}+{snow+truck_more-rose_less}={snow + (snow + truck_more) + (snow + truck_more - rose_less)}>>{snow + (snow + truck_more) + (snow + truck_more - rose_less)} stamps in all.
+#### {snow + (snow + truck_more) + (snow + truck_more - rose_less)}
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"

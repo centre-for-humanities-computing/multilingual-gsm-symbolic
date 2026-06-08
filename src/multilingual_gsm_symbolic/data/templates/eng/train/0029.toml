@@ -1,4 +1,6 @@
-question = "Mrs. Snyder used to spend 40% of her monthly income on rent and utilities. Her salary was recently increased by $600 so now her rent and utilities only amount to 25% of her monthly income. How much was her previous monthly income?"
+question = """
+Mrs. Snyder used to spend 40% of her monthly income on rent and utilities. Her salary was recently increased by $600 so now her rent and utilities only amount to 25% of her monthly income. How much was her previous monthly income?
+"""
 
 answer = """
 Let her previous monthly income be p
@@ -13,44 +15,36 @@ Dividing both sides by 3 gives p = $1000
 """
 
 id_orig = 29
-
 id_shuffled = 29
 
 question_annotated = """
-Mrs. Snyder used to spend {r1,40}% of her monthly income on rent and utilities. Her salary was recently increased by {cur,$}{inc,600} so now her rent and utilities only amount to {r2,25}% of her monthly income. How much was her previous monthly income?
+Mrs. {name,Snyder} used to spend {old_pct,40}% of her monthly income on rent and utilities. Her salary was recently increased by {currency,$}{inc,600} so now her rent and utilities only amount to {new_pct,25}% of her monthly income. How much was her previous monthly income?
 
 #init:
-- $r1 = range(30, 81, 5)
-- $r2 = range(10, 41, 5)
-- $inc = range(100, 2100, 100)
-- cur = sample(currencies_sym)
+- $name = sample(["Snyder"])
+- $currency = sample(currencies_sym)
+- $old_pct = sample([40])
+- $new_pct = sample([25])
+- $inc = range(300, 30000, 3)
 
 #conditions:
-- r1 > r2
-- divides(r2 * inc, r1 - r2)
+- divides(inc, 3)
 
-#answer: (r2 * inc) // (r1 - r2)
+#answer: inc*5//3
 """
 
 answer_annotated = """
-Let her previous monthly income be p.
-The cost of her rent and utilities used to be {r1}% of p, which is ({r1}/100)*p.
-Her income was increased by {cur}{inc}, so it is now p+{inc}.
-Now her rent and utilities amount to {r2}% of (p+{inc}), which is ({r2}/100)*(p+{inc}).
-Equating the two expressions:
-({r1}/100)*p = ({r2}/100)*(p+{inc})
-
-Multiplying both sides by 100:
-{r1}*p = {r2}*(p+{inc})
-{r1}*p = {r2}*p + {r2}*{inc}
-({r1}-{r2})*p = {r2}*{inc}
-
-So,
-p = {r2}*{inc} / ({r1}-{r2}) = <<{r2}*{inc}//({r1}-{r2})={r2*inc//(r1-r2)}>>{r2*inc//(r1-r2)}
-
-#### {r2*inc//(r1-r2)}
+Let her previous monthly income be p
+The cost of her rent and utilities was 40% of p which is (40/100)*p = 2p/5
+Her income was increased by {currency}{inc} so it is now p+{currency}{inc}
+The cost of her rent and utilities now amount to 25% of (p+{currency}{inc}) which is (25/100)*(p+{currency}{inc}) = (p+{currency}{inc})/4
+Equating both expressions for cost of rent and utilities: 2p/5 = (p+{currency}{inc})/4
+Multiplying both sides of the equation by 20 gives 8p = 5p+{currency}{inc*5}
+Subtracting 5p from both sides gives: 3p = {currency}{inc*5}
+Dividing both sides by 3 gives p = {currency}{inc*5//3}
+#### {inc*5//3}
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"

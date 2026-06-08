@@ -1,4 +1,6 @@
-question = "Mark has a garden with flowers. He planted plants of three different colors in it. Ten of them are yellow, and there are 80% more of those in purple. There are only 25% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?"
+question = """
+Mark has a garden with flowers. He planted plants of three different colors in it. Ten of them are yellow, and there are 80% more of those in purple. There are only 25% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?
+"""
 
 answer = """
 There are 80/100 * 10 = <<80/100*10=8>>8 more purple flowers than yellow flowers.
@@ -10,33 +12,32 @@ So in total Mark has 28 + 7 = <<28+7=35>>35 plants in his garden.
 """
 
 id_orig = 5
-
 id_shuffled = 5
 
 question_annotated = """
-Mark has a garden with flowers. He planted plants of three different colors in it. {y,10} of them are yellow, and there are {p,80}% more of those in purple. There are only {g,25}% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?
+Mark has a garden with flowers. He planted plants of three different colors in it. {y_txt,Ten} of them are yellow, and there are {p,80}% more of those in purple. There are only {q,25}% as many green flowers as there are yellow and purple flowers. How many flowers does Mark have in his garden?
 
 #init:
-- $y = range(4, 51)
-- $p = range(10, 100)
-- $g = range(5, 60)
+- $y_txt, y = sample([("Ten", 10), ("Twenty", 20), ("Thirty", 30), ("Forty", 40), ("Fifty", 50), ("Sixty", 60), ("Seventy", 70), ("Eighty", 80), ("Ninety", 90), ("One hundred", 100)])
+- $p = range(40, 201, 40)
+- $q = sample([25, 50, 75, 100])
 
 #conditions:
-- divides(y*p, 100)
-- divides(g*(2*y + (y*p)//100), 100)
+- divides(y * p, 100)
+- divides((2 * y + y * p // 100) * q, 100)
 
-#answer: (2*y + (y*p)//100) + (g*(2*y + (y*p)//100))//100
+#answer: 2 * y + y * p // 100 + ((2 * y + y * p // 100) * q) // 100
 """
 
 answer_annotated = """
-There are {p}/100 * {y} = <<{p}/100*{y}={(p*y)//100}>>{(p*y)//100} more purple flowers than yellow flowers.
-So in Mark's garden, there are {y} + {(p*y)//100} = <<{y}+{(p*y)//100}={y + (p*y)//100}>>{y + (p*y)//100} purple flowers.
-Purple and yellow flowers sum up to {y} + {y + (p*y)//100} = <<{y}+{y + (p*y)//100}={y + (y + (p*y)//100)}>>{y + (y + (p*y)//100)} flowers.
-That means in Mark's garden there are {g}/100 * {y + (y + (p*y)//100)} = <<{g}/100*{y + (y + (p*y)//100)}={(g*(y + (y + (p*y)//100)))//100}>>{(g*(y + (y + (p*y)//100)))//100} green flowers.
-So in total Mark has {y + (y + (p*y)//100)} + {(g*(y + (y + (p*y)//100)))//100} = <<{y + (y + (p*y)//100)}+{(g*(y + (y + (p*y)//100)))//100}={(y + (y + (p*y)//100)) + (g*(y + (y + (p*y)//100)))//100}>>{(y + (y + (p*y)//100)) + (g*(y + (y + (p*y)//100)))//100} plants in his garden.
-#### {(y + (y + (p*y)//100)) + (g*(y + (y + (p*y)//100)))//100}
+There are {p}/100 * {y} = <<{p}/100*{y}={y*p//100}>>{y*p//100} more purple flowers than yellow flowers.
+So in Mark's garden, there are {y} + {y*p//100} = <<{y}+{y*p//100}={y+y*p//100}>>{y+y*p//100} purple flowers.
+Purple and yellow flowers sum up to {y} + {y+y*p//100} = <<{y}+{y+y*p//100}={2*y+y*p//100}>>{2*y+y*p//100} flowers.
+That means in Mark's garden there are {q}/100 * {2*y+y*p//100} = <<{q}/100*{2*y+y*p//100}={((2*y+y*p//100) * q)//100}>>{((2*y+y*p//100) * q)//100} green flowers.
+So in total Mark has {2*y+y*p//100} + {((2*y+y*p//100) * q)//100} = <<{2*y+y*p//100}+{((2*y+y*p//100) * q)//100}={2*y+y*p//100 + ((2*y+y*p//100) * q)//100}>>{2*y+y*p//100 + ((2*y+y*p//100) * q)//100} plants in his garden.
+#### {2*y+y*p//100 + ((2*y+y*p//100) * q)//100}
 """
 
-creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"

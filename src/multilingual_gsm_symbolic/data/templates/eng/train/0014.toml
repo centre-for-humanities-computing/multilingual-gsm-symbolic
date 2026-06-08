@@ -1,4 +1,6 @@
-question = "Joy can read 8 pages of a book in 20 minutes. How many hours will it take her to read 120 pages?"
+question = """
+Joy can read 8 pages of a book in 20 minutes. How many hours will it take her to read 120 pages?
+"""
 
 answer = """
 In one hour, there are 3 sets of 20 minutes.
@@ -8,30 +10,35 @@ It will take her 120/24 = <<120/24=5>>5 hours to read 120 pages.
 """
 
 id_orig = 14
-
 id_shuffled = 14
 
 question_annotated = """
-Joy can read {p,8} pages of a book in {t,20} minutes. How many hours will it take her to read {n,120} pages?
+{name,Joy} can read {p,8} pages of a {item,book} in {m,20} minutes. How many hours will it take {name,Joy} to read {c,120} pages?
 
 #init:
-- $p = range(1, 51)
-- $t = sample([10, 12, 15, 20, 30])
-- $n = range(10, 401)
+- name = sample(names_female)
+- item = sample(["book", "novel", "magazine"])
+- $p = range(4, 21)
+- $m = sample([5, 6, 10, 12, 15, 20, 30])
+- $q = range(2, 16)
+- $c = range(40, 5001)
 
 #conditions:
-- divides(n, p * (60//t))
+- divides(60, m)
+- c == p * (60 // m) * q
 
-#answer: n // (p * (60//t))
+#answer: q
 """
 
 answer_annotated = """
-In one hour, there are {60//t} sets of {t} minutes.
-So, Joy can read {p} x {60//t} = <<{p}*{60//t}={p*(60//t)}>>{p*(60//t)} pages in an hour.
-It will take her {n}/{p*(60//t)} = <<{n}/({p*(60//t)})={n//(p*(60//t))}>>{n//(p*(60//t))} hours to read {n} pages.
-#### {n//(p*(60//t))}
+In one hour, there are 60 / {m} = <<60/{m}={60//m}>>{60//m} sets of {m} minutes.
+So, {name} can read {p} x {60//m} = <<{p}*{60//m}={p*60//m}>>{p*60//m} pages in an hour.
+It will take her {c} / {p*60//m} = <<{c}/{p*60//m}={q}>>{q} hours to read {c} pages.
+#### {q}
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"
+
+ignore = true  # failed after 3 attempts: Variable q not found in assignments, and no other variable to derive from in question 14.

@@ -1,4 +1,6 @@
-question = "James creates a media empire.  He creates a movie for $2000.  Each DVD cost $6 to make.  He sells it for 2.5 times that much.  He sells 500 movies a day for 5 days a week.  How much profit does he make in 20 weeks?"
+question = """
+James creates a media empire.  He creates a movie for $2000.  Each DVD cost $6 to make.  He sells it for 2.5 times that much.  He sells 500 movies a day for 5 days a week.  How much profit does he make in 20 weeks?
+"""
 
 answer = """
 He sold each DVD for 6*2.5=$<<6*2.5=15>>15
@@ -11,41 +13,36 @@ Then after the cost of creating the movie he has a profit of 450,000-2000=$<<450
 """
 
 id_orig = 15
-
 id_shuffled = 15
 
 question_annotated = """
-{name,James} creates a media empire.  He creates a movie for {cur,$}{movie_budget,2000}.  Each DVD cost {cur,$}{dvd_cost,6} to make.  He sells it for 2.5 times that much.  He sells {daily_movies,500} movies a day for {days_per_week,5} days a week.  How much profit does he make in {weeks,20} weeks?
+{name,James} creates a media empire.  He creates a movie for {cur,$}{startup_cost,2000}.  Each DVD cost {cur,$}{unit_cost,6} to make.  He sells it for {markup,2.5} times that much.  He sells {per_day,500} movies a day for {days,5} days a week.  How much profit does he make in {weeks,20} weeks?
 
 #init:
-- name = sample(["James"])
-- $cur = sample(currencies_sym)
-- $movie_budget = range(2000,2001,1)
-- $dvd_cost = range(6,7,1)
-- $daily_movies = range(300, 801, 25)
-- $days_per_week = range(3, 7, 1)
-- $weeks = range(10, 31, 2)
+- name = sample(names)
+- cur = sample(currencies_sym)
+- $startup_cost = sample([2000])
+- $unit_cost = sample([6])
+- $markup = sample([2.5])
+- $per_day = sample([500])
+- $days = sample([5])
+- $weeks = sample([20])
 
-#conditions:
-- daily_movies > 0
-- days_per_week > 0
-- weeks > 0
-
-#answer: (9*daily_movies*days_per_week*weeks) - movie_budget
+#answer: int(unit_cost * (markup - 1) * per_day * days * weeks - startup_cost)
 """
 
 answer_annotated = """
-He sold each DVD for {dvd_cost}*2.5=$<<{dvd_cost}*2.5=15>>15
-So he makes a profit of 15-{dvd_cost}=$<<15-{dvd_cost}=9>>9
-So each day he makes a profit of 9*{daily_movies}=$<<9*{daily_movies}={9*daily_movies}>>{9*daily_movies}
-So he makes {9*daily_movies}*{days_per_week}=$<<{9*daily_movies}*{days_per_week}={9*daily_movies*days_per_week}>>{9*daily_movies*days_per_week:,}
-He makes {9*daily_movies*days_per_week}*{weeks}=$<<{9*daily_movies*days_per_week}*{weeks}={9*daily_movies*days_per_week*weeks}>>{9*daily_movies*days_per_week*weeks:,}
-Then after the cost of creating the movie he has a profit of {9*daily_movies*days_per_week*weeks:,}-{movie_budget}=$<<{9*daily_movies*days_per_week*weeks}-{movie_budget}={9*daily_movies*days_per_week*weeks-movie_budget}>>{9*daily_movies*days_per_week*weeks-movie_budget:,}
-#### {9*daily_movies*days_per_week*weeks-movie_budget}
+He sold each DVD for 6*2.5={cur}<<6*2.5=15>>15
+So he makes a profit of 15-6={cur}<<15-6=9>>9
+So each day he makes a profit of 9*500={cur}<<9*500=4500>>4500
+So he makes 4500*5={cur}<<4500*5=22500>>22,500
+He makes 22,500*20={cur}<<22500*20=450000>>450,000
+Then after the cost of creating the movie he has a profit of 450,000-2000={cur}<<450000-2000=448000>>448,000
+#### 448000
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"
 
-ignore = true  # failed after 3 attempts: invalid syntax (<unknown>, line 1)
+ignore = true  # failed after 3 attempts: Template has only 1 numeric combinations, fewer than 100, for 0015.toml

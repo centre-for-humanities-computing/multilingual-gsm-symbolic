@@ -10,6 +10,10 @@ from multilingual_gsm_symbolic.load_data import (
     load_replacements,
 )
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion
+from multilingual_gsm_symbolic.validation import (
+    validate_maximum_numeric_combinations,
+    validate_minimum_numeric_combinations,
+)
 
 
 def test_get_combinations_deduplicates_numeric_solutions():
@@ -33,6 +37,47 @@ def test_get_combinations_deduplicates_numeric_solutions():
     combinations = template.get_combinations(replacements={}, only_numeric=True)
 
     assert combinations == [{"x": 1}, {"x": 2}, {"x": 3}]
+
+
+def test_validate_maximum_numeric_combinations_accepts_boundary():
+    template = AnnotatedQuestion(
+        question="Q",
+        answer="A",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated=(
+            "{x,1}\n"
+            "#init:\n"
+            "- $x = range(1, 101)\n"
+            "#conditions:\n"
+            "- True\n"
+            "#answer: x"
+        ),
+        answer_annotated="{x}",
+    )
+
+    validate_maximum_numeric_combinations(template, replacements={}, maximum=100)
+
+
+def test_validate_maximum_numeric_combinations_rejects_above_boundary():
+    template = AnnotatedQuestion(
+        question="Q",
+        answer="A",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated=(
+            "{x,1}\n"
+            "#init:\n"
+            "- $x = range(1, 102)\n"
+            "#conditions:\n"
+            "- True\n"
+            "#answer: x"
+        ),
+        answer_annotated="{x}",
+    )
+
+    with pytest.raises(AssertionError, match=r"more than 100 numeric combinations"):
+        validate_maximum_numeric_combinations(template, replacements={}, maximum=100)
 
 
 _CACHE_DIR = Path(__file__).with_name("combinations_cache")
@@ -97,12 +142,15 @@ def _sync_language_cache(language: str) -> tuple[list[tuple[Path, AnnotatedQuest
 @pytest.mark.parametrize("language", sorted(available_languages()))
 def test_each_template_has_at_least_100_solutions(language: str):
     templates, cache = _sync_language_cache(language)
+    replacements = load_replacements(language)
 
     failures = []
     for path, template in templates:
         count = cache[template.question_annotated]
         if count < 100:
             failures.append((path, count, template.question_annotated.splitlines()[0]))
+            continue
+        validate_minimum_numeric_combinations(template, replacements, source=path)
     if failures:
         details = "\n".join(
             f"- {path}\n  numeric combinations: {count}\n  template: {first_line}"

@@ -1,4 +1,6 @@
-question = "Tobias is buying a new pair of shoes that costs $95. He has been saving up his money each month for the past three months. He gets a $5 allowance a month. He also mows lawns and shovels driveways. He charges $15 to mow a lawn and $7 to shovel. After buying the shoes, he has $15 in change. If he mows 4 lawns, how many driveways did he shovel?"
+question = """
+Tobias is buying a new pair of shoes that costs $95. He has been saving up his money each month for the past three months. He gets a $5 allowance a month. He also mows lawns and shovels driveways. He charges $15 to mow a lawn and $7 to shovel. After buying the shoes, he has $15 in change. If he mows 4 lawns, how many driveways did he shovel?
+"""
 
 answer = """
 He saved up $110 total because 95 + 15 = <<95+15=110>>110
@@ -10,38 +12,39 @@ He shoveled 5 driveways because 35 / 7 = <<35/7=5>>5
 """
 
 id_orig = 11
-
 id_shuffled = 11
 
 question_annotated = """
-{name,Tobias} is buying a new pair of shoes that costs ${shoe_cost,95}. He has been saving up his money each month for the past {months,3} months. He gets a ${allowance,5} allowance a month. He also mows lawns and shovels driveways. He charges ${lawn_pay,15} to mow a lawn and ${shovel_pay,7} to shovel. After buying the shoes, he has ${change_left,15} in change. If he mows {lawns,4} lawns, how many driveways did he shovel?
+{name,Tobias} is buying a new pair of shoes that costs {currency,$}{shoe_price,95}. He has been saving up his money each month for the past three months. He gets a {currency,$}{allowance,5} allowance a month. He also mows lawns and shovels driveways. He charges {currency,$}{lawn_fee,15} to mow a lawn and {currency,$}{shovel_fee,7} to shovel. After buying the shoes, he has {currency,$}{change,15} in change. If he mows {lawns,4} lawns, how many driveways did he shovel?
 
 #init:
-- name = "Tobias"
-- $shoe_cost = range(80, 131, 5)
-- $months = range(2, 5)
-- $allowance = range(3, 8)
-- $lawn_pay = range(12, 19)
-- $shovel_pay = range(5, 11)
-- $change_left = range(5, 26, 5)
-- $lawns = range(2, 7)
+- $name = sample(names)
+- $currency = sample(currencies_sym)
+- $shoe_price = sample([95])
+- $allowance = sample([5])
+- $lawn_fee = sample([15])
+- $shovel_fee = sample([7])
+- $change = sample([15])
+- $lawns = sample([4])
 
 #conditions:
-- shoe_cost + change_left - months*allowance - lawns*lawn_pay > 0
-- divides(shoe_cost + change_left - months*allowance - lawns*lawn_pay, shovel_pay)
+- shoe_price + change > allowance + lawn_fee * lawns
+- divides(shoe_price + change - allowance - lawn_fee * lawns, shovel_fee)
 
-#answer: (shoe_cost + change_left - months*allowance - lawns*lawn_pay) // shovel_pay
+#answer: (shoe_price + change - allowance - lawn_fee * lawns) // shovel_fee
 """
 
 answer_annotated = """
-He saved up ${shoe_cost+change_left} total because {shoe_cost} + {change_left} = <<{shoe_cost}+{change_left}={shoe_cost+change_left}>>{shoe_cost+change_left}
-He saved ${months*allowance} from his allowance because {months} x {allowance} = <<{months}*{allowance}={months*allowance}>>{months*allowance}
-He earned ${lawns*lawn_pay} mowing lawns because {lawns} x {lawn_pay} = <<{lawns}*{lawn_pay}={lawns*lawn_pay}>>{lawns*lawn_pay}
-He earned ${shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance)} shoveling driveways because {shoe_cost+change_left} - {lawns*lawn_pay} - {months*allowance} = <<{shoe_cost+change_left}-{lawns*lawn_pay}-{months*allowance}={shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance)}>>{shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance)}
-He shoveled {(shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance))//shovel_pay} driveways because {shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance)} / {shovel_pay} = <<{shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance)}/{shovel_pay}={(shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance))//shovel_pay}>>{(shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance))//shovel_pay}
-#### {(shoe_cost+change_left-(lawns*lawn_pay)-(months*allowance))//shovel_pay}
+He saved up {shoe_price+change} total because {shoe_price} + {change} = <<{shoe_price}+{change}={shoe_price+change}>>{shoe_price+change}
+He saved {allowance} from his allowance because 3 x {allowance} = <<3*{allowance}={3*allowance}>>{3*allowance}
+He earned {lawns*lawn_fee} mowing lawns because {lawns} x {lawn_fee} = <<{lawns}*{lawn_fee}={lawns*lawn_fee}>>{lawns*lawn_fee}
+He earned {shoe_price+change-3*allowance-lawns*lawn_fee} shoveling driveways because {shoe_price+change} - {3*allowance} - {lawns*lawn_fee} = <<{shoe_price+change}-{3*allowance}-{lawns*lawn_fee}={shoe_price+change-3*allowance-lawns*lawn_fee}>>{shoe_price+change-3*allowance-lawns*lawn_fee}
+He shoveled {(shoe_price+change-3*allowance-lawns*lawn_fee)//shovel_fee} driveways because {shoe_price+change-3*allowance-lawns*lawn_fee} / {shovel_fee} = <<{shoe_price+change-3*allowance-lawns*lawn_fee}/{shovel_fee}={(shoe_price+change-3*allowance-lawns*lawn_fee)//shovel_fee}>>{(shoe_price+change-3*allowance-lawns*lawn_fee)//shovel_fee}
+#### {(shoe_price+change-3*allowance-lawns*lawn_fee)//shovel_fee}
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"
+
+ignore = true  # failed after 3 attempts: Template has only 0 numeric combinations, fewer than 100, for 0011.toml

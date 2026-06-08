@@ -15,10 +15,15 @@ logger = logging.getLogger(__name__)
 def _active_toml_files(directory: Path) -> list[Path]:
     files = []
     for f in sorted(directory.glob("*.toml")):
+      
         with f.open("rb") as fp:
-            data = tomllib.load(fp)
-        if not data.get("ignore"):
-            files.append(f)
+            if "ignore = true" not in fp.read().decode("utf-8"):
+  
+              fp.seek(0)
+              data = tomllib.load(fp)
+              if not data.get("ignore"):
+                files.append(f)
+
     return files
 
 

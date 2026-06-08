@@ -1,32 +1,40 @@
-question = "Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15 for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?"
+question = """
+Betty is saving money for a new wallet which costs $100. Betty has only half of the money she needs. Her parents decided to give her $15 for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?
+"""
 
-answer = "In the beginning, Betty has only 100 / 2 = $<<100/2=50>>50.\nBetty's grandparents gave her 15 * 2 = $<<15*2=30>>30.\nThis means, Betty needs 100 - 50 - 30 - 15 = $<<100-50-30-15=5>>5 more.\n#### 5"
+answer = """
+In the beginning, Betty has only 100 / 2 = $<<100/2=50>>50.
+Betty's grandparents gave her 15 * 2 = $<<15*2=30>>30.
+This means, Betty needs 100 - 50 - 30 - 15 = $<<100-50-30-15=5>>5 more.
+#### 5
+"""
 
 id_orig = 2
-
 id_shuffled = 2
 
 question_annotated = """
-Betty is saving money for a new wallet which costs {cur,$}$%{cost,100}%. Betty has only half of the money she needs. Her parents decided to give her {cur,$}$%{parents,15}%. for that purpose, and her grandparents twice as much as her parents. How much more money does Betty need to buy the wallet?
+{name,Betty} is saving money for a new wallet which costs {currency,$}{cost,100}. {name,Betty} has only half of the money she needs. Her parents decided to give her {currency,$}{parent,15} for that purpose, and her grandparents twice as much as her parents. How much more money does {name,Betty} need to buy the wallet?
+
 #init:
-- cur = sample(currencies_sym)
-- $cost = range(40, 201, 10)
-- $parents = range(5, 31)
+- name = sample(names_female)
+- currency = sample(currencies_sym)
+- $cost = range(20, 501, 10)
+- $parent = range(5, 101, 5)
 
 #conditions:
 - divides(cost, 2)
-- cost // 2 - 3 * parents > 0
+- cost > 6 * parent
 
-#answer: cost - cost//2 - parents - 2*parents
+#answer: cost - cost//2 - 3*parent
 """
 
 answer_annotated = """
-In the beginning, Betty has only {cost} / 2 = {cur}$<<{cost}/2={cost//2}>>{cost//2}.
-Betty's grandparents gave her {parents} * 2 = {cur}$<<{parents}*2={2*parents}>>{2*parents}.
-This means, Betty needs {cost} - {cost//2} - {2*parents} - {parents} = {cur}$<<{cost}-{cost//2}-{2*parents}-{parents}={cost - cost//2 - 2*parents - parents}>>{cost - cost//2 - 2*parents - parents} more.
-#### {cost - cost//2 - 2*parents - parents}
+In the beginning, {name} has only {cost} / 2 = $<<{cost}/2={cost//2}>>{cost//2}.
+{name}'s grandparents gave her {parent} * 2 = $<<{parent}*2={2*parent}>>{2*parent}.
+This means, {name} needs {cost} - {cost//2} - {2*parent} - {parent} = $<<{cost}-{cost//2}-{2*parent}-{parent}={cost - cost//2 - 3*parent}>>{cost - cost//2 - 3*parent} more.
+#### {cost - cost//2 - 3*parent}
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"

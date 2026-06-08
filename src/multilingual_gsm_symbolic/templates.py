@@ -210,7 +210,19 @@ class AnnotatedQuestion:
     @cached_property
     def _answer_expr_asts(self) -> dict[str, ast.expr]:
         exprs = RE_CURLY_EXPR.findall(self.answer_annotated)
-        return {expr.strip(): parse_expr(expr.strip()) for expr in set(exprs)}
+        parsed_exprs: dict[str, ast.expr] = {}
+        for expr in set(exprs):
+            stripped = expr.strip()
+            if RE_TEMPLATE_VAR.fullmatch("{" + stripped + "}"):
+                logger.warning(
+                    "Template %s contains question-style placeholder syntax in answer_annotated: {%s}. "
+                    "Leaving it untouched during answer rendering.",
+                    self.id_shuffled,
+                    stripped,
+                )
+                continue
+            parsed_exprs[stripped] = parse_expr(stripped)
+        return parsed_exprs
 
     @cached_property
     def _init_line_asts(self) -> list[tuple[list[str], ast.expr]]:
@@ -406,6 +418,8 @@ class AnnotatedQuestion:
 
         def eval_curly_expr(match: re.Match) -> str:
             expr_str = match.group(1).strip()
+            if expr_str not in self._answer_expr_asts:
+                return match.group(0)
             logger.debug(f"Evaluating expression: {expr_str}")
             value = eval_node(self._answer_expr_asts[expr_str], eval_env)
             logger.debug(f"Evaluated value: {value}")

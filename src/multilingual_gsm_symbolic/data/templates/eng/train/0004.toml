@@ -1,4 +1,6 @@
-question = "James writes a 3-page letter to 2 different friends twice a week.  How many pages does he write a year?"
+question = """
+James writes a 3-page letter to 2 different friends twice a week.  How many pages does he write a year?
+"""
 
 answer = """
 He writes each friend 3*2=<<3*2=6>>6 pages a week
@@ -8,30 +10,31 @@ That means he writes 12*52=<<12*52=624>>624 pages a year
 """
 
 id_orig = 4
-
 id_shuffled = 4
 
 question_annotated = """
-{n,James} writes a {p,3}-page letter to {f,2} different friends twice a week.  How many pages does he write a year?
+James writes a {p,3}-page letter to {f,2} different friends {freq_txt,twice} a week. How many pages does he write a year?
 
 #init:
-- n = sample(["James", "Oliver", "Ethan", "Daniel", "Lucas"])
-- $p = range(1, 31)
-- $f = range(1, 21)
-- $w = sample([48, 49, 50, 51, 52, 53, 54, 55, 56])
+- $p = range(2, 21)
+- $f = range(2, 21)
+- freq_txt, freq_val = sample([("once", 1), ("twice", 2), ("three times", 3), ("four times", 4), ("five times", 5)])
 
 #conditions:
+- p > 0
+- f > 0
+- freq_val > 0
 
-#answer: p*2*f*w
+#answer: p * f * freq_val * 52
 """
 
 answer_annotated = """
-He writes each friend {p}*2=<<{p}*2={p*2}>>{p*2} pages a week
-So he writes {p*2}*{f}=<<{p*2}*{f}={(p*2)*f}>>{(p*2)*f} pages every week
-That means he writes {(p*2)*f}*{w}=<<{(p*2)*f}*{w}={((p*2)*f)*w}>>{((p*2)*f)*w} pages a year
-#### {(p*2)*f*w}
+He writes each friend {p}*{f}=<<{p}*{f}={p*f}>>{p*f} pages a week
+So he writes {p*f}*{freq_val}=<<{p*f}*{freq_val}={p*f*freq_val}>>{p*f*freq_val} pages every week
+That means he writes {p*f*freq_val}*52=<<{p*f*freq_val}*52={p*f*freq_val*52}>>{p*f*freq_val*52} pages a year
+#### {p*f*freq_val*52}
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"

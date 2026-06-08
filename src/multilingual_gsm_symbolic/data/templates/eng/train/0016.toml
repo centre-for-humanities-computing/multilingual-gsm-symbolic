@@ -1,4 +1,6 @@
-question = "The profit from a business transaction is shared among 2 business partners, Mike and Johnson in the ratio 2:5 respectively. If Johnson got $2500, how much will Mike have after spending some of his share on a shirt that costs $200?"
+question = """
+The profit from a business transaction is shared among 2 business partners, Mike and Johnson in the ratio 2:5 respectively. If Johnson got $2500, how much will Mike have after spending some of his share on a shirt that costs $200?
+"""
 
 answer = """
 According to the ratio, for every 5 parts that Johnson gets, Mike gets 2 parts
@@ -9,34 +11,22 @@ After buying the shirt he will have $1000-$200 = $<<1000-200=800>>800 left
 """
 
 id_orig = 16
-
 id_shuffled = 16
 
 question_annotated = """
-The profit from a business transaction is shared among 2 business partners, {m_name,Mike} and {j_name,Johnson} in the ratio 2:5 respectively. If {j_name,Johnson} got {cur,$}{j_amt,2500}, how much will {m_name,Mike} have after spending some of his share on a shirt that costs {cur,$}{shirt_cost,200}?
-
-#init:
-- m_name = sample(["Mike"])
-- j_name = sample(["Johnson"])
-- cur = sample(currencies_sym)
-- $j_amt = range(500, 10000, 250)
-- $shirt_cost = range(50, 500, 10)
-
-#conditions:
-- divides(j_amt, 5)
-- 2 * (j_amt // 5) - shirt_cost > 0
-
-#answer: 2 * (j_amt // 5) - shirt_cost
+The profit from a business transaction is shared among 2 business partners, Mike and Johnson in the ratio 2:5 respectively. If Johnson got $2500, how much will Mike have after spending some of his share on a shirt that costs $200?
 """
 
 answer_annotated = """
 According to the ratio, for every 5 parts that Johnson gets, Mike gets 2 parts
-Since Johnson got {cur}{j_amt}, each part is therefore {cur}{j_amt}/5 = {cur}<<{j_amt}/5={j_amt//5}>>{j_amt//5}
-Mike will get 2*${j_amt//5} = {cur}<<2*{j_amt//5}={2*(j_amt//5)}>>{2*(j_amt//5)}
-After buying the shirt he will have {cur}{2*(j_amt//5)}-{cur}{shirt_cost} = {cur}<<{2*(j_amt//5)}-{shirt_cost}={2*(j_amt//5)-shirt_cost}>>{2*(j_amt//5)-shirt_cost} left
-#### {2*(j_amt//5)-shirt_cost}
+Since Johnson got $2500, each part is therefore $2500/5 = $<<2500/5=500>>500
+Mike will get 2*$500 = $<<2*500=1000>>1000
+After buying the shirt he will have $1000-$200 = $<<1000-200=800>>800 left
+#### 800
 """
 
-creation = "machine-generated from GSM8K using gpt-5.4-nano-2026-03-17"
+creation = "machine-generated from GSM8K using gpt-5.4-mini-2026-03-17"
 
 language = "eng"
+
+ignore = true  # failed after 3 attempts: Template 16 is missing '#init:' in question_annotated. Put #init, #conditions, and #answer inside question_annotated; answer_annotated should only contain the worked solution template.

@@ -4,23 +4,14 @@ from conftest import get_template_files
 from multilingual_gsm_symbolic._helpers import arange_possibilities
 from multilingual_gsm_symbolic.load_data import load_replacements
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion
+from multilingual_gsm_symbolic.validation import validate_formatting_matches_original
 
 
 @pytest.mark.parametrize("template_file", get_template_files())
 def test_template_formatting_matches_original(template_file):
     annotated_question = AnnotatedQuestion.from_toml(template_file)
     replacements = load_replacements(annotated_question.language)
-    default_assignments = annotated_question._get_full_default_assignments(replacements)
-
-    formatted_question = annotated_question.format_question(default_assignments)
-    formatted_answer = annotated_question.format_answer(default_assignments)
-
-    assert formatted_question == annotated_question.question, (
-        f"Formatted question doesn't match original for {template_file.name}"
-    )
-    assert formatted_answer == annotated_question.answer, (
-        f"Formatted answer doesn't match original for {template_file.name}"
-    )
+    validate_formatting_matches_original(annotated_question, replacements, source=template_file)
 
 
 def make_template(answer_annotated: str) -> AnnotatedQuestion:
@@ -60,6 +51,13 @@ def test_format_answer_repeated_expression():
     assert t.format_answer({"x": 5}) == "5 and 5 again"
 
 
+def test_format_answer_ignores_placeholder_syntax():
+    t = make_template("Keep {name,Pat} literal and compute {x+1}.")
+    assert t.format_answer({"x": 3}) == "Keep {name,Pat} literal and compute 4."
+    assert "x+1" in t._answer_expr_asts
+    assert "name,Pat" not in t._answer_expr_asts
+
+
 def test_arange_no_floating_point_noise():
     """arange_possibilities must not produce strings like '1.7999999999999998'.
 
@@ -93,3 +91,50 @@ def test_format_question_arange_variable_no_noise():
     for q in questions:
         assert "1.7999" not in q.question, f"Floating-point noise in question: {q.question}"
         assert "1.7999" not in q.answer, f"Floating-point noise in answer: {q.answer}"
+
+
+def test_validate_formatting_ignores_whitespace_only_differences():
+    template = AnnotatedQuestion(
+        question="James writes a 3-page letter twice a week.  How many pages?",
+        answer="First line\nSecond line",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated=(
+            "James writes a {pages,3}-page letter twice a week. How many pages?\n"
+            "#init:\n"
+            "- $pages = range(1, 5)\n"
+            "#conditions:\n"
+            "- True\n"
+            "#answer: pages"
+        ),
+        answer_annotated="First    line\nSecond line",
+    )
+    validate_formatting_matches_original(template, replacements={})
+
+
+def test_validate_formatting_includes_diff_for_mismatch():
+    template = AnnotatedQuestion(
+        question="Expected question.",
+        answer="Expected answer.",
+        id_orig=1,
+        id_shuffled=1,
+        question_annotated=(
+            "Rendered {thing,question}.\n"
+            "#init:\n"
+            "- thing = sample([\"question\"])\n"
+            "#conditions:\n"
+            "- True\n"
+            "#answer: 1"
+        ),
+        answer_annotated="Expected answer.",
+    )
+
+    with pytest.raises(AssertionError) as exc_info:
+        validate_formatting_matches_original(template, replacements={})
+
+    message = str(exc_info.value)
+    assert "Formatted question doesn't match original" in message
+    assert "--- original_question" in message
+    assert "+++ formatted_question" in message
+    assert "-Expected question." in message
+    assert "+Rendered question." in message

@@ -10,11 +10,14 @@ from openai import OpenAI
 
 from multilingual_gsm_symbolic.load_data import load_replacements
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion
+from multilingual_gsm_symbolic.validation import (
+    validate_template_against_pytest_checks,
+)
 
 GSM8K_DATASET = "openai/gsm8k"
 GSM8K_CONFIG = "main"
 GSM8K_SPLIT = "train"
-MODEL = "gpt-5.4-nano-2026-03-17"
+MODEL = "gpt-5.4-mini-2026-03-17"
 CREATION = f"machine-generated from GSM8K using {MODEL}"
 MAX_TEMPLATE_ATTEMPTS = 3
 
@@ -79,7 +82,7 @@ Template rules:
 - Use placeholders like {{variable,default_value}} in question_annotated. Defaults must render the exact concrete question. Use the same default in every occurrence of that variable's placeholder even if the placeholder appears multiple times. 
 - Do not use placeholders in answer_annotated. Render the exact concrete answer in answer_annotated with no placeholders.
 - Use bare {{variable}} or Python expressions in answer_annotated. These must render the exact concrete answer.
-- In init, prefix numeric sampled variables with $, for example: "$price = range(1, 20)".
+- In init, the first variable on each init line must be prefixed with $, for example: "$price = range(1, 20)".
 - In init, every right-hand side must be iterable; for fixed values use `range(12, 13)` or `sample([12])`, not `12`.
 - Every placeholder must have a default value. For example, {{price,20}}. This default must be reachable from that variable's init expression. 
 - range(start, end[, step]) uses a Python-style exclusive end. Never emit range(x, x), because it has no possible values.
@@ -106,6 +109,13 @@ Parser helpers available in synthetic templates:
 
 
 _QUESTION_PLACEHOLDER_RE = re.compile(r"\{([^},]+)(?:,[^}]+)?\}")
+
+
+def _is_formatting_mismatch_error(error: Exception) -> bool:
+    message = str(error)
+    return message.startswith("Formatted question doesn't match original") or message.startswith(
+        "Formatted answer doesn't match original"
+    )
 
 
 def validate_question_annotated_placeholders(template: AnnotatedQuestion) -> None:
@@ -182,14 +192,21 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> dict:
         attempt_log = {"attempt": attempt, "template_text": template_text}
 
         try:
-            annotated_question_from_toml_text(template_text).generate_questions(
-                n=10, replacements=replacements, verbose=False
-            )
+            template = annotated_question_from_toml_text(template_text)
+            validate_template_against_pytest_checks(template, replacements, source=f"{id_shuffled:04d}.toml")
+            template.generate_questions(n=10, replacements=replacements, verbose=False)
         except Exception as e:
             last_error = e
             attempt_log["error"] = str(e)
             attempts.append(attempt_log)
-            print(f"Error generating questions for id {source_id} on attempt {attempt}/{MAX_TEMPLATE_ATTEMPTS}: {e}")
+            if _is_formatting_mismatch_error(e):
+                print(
+                    "Formatting mismatch for "
+                    f"id {source_id} on attempt {attempt}/{MAX_TEMPLATE_ATTEMPTS}; "
+                    "details sent back to the model for retry."
+                )
+            else:
+                print(f"Error generating questions for id {source_id} on attempt {attempt}/{MAX_TEMPLATE_ATTEMPTS}: {e}")
             messages.append(
                 {
                     "role": "assistant",
@@ -214,7 +231,9 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> dict:
             "log_entry": {"source_id": source_id, "id_shuffled": id_shuffled, "success": True, "attempts": attempts},
         }
 
+    last_error = "formatting mismatch" if _is_formatting_mismatch_error(last_error) else last_error
     print(f"Error generating questions after {MAX_TEMPLATE_ATTEMPTS} attempts: {last_error}")
+    
     return {
         "template_text": (
             last_template_text
@@ -241,12 +260,12 @@ jobs = []
 for source_id, example in enumerate(gsm8k_train):
     if source_id in generated_source_ids:
         continue
-    if len(jobs) >= 100:
+    if len(jobs) >= 90:
         break
     jobs.append((source_id, example, next_template_number + len(jobs)))
 
 output_dir.mkdir(exist_ok=True)
-with ThreadPoolExecutor(max_workers=int(os.getenv("SYNTHETIC_TEMPLATE_WORKERS", "1"))) as executor:
+with ThreadPoolExecutor(max_workers=int(os.getenv("SYNTHETIC_TEMPLATE_WORKERS", "3"))) as executor:
     futures = {executor.submit(create_template, *job): job for job in jobs}
     for future in as_completed(futures):
         source_id, _, id_shuffled = futures[future]
@@ -264,6 +283,4 @@ with ThreadPoolExecutor(max_workers=int(os.getenv("SYNTHETIC_TEMPLATE_WORKERS", 
             print(f"Skipping template with id_shuffled={id_shuffled} due to generation error")
             continue
         (output_dir / f"{id_shuffled:04d}.toml").write_text(toml.strip() + "\n", encoding="utf-8")
-        print(
-            f"Wrote {output_dir / f'{id_shuffled:04d}.toml'} for source id {source_id} and id_shuffled {id_shuffled}"
-        )
+        print(f"Wrote {output_dir / f'{id_shuffled:04d}.toml'} for source id {source_id} and id_shuffled {id_shuffled}")
