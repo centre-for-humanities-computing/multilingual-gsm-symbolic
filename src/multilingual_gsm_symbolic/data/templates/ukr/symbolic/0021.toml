@@ -10,12 +10,19 @@ answer = """Нехай E — це кількість епізодів, які в
 """
 id_orig = 107
 id_shuffled = 21
-question_annotated = """{name,Серен} дивиться телевізор після того, як закінчить домашнє завдання. У {d1,понеділок} і {d2,вівторок} він подивився по {h1,1}-годинному епізоду свого улюбленого шоу. У {d3,середу} він подивився кілька епізодів {m1,30}-хвилинного шоу. У {d4,четвер} він рано закінчив домашнє завдання і подивився {h2,1}-годинний епізод і {m2,30}-хвилинне шоу. У {d5,п’ятницю} йому дозволили не лягати спати допізна, тож він подивився {n2_txt,два} {h3,1}-годинні епізоди. Якщо загалом він подивився {total,7} годин телевізора, скільки {m1,30}-хвилинних епізодів він подивився в {d3,середу}?
+question_annotated = """{name,Серен} дивиться телевізор після того, як закінчить домашнє завдання. У {d1_when,понеділок} і {d2_when,вівторок} він подивився по {h1,1}-годинному епізоду свого улюбленого шоу. У {d3_when,середу} він подивився кілька епізодів {m1,30}-хвилинного шоу. У {d4_when,четвер} він рано закінчив домашнє завдання і подивився {h2,1}-годинний епізод і {m2,30}-хвилинне шоу. У {d5,п’ятницю} йому дозволили не лягати спати допізна, тож він подивився {n2_txt,два} {h3,1}-годинні епізоди. Якщо загалом він подивився {total,7} {total_hour_form, годин} телевізора, скільки {m1,30}-хвилинних епізодів він подивився в {d3_when,середу}?
 
 #init:
 - name = sample(names_male)
 - d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)
+- d1_when = ukr_weekday_to_when(d1)
+- d2_when = ukr_weekday_to_when(d2)
+- d3_when = ukr_weekday_to_when(d3)
+- d4_when = ukr_weekday_to_when(d4)
+- d5_when = ukr_weekday_to_when(d5)
+
 - $total = range(7, 33)
+- total_hour_form = ukr_plural_measurements(total, "година", "години", "годин")
 - $h1 = range(1, 7)
 - $h3 = range(1, 6)
 - $m1 = range(5, 61, 5)
@@ -23,23 +30,29 @@ question_annotated = """{name,Серен} дивиться телевізор п
 - $h2 = range(1, 7)
 - n2_txt, n2_val = range_str(2, 5, 1, numbers)
 
-#conditions: 
+- d1_hour_form = ukr_plural_measurements(total-h1, "година", "години", "годин")
+- d21_hour_form = ukr_plural_measurements(total-2*h1, "година", "години", "годин")
+- d4_hour_form = ukr_plural_measurements(total-2*h1-h2- m2/60, "година", "години", "годин")
+- d5_hour_form = ukr_plural_measurements(total-2*h1-h2- m2/60-n2_val*h3, "година", "години", "годин")
+- total_episodes_fomr = ukr_plural_measurements(int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1), "епізод", "епізоди", "епізодів")
+
+#conditions:
 - divides(m1, 15)
 - divides(m2, 15)
 - divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)
 - (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0
-- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 
+- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8
 
 #answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)
 """
-answer_annotated = """Нехай E — це кількість епізодів, які він подивився в {d3}.
-Після понеділка в нього залишилося {total} - {h1} = <<{total}-{h1}={total-h1}>>{total-h1} годин телевізора.
-Після вівторка в нього залишилося {total-h1} - {h1} = <<{total-h1}-{h1}={total-2*h1}>>{total-2*h1} годин телевізора.
-Після четверга в нього залишилося {total-2*h1} - {h2} - {m2/60} = {total-2*h1-h2- m2/60} години телевізора.
-Після п’ятниці в нього залишилося {total-2*h1-h2- m2/60} - {n2_val*h3} = {total-2*h1-h2- m2/60-n2_val*h3} години телевізора.
+answer_annotated = """Нехай E — це кількість епізодів, які він подивився в {d3_when}.
+Після перегляду в {d1_when} в нього залишилося {total} - {h1} = <<{total}-{h1}={total-h1}>>{total-h1} {d1_hour_form} телевізора.
+Після перегляду в {d2_when} в нього залишилося {total-h1} - {h1} = <<{total-h1}-{h1}={total-2*h1}>>{total-2*h1} {d21_hour_form} телевізора.
+Після перегляду в {d4_when} в нього залишилося {total-2*h1} - {h2} - {m2/60} = {total-2*h1-h2- m2/60} {d4_hour_form} телевізора.
+Після перегляду в {d5_when} в нього залишилося {total-2*h1-h2- m2/60} - {n2_val*h3} = {total-2*h1-h2- m2/60-n2_val*h3} {d5_hour_form} телевізора.
 Кожен {m1}-хвилинний епізод триває {m1/60} години.
-Отже, E = {total-2*h1-h2-m2/60-n2_val*h3}/{m1/60} = {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)} епізоди.
+Отже, E = {total-2*h1-h2-m2/60-n2_val*h3}/{m1/60} = {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)} {total_episodes_fomr}.
 #### {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
