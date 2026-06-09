@@ -1,0 +1,8 @@
+question = "根據營養標示，一包洋芋片每份有 250 卡路里。如果一包 300 公克的洋芋片有 5 份，而你每天的卡路里目標是 2000，且你已經攝取了 1800 卡路里，那麼你還可以吃多少公克？"
+answer = "如果卡路里總目標是 2000，而我已經攝取了 1800 卡路里，那麼我還可以吃 2000-1800 = <<2000-1800=200>>200 卡路里\n如果每一份洋芋片有 250 卡路里，而我只剩下 200 卡路里可以吃，那麼我只能吃 200/250 份，也就是 4/5 份\n我們也知道，一包 300 公克的洋芋片有 5 份，因此每一份有 300 公克/5 = <<300/5=60>>60 公克\n如果我只能吃 4/5 份，那麼我只能吃 60 公克 * 4/5 = 48 公克\n#### 48\n"
+id_orig = 43
+id_shuffled = 24
+question_annotated = "根據營養標示，一包{food,洋芋片}每份有 {cal,250} 卡路里。如果一包 {size,300} {unit,公克}的{food,洋芋片}有 {n,5} 份，而你每天的卡路里目標是 {total,2000}，且你已經攝取了 {spent,1800} 卡路里，那麼你還可以吃多少{unit,公克}？\n\n#init:\n- food = sample([\"爆米花\", \"麵包\",  \"餅乾\"])\n- unit = sample([\"公克\", \"盎司\", \"oz\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)\n"
+answer_annotated = "如果卡路里總目標是 {total}，而我已經攝取了 {spent} 卡路里，那麼我還可以吃 {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} 卡路里\n如果每一份{food}有 {cal} 卡路里，而我只剩下 {total-spent} 卡路里可以吃，那麼我只能吃 {total-spent}/{cal} 份，也就是 {Fraction((total-spent)/cal)} 份\n我們也知道，一包 {size} {unit}的{food}有 {n} 份，因此每一份有 {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit}\n如果我只能吃 {Fraction((total-spent)/cal)} 份，那麼我只能吃 {size//n} {unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit}\n#### {size//n * (total-spent)/cal}\n"
+creation = "machine-translated from English using openai/gpt-5.4-2026-03-05, based on English templates; computationally validated; validated by a fluent speaker."
+language = "zho"

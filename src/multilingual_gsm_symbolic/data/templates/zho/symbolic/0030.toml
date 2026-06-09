@@ -1,0 +1,8 @@
+question = "宇軒 有 $12.48，想從五金店的一個箱子裡買 16 個螺栓。每個螺栓價格是 $0.03。宇軒 在支付這些螺栓費用後還剩多少錢？"
+answer = "宇軒 付了 16 * $0.03 = $<<16*0.03=0.48>>0.48 買這些螺栓。\n宇軒 有 $12.48 - $0.48 = $12 剩下。\n#### 12"
+id_orig = 873
+id_shuffled = 30
+question_annotated = "{name,宇軒} 有 {cur,$}{initial_amount,12.48}，想從{store_type,五金}店的一個箱子裡買 {quantity,16} 個{item,螺栓}。每個{item,螺栓}價格是 {cur,$}{unit_price,0.03}。{name,宇軒} 在支付這些{item,螺栓}費用後還剩多少錢？\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item = sample([\"螺絲\", \"釘子\", \"墊圈\", \"螺帽\", \"錨栓\"])\n- store_type = sample([\"五金\", \"居家修繕\", \"建材供應\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(12.48, 105, 0.48)\n- $unit_price = arange(0.01, 1, 0.01)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: round(initial_amount - quantity * unit_price)\n"
+answer_annotated = "{name} 付了 {quantity} * {cur}{round(unit_price,2)} = {cur}<<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} 買這些{item}。\n{name} 有 {cur}{initial_amount} - {cur}{round(quantity*unit_price,2)} = {cur}{round(initial_amount - quantity * unit_price)} 剩下。\n#### {round(initial_amount - quantity * unit_price)}\n"
+creation = "machine-translated from English using openai/gpt-5.4-2026-03-05, based on English templates; computationally validated; validated by a fluent speaker."
+language = "zho"

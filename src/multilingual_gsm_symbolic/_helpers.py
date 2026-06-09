@@ -383,8 +383,15 @@ _RE_SENTENCE_CAP = re.compile(r"([.!?]+\s*)([a-z])")
 
 
 def parse_value(val: Any) -> int | float | Fraction | str:
-    if (isinstance(val, str) and val.isnumeric()) or (isinstance(val, float) and val.is_integer()):
+    if isinstance(val, float) and val.is_integer():
         return int(val)
+    if isinstance(val, str) and val.isnumeric():
+        # str.isnumeric() returns True for CJK numerals (e.g. '四'), but int() cannot
+        # parse them. Fall back to returning the string as-is in that case.
+        try:
+            return int(val)
+        except ValueError:
+            return val
     return try_parse_fraction(try_parse_float(val))
 
 
