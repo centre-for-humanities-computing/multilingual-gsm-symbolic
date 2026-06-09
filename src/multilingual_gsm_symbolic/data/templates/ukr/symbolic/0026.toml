@@ -5,24 +5,32 @@ answer = """Кількість сендвічів, які вони з'їдают
 """
 id_orig = 1023
 id_shuffled = 26
-question_annotated = """{name1,чоловік} з'їдає {n1,5} {food,сендвічів} на {time_unit,день}, {name2,його дружина} з'їдає {n2,4} сендвічі на {time_unit,день}, а їхній {relation,син} з'їдає {n3,2} сендвічі на {time_unit,день}. Скільки {food,сендвічів} ця сім'я з'їдає за {time_period,тиждень}?
+question_annotated = """{name1,чоловік} з'їдає {n1,5} {n_food_form,сендвічів} на {time_unit,день}, {name2,його дружина} з'їдає {n2,4} {n2_food_form, сендвічі} на {time_unit,день}, а {relation, їхній син} з'їдає {n3,2} {n3_food_form, сендвічі} на {time_unit,день}. Скільки {food_pl2,сендвічів} ця сім'я з'їдає за {time_period,тиждень}{month_def, }?
 
 #init:
-- name1 = sample(["батько", "дідусь", "дядько"])
-- name2 = sample(["його дружина", "його партнерка", "його дружина"])
-- relation = sample(["донька", "син", "онук"])
-- food = sample(["піци", "буріто", "тако", "суші-роли", "бургери"])
+- name1 = sample(["Батько", "Дідусь", "Дядько", "Дід", "Чоловік"])
+- name2 = sample(["його дружина"])
+- relation = sample(["їхня донька", "їхній син", "їхній онук", "їхній онука"])
+- food, food_pl1, food_pl2 = sample([["пиріжок", "пиріжки", "пиріжків"], ["сирник", "сирники", "сирників"], ["бутерброд", "бутерброди", "бутербродів"], ["вафля", "вафлі", "вафлів"], ["яблуко", "яблука", "яблук"]])
 - time_unit = sample(["день"])
 - time_period = sample(["тиждень", "місяць"])
 - $n1 = range(2, 9)
 - $n2 = range(2, 9)
 - $n3 = range(2, 9)
+- n_food_form = ukr_plural_measurements(n1, food, food_pl1, food_pl2)
+- n2_food_form = ukr_plural_measurements(n2, food, food_pl1, food_pl2)
+- n3_food_form = ukr_plural_measurements(n3, food, food_pl1, food_pl2)
+- month_def = "" if time_period == "тиждень" else ", якщо один місяць включає в себе 30 днів"
+- sumn_food_form = ukr_plural_measurements(n1+n2+n3, food, food_pl1, food_pl2)
+- time_period_n = 7 if time_period == "тиждень" else 30
+- totaln_food_form = ukr_plural_measurements((n1+n2+n3)*time_period_n, food, food_pl1, food_pl2)
 
-#answer: (n1 + n2 + n3) * (7 if time_period == "week" else 30)
+
+#answer: (n1 + n2 + n3) * (7 if time_period == "тиждень" else 30)
 """
-answer_annotated = """Кількість {food}, які вони з'їдають за {time_unit}, становить {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food}.
-Кількість {food}, які вони з'їдають за {time_period}, становить {n1+n2+n3} * {7 if time_period == "тиждень" else 30} = <<{n1+n2+n3}*{7 if time_period == "тиждень" else 30}={(n1+n2+n3)*(7 if time_period == "тиждень" else 30)}>>{(n1+n2+n3)*(7 if time_period == "тиждень" else 30)} {food}.
+answer_annotated = """Кількість {food_pl2}, які вони з'їдають за {time_unit}, становить {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {sumn_food_form}.
+Кількість {food_pl2}, які вони з'їдають за {time_period}, становить {n1+n2+n3} * {7 if time_period == "тиждень" else 30} = <<{n1+n2+n3}*{7 if time_period == "тиждень" else 30}={(n1+n2+n3)*(7 if time_period == "тиждень" else 30)}>>{(n1+n2+n3)*(7 if time_period == "тиждень" else 30)} {totaln_food_form}.
 #### {(n1+n2+n3)*(7 if time_period == "тиждень" else 30)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

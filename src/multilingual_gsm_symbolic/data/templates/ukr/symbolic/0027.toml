@@ -6,13 +6,17 @@ answer = """Йорген отримує 80*20/100=<<80*20/100=16>>16 елект�
 """
 id_orig = 1063
 id_shuffled = 27
-question_annotated = """{name,Йорген} отримує {n,80} електронних листів на день. {p,20}% із цих електронних листів не потребують відповіді. На решту він відповідає. На скільки електронних листів {name,Йорген} відповідає за {d,5}-денний робочий тиждень?
+question_annotated = """{name,Йорген} отримує {n,80} {n_letter_form, електронних листів} на день. {p,20}% із них не потребують відповіді. На решту він відповідає. На скільки електронних листів {name,Йорген} відповідає за {d,5}-денний робочий тиждень?
 
 #init:
-- name = sample(male_names)
+- name = sample(names_male)
 - $n = range(50, 200)
 - $p = range(5, 40)
 - $d = range(3, 7)
+- n_letter_form = ukr_plural_measurements(n, "електронний лист", "електронні листи", "електронних листів")
+- np_letter_form = ukr_plural_measurements(n*p//100, "електронний лист", "електронні листи", "електронних листів")
+- npp_letter_form = ukr_plural_measurements(n*(100-p)//100, "електронний лист", "електронні листи", "електронних листів")
+- t_letter_form = ukr_plural_measurements(d*(n*(100-p)//100), "електронний лист", "електронні листи", "електронних листів")
 
 #conditions:
 - is_int(n * p / 100)
@@ -20,10 +24,10 @@ question_annotated = """{name,Йорген} отримує {n,80} електро
 
 #answer: d * (n * (100 - p) / 100)
 """
-answer_annotated = """{name} отримує {n}*{p}/100=<<{n}*{p}/100={n*p//100}>>{n*p//100} електронних листів, які не потребують відповіді
-Отже, він відповідає на {n}-{n*p//100}=<<{n}-{n*p//100}={n*(100-p)//100}>>{n*(100-p)//100} електронні листи на день
-За {d}-денний робочий тиждень {name}, отже, відповідає на {n*(100-p)//100}*{d}=<<{n*(100-p)/100}*{d}={d*(n*(100-p)//100)}>>{d*(n*(100-p)//100)} електронних листів
+answer_annotated = """{name} отримує {n}*{p}/100=<<{n}*{p}/100={n*p//100}>>{n*p//100} {np_letter_form}, які не потребують відповіді
+Отже, він відповідає на {n}-{n*p//100}=<<{n}-{n*p//100}={n*(100-p)//100}>>{n*(100-p)//100} {npp_letter_form} на день
+За {d}-денний робочий тиждень він відповідає на {n*(100-p)//100}*{d}=<<{n*(100-p)/100}*{d}={d*(n*(100-p)//100)}>>{d*(n*(100-p)//100)} {t_letter_form}
 #### {d*(n*(100-p)//100)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
