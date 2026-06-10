@@ -5,7 +5,7 @@ answer = """Кароліна та Йоганна вже зібрали 20 + 44 �
 """
 id_orig = 677
 id_shuffled = 33
-question_annotated = """{name1,Кароліна} та {name2,Йоганна} — сестри з {city,Копенгагена}, які люблять збирати автографи {celebrity_type,знаменитостей}. Протягом {vacation_type,літніх канікул} сестри щодня після обіду збирають автографи. Через {n1_txt,п’ять} тижнів {name1,Кароліна} та {name2,Йоганна} порівнюють свої альбоми для автографів і підраховують кількість автографів, які зібрала кожна сестра. У {name1,Кароліни} в альбомі для автографів {s1,20} автографів, а у {name2,Йоганни} — {s2,44}. У сестер залишилося ще {n2_txt,три} тижні {vacation_type,літніх канікул}, і вони вирішують, що до кінця літа хочуть разом зібрати {goal,100} автографів. Скільки автографів сестрам потрібно зібрати, щоб досягти своєї мети?
+question_annotated = """{name1,Кароліна} та {name2,Йоганна} — сестри з міста {city,Копенгагена}, які люблять збирати автографи {celebrity_type,знаменитостей}. Протягом {vacation_type,літніх канікул} сестри щодня після обіду збирають автографи. Через {n1_txt,п’ять} тижнів {name1,Кароліна} та {name2,Йоганна} порівнюють свої альбоми для автографів і підраховують кількість автографів, які зібрала кожна сестра. {name1,Кароліни} має в альбомі {s1,20} {s1_auto, автографів}, а {name2,Йоганни} — {s2,44}. У сестер залишилося ще {n2_txt,три} {week_form, тижні} {vacation_type,літніх канікул}, і вони вирішують, що до їхнього кінця хочуть разом зібрати {goal,100} {goal_auto, автографів}. Скільки автографів сестрам потрібно зібрати, щоб досягти своєї мети?
 
 #init:
 - name1, name2 = sample(names_female, 2)
@@ -17,15 +17,21 @@ question_annotated = """{name1,Кароліна} та {name2,Йоганна} —
 - $s1 = range(15, 40)
 - $s2 = range(30, 60)
 - $goal = range(90, 150, 5)
+- s1_auto = ukr_plural_measurements(s1, "автограф", "автографи", "автографів")
+- s2_auto = ukr_plural_measurements(s2, "автограф", "автографи", "автографів")
+- goal_auto = ukr_plural_measurements(goal, "автограф", "автографи", "автографів")
+- week_form = ukr_plural_measurements(n2_val, "тиждень", "тижні", "тижнів")
+- s1s2_auto = ukr_plural_measurements(s1+s2, "автограф", "автографи", "автографів")
+- gs1s2_auto = ukr_plural_measurements(goal-s1+s2, "автограф", "автографи", "автографів")
 
 #conditions:
 - s1 + s2 < goal
 
 #answer: goal - (s1 + s2)
 """
-answer_annotated = """{name1} та {name2} вже зібрали {s1} + {s2} автографи = <<{s1}+{s2}={s1+s2}>>{s1+s2} автографи.
-Оскільки їхня мета — {goal}, їм потрібно зібрати {goal} - {s1+s2} автографи. {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} автографів
+answer_annotated = """{name1} та {name2} вже зібрали {s1} + {s2} = <<{s1}+{s2}={s1+s2}>>{s1+s2} {s1s2_auto}.
+Оскільки їхня мета — {goal}, їм потрібно зібрати {goal} - {s1+s2} {gs1s2_auto}. {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} {gs1s2_auto}
 #### {goal-(s1+s2)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

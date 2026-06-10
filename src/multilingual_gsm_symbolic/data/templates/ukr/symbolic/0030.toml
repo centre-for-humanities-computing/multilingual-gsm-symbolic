@@ -5,16 +5,17 @@ answer = """Давид заплатив 16*0,2 крони = <<16*0,2=3,2>>3,2 к
 """
 id_orig = 873
 id_shuffled = 30
-question_annotated = """{name,Давид} має {initial_amount,85.5} {cur,крони} і хоче купити {quantity,16} {item_plural,болти} із коробки в {store_type,будівельному магазині}. Кожен {item,болт} коштує {unit_price,0.2} {cur,крони}. Скільки грошей залишиться у {name,Давид} після оплати {item_plural,болти}?
+question_annotated = """{name,Давид} має {initial_amount,85.5} {cur,крони} і хоче купити {quantity,16} {q_item_form,болти} із коробки в {store_type,будівельному магазині}. Кожен {item,болт} коштує {unit_price,0.2} {cur,крони}. Скільки грошей {name,Давид} матиме після оплати {item_pl2,болти}?
 
 #init:
 - name = sample(names)
-- cur = sample(currencies_sym)
-- item, item_plural = sample([("болт", "болти"),("гвинт", "гвинти"), ("шайба", "шайби"), ("гайка", "гайки"), ("анкер", "анкери")])
-- store_type = sample(["будівельний магазин", "господарський магазин"])
+- cur = sample(["грн", "$", "£", "євро"])
+- item, item_pl1, item_pl2 = sample([("болт", "болти", "болтів"),("гвинт", "гвинти", "гвинтів"), ("шайба", "шайби", "шайб"), ("гайка", "гайки", "гайок"), ("саморіз", "саморізи", "саморізів")])
+- store_type = sample(["будівельному магазині", "Епіцентрі", "магазині", "спеціалізованому магазині", "онлайн маразині"])
 - $quantity = range(15, 60)
 - $initial_amount = arange(85.5, 175, 5.5)
 - $unit_price = arange(0.2, 4.8, 0.1)
+- q_item_form = ukr_plural_measurements(quantity, item, item_pl1, item_pl2)
 
 #conditions:
 - initial_amount > quantity * unit_price
@@ -24,9 +25,9 @@ question_annotated = """{name,Давид} має {initial_amount,85.5} {cur,кр
 
 #answer: round(initial_amount - quantity * unit_price)
 """
-answer_annotated = """{name} заплатив {quantity}*{round(unit_price} {cur} = <<{quantity}*{round(unit_price}={round(quantity*unit_price}>>{round(quantity*unit_price} {cur} за {item_plural}.
-У {name} залишилося {initial_amount} {cur} - {round(quantity*unit_price} {cur} = {round(initial_amount - quantity * unit_price)} {cur}.
+answer_annotated = """{name} має заплатити {quantity}*{round(unit_price)} {cur} = <<{quantity}*{round(unit_price)}={round(quantity*unit_price)}>>{round(quantity*unit_price)} {cur} за {item_pl1}.
+{name} має в залишку {initial_amount} {cur} - {round(quantity*unit_price)} {cur} = {round(initial_amount - quantity * unit_price)} {cur}.
 #### {round(initial_amount - quantity * unit_price)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

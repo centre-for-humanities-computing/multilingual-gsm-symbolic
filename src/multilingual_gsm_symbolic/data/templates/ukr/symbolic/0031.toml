@@ -6,22 +6,28 @@ answer = """Якщо Мії 40 років, то Еммі 40+16 = <<40+16=56>>56 
 """
 id_orig = 1277
 id_shuffled = 31
-question_annotated = """Зараз різниця у віці між {name1,Мією} та {name2,Еммою} становить {age_diff,16} років. Якщо {name1,Мії}, яка молодша за {name2,Емму}, {age1,40} років, який середній вік у них обох?
+question_annotated = """{name1,Мією} та {name2,Еммою} дружать. Зараз різниця у віці між ними становить {age_diff,16} {years_form, років}. Якщо {name1_who,Мія}, яка молодша за свою подругу, {age1,40} {a1_years_form, років}, який середній вік у них обох?
 
 #init:
-- name1, name2 = sample(names, 2)
+- name1, name1_who = sample([("Анна", "Анні"), ("Марія", "Марії"), ("Надія", "Надії"), ("Віка", "Віці"), ("Наталя", "Наталі"), ("Жанна", "Жанні"), ("Леся", "Лесі"), ("Альона", "Альоні")])
+- name2, name2_who = sample([("Христина", "Христині"), ("Тетяна", "Тетяні"), ("Оля", "Олі"), ("Софія", "Софії"), ("Оксана", "Оксані"), ("Аліна", "Аліні"), ("Настя", "Насті"), ("Ліза", "Лізі")])
 - $age_diff = range(5, 30)
 - $age1 = range(15, 75)
+- years_form = ukr_plural_measurements(age_diff, "рік", "роки", "років")
+- a1_years_form = ukr_plural_measurements(age1, "рік", "роки", "років")
+- agediff_years_form = ukr_plural_measurements(age1+age_diff, "рік", "роки", "років")
+- agediff2_years_form = ukr_plural_measurements(2*age1+age_diff, "рік", "роки", "років")
+- agediff3_years_form = ukr_plural_measurements((2*age1+age_diff)//2, "рік", "роки", "років")
 
 #conditions:
 - is_int((2*age1 + age_diff) / 2)
 
 #answer: (2*age1 + age_diff) // 2
 """
-answer_annotated = """Якщо {name1} {age1} років, то {name2} {age1}+{age_diff} = <<{age1}+{age_diff}={age1+age_diff}>>{age1+age_diff} років.
-Сума їхніх віків становить {age1+age_diff}+{age1} = <<{age1+age_diff}+{age1}={2*age1+age_diff}>>{2*age1+age_diff} років
-Середній вік їх обох дорівнює {2*age1+age_diff}/2 = <<{2*age1+age_diff}/2={(2*age1+age_diff)//2}>>{(2*age1+age_diff)//2} років
+answer_annotated = """Якщо {name1_who} {age1} років, то {name2_who} {age1}+{age_diff} = <<{age1}+{age_diff}={age1+age_diff}>>{age1+age_diff} {agediff_years_form}.
+Сума їхніх віків становить {age1+age_diff}+{age1} = <<{age1+age_diff}+{age1}={2*age1+age_diff}>>{2*age1+age_diff} {agediff2_years_form}
+Середній вік їх обох дорівнює {2*age1+age_diff}/2 = <<{2*age1+age_diff}/2={(2*age1+age_diff)//2}>>{(2*age1+age_diff)//2} {agediff3_years_form}
 #### {(2*age1+age_diff)//2}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

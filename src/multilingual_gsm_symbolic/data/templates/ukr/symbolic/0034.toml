@@ -7,18 +7,27 @@ answer = """Пан Гансен сплатив 2.700.000 крон*3/100 = <<2700
 """
 id_orig = 266
 id_shuffled = 34
-question_annotated = """{title,пан} {name,Гансен} продав свій {property,будинок} за {price,2700000} крон. Він сплатив збір за {fee1_name,переоформлення}, який становить {fee1_percent,3}% від ціни продажу, а також сплатив {fee2_name,рієлторський} збір, який становить {fee2_percent,5}% від ціни продажу. Якщо він також сплатив {loan,1700000} крон за залишок кредиту на {property,будинок}, яким є чистий дохід {title,пан}а {name,Гансен}а від продажу {property,будинок}у?
+question_annotated = """{title_up,пан} {name,Гансен} продав {property,будинок} за {price,2700000} {curr_pr, крон}. Він сплатив збір за {fee1_name,переоформлення}, який становить {fee1_percent,3}% від ціни продажу, а також сплатив {fee2_name,рієлторський} збір, який становить {fee2_percent,5}% від ціни продажу. Якщо він також сплатив {loan,1700000} {curr_l, крон} за залишок кредиту на {property,будинок}, яким є чистий дохід {title,пан}а від продажу ?
 
 #init:
-- title = sample(["пан", "проф.", "д-р"])
-- name = sample(["Крістенсен", "Джонсон", "Льокке", "Йоргенсен", "Расмуссен", "Фредеріксен", "Йохансен", "Меллер", "Мортенсен"])
-- property = sample(["будинок", "дача"])
-- fee1_name = sample(["переоформлення", "реєстрація", "послуги адвоката"])
-- fee2_name = sample(["рієлторський", "агентський", "маклерський"])
+- title = sample(["пан", "професор", "доктор"])
+- title_up = to_title(title)
+- name = sample(names_male)
+- curr_s, curr_pl1, curr_pl2 = sample([["гривня", "гривні", "гривень"], ["долар", "долари", "доларів"], ["євро", "євро", "євро"]])
+- property = sample(["будинок", "гараж", "ділянку землі", "квартиру", "житло"])
+- fee1_name = sample(["переоформлення", "реєстрацію", "послуги адвоката"])
+- fee2_name = sample(["рієлторський", "агентський", "державний", "податковий"])
 - $price = range(1300000, 6700000, 70000)
 - $fee1_percent = range(1, 5)
 - $fee2_percent = range(2, 7)
 - $loan = range(700000, 4700000, 100000)
+- curr_pr = ukr_plural_measurements(price, curr_s, curr_pl1, curr_pl2)
+- curr_l = ukr_plural_measurements(loan, curr_s, curr_pl1, curr_pl2)
+- fee_1 = ukr_plural_measurements(price * fee1_percent // 100, curr_s, curr_pl1, curr_pl2)
+- fee_2 = ukr_plural_measurements(price * fee2_percent // 100, curr_s, curr_pl1, curr_pl2)
+- total_form = ukr_plural_measurements(price * (fee1_percent + fee2_percent) // 100 + loan, curr_s, curr_pl1, curr_pl2)
+- inc_form = ukr_plural_measurements(price - (price * (fee1_percent + fee2_percent) // 100 + loan), curr_s, curr_pl1, curr_pl2)
+
 
 #conditions:
 - price > loan
@@ -26,11 +35,11 @@ question_annotated = """{title,пан} {name,Гансен} продав свій
 
 #answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
 """
-answer_annotated = """{title} {name} сплатив {price} крон*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{price * fee1_percent // 100} крон як збір за {fee1_name}.
-Він сплатив {price} крон*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{price * fee2_percent // 100} крон як {fee2_name} збір.
-Отже, {title} {name} загалом сплатив {price * fee1_percent // 100} крон + {price * fee2_percent // 100} крон + {loan} крон = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{price * (fee1_percent + fee2_percent) // 100 + loan} крон як збір за {fee1_name}, {fee2_name} збір і залишок кредиту.
-Тому чистий дохід {title}а {name}а становить {price} крон - {price * (fee1_percent + fee2_percent) // 100 + loan} крон = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} крон.
+answer_annotated = """{title_up} {name} сплатив {price}*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{price * fee1_percent // 100} {fee_1} як збір за {fee1_name}.
+Він сплатив {price}*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{price * fee2_percent // 100} {fee_2} як {fee2_name} збір.
+Отже, {title} {name} загалом сплатив {price * fee1_percent // 100} + {price * fee2_percent // 100} + {loan} = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{price * (fee1_percent + fee2_percent) // 100 + loan} {total_form} як збір за {fee1_name}, {fee2_name} збір і залишок кредиту.
+Тому чистий дохід {title}а становить {price} - {price * (fee1_percent + fee2_percent) // 100 + loan} = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} {inc_form}.
 #### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

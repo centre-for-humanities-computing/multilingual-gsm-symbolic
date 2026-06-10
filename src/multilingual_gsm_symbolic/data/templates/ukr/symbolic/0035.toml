@@ -6,14 +6,14 @@ answer = """Школа Нільса вирішила заплатити 2000*1/2
 """
 id_orig = 788
 id_shuffled = 35
-question_annotated = """{name,Нільс} збирає гроші на {event_article,шкільну} {event,екскурсію}. Він звернувся по допомогу до {organization_definite,школи}, яка вирішила покрити {fraction_txt,половину} вартості {event_genitive,шкільної екскурсії}. Скільки грошей не вистачає {name,Нільсу}, якщо в нього є {current,350} {cur,кр} і {event_definite,шкільна екскурсія} коштує {total,2000} {cur,кр}?
+question_annotated = """{name,Нільс} збирає гроші щоб купити квиток на {event,екскурсію}. Він звернувся по допомогу до {organization_definite,школи}, яка вирішила покрити {fraction_val,половину} вартості. Скільки грошей {name,Нільсу} має знайти, якщо в нього є {current,350} {cur, $}, а квиток коштує {total,2000} {cur, $}?
 
 #init:
 - name = sample(names_male)
-- event_article, event, event_definite, event_genitive = sample([("шкільну", "екскурсію", "шкільна екскурсія", "шкільної екскурсії"), ("спортивний", "турнір", "спортивний турнір", "спортивного турніру"), ("наукову", "конференцію", "наукова конференція", "наукової конференції"), ("музичний", "фестиваль", "музичний фестиваль", "музичного фестивалю"), ("науковий", "ярмарок", "науковий ярмарок", "наукового ярмарку")])
-- cur = sample(currencies_sym)
-- organization, organization_definite = sample([("школа", "школи"), ("муніципалітет", "муніципалітету"), ("місцева благодійна організація", "місцевої благодійної організації"), ("молодіжний клуб", "молодіжного клубу"), ("батьки", "батьків")])
-- $fraction_txt, fraction_val = sample(fraction_alnum)
+- event = sample(["екскурсію", "спортивний турнір", "конференцію", "музичний фестиваль", "ярмарку"])
+- organization_definite = sample(["школи", "фінансової організації", "місцевої благодійної організації"])
+- cur = sample(curr_short)
+- fraction_val = sample(fractions)
 - $current = range(50, 1350, 50)
 - $total = range(1350, 7000, 50)
 
@@ -25,10 +25,10 @@ question_annotated = """{name,Нільс} збирає гроші на {event_ar
 
 #answer: total - (total * (fraction_val) + current)
 """
-answer_annotated = """{organization_definite} {name} вирішила заплатити {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur} за його {event_definite}.
-Загалом {name} покрив {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} вартості своєї {event_genitive}
-Тому {name} потрібно ще {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} на {event_article} {event}.
+answer_annotated = """Допомога від {organization_definite} становить {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur}.
+Загалом {name} покрив {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} вартості квитка.
+Тому йому потрібно ще {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} щоб купити квиток на {event}.
 #### {total-(total*(fraction_val)+current)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
