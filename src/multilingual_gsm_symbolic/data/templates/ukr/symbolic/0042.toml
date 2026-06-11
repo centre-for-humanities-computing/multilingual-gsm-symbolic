@@ -8,30 +8,40 @@ answer = """Кава, яку він купив, була на 35*0,2=<<35*0,2=7>
 """
 id_orig = 661
 id_shuffled = 42
-question_annotated = """{name,Расмус} іде до магазину, щоб купити трохи {item,кава}. Звичайна марка кави, яку він купує, коштує {price,35} {cur,крон} за 500 {unit,грамів}. Йому довелося купити дорожчу марку, яка коштувала на {percent,20}% більше, оскільки його улюблена марка була розпродана. Він вирішує купити кави на тиждень, і він використовує {usage,500} {unit,грамів} кави на день. Він також вирішив купити {extra_item,пончик} за {extra_price,15} {cur,крон}. Скільки все це коштувало?
+question_annotated = """{name,Расмус} іде до магазину, щоб купити трохи {item_definite,кави}. Звичайна марка {item_definite,кави}, яку він купує, коштує {price,35} {p_cur,крон} за 500 {unit_500,грамів}. Йому довелося купити дорожчу марку, яка коштувала на {percent,20}% більше, оскільки його улюблена марка була розпродана. Він вирішує купити {item_definite,кави} на тиждень, і він використовує {usage,500} {unit_usage,грамів} {item_definite,кави} на день. Він також вирішив купити {extra_item,пончик} за {extra_price,15} {extra_price_cur,крон}. Скільки всього грошей він витратив ?
 
 #init:
+- cur_s, cur_pl1, cur_pl2 = sample(currencies_sym)
 - name = sample(names_male)
-- item, item_definite = sample([("кава", "кава"),("чай", "чай"), ("цукор", "цукор"), ("борошно", "борошно"), ("рис", "рис")])
-- cur = sample(currencies_sym)
-- unit = sample(['g', 'кілограм', 'kg'])
-- extra_item = sample(['печиво', 'мафін', 'бейгл'])
+- item, item_definite = sample([("Каву", "кави"),("Чай", "чаю"), ("Цукор", "цукру"), ("Борошно", "борошна"), ("Рис", "рису")])
+- unit_s,unit_pl1, unit_pl2 = sample(weights_med)
+- extra_item = sample(['печиво', 'мафін', 'шоколадку', "тісто", "кекс", "булочку"])
 - $price = range(20, 160)
 - $percent = range(10, 50, 5)
 - $usage = range(500, 1000)
 - $extra_price = range(8, 35)
+- p_cur = ukr_plural_measurements(price, cur_s, cur_pl1, cur_pl2)
+- unit_500 = ukr_plural_measurements(500, unit_s,unit_pl1, unit_pl2)
+- unit_usage = ukr_plural_measurements(usage, unit_s,unit_pl1, unit_pl2)
+- extra_price_cur = ukr_plural_measurements(extra_price, cur_s, cur_pl1, cur_pl2)
+- pp_price_cur = ukr_plural_measurements(price*percent//100, cur_s, cur_pl1, cur_pl2)
+- ppp_price_cur = ukr_plural_measurements(price+price*percent//100, cur_s, cur_pl1, cur_pl2)
+- u7_price_unit = ukr_plural_measurements(usage*7, unit_s,unit_pl1, unit_pl2)
+- paid_price_cur = ukr_plural_measurements(int((price+price*percent/100)*7), cur_s, cur_pl1, cur_pl2)
+- t_price_cur = ukr_plural_measurements(int((price+price*percent/100)*7)+extra_price, cur_s, cur_pl1, cur_pl2)
+
 
 #conditions:
 - is_int(price * percent / 100)
 
 #answer: (price + price * percent / 100) * 7 * usage + extra_price
 """
-answer_annotated = """{item_definite}, яку він купив, була на {price}*{percent/100}=<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {cur} дорожча за 500 {unit}, ніж та, яку він зазвичай купує
-Отже, вона коштувала {price}+{price*percent//100}=<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} {cur} за 500 {unit}
-Він використовує {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {unit} кави на тиждень
-Отже, він заплатив {price+price*percent/100}*7=<<{price+price*percent/100}*7={int((price+price*percent/100)*7)}>>{int((price+price*percent/100)*7)} {cur} за каву
-Це означає, що його загальний рахунок становив {int((price+price*percent/100)*7)}+{extra_price}=<<{int((price+price*percent/100)*7)}+{extra_price}={int((price+price*percent/100)*7)+extra_price}>>{int((price+price*percent/100)*7)+extra_price} {cur}
+answer_annotated = """{item_definite}, що він купив, була на {price}*{percent/100}=<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {pp_price_cur} дорожча за 500 {unit_500}, аніж марка, яку він зазвичай купує
+Отже, ця марка коштувала {price}+{price*percent//100}=<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} {ppp_price_cur} за 500 {unit_500}
+Він використовує {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {u7_price_unit} на тиждень
+Отже, він заплатив {price+price*percent/100}*7=<<{price+price*percent/100}*7={int((price+price*percent/100)*7)}>>{int((price+price*percent/100)*7)} {paid_price_cur} за каву
+Це означає, що його загальний рахунок становив {int((price+price*percent/100)*7)}+{extra_price}=<<{int((price+price*percent/100)*7)}+{extra_price}={int((price+price*percent/100)*7)+extra_price}>>{int((price+price*percent/100)*7)+extra_price} {t_price_cur}
 #### {int((price+price*percent/100)*7)+extra_price}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

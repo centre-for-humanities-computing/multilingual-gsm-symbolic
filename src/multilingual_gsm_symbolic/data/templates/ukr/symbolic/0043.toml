@@ -5,25 +5,34 @@ answer = """Якщо було 50 мурах, то загальна кількі�
 """
 id_orig = 232
 id_shuffled = 43
-question_annotated = """{name,Даніель} пішов до свого {place,подвір’я}, щоб назбирати трохи {fruit,яблук}, і знайшов у {location,саду} {frac_txt,вдвічі менше} {insect1,сонечок}, ніж {insect2,мурах}. Якщо було {n,50} {insect2,мурах}, обчисліть загальну кількість {insect1,сонечок} у {location,саду}.
+question_annotated = """{name,Даніель} пішов до свого {location,саду}, щоб назбирати трохи {fruit_3,яблук}, і знайшов там у {frac_txt,два рази} менше {insect1_pl2,сонечок}, ніж {insect2_pl2,мурах}. Якщо було {n,50} {n_insect2,мурах}, обчисліть загальну кількість {insect1_pl2,сонечок} у {location,саду}.
+
+            "ананас",
+            "ананасової",
+            "ананасів",
+            "ананаси"
+
 
 #init:
-- name = sample(names)
-- place = sample(["фруктовий сад", "задній двір", "теплиця", "дачна ділянка"])
-- fruit = sample(["полуниця", "вишня", "чорниця", "малина"])
-- location = sample(["сад", "поле", "земля"])
-- insect1, insect2 = sample(["мурахи", "жуки", "сонечка", "коники", "личинки", "бджоли", "оси"], 2)
-- frac_txt, frac_val = sample(fraction_alnum)
+- name = sample(names_male)
+- place = sample(["фруктового саду", "заднього двору", "сараю", "лісу"])
+- fruit_1,fruit_2,fruit_3,fruit_4 = sample(fruits)
+- location = sample(["саду", "полі", "землі", "дуплі дерева"])
+- (insect1,insect1_pl1, insect1_pl2), (insect2, insect2_pl1, insect2_pl2) = sample([["мурахa", "мурахи", "мурах"], ["жук", "жуки", "жуків"], ["сонечко", "сонечки", "сонечків"], ["коник", "коники", "коників"], ["личинка", "личинки", "личинок"], ["бджола", "бджоли", "бджіл"]], 2)
+- frac_txt, frac_val = sample(multi_times)
 - $n = range(20, 201)
+- n_insect2 = ukr_plural_measurements(n, insect2,insect1_pl2, insect2_pl2)
+- nf_insect1 = ukr_plural_measurements(int(n * frac_val), insect1,insect1_pl1, insect1_pl2)
+
 
 #conditions:
 - is_int(n * frac_val)
 
 #answer: n + int(n * frac_val)
 """
-answer_annotated = """Якщо було {n} {insect2}, то загальна кількість {insect1} у {location} становить {frac_val}*{n} {insect2} = {int(n * frac_val)} {insect1}
-Загальна кількість {insect1} у {location} становить {int(n * frac_val)} {insect1} + {n} {insect2} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} сонечок
+answer_annotated = """Якщо було {n} {n_insect2}, то загальна кількість {insect1_pl2} у {location} становить {frac_val}*{n} {insect2} = {int(n * frac_val)} {nf_insect1}
+Загальна кількість {insect1_pl2} у {location} становить {int(n * frac_val)} {nf_insect1} + {n} {n_insect2} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)}
 #### {n + int(n * frac_val)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
