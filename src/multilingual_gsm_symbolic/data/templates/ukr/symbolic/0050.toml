@@ -6,13 +6,18 @@ answer = """Довжина кімнати дорівнює 300 см * 1/100 ме
 """
 id_orig = 440
 id_shuffled = 50
-question_annotated = """Площа прямокутної {room_type,спальні} {name,Бйорна} становить {area,33} квадратні метри. Якщо довжина його кімнати дорівнює {length,300} см, який периметр кімнати в метрах?
+question_annotated = """Площа прямокутної {room_type,спальні} {name, Бйорна} становить {area,33} {area_m_form, квадратні метри}. Якщо довжина кімнати {name, Бйорна} дорівнює {length,300} см, який периметр кімнати в метрах?
 
 #init:
-- name = sample(names_male)
-- room_type = sample(["вітальня", "кабінет", "кухня", "передпокій"])
+- name = sample(["Андрія", "Анни", "Тараса", "Оксани", "Антона", "Марії", "Євгена", "Вікторії"])
+- room_type = sample(["вітальні", "кухні", "кімнати", "ванни", "зали"])
 - $area = range(18, 121)
 - $length = range(300, 1300, 100)
+- area_m_form = ukr_plural_measurements(area, "квадратний метр", "квадратні метри", "квадратних метрів")
+- summ_form = ukr_plural_measurements(2 * (area // (length * (1/100)) + length * (1/100)), "метр", "метри", "метрів")
+- lform = ukr_plural_measurements(length * (1/100), "метр", "метри", "метрів")
+- llform = ukr_plural_measurements(area // (length * (1/100)), "метр", "метри", "метрів")
+
 
 #conditions:
 - is_int(area / (length * (1/100)))
@@ -20,10 +25,10 @@ question_annotated = """Площа прямокутної {room_type,спаль�
 
 #answer: 2 * (area // (length * (1/100)) + length * (1/100))
 """
-answer_annotated = """Довжина кімнати дорівнює {length} см * 1/100 метра/см = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} метри.
-Ширина кімнати дорівнює {area} квадратні метри / {length * (1/100)} метри = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} метрів.
-Периметр кімнати дорівнює 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} метрів
+answer_annotated = """Довжина кімнати дорівнює {length} см * 1/100 м/см = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} {lform}.
+Ширина кімнати дорівнює {area} {area_m_form} / {length * (1/100)} м = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} {llform}.
+Периметр кімнати дорівнює 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} {summ_form}
 #### {2 * (area // (length * (1/100)) + length * (1/100))}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

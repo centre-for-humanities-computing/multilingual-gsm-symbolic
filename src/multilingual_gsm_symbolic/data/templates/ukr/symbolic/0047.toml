@@ -10,15 +10,23 @@ answer = """Карл сховав 3*12 = <<3*12=36>>36 яєць.
 """
 id_orig = 1164
 id_shuffled = 47
-question_annotated = """{name1,Карл} сховав {n,3} дюжини яєць на подвір’ї для великоднього полювання на яйця. {name2,Ліам} знаходить {x,5} яєць. {name3,Софія} знаходить {mult1_txt,у 2 рази} більше, ніж {name2,Ліам}. {name4,Яків} знаходить на {y,2} менше, ніж {name3,Софія}. А {name5,Майя} знаходить {frac_txt,половина} від кількості {name4,Яків}а. Скільки яєць усе ще заховано на подвір’ї?
+question_annotated = """{name1,Карл} сховав {n,3} {n_duz, дюжини} яєць на подвір’ї для великоднього конкурсу на пошук яєць. {name2,Ліам} знайшов {x,5} {x_egg, яєць}. {name3,Хосе} знайшов у {mult1_txt, 2 рази} більше, ніж {name2,Ліам}. {name4,Яків} знайшов на {y,2} менше, ніж {name3,Хосе}. А {name5,Ян} знайшов {frac_val,половина} від кількості яку знайшов {name4,Яків}. Скільки яєць усе ще заховано на подвір’ї?
 
 #init:
-- name1, name2, name3, name4, name5 = sample(names, 5)
+- name1, name2, name3, name4, name5 = sample(names_male, 5)
 - $n = range(2, 10)
 - $x = range(3, 15)
 - $y = range(1, 5)
 - mult1_txt, mult1_val = sample(multi_times)
 - frac_txt, frac_val = sample(fraction_alnum)
+- n_duz = ukr_plural_measurements(n, "дюжина", "дюжини", "дюжин")
+- x_egg = ukr_plural_measurements(x, "яйце", "яйця", "яєць")
+- n12_egg = ukr_plural_measurements(n*12, "яйце", "яйця", "яєць")
+- xm_egg = ukr_plural_measurements(x*mult1_val, "яйце", "яйця", "яєць")
+- xmy_egg = ukr_plural_measurements(x*mult1_val-y, "яйце", "яйця", "яєць")
+- xmyy_egg = ukr_plural_measurements((x*mult1_val-y)*frac_val, "яйце", "яйця", "яєць")
+- f_egg = ukr_plural_measurements(x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val, "яйце", "яйця", "яєць")
+- l_egg = ukr_plural_measurements(n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val), "яйце", "яйця", "яєць")
 
 #conditions:
 - is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
@@ -29,14 +37,14 @@ question_annotated = """{name1,Карл} сховав {n,3} дюжини яєц�
 
 #answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
 """
-answer_annotated = """{name1} сховав {n}*12 = <<{n}*12={n*12}>>{n*12} яєць.
-{name2} знаходить {x} яєць.
-{name3} знаходить {x}*{mult1_val}=<<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} яєць.
-{name4} знаходить {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} яєць.
-{name5} знаходить {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} яйця.
-Діти знаходять разом {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} яєць.
-Загальна кількість яєць, які все ще залишаються на подвір’ї, становить {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} яєць.
+answer_annotated = """{name1} сховав {n}*12 = <<{n}*12={n*12}>>{n*12} {n12_egg}.
+{name2} знайшов {x} {x_egg}.
+{name3} знайшов {x}*{mult1_val}=<<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} {xm_egg}.
+{name4} знайшов {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} {xmy_egg}.
+{name5} знайшов {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} {xmyy_egg}.
+Діти знаходять разом {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} {f_egg}.
+Загальна кількість яєць, які все ще залишаються на подвір’ї, становить {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} {l_egg}.
 #### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

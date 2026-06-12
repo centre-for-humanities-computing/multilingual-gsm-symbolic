@@ -6,16 +6,21 @@ answer = """Щоб заповнити клумбу, потрібно 28.8 м / 4
 """
 id_orig = 984
 id_shuffled = 45
-question_annotated = """У {name,Софії} є клумба завдовжки {length,28.8} м. Вона хоче заповнити свою клумбу рослинами. Її квіти мають ширину {plant_width,30} см, і рекомендації з садівництва кажуть висаджувати одну квітку через кожні {space,45} см уздовж клумби. У {name,Софії} вже є {owned,17} квітів. Кожна квітуча рослина коштує {cost,40} {cur,крон} у магазині. Скільки грошей потрібно витратити, щоб заповнити клумбу {name,Софії}?
+question_annotated = """{name,Софія} має клумбу завдовжки {length,28.8} м. Вона хоче заповнити свою клумбу рослинами. Її квіти мають ширину {plant_width,30} см, і рекомендації з садівництва кажуть висаджувати одну квітку через кожні {space,45} см уздовж клумби. {name,Софія} вже посадила {owned,17} {ow_flowers, квітів}. Кожна квітуча рослина коштує {cost,40} {cur,крон} у магазині. Скільки грошей потрібно витратити, щоб заповнити клумбу ?
 
 #init:
 - name = sample(names_female)
-- cur = sample(currencies_sym)
+- cur = sample(curr_short)
 - $length = arange(25, 40, 0.2)
 - $plant_width = range(20, 40)
 - $space = range(20, 60)
 - $owned = range(5, 20)
 - $cost = range(20, 100)
+- ow_flowers = ukr_plural_measurements(owned, "квітка", "квіти", "квітів")
+- req_flowers = ukr_plural_measurements(int(length*100/space), "рослина", "рослини", "рослин")
+- b_flowers = ukr_plural_measurements(int(length*100/space)-owned, "рослина", "рослини", "рослин")
+
+
 
 #conditions:
 - plant_width * 3 < length*100
@@ -25,10 +30,10 @@ question_annotated = """У {name,Софії} є клумба завдовжки 
 
 #answer: int((length*100 / space - owned) * cost)
 """
-answer_annotated = """Щоб заповнити клумбу, потрібно {length} м / {space} см на одну рослину = <<{length*100}/{space}={int(length*100/space)}>>{int(length*100/space)} рослини.
-Треба купити {int(length*100/space)} рослини - {owned} рослин = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} рослин.
-Отже, потрібно витратити {int(length*100/space)-owned} рослин * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
+answer_annotated = """Щоб заповнити клумбу, потрібно {length} м / {space} см на одну рослину = <<{length*100}/{space}={int(length*100/space)}>>{int(length*100/space)} {req_flowers}.
+Треба купити {int(length*100/space)} - {owned} = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} {b_flowers}.
+Отже, потрібно витратити {int(length*100/space)-owned} * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
 #### {int(length*100 / space - owned) * cost}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

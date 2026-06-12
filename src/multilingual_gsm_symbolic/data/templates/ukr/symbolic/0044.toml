@@ -5,12 +5,16 @@ answer = """У парку є 6 дівчат*2 хлопців/дівчат = <<6*
 """
 id_orig = 365
 id_shuffled = 44
-question_annotated = """У {place,парку} є {n,6} дівчат. Якщо хлопців у {place,парку} {mult_txt,to gange} більше, скільки всього дітей у {place,парку}?
+question_annotated = """У {place,парку} є {n,6} {n_girls, дівчат}. Якщо хлопців у {place,парку} у {mult_txt, два рази} більше, скільки всього дітей у {place,парку}?
 
 #init:
-- place = sample(["парку", "дворі", "саду", "на дитячому майданчику", "шкільному дворі"])
+- place = sample(["парку", "дворі", "саду", "шкільному дворі", "дитячому садочку"])
 - $n = range(5, 51)
 - mult_txt, mult_val = sample(multi_times)
+- n_girls = ukr_plural_measurements(n, "дівчина", "дівчата", "дівчат")
+- nm_boys = ukr_plural_measurements(n*mult_val, "хлопець", "хлопеці", "хлопеців")
+- t_children = ukr_plural_measurements(n*(mult_val+1), "дитина", "дитини", "дітей")
+
 
 #conditions:
 - is_int(n * mult_val + 1)
@@ -18,9 +22,9 @@ question_annotated = """У {place,парку} є {n,6} дівчат. Якщо х
 
 #answer: n * (mult_val + 1)
 """
-answer_annotated = """У {place} є {n} дівчат*{mult_val} хлопців/дівчат = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} хлопців у {place}.
-Усього є {n} дівчат + {n*mult_val} хлопців = <<{n}+{n*mult_val}={n*(mult_val+1)}>>{n*(mult_val+1)} дітей у {place}
+answer_annotated = """У {place} є {n} {n_girls}*{mult_val} хлопців/дівчат = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} {nm_boys} у {place}.
+Усього є {n} {n_girls} + {n*mult_val} {nm_boys} = <<{n}+{n*mult_val}={n*(mult_val+1)}>>{n*(mult_val+1)} {t_children} у {place}
 #### {n*(mult_val+1)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
