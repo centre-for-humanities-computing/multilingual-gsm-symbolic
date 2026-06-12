@@ -1,0 +1,8 @@
+question = "要用投幣式電話打電話，你必須為通話的每一分鐘支付 $0.25。16 分鐘後，費率降為每分鐘 $0.2。通話 36 分鐘要花多少錢？"
+answer = "前 16 分鐘的費用是 16 * 0.25 = $<<16*0.25=4>>4。\n之後，通話還剩下 36 - 16 = <<36-16=20>>20 分鐘。\n而這 20 分鐘的費用是 20 * 0.2 = $<<20*0.2=4>>4。\n所以總共，這通 36 分鐘的電話費用是 4 + 4 = $8。\n#### 8\n"
+id_orig = 1223
+id_shuffled = 10
+question_annotated = "要用{dev,投幣式電話}打電話，你必須為通話的每一分鐘支付 {currency,$}{frac1,0.25}。{t,16} 分鐘後，費率降為每分鐘 {currency,$}{frac2,0.2}。通話 {total,36} 分鐘要花多少錢？\n\n#init:\n- dev = sample(['電話亭', '飯店房間電話'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))\n"
+answer_annotated = "前 {t} 分鐘的費用是 {t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)}。\n之後，通話還剩下 {total} - {t} = <<{total}-{t}={total-t}>>{total-t} 分鐘。\n而這 {total-t} 分鐘的費用是 {total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)}。\n所以總共，這通 {total} 分鐘的電話費用是 {int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))}。\n#### {int((frac1 * t) + frac2*(total-t))}\n"
+creation = "machine-translated from English using openai/gpt-5.4-2026-03-05, based on English templates; computationally validated; validated by a fluent speaker."
+language = "zho"

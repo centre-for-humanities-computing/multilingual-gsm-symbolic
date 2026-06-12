@@ -1,0 +1,49 @@
+question = "A custodian has to clean a school with 80 classrooms. They have 5 days to get it done. It takes them 15 minutes per classroom. If they work 8 hours each day, what percentage of their day, on average, is spent cleaning classrooms?"
+
+answer = """
+They have to clean 16 classrooms a day because 80 / 5 = <<80/5=16>>16
+They spend 240 minutes cleaning per day because 16*15 = <<16*15=240>>240
+They spend 4 hours a day because 240 / 60 = <<240/60=4>>4
+They spend 1/2 of their day cleaning classrooms because 4 / 8 = <<4/8=0.5>>0.5
+They spend 50% of their day cleaning classrooms because 0.5*100 = <<0.5*100=50>>50
+#### 50
+"""
+
+id_orig = 1239
+
+id_shuffled = 39
+
+question_annotated = """
+A {job,custodian} has to clean a {building,school} with {n,80} {room,classroom}s. They have {d,5} days to get it done. It takes them {t,15} minutes per {room,classroom}. If they work {h,8} hours each day, what percentage of their day, on average, is spent cleaning {room,classroom}s?
+
+#init:
+- job = sample(["janitor", "cleaner", "maintenance worker"])
+- building = sample(["office building", "hospital", "university",])
+- room = sample(["room", "floor"])
+- $n = range(50, 221, 5)
+- $d = range(3, 12)
+- $t = range(10, 46, 5)
+- $h = range(6, 17)
+
+#conditions:
+- divides(n, d)
+- divides(60, t)
+- (n/d) * t < h * 60
+- is_int( 10 * (n/d) * t / (h * 60))
+- is_int(100 * (n/d) * t / (h * 60))
+
+#answer: int(100 * (n/d) * t / (h * 60))
+"""
+
+answer_annotated = """
+They have to clean {n//d} {room}s a day because {n} / {d} = <<{n}/{d}={n//d}>>{n//d}
+They spend {(n//d)*t} minutes cleaning per day because {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
+They spend {(n//d)*t/60} hours a day because {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
+They spend {Fraction((n//d)*t/(h*60))} of their day cleaning {room}s because {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
+They spend {int(100 * (n/d) * t / (h * 60))}% of their day cleaning {room}s because {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
+#### {int(100 * (n/d) * t / (h * 60))}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"

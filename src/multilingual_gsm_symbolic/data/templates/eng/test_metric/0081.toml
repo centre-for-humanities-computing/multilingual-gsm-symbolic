@@ -1,0 +1,40 @@
+question = "The Easter egg hunt team hid 100 eggs. The Smith twins each found 30 eggs. All the other eggs except 10 were found by their friends. How many eggs did the friends find?"
+
+answer = """
+The Smith twins found, 30 * 2 = <<30*2=60>>60 eggs.
+The number that remained hidden was 100 - 60 = <<100-60=40>>40 eggs
+Since 10 eggs were not found, this means the friends found 40 - 10 = 30 eggs.
+#### 30
+"""
+
+id_orig = 1025
+
+id_shuffled = 81
+
+question_annotated = """
+The {event,Easter egg hunt} team hid {total,100} {item,eggs}. The {family,Smith} twins each found {n,30} {item,eggs}. All the other {item,eggs} except {m,10} were found by their friends. How many {item,eggs} did the friends find?
+
+#init:
+- event = sample(["Halloween candy hunt", "Treasure hunt", "Scavenger hunt", "Charity fundraiser"])
+- item = sample(["eggs", "treats", "toys", "coins", "tokens", "balls", "candies", "goodies"])
+- family = sample(["Johnson", "Williams", "Mirzakhani", "Lopez", "Garcia", "Lee", ])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+
+answer_annotated = """
+The {family} twins found, {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
+The number that remained hidden was {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
+Since {m} {item} were not found, this means the friends found {total-2*n} - {m} = {total - 2*n - m} {item}.
+#### {total - 2*n - m}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng"
