@@ -9,32 +9,36 @@ answer = """Альберт округлить ціну своїх тюльпан
 """
 id_orig = 74
 id_shuffled = 51
-question_annotated = """{name,Альберт} має {product,квітковий} прилавок на {location,ринку}. Він продає три види квітів: {item1,тюльпани}, {item2,лілії} та {item3,соняшники}. Зазвичай він продає {item1,тюльпани} по {p1,18.1} {cur,крон} за {unit,горщик}, {item2,лілії} по {p2,12.3} {cur,крон} за {unit,горщик}, а {item3,соняшники} по {p3,14.9} {cur,крон} за {unit,горщик}. Сьогодні в {name,Альберта} немає дрібних монет, тож він вирішив округлювати до найближчої крони. Якщо він продасть {n1,12} {unit_plural,горщиків} {item1,тюльпанів}, {n2,9} {unit_plural,горщиків} {item2,лілій} і {n3,17} {unit_plural,горщиків} {item3,соняшників}, скільки він заробить?
+question_annotated = """{name,Альберт} має квітковий прилавок на {location,ринку}. Він продає три види квітів: {item1,тюльпани}, {item2,лілії} та {item3,соняшники}. Зазвичай він продає {item1,тюльпани} по {p1,18.1} {cur,крон} за {unit,горщик}, {item2,лілії} по {p2,12.3} {cur,крон} за {unit,горщик}, а {item3,соняшники} по {p3,14.9} {cur,крон} за {unit,горщик}. Сьогодні {name,Альберт} не має дрібних монет, тож він вирішив округлювати до найближчої {cur, крони}. Якщо він продасть {n1,12} {n1_unit,горщиків}, що містять {item1,тюльпани}, {n2,9} {n2_unit,горщиків}, що містять {item2,лілії} і {n3,17} {n3_unit,горщиків}, що містять {item3,соняшники}, скільки він заробить?
 
 #init:
 - name = sample(names_male)
-- product = sample(["овочі", "квіти", "трави", "рослини"])
 - location = sample(["ринку", "ярмарку", "базарі", "вулиці", "площі"])
 - item1, item2, item3 = sample(["троянди", "ромашки", "орхідеї", "півонії", "анемони", "волошки"], 3)
-- unit, unit_plural = sample([("горщик", "горщиків"), ("букет", "букетів"), ("кошик", "кошиків"), ("пучок", "пучків"), ("жменя", "жмень")])
-- cur = sample(currencies_sym)
+- unit, unit_pl1, unit_pl2 = sample([("горщик", "горщики", "горщиків"), ("букет","букети", "букетів"), ("кошик","кошики", "кошиків"), ("пучок","пучки",  "пучків")])
+- cur = sample(curr_short)
 - $p1 = arange(8.1, 23.3, 2.7)
 - $p2 = arange(14.9, 36.4, 1.7)
 - $p3 = arange(31.9, 42.8, 2.2)
 - $n1 = range(5, 21)
 - $n2 = range(15, 31)
 - $n3 = range(35, 41)
+- n1_unit = ukr_plural_measurements(n1, unit, unit_pl1, unit_pl2)
+- n2_unit = ukr_plural_measurements(n2, unit, unit_pl1, unit_pl2)
+- n3_unit = ukr_plural_measurements(n3, unit, unit_pl1, unit_pl2)
+
 
 
 #answer: n1*round(p1) + n2*round(p2) + n3*round(p3)
 """
-answer_annotated = """{name} округлить ціну своїх {item1} вниз з {p1} {cur} до {round(p1)} {cur}, оскільки цифра після {int(p1)} менша за 5.
-{name} округлить ціну своїх {item3} {'op' if round(p3) > p3 else 'ned'} з {p3} {cur} до {round(p3)} {cur}, оскільки цифра після {int(p3)} є {'5 eller højere' if round(p3) > p3 else 'lavere end 5'}.
-{name} продає {n1} горщиків {item1}*{round(p1)} {cur} = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}
-{name} продає {n2} горщиків {item2}*{round(p2)} {cur} = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}
-{name} продає {n3} горщиків {item3}*{round(p3)} {cur} = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}
+answer_annotated = """{name} округлить ціну на {item1} з {p1} {cur} до {round(p1)} {cur}, оскільки цифра після {int(p1)} {'менша' if round(p1) <= p1 else 'більша'} за 5.
+{name} округлить ціну на {item2} з {p2} {cur} до {round(p2)} {cur}, оскільки цифра після {int(p2)} {'менша' if round(p2) <= p2 else 'більша'} за 5.
+{name} округлить ціну на {item3} з {p3} {cur} до {round(p3)} {cur}, оскільки цифра після {int(p3)} {'менша' if round(p3) <= p3 else 'більша'} за 5.
+{name} продає {n1} {n1_unit} {item1}*{round(p1)} {cur} = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}
+{name} продає {n2} {n2_unit} {item2}*{round(p2)} {cur} = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}
+{name} продає {n3} {n3_unit} {item3}*{round(p3)} {cur} = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}
 Усього {name} заробить {n1*round(p1)} {cur} + {n2*round(p2)} {cur} + {n3*round(p3)} {cur} = <<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)} {cur}
 #### {n1*round(p1) + n2*round(p2) + n3*round(p3)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

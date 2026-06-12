@@ -8,31 +8,43 @@ answer = """Карл спочатку має 2*50 кр = <<2*50=100>>100 кр.
 """
 id_orig = 843
 id_shuffled = 52
-question_annotated = """{name,Карл} має {n_txt,дві} банкноти по {bill,50} {cur,крон}. Він купує {m_txt,шість} {item1,водяних пістолетів} по {p1,5} {cur,крон} за штуку. Він також купує {k,3} пакунки {item2,водяних кульок} по {p2,8} {cur,крон} за штуку. Скільки грошей у нього залишилося?
+question_annotated = """{name,Карл} має {n_val,дві} {n_billetas, банкноти} по {bill,50} {bill_cur,крон}. Він купує {m_txt,шість} {item1_m,водяних пістолетів} по {p1,5} {p1_cur,крон} за штуку. Він також купує {k,3} {k_box, пакунки} {item2_pl2,водяних кульок} по {p2,8} {p2_cur,крон} за штуку. Скільки грошей у нього залишилося?
 
 #init:
 - name = sample(names_male)
 - $bill = sample([50, 100, 200])
-- item1 = sample(["водяні пістолети", "іграшкові машинки", "екшн-фігурки", "розмальовки", "пазли", "настільні ігри"])
-- item2 = sample(["водяні кульки", "наліпки", "шоколадні батончики", "картки покемонів", "олівці", "гумки"])
-- cur = sample(currencies_sym)
+- item1, item1_pl1, item1_pl2 = sample([["водяний пістолет", "водяні пістолети", "водяних пістолетів"], ["іграшкову машинку", "іграшкові машинки", "іграшкових машинок"], ["пластиковий солдатик", "пластикові солдатики", "пластикових солдатиків"], ["розмальовка", "розмальовки", "розмальовок"], ["пазл", "пазли", "пазлів"], ["настільна гра", "настільні ігри", "настільних ігор"]])
+- item2, item2_pl1, item2_pl2 = sample([["водяня кулька", "водяні кульки", "водяних кульок"], ["наліпка", "наліпки", "наліпок"], ["шоколадний батончик", "шоколадні батончики", "шоколадних батончиків"], ["картка покемонів", "картки покемонів", "карток покемонів"], ["олівець", "олівеці", "олівеців"]])
+- cur, cur_pl1, cur_pl2 = sample(currencies_sym)
 - n_txt, n_val = range_str(1, 10, 1, numbers)
 - m_txt, m_val = range_str(2, 15, 1, numbers)
 - $k = range(2, 10)
 - $p1 = range(1, 10)
 - $p2 = range(1, 10)
+- n_billetas = ukr_plural_measurements(n_val, "банкноту", "банкноти", "банкнот")
+- bill_cur = ukr_plural_measurements(bill, cur, cur_pl1, cur_pl2)
+- item1_m = ukr_plural_measurements(m_val, item1, item1_pl1, item1_pl2)
+- p1_cur = ukr_plural_measurements(p1, cur, cur_pl1, cur_pl2)
+- k_box = ukr_plural_measurements(k, "пачка", "пачки","пачок")
+- p2_cur = ukr_plural_measurements(p2, cur, cur_pl1, cur_pl2)
+- bn_cur = ukr_plural_measurements(n_val*bill, cur, cur_pl1, cur_pl2)
+- p1m_cur = ukr_plural_measurements(m_val*p1, cur, cur_pl1, cur_pl2)
+- kp2_cur = ukr_plural_measurements(k*p2, cur, cur_pl1, cur_pl2)
+- t_cur = ukr_plural_measurements(m_val*p1+k*p2, cur, cur_pl1, cur_pl2)
+- l_cur = ukr_plural_measurements(n_val*int(bill)-(m_val*p1+k*p2), cur, cur_pl1, cur_pl2)
+
 
 #conditions:
 - n_val * int(bill) > m_val * p1 + k * p2
 
 #answer: n_val * int(bill) - (m_val * p1 + k * p2)
 """
-answer_annotated = """{name} спочатку має {n_val}*{bill} {cur} = <<{n_val}*{int(bill)}={n_val*int(bill)}>>{n_val*int(bill)} {cur}.
-{name} купує {m_txt} {item1} * {p1} {cur} = <<{m_val}*{p1}={m_val*p1}>>{m_val*p1} {cur} на {item1}.
-{name} купує {k} пакунки {item2} * {p2} {cur} = <<{k}*{p2}={k*p2}>>{k*p2} {cur} на {item2}.
-Усього {name} витратив {m_val*p1} {cur} + {k*p2} {cur} = <<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} {cur}.
-У {name} залишилося {n_val*int(bill)} {cur} - {m_val*p1+k*p2} {cur} = <<{n_val*int(bill)}-{m_val*p1+k*p2}={n_val*int(bill)-(m_val*p1+k*p2)}>>{n_val*int(bill)-(m_val*p1+k*p2)} {cur}.
+answer_annotated = """{name} спочатку має {n_val}*{bill} {bn_cur} = <<{n_val}*{int(bill)}={n_val*int(bill)}>>{n_val*int(bill)} {bn_cur}.
+{name} купує {m_txt} {item1_m} * {p1} {p1_cur} = <<{m_val}*{p1}={m_val*p1}>>{m_val*p1} {p1m_cur} на {item1_pl1}.
+{name} купує {k} {k_box} {item2_pl2} * {p2} {p2_cur} = <<{k}*{p2}={k*p2}>>{k*p2} {kp2_cur}.
+Усього {name} витратив {m_val*p1} {p1m_cur} + {k*p2} {kp2_cur} = <<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} {t_cur}.
+У {name} залишилося {n_val*int(bill)} - {m_val*p1+k*p2} = <<{n_val*int(bill)}-{m_val*p1+k*p2}={n_val*int(bill)-(m_val*p1+k*p2)}>>{n_val*int(bill)-(m_val*p1+k*p2)} {l_cur}.
 #### {n_val*int(bill)-(m_val*p1+k*p2)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
