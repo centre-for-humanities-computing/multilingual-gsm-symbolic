@@ -206,7 +206,7 @@ def ukr_weekday_to_when(weekday):
         return "неділю"
 
 def to_title(text):
-    return text.title()
+    return text[0].upper() + text[1:]
 
 def ensure_int(value: Any) -> int:
     """Convert a value to int if it's a float representing an integer, else return an error"""

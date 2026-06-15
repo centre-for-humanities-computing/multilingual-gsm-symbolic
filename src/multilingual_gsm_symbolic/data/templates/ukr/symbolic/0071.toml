@@ -7,28 +7,38 @@ answer = """Спочатку знайдемо, скільки сіна потр�
 """
 id_orig = 937
 id_shuffled = 71
-question_annotated = """{name,Нільс} годує своїх свійських тварин {food,сіном}. Кожній {animal1,козі} потрібно {n1,5} {unit,кг}, а кожній {animal2,вівці} потрібно на {n2,3} {unit,кг} менше, ніж удвічі більше від того, скільки потрібно кожній {animal1,козі}. Якщо є {k1,15} кіз і {k2,12} овець, скільки {unit,кг} {food,сіна} потрібно {name,Нільсу}?
+question_annotated = """{name,Нільс} годує своїх свійських тварин {food_ins,сіном}. Кожній {animal1_dat,козі} потрібно {n1,5} {n1_unit, кг}, а кожній {animal2_dat,вівці} потрібно на {n2,3} {n2_unit, кг} менше, ніж удвічі більше від того, скільки потрібно кожній {animal1_dat,козі}. Якщо в нього є {k1,15} {k1_animal1, кіз} і {k2,12} {k2_animal2, вівць}, скільки {u_pl2, кг} {food_gen,сіна} {name,Нільс} має приготувати, щоб нагодувати всіх ?
 
 #init:
 - name = sample(names_male)
-- food = sample(["сіно", "зерно", "корм", "солома"])
-- animal1, animal2 = sample(["коза", "корова", "кінь", "віслюк", "лама", "альпака", "свиня", "індик", "качка"], 2)
-- unit = sample(["кг", "кілограм"])
+- food_ins, food_gen = sample([["сіном", "сіна"], ["зерном", "зерна"], ["кормом", "корму"], ["соломою", "соломи"]])
+- animal1, animal2 = sample([["козі", "коза", "кози", "кіз", "козам"], ["корові", "корова", "корови", "корів", "коровам"], ["вівці", "вівця", "вівці", "овець", "вівцям"], ["ламі", "лама", "лами", "лам", "ламам"], ["свині", "свиня", "свині", "свиней", "свиням"], ["качці", "качка", "качки", "качок", "качкам"]], 2)
+- animal1_dat, animal1_nom, animal1_pl1, animal1_pl2, animal1_dat_pl = animal1
+- animal2_dat, animal2_nom, animal2_pl1, animal2_pl2, animal2_dat_pl = animal2
+- u_sing, u_pl1, u_pl2 = sample([["кілограм", "кілограми", "кілограмів"], ["кг", "кг", "кг"], ["г", "г", "г"], ["грам", "грами", "грамів"]])
 - $n1 = range(3, 15)
 - $n2 = range(1, 10)
 - $k1 = range(10, 50)
 - $k2 = range(10, 50)
+- n1_unit = ukr_plural_measurements(n1, u_sing, u_pl1, u_pl2)
+- n2_unit = ukr_plural_measurements(n2, u_sing, u_pl1, u_pl2)
+- v2_unit = ukr_plural_measurements(2 * n1 - n2, u_sing, u_pl1, u_pl2)
+- k1_animal1 = ukr_plural_measurements(k1, animal1_nom, animal1_pl1, animal1_pl2)
+- k2_animal2 = ukr_plural_measurements(k2, animal2_nom, animal2_pl1, animal2_pl2)
+- k1_n1_unit = ukr_plural_measurements(k1 * n1, u_sing, u_pl1, u_pl2)
+- k2_v2_unit = ukr_plural_measurements(k2 * (2 * n1 - n2), u_sing, u_pl1, u_pl2)
+- total_unit = ukr_plural_measurements(k1 * n1 + k2 * (2 * n1 - n2), u_sing, u_pl1, u_pl2)
 
 #conditions:
 - 2*n1 - n2 > 0
 
 #answer: k1*n1 + k2*(2*n1 - n2)
 """
-answer_annotated = """Спочатку знайдемо, скільки {food} потрібно кожній {animal2}: {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/вівця
-Потім обчислимо, скільки {food} потрібно всім вівцям разом: {2*n1-n2} {unit}/вівця * {k2} овець = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
-Далі обчислимо, скільки {food} потрібно всім козам разом: {n1} {unit}/коза * {k1} кіз = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
-Нарешті додамо ці дві кількості {food}, щоб знайти загальну кількість: {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
+answer_annotated = """Спочатку знайдемо, скільки {food_gen} потрібно кожній {animal2_dat}: {n1} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {v2_unit}.
+Потім обчислимо, скільки {food_gen} потрібно всім {animal2_dat_pl} разом: {2*n1-n2} * {k2} = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {k2_v2_unit}.
+Далі обчислимо, скільки {food_gen} потрібно всім {animal1_dat_pl} разом: {n1} * {k1} = <<{n1}*{k1}={k1*n1}>>{k1*n1} {k1_n1_unit}.
+Нарешті додамо ці дві кількості {food_gen}, щоб знайти загальну кількість: {k2*(2*n1-n2)} + {k1*n1} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {total_unit}.
 #### {k1*n1 + k2*(2*n1 - n2)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

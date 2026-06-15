@@ -5,15 +5,18 @@ answer = """Генрік побачив комету вдруге, коли йо
 """
 id_orig = 991
 id_shuffled = 73
-question_annotated = """Комета {comet_name,Галлея} обертається навколо Сонця кожні {orbit_period,75} років. Батько {name,Генрік}а бачив комету, коли йому було {relative_age,30} років. {name,Генрік} побачив комету вдруге, коли був {multiple_txt,утричі} старший, ніж його {relative,батько}, коли той бачив комету. Скільки років було {name,Генрік}у, коли він побачив комету вперше?
+question_annotated = """Комета {comet_name,Галлея} обертається навколо Сонця кожні {orbit_period,75} {orbit_period_f, років}. {relative_up, Батько} {name,Генріка} бачив комету, коли йому було {relative_age,30} {relative_age_f, років}. {name1,Генрік} побачив комету вдруге, коли він був в {multiple_txt,три рази} старший, ніж його {relative,батько}, коли той бачив комету. Який був вік {name,Генріка}, коли він побачив комету вперше?
 
 #init:
-- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])
-- name = sample(names_male)
+- comet_name = sample(['Галлея', 'Макнота', 'Чурюмова-Герасименко', 'Гейла-Боппа', 'Бієли'])
+- name, name1 = sample([["Андрія", "Анрій"], ["Антона", "Антон"], ["Євгена", "Євген"], ["Микити", "Микита"], ["Миколи", "Микола"], ["Артура", "Артур"], ["Петра", "Петро"], ["Тараса", "Тарас"]])
 - relative = sample(['батько', 'дідусь', 'дідусь', 'дядько'])
+- relative_up = to_title(relative)
 - $orbit_period = range(50, 101, 5)
 - $relative_age = range(20, 51)
 - multiple_txt, multiple_val = sample(multi_times)
+- orbit_period_f = ukr_plural_measurements(orbit_period, "рік", "роки", "років")
+- relative_age_f = ukr_plural_measurements(relative_age, "рік", "роки", "років")
 
 #conditions:
 - multiple_val * relative_age < 100
@@ -26,5 +29,5 @@ answer_annotated = """{name} побачив комету вдруге, коли 
 Комету {comet_name} можна побачити кожні {orbit_period} років, тож {name} побачив комету вперше, коли йому було {relative_age*multiple_val} років - {orbit_period} років = <<{relative_age*multiple_val}-{orbit_period}={relative_age*multiple_val-orbit_period}>>{relative_age*multiple_val-orbit_period} років.
 #### {relative_age*multiple_val-orbit_period}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

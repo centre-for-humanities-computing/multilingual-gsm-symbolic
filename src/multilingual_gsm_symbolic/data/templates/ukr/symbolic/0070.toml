@@ -6,22 +6,29 @@ answer = """Бляхар працює 6 днів щотижня і працює 
 """
 id_orig = 401
 id_shuffled = 70
-question_annotated = """{occupation,бляхар} працює {w,4} тижні щомісяця і {d,6} днів щотижня. Якщо він отримує {p,50} {cur,крон} щодня, скільки він заробляє, якщо працює протягом року?
+question_annotated = """{occ_nom_cap,Бляхар} працює {w,4} {w_form,тижні} щомісяця і {d,6} {d_form,днів} щотижня. Якщо він отримує {p,50} {p_cur,крон} щодня, скільки він заробляє, якщо працює протягом року?
 
 #init:
-- occupation = sample(["бляхар", "електрик", "маляр", "тесляр", "садівник"])
-- cur = sample(currencies_sym)
+- occ_nom_cap, occ_nom = sample([["Бляхар", "бляхар"], ["Електрик", "електрик"], ["Маляр", "маляр"], ["Тесляр", "тесляр"], ["Садівник", "садівник"]])
+- cur_sing, cur_pl1, cur_pl2 = sample([["гривня", "гривні", "гривень"], ["долар", "долари", "доларів"], ["євро", "євро", "євро"]])
 - $w = range(2, 5)
 - $d = range(4, 7)
 - $p = range(40, 200, 5)
+- w_form = ukr_plural_measurements(w, "тиждень", "тижні", "тижнів")
+- d_form = ukr_plural_measurements(d, "день", "дні", "днів")
+- dw_form = ukr_plural_measurements(d * w, "день", "дні", "днів")
+- p_cur = ukr_plural_measurements(p, cur_sing, cur_pl1, cur_pl2)
+- pdw_cur = ukr_plural_measurements(p * d * w, cur_sing, cur_pl1, cur_pl2)
+- pdw12_cur = ukr_plural_measurements(p * d * w * 12, cur_sing, cur_pl1, cur_pl2)
 
+#conditions:
 
-#answer: w * d * p * 12
+#answer: w*d*p*12
 """
-answer_annotated = """{occupation} працює {d} днів щотижня і працює {w} тижні щомісяця, тож він працює {d} днів/тиждень * {w} тижні/місяць = <<{d}*{w}={d*w}>>{d*w} дні/місяць
-Якщо він заробляє {p} {cur} щодня, то заробляє {p} {cur}/день * {d*w} дні/місяць = <<{p}*{d*w}={p*d*w}>>{p*d*w} {cur}/місяць
-Рік дорівнює 12 місяцям, тож за рік він заробляє {p*d*w} {cur}/місяць * 12 місяців/рік = <<{p*d*w}*12={p*d*w*12}>>{p*d*w*12} {cur}
+answer_annotated = """{occ_nom_cap} працює {d} {d_form} щотижня і {w} {w_form} щомісяця, тож за місяць він працює {d} * {w} = <<{d}*{w}={d*w}>>{d*w} {dw_form}.
+Якщо він заробляє {p} {p_cur} щодня, то за місяць отримує {p} * {d*w} = <<{p}*{d*w}={p*d*w}>>{p*d*w} {pdw_cur}.
+Рік має 12 місяців, тож за рік він заробляє {p*d*w} * 12 = <<{p*d*w}*12={p*d*w*12}>>{p*d*w*12} {pdw12_cur}.
 #### {p*d*w*12}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

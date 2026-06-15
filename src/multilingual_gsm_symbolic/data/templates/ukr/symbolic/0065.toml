@@ -5,26 +5,32 @@ answer = """Спочатку знайдемо загальну втрату до
 """
 id_orig = 164
 id_shuffled = 65
-question_annotated = """{name,Жозефіна} розмірковує, чи робити їй {task,свої податки} самостійно, чи найняти {profession,бухгалтера}. Якщо вона зробить це сама, то зможе виконати на {n,3} години менше {work_type,фриланс-}роботи, що призведе до втрати доходу {rate,35} {cur,кр}/год. {profession_definite,Бухгалтер} бере {fee,90} {cur,кр}. На скільки більше грошей у неї буде, якщо вона найме {profession,бухгалтера}?
+question_annotated = """{name,Жозефіна} розмірковує, чи робити їй {task,свої податки} самостійно, чи найняти {prof_gen,бухгалтера}. Якщо вона зробить це сама, то зможе виконати на {n,3} {n_hours,години} менше {work_type,фриланс-}роботи, що призведе до втрати доходу {rate,35} {cur_rate, крон}/год. {prof_nom_up,Бухгалтер} бере {fee,90} {cur_fee, крон}. На скільки більше грошей у неї буде, якщо вона найме {prof_gen,бухгалтера}?
 
 #init:
 - name = sample(names_female)
-- task = sample(["свої податки", "своє фінансове планування", "свою бухгалтерію бізнесу"])
-- profession, profession_definite = sample([("бухгалтера", "бухгалтера"), ("фінансового радника", "фінансового радника"), ("податкового консультанта", "податкового консультанта"), ("бухгалтера", "бухгалтера")])
-- work_type = sample(["фриланс-", "консультаційної ", "неповної зайнятості ", "контрактної "])
-- cur = sample(currencies_sym)
+- task = sample(["свої податки", "своє фінансове планування", "свою податкову декларацію"])
+- prof_nom, prof_gen = sample([("бухгалтер", "бухгалтера"), ("фінансовий радник", "фінансового радника"), ("податковий консультант", "податкового консультанта")])
+- prof_nom_up = to_title(prof_nom)
+- work_type = sample(["фриланс-", "консультаційної ", "контрактної "])
+- cur_s, cur_pl1, cur_pl2 = sample([("гривня", "гривні", "гривень"), ("долар", "долари", "доларів"), ("євро", "євро", "євро")])
 - $n = range(3, 14)
 - $rate = range(20, 100)
 - $fee = range(50, 200)
+- n_hours = ukr_plural_measurements(n, "година", "години", "годин")
+- cur_rate = ukr_plural_measurements(rate, cur_s, cur_pl1, cur_pl2)
+- cur_earn = ukr_plural_measurements(rate*n, cur_s, cur_pl1, cur_pl2)
+- cur_fee = ukr_plural_measurements(fee, cur_s, cur_pl1, cur_pl2)
+- cur_save = ukr_plural_measurements(rate*n-fee, cur_s, cur_pl1, cur_pl2)
 
 #conditions:
 - n * rate > fee
 
 #answer: n * rate - fee
 """
-answer_annotated = """Спочатку знайдемо загальну втрату доходу, якщо {name} робитиме {task} сама: {rate} {cur}/год * {n} години = <<{rate}*{n}={rate*n}>>{rate*n} {cur}
-Потім віднімемо оплату {profession_definite}, щоб дізнатися, скільки грошей {name} заощадить: {rate*n} {cur} - {fee} {cur} = <<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee} {cur}
+answer_annotated = """Спочатку знайдемо загальну втрату доходу, якщо {name} робитиме {task} самостійно: {rate} {cur_rate}/год * {n} {n_hours} = <<{rate}*{n}={rate*n}>>{rate*n} {cur_earn}
+Потім підрахуємо оплату {prof_gen}, щоб дізнатися, скільки грошей {name} заощадить: {rate*n} {cur_earn} - {fee} {cur_fee} = <<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee} {cur_save}
 #### {rate*n-fee}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

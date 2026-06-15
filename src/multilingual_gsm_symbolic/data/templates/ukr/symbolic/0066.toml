@@ -6,25 +6,32 @@ answer = """Спочатку знайдемо кількість блакитн�
 """
 id_orig = 728
 id_shuffled = 66
-question_annotated = """У {name,Клари} є {n1,15} світло-{c1,блакитних} котушок ниток, {n2,45} темно-{c1,блакитних} котушок ниток, {n3,40} світло-{c2,зелених} котушок ниток і {n4,50} темно-{c2,зелених} котушок ниток. Який відсоток її котушок є {c1,блакитні}?
+question_annotated = """{name,Клара} має {n1,15} {n1_item,котушок ниток}, які мають світло-{c1,блакитний} колір, {n2,45} {n2_item,котушок ниток}, які мають темно-{c1,блакитний} колір, {n3,40} {n3_item,котушок ниток}, які мають світло-{c2,зелений} колір, і {n4,50} {n4_item,котушок ниток}, які мають темно-{c2,зелений} колір. Який відсоток від загальної кількості становлять {item_pl1,котушки ниток}, що мають {c1,блакитний} колір (як світлий, так і темний відтінки)?
 
 #init:
 - name = sample(names)
 - c1, c2 = sample(colors, 2)
+- item, item_pl1, item_pl2 = sample([["котушка ниток", "котушки ниток", "котушок ниток"], ["моток пряжі", "мотки пряжі", "мотків пряжі"], ["набір бісеру", "набори бісеру", "наборів бісеру"]])
 - $n1 = range(15, 100, 5)
 - $n2 = range(45, 150, 5)
 - $n3 = range(20, 80, 5)
 - $n4 = range(50, 100, 5)
+- n1_item = ukr_plural_measurements(n1, item, item_pl1, item_pl2)
+- n2_item = ukr_plural_measurements(n2, item, item_pl1, item_pl2)
+- n3_item = ukr_plural_measurements(n3, item, item_pl1, item_pl2)
+- n4_item = ukr_plural_measurements(n4, item, item_pl1, item_pl2)
+- n1n2_item = ukr_plural_measurements(n1 + n2, item, item_pl1, item_pl2)
+- total_item = ukr_plural_measurements(n1 + n2 + n3 + n4, item, item_pl1, item_pl2)
 
 #conditions:
 - is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))
 
 #answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))
 """
-answer_annotated = """Спочатку знайдемо кількість {c1} котушок: {n1} котушок + {n2} котушок = <<{n1}+{n2}={n1+n2}>>{n1+n2} котушок
-Потім знайдемо загальну кількість котушок: {n3} котушок + {n4} котушок + {n1+n2} котушок = <<{n3}+{n4}+{n1+n2}={n1+n2+n3+n4}>>{n1+n2+n3+n4} котушок
-Потім ділимо кількість {c1} котушок на загальну кількість котушок і множимо на 100%, щоб подати відповідь у відсотках: {n1+n2} котушок / {n1+n2+n3+n4} котушок * 100% = {int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))}%
+answer_annotated = """Спочатку знайдемо загальну кількість предметів, що мають {c1} колір: {n1} {n1_item} + {n2} {n2_item} = <<{n1}+{n2}={n1+n2}>>{n1+n2} {n1n2_item}.
+Потім знайдемо загальну кількість усіх предметів: {n3} {n3_item} + {n4} {n4_item} + {n1+n2} {n1n2_item} = <<{n3}+{n4}+{n1+n2}={n1+n2+n3+n4}>>{n1+n2+n3+n4} {total_item}.
+Потім ділимо кількість предметів, що мають {c1} колір, на загальну кількість і множимо на 100%, щоб подати відповідь у відсотках: {n1+n2} {n1n2_item} / {n1+n2+n3+n4} {total_item} * 100% = {int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))}%
 #### {int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

@@ -7,19 +7,21 @@ answer = """Спочатку з’ясуймо, скільки руди один
 """
 id_orig = 1026
 id_shuffled = 58
-question_annotated = """Один {worker,гном} може видобувати {base,12} {unit,кг} руди на день за допомогою {tool1,голих рук}. Він може видобувати {mult1_txt,2} рази більше за допомогою {tool2,залізної кирки} і на {mult2,50}% більше за допомогою {tool3,сталевої кирки}, ніж за допомогою {tool2,залізної кирки}. Скільки {unit,кг} руди можуть видобути {n,40} {worker_plural,гномів} за допомогою {tool3,сталевих кирок} за місяць із {days,30} днів?
+question_annotated = """Один {worker,гном} може видобувати {base,12} {unit,кг} руди на день використовуючи {tool1,голих рук}. Він може видобувати в {mult1_txt,2} рази більше за допомогою {tool2,залізної кирки} і на {mult2,50}% більше за допомогою {tool3,сталевої кирки}, ніж за допомогою {tool2,залізної кирки}. Скільки {unit,кг} руди можуть видобути {n,40} {n_workers,гномів} за допомогою {tool3,сталевих кирок} за місяць з {days,30} днів?
 
 #init:
-- worker, worker_plural = sample([("гном", "гноми"), ("гоблін", "гобліни"), ("гном", "гноми"), ("троль", "тролі")])
-- tool1 = sample(["голі руки", "лопата", "дерев'яна кирка"])
+- worker, worker_pl1, worker_pl2 = sample([("гном", "гноми", "гномів"), ("гоблін", "гобліни", "гоблінів"), ("троль", "тролі", "тролів")])
+- tool1 = sample(["лопату", "дерев'яну кирку", "свої пазурі", "лом", "наявні інструменти"])
 - unit = sample(["кг", "г"])
-- tool2 = sample(["нікелева кирка", "бронзова кирка", "срібна кирка"])
-- tool3 = sample(["сталева кирка", "алмазна кирка", "міфрилова кирка", "титанова кирка"])
+- tool2 = sample(["нікелевої кирки", "бронзової кирки", "срібної кирки"])
+- tool3 = sample(["сталевої кирки", "алмазної кирки",  "титанової кирки"])
 - $base = range(5, 20)
 - mult1_txt, mult1_val = sample(multi_times)
 - $mult2 = range(30, 80, 5)
 - $n = range(20, 50)
 - $days = range(28, 32)
+- n_workers = ukr_plural_measurements(n, worker, worker_pl1, worker_pl2)
+
 
 #conditions:
 - is_int(mult2/100*base*mult1_val)
@@ -29,9 +31,9 @@ question_annotated = """Один {worker,гном} може видобувати
 """
 answer_annotated = """Спочатку з’ясуймо, скільки руди один {worker} може видобути за допомогою {tool2}: {base} {unit}/день*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/день
 Потім помножимо цю кількість на {100+mult2}%, щоб з’ясувати, скільки один {worker} може видобути за допомогою {tool3}: {base*mult1_val} {unit}/день * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/день
-Потім помножимо кількість, яку один {worker} може видобути за день за допомогою {tool3}, на кількість {worker_plural}: {int(base*mult1_val*(1+mult2/100))} {unit}/день/{worker} * {n} {worker_plural} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/день
+Потім помножимо кількість, яку один {worker} може видобути за день за допомогою {tool3}, на кількість {worker_pl2}: {int(base*mult1_val*(1+mult2/100))} {unit}/день/{worker} * {n} {n_workers} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/день
 Потім помножимо денну кількість руди на кількість днів, щоб знайти загальну кількість, видобуту за місяць: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/день * {days} днів = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}/день
 #### {int(base*mult1_val*(1+mult2/100)*n*days)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

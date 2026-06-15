@@ -5,23 +5,27 @@ answer = """У його брата 5 - 3 = <<5-3=2>>2 картки.
 """
 id_orig = 579
 id_shuffled = 63
-question_annotated = """{person1_article,У} {person1,хлопчика} є {n,5} {item,карток}. У його {relation,брата} на {k,3} менше {item,карток}, ніж у нього. Скільки {item,карток} у них разом?
+question_annotated = """У {person1,хлопчика} є {n,5} {n_item,карток}. У його {relation,брата} на {k,3} {item_gen_pl,карток} менше, ніж у нього. Скільки {item_pl2,карток} у них разом?
 
 #init:
-- person1_article, person1 = sample([("En", "учня"), ("En", "хлопчика"), ("Et", "дитини"), ("En", "хлопця")])
-- item = sample(["карток", "кульок", "наліпок", "олівців", "гумок", "книжок"])
+- person1 = sample(["учня", "хлопчика", "хлопця", "юнака"])
+- item_s, item_pl1, item_pl2 = sample([("картка", "картки", "карток"), ("кулька", "кульки", "кульок"), ("наліпка", "наліпки", "наліпок"), ("олівець", "олівці", "олівців"), ("гумка", "гумки", "гумок"), ("книжка", "книжки", "книжок")])
+- item_gen_pl = ukr_plural_measurements(k, item_s, item_pl1, item_pl2)
 - relation = sample(["сестри", "брата", "друга", "двоюрідного брата"])
 - $n = range(5, 21)
 - $k = range(2, 10)
+- n_item = ukr_plural_measurements(n, item_s, item_pl1, item_pl2)
+- nk_item = ukr_plural_measurements(n-k, item_s, item_pl1, item_pl2)
+- total_item = ukr_plural_measurements(n+(n-k), item_s, item_pl1, item_pl2)
 
 #conditions:
 - n > k
 
 #answer: n + (n-k)
 """
-answer_annotated = """У його {relation} {n} - {k} = <<{n}-{k}={n-k}>>{n-k} картки.
-Разом у них {n} + {n-k} = <<{n}+{n-k}={n+(n-k)}>>{n+(n-k)} {item}.
+answer_annotated = """У його {relation} {n} - {k} = <<{n}-{k}={n-k}>>{n-k} {nk_item}.
+Разом у них {n} + {n-k} = <<{n}+{n-k}={n+(n-k)}>>{n+(n-k)} {total_item}.
 #### {n+(n-k)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
