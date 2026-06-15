@@ -7,25 +7,32 @@ answer = """Пер = <<278=278>>278 очок
 """
 id_orig = 800
 id_shuffled = 53
-question_annotated = """{name1,Пер} набрав {n1,278} очок у грі в {game,боулінг}. {name2,Надя} набрала на {n2,11} очок більше, ніж {frac_txt,половина} очок {name1}а. Скільки очок разом набрали {name1,Пер} і {name2,Надя}?
+question_annotated = """{name1,Пер} набрав {n1,278} {points_n1, очок} у грі в {game,боулінг}. {name2,Надя} набрала на {n2,11} {points_n2, очок} більше, ніж {frac_txt,половина} очок, що набрав {name1, Пер}. Скільки очок разом набрали {name1,Пер} і {name2,Надя}?
 
 #init:
-- name1, name2 = sample(names, 2)
-- game = sample(["боулінг", "дартс", "стрільба з лука", "баскетбол", "теніс"])
+- name1 = sample(names_male)
+- name2 = sample(names_female)
+- game = sample(["боулінг", "дартс", "баскетбол", "теніс"])
 - $n1 = range(200, 500)
 - $n2 = range(5, 50)
 - frac_txt, frac_val = sample(fraction_alnum)
+- points_n1 =ukr_plural_measurements(n1, "очко", "очки", "очок")
+- points_n2 =ukr_plural_measurements(n2, "очко", "очки", "очок")
+- points_n21 =ukr_plural_measurements(int(frac_val * n1 + n2), "очко", "очки", "очок")
+- points_n22 =ukr_plural_measurements(n1 + int(frac_val * n1 + n2), "очко", "очки", "очок")
+- points_n2n1 =ukr_plural_measurements(n1 + int(frac_val * n1 + n2), "очко", "очки", "очок")
+
 
 #conditions:
 - is_int(frac_val * n1)
 
 #answer: n1 + int(frac_val * n1 + n2)
 """
-answer_annotated = """{name1} = <<{n1}={n1}>>{n1} очок
-{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} очок
-{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} очок
-Разом {name1} і {name2} набрали {n1 + int(frac_val * n1 + n2)} очок.
+answer_annotated = """{name1} = <<{n1}={n1}>>{n1} {points_n1}
+{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} {points_n21}
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} {points_n22}
+Разом {name1} і {name2} набрали {n1 + int(frac_val * n1 + n2)} {points_n2n1}.
 #### {n1 + int(frac_val * n1 + n2)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
