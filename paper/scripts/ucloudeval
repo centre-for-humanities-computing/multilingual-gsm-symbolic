@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+# /// script
+# dependencies = ["pyyaml"]
+# ///
+"""Run multilingual GSM-Symbolic Inspect tasks against local vLLM servers."""
+
+from __future__ import annotations
+
+import argparse
+import os
+import subprocess
+import sys
+from collections.abc import Sequence
+from dataclasses import dataclass
+from pathlib import Path
+
+import yaml
+
+MODELS = (
+    "Qwen/Qwen2.5-0.5B-Instruct",
+    "Qwen/Qwen2.5-1.5B-Instruct",
+    "Qwen/Qwen2.5-3B-Instruct",
+    "Qwen/Qwen2.5-7B-Instruct",
+    "Qwen/Qwen2.5-14B-Instruct",
+    "Qwen/Qwen2.5-32B-Instruct",
+    "allenai/OLMo-2-0425-1B-Instruct",
+    "allenai/OLMo-2-1124-7B-Instruct",
+    "allenai/OLMo-2-1124-13B-Instruct",
+    "allenai/OLMo-2-0325-32B-Instruct",
+    "google/gemma-3-1b-it",
+    "google/gemma-3-4b-it",
+    "google/gemma-3-12b-it",
+    "google/gemma-3-27b-it",
+    "swiss-ai/Apertus-8B-Instruct-2509"
+
+)
+# Repository id (no revision) and optional revision to apply to each task
+DATASET = "danish-foundation-models/multilingual-gsm-symbolic"
+REVISION = "refs/pr/4"
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+EVAL_YAML = REPO_ROOT / "paper" / "eval.yaml"
+LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
+
+
+class RunnerError(RuntimeError):
+    pass
+
+
+@dataclass(frozen=True)
+class Task:
+    task_id: str
+    language: str
+    split: str
+
+
+def unique(values: Sequence[str]) -> list[str]:
+    return list(dict.fromkeys(values))
+
+
+def load_tasks(path: Path = EVAL_YAML) -> list[Task]:
+    try:
+        raw_tasks = yaml.safe_load(path.read_text(encoding="utf-8"))["tasks"]
+    except (OSError, yaml.YAMLError) as error:
+        raise RunnerError(f"Could not read {path}: {error}") from error
+
+    return [Task(item["id"], item["config"], item["split"]) for item in raw_tasks]
+
+
+def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Evaluate multilingual GSM-Symbolic tasks against one local vLLM model at a time, "
+            "resuming completed and interrupted work from the log directory."
+        )
+    )
+    options = (
+        ("model", MODELS, "HF_MODEL_ID", "curated Hugging Face model id"),
+        ("language", languages, "CODE", "language code"),
+        ("split", splits, "HF_SPLIT", "full Hugging Face split name"),
+    )
+    for name, available, metavar, label in options:
+        choices = "curated list" if name == "model" else ", ".join(available)
+        parser.add_argument(
+            f"--{name}", nargs="+", default=["all"], metavar=metavar,
+            help=f"{label}(s), or 'all' (available: {choices})",
+        )
+    return parser
+
+
+def expand(
+    parser: argparse.ArgumentParser,
+    option: str,
+    values: Sequence[str],
+    available: Sequence[str],
+) -> list[str]:
+    values = unique(values)
+    if "all" in values:
+        if len(values) > 1:
+            parser.error(f"--{option}: 'all' cannot be combined with other values")
+        return list(available)
+    if option != "model" and (invalid := [value for value in values if value not in available]):
+        parser.error(
+            f"--{option}: invalid value(s): {', '.join(invalid)} "
+            f"(choose from {', '.join(available)}, or all)"
+        )
+    return values
+
+
+def select_tasks(
+    tasks: Sequence[Task],
+    languages: Sequence[str],
+    splits: Sequence[str],
+    all_defined: bool = False,
+) -> list[Task]:
+    if all_defined:
+        return list(tasks)
+
+    requested = {(language, split) for language in languages for split in splits}
+    available = {(task.language, task.split) for task in tasks}
+    if missing := sorted(requested - available):
+        combinations = ", ".join(f"{language}/{split}" for language, split in missing)
+        raise RunnerError(f"No task definition exists for language/split combination(s): {combinations}")
+    return [task for task in tasks if (task.language, task.split) in requested]
+
+
+def inspect_command(model: str, tasks: Sequence[Task]) -> list[str]:
+    # place the revision after the task id so the HF loader parses it correctly
+    specs = [
+        f"hf/{DATASET}/{task.task_id}@{REVISION}" if REVISION else f"hf/{DATASET}/{task.task_id}" for task in tasks
+    ]
+    return [
+        # Eval sets use the log directory to skip successful tasks and retry
+        # interrupted tasks without repeating their completed samples.
+        "inspect", "eval-set", *specs,
+        "--model", f"vllm/{model}",
+        "-M", "dtype=auto",
+        "-M", "attention_backend=FLASH_ATTN",
+        "-M", "max_num_seqs=512",
+        "--max-connections", "128",
+        "--max-samples", "128",
+        "--max-tasks", "8",
+        "--log-dir", str(LOG_DIR),
+        "--log-dir-allow-dirty",
+    ]
+
+
+def vllm_environment() -> dict[str, str]:
+    env = os.environ.copy()
+    # The CUDA 13 packages in this environment have mismatched nvcc/headers.
+    # Avoid vLLM paths that require FlashInfer or DeepGEMM runtime compilation.
+    env.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")
+    env.setdefault("VLLM_USE_DEEP_GEMM", "0")
+    return env
+
+
+def show_command(message: str, command: Sequence[str]) -> None:
+    print(f"{message}\n  {' '.join(command)}")
+
+
+def run_inspect(model: str, tasks: Sequence[Task]) -> None:
+    command = inspect_command(model, tasks)
+    show_command(f"Running {len(tasks)} Inspect task(s) for {model}", command)
+    try:
+        subprocess.run(command, check=True, env=vllm_environment())
+    except subprocess.CalledProcessError as error:
+        raise RunnerError(f"Inspect failed for {model} with status {error.returncode}") from error
+    except OSError as error:
+        raise RunnerError(f"Could not start Inspect for {model}: {error}") from error
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    try:
+        tasks = load_tasks()
+    except RunnerError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+
+    available = {
+        "model": MODELS,
+        "language": unique([task.language for task in tasks]),
+        "split": unique([task.split for task in tasks]),
+    }
+    parser = build_parser(available["language"], available["split"])
+    args = parser.parse_args(argv)
+    selected = {name: expand(parser, name, getattr(args, name), values) for name, values in available.items()}
+
+    try:
+        selected_tasks = select_tasks(
+            tasks,
+            selected["language"],
+            selected["split"],
+            all_defined=set(args.language) == {"all"} and set(args.split) == {"all"},
+        )
+    except RunnerError as error:
+        parser.error(str(error))
+
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    for label, values in (
+        ("Models", selected["model"]),
+        ("Languages", selected["language"]),
+        ("Splits", selected["split"]),
+        ("Tasks", [task.task_id for task in selected_tasks]),
+    ):
+        print(f"{label}: {', '.join(values)}")
+    print(f"Logs: {LOG_DIR}")
+
+    failures = []
+    try:
+        for model in selected["model"]:
+            try:
+                run_inspect(model, selected_tasks)
+            except RunnerError as error:
+                failures.append((model, str(error)))
+                print(f"Model failed: {error}", file=sys.stderr)
+    except KeyboardInterrupt:
+        print("\nInterrupted.", file=sys.stderr)
+        return 130
+
+    if failures:
+        print("\nFailed model runs:", file=sys.stderr)
+        for model, error in failures:
+            print(f"  {model}: {error}", file=sys.stderr)
+        return 1
+
+    print("\nAll model runs completed successfully.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

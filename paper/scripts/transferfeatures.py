@@ -1,0 +1,542 @@
+# /// script
+# dependencies = [
+#   "lang2vec",
+#   "matplotlib",
+#   "numpy",
+#   "pandas",
+#   "pyarrow",
+#   "setuptools<81",
+#   "transformers",
+# ]
+# ///
+"""Collect language features and relate them to cross-lingual transfer.
+
+The script combines ``visualize_model_grid.py``'s run summary with:
+
+* tokenizer fertility: tokens per non-whitespace Unicode character, normalized
+  to English on matched source problems for each model tokenizer;
+* typological distance: cosine distance from English over concatenated
+  URIEL/lang2vec ``syntax_knn`` and ``inventory_knn`` vectors;
+* resource quantity: Common Crawl page count from the latest crawl in
+  ``languages.csv``, plotted on a base-10 log scale.
+
+Outputs include the collected feature tables, the joined transfer-analysis
+table, provenance metadata, and one relationship plot per feature.
+
+Example:
+    uv run paper/scripts/transferfeatures.py
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+from pathlib import Path
+from typing import Any
+
+import lang2vec.lang2vec as l2v
+import matplotlib.pyplot as plt
+from matplotlib.ticker import PercentFormatter
+import numpy as np
+import pandas as pd
+from transformers import AutoTokenizer
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+ARTIFACTS_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
+DEFAULT_OUT_DIR = ARTIFACTS_DIR / "transfer_features"
+
+LANGUAGE_LABELS = {
+    "dan": "Danish",
+    "deu": "German",
+    "eng": "English",
+    "fra": "French",
+    "isl": "Icelandic",
+    "ita": "Italian",
+    "nob": "Norwegian Bokmal",
+    "por": "Portuguese",
+    "rus": "Russian",
+    "spa": "Spanish",
+    "ukr": "Ukrainian",
+    "zho": "Chinese",
+}
+
+COMMON_CRAWL_LANGUAGE_CODES = {
+    "nob": "nor",
+}
+
+TOKENIZER_REPOS = {
+    "qwen2.5-0.5b-instruct": "Qwen/Qwen2.5-0.5B-Instruct",
+    "qwen2.5-1.5b-instruct": "Qwen/Qwen2.5-1.5B-Instruct",
+    "qwen2.5-3b-instruct": "Qwen/Qwen2.5-3B-Instruct",
+    "qwen2.5-7b-instruct": "Qwen/Qwen2.5-7B-Instruct",
+    "llama-3.2-1b-instruct": "meta-llama/Llama-3.2-1B-Instruct",
+    "llama-3.2-3b-instruct": "meta-llama/Llama-3.2-3B-Instruct",
+    "llama-3.1-8b-instruct": "meta-llama/Llama-3.1-8B-Instruct",
+    "gemma-3-1b-it": "google/gemma-3-1b-it",
+    "gemma-3-4b-it": "google/gemma-3-4b-it",
+    "gemma-3-12b-it": "google/gemma-3-12b-it",
+}
+
+FAMILY_COLORS = {
+    "Qwen2.5": "#7B2CBF",
+    "Llama 3": "#E76F51",
+    "Gemma 3": "#2A9D8F",
+    "OpenAI": "#457B9D",
+    "Other": "#666666",
+}
+
+SPLIT_LABELS = {
+    "original": "Original benchmark questions",
+    "synthetic": "Synthetic numerical variants",
+}
+
+plt.rcParams.update(
+    {
+        "axes.spines.right": False,
+        "axes.spines.top": False,
+        "figure.dpi": 160,
+        "font.family": "sans-serif",
+    }
+)
+
+
+def portable_source_path(path: Path) -> str:
+    """Prefer a repository-relative provenance path when possible."""
+    try:
+        return path.resolve().relative_to(REPO_ROOT.resolve()).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def load_common_crawl_pages(path: Path, languages: list[str]) -> tuple[pd.DataFrame, str]:
+    """Load page counts for the latest Common Crawl represented in the CSV."""
+    frame = pd.read_csv(path)
+    required = {"crawl", "primary_language", "pages", "urls", "%pages/crawl"}
+    missing = required - set(frame.columns)
+    if missing:
+        raise ValueError(f"{path} is missing required columns: {', '.join(sorted(missing))}")
+    if frame.empty:
+        raise ValueError(f"{path} contains no Common Crawl language statistics")
+
+    latest_crawl = str(frame["crawl"].drop_duplicates().iloc[-1])
+    latest = frame.loc[frame["crawl"] == latest_crawl].copy()
+    latest = latest.set_index("primary_language")
+    if not latest.index.is_unique:
+        raise ValueError(f"{path} contains duplicate language rows for {latest_crawl}")
+
+    rows = []
+    missing_languages = []
+    for language in languages:
+        common_crawl_language = COMMON_CRAWL_LANGUAGE_CODES.get(language, language)
+        if common_crawl_language not in latest.index:
+            missing_languages.append(f"{language} ({common_crawl_language})")
+            continue
+        resource = latest.loc[common_crawl_language]
+        rows.append(
+            {
+                "language": language,
+                "common_crawl": latest_crawl,
+                "common_crawl_language": common_crawl_language,
+                "common_crawl_pages": int(resource["pages"]),
+                "common_crawl_urls": int(resource["urls"]),
+                "common_crawl_percent_pages": float(resource["%pages/crawl"]),
+                "resource_source_path": portable_source_path(path),
+            }
+        )
+
+    if missing_languages:
+        raise ValueError(
+            f"{path} has no {latest_crawl} page count for: {', '.join(missing_languages)}"
+        )
+    return pd.DataFrame(rows), latest_crawl
+
+
+def cosine_distance(left: np.ndarray, right: np.ndarray) -> float:
+    denominator = np.linalg.norm(left) * np.linalg.norm(right)
+    if denominator == 0:
+        return math.nan
+    distance = float(1 - np.dot(left, right) / denominator)
+    return 0.0 if abs(distance) < 1e-12 else distance
+
+
+def collect_language_features(
+    languages: list[str],
+    common_crawl_resources: pd.DataFrame,
+) -> pd.DataFrame:
+    """Collect URIEL distance and Common Crawl page counts per language."""
+    vectors = l2v.get_features(languages, "syntax_knn+inventory_knn")
+    english = np.asarray(vectors["eng"], dtype=float)
+    resources = common_crawl_resources.set_index("language").to_dict(orient="index")
+
+    rows: list[dict[str, Any]] = []
+    for language in languages:
+        resource = resources[language]
+        pages = int(resource["common_crawl_pages"])
+        rows.append(
+            {
+                "language": language,
+                "language_name": LANGUAGE_LABELS.get(language, language),
+                "typological_distance_from_english": cosine_distance(
+                    np.asarray(vectors[language], dtype=float),
+                    english,
+                ),
+                "typological_feature_set": "URIEL syntax_knn + inventory_knn",
+                **resource,
+                "log10_common_crawl_pages": math.log10(pages) if pages > 0 else math.nan,
+            }
+        )
+
+    return pd.DataFrame(rows)
+
+
+def load_questions(data_dir: Path, languages: list[str]) -> dict[str, pd.DataFrame]:
+    """Load original benchmark questions, indexed by matched source id."""
+    questions: dict[str, pd.DataFrame] = {}
+    for language in languages:
+        paths = sorted((data_dir / language).glob("test_original-*.parquet"))
+        if not paths:
+            raise FileNotFoundError(f"No test_original parquet files found for {language} in {data_dir}")
+        frame = pd.concat(pd.read_parquet(path, columns=["question", "source_id"]) for path in paths)
+        frame = frame.drop_duplicates("source_id").set_index("source_id").sort_index()
+        questions[language] = frame
+    return questions
+
+
+def tokenizer_repo(model: str, model_raw: str) -> str | None:
+    known = TOKENIZER_REPOS.get(model.lower())
+    if known:
+        return known
+
+    raw = model_raw.rstrip("/")
+    for prefix in ("vllm/", "hf/", "transformers/"):
+        if raw.lower().startswith(prefix):
+            return raw[len(prefix) :]
+    if raw.lower().startswith("openai/"):
+        return None
+    return raw if "/" in raw else None
+
+
+def text_fertility(tokenizer: Any, texts: list[str]) -> tuple[float, int, int]:
+    """Return corpus tokens/non-whitespace-character ratio and its totals."""
+    encoded = tokenizer(
+        texts,
+        add_special_tokens=False,
+        truncation=False,
+        return_attention_mask=False,
+        return_token_type_ids=False,
+    )
+    token_count = sum(len(input_ids) for input_ids in encoded["input_ids"])
+    character_count = sum(sum(not character.isspace() for character in text) for text in texts)
+    if character_count == 0:
+        return math.nan, token_count, character_count
+    return token_count / character_count, token_count, character_count
+
+
+def collect_tokenizer_fertility(
+    summary: pd.DataFrame,
+    questions: dict[str, pd.DataFrame],
+    local_files_only: bool,
+) -> pd.DataFrame:
+    """Calculate model-specific fertility on source-matched translated questions."""
+    if "eng" not in questions:
+        raise ValueError("English questions are required as the fertility reference")
+
+    models = summary[["model_raw", "model", "family"]].drop_duplicates()
+    rows: list[dict[str, Any]] = []
+
+    for model_row in models.itertuples(index=False):
+        repo = tokenizer_repo(model_row.model, model_row.model_raw)
+        if repo is None:
+            print(f"Skipping tokenizer fertility for {model_row.model}: no open tokenizer repository")
+            continue
+
+        print(f"Loading tokenizer for {model_row.model} from {repo}")
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(
+                repo,
+                local_files_only=local_files_only,
+                trust_remote_code=False,
+            )
+        except Exception as exc:
+            print(f"Skipping tokenizer fertility for {model_row.model}: {exc}")
+            continue
+
+        for language, language_questions in questions.items():
+            common_ids = questions["eng"].index.intersection(language_questions.index)
+            if common_ids.empty:
+                print(f"Skipping {model_row.model}/{language}: no source ids match English")
+                continue
+
+            english_texts = questions["eng"].loc[common_ids, "question"].astype(str).tolist()
+            language_texts = language_questions.loc[common_ids, "question"].astype(str).tolist()
+            english_fertility, english_tokens, english_characters = text_fertility(
+                tokenizer,
+                english_texts,
+            )
+            fertility, token_count, character_count = text_fertility(tokenizer, language_texts)
+
+            rows.append(
+                {
+                    "model_raw": model_row.model_raw,
+                    "model": model_row.model,
+                    "family": model_row.family,
+                    "tokenizer_repo": repo,
+                    "language": language,
+                    "fertility_tokens_per_character": fertility,
+                    "english_fertility_tokens_per_character": english_fertility,
+                    "normalized_fertility": fertility / english_fertility,
+                    "n_matched_questions": len(common_ids),
+                    "token_count": token_count,
+                    "non_whitespace_character_count": character_count,
+                    "english_token_count": english_tokens,
+                    "english_non_whitespace_character_count": english_characters,
+                }
+            )
+
+    return pd.DataFrame(rows)
+
+
+def build_transfer_table(
+    summary: pd.DataFrame,
+    language_features: pd.DataFrame,
+    fertility: pd.DataFrame,
+) -> pd.DataFrame:
+    """Join English-relative accuracy penalties to collected language features."""
+    index_columns = ["model_raw", "model", "family", "params_b", "language", "split"]
+    values = summary[index_columns + ["accuracy", "stderr", "n_problems"]].copy()
+    english = (
+        values[values["language"] == "eng"]
+        .drop(columns="language")
+        .rename(
+            columns={
+                "accuracy": "english_accuracy",
+                "stderr": "english_stderr",
+                "n_problems": "english_n_problems",
+            }
+        )
+    )
+    transfer = values[values["language"] != "eng"].merge(
+        english,
+        on=["model_raw", "model", "family", "params_b", "split"],
+        how="inner",
+        validate="many_to_one",
+    )
+    transfer["transfer_gap"] = transfer["english_accuracy"] - transfer["accuracy"]
+    transfer["transfer_gap_stderr"] = np.sqrt(
+        transfer["stderr"].fillna(0) ** 2 + transfer["english_stderr"].fillna(0) ** 2
+    )
+
+    transfer = transfer.merge(
+        language_features,
+        on="language",
+        how="left",
+        validate="many_to_one",
+    )
+    if not fertility.empty:
+        transfer = transfer.merge(
+            fertility.drop(columns=["family"]),
+            on=["model_raw", "model", "language"],
+            how="left",
+            validate="many_to_one",
+        )
+    return transfer
+
+
+def relationship_plot(
+    data: pd.DataFrame,
+    x_column: str,
+    xlabel: str,
+    title: str,
+    out: Path,
+) -> bool:
+    """Plot a descriptive feature relationship separately for each split."""
+    plot_data = data.dropna(subset=[x_column, "transfer_gap"])
+    if plot_data.empty:
+        return False
+
+    splits = [split for split in ("original", "synthetic") if split in set(plot_data["split"])]
+    fig, axes = plt.subplots(1, len(splits), figsize=(6.5 * len(splits), 5), squeeze=False)
+    axes = axes[0]
+
+    for ax, split in zip(axes, splits, strict=True):
+        panel = plot_data[plot_data["split"] == split]
+        for family, family_rows in panel.groupby("family"):
+            ax.errorbar(
+                family_rows[x_column],
+                family_rows["transfer_gap"],
+                yerr=family_rows["transfer_gap_stderr"],
+                fmt="o",
+                markersize=6,
+                capsize=2,
+                alpha=0.8,
+                color=FAMILY_COLORS.get(family, FAMILY_COLORS["Other"]),
+                label=family,
+            )
+
+        label_positions = (
+            panel.groupby(["family", "language"], as_index=False)
+            .agg(x=(x_column, "mean"), y=("transfer_gap", "mean"))
+        )
+        for row in label_positions.itertuples(index=False):
+            ax.annotate(
+                row.language,
+                (row.x, row.y),
+                xytext=(4, 3),
+                textcoords="offset points",
+                fontsize=7,
+                color=FAMILY_COLORS.get(row.family, FAMILY_COLORS["Other"]),
+            )
+
+        unique_x = panel[x_column].nunique()
+        if len(panel) >= 3 and unique_x >= 2:
+            slope, intercept = np.polyfit(panel[x_column], panel["transfer_gap"], 1)
+            x_line = np.linspace(panel[x_column].min(), panel[x_column].max(), 100)
+            ax.plot(x_line, slope * x_line + intercept, color="black", linestyle="--", linewidth=1)
+            correlation = panel[[x_column, "transfer_gap"]].corr().iloc[0, 1]
+            ax.text(
+                0.02,
+                0.98,
+                f"Descriptive Pearson r = {correlation:.2f}",
+                transform=ax.transAxes,
+                ha="left",
+                va="top",
+                fontsize=8,
+            )
+
+        ax.axhline(0, color="black", linewidth=0.8, alpha=0.4)
+        ax.grid(alpha=0.2)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel("Accuracy gap: English - target language")
+        ax.yaxis.set_major_formatter(PercentFormatter(1))
+        ax.set_title(SPLIT_LABELS[split])
+
+    handles, labels = axes[0].get_legend_handles_labels()
+    if handles:
+        fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False)
+    fig.suptitle(title)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.94))
+    fig.savefig(out, bbox_inches="tight")
+    plt.close(fig)
+    return True
+
+
+def source_metadata(languages_csv: Path, common_crawl: str) -> dict[str, Any]:
+    return {
+        "definitions": {
+            "transfer_gap": "English accuracy minus target-language accuracy for the same model and split",
+            "tokenizer_fertility": (
+                "Tokenizer tokens divided by non-whitespace Unicode characters, with no special tokens"
+            ),
+            "normalized_fertility": (
+                "Target-language fertility divided by English fertility on matched source_id questions"
+            ),
+            "typological_distance": (
+                "Cosine distance from English over concatenated URIEL/lang2vec "
+                "syntax_knn and inventory_knn vectors"
+            ),
+            "resource_quantity": (
+                f"Common Crawl page count from {common_crawl}; plots use log10(page count)"
+            ),
+        },
+        "sources": {
+            "tokenizers": "https://huggingface.co/docs/transformers/en/model_doc/auto",
+            "uriel_lang2vec": "https://github.com/antonisa/lang2vec",
+            "uriel_paper": "https://aclanthology.org/E17-2002/",
+            "common_crawl_statistics": "https://index.commoncrawl.org/",
+            "common_crawl_languages_csv": portable_source_path(languages_csv),
+        },
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--summary",
+        type=Path,
+        default=ARTIFACTS_DIR / "model_grid" / "run_summary.csv",
+    )
+    parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "hf_dataset" / "data")
+    parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument(
+        "--languages-csv",
+        type=Path,
+        default=DEFAULT_OUT_DIR / "languages.csv",
+        help="Common Crawl language statistics CSV; the final crawl in the file is used.",
+    )
+    parser.add_argument(
+        "--local-files-only",
+        action="store_true",
+        help="Do not download tokenizer files; use the Hugging Face cache only.",
+    )
+    args = parser.parse_args()
+
+    summary = pd.read_csv(args.summary)
+    if "eng" not in set(summary["language"]):
+        raise SystemExit("English results are required to calculate transfer gaps.")
+    languages = sorted(set(summary["language"]))
+
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    language_features_path = args.out_dir / "language_features.csv"
+    common_crawl_resources, common_crawl = load_common_crawl_pages(args.languages_csv, languages)
+
+    print(f"Collecting language features for: {', '.join(languages)} ({common_crawl})")
+    language_features = collect_language_features(
+        languages,
+        common_crawl_resources,
+    )
+    language_features.to_csv(language_features_path, index=False)
+
+    questions = load_questions(args.data_dir, languages)
+    fertility = collect_tokenizer_fertility(
+        summary,
+        questions,
+        local_files_only=args.local_files_only,
+    )
+    fertility_path = args.out_dir / "tokenizer_fertility.csv"
+    fertility.to_csv(fertility_path, index=False)
+
+    transfer = build_transfer_table(summary, language_features, fertility)
+    transfer_path = args.out_dir / "transfer_feature_data.csv"
+    transfer.to_csv(transfer_path, index=False)
+
+    metadata_path = args.out_dir / "feature_sources.json"
+    metadata_path.write_text(
+        json.dumps(source_metadata(args.languages_csv, common_crawl), indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    plots = [
+        (
+            "normalized_fertility",
+            "TFR: target-language tokens/character divided by English tokens/character. Computed on GSM8K templates.",
+            "English-minus-target-language accuracy gap versus tokenizer fertility ratio (TFR)",
+            args.out_dir / "tokenizer_fertility_vs_transfer.png",
+        ),
+        (
+            "typological_distance_from_english",
+            "URIEL cosine distance from English (syntax + phoneme inventory features)",
+            "English-minus-target-language accuracy gap versus typological distance from English",
+            args.out_dir / "typological_distance_vs_transfer.png",
+        ),
+        (
+            "log10_common_crawl_pages",
+            "Language-resource proxy: log10 Common Crawl page count",
+            "English-minus-target-language accuracy gap versus Common Crawl resource quantity",
+            args.out_dir / "resource_quantity_vs_transfer.png",
+        ),
+    ]
+    for column, xlabel, title, path in plots:
+        if relationship_plot(transfer, column, xlabel, title, path):
+            print(f"Saved {path}")
+        else:
+            print(f"Skipped {path.name}: no paired transfer observations with this feature.")
+
+    print(f"Saved {language_features_path}")
+    print(f"Saved {fertility_path}")
+    print(f"Saved {transfer_path}")
+    print(f"Saved {metadata_path}")
+
+
+if __name__ == "__main__":
+    main()
