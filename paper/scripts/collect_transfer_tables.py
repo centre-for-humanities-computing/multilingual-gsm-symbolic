@@ -234,7 +234,7 @@ def main() -> None:
     parser.add_argument("--language-features", type=Path, default=DEFAULT_LANGUAGE_FEATURES)
     parser.add_argument("--fertility", type=Path, default=DEFAULT_FERTILITY)
     parser.add_argument("--scorer", default=None)
-    parser.add_argument("--workers", type=int, default=min(8, os.cpu_count() or 1))
+    parser.add_argument("--workers", type=int, default=16)
     parser.add_argument("--include-incomplete", action="store_true")
     args = parser.parse_args()
 

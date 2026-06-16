@@ -50,13 +50,15 @@ LANGUAGE_LABELS = {
     "zho": "Chinese",
 }
 LANGUAGE_SPEAKERS = {
+    "zho": 940_000_000,
     "eng": 380_000_000,
+    "rus": 150_000_000,
     "deu": 100_000_000,
     "dan": 6_000_000,
     "nob": 5_000_000,
     "isl": 370_000,
 }
-HUMAN_VERIFIED_LANGUAGES = {"eng", "dan"}
+HUMAN_VERIFIED_LANGUAGES = {"eng", "dan", "rus", "zho"}
 
 plt.rcParams.update(
     {
