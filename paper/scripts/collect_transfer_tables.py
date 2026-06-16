@@ -12,7 +12,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, ProcessPoolExecutor 
 from pathlib import Path
 from typing import Any
 
@@ -113,12 +113,20 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     frames: list[pd.DataFrame] = []
+    results = []
     if workers <= 1:
-        results = [load_log_rows(path, scorer) for path in paths]
+        for path in paths:
+            result = load_log_rows(path, scorer)
+            print(f"Loaded log: {path}")
+            results.append(result)
     else:
-        with ThreadPoolExecutor(max_workers=min(workers, len(paths))) as pool:
-            futures = [pool.submit(load_log_rows, path, scorer) for path in paths]
-            results = [future.result() for future in as_completed(futures)]
+        with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
+            futures = {pool.submit(load_log_rows, path, scorer): path for path in paths}
+            for future in as_completed(futures):
+                path = futures[future]
+                result = future.result()
+                print(f"Loaded log: {path}")
+                results.append(result)
 
     for label, frame, warning in results:
         if warning:
@@ -234,7 +242,7 @@ def main() -> None:
     parser.add_argument("--language-features", type=Path, default=DEFAULT_LANGUAGE_FEATURES)
     parser.add_argument("--fertility", type=Path, default=DEFAULT_FERTILITY)
     parser.add_argument("--scorer", default=None)
-    parser.add_argument("--workers", type=int, default=16)
+    parser.add_argument("--workers", type=int, default=32)
     parser.add_argument("--include-incomplete", action="store_true")
     args = parser.parse_args()
 
