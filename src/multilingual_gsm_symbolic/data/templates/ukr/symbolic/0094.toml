@@ -6,14 +6,21 @@ answer = """Кількість людей, які отримують запро�
 """
 id_orig = 718
 id_shuffled = 94
-question_annotated = """{n,100} людей подають заявку на роботу в {company,Google}. Із тих, хто подає заявку, лише {p1,30}% отримують запрошення на співбесіду. Із тих, хто проходить співбесіду, {p2,20}% отримують пропозицію роботи. Із тих, хто отримує пропозицію роботи, {frac_txt,third} людей приймає посаду. Скільки людей приймають посаду?
+question_annotated = """{n,100} {n_people_form,людей} подають заявку на роботу в компанію {company,Google}. Із тих, хто подає заявку, лише {p1,30}% отримують запрошення на співбесіду. Із тих, хто проходить співбесіду, {p2,20}% отримують пропозицію роботи. Із тих, хто отримує пропозицію роботи, {frac_txt,одна третя} людей приймає посаду. Скільки людей приймають посаду?
 
 #init:
-- company = sample(["Salling Group", "LEGO", "Søstrene Grene", "Facebook", "Apple", "Rema1000", "Hatting"])
+- company = sample(["Google", "Apple", "Facebook", "Samsung", "Microsoft", "Rozetka", "Нова Пошта", "АТБ", "Сільпо"])
 - $n = range(100, 1001, 10)
 - $p1 = range(10, 51)
 - $p2 = range(10, 51)
 - frac_txt, frac_val = sample(fraction_alnum)
+- n_people_form = ukr_plural_measurements(n, "людина", "людини", "людей")
+- n1 = int(n * (p1/100))
+- n2 = int(n1 * (p2/100))
+- n3 = int(n2 * frac_val)
+- n1_people_form = ukr_plural_measurements(n1, "людина", "людини", "людей")
+- n2_people_form = ukr_plural_measurements(n2, "людина", "людини", "людей")
+- n3_people_form = ukr_plural_measurements(n3, "людина", "людини", "людей")
 
 #conditions:
 - is_int(n * (p1/100))
@@ -22,10 +29,10 @@ question_annotated = """{n,100} людей подають заявку на ро
 
 #answer: int(n * (p1/100) * (p2/100) * frac_val)
 """
-answer_annotated = """Кількість людей, які отримують запрошення на співбесіду, становить {n} * {p1/100} = <<{n}*{p1/100}={int(n*(p1/100))}>>{int(n*(p1/100))} людей
-Кількість людей, які отримують пропозицію роботи, становить {int(n*(p1/100))} * {p2/100} = <<{int(n*(p1/100))}*{p2/100}={int(n*(p1/100)*(p2/100))}>>{int(n*(p1/100)*(p2/100))} людей
-Кількість людей, які приймають посаду, становить {int(n*(p1/100)*(p2/100))}*{frac_val}=<<{int(n*(p1/100)*(p2/100))}*{frac_val}={int(n*(p1/100)*(p2/100)*frac_val)}>>{int(n*(p1/100)*(p2/100)*frac_val)} людей
-#### {int(n*(p1/100)*(p2/100)*frac_val)}
+answer_annotated = """Кількість людей, які отримують запрошення на співбесіду, становить {n} * {p1}/100 = <<{n}*{p1}/100={n1}>>{n1} {n1_people_form}
+Кількість людей, які отримують пропозицію роботи, становить {n1} * {p2}/100 = <<{n1}*{p2}/100={n2}>>{n2} {n2_people_form}
+Кількість людей, які приймають посаду, становить {n2}*{frac_val}=<<{n2}*{frac_val}={n3}>>{n3} {n3_people_form}
+#### {n3}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

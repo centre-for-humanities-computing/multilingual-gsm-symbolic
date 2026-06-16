@@ -407,6 +407,7 @@ _BASE_HELPERS: dict[str, Any] = {
     "list": list,
     "Fraction": frac_format,
     "plural": plural,
+    "ensure_int": ensure_int,
 }
 
 # Legacy alias used by condition evaluation and answer formatting (no sampling needed there).
@@ -430,6 +431,7 @@ COMBINATION_HELPERS: dict[str, Any] = {
     "divides": divides,
     "Fraction": frac_format,
     "plural": plural,
+"ensure_int": ensure_int,
 }
 
 # Pre-compiled regex patterns used in hot paths

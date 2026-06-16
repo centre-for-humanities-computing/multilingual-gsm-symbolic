@@ -5,24 +5,30 @@ answer = """Загальна кількість лимонного та вівс
 """
 id_orig = 1305
 id_shuffled = 83
-question_annotated = """Родина {family,Слот} зайнята приготуванням {item,печива}. Наразі вони приготували {total,7995} {item,печива}. У них є {n1,2595} {flavor1,лимонного} {item,печива}, {n2,3075} {flavor2,вівсяного} {item,печива} та трохи {flavor3,шоколадного} {item,печива}. Скільки {flavor3,шоколадного} {item,печива} вони приготували?
+question_annotated = """Родина {family,Слот} зайнята приготуванням {flavor1,лимонних} та {flavor2,вівсяних} {item_gen_pl,десертів}. Наразі вони приготували {total,7995} {n_total,печива}. У них є {n1,2595} {flavor1,лимонного} {n1_item,печива}, {n2,3075} {flavor2,вівсяного} {n2_item,печива} та трохи {flavor3,шоколадного} {item_pl2,печива}. Скільки {flavor3,шоколадного} {item_pl2,печива} вони приготували?
+
 
 #init:
-- family = sample(["Норгор", "Гойбю", "Єнсен", "Бруун", "Крістенсен"])
-- item = sample(["мафіни", "капкейки", "кекси", "брауні"])
-- flavor1, flavor2, flavor3 = sample(["ваніль", "полуниця", "чорниця", "лимон", "апельсин"], 3)
+- family = sample(["Коваленко", "Мельник", "Бондаренко", "Шевченко", "Франко", "Кравченко", "Мороз", "Руденко","Лисенко", "Костенко", "Коновалець"])
+- item_gen_sg, item_gen_pl, item_s, item_pl1, item_pl2 = sample([ ("тістечка", "тістечок", "тістечко", "тістечка", "тістечок"), ("кексу", "кексів", "кекс", "кекси", "кексів"), ("брауні", "брауні", "брауні", "брауні", "брауні")])
+- flavor1, flavor2, flavor3 = sample(["лимонних", "полуничних", "чорничних", "шоколадних", "апельсинових", "ванільних", "карамельних", "малинових"], 3)
 - $total = range(4995, 10000, 25)
 - $n1 = range(995, 3000, 50)
 - $n2 = range(1075, 3100, 50)
+- n_total = ukr_plural_measurements(total, item_s, item_pl1, item_pl2)
+- n1_item = ukr_plural_measurements(n1, item_s, item_pl1, item_pl2)
+- n2_item = ukr_plural_measurements(n2, item_s, item_pl1, item_pl2)
+- n12_item = ukr_plural_measurements(n1+n2, item_s, item_pl1, item_pl2)
+- ans_item = ukr_plural_measurements(total-(n1+n2), item_s, item_pl1, item_pl2)
 
 #conditions:
 - n1 + n2 < total
 
 #answer: total - (n1 + n2)
 """
-answer_annotated = """Загальна кількість {flavor1} та {flavor2} {item} становить {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}.
-Отже, вони приготували {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {flavor3} {item}.
+answer_annotated = """Загальна кількість {flavor1} та {flavor2} {item_gen_sg} становить {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} {n12_item}.
+Отже, вони приготували {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {ans_item} {flavor3} {item_gen_sg}.
 #### {total-(n1+n2)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

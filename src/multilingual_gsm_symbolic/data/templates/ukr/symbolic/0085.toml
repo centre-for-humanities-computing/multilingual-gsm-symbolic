@@ -7,13 +7,16 @@ answer = """Нехай x — це кількість огорожі, яку от
 """
 id_orig = 1084
 id_shuffled = 85
-question_annotated = """Якщо у {name1,Симона} і {name2,Генріка} разом є {total,100} {unit,см} огорожі і вони домовилися поділити її так, що {name2,Генрік} отримає на {diff,60} {unit,см} більше, ніж {name1,Симон}, скільки залишиться {name1,Симону}?
+question_annotated = """Якщо у {name1_gen,Симона} і {name2_gen,Генріка} разом є {total,100} {n_unit_total,см} огорожі і вони домовилися поділити її так, що {name2_nom,Генрік} отримає на {diff,60} {n_unit_diff,см} більше, ніж {name1_nom,Симон}. Cкільки залишиться {name1_dat,Симону}?
 
 #init:
-- name1, name2 = sample(names, 2)
-- unit = sample(["см", "м", "сантиметри", "метри"])
+- name1_nom, name1_gen, name1_dat, name2_nom, name2_gen = sample([("Андрій", "Андрія", "Андрію"), ("Петро", "Петра", "Петру"), ("Максим", "Максима", "Максиму"), ("Богдан", "Богдана", "Богдану"), ("Тарас", "Тараса", "Тарасу"), ("Василь", "Василя", "Василю"), ("Денис", "Дениса", "Денису"), ("Ігор", "Ігоря", "Ігорю"), ("Олег", "Олега", "Олегу"), ("Дмитро", "Дмитра", "Дмитру")], 2)
+- unit_s, unit_pl1, unit_pl2 = sample([("см", "см", "см"), ("м", "м", "м"), ("сантиметр", "сантиметри", "сантиметрів"), ("метр", "метри", "метрів")])
 - $total = range(100, 1000, 20)
 - $diff = range(20, 200, 10)
+- n_unit_total = ukr_plural_measurements(total, unit_s, unit_pl1, unit_pl2)
+- n_unit_diff = ukr_plural_measurements(diff, unit_s, unit_pl1, unit_pl2)
+- n_unit_ans = ukr_plural_measurements((total-diff)//2, unit_s, unit_pl1, unit_pl2)
 
 #conditions:
 - total - diff > 10
@@ -21,11 +24,11 @@ question_annotated = """Якщо у {name1,Симона} і {name2,Генрік�
 
 #answer: (total - diff) // 2
 """
-answer_annotated = """Нехай x — це кількість огорожі, яку отримає {name1}, а y — це кількість, яку отримає {name2}. Ми знаємо, що y = x + {diff} і y + x = {total}.
+answer_annotated = """Нехай x — це кількість огорожі, яку отримає {name1_nom}, а y — це кількість, яку отримає {name2_nom}. Ми знаємо, що y = x + {diff} і y + x = {total}.
 Підставивши перше рівняння в друге, отримаємо 2x+{diff}={total}
 Віднімаємо {diff} з обох сторін, отримуємо 2x={total-diff}
-Ділимо обидві сторони на два і x={(total-diff)//2}. Це означає, що {name1} залишиться {(total-diff)//2} {unit} огорожі.
+Ділимо обидві сторони на два і x={(total-diff)//2}. Це означає, що {name1_dat} залишиться {(total-diff)//2} {n_unit_ans} огорожі.
 #### {(total-diff)//2}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

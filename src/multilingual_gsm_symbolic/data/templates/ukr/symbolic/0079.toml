@@ -5,22 +5,26 @@ answer = """Тобіас розмістив 1/2*500 шматочків = <<500*1
 """
 id_orig = 1074
 id_shuffled = 79
-question_annotated = """{name,Тобіас} завершив {frac_txt,половину} пазла з {n1,500} шматочків, а потім за одну годину почав завершувати інший пазл із {n2,500} шматочків. Скільки шматочків пазла {name,Тобіас} розмістив протягом тієї години?
+question_annotated = """{name,Тобіас} завершив збирати {frac_txt,половину} пазла з {n1,500} {n1_items,шматочків}, а потім за одну годину почав і завершив збирати інший пазл із {n2,500} {n2_items,шматочків}. Скільки шматочків пазла {name,Тобіас} зібрав ?
 
 #init:
-- name = sample(names)
-- frac_txt, frac_val = sample(fraction_alnum)
+- name = sample(names_male)
+- frac_txt, frac_val = sample([["одна п’яту","1/5"],["три п’ятих","3/5"],["половину","1/2"],["одна четверту","1/4"],["три четвертих","3/4"],["одна третю","1/3"],["дві третіх","2/3"]])
 - $n1 = range(100, 501)
 - $n2 = range(300, 1001)
+- n1_items = ukr_plural_measurements(n1, "шматочок", "шматочки", "шматочків")
+- n1f_items = ukr_plural_measurements(int(n1*frac_val), "шматочок", "шматочки", "шматочків")
+- n2_items = ukr_plural_measurements(n2, "шматочок", "шматочки", "шматочків")
+- total_items = ukr_plural_measurements(int(n1*frac_val)+n2, "шматочок", "шматочки", "шматочків")
 
 #conditions:
 - is_int(n1 * frac_val)
 
 #answer: int(n1 * frac_val) + n2
 """
-answer_annotated = """{name} розмістив {frac_val}*{n1} шматочків = <<{n1}*{frac_val}={int(n1*frac_val)}>>{int(n1*frac_val)} шматочків.
-{name} завершив {int(n1*frac_val)} шматочків + {n2} шматочків = <<{int(n1*frac_val)}+{n2}={int(n1*frac_val)+n2}>>{int(n1*frac_val)+n2} шматочків.
+answer_annotated = """{name} зібрав {frac_val}*{n1} {n1_items} = <<{n1}*{frac_val}={int(n1*frac_val)}>>{int(n1*frac_val)} {n1f_items}.
+А отже, разом {name} зібрав {int(n1*frac_val)} {n1f_items} + {n2} {n2_items} = <<{int(n1*frac_val)}+{n2}={int(n1*frac_val)+n2}>>{int(n1*frac_val)+n2} {total_items}.
 #### {int(n1*frac_val)+n2}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

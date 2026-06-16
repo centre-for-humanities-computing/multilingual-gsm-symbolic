@@ -7,35 +7,45 @@ answer = """Шорти коштували на 5 крон більше, ніж �
 """
 id_orig = 1053
 id_shuffled = 86
-question_annotated = """{name,Аліса} кваліфікувалася на місце в команді з {sport,бігу}, тож пішла купити спортивне спорядження. Вона купила {item1,майка} за {p1,10} {cur,крон}, пару {sport, бігових}{item2,шорти} за {p2,5} {cur,крон} більше, ніж коштувала {item1_definite, майка}, і пару {item3,кросівки}, які спочатку коштували {p3,48} {cur,крон}, але продавалися зі знижкою за {frac_txt,пів} ціни. У неї був купон на знижку {d,2} {cur,крон} на упаковку спортивних {item4,шкарпетки} за {p4,8} {cur,крон}, яку вона теж купила. Скільки вона витратила на спортивне спорядження?
+question_annotated = """{name,Аліса} кваліфікувалася на місце в команді з {sport_gen,бігу}, тож пішла купити спортивне спорядження. Вона купила {item1,майку} за {p1,10} {n_cur_p1,крон}, пару {sport_adj,бігових} {item2,шортів}, які коштували на {p2,5} {n_cur_p2,крон} більше, ніж вона витратила на {item1,майку}, і пару {item3,кросівок}, які спочатку коштували {p3,48} {n_cur_p3,крон}, але продавалися зі знижкою за {frac_txt,половину} ціни. У неї був купон на знижку {d,2} {n_cur_d,крони} на упаковку спортивних {item4,шкарпеток} за {p4,8} {n_cur_p4,крон}, яку вона теж купила. Скільки вона витратила на спортивне спорядження?
 
 #init:
 - name = sample(names_female)
-- sport = sample(["плавання", "велосипед", "баскетбол", "футбол", "гандбол"])
-- item1, item1_definite = sample([("майка", "майка"), ("футболка", "футболка"), ("кофта", "кофта"), ("спортивний бюстгальтер", "спортивний бюстгальтер")])
-- item2, item2_definite = sample([("шорти", "шорти"), ("легінси", "легінси"), ("спортивні штани", "спортивні штани")])
-- item3, item3_definite = sample([("кросівки", "кросівки"), ("тенісні туфлі","тенісні туфлі"), ("тренувальні кросівки", "тренувальні кросівки")])
-- item4, item4_definite = sample([("шкарпетки", "шкарпетки"),("панчохи","панчохи"),("пов'язка на голову","пов'язка на голову"), ("напульсник","напульсник")])
-- cur = sample(currencies_sym)
-- frac_txt, frac_val = sample(fraction_alnum)
+- sport_gen, sport_adj = sample([("бігу", "бігових"),("баскетболу", "баскетбольних"), ("футболу", "футбольних"), ("гандболу", "гандбольних"), ("волейболу", "волейбольних"), ("боксу", "боксерських")])
+- item1_r, item1 = sample([("майка", "майку"), ("футболка", "футболку"), ("кофта", "кофту")])
+- item2 = sample(["шортів", "легінсів", "спортивних штанів"])
+- item3 = sample(["кросівок", "тенісних туфель", "тренувальних кросівок"])
+- item4 = sample(["шкарпеток", "панчіх", "напульсників"])
+- cur_s, cur_pl1, cur_pl2 = sample([("гривня", "гривні", "гривень"), ("долар", "долари", "доларів"), ("євро", "євро", "євро")])
+- frac_val  = sample(fractions)
+- frac_txt = frac_val
 - $p1 = range(8, 25)
 - $p2 = range(3, 15)
 - $p3 = range(30, 80, 2)
 - $p4 = range(5, 15)
 - $d = range(1, 5)
+- n_cur_p1 = ukr_plural_measurements(p1, cur_s, cur_pl1, cur_pl2)
+- n_cur_p2 = ukr_plural_measurements(p2, cur_s, cur_pl1, cur_pl2)
+- n_cur_p3 = ukr_plural_measurements(p3, cur_s, cur_pl1, cur_pl2)
+- n_cur_p4 = ukr_plural_measurements(p4, cur_s, cur_pl1, cur_pl2)
+- n_cur_d = ukr_plural_measurements(d, cur_s, cur_pl1, cur_pl2)
+- n_cur_p1p2 = ukr_plural_measurements(p1+p2, cur_s, cur_pl1, cur_pl2)
+- n_cur_p3f = ukr_plural_measurements(int(p3*frac_val), cur_s, cur_pl1, cur_pl2)
+- n_cur_p4d = ukr_plural_measurements(p4-d, cur_s, cur_pl1, cur_pl2)
+- n_cur_total = ukr_plural_measurements(p1+(p1+p2)+int(p3*frac_val)+(p4-d), cur_s, cur_pl1, cur_pl2)
 
 #conditions:
-- is_int(p3*frac_val)
+- is_int(p3 * frac_val)
 - p3 % 2 == 0
 - p4 > d
 
-#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)
+#answer: p1 + (p1 + p2) + int(p3 * frac_val) + (p4 - d)
 """
-answer_annotated = """{item2_definite} коштували на {p2} {cur} більше, ніж {item1_definite}, тож вони коштували {p2} {cur} + {p1} {cur} = <<{p2}+{p1}={p1+p2}>>{p1+p2} {cur}.
-Її {item3} коштували {frac_txt} від початкової ціни {p3} {cur}, тож вони коштували {p3} {cur}*{frac_val}={p3*frac_val} {cur}.
-З її купоном {item4_definite} коштували {p4} {cur} - {d} {cur} = <<{p4}-{d}={p4-d}>>{p4-d} {cur}.
-{item1_definite}, {item2_definite}, {item3_definite} і {item4_definite} разом коштували {p1} {cur} + {p1+p2} {cur} + {p3*frac_val} {cur} + {p4-d} {cur} = <<{p1}+{p1+p2}+{p3*frac_val}+{p4-d}={p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}>>{p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)} {cur}.
-#### {p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}
+answer_annotated = """Ціна {item2} була на {p2} {n_cur_p2} більше, ніж коштує {item1_r}, тож вони коштували {p2} {n_cur_p2} + {p1} {n_cur_p1} = <<{p2}+{p1}={p1+p2}>>{p1+p2} {n_cur_p1p2}.
+Ціна її {item3} {frac_txt} від початкової ціни {p3} {n_cur_p3}, тож вони коштували {p3} {n_cur_p3}*{frac_val}={int(p3*frac_val)} {n_cur_p3f}.
+З її купоном на купівлю {item4}, вони коштували {p4} {n_cur_p4} - {d} {n_cur_d} = <<{p4}-{d}={p4-d}>>{p4-d} {n_cur_p4d}.
+Відповідно, {item1_r} та купівля {item2}, {item3} і {item4} разом обійшлася в {p1} {n_cur_p1} + {p1+p2} {n_cur_p1p2} + {int(p3*frac_val)} {n_cur_p3f} + {p4-d} {n_cur_p4d} = <<{p1}+{p1+p2}+{int(p3*frac_val)}+{p4-d}={p1+(p1+p2)+int(p3*frac_val)+(p4-d)}>>{p1+(p1+p2)+int(p3*frac_val)+(p4-d)} {n_cur_total}.
+#### {p1+(p1+p2)+int(p3*frac_val)+(p4-d)}
 """
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
