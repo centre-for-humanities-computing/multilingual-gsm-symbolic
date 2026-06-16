@@ -52,6 +52,7 @@ _LANGUAGE_NAMES = {
     "ukr": "Ukrainian",
     "hin": "Hindi",
     "mar": "Marathi",
+    "jpn": "Japanese",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")
@@ -272,7 +273,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Translate symbolic math templates between languages.")
     parser.add_argument("--from", dest="src", default="eng", help="Source language code (default: eng)")
     parser.add_argument("--to", dest="tgt", required=True, help="Target language code (e.g. nob)")
-    parser.add_argument("--subfolder", default="test_metric", help="Template subfolder within the language directory (default: test_metric)")
+    parser.add_argument(
+        "--subfolder",
+        default="test_metric",
+        help="Template subfolder within the language directory (default: test_metric)",
+    )
     parser.add_argument("--model", default="gpt-5.4-nano", help="OpenAI model to use")
     parser.add_argument("--overwrite", action="store_true", help="Re-translate already existing files")
     parser.add_argument("--retries", type=int, default=2, help="Max retries for templates failing validation")
