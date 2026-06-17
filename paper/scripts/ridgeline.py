@@ -247,14 +247,11 @@ def _load_one_log(
         return label, pd.DataFrame(), None
 
     samples = pd.DataFrame(rows)
-    grouped = (
-        samples.groupby(
-            ["model", "language", "split", "sample_id", "source_id"],
-            dropna=False,
-            as_index=False,
-        )["correct"]
-        .agg(correct_sum="sum", correct_count="size")
-    )
+    grouped = samples.groupby(
+        ["model", "language", "split", "sample_id", "source_id"],
+        dropna=False,
+        as_index=False,
+    )["correct"].agg(correct_sum="sum", correct_count="size")
     return label, grouped, None
 
 
@@ -292,9 +289,8 @@ def load_problem_scores(
 
     combined = pd.concat(frames, ignore_index=True)
     keys = ["model", "language", "split", "sample_id", "source_id"]
-    problems = (
-        combined.groupby(keys, dropna=False, as_index=False)
-        .agg(correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum"))
+    problems = combined.groupby(keys, dropna=False, as_index=False).agg(
+        correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum")
     )
     problems["correct"] = problems["correct_sum"] / problems["correct_count"]
     return problems.drop(columns=["correct_sum", "correct_count"])
@@ -341,13 +337,8 @@ def collect_plot_data(
 
     for language in languages:
         rows = problems[problems["language"] == language]
-        split_models = {
-            split: set(split_rows["model"].unique())
-            for split, split_rows in rows.groupby("split")
-        }
-        paired_models = sorted(
-            split_models.get("original", set()) & split_models.get("synthetic", set())
-        )
+        split_models = {split: set(split_rows["model"].unique()) for split, split_rows in rows.groupby("split")}
+        paired_models = sorted(split_models.get("original", set()) & split_models.get("synthetic", set()))
         if not paired_models:
             print(f"Skipping {language}: both original and synthetic results are required.")
             continue

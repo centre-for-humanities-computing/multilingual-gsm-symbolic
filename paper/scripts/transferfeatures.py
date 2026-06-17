@@ -37,9 +37,9 @@ from typing import Any
 
 import lang2vec.lang2vec as l2v
 import matplotlib.pyplot as plt
-from matplotlib.ticker import PercentFormatter
 import numpy as np
 import pandas as pd
+from matplotlib.ticker import PercentFormatter
 from transformers import AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -167,9 +167,7 @@ def load_common_crawl_pages(path: Path, languages: list[str]) -> tuple[pd.DataFr
         )
 
     if missing_languages:
-        raise ValueError(
-            f"{path} has no {latest_crawl} page count for: {', '.join(missing_languages)}"
-        )
+        raise ValueError(f"{path} has no {latest_crawl} page count for: {', '.join(missing_languages)}")
     return pd.DataFrame(rows), latest_crawl
 
 
@@ -186,7 +184,7 @@ def collect_language_features(
     common_crawl_resources: pd.DataFrame,
 ) -> pd.DataFrame:
     """Collect URIEL distance and Common Crawl page counts per language."""
-    vectors = l2v.get_features(languages, "syntax_knn+inventory_knn")
+    vectors = l2v.get_features(languages, "syntax_knn")
     english = np.asarray(vectors["eng"], dtype=float)
     resources = common_crawl_resources.set_index("language").to_dict(orient="index")
 
@@ -202,7 +200,7 @@ def collect_language_features(
                     np.asarray(vectors[language], dtype=float),
                     english,
                 ),
-                "typological_feature_set": "URIEL syntax_knn + inventory_knn",
+                "typological_feature_set": "URIEL syntax_knn",
                 **resource,
                 "log10_common_crawl_pages": math.log10(pages) if pages > 0 else math.nan,
             }
@@ -396,9 +394,8 @@ def relationship_plot(
                 label=family,
             )
 
-        label_positions = (
-            panel.groupby(["family", "language"], as_index=False)
-            .agg(x=(x_column, "mean"), y=("transfer_gap", "mean"))
+        label_positions = panel.groupby(["family", "language"], as_index=False).agg(
+            x=(x_column, "mean"), y=("transfer_gap", "mean")
         )
         label_positions["family_order"] = label_positions["family"].map(FAMILY_ORDER).fillna(99)
         label_positions = label_positions.sort_values(["family_order", "language"])
@@ -456,12 +453,9 @@ def source_metadata(languages_csv: Path, common_crawl: str) -> dict[str, Any]:
                 "Target-language fertility divided by English fertility on matched source_id questions"
             ),
             "typological_distance": (
-                "Cosine distance from English over concatenated URIEL/lang2vec "
-                "syntax_knn and inventory_knn vectors"
+                "Cosine distance from English over concatenated URIEL/lang2vec syntax_knn and inventory_knn vectors"
             ),
-            "resource_quantity": (
-                f"Common Crawl page count from {common_crawl}; plots use log10(page count)"
-            ),
+            "resource_quantity": (f"Common Crawl page count from {common_crawl}; plots use log10(page count)"),
         },
         "sources": {
             "tokenizers": "https://huggingface.co/docs/transformers/en/model_doc/auto",
@@ -539,7 +533,7 @@ def main() -> None:
         ),
         (
             "typological_distance_from_english",
-            "URIEL cosine distance from English (syntax + phoneme inventory features)",
+            "URIEL cosine distance from English (syntax features)",
             "English-minus-target-language accuracy gap versus typological distance from English",
             args.out_dir / "typological_distance_vs_transfer.png",
         ),

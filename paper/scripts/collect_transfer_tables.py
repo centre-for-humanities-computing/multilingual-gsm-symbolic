@@ -10,9 +10,8 @@ Example:
 from __future__ import annotations
 
 import argparse
-import os
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed, ProcessPoolExecutor 
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -35,7 +34,9 @@ from visualizegrid import (  # noqa: E402
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "transfer_tables"
-DEFAULT_LANGUAGE_FEATURES = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "language_features.csv"
+DEFAULT_LANGUAGE_FEATURES = (
+    REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "language_features.csv"
+)
 DEFAULT_FERTILITY = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "tokenizer_fertility.csv"
 
 
@@ -175,7 +176,9 @@ def build_analysis_tables(
         "training_language",
         "pretrain_tokens_t",
     ]
-    models = main[[column for column in model_columns if column in main.columns]].drop_duplicates().reset_index(drop=True)
+    models = (
+        main[[column for column in model_columns if column in main.columns]].drop_duplicates().reset_index(drop=True)
+    )
 
     model_languages = fertility.copy()
     if not fertility.empty:
@@ -188,9 +191,8 @@ def build_analysis_tables(
 
     languages = language_features.copy()
     if not languages.empty:
-        language_counts = (
-            main.groupby("language", as_index=False)
-            .agg(n_observations=("correct", "size"), mean_accuracy=("score", "mean"))
+        language_counts = main.groupby("language", as_index=False).agg(
+            n_observations=("correct", "size"), mean_accuracy=("score", "mean")
         )
         languages = languages.merge(language_counts, on="language", how="outer")
 

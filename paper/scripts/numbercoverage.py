@@ -32,9 +32,7 @@ from matplotlib.ticker import PercentFormatter
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "prompt_number_coverage"
-NUMBER_RE = re.compile(
-    r"(?<![\w.])[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?!\w|\.\d)"
-)
+NUMBER_RE = re.compile(r"(?<![\w.])[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?!\w|\.\d)")
 LANGUAGE_LABELS = {
     "dan": "Danish",
     "deu": "German",
@@ -177,9 +175,7 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
             sum(row["final_correct"] for row in final_scored),
             len(final_scored),
         ),
-        "samples_with_all_prompt_numbers_present": sum(
-            row["all_prompt_numbers_present"] for row in sample_rows
-        ),
+        "samples_with_all_prompt_numbers_present": sum(row["all_prompt_numbers_present"] for row in sample_rows),
         "all_prompt_numbers_present_rate": safe_rate(
             sum(row["all_prompt_numbers_present"] for row in sample_rows),
             len(sample_rows),
@@ -189,9 +185,7 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
             "final_incorrect": incorrect_summary,
         },
         "correct_minus_incorrect_percentage_points": (
-            (correct_rate - incorrect_rate) * 100
-            if correct_rate is not None and incorrect_rate is not None
-            else None
+            (correct_rate - incorrect_rate) * 100 if correct_rate is not None and incorrect_rate is not None else None
         ),
         "matcher": "distinct normalized complete numeric tokens",
         "note": (
@@ -233,10 +227,7 @@ def analyze_logs(
 
     ordered_results: list[tuple[dict[str, Any], list[dict[str, Any]]] | None] = [None] * len(logs)
     with ProcessPoolExecutor(max_workers=workers) as executor:
-        futures = {
-            executor.submit(analyze_log, path, max_samples): (index, path)
-            for index, path in enumerate(logs)
-        }
+        futures = {executor.submit(analyze_log, path, max_samples): (index, path) for index, path in enumerate(logs)}
         for future in as_completed(futures):
             index, path = futures[future]
             ordered_results[index] = future.result()
@@ -334,9 +325,7 @@ def plot_number_coverage_heatmap(rows: list[dict[str, Any]], path: Path) -> bool
 
     cmap = plt.colormaps["viridis"].copy()
     cmap.set_bad("#E0E0E0")
-    fig, ax = plt.subplots(
-        figsize=(max(7, 1.35 * len(languages) + 3.5), max(4, 0.6 * len(models) + 1.8))
-    )
+    fig, ax = plt.subplots(figsize=(max(7, 1.35 * len(languages) + 3.5), max(4, 0.6 * len(models) + 1.8)))
     image = ax.imshow(rates, aspect="auto", cmap=cmap, vmin=0, vmax=1)
     ax.set_xticks(
         range(len(languages)),
@@ -402,9 +391,7 @@ def run_self_test() -> None:
     for prompt, response, expected in cases:
         actual = extract_numbers(prompt) <= extract_numbers(response)
         if actual != expected:
-            raise AssertionError(
-                f"Failed: prompt={prompt!r}, response={response!r}, expected={expected}, got={actual}"
-            )
+            raise AssertionError(f"Failed: prompt={prompt!r}, response={response!r}, expected={expected}, got={actual}")
     models, languages, rates, samples = number_coverage_grid(
         [
             {"model": "provider/model-1B", "language": "eng", "all_prompt_numbers_present": True},

@@ -325,9 +325,8 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
         "source_id",
     ]
 
-    grouped = (
-        samples.groupby(problem_keys, dropna=False, as_index=False)["correct"]
-        .agg(correct_sum="sum", correct_count="size")
+    grouped = samples.groupby(problem_keys, dropna=False, as_index=False)["correct"].agg(
+        correct_sum="sum", correct_count="size"
     )
 
     return label, grouped, None
@@ -387,9 +386,8 @@ def load_samples(
         "source_id",
     ]
 
-    samples = (
-        combined.groupby(problem_keys, dropna=False, as_index=False)
-        .agg(correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum"))
+    samples = combined.groupby(problem_keys, dropna=False, as_index=False).agg(
+        correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum")
     )
     samples["correct"] = samples["correct_sum"] / samples["correct_count"]
 
@@ -524,8 +522,7 @@ def plot_heatmaps(summary: pd.DataFrame, out: Path) -> None:
         ).reindex(index=order, columns=languages)
 
     panels: list[tuple[str, pd.DataFrame, str, float, float, bool]] = [
-        (SPLIT_LABELS[split], matrices[split], "viridis", 0, 1, False)
-        for split in available_splits
+        (SPLIT_LABELS[split], matrices[split], "viridis", 0, 1, False) for split in available_splits
     ]
 
     height = max(4.0, 0.42 * len(order) + 1.5)
@@ -635,11 +632,7 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
     if not panels:
         return False
 
-    max_gap = max(
-        np.nanmax(np.abs(matrix.to_numpy()))
-        for _title, matrix in panels
-        if matrix.notna().any().any()
-    )
+    max_gap = max(np.nanmax(np.abs(matrix.to_numpy())) for _title, matrix in panels if matrix.notna().any().any())
     max_gap = max(max_gap, 0.05)
     height = max(4.0, 0.42 * len(order) + 1.5)
     fig, axes = plt.subplots(
@@ -665,9 +658,7 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
     ]
 
     axes[0].set_ylabel("Evaluated instruction-tuned model")
-    fig.suptitle(
-        "Target-language accuracy minus English accuracy for the same model"
-    )
+    fig.suptitle("Target-language accuracy minus English accuracy for the same model")
     fig.subplots_adjust(left=0.2, right=0.89, bottom=0.27, top=0.84, wspace=0.18)
     colorbar_axis = fig.add_axes([0.91, 0.25, 0.012, 0.55])
     colorbar = fig.colorbar(
@@ -758,9 +749,7 @@ def plot_transfer_robustness(summary: pd.DataFrame, out: Path) -> bool:
     handles, labels = axes[0, 0].get_legend_handles_labels()
     if handles:
         fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False)
-    fig.suptitle(
-        "English-to-non-English accuracy gaps and variability by model parameter count"
-    )
+    fig.suptitle("English-to-non-English accuracy gaps and variability by model parameter count")
     fig.tight_layout(rect=(0, 0.05, 1, 0.96))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -819,9 +808,7 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
         signed=True,
     )
     axes[0].set_ylabel("Evaluated instruction-tuned model")
-    fig.suptitle(
-        "Accuracy decrease from original benchmark questions to synthetic numerical variants"
-    )
+    fig.suptitle("Accuracy decrease from original benchmark questions to synthetic numerical variants")
     absolute_colorbar = fig.colorbar(
         absolute_image,
         ax=axes[0],
@@ -916,9 +903,7 @@ def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
             frameon=False,
         )
 
-    fig.suptitle(
-        "Exact-answer accuracy by model size within each model family and problem language"
-    )
+    fig.suptitle("Exact-answer accuracy by model size within each model family and problem language")
     fig.tight_layout(rect=(0, 0.06, 1, 0.96))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
