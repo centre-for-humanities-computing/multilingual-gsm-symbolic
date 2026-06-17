@@ -10,8 +10,9 @@ terminology across fields) and validates each template using the same checks
 as the test suite. Templates that fail validation are retried up to 3 times.
 
 Usage:
-    uv run src/scripts/translate_templates.py --from dan --to nob
-    uv run src/scripts/translate_templates.py --from eng --to fra --model gpt-5.4
+    uv run src/scripts/translate_templates.py --to nob
+    uv run src/scripts/translate_templates.py --to fra --model gpt-5.4
+    uv run src/scripts/translate_templates.py --from dan --subfolder symbolic --to nob
 """
 
 import argparse
@@ -49,6 +50,9 @@ _LANGUAGE_NAMES = {
     "por": "Portuguese",
     "rus": "Russian",
     "ukr": "Ukrainian",
+    "hin": "Hindi",
+    "mar": "Marathi",
+    "jpn": "Japanese",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")
@@ -267,8 +271,13 @@ def verify_renders(tgt_data: dict, replacements: dict) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Translate symbolic math templates between languages.")
-    parser.add_argument("--from", dest="src", required=True, help="Source language code (e.g. dan)")
+    parser.add_argument("--from", dest="src", default="eng", help="Source language code (default: eng)")
     parser.add_argument("--to", dest="tgt", required=True, help="Target language code (e.g. nob)")
+    parser.add_argument(
+        "--subfolder",
+        default="test_metric",
+        help="Template subfolder within the language directory (default: test_metric)",
+    )
     parser.add_argument("--model", default="gpt-5.4-nano", help="OpenAI model to use")
     parser.add_argument("--overwrite", action="store_true", help="Re-translate already existing files")
     parser.add_argument("--retries", type=int, default=2, help="Max retries for templates failing validation")
@@ -276,7 +285,7 @@ def main() -> None:
 
     src_dir = _DATA_ROOT / args.src
     tgt_dir = _DATA_ROOT / args.tgt
-    tgt_symbolic = tgt_dir / "symbolic"
+    tgt_symbolic = tgt_dir / args.subfolder
 
     if not src_dir.exists():
         raise SystemExit(f"Source language directory not found: {src_dir}")
@@ -301,7 +310,7 @@ def main() -> None:
     tgt_replacements = json.loads(rep_tgt.read_text(encoding="utf-8")) if rep_tgt.exists() else {}
 
     # Translate / fix templates
-    template_files = sorted((src_dir / "symbolic").glob("*.toml"))
+    template_files = sorted((src_dir / args.subfolder).glob("*.toml"))
     errors: list[tuple[str, list[str]]] = []
 
     for i, src_file in enumerate(template_files):
