@@ -55,12 +55,21 @@ MODEL_CATALOG = {
     "qwen2.5-1.5b-instruct": ModelInfo("Qwen2.5", 1.5, 151_936, "Chinese-English; multilingual", 18),
     "qwen2.5-3b-instruct": ModelInfo("Qwen2.5", 3, 151_936, "Chinese-English; multilingual", 18),
     "qwen2.5-7b-instruct": ModelInfo("Qwen2.5", 7, 151_936, "Chinese-English; multilingual", 18),
+    "qwen2.5-14b-instruct": ModelInfo("Qwen2.5", 14, 151_936, "Chinese-English; multilingual", 18),
+    "qwen2.5-32b-instruct": ModelInfo("Qwen2.5", 32, 151_936, "Chinese-English; multilingual", 18),
     "llama-3.2-1b-instruct": ModelInfo("Llama 3", 1, 128_256, "English-centric", 9),
     "llama-3.2-3b-instruct": ModelInfo("Llama 3", 3, 128_256, "English-centric", 9),
     "llama-3.1-8b-instruct": ModelInfo("Llama 3", 8, 128_256, "English-centric", 15),
+    "llama-3.2-8b-instruct": ModelInfo("Llama 3", 8, 128_256, "English-centric", 15),
+    "olmo-2-0425-1b-instruct": ModelInfo("OLMo 2", 1),
+    "olmo-2-1124-7b-instruct": ModelInfo("OLMo 2", 7),
+    "olmo-2-1124-13b-instruct": ModelInfo("OLMo 2", 13),
+    "olmo-2-0325-32b-instruct": ModelInfo("OLMo 2", 32),
     "gemma-3-1b-it": ModelInfo("Gemma 3", 1, 262_144, "English-oriented", 2),
     "gemma-3-4b-it": ModelInfo("Gemma 3", 4, 262_144, "Multilingual; 140+ languages", 4),
     "gemma-3-12b-it": ModelInfo("Gemma 3", 12, 262_144, "Multilingual; 140+ languages", 12),
+    "gemma-3-27b-it": ModelInfo("Gemma 3", 27, 262_144, "Multilingual; 140+ languages", 14),
+    "apertus-8b-instruct-2509": ModelInfo("Apertus", 8),
 }
 
 LANGUAGE_LABELS = {
@@ -93,9 +102,21 @@ HUMAN_VERIFIED_LANGUAGES = {"eng", "dan", "rus", "zho"}
 FAMILY_COLORS = {
     "Qwen2.5": "#7B2CBF",
     "Llama 3": "#E76F51",
+    "OLMo 2": "#D62828",
     "Gemma 3": "#2A9D8F",
+    "Apertus": "#6A994E",
     "OpenAI": "#457B9D",
     "Other": "#666666",
+}
+
+FAMILY_ORDER = {
+    "Qwen2.5": 0,
+    "Llama 3": 1,
+    "Gemma 3": 2,
+    "OLMo 2": 3,
+    "Apertus": 4,
+    "OpenAI": 5,
+    "Other": 6,
 }
 
 SPLIT_LABELS = {
@@ -396,10 +417,18 @@ def summarize(samples: pd.DataFrame) -> pd.DataFrame:
 
 def model_order(summary: pd.DataFrame) -> list[str]:
     models = summary[["model", "family", "params_b"]].drop_duplicates().copy()
-    family_order = {"Qwen2.5": 0, "Llama 3": 1, "Gemma 3": 2, "OpenAI": 3, "Other": 4}
-    models["family_order"] = models["family"].map(family_order).fillna(99)
+    models["family_order"] = models["family"].map(FAMILY_ORDER).fillna(99)
     models["size_order"] = models["params_b"].fillna(math.inf)
     return models.sort_values(["family_order", "size_order", "model"])["model"].tolist()
+
+
+def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
+    ordered = summary.copy()
+    ordered["family_order"] = ordered["family"].map(FAMILY_ORDER).fillna(99)
+    ordered["size_order"] = ordered["params_b"].fillna(math.inf)
+    return ordered.sort_values(["family_order", "size_order", "model", "language", "split"]).drop(
+        columns=["family_order", "size_order"]
+    )
 
 
 def format_speaker_count(count: int) -> str:
@@ -698,7 +727,8 @@ def plot_transfer_robustness(summary: pd.DataFrame, out: Path) -> bool:
         split_rows = robust[robust["split"] == split]
         for col_index, (metric, label) in enumerate(metrics):
             ax = axes[row_index, col_index]
-            for family, family_rows in split_rows.groupby("family"):
+            for family in [family for family in FAMILY_ORDER if family in set(split_rows["family"])]:
+                family_rows = split_rows[split_rows["family"] == family]
                 family_rows = family_rows.sort_values("params_b")
                 ax.plot(
                     family_rows["params_b"],
@@ -821,7 +851,7 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
 
 def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
     scaled = summary.dropna(subset=["params_b"])
-    families = [family for family in ("Qwen2.5", "Llama 3", "Gemma 3") if family in set(scaled["family"])]
+    families = [family for family in FAMILY_ORDER if family != "Other" and family in set(scaled["family"])]
 
     if not families:
         return False
@@ -951,7 +981,7 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     summary_path = args.out_dir / "run_summary.csv"
-    summary.sort_values(["family", "params_b", "model", "language", "split"]).to_csv(summary_path, index=False)
+    sort_summary(summary).to_csv(summary_path, index=False)
 
     plot_heatmaps(summary, args.out_dir / "accuracy_heatmaps.png")
     made_pairs = plot_split_pairs(summary, args.out_dir / "original_vs_synthetic.png")

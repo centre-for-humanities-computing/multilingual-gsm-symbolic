@@ -97,6 +97,8 @@ def model_family(model: str) -> str:
         return "Llama 3"
     if "apertus" in lower:
         return "Apertus"
+    if model.lower().startswith("openai/") or lower.startswith(("gpt-", "o1", "o3", "o4")):
+        return "OpenAI"
     return "Other"
 
 

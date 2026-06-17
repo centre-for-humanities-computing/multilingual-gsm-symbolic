@@ -70,20 +70,41 @@ TOKENIZER_REPOS = {
     "qwen2.5-1.5b-instruct": "Qwen/Qwen2.5-1.5B-Instruct",
     "qwen2.5-3b-instruct": "Qwen/Qwen2.5-3B-Instruct",
     "qwen2.5-7b-instruct": "Qwen/Qwen2.5-7B-Instruct",
+    "qwen2.5-14b-instruct": "Qwen/Qwen2.5-14B-Instruct",
+    "qwen2.5-32b-instruct": "Qwen/Qwen2.5-32B-Instruct",
     "llama-3.2-1b-instruct": "meta-llama/Llama-3.2-1B-Instruct",
     "llama-3.2-3b-instruct": "meta-llama/Llama-3.2-3B-Instruct",
     "llama-3.1-8b-instruct": "meta-llama/Llama-3.1-8B-Instruct",
+    "llama-3.2-8b-instruct": "meta-llama/Llama-3.2-8B-Instruct",
+    "olmo-2-0425-1b-instruct": "allenai/OLMo-2-0425-1B-Instruct",
+    "olmo-2-1124-7b-instruct": "allenai/OLMo-2-1124-7B-Instruct",
+    "olmo-2-1124-13b-instruct": "allenai/OLMo-2-1124-13B-Instruct",
+    "olmo-2-0325-32b-instruct": "allenai/OLMo-2-0325-32B-Instruct",
     "gemma-3-1b-it": "google/gemma-3-1b-it",
     "gemma-3-4b-it": "google/gemma-3-4b-it",
     "gemma-3-12b-it": "google/gemma-3-12b-it",
+    "gemma-3-27b-it": "google/gemma-3-27b-it",
+    "apertus-8b-instruct-2509": "swiss-ai/Apertus-8B-Instruct-2509",
 }
 
 FAMILY_COLORS = {
     "Qwen2.5": "#7B2CBF",
     "Llama 3": "#E76F51",
+    "OLMo 2": "#D62828",
     "Gemma 3": "#2A9D8F",
+    "Apertus": "#6A994E",
     "OpenAI": "#457B9D",
     "Other": "#666666",
+}
+
+FAMILY_ORDER = {
+    "Qwen2.5": 0,
+    "Llama 3": 1,
+    "Gemma 3": 2,
+    "OLMo 2": 3,
+    "Apertus": 4,
+    "OpenAI": 5,
+    "Other": 6,
 }
 
 SPLIT_LABELS = {
@@ -361,7 +382,8 @@ def relationship_plot(
 
     for ax, split in zip(axes, splits, strict=True):
         panel = plot_data[plot_data["split"] == split]
-        for family, family_rows in panel.groupby("family"):
+        for family in [family for family in FAMILY_ORDER if family in set(panel["family"])]:
+            family_rows = panel[panel["family"] == family]
             ax.errorbar(
                 family_rows[x_column],
                 family_rows["transfer_gap"],
@@ -378,6 +400,8 @@ def relationship_plot(
             panel.groupby(["family", "language"], as_index=False)
             .agg(x=(x_column, "mean"), y=("transfer_gap", "mean"))
         )
+        label_positions["family_order"] = label_positions["family"].map(FAMILY_ORDER).fillna(99)
+        label_positions = label_positions.sort_values(["family_order", "language"])
         for row in label_positions.itertuples(index=False):
             ax.annotate(
                 row.language,
