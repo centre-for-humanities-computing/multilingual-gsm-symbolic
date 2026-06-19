@@ -94,7 +94,6 @@ FAMILY_COLORS = {
     "Gemma 3": "#2A9D8F",
     "Apertus": "#6A994E",
     "OpenAI": "#457B9D",
-    "Other": "#666666",
 }
 
 FAMILY_ORDER = {
@@ -104,7 +103,6 @@ FAMILY_ORDER = {
     "OLMo 2": 3,
     "Apertus": 4,
     "OpenAI": 5,
-    "Other": 6,
 }
 
 SPLIT_LABELS = {
@@ -128,6 +126,13 @@ def portable_source_path(path: Path) -> str:
         return path.resolve().relative_to(REPO_ROOT.resolve()).as_posix()
     except ValueError:
         return str(path)
+
+
+def ordered_families(families: pd.Series | set[str] | list[str]) -> list[str]:
+    unique_families = set(families)
+    known = [family for family in FAMILY_ORDER if family in unique_families]
+    extra = sorted(unique_families - set(FAMILY_ORDER))
+    return known + extra
 
 
 def load_common_crawl_pages(path: Path, languages: list[str]) -> tuple[pd.DataFrame, str]:
@@ -380,7 +385,7 @@ def relationship_plot(
 
     for ax, split in zip(axes, splits, strict=True):
         panel = plot_data[plot_data["split"] == split]
-        for family in [family for family in FAMILY_ORDER if family in set(panel["family"])]:
+        for family in ordered_families(panel["family"]):
             family_rows = panel[panel["family"] == family]
             ax.errorbar(
                 family_rows[x_column],
@@ -390,7 +395,7 @@ def relationship_plot(
                 markersize=6,
                 capsize=2,
                 alpha=0.8,
-                color=FAMILY_COLORS.get(family, FAMILY_COLORS["Other"]),
+                color=FAMILY_COLORS.get(family, "#666666"),
                 label=family,
             )
 
@@ -406,7 +411,7 @@ def relationship_plot(
                 xytext=(4, 3),
                 textcoords="offset points",
                 fontsize=7,
-                color=FAMILY_COLORS.get(row.family, FAMILY_COLORS["Other"]),
+                color=FAMILY_COLORS.get(row.family, "#666666"),
             )
 
         unique_x = panel[x_column].nunique()
@@ -432,9 +437,20 @@ def relationship_plot(
         ax.yaxis.set_major_formatter(PercentFormatter(1))
         ax.set_title(SPLIT_LABELS[split])
 
-    handles, labels = axes[0].get_legend_handles_labels()
-    if handles:
-        fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False)
+    legend_entries: dict[str, Any] = {}
+    for ax in axes:
+        handles, labels = ax.get_legend_handles_labels()
+        legend_entries.update(
+            (label, handle) for handle, label in zip(handles, labels, strict=True) if label not in legend_entries
+        )
+    if legend_entries:
+        fig.legend(
+            list(legend_entries.values()),
+            list(legend_entries.keys()),
+            loc="lower center",
+            ncol=len(legend_entries),
+            frameon=False,
+        )
     fig.suptitle(title)
     fig.tight_layout(rect=(0, 0.07, 1, 0.94))
     fig.savefig(out, bbox_inches="tight")

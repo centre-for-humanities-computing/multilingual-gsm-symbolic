@@ -34,6 +34,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from inspect_ai.log import read_eval_log
+from matplotlib.colors import Normalize
+from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -106,7 +108,6 @@ FAMILY_COLORS = {
     "Gemma 3": "#2A9D8F",
     "Apertus": "#6A994E",
     "OpenAI": "#457B9D",
-    "Other": "#666666",
 }
 
 FAMILY_ORDER = {
@@ -116,7 +117,15 @@ FAMILY_ORDER = {
     "OLMo 2": 3,
     "Apertus": 4,
     "OpenAI": 5,
-    "Other": 6,
+}
+
+FAMILY_MARKERS = {
+    "Qwen2.5": "o",
+    "Llama 3": "s",
+    "Gemma 3": "^",
+    "OLMo 2": "D",
+    "Apertus": "P",
+    "OpenAI": "X",
 }
 
 SPLIT_LABELS = {
@@ -152,10 +161,14 @@ def infer_model_info(raw_model: str) -> ModelInfo:
         family = "Llama 3" if re.search(r"llama[-_. ]?3", lower) else "Llama"
     elif "gemma" in lower:
         family = "Gemma 3" if re.search(r"gemma[-_. ]?3", lower) else "Gemma"
+    elif "olmo" in lower:
+        family = "OLMo 2" if re.search(r"olmo[-_. ]?2", lower) else "OLMo"
+    elif "apertus" in lower:
+        family = "Apertus"
     elif raw_model.lower().startswith("openai/") or lower.startswith(("gpt-", "o1", "o3", "o4")):
         family = "OpenAI"
     else:
-        family = "Other"
+        family = name.split("-", 1)[0].split("_", 1)[0].split(".", 1)[0]
 
     size_match = re.search(r"(?<![\d.])(\d+(?:\.\d+)?)\s*b(?:\b|[-_])", lower)
     params_b = float(size_match.group(1)) if size_match else None
@@ -429,6 +442,13 @@ def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def ordered_families(families: pd.Series | set[str] | list[str]) -> list[str]:
+    unique_families = set(families)
+    known = [family for family in FAMILY_ORDER if family in unique_families]
+    extra = sorted(unique_families - set(FAMILY_ORDER))
+    return known + extra
+
+
 def format_speaker_count(count: int) -> str:
     if count >= 1_000_000:
         return f"{count / 1_000_000:g}M"
@@ -563,7 +583,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
         return False
 
     paired = summary.pivot_table(
-        index=["model", "family", "language"],
+        index=["model", "family", "params_b", "language"],
         columns="split",
         values="accuracy",
     ).dropna(subset=["original", "synthetic"])
@@ -571,22 +591,71 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     if paired.empty:
         return False
 
-    fig, ax = plt.subplots(figsize=(6.5, 6))
+    fig, ax = plt.subplots(figsize=(6.8, 6.4))
+    sized = paired.reset_index()
+    finite_sizes = sized["params_b"].dropna()
+    norm = Normalize(
+        vmin=float(finite_sizes.min()) if not finite_sizes.empty else 0,
+        vmax=float(finite_sizes.max()) if not finite_sizes.empty else 1,
+    )
+    cmap = plt.get_cmap("viridis")
 
-    for (model, family, language), row in paired.iterrows():
-        ax.scatter(
-            row["original"],
-            row["synthetic"],
-            color=FAMILY_COLORS.get(family, FAMILY_COLORS["Other"]),
-            s=50,
-            alpha=0.85,
+    for family in ordered_families(sized["family"]):
+        family_rows = sized[sized["family"] == family]
+        marker = FAMILY_MARKERS.get(family, "v")
+        known_size = family_rows.dropna(subset=["params_b"])
+        if not known_size.empty:
+            ax.scatter(
+                known_size["original"],
+                known_size["synthetic"],
+                c=known_size["params_b"],
+                cmap=cmap,
+                norm=norm,
+                marker=marker,
+                s=58,
+                alpha=0.9,
+                edgecolors="white",
+                linewidths=0.5,
+            )
+
+        unknown_size = family_rows[family_rows["params_b"].isna()]
+        if not unknown_size.empty:
+            ax.scatter(
+                unknown_size["original"],
+                unknown_size["synthetic"],
+                color="#888888",
+                marker=marker,
+                s=58,
+                alpha=0.8,
+                edgecolors="white",
+                linewidths=0.5,
+            )
+
+    mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
+    mappable.set_array([])
+    colorbar = fig.colorbar(mappable, ax=ax, shrink=0.82)
+    colorbar.set_label("Model parameters (billions)")
+
+    legend_handles = [
+        Line2D(
+            [0],
+            [0],
+            marker=FAMILY_MARKERS.get(family, "v"),
+            linestyle="none",
+            markerfacecolor="#777777",
+            markeredgecolor="white",
+            markersize=7,
         )
-        ax.annotate(
-            f"{model} / {language}",
-            (row["original"], row["synthetic"]),
-            xytext=(4, 3),
-            textcoords="offset points",
-            fontsize=6.5,
+        for family in ordered_families(sized["family"])
+    ]
+    if legend_handles:
+        fig.legend(
+            legend_handles,
+            ordered_families(sized["family"]),
+            loc="lower center",
+            ncol=min(6, len(legend_handles)),
+            frameon=False,
+            title="Model family",
         )
 
     ax.plot([0, 1], [0, 1], linestyle="--", color="black", linewidth=1, alpha=0.6)
@@ -600,7 +669,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     ax.set_title("Original-question accuracy versus synthetic-variant accuracy")
 
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0.09, 1, 1))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
 
@@ -718,7 +787,7 @@ def plot_transfer_robustness(summary: pd.DataFrame, out: Path) -> bool:
         split_rows = robust[robust["split"] == split]
         for col_index, (metric, label) in enumerate(metrics):
             ax = axes[row_index, col_index]
-            for family in [family for family in FAMILY_ORDER if family in set(split_rows["family"])]:
+            for family in ordered_families(split_rows["family"]):
                 family_rows = split_rows[split_rows["family"] == family]
                 family_rows = family_rows.sort_values("params_b")
                 ax.plot(
@@ -726,7 +795,7 @@ def plot_transfer_robustness(summary: pd.DataFrame, out: Path) -> bool:
                     family_rows[metric],
                     marker="o",
                     linewidth=1.7,
-                    color=FAMILY_COLORS.get(family, FAMILY_COLORS["Other"]),
+                    color=FAMILY_COLORS.get(family, "#666666"),
                     label=family,
                 )
                 for row in family_rows.itertuples():
@@ -838,7 +907,7 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
 
 def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
     scaled = summary.dropna(subset=["params_b"])
-    families = [family for family in FAMILY_ORDER if family != "Other" and family in set(scaled["family"])]
+    families = ordered_families(scaled["family"])
 
     if not families:
         return False
