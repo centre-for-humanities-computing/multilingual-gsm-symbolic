@@ -63,7 +63,6 @@ class AnnotatedQuestion:
     answer_annotated: str
     language: str = "eng"
     creation: str = ""
-
     def __post_init__(self) -> None:
         constrained_derived = [v for v in self.derived_variables if is_variable_mentioned(v, self.conditions)]
         if constrained_derived:
@@ -226,38 +225,59 @@ class AnnotatedQuestion:
         """Return defaults for all variables, deriving paired variables not in the question template."""
         assignments = self.get_default_assignments()
 
-        for var in self.variables:
-            if var in assignments:
-                continue
-            logger.debug(f"Variable {var} not in question template; deriving from init in question {self.id_shuffled}.")
-            assignment_line = next(
-                (line for line in self.init if var in self._extract_variables_from_init_line(line)),
-                None,
-            )
-            if not assignment_line:
-                raise ValueError(f"Variable {var} not found in any assignment line in question {self.id_shuffled}.")
-            line_vars = self._extract_variables_from_init_line(assignment_line)
-            definition_part = assignment_line.split("=", 1)[1].strip()
-            other_var = next((v for v in line_vars if v != var), None)
-            if not (other_var and other_var in assignments):
+        init_vars = set(self.variables)
+        missing = init_vars - set(assignments)
+        while missing:
+            progress = False
+            for line_vars, ast_node in self._init_line_asts:
+                if not (set(line_vars) & missing):
+                    continue
+                env = build_eval_context(Random(0), replacements) | {k: parse_value(v) for k, v in assignments.items()}
+                rhs_init_refs = {node.id for node in ast.walk(ast_node) if isinstance(node, ast.Name)} & init_vars
+                if rhs_init_refs and rhs_init_refs <= set(assignments):
+                    new_assignments = self._assign_from_ast(line_vars, ast_node, env)
+                    if new_assignments:
+                        assignments.update(new_assignments)
+                        missing -= set(new_assignments)
+                        progress = True
+                        continue
+
+                known_line_vars = [v for v in line_vars if v in assignments]
+                if known_line_vars:
+                    try:
+                        possible_values = eval_node(ast_node, COMBINATION_HELPERS | replacements)
+                    except Exception:
+                        possible_values = []
+                    for val in possible_values:
+                        values = align_values_to_variables(line_vars, val)
+                        if len(values) != len(line_vars):
+                            continue
+                        candidate = dict(zip(line_vars, values))
+                        if all(
+                            candidate[v] == assignments[v] or str(candidate[v]) == str(assignments[v])
+                            for v in known_line_vars
+                        ):
+                            assignments.update(candidate)
+                            missing -= set(candidate)
+                            progress = True
+                            break
+                    if progress:
+                        continue
+
+                try:
+                    fallback = self._assign_from_ast(line_vars, ast_node, env)
+                except Exception:
+                    fallback = {}
+                fallback = {k: v for k, v in fallback.items() if k in missing}
+                if fallback:
+                    assignments.update(fallback)
+                    missing -= set(fallback)
+                    progress = True
+            if not progress:
+                var = next(iter(missing))
                 raise ValueError(
                     f"Variable {var} not found in assignments, and no other variable to derive from "
                     f"in question {self.id_shuffled}."
-                )
-            other_value = assignments[other_var]
-            potential_values = eval_node(parse_expr(definition_part), COMBINATION_HELPERS | replacements)
-            for val in potential_values:
-                if isinstance(val, (tuple, list)) and len(val) == 2:
-                    if val[0] == other_value or str(val[0]) == str(other_value):
-                        assignments[var] = val[1]
-                        break
-                    if val[1] == other_value or str(val[1]) == str(other_value):
-                        assignments[var] = val[0]
-                        break
-            if var not in assignments:
-                raise ValueError(
-                    f"Could not derive value for {var} (other_var={other_var}, value={other_value}) "
-                    f"from line '{assignment_line}' in question {self.id_shuffled}."
                 )
 
         return assignments
@@ -374,7 +394,9 @@ class AnnotatedQuestion:
 
         def replace_placeholder(match: re.Match) -> str:
             variable_name = match.group(1)
-            return str(assignments[variable_name]) if variable_name in assignments else match.group(0)
+            if variable_name not in assignments:
+                return match.group(0)
+            return str(assignments[variable_name])
 
         processed_text = RE_TEMPLATE_VAR.sub(replace_placeholder, self.question_template)
         processed_text = format_numbers_by_language(processed_text, self.language)
@@ -547,7 +569,8 @@ class AnnotatedQuestion:
 
     def _assign_from_ast(self, variables: list[str], ast_node: ast.expr, env: dict[str, Any]) -> dict[str, Any]:
         """Evaluate one init-line expression against ``env`` and zip results to variables."""
-        values = align_values_to_variables(variables, eval_node(ast_node, env))
+        result = eval_node(ast_node, env)
+        values = [result] if len(variables) == 1 else align_values_to_variables(variables, result)
         if len(values) != len(variables):
             logger.warning(f"Incompatible variables {variables} and values {values} in template {self.id_shuffled}.")
             return {}
