@@ -1,8 +1,47 @@
-question = "रोजर कुछ कॉफी खरीदने के लिए दुकान पर जाता है। वह जो कॉफी का सामान्य ब्रांड खरीदता है, उसकी कीमत ₹५ प्रति किलोग्राम है। उसे एक अधिक महंगा ब्रांड खरीदना पड़ा जिसकी कीमत २०% अधिक है, क्योंकि उसका पसंदीदा ब्रांड बिक चुका था। वह एक हफ्ते भर के लिए कॉफी खरीदने का फैसला करता है और वह प्रति दिन १ किलोग्राम कॉफी इस्तेमाल करता है। उसने अपने लिए ₹२ का एक डोनट भी खरीदने का फैसला किया। सब कुछ मिलाकर कुल कितनी कीमत हुई?"
-answer = "उसने जो कॉफी खरीदी, वह उसकी सामान्य खरीद वाली कॉफी से ५*०.२=₹<<५*०.२=१>>१ प्रति किलोग्राम अधिक महंगी थी\nइसलिए उसकी कीमत ५+१=₹<<५+१=६>>६ प्रति किलोग्राम थी\nवह एक हफ्ते में १*७=<<१*७=७>>७ किलोग्राम कॉफी इस्तेमाल करता है\nइसलिए उसने कॉफी पर ६*७=$<<६*७=४२>>४२ चुकाए\nइसका मतलब उसका कुल बिल ४२+२=$<<४२+२=४४>>४४ था\n#### ४४\n"
+question = "दिवाकर कुछ कॉफी खरीदने के लिए दुकान पर जाता है। वह जो कॉफी का सामान्य ब्रांड खरीदता है, उसकी कीमत ₹५ प्रति किलोग्राम है। उसे एक अधिक महंगा ब्रांड खरीदना पड़ा जिसकी कीमत २०% अधिक है, क्योंकि उसका पसंदीदा ब्रांड बिक चुका था। वह एक हफ्ते भर के लिए कॉफी खरीदने का फैसला करता है और वह प्रति दिन १ किलोग्राम कॉफी इस्तेमाल करता है। उसने अपने लिए ₹२ का एक डोनट भी खरीदने का फैसला किया। सब कुछ मिलाकर कुल कितनी कीमत हुई?"
+
+answer = """
+उसने जो कॉफी खरीदी, वह उसकी सामान्य खरीद वाली कॉफी से ५*०.२=₹<<५*०.२=१>>१ प्रति किलोग्राम अधिक महंगी थी
+इसलिए उसकी कीमत ५+१=₹<<५+१=६>>६ प्रति किलोग्राम थी
+वह एक हफ्ते में १*७=<<१*७=७>>७ किलोग्राम कॉफी इस्तेमाल करता है
+इसलिए उसने कॉफी पर ६*७=$<<६*७=४२>>४२ चुकाए
+इसका मतलब उसका कुल बिल ४२+२=$<<४२+२=४४>>४४ था
+#### ४४
+"""
+
 id_orig = 661
+
 id_shuffled = 42
-question_annotated = "{name,रोजर} कुछ {item,कॉफी} खरीदने के लिए दुकान पर जाता है। वह जो {item,कॉफी} का सामान्य ब्रांड खरीदता है, उसकी कीमत {cur,₹}{price,५} प्रति {unit,किलोग्राम} है। उसे एक अधिक महंगा ब्रांड खरीदना पड़ा जिसकी कीमत {percent,२०}% अधिक है, क्योंकि उसका पसंदीदा ब्रांड बिक चुका था। वह एक हफ्ते भर के लिए {item,कॉफी} खरीदने का फैसला करता है और वह प्रति दिन {usage,१} {unit,किलोग्राम} {item,कॉफी} इस्तेमाल करता है। उसने अपने लिए {cur,₹}{extra_price,२} का एक {extra_item,डोनट} भी खरीदने का फैसला किया। सब कुछ मिलाकर कुल कितनी कीमत हुई?\n\n#init:\n- name = sample(names_male)\n- item = sample(['चाय', 'चीनी', 'आटा', 'चावल'])\n- cur = sample(currencies_sym)\n- unit = sample(['किलोग्राम', 'किग्रा'])\n- extra_item = sample(['कुकी', 'मफिन', 'बेगल'])\n- $price = range(३, २५)\n- $percent = range(१०, ५०, ५)\n- $usage = range(१, ३)\n- $extra_price = range(१, ५)\n\n#conditions:\n- is_int(price * percent / १००)\n\n#answer: (price + price * percent / १००) * ७ * usage + extra_price\n"
-answer_annotated = "उसने जो {item} खरीदी, वह उसकी सामान्य खरीद वाली {item} से {price}*{percent/१००}={cur}<<{price}*{percent/१००}={price*percent//१००}>>{price*percent//१००} प्रति {unit} अधिक महंगी थी\nइसलिए उसकी कीमत {price}+{price*percent//१००}={cur}<<{price}+{price*percent//१००}={price+price*percent//१००}>>{price+price*percent//१००} प्रति {unit} थी\nवह एक हफ्ते में {usage}*७=<<{usage}*७={usage*७}>>{usage*७} {unit} {item} इस्तेमाल करता है\nइसलिए उसने {item} पर {price+price*percent/१००}*{usage*७}={cur}<<{price+price*percent/१००}*{usage*७}={int((price+price*percent/१००)*usage*७)}>>{int((price+price*percent/१००)*usage*७)} चुकाए\nइसका मतलब उसका कुल बिल {int((price+price*percent/१००)*usage*७)}+{extra_price}={cur}<<{int((price+price*percent/१००)*usage*७)}+{extra_price}={int((price+price*percent/१००)*usage*७)+extra_price}>>{int((price+price*percent/१००)*usage*७)+extra_price} था\n#### {int((price+price*percent/१००)*usage*७)+extra_price}\n"
+
+question_annotated = """
+{name,दिवाकर} कुछ {item,कॉफी} खरीदने के लिए दुकान पर जाता है। वह जो {item,कॉफी} का सामान्य ब्रांड खरीदता है, उसकी कीमत {cur,₹}{price,५} प्रति {unit,किलोग्राम} है। उसे एक अधिक महंगा ब्रांड खरीदना पड़ा जिसकी कीमत {percent,२०}% अधिक है, क्योंकि उसका पसंदीदा ब्रांड बिक चुका था। वह एक हफ्ते भर के लिए {item,कॉफी} खरीदने का फैसला करता है और वह प्रति दिन {usage,१} {unit,किलोग्राम} {item,कॉफी} इस्तेमाल करता है। उसने अपने लिए {cur,₹}{extra_price,२} का एक {extra_item,डोनट} भी खरीदने का फैसला किया। सब कुछ मिलाकर कुल कितनी कीमत हुई?
+
+#init:
+- name = sample(names_male)
+- item = sample(['चाय', 'चीनी', 'आटा', 'चावल'])
+- cur = sample(currencies_sym)
+- unit = sample(['किलोग्राम', 'किग्रा'])
+- extra_item = sample(['कुकी', 'मफिन', 'बेगल'])
+- $price = range(३, २५)
+- $percent = range(१०, ५०, ५)
+- $usage = range(१, ३)
+- $extra_price = range(१, ५)
+
+#conditions:
+- is_int(price * percent / १००)
+
+#answer: (price + price * percent / १००) * ७ * usage + extra_price
+"""
+
+answer_annotated = """
+उसने जो {item} खरीदी, वह उसकी सामान्य खरीद वाली {item} से {price}*{percent/१००}={cur}<<{price}*{percent/१००}={price*percent//१००}>>{price*percent//१००} प्रति {unit} अधिक महंगी थी
+इसलिए उसकी कीमत {price}+{price*percent//१००}={cur}<<{price}+{price*percent//१००}={price+price*percent//१००}>>{price+price*percent//१००} प्रति {unit} थी
+वह एक हफ्ते में {usage}*७=<<{usage}*७={usage*७}>>{usage*७} {unit} {item} इस्तेमाल करता है
+इसलिए उसने {item} पर {price+price*percent/१००}*{usage*७}={cur}<<{price+price*percent/१००}*{usage*७}={int((price+price*percent/१००)*usage*७)}>>{int((price+price*percent/१००)*usage*७)} चुकाए
+इसका मतलब उसका कुल बिल {int((price+price*percent/१००)*usage*७)}+{extra_price}={cur}<<{int((price+price*percent/१००)*usage*७)}+{extra_price}={int((price+price*percent/१००)*usage*७)+extra_price}>>{int((price+price*percent/१००)*usage*७)+extra_price} था
+#### {int((price+price*percent/१००)*usage*७)+extra_price}
+"""
+
 creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated"
+
 language = "hin"

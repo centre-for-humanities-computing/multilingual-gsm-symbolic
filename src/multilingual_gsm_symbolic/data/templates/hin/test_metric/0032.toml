@@ -1,8 +1,47 @@
 question = "श्रीमती क्रूज़ एक ऐसा घर ढूंढ रही हैं जो उनके ₹४००,००० के बजट से अधिक न हो। उन्होंने एक संपत्ति देखी जिसकी बिक्री कीमत ₹३५०,००० है। इसके अलावा, खरीदार को एक ब्रोकरेज शुल्क भी देना होगा, जो बिक्री कीमत का ५% है, और साथ ही ट्रांसफर शुल्क भी देना होगा, जो बिक्री कीमत का १२% है। घर की कुल कीमत श्रीमती क्रूज़ के बजट से कितनी अधिक है?"
-answer = "ब्रोकरेज शुल्क ₹३५०,०००*५/१०० = $<<३५००००*५/१००=१७५००>>१७,५०० है।\nट्रांसफर शुल्क ₹३५०,०००*१२/१०० = $<<३५००००*१२/१००=४२०००>>४२,००० है।\nघर की कुल कीमत ₹३५०,००० + ₹१७,५०० + ₹४२,००० = ₹४०९,५०० है।\nअतः, यह श्रीमती क्रूज़ के बजट से ₹४०९,५०० - ₹४००,००० = ₹<<४०९५००-४०००००=९५००>>९५०० अधिक है।\n#### ९५००\n"
+
+answer = """
+ब्रोकरेज शुल्क ₹३५०,०००*५/१०० = $<<३५००००*५/१००=१७५००>>१७,५०० है।
+ट्रांसफर शुल्क ₹३५०,०००*१२/१०० = $<<३५००००*१२/१००=४२०००>>४२,००० है।
+घर की कुल कीमत ₹३५०,००० + ₹१७,५०० + ₹४२,००० = ₹४०९,५०० है।
+अतः, यह श्रीमती क्रूज़ के बजट से ₹४०९,५०० - ₹४००,००० = ₹<<४०९५००-४०००००=९५००>>९५०० अधिक है।
+#### ९५००
+"""
+
 id_orig = 265
+
 id_shuffled = 32
-question_annotated = "{name, श्रीमती क्रूज़} एक ऐसा {property_type, घर} ढूंढ रही हैं जो उनके ₹{budget, ४०००००} के बजट से अधिक न हो। उन्होंने एक संपत्ति देखी जिसकी बिक्री कीमत ₹{price, ३५००००} है। इसके अलावा, खरीदार को एक ब्रोकरेज शुल्क भी देना होगा, जो बिक्री कीमत का {brokerage_fee, ५}% है, और साथ ही ट्रांसफर शुल्क भी देना होगा, जो बिक्री कीमत का {transfer_fee, १२}% है। {property_type, घर} की कुल कीमत {name, श्रीमती क्रूज़} के बजट से कितनी अधिक है?\n\n#init:\n- name = sample(['Mrs. Smith', 'Ms. Johnson', 'Dr. Patel', 'Mrs. Lee'])\n- property_type = sample(['house', 'apartment', 'condo', 'townhouse'])\n- $budget = range(३०००००, ५०००००, १००००)\n- $price = range(२५००००, ४५००००, १००००)\n- $brokerage_fee = range(३, ८)\n- $transfer_fee = range(१०, १५)\n\n#conditions:\n- brokerage_fee < १००\n- transfer_fee < १००\n- price < budget\n- price + price*brokerage_fee/१०० + price*transfer_fee/१०० > budget + १\n- is_int(price * brokerage_fee / १००)\n- is_int(price * transfer_fee / १००)\n\n#answer: int(price + price*brokerage_fee/१०० + price*transfer_fee/१०० - budget)\n"
-answer_annotated = "ब्रोकरेज शुल्क ₹{price}*{brokerage_fee}/१०० = ₹<<{price}*{brokerage_fee}/१००={int(price*brokerage_fee/१००)}>>{int(price*brokerage_fee/१००)} है।\nट्रांसफर शुल्क ₹{price}*{transfer_fee}/१०० = ₹<<{price}*{transfer_fee}/१००={int(price*transfer_fee/१००)}>>{int(price*transfer_fee/१००)} है।\n{property_type} की कुल कीमत ₹{price} + ₹{int(price*brokerage_fee/१००)} + ₹{int(price*transfer_fee/१००)} = ₹{int(price + price*brokerage_fee/१०० + price*transfer_fee/१००)} है।\nअतः, यह {name} के बजट से ₹{int(price + price*brokerage_fee/१०० + price*transfer_fee/१००)} - ₹{budget} = ₹<<{int(price + price*brokerage_fee/१०० + price*transfer_fee/१००)}-{budget}={int(price + price*brokerage_fee/१०० + price*transfer_fee/१०० - budget)}>>{int(price + price*brokerage_fee/१०० + price*transfer_fee/१०० - budget)} अधिक है।\n#### {int(price + price*brokerage_fee/१०० + price*transfer_fee/१०० - budget)}\n"
+
+question_annotated = """
+{name, श्रीमती क्रूज़} एक ऐसा {property_type, घर} ढूंढ रही हैं जो उनके ₹{budget, ४०००००} के बजट से अधिक न हो। उन्होंने एक संपत्ति देखी जिसकी बिक्री कीमत ₹{price, ३५००००} है। इसके अलावा, खरीदार को एक ब्रोकरेज शुल्क भी देना होगा, जो बिक्री कीमत का {brokerage_fee, ५}% है, और साथ ही ट्रांसफर शुल्क भी देना होगा, जो बिक्री कीमत का {transfer_fee, १२}% है। {property_type, घर} की कुल कीमत {name, श्रीमती क्रूज़} के बजट से कितनी अधिक है?
+
+#init:
+- name = sample(['Mrs. Smith', 'Ms. Johnson', 'Dr. Patel', 'Mrs. Lee'])
+- property_type = sample(['house', 'apartment', 'condo', 'townhouse'])
+- $budget = range(३०००००, ५०००००, १००००)
+- $price = range(२५००००, ४५००००, १००००)
+- $brokerage_fee = range(३, ८)
+- $transfer_fee = range(१०, १५)
+
+#conditions:
+- brokerage_fee < १००
+- transfer_fee < १००
+- price < budget
+- price + price*brokerage_fee/१०० + price*transfer_fee/१०० > budget + १
+- is_int(price * brokerage_fee / १००)
+- is_int(price * transfer_fee / १००)
+
+#answer: int(price + price*brokerage_fee/१०० + price*transfer_fee/१०० - budget)
+"""
+
+answer_annotated = """
+ब्रोकरेज शुल्क ₹{price}*{brokerage_fee}/१०० = ₹<<{price}*{brokerage_fee}/१००={int(price*brokerage_fee/१००)}>>{int(price*brokerage_fee/१००)} है।
+ट्रांसफर शुल्क ₹{price}*{transfer_fee}/१०० = ₹<<{price}*{transfer_fee}/१००={int(price*transfer_fee/१००)}>>{int(price*transfer_fee/१००)} है।
+{property_type} की कुल कीमत ₹{price} + ₹{int(price*brokerage_fee/१००)} + ₹{int(price*transfer_fee/१००)} = ₹{int(price + price*brokerage_fee/१०० + price*transfer_fee/१००)} है।
+अतः, यह {name} के बजट से ₹{int(price + price*brokerage_fee/१०० + price*transfer_fee/१००)} - ₹{budget} = ₹<<{int(price + price*brokerage_fee/१०० + price*transfer_fee/१००)}-{budget}={int(price + price*brokerage_fee/१०० + price*transfer_fee/१०० - budget)}>>{int(price + price*brokerage_fee/१०० + price*transfer_fee/१०० - budget)} अधिक है।
+#### {int(price + price*brokerage_fee/१०० + price*transfer_fee/१०० - budget)}
+"""
+
 creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated"
+
 language = "hin"
