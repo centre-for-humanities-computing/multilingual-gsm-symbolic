@@ -407,7 +407,6 @@ def relationship_plot(
 
         ax.axhline(0, color="black", linewidth=0.8, alpha=0.4)
         ax.grid(alpha=0.2)
-        ax.set_xlabel(xlabel)
         ax.set_ylabel("Accuracy gap: English - target language")
         ax.yaxis.set_major_formatter(PercentFormatter(1))
         ax.set_title(SPLIT_LABELS[split])
@@ -426,8 +425,9 @@ def relationship_plot(
             ncol=len(legend_entries),
             frameon=False,
         )
+    fig.supxlabel(xlabel, y=0.08)
     fig.suptitle(title)
-    fig.tight_layout(rect=(0, 0.07, 1, 0.94))
+    fig.tight_layout(rect=(0, 0.13, 1, 0.94))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
