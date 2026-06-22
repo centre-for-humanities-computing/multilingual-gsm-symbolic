@@ -127,6 +127,7 @@ FAMILY_MARKERS = {
     "Apertus": "P",
     "OpenAI": "X",
 }
+OUTLIER_LABEL_COUNT = 5
 
 SPLIT_LABELS = {
     "original": "Original benchmark questions",
@@ -631,6 +632,18 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
                 linewidths=0.5,
             )
 
+    outliers = (
+        sized.dropna(subset=["params_b"])
+        .assign(gap=lambda rows: (rows["synthetic"] - rows["original"]).abs())
+        .sort_values("gap", ascending=False)
+        .drop_duplicates("model")
+        .head(OUTLIER_LABEL_COUNT)
+    )
+    for row in outliers.itertuples():
+        family = row.family if row.family != "Other" else row.model.split("-")[0]
+        label = f"{family} {row.params_b:g}B"
+        ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
+
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable.set_array([])
     colorbar = fig.colorbar(mappable, ax=ax, shrink=0.82)
@@ -667,8 +680,6 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     )
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.yaxis.set_major_formatter(PercentFormatter(1))
-    ax.set_title("Original-question accuracy versus synthetic-variant accuracy")
-
     fig.tight_layout(rect=(0, 0.09, 1, 1))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)

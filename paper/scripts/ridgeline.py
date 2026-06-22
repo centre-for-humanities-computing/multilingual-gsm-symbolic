@@ -11,6 +11,7 @@ every source template, then averages correctness across the selected problems.
 from __future__ import annotations
 
 import argparse
+import math
 import os
 import re
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
@@ -37,7 +38,11 @@ LANGUAGE_LABELS = {
     "deu": "German",
     "nob": "Norwegian Bokmal",
     "isl": "Icelandic",
+    "rus": "Russian",
+    "zho": "Chinese",
 }
+COMMON_CRAWL_LANGUAGE_CODES = {"nob": "nor"}
+DEFAULT_COMMON_CRAWL_CSV = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "languages.csv"
 LANGUAGE_SPEAKERS = {
     "eng": 380_000_000,
     "deu": 100_000_000,
@@ -105,6 +110,29 @@ def model_family(model: str) -> str:
 def path_slug(value: str) -> str:
     slug = re.sub(r"[^a-z0-9.]+", "-", value.lower()).strip("-")
     return slug or "unknown"
+
+
+def load_common_crawl_log10_pages(source: str | Path, languages: list[str]) -> dict[str, float]:
+    """Return the latest Common Crawl page count for each language on a log10 scale."""
+    frame = pd.read_csv(source)
+    required = {"crawl", "primary_language", "pages"}
+    missing = required - set(frame.columns)
+    if missing:
+        raise ValueError(f"{source} is missing required columns: {', '.join(sorted(missing))}")
+
+    resources: dict[str, float] = {}
+    for language in languages:
+        common_crawl_language = COMMON_CRAWL_LANGUAGE_CODES.get(language, language)
+        matches = frame.loc[frame["primary_language"] == common_crawl_language].sort_values("crawl")
+        if matches.empty:
+            raise ValueError(f"No Common Crawl page count found for {language} ({common_crawl_language}).")
+        pages = int(matches.iloc[-1]["pages"])
+        resources[language] = math.log10(pages) if pages > 0 else math.nan
+    return resources
+
+
+def common_crawl_title(language: str, log10_pages: float) -> str:
+    return f"{LANGUAGE_LABELS.get(language, language)} (log10 Common Crawl pages: {log10_pages:.2f})"
 
 
 def format_speaker_count(count: int) -> str:
@@ -382,6 +410,7 @@ def collect_plot_data(
 def plot_distributions(
     distributions: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]],
     stats: list[PlotStats],
+    common_crawl_log10_pages: dict[str, float],
     scope_label: str,
     out_png: Path,
 ) -> None:
@@ -483,7 +512,7 @@ def plot_distributions(
         )
 
         ax.set_title(
-            language_title(row.language),
+            common_crawl_title(row.language, common_crawl_log10_pages[row.language]),
             loc="left",
             fontsize=11,
             fontweight="semibold",
@@ -542,6 +571,7 @@ def plot_distributions(
             label="Human verified",
         ),
     ]
+    legend_handles = legend_handles[:2]
     axes[0].legend(
         handles=legend_handles,
         loc="upper right",
@@ -580,10 +610,7 @@ def write_summary(stats: list[PlotStats], out_csv: Path) -> None:
 def language_order(available: set[str], requested: list[str] | None) -> list[str]:
     if requested:
         return requested
-    return sorted(
-        available,
-        key=lambda language: (-LANGUAGE_SPEAKERS.get(language, -1), language),
-    )
+    return sorted(available)
 
 
 def main() -> None:
@@ -604,6 +631,12 @@ def main() -> None:
         "--languages",
         nargs="+",
         help="Optional three-letter language codes in display order; defaults to all discovered languages.",
+    )
+    parser.add_argument(
+        "--common-crawl-csv",
+        type=Path,
+        default=DEFAULT_COMMON_CRAWL_CSV,
+        help="Common Crawl language page-count CSV.",
     )
     parser.add_argument(
         "--samples",
@@ -652,6 +685,7 @@ def main() -> None:
 
     models = sorted(problems["model"].unique(), key=lambda model: (model_family(model), model.lower()))
     all_languages = language_order(set(problems["language"].unique()), args.languages)
+    common_crawl_log10_pages = load_common_crawl_log10_pages(args.common_crawl_csv, all_languages)
     print(f"Models ({len(models)}): {', '.join(models)}")
     print(f"Languages ({len(all_languages)}): {', '.join(all_languages)}")
 
@@ -680,7 +714,7 @@ def main() -> None:
         out_png = out_dir / f"{base_name}.png"
         out_csv = out_dir / f"{base_name}.csv"
 
-        plot_distributions(curves, stats, model, out_png)
+        plot_distributions(curves, stats, common_crawl_log10_pages, model, out_png)
         write_summary(stats, out_csv)
 
         print(f"Saved {out_png}")

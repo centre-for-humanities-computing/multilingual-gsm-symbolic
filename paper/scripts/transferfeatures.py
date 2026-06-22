@@ -17,8 +17,7 @@ The script combines ``visualize_model_grid.py``'s run summary with:
   to English on matched source problems for each model tokenizer;
 * typological distance: cosine distance from English over concatenated
   URIEL/lang2vec ``syntax_knn`` and ``inventory_knn`` vectors;
-* resource quantity: Common Crawl page count from the latest crawl in
-  ``languages.csv``, plotted on a base-10 log scale.
+* resource quantity: Common Crawl page count, plotted on a base-10 log scale.
 
 Outputs include the collected feature tables, the joined transfer-analysis
 table, provenance metadata, and one relationship plot per feature.
@@ -61,9 +60,8 @@ LANGUAGE_LABELS = {
     "zho": "Chinese",
 }
 
-COMMON_CRAWL_LANGUAGE_CODES = {
-    "nob": "nor",
-}
+COMMON_CRAWL_LANGUAGE_CODES = {"nob": "nor"}
+DEFAULT_COMMON_CRAWL_CSV = ARTIFACTS_DIR / "transfer_features" / "languages.csv"
 
 TOKENIZER_REPOS = {
     "qwen2.5-0.5b-instruct": "Qwen/Qwen2.5-0.5B-Instruct",
@@ -120,14 +118,6 @@ plt.rcParams.update(
 )
 
 
-def portable_source_path(path: Path) -> str:
-    """Prefer a repository-relative provenance path when possible."""
-    try:
-        return path.resolve().relative_to(REPO_ROOT.resolve()).as_posix()
-    except ValueError:
-        return str(path)
-
-
 def ordered_families(families: pd.Series | set[str] | list[str]) -> list[str]:
     unique_families = set(families)
     known = [family for family in FAMILY_ORDER if family in unique_families]
@@ -135,45 +125,30 @@ def ordered_families(families: pd.Series | set[str] | list[str]) -> list[str]:
     return known + extra
 
 
-def load_common_crawl_pages(path: Path, languages: list[str]) -> tuple[pd.DataFrame, str]:
-    """Load page counts for the latest Common Crawl represented in the CSV."""
-    frame = pd.read_csv(path)
-    required = {"crawl", "primary_language", "pages", "urls", "%pages/crawl"}
+def load_common_crawl_pages(source: str | Path, languages: list[str]) -> pd.DataFrame:
+    """Load the latest Common Crawl page count for each available language."""
+    frame = pd.read_csv(source)
+    required = {"crawl", "primary_language", "pages"}
     missing = required - set(frame.columns)
     if missing:
-        raise ValueError(f"{path} is missing required columns: {', '.join(sorted(missing))}")
-    if frame.empty:
-        raise ValueError(f"{path} contains no Common Crawl language statistics")
-
-    latest_crawl = str(frame["crawl"].drop_duplicates().iloc[-1])
-    latest = frame.loc[frame["crawl"] == latest_crawl].copy()
-    latest = latest.set_index("primary_language")
-    if not latest.index.is_unique:
-        raise ValueError(f"{path} contains duplicate language rows for {latest_crawl}")
-
+        raise ValueError(f"{source} is missing required columns: {', '.join(sorted(missing))}")
     rows = []
-    missing_languages = []
     for language in languages:
         common_crawl_language = COMMON_CRAWL_LANGUAGE_CODES.get(language, language)
-        if common_crawl_language not in latest.index:
-            missing_languages.append(f"{language} ({common_crawl_language})")
+        matches = frame.loc[frame["primary_language"] == common_crawl_language].sort_values("crawl")
+        if matches.empty:
             continue
-        resource = latest.loc[common_crawl_language]
+        resource = matches.iloc[-1]
         rows.append(
             {
                 "language": language,
-                "common_crawl": latest_crawl,
                 "common_crawl_language": common_crawl_language,
+                "common_crawl_crawl": resource["crawl"],
                 "common_crawl_pages": int(resource["pages"]),
-                "common_crawl_urls": int(resource["urls"]),
-                "common_crawl_percent_pages": float(resource["%pages/crawl"]),
-                "resource_source_path": portable_source_path(path),
+                "resource_source_path": str(source),
             }
         )
-
-    if missing_languages:
-        raise ValueError(f"{path} has no {latest_crawl} page count for: {', '.join(missing_languages)}")
-    return pd.DataFrame(rows), latest_crawl
+    return pd.DataFrame(rows)
 
 
 def cosine_distance(left: np.ndarray, right: np.ndarray) -> float:
@@ -189,7 +164,7 @@ def collect_language_features(
     common_crawl_resources: pd.DataFrame,
 ) -> pd.DataFrame:
     """Collect URIEL distance and Common Crawl page counts per language."""
-    vectors = l2v.get_features(languages, "syntax_knn")
+    vectors = l2v.get_features(sorted(set(languages) | {"eng"}), "syntax_knn")
     english = np.asarray(vectors["eng"], dtype=float)
     resources = common_crawl_resources.set_index("language").to_dict(orient="index")
 
@@ -458,7 +433,7 @@ def relationship_plot(
     return True
 
 
-def source_metadata(languages_csv: Path, common_crawl: str) -> dict[str, Any]:
+def source_metadata() -> dict[str, Any]:
     return {
         "definitions": {
             "transfer_gap": "English accuracy minus target-language accuracy for the same model and split",
@@ -471,14 +446,13 @@ def source_metadata(languages_csv: Path, common_crawl: str) -> dict[str, Any]:
             "typological_distance": (
                 "Cosine distance from English over concatenated URIEL/lang2vec syntax_knn and inventory_knn vectors"
             ),
-            "resource_quantity": (f"Common Crawl page count from {common_crawl}; plots use log10(page count)"),
+            "resource_quantity": "Common Crawl page count; plots use log10(page count)",
         },
         "sources": {
             "tokenizers": "https://huggingface.co/docs/transformers/en/model_doc/auto",
             "uriel_lang2vec": "https://github.com/antonisa/lang2vec",
             "uriel_paper": "https://aclanthology.org/E17-2002/",
-            "common_crawl_statistics": "https://index.commoncrawl.org/",
-            "common_crawl_languages_csv": portable_source_path(languages_csv),
+            "common_crawl_language_counts": str(DEFAULT_COMMON_CRAWL_CSV),
         },
     }
 
@@ -493,10 +467,10 @@ def main() -> None:
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "hf_dataset" / "data")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument(
-        "--languages-csv",
+        "--common-crawl-csv",
         type=Path,
-        default=DEFAULT_OUT_DIR / "languages.csv",
-        help="Common Crawl language statistics CSV; the final crawl in the file is used.",
+        default=DEFAULT_COMMON_CRAWL_CSV,
+        help="Common Crawl language page-count CSV.",
     )
     parser.add_argument(
         "--local-files-only",
@@ -512,11 +486,12 @@ def main() -> None:
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     language_features_path = args.out_dir / "language_features.csv"
-    common_crawl_resources, common_crawl = load_common_crawl_pages(args.languages_csv, languages)
+    common_crawl_resources = load_common_crawl_pages(args.common_crawl_csv, languages)
+    feature_languages = common_crawl_resources["language"].tolist()
 
-    print(f"Collecting language features for: {', '.join(languages)} ({common_crawl})")
+    print(f"Collecting language features for: {', '.join(feature_languages)} (Common Crawl)")
     language_features = collect_language_features(
-        languages,
+        feature_languages,
         common_crawl_resources,
     )
     language_features.to_csv(language_features_path, index=False)
@@ -536,7 +511,7 @@ def main() -> None:
 
     metadata_path = args.out_dir / "feature_sources.json"
     metadata_path.write_text(
-        json.dumps(source_metadata(args.languages_csv, common_crawl), indent=2) + "\n",
+        json.dumps(source_metadata(), indent=2) + "\n",
         encoding="utf-8",
     )
 
