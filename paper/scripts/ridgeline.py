@@ -610,7 +610,7 @@ def write_summary(stats: list[PlotStats], out_csv: Path) -> None:
 def language_order(available: set[str], requested: list[str] | None) -> list[str]:
     if requested:
         return requested
-    return sorted(available)
+    return sorted(available, key=lambda language: (-LANGUAGE_SPEAKERS.get(language, -1), language))
 
 
 def main() -> None:
