@@ -44,7 +44,9 @@ LANGUAGE_LABELS = {
 COMMON_CRAWL_LANGUAGE_CODES = {"nob": "nor"}
 DEFAULT_COMMON_CRAWL_CSV = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "languages.csv"
 LANGUAGE_SPEAKERS = {
+    "zho": 940_000_000,
     "eng": 380_000_000,
+    "rus": 150_000_000,
     "deu": 100_000_000,
     "dan": 6_000_000,
     "nob": 5_000_000,
@@ -512,7 +514,7 @@ def plot_distributions(
         )
 
         ax.set_title(
-            common_crawl_title(row.language, common_crawl_log10_pages[row.language]),
+            language_title(row.language),
             loc="left",
             fontsize=11,
             fontweight="semibold",
