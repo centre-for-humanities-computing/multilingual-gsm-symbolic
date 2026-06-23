@@ -128,6 +128,11 @@ FAMILY_MARKERS = {
     "OpenAI": "X",
 }
 OUTLIER_LABEL_COUNT = 5
+EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
+HARD_CODED_SPLIT_PAIR_LABELS = {
+    ("Qwen2.5-1.5B-Instruct", "nob"): "Qwen2.5 1.5B (Norwegian)",
+    ("Llama-3.2-3B-Instruct", "dan"): "Llama 3.2 3B (Danish)",
+}
 
 SPLIT_LABELS = {
     "original": "Original benchmark questions",
@@ -594,6 +599,9 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
 
     fig, ax = plt.subplots(figsize=(6.8, 6.4))
     sized = paired.reset_index()
+    sized = sized[
+        ~((sized["model"] == EXCLUDED_SPLIT_PAIR[0]) & (sized["language"] == EXCLUDED_SPLIT_PAIR[1]))
+    ]
     finite_sizes = sized["params_b"].dropna()
     norm = Normalize(
         vmin=float(finite_sizes.min()) if not finite_sizes.empty else 0,
@@ -643,6 +651,11 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
         family = row.family if row.family != "Other" else row.model.split("-")[0]
         label = f"{family} {row.params_b:g}B"
         ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
+
+    for row in sized.itertuples():
+        label = HARD_CODED_SPLIT_PAIR_LABELS.get((row.model, row.language))
+        if label:
+            ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
 
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable.set_array([])
