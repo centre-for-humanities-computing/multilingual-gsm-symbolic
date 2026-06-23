@@ -350,9 +350,9 @@ def plot_number_coverage_heatmap(rows: list[dict[str, Any]], path: Path) -> bool
             annotation_clip=False,
         )
     ax.set_yticks(range(len(models)), display_names)
-    ax.set_xlabel("Problem language")
+    ax.set_xlabel("Problem language (* = Human verified)")
     ax.set_ylabel("Evaluated instruction-tuned model")
-    ax.set_title("percentage of cases where model response contained all numbers from prompt")
+    ax.set_title("Percentage of model responses containing all numbers in question")
 
     for row_index in range(len(models)):
         for column_index in range(len(languages)):
@@ -372,8 +372,6 @@ def plot_number_coverage_heatmap(rows: list[dict[str, Any]], path: Path) -> bool
 
     colorbar = fig.colorbar(image, ax=ax, label="Samples containing every prompt number")
     colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1))
-    fig.text(0.47, 0.09, "*", color="#FFC107", fontweight="bold", ha="right", fontsize=8)
-    fig.text(0.472, 0.09, "Human verified", ha="left", fontsize=8)
     fig.subplots_adjust(left=0.22, right=0.88, bottom=0.31, top=0.9)
     fig.savefig(path, bbox_inches="tight")
     plt.close(fig)

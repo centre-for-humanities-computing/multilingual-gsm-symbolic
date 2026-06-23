@@ -647,15 +647,20 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
         .drop_duplicates("model")
         .head(OUTLIER_LABEL_COUNT)
     )
-    for row in outliers.itertuples():
-        family = row.family if row.family != "Other" else row.model.split("-")[0]
-        label = f"{family} {row.params_b:g}B"
-        ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
-
+    annotations = []
     for row in sized.itertuples():
         label = HARD_CODED_SPLIT_PAIR_LABELS.get((row.model, row.language))
         if label:
+            annotations.append(
+                ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
+            )
+
+    for row in outliers.itertuples():
+        family = row.family if row.family != "Other" else row.model.split("-")[0]
+        label = f"{family} {row.params_b:g}B ({LANGUAGE_LABELS.get(row.language, row.language)})"
+        annotations.append(
             ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
+        )
 
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable.set_array([])
@@ -694,6 +699,14 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     fig.tight_layout(rect=(0, 0.09, 1, 1))
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    label_bounds = []
+    for annotation in annotations:
+        if any(annotation.get_window_extent(renderer).overlaps(bounds) for bounds in label_bounds):
+            annotation.remove()
+        else:
+            label_bounds.append(annotation.get_window_extent(renderer))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
 
