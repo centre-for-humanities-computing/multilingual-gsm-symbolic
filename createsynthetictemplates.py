@@ -3,7 +3,12 @@ import os
 import re
 import tomllib
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import contextmanager
 from pathlib import Path
+from subprocess import Popen, TimeoutExpired
+from time import monotonic, sleep
+from urllib.error import URLError
+from urllib.request import urlopen
 
 from datasets import load_dataset
 from openai import OpenAI
@@ -17,9 +22,14 @@ from multilingual_gsm_symbolic.validation import (
 GSM8K_DATASET = "openai/gsm8k"
 GSM8K_CONFIG = "main"
 GSM8K_SPLIT = "train"
-MODEL = "gpt-5.4-mini-2026-03-17"
+MODEL = "Qwen/Qwen3-235B-A22B-Thinking-2507"
 CREATION = f"machine-generated from GSM8K using {MODEL}"
-MAX_TEMPLATE_ATTEMPTS = 3
+MAX_TEMPLATE_ATTEMPTS = 10
+VLLM_HOST = "127.0.0.1"
+VLLM_PORT = 8000
+VLLM_BASE_URL = f"http://{VLLM_HOST}:{VLLM_PORT}/v1"
+VLLM_HEALTH_URL = f"http://{VLLM_HOST}:{VLLM_PORT}/health"
+VLLM_STARTUP_TIMEOUT_SECONDS = 600
 
 
 # gather generated template ids and aggregate toml texts
@@ -111,6 +121,47 @@ Parser helpers available in synthetic templates:
 _QUESTION_PLACEHOLDER_RE = re.compile(r"\{([^},]+)(?:,[^}]+)?\}")
 
 
+@contextmanager
+def local_vllm_server():
+    process = Popen(
+        [
+            "vllm",
+            "serve",
+            MODEL,
+            "--host",
+            VLLM_HOST,
+            "--port",
+            str(VLLM_PORT),
+            "--quantization",
+            "nvfp4",
+            "--max-model-len",
+            "32768",
+        ],
+    )
+    deadline = monotonic() + VLLM_STARTUP_TIMEOUT_SECONDS
+    while True:
+        if process.poll() is not None:
+            raise RuntimeError(f"vLLM exited during startup with code {process.returncode}.")
+        try:
+            with urlopen(VLLM_HEALTH_URL, timeout=1):
+                break
+        except URLError:
+            if monotonic() >= deadline:
+                process.terminate()
+                process.wait()
+                raise TimeoutError(f"vLLM did not become healthy within {VLLM_STARTUP_TIMEOUT_SECONDS} seconds.")
+            sleep(1)
+    try:
+        yield
+    finally:
+        process.terminate()
+        try:
+            process.wait(timeout=30)
+        except TimeoutExpired:
+            process.kill()
+            process.wait()
+
+
 def _is_formatting_mismatch_error(error: Exception) -> bool:
     message = str(error)
     return message.startswith("Formatted question doesn't match original") or message.startswith(
@@ -160,11 +211,7 @@ def build_template_toml(example: dict, source_id: int, id_shuffled: int, body: s
 
 
 def create_template(source_id: int, example: dict, id_shuffled: int) -> dict:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if api_key:
-        api_key = api_key.encode("ascii", "ignore").decode()
-
-    client = OpenAI(api_key=api_key)
+    client = OpenAI(base_url=VLLM_BASE_URL, api_key="EMPTY")
     user_prompt = {
         "source_id": source_id,
         "question": example["question"],
@@ -180,13 +227,13 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> dict:
     last_template_text = None
     attempts = []
     for attempt in range(1, MAX_TEMPLATE_ATTEMPTS + 1):
-        response = client.responses.create(
+        response = client.chat.completions.create(
             model=MODEL,
-            reasoning={"effort": "medium"},
-            input=messages,
+            messages=messages,
         )
         # strip markdown toml tags that the model may include, and also strip leading/trailing whitespace
-        body = re.sub(r"^\s*```[^\n`]*\n|\n```\s*$", "", response.output_text.strip())
+        output_text = response.choices[0].message.content or ""
+        body = re.sub(r"^\s*```[^\n`]*\n|\n```\s*$", "", output_text.strip())
         template_text = build_template_toml(example, source_id, id_shuffled, body)
         last_template_text = template_text
         attempt_log = {"attempt": attempt, "template_text": template_text}
@@ -210,7 +257,7 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> dict:
             messages.append(
                 {
                     "role": "assistant",
-                    "content": response.output_text,
+                    "content": output_text,
                 }
             )
             messages.append(
@@ -265,7 +312,7 @@ for source_id, example in enumerate(gsm8k_train):
     jobs.append((source_id, example, next_template_number + len(jobs)))
 
 output_dir.mkdir(exist_ok=True)
-with ThreadPoolExecutor(max_workers=int(os.getenv("SYNTHETIC_TEMPLATE_WORKERS", "3"))) as executor:
+with local_vllm_server(), ThreadPoolExecutor(max_workers=int(os.getenv("SYNTHETIC_TEMPLATE_WORKERS", "3"))) as executor:
     futures = {executor.submit(create_template, *job): job for job in jobs}
     for future in as_completed(futures):
         source_id, _, id_shuffled = futures[future]
