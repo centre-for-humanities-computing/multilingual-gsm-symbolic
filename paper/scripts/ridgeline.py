@@ -422,7 +422,7 @@ def plot_distributions(
     fig, axes = plt.subplots(
         len(stats),
         1,
-        figsize=(10.5, 1.55 * len(stats) + 1.35),
+        figsize=(10.5, 1.55 * len(stats) + 0.95),
         sharex=True,
         squeeze=False,
     )
@@ -505,7 +505,7 @@ def plot_distributions(
         ax.text(
             midpoint,
             arrow_y + peak_density * 0.045,
-            f"performance gap ({row.shift_pp:+.1f} pp)",
+            f"{row.shift_pp:+.1f} pp",
             color="black",
             fontsize=17,
             ha="center",
@@ -514,7 +514,7 @@ def plot_distributions(
         )
 
         ax.set_title(
-            language_title(row.language),
+            LANGUAGE_LABELS.get(row.language, row.language),
             loc="left",
             fontsize=17,
             fontweight="semibold",
@@ -541,7 +541,7 @@ def plot_distributions(
     fig.text(
         0.08,
         0.955,
-        f"{scope_label} | one random variant per template in each sampled set",
+        f"{scope_label} | red: original; blue: sampled synthetic sets",
         fontsize=17,
         color="#596579",
         ha="left",
@@ -557,12 +557,12 @@ def plot_distributions(
             markersize=15,
             markeredgewidth=2.4,
             linewidth=0,
-            label="Original benchmark accuracy",
+            label="Original",
         ),
         Patch(
             facecolor=SYNTHETIC_FILL,
             edgecolor=SYNTHETIC_COLOR,
-            label="Sampled synthetic sets",
+            label="Synthetic",
         ),
         Line2D(
             [0],
@@ -575,18 +575,18 @@ def plot_distributions(
         ),
     ]
     legend_handles = legend_handles[:2]
-    fig.legend(
+    axes[0].legend(
         handles=legend_handles,
-        loc="upper right",
-        bbox_to_anchor=(0.98, 0.925),
+        loc="lower left",
+        bbox_to_anchor=(0, 0),
         frameon=False,
-        ncol=2,
+        ncol=1,
         fontsize=17,
         handlelength=1.8,
         columnspacing=1.7,
     )
 
-    fig.tight_layout(rect=(0.06, 0.03, 1, 0.84), h_pad=0.2)
+    fig.tight_layout(rect=(0.06, 0.03, 1, 0.94), h_pad=0.2)
     fig.savefig(out_png, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
