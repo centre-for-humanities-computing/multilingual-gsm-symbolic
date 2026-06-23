@@ -422,7 +422,7 @@ def plot_distributions(
     fig, axes = plt.subplots(
         len(stats),
         1,
-        figsize=(10.5, 1.55 * len(stats) + 0.95),
+        figsize=(10.5, 1.75 * len(stats) + 0.95),
         sharex=True,
         squeeze=False,
     )
