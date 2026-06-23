@@ -507,7 +507,7 @@ def plot_distributions(
             arrow_y + peak_density * 0.045,
             f"performance gap ({row.shift_pp:+.1f} pp)",
             color="black",
-            fontsize=8,
+            fontsize=10,
             ha="center",
             va="bottom",
             zorder=7,
@@ -516,24 +516,25 @@ def plot_distributions(
         ax.set_title(
             language_title(row.language),
             loc="left",
-            fontsize=11,
+            fontsize=13,
             fontweight="semibold",
             pad=8,
         )
         ax.set_ylim(0, peak_density * 1.32)
         ax.grid(axis="y", color=GRID_COLOR, linewidth=0.7, alpha=0.65)
         ax.set_axisbelow(True)
-        ax.tick_params(axis="y", labelsize=8)
+        ax.tick_params(axis="y", labelsize=9)
 
     axes[-1].set_xlim(0, 1)
     axes[-1].xaxis.set_major_formatter(PercentFormatter(1))
-    axes[-1].set_xlabel("Exact-answer accuracy", fontsize=11, labelpad=10)
-    fig.supylabel("Density", fontsize=11, x=0.03)
+    axes[-1].tick_params(axis="x", labelsize=10)
+    axes[-1].set_xlabel("Exact-answer accuracy", fontsize=13, labelpad=10)
+    fig.supylabel("Density", fontsize=13, x=0.03)
     fig.suptitle(
         "Original accuracy and synthetic-set distributions",
         x=0.08,
         ha="left",
-        fontsize=17,
+        fontsize=19,
         fontweight="bold",
         y=0.985,
     )
@@ -541,7 +542,7 @@ def plot_distributions(
         0.08,
         0.955,
         f"{scope_label} | one random variant per template in each sampled set",
-        fontsize=10,
+        fontsize=11,
         color="#596579",
         ha="left",
         va="top",
@@ -580,7 +581,7 @@ def plot_distributions(
         bbox_to_anchor=(1, 1.42),
         frameon=False,
         ncol=3,
-        fontsize=9,
+        fontsize=10,
         handlelength=1.8,
         columnspacing=1.7,
     )
