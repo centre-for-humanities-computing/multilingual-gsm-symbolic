@@ -263,16 +263,29 @@ class AnnotatedQuestion:
                             continue
                         candidate = dict(zip(line_vars, values))
                         candidate_env = env | {k: parse_value(v) for k, v in candidate.items()}
-                        if all(candidate[v] == assignments[v] or str(candidate[v]) == str(assignments[v]) for v in known_line_vars) and all(
-                            not ({node.id for node in ast.walk(derived_ast) if isinstance(node, ast.Name)} & init_vars)
-                            <= set(candidate_env)
-                            or all(
+                        known_vars_ok = all(
+                            candidate[v] == assignments[v] or str(candidate[v]) == str(assignments[v])
+                            for v in known_line_vars
+                        )
+                        # A dep-default is evaluable when all its init-var refs are already in scope.
+                        # Accept this candidate if at least one evaluable dep-default correctly
+                        # predicts a known assignment value.  Requiring *all* to match is too strict:
+                        # template annotations sometimes use informal plural forms (e.g. "кілограм"
+                        # for n=12) that disagree with the formal plural function, causing false
+                        # negatives that reject the only correct candidate.
+                        evaluable_dep_matches = [
+                            all(
                                 value == assignments[var] or str(value) == str(assignments[var])
                                 for var, value in self._assign_from_ast(derived_vars, derived_ast, candidate_env).items()
                                 if var in assignments
                             )
                             for derived_vars, derived_ast in dependent_defaults
-                        ):
+                            if (
+                                {node.id for node in ast.walk(derived_ast) if isinstance(node, ast.Name)} & init_vars
+                            ) <= set(candidate_env)
+                        ]
+                        dep_defaults_ok = not evaluable_dep_matches or any(evaluable_dep_matches)
+                        if known_vars_ok and dep_defaults_ok:
                             assignments.update(candidate)
                             missing -= set(candidate)
                             progress = True

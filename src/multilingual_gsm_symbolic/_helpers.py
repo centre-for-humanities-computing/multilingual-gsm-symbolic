@@ -431,7 +431,12 @@ COMBINATION_HELPERS: dict[str, Any] = {
     "divides": divides,
     "Fraction": frac_format,
     "plural": plural,
-"ensure_int": ensure_int,
+    "ensure_int": ensure_int,
+    # Ukrainian-specific helpers (needed for dependent-default resolution in _get_full_default_assignments)
+    "ukr_plural_measurements": ukr_plural_measurements,
+    "ukr_month_form_on_number": ukr_month_form_on_number,
+    "ukr_weekday_to_when": ukr_weekday_to_when,
+    "to_title": to_title,
 }
 
 # Pre-compiled regex patterns used in hot paths
