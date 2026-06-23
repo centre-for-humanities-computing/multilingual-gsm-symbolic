@@ -422,7 +422,7 @@ def plot_distributions(
     fig, axes = plt.subplots(
         len(stats),
         1,
-        figsize=(10.5, 1.75 * len(stats) + 0.95),
+        figsize=(10.5, 2.05 * len(stats) + 1.7),
         sharex=True,
         squeeze=False,
     )
@@ -505,31 +505,30 @@ def plot_distributions(
         ax.text(
             midpoint,
             arrow_y + peak_density * 0.045,
-            f"{row.shift_pp:+.1f} pp",
+            f"performance gap ({row.shift_pp:+.1f} pp)",
             color="black",
-            fontsize=17,
+            fontsize=8,
             ha="center",
             va="bottom",
             zorder=7,
         )
 
         ax.set_title(
-            LANGUAGE_LABELS.get(row.language, row.language),
+            language_title(row.language),
             loc="left",
-            fontsize=17,
+            fontsize=11,
             fontweight="semibold",
-            pad=3,
+            pad=8,
         )
         ax.set_ylim(0, peak_density * 1.32)
         ax.grid(axis="y", color=GRID_COLOR, linewidth=0.7, alpha=0.65)
         ax.set_axisbelow(True)
-        ax.tick_params(axis="y", labelsize=17)
+        ax.tick_params(axis="y", labelsize=8)
 
     axes[-1].set_xlim(0, 1)
     axes[-1].xaxis.set_major_formatter(PercentFormatter(1))
-    axes[-1].tick_params(axis="x", labelsize=17)
-    axes[-1].set_xlabel("Exact-answer accuracy", fontsize=17, labelpad=5)
-    fig.supylabel("Density", fontsize=17, x=0.03)
+    axes[-1].set_xlabel("Exact-answer accuracy", fontsize=11, labelpad=10)
+    fig.supylabel("Density", fontsize=11, x=0.03)
     fig.suptitle(
         "Original accuracy and synthetic-set distributions",
         x=0.08,
@@ -541,8 +540,8 @@ def plot_distributions(
     fig.text(
         0.08,
         0.955,
-        f"{scope_label} | red: original; blue: sampled synthetic sets",
-        fontsize=17,
+        f"{scope_label} | one random variant per template in each sampled set",
+        fontsize=10,
         color="#596579",
         ha="left",
         va="top",
@@ -557,12 +556,12 @@ def plot_distributions(
             markersize=15,
             markeredgewidth=2.4,
             linewidth=0,
-            label="Original",
+            label="Original benchmark accuracy",
         ),
         Patch(
             facecolor=SYNTHETIC_FILL,
             edgecolor=SYNTHETIC_COLOR,
-            label="Synthetic",
+            label="Sampled synthetic sets",
         ),
         Line2D(
             [0],
@@ -577,16 +576,16 @@ def plot_distributions(
     legend_handles = legend_handles[:2]
     axes[0].legend(
         handles=legend_handles,
-        loc="lower left",
-        bbox_to_anchor=(0, 0),
+        loc="upper right",
+        bbox_to_anchor=(1, 1.42),
         frameon=False,
-        ncol=1,
-        fontsize=17,
+        ncol=3,
+        fontsize=9,
         handlelength=1.8,
         columnspacing=1.7,
     )
 
-    fig.tight_layout(rect=(0.06, 0.03, 1, 0.94), h_pad=0.2)
+    fig.tight_layout(rect=(0.045, 0.03, 1, 0.925))
     fig.savefig(out_png, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
