@@ -48,6 +48,48 @@ tasks:
     scorers:
       - name: math
 
+  - id: original_eng_metric
+    config: eng_metric
+    split: test_original
+
+    field_spec:
+      input: question
+      target: target
+      metadata:
+        - answer
+        - language
+        - source_id
+
+    solvers:
+      - name: prompt_template
+        args:
+          template: "Solve the following math problem step by step. Put your final numeric answer (without units, currency symbols, or percentage signs) in \\boxed{{}}, for example: \\boxed{{42}}.\n\n{prompt}"
+      - name: generate
+
+    scorers:
+      - name: math
+
+  - id: synthetic_eng_metric
+    config: eng_metric
+    split: test_synthetic
+
+    field_spec:
+      input: question
+      target: target
+      metadata:
+        - answer
+        - language
+        - source_id
+
+    solvers:
+      - name: prompt_template
+        args:
+          template: "Solve the following math problem step by step. Put your final numeric answer (without units, currency symbols, or percentage signs) in \\boxed{{}}, for example: \\boxed{{42}}.\n\n{prompt}"
+      - name: generate
+
+    scorers:
+      - name: math
+
   - id: original_dan
     config: dan
     split: test_original

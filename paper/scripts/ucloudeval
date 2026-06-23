@@ -67,6 +67,7 @@ REVISION = "main"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EVAL_YAML = REPO_ROOT / "paper" / "eval.yaml"
 LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
+OPTIONAL_LANGUAGES = {"eng_metric"}
 
 
 class RunnerError(RuntimeError):
@@ -119,12 +120,13 @@ def expand(
     option: str,
     values: Sequence[str],
     available: Sequence[str],
+    default_all: Sequence[str] | None = None,
 ) -> list[str]:
     values = unique(values)
     if "all" in values:
         if len(values) > 1:
             parser.error(f"--{option}: 'all' cannot be combined with other values")
-        return list(available)
+        return list(available if default_all is None else default_all)
     if option != "model" and (invalid := [value for value in values if value not in available]):
         parser.error(
             f"--{option}: invalid value(s): {', '.join(invalid)} "
@@ -217,9 +219,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         "language": unique([task.language for task in tasks]),
         "split": unique([task.split for task in tasks]),
     }
+    default_all = {
+        "model": available["model"],
+        "language": [language for language in available["language"] if language not in OPTIONAL_LANGUAGES],
+        "split": available["split"],
+    }
     parser = build_parser(available["language"], available["split"])
     args = parser.parse_args(argv)
-    selected = {name: expand(parser, name, getattr(args, name), values) for name, values in available.items()}
+    selected = {
+        name: expand(parser, name, getattr(args, name), values, default_all=default_all[name])
+        for name, values in available.items()
+    }
 
     try:
         selected_tasks = select_tasks(
