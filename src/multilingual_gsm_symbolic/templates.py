@@ -243,19 +243,35 @@ class AnnotatedQuestion:
                         continue
 
                 known_line_vars = [v for v in line_vars if v in assignments]
+                dependent_defaults = [
+                    (derived_vars, derived_ast)
+                    for derived_vars, derived_ast in self._init_line_asts
+                    if set(derived_vars) & set(assignments)
+                    and set(line_vars)
+                    & ({node.id for node in ast.walk(derived_ast) if isinstance(node, ast.Name)} & init_vars)
+                ]
                 if known_line_vars:
+                    dependent_defaults = []
+                if known_line_vars or dependent_defaults:
                     try:
                         possible_values = eval_node(ast_node, COMBINATION_HELPERS | replacements)
                     except Exception:
                         possible_values = []
                     for val in possible_values:
-                        values = align_values_to_variables(line_vars, val)
+                        values = [val] if len(line_vars) == 1 else align_values_to_variables(line_vars, val)
                         if len(values) != len(line_vars):
                             continue
                         candidate = dict(zip(line_vars, values))
-                        if all(
-                            candidate[v] == assignments[v] or str(candidate[v]) == str(assignments[v])
-                            for v in known_line_vars
+                        candidate_env = env | {k: parse_value(v) for k, v in candidate.items()}
+                        if all(candidate[v] == assignments[v] or str(candidate[v]) == str(assignments[v]) for v in known_line_vars) and all(
+                            not ({node.id for node in ast.walk(derived_ast) if isinstance(node, ast.Name)} & init_vars)
+                            <= set(candidate_env)
+                            or all(
+                                value == assignments[var] or str(value) == str(assignments[var])
+                                for var, value in self._assign_from_ast(derived_vars, derived_ast, candidate_env).items()
+                                if var in assignments
+                            )
+                            for derived_vars, derived_ast in dependent_defaults
                         ):
                             assignments.update(candidate)
                             missing -= set(candidate)
