@@ -150,6 +150,15 @@ def select_tasks(
     return [task for task in tasks if (task.language, task.split) in requested]
 
 
+def model_args(model: str) -> list[str]:
+    lower = model.lower()
+    if lower.startswith("qwen/qwen3-"):
+        return ["-M", "reasoning_parser=qwen3"]
+    if lower.startswith("deepseek-ai/deepseek-r1-distill-"):
+        return ["-M", "reasoning_parser=deepseek_r1"]
+    return []
+
+
 def inspect_command(model: str, tasks: Sequence[Task]) -> list[str]:
     # place the revision after the task id so the HF loader parses it correctly
     specs = [
@@ -160,6 +169,7 @@ def inspect_command(model: str, tasks: Sequence[Task]) -> list[str]:
         # interrupted tasks without repeating their completed samples.
         "inspect", "eval-set", *specs,
         "--model", f"vllm/{model}",
+        *model_args(model),
         "-M", "dtype=auto",
         "-M", "attention_backend=FLASH_ATTN",
         "-M", "max_num_seqs=512",
