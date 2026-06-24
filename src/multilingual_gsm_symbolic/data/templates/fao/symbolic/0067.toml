@@ -1,0 +1,44 @@
+question = "Johns bil steðgar. Bilurin vigar 1200 kg, og hann hevur viðføri í honum, sum vigar 250 kg. Hann hevur eisini síni tvey børn, sum hvørt viga 75 kg, í honum. Um kraftin at flyta bilin er 1% av vektini, hvussu nógva kraft hevur hann brúk fyri at skumpa bilin?"
+
+answer = """
+Bæði børnini hansara viga 75*2=<<75*2=150>>150 kg
+So samlaða vektin av bilinum og øllum er 1200+250+150=<<1200+250+150=1600>>1600 kg
+So hann skal framleiða 1600*0,01=<<1600*0,01=16>>16 kg
+#### 16
+"""
+
+id_orig = 1275
+
+id_shuffled = 67
+
+question_annotated = """
+{name,John}s {vehicle,bil} steðgar. {vehicle,bil}urin vigar {weight_vehicle,1200} {unit,kg}, og hann hevur {item,viðføri} í honum, sum vigar {weight_item,250} {unit,kg}. Hann hevur eisini síni {num_passengers_txt,to} {passenger_type,børn}, sum hvørt viga {weight_passenger,75} {unit,kg}, í honum. Um kraftin at flyta {vehicle,bil}in er {force_percent,1}% av vektini, hvussu nógva kraft hevur hann brúk fyri at skumpa {vehicle,bil}in?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(['bil', 'vøruvogn', 'lastbil', 'SUV'])
+- item = sample(['viðføri', 'gerandisvørur', 'útgerð', 'møblar'])
+- passenger_type = sample(['børn', 'vinir', 'starvsfelagar', 'syskin'])
+- unit = sample(['kg', 'kilogram'])
+- $weight_vehicle = range(1000, 3000, 50)
+- $weight_item = range(100, 500, 25)
+- $weight_passenger = range(50, 100, 5)
+- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- $force_percent = range(1, 6)
+
+#conditions:
+- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+
+#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+"""
+
+answer_annotated = """
+Hans {num_passengers_txt} {passenger_type} viga {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
+So samlaða vektin av {vehicle}inum og øllum er {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
+So hann skal framleiða {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}
+#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

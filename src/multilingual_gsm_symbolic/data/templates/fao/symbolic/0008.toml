@@ -1,0 +1,38 @@
+question = "Ein sirkuslistamaður kann jonglera við 16 bóltum. Helmingurin av bóltunum eru golfbóltar, og helmingurin av golfbóltunum eru bláir. Hvussu nógvir bláir golfbóltar eru har?"
+
+answer = """
+Golfbóltar: 16*1/2=<<16*1/2=8>>8.
+Bláir golfbóltar: 8*1/2=<<8*1/2=4>>4 bóltar
+#### 4
+"""
+
+id_orig = 269
+
+id_shuffled = 8
+
+question_annotated = """
+Ein sirkuslistamaður kann jonglera við {n, 16} bóltum. {frac_1_txt,helvtin} av bóltunum eru {ball_type, golf}bóltar, og {frac_2_txt,helvtin} av {ball_type, golf}bóltunum eru {color, blá}. Hvussu nógvir {color, blá}ir {ball_type, golf}bóltar eru har?
+
+#init:
+- ball_type = sample(["golf", "tennis"])
+- color = sample(colors)
+- $frac_1_txt, frac_1_val = sample(fraction_alnum)
+- $frac_2_txt, frac_2_val = sample(fraction_alnum)
+- $n = range(16, 100, 2)
+
+#conditions:
+- is_int(n * frac_1_val)
+- is_int(n * frac_1_val * frac_2_val)
+
+#answer: int(n * frac_1_val * frac_2_val)
+"""
+
+answer_annotated = """
+{ball_type}bóltar: {n}*{frac_1_val}=<<{n}*{frac_1_val}={n*frac_1_val}>>{int(n*frac_1_val)}.
+{color}ir {ball_type}bóltar: {int(n*frac_1_val)}*{frac_2_val}=<<{int(n*frac_1_val)}*{frac_2_val}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} bóltar
+#### {int(n*frac_1_val*frac_2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

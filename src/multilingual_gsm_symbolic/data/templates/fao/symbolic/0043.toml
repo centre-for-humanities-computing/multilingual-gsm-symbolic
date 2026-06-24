@@ -1,0 +1,39 @@
+question = "Daniel fór til teirra urtagarð at taka nøkur súrepli og fann helvt so nógvar mariuhønur sum maurar í garðinum. Um tað vóru 50 maurar, rokna samlaða talið av mariuhønum í garðinum."
+
+answer = """
+Um tað vóru 50 maurar, er samlaða talið av mariuhønum í garðinum 1/2*50 maurar = 25 mariuhønur
+Samlaða talið av mariuhønum í garðinum er 25 mariuhønur + 50 maurar = <<25+50=75>>75 mariuhønur
+#### 75
+"""
+
+id_orig = 232
+
+id_shuffled = 43
+
+question_annotated = """
+{name,Daniel} fór til teirra {place,urtagarð} at taka nøkur {fruit,súrepli} og fann {frac_txt,helvt} so nógvar {insect1,mariuhønur} sum {insect2,maurar} í {location,garðinum}. Um tað vóru {n,50} {insect2,maurar}, rokna samlaða talið av mariuhønum í {location,garðinum}.
+
+#init:
+- name = sample(names)
+- place = sample(["fruktgarðin", "bakgarðin", "vakstrarhúsið", "urtagarðin"])
+- fruit = sample(["jarðber", "kirsiber", "bláber", "hindber"])
+- location = sample(["garðinum", "vøllinum", "jørðini"])
+- insect1, insect2 = sample(["maurar", "bjallur", "mariuhønur", "grashoppur", "larvur", "býflugur", "vespur"], 2)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(20, 201)
+
+#conditions:
+- is_int(n * frac_val)
+
+#answer: n + int(n * frac_val)
+"""
+
+answer_annotated = """
+Um tað vóru {n} {insect2}, er samlaða talið av {insect1} í {location} {frac_val}*{n} {insect2} = {int(n * frac_val)} {insect1}
+Samlaða talið av {insect1} í {location} er {int(n * frac_val)} {insect1} + {n} {insect2} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} mariuhønur
+#### {n + int(n * frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

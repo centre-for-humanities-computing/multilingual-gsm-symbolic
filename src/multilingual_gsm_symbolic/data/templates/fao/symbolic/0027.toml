@@ -1,0 +1,39 @@
+question = "Jørgen fær 80 teldupostar um dagin. 20% av hesum teldupostunum krevja ikki nakað svar. Hann svarar teimum, sum eru eftir. Hvussu nógvar teldupostar svarar Jørgen upp á í einari 5-daga arbeiðsviku?"
+
+answer = """
+Jørgen fær 80*20/100=<<80*20/100=16>>16 teldupostar, sum ikki krevja eitt svar
+So svarar hann upp á 80-16=<<80-16=64>>64 teldupostar um dagin
+Í einari 5-daga arbeiðsviku svarar Jørgen sostatt upp á 64*5=<<64*5=320>>320 teldupostar
+#### 320
+"""
+
+id_orig = 1063
+
+id_shuffled = 27
+
+question_annotated = """
+{name,Jørgen} fær {n,80} teldupostar um dagin. {p,20}% av hesum teldupostunum krevja ikki nakað svar. Hann svarar teimum, sum eru eftir. Hvussu nógvar teldupostar svarar {name,Jørgen} upp á í einari {d,5}-daga arbeiðsviku?
+
+#init:
+- name = sample(names_male)
+- $n = range(50, 200)
+- $p = range(5, 40)
+- $d = range(3, 7)
+
+#conditions:
+- is_int(n * p / 100)
+- is_int(n * (100 - p) / 100)
+
+#answer: d * (n * (100 - p) / 100)
+"""
+
+answer_annotated = """
+{name} fær {n}*{p}/100=<<{n}*{p}/100={n*p//100}>>{n*p//100} teldupostar, sum ikki krevja eitt svar
+So svarar hann upp á {n}-{n*p//100}=<<{n}-{n*p//100}={n*(100-p)//100}>>{n*(100-p)//100} teldupostar um dagin
+Í einari {d}-daga arbeiðsviku svarar {name} sostatt upp á {n*(100-p)//100}*{d}=<<{n*(100-p)/100}*{d}={d*(n*(100-p)//100)}>>{d*(n*(100-p)//100)} teldupostar
+#### {d*(n*(100-p)//100)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

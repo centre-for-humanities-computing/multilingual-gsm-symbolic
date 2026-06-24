@@ -1,0 +1,42 @@
+question = "Rasmus fór at keypa sær nakrar skúlalutir. Hann keypti 4 pennar, sum kostaðu 1,5 krónur hvør, 2 skrivibøkur, sum kostaðu 4 krónur hvør, og eitt ark av pappíri, sum kostaði 20 krónur. Hvussu nógv brúkti Rasmus tilsamans?"
+
+answer = """
+Rasmus brúkti 4*1,5 krónur = <<4*1,5=6>>6 krónur upp á pennarnar.
+Hann brúkti eisini 2*4 krónur = <<2*4=8>>8 krónur upp á skrivibøkurnar.
+Tí brúkti Rasmus tilsamans 6 krónur + 8 krónur + 20 krónur = <<6+8+20=34>>34 krónur upp á skúlalutir.
+#### 34
+"""
+
+id_orig = 158
+
+id_shuffled = 18
+
+question_annotated = """
+{name,Rasmus} fór at keypa sær nakrar skúlalutir. Hann keypti {n1,4} {obj1,pennar}, sum kostaðu {c1,1.5} {cur,krónur} hvør, {n2,2} {obj2,skrivibøkur}, sum kostaðu {c2,4} {cur,krónur} hvør, og eitt ark av pappíri, sum kostaði {c3,20} {cur,krónur}. Hvussu nógv brúkti {name,Rasmus} tilsamans?
+
+#init:
+- name = sample(names_male)
+- obj1, obj2 = sample(["skrivibøkur", "blýantar", "litblýantar", "tussjar", "linjalir", "mappur"], 2)
+- cur = sample(currencies_sym)
+- $n1 = range(4, 25, 2)
+- $c1 = arange(1.5, 11.5, 0.25)
+- $n2 = range(2, 15, 2)
+- $c2 = arange(4, 19.5, 0.25)
+- $c3 = range(10, 25)
+
+#conditions:
+- is_int(n1 * c1)
+- is_int(n2 * c2)
+#answer: int(n1*c1 + n2*c2 + c3)
+"""
+
+answer_annotated = """
+{name} brúkti {n1}*{c1} {cur} = <<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} {cur} upp á {obj1}nar.
+Hann brúkti eisini {n2}*{c2} {cur} = <<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} {cur} upp á {obj2}nar.
+Tí brúkti {name} tilsamans {int(n1*c1)} {cur} + {int(n2*c2)} {cur} + {c3} {cur} = <<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} {cur} upp á skúlalutir.
+#### {int(n1*c1+n2*c2+c3)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"
