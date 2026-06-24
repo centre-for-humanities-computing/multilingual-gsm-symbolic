@@ -1,0 +1,53 @@
+question = "Kristian selur hunangskøkur og eplatertu til eina innsavning. Leygardagin seldi hann 10 eskjur av hunangskøkum og 4 færri eskjur av eplatertu enn sunnudagin. Sunnudagin seldi hann aftrat 5 eskjur fleiri av hunangskøkum enn leygardagin og 15 eskjur av eplatertu. Um hunangskøkur kosta 6 krónur og eplatertur kosta 15 krónur, hvussu nógv forvann Kristian upp á tveir dagar?"
+
+answer = """
+Hann seldi 10 + 5 = <<10+5=15>>15 eskjur av hunangskøkum sunnudagin.
+Samanlagda talið av eskjum av hunangskøkum, sum Kristian seldi, er 10 + 15 = <<10+15=25>>25.
+Kristian forvann 25*6 krónur = <<25*6=150>>150 krónur upp á at selja hunangskøkur.
+Hann seldi 15 - 4 = <<15-4=11>>11 eskjur av eplatertu leygardagin.
+Samanlagda talið av eskjum av eplatertu, sum Kristian seldi, er 15 + 11 = <<15+11=26>>26.
+Hann forvann 26*15 krónur = <<26*15=390>>390 krónur upp á at selja eplatertu.
+So forvann Kristian 150 krónur + 390 krónur = <<150+390=540>>540 krónur upp á tveir dagar.
+#### 540
+"""
+
+id_orig = 976
+
+id_shuffled = 16
+
+question_annotated = """
+{name, Kristian} selur {food,hunangskøkur} og {fruit,epal}tertu til eina innsavning. {d1,Leygardag}in seldi hann {n1,10} eskjur av {food,hunangskøkum} og {m1,4} færri eskjur av {fruit,epal}tertu enn {d2,sunnudag}in. {d2,Sunnudag}in seldi hann aftrat {n2,5} eskjur fleiri av {food,hunangskøkum} enn {d1,leygardag}in og {m2,15} eskjur av {fruit,epal}tertu. Um {food,hunangskøkur} kosta {cn,6} {cur,krónur} og {fruit,epal}tertur kosta {cm,15} {cur,krónur}, hvussu nógv forvann {name,Kristian} upp á tveir dagar?
+
+#init:
+- name = sample(names_male)
+- fruit, fruit_plural = sample(fruits)
+- cur = sample(currencies_sym)
+- food = sample([ "hunangskøkur", "brownies", "kanilsniglar", "wienerbreyð",])
+- d1, d2 = sample_sequential(weekdays, 2)
+- $n1 = range(21, 30)
+- $n2 = range(11, 15)
+- $m1 = range(2, 20)
+- $m2 = range(15, 30)
+- $cn = range(7, 13)
+- $cm = range(20, 33)
+
+#conditions:
+- m1 < m2
+
+#answer: (2*n1+n2)*cn + (2*m2-m1)*cm
+"""
+
+answer_annotated = """
+Hann seldi {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} eskjur av {food} {d2}in.
+Samanlagda talið av eskjum av {food}, sum {name} seldi, er {n1} + {n1+n2} = <<{n1}+{n1+n2}={2*n1+n2}>>{n1+n1+n2}.
+{name} forvann {n1+n1+n2}*{cn} {cur} = <<{n1+n1+n2}*{cn}={(n1+n1+n2)*cn}>>{(n1+n1+n2)*cn} {cur} upp á at selja {food}.
+Hann seldi {m2} - {m1} = <<{m2}-{m1}={m2-m1}>>{m2-m1} eskjur av {fruit}tertu {d1}in.
+Samanlagda talið av eskjum av {fruit}tertu, sum {name} seldi, er {m2} + {m2-m1} = <<{m2}+{m2-m1}={2*m2-m1}>>{2*m2-m1}.
+Hann forvann {2*m2-m1}*{cm} {cur} = <<{2*m2-m1}*{cm}={(2*m2-m1)*cm}>>{(2*m2-m1)*cm} {cur} upp á at selja {fruit}tertu.
+So forvann {name} {(n1+n1+n2)*cn} {cur} + {(2*m2-m1)*cm} {cur} = <<{(n1+n1+n2)*cn}+{(2*m2-m1)*cm}={(2*n1+n2)*cn + (2*m2-m1)*cm}>>{(2*n1+n2)*cn + (2*m2-m1)*cm} {cur} upp á tveir dagar.
+#### {(2*n1+n2)*cn + (2*m2-m1)*cm}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

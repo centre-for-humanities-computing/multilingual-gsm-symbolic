@@ -1,0 +1,44 @@
+question = "Hjá Allan eru tvær ferðir so nógv mais sum bananir. Hann hevur tilsamans 40 bananir í húsinum. Allan keypti 60 fleiri bananir í handlinum og 40 færri mais enn talið av bananum. Hvat er samlaða talið av mais og bananum tilsamans, sum Allan hevur?"
+
+answer = """
+Áðrenn hann keypti nakran mais og nakrar bananir, hevði Allan tvær ferðir so nógv mais sum bananir, sum er 2*40 = <<2*40=80>>80 mais
+Samlaða talið av mais og bananum, sum Allan hevði frammanundan, er 80 mais + 40 bananir = <<80+40=120>>120 lutir
+Tá hann keypti 40 færri mais enn bananir, keypti hann 60 - 40 = <<60-40=20>>20 mais
+Tilsamans keypti hann 20 mais + 60 bananir = <<20+60=80>>80 lutir
+Eftir keypini hevur Allan 120 lutir + 80 lutir = <<120+80=200>>200 mais og bananir tilsamans.
+#### 200
+"""
+
+id_orig = 406
+
+id_shuffled = 91
+
+question_annotated = """
+Hjá {name, Allan} eru {mult_txt,tvær ferðir} so nógv {food1, mais} sum {food2, bananir}. Hann hevur tilsamans {n, 40} {food2, bananir} í húsinum. {name, Allan} keypti {m, 60} fleiri {food2, bananir} í handlinum og {k, 40} færri {food1, mais} enn talið av {food2, bananum}. Hvat er samlaða talið av {food1, mais} og {food2, bananum} tilsamans, sum {name, Allan} hevur?
+
+#init:
+- name = sample(names_male)
+- food1, food2 = sample(["perur", "epli", "appelsinir", "sitronir", "fikur", "nektarinur", "plommur", "jarðber", "kiwi", "bláber"], 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(20, 100)
+- $m = range(30, 100)
+- $k = range(10, 50)
+
+#conditions:
+- m > k
+
+#answer: mult_val*n + n + m + (m-k)
+"""
+
+answer_annotated = """
+Áðrenn hann keypti nakran {food1} og nakrar {food2}, hevði {name} {mult_txt} so nógv {food1} sum {food2}, sum er {mult_val}*{n} = <<{mult_val}*{n}={n*mult_val}>>{n*mult_val} {food1}
+Samlaða talið av {food1} og {food2}, sum {name} hevði frammanundan, er {n*mult_val} {food1} + {n} {food2} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} lutir
+Tá hann keypti {k} færri {food1} enn {food2}, keypti hann {m} - {k} = <<{m}-{k}={m-k}>>{m-k} {food1}
+Tilsamans keypti hann {m-k} {food1} + {m} {food2} = <<{m-k}+{m}={2*m-k}>>{2*m-k} lutir
+Eftir keypini hevur {name} {n*mult_val+n} lutir + {2*m-k} lutir = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} {food1} og {food2} tilsamans.
+#### {n*mult_val+n+2*m-k}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

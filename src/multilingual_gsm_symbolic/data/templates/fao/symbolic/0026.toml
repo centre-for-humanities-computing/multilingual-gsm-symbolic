@@ -1,0 +1,38 @@
+question = "Ein maður etur 5 sandwichar um dagin, kona hansara etur 4 sandwichar um dagin og sonur teirra etur 2 sandwichar um dagin. Hvussu nógvar sandwichar etur henda familjan upp á eina viku?"
+
+answer = """
+Talið av sandwichum, tey eta upp á ein dag, er 5 + 4 + 2 = <<5+4+2=11>>11 sandwichar.
+Talið av sandwichum, tey eta upp á eina viku, er 11 * 7 = <<11*7=77>>77 sandwichar.
+#### 77
+"""
+
+id_orig = 1023
+
+id_shuffled = 26
+
+question_annotated = """
+{name1,Ein maður} etur {n1,5} {food,sandwichar} um {time_unit,dag}in, {name2,kona hansara} etur {n2,4} {food,sandwichar} um {time_unit,dag}in og {relation,sonur} teirra etur {n3,2} {food,sandwichar} um {time_unit,dag}in. Hvussu nógvar {food,sandwichar} etur henda familjan upp á eina {time_period,viku}?
+
+#init:
+- name1 = sample(["Ein faðir", "Ein abbi", "Ein pápabeiggi"])
+- name2 = sample(["kona hansara", "partnari hansara", "hjúnafelagi hansara"])
+- relation = sample(["dóttir", "sonur", "ommubarn"])
+- food = sample(["pizzur", "burritoir", "tacos", "sushi-rullur", "hamburgarar"])
+- time_unit = sample(["dag"])
+- time_period = sample(["viku", "mánað"])
+- $n1 = range(2, 9)
+- $n2 = range(2, 9)
+- $n3 = range(2, 9)
+
+#answer: (n1 + n2 + n3) * (7 if time_period == "week" else 30)
+"""
+
+answer_annotated = """
+Talið av {food}um, tey eta upp á ein {time_unit}, er {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food}.
+Talið av {food}um, tey eta upp á eina {time_period}, er {n1+n2+n3} * {7 if time_period == "uge" else 30} = <<{n1+n2+n3}*{7 if time_period == "uge" else 30}={(n1+n2+n3)*(7 if time_period == "uge" else 30)}>>{(n1+n2+n3)*(7 if time_period == "uge" else 30)} {food}.
+#### {(n1+n2+n3)*(7 if time_period == "uge" else 30)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

@@ -1,0 +1,46 @@
+question = "Í flokkinum hjá Hansen við 30 næmingum eru 20% av flokkinum fótbóltsspælarar. Av teimum næmingunum, sum eru eftir, eru 25% cheerleaders ella partur av orkestrinum. Hesir 3 bólkarnir av næmingum skulu fara tíðliga úr skúlanum í dag fyri at ferðast til ein útidyst. Hvussu nógvir næmingar fara tíðliga úr skúlanum?"
+
+answer = """
+20% av teimum 30 næmingunum í flokkinum eru fótbóltsspælarar, so tað eru 0,2*30 = <<0,2*30=6>>6 næmingar
+Tað eru 30 næmingar, og 6 eru fótbóltsspælarar, so tað eru 30-6 = <<30-6=24>>24 næmingar eftir
+25% av teimum 24 næmingunum, sum eru eftir, eru partur av orkestrinum ella cheerleaders, so tað eru 0,25*24 = <<0,25*24=6>>6 næmingar
+6 næmingar eru fótbóltsspælarar, og 6 eru partur av orkestrinum/cheerleaders, so 6+6 = <<6+6=12>>12 næmingar fara tíðliga úr skúlanum
+#### 12
+"""
+
+id_orig = 982
+
+id_shuffled = 25
+
+question_annotated = """
+Í flokkinum hjá {lærer,Hansen} við {total,30} næmingum eru {p1,20}% av flokkinum {gruppe1,fótbóltsspælarar}. Av teimum næmingunum, sum eru eftir, eru {p2,25}% {gruppe2,cheerleaders} ella {gruppe3,partur av orkestrinum}. Hesir 3 bólkarnir av næmingum skulu fara tíðliga úr skúlanum í dag fyri at ferðast til {event, ein útidyst}. Hvussu nógvir næmingar fara tíðliga úr skúlanum?
+
+#init:
+- lærer = sample(['Hansen', 'Jensen', 'Susanne', 'Lærke'])
+- gruppe1 = sample(['fótbóltsspælarar', 'basketbóltsleikarar', 'volleybóltsleikarar', 'svømmarar'])
+- gruppe2, gruppe3 = sample(['dansarar', 'kórsangarar', 'cheerleaders'],  2)
+- event = sample(['ein útidyst', 'ein kapping', 'ein kapping', 'ein framførsla', 'eitt stevni'])
+- $total = range(20, 150)
+- $p1 = range(10, 50)
+- $p2 = range(15, 45)
+
+#conditions:
+- p1 < 100
+- p2 < 100
+- is_int(total * p1 / 100)
+- is_int((total - total * p1 / 100) * p2 / 100)
+
+#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)
+"""
+
+answer_annotated = """
+{p1}% av teimum {total} næmingunum í flokkinum eru {gruppe1}, so tað eru {p1/100}*{total} = <<{p1/100}*{total}={int(total*p1/100)}>>{int(total*p1/100)} næmingar
+Tað eru {total} næmingar, og {int(total*p1/100)} eru {gruppe1}, so tað eru {total}-{int(total*p1/100)} = <<{total}-{int(total*p1/100)}={total-int(total*p1/100)}>>{total-int(total*p1/100)} næmingar eftir
+{p2}% av teimum {total-int(total*p1/100)} næmingunum, sum eru eftir, eru {gruppe3} ella {gruppe2}, so tað eru {p2/100}*{total-int(total*p1/100)} = <<{p2/100}*{total-int(total*p1/100)}={int((total-int(total*p1/100))*p2/100)}>>{int((total-int(total*p1/100))*p2/100)} næmingar
+{int(total*p1/100)} næmingar eru {gruppe1}, og {int((total-int(total*p1/100))*p2/100)} eru {gruppe3}/{gruppe2}, so {int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)} = <<{int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)}={int(total*p1/100 + (total-int(total*p1/100))*p2/100)}>>{int(total*p1/100 + (total-int(total*p1/100))*p2/100)} næmingar fara tíðliga úr skúlanum
+#### {int(total*p1/100 + (total-int(total*p1/100))*p2/100)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

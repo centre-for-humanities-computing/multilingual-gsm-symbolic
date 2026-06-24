@@ -1,0 +1,40 @@
+question = "Le lycée Henri-IV organise sa remise de diplômes dans la salle des fêtes cette année, qui peut accueillir 1900 personnes. Après avoir réservé 450 places pour les diplômés et 100 places pour les membres du corps enseignant, combien de billets chaque diplômé peut-il donner à ses amis et à sa famille, si les billets sont répartis équitablement ?"
+
+answer = """
+Additionnez les places des diplômés et du corps enseignant. 450 + 100 = <<450+100=550>>550 places pour le corps enseignant et les diplômés
+Soustrayez les places du corps enseignant et des diplômés du nombre total de places autorisées. 1900 - 550 = <<1900-550=1350>>1350 places restantes.
+Divisez le nombre de places restantes par le nombre de diplômés 1350/450 = <<1350/450=3>>3 billets
+#### 3
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,le lycée Henri-IV} organise sa remise de diplômes dans {venue,la salle des fêtes} cette année, qui peut accueillir {total,1900} personnes. Après avoir réservé {graduates,450} places pour les diplômés et {faculty,100} places pour les membres du corps enseignant, combien de billets chaque diplômé peut-il donner à ses amis et à sa famille, si les billets sont répartis équitablement ?
+
+#init:
+- school = sample(["l'université de Lyon", "le lycée Victor Hugo", "le lycée Montaigne", "le collège Voltaire"])
+- venue = sample(["l'auditorium", "le gymnase", "l'atrium"])
+- $total = range(1500, 10000, 100)
+- $graduates = range(400, 1500, 50)
+- $faculty = range(100, 1500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Additionnez les places des diplômés et du corps enseignant. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} places pour le corps enseignant et les diplômés
+Soustrayez les places du corps enseignant et des diplômés du nombre total de places autorisées. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} places restantes.
+Divisez le nombre de places restantes par le nombre de diplômés {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} billets
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

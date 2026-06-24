@@ -1,0 +1,40 @@
+question = "L'équipe des chasseurs de la chasse aux œufs de Pâques a caché 100 œufs. Les jumeaux Durand ont trouvé 30 œufs chacun. Tous les autres œufs sauf 10 ont été trouvés par leurs amis. Combien les amis en ont-ils trouvé ?"
+
+answer = """
+Les jumeaux Durand ont trouvé 30 * 2 = <<30*2=60>>60 œufs.
+Le nombre restant était 100 - 60 = <<100-60=40>>40 œufs
+Comme 10 œufs n'ont pas été trouvés, cela signifie que les amis ont trouvé 40 - 10 = 30 œufs.
+#### 30
+"""
+
+id_orig = 1025
+
+id_shuffled = 81
+
+question_annotated = """
+L'équipe des {event,chasseurs} de la chasse aux œufs de Pâques a caché {total,100} {item,œufs}. Les jumeaux {family,Durand} ont trouvé {n,30} {item,œufs} chacun. Tous les autres {item,œufs} sauf {m,10} ont été trouvés par leurs amis. Combien les amis en ont-ils trouvé ?
+
+#init:
+- event = sample(["chasseurs", "chasseurs de trésor", "participants"])
+- item = sample(["œufs", "friandises", "jouets", "pièces", "bonbons", "cadeaux"])
+- family = sample(["Martin", "Dubois", "Lefebvre", "Moreau", "Bernard"])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+
+answer_annotated = """
+Les jumeaux {family} ont trouvé {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
+Le nombre restant était {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
+Comme {m} {item} n'ont pas été trouvés, cela signifie que les amis ont trouvé {total-2*n} - {m} = {total - 2*n - m} {item}.
+#### {total - 2*n - m}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

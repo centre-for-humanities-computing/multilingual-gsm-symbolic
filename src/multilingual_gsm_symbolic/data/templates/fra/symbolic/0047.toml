@@ -1,0 +1,52 @@
+question = "Lucas a caché 3 douzaines d'œufs dans la cour pour la chasse aux œufs de Pâques. Liam trouve 5 œufs. Sofia en trouve deux fois plus que Liam. Jacob en trouve 2 de moins que Sofia. Et Manon trouve la moitié du nombre de Jacob. Combien d'œufs sont encore cachés dans la cour ?"
+
+answer = """
+Lucas a caché 3*12 = <<3*12=36>>36 œufs.
+Liam trouve 5 œufs.
+Sofia trouve 5*2=<<5*2=10>>10 œufs.
+Jacob trouve 10 - 2 = <<10-2=8>>8 œufs.
+Manon trouve 8*1/2=<<8*1/2=4>>4 œufs.
+Les enfants trouvent au total 5 + 10 + 8 + 4 = <<5+10+8+4=27>>27 œufs.
+Le nombre total d'œufs encore cachés dans la cour est 36 - 27 = <<36-27=9>>9 œufs.
+#### 9
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,Lucas} a caché {n,3} douzaines d'œufs dans la cour pour la chasse aux œufs de Pâques. {name2,Liam} trouve {x,5} œufs. {name3,Sofia} en trouve {mult1_txt,deux fois} plus que {name2,Liam}. {name4,Jacob} en trouve {y,2} de moins que {name3,Sofia}. Et {name5,Manon} trouve {frac_txt,la moitié} du nombre de {name4,Jacob}. Combien d'œufs sont encore cachés dans la cour ?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(["Lucas", "Tom", "Paul", "Léa", "Léo", "Nina", "Mila", "Lola", "Camille", "Manon", "Sarah", "Clara", "Louis", "Jules", "Nathan", "Sacha", "Noah", "Liam", "Théo", "Gabriel", "Mathis", "Martin", "Bruno", "Romain", "Victor", "Sofia"], 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} a caché {n}*12 = <<{n}*12={n*12}>>{n*12} œufs.
+{name2} trouve {x} œufs.
+{name3} trouve {x}*{mult1_val}=<<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} œufs.
+{name4} trouve {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} œufs.
+{name5} trouve {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} œufs.
+Les enfants trouvent au total {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} œufs.
+Le nombre total d'œufs encore cachés dans la cour est {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} œufs.
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

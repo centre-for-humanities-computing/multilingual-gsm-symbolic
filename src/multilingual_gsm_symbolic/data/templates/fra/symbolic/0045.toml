@@ -1,0 +1,44 @@
+question = "Sophie a un parterre de fleurs qui mesure 28,8 m de long. Sophie veut remplir son parterre de fleurs avec des plantes. Ses fleurs feront 30 cm de large, et le guide de jardinage indique qu'il faut planter une fleur tous les 45 cm le long du parterre. Sophie possède déjà 17 fleurs. Chaque plante à fleurs coûte 40 euros en magasin. Combien d'argent Sophie doit-elle dépenser pour remplir son parterre de fleurs ?"
+
+answer = """
+Son parterre de fleurs mesure 28,8 m / 45 cm par plante = <<2880/45=64>>64 plantes nécessaires.
+Sophie doit acheter 64 plantes - 17 plantes = <<64-17=47>>47 plantes à acheter.
+Sophie doit dépenser 47 plantes * 40 euros = <<47*40=1880>>1880 euros.
+#### 1880
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,Sophie} a un parterre de fleurs qui mesure {length,28.8} m de long. {name,Sophie} veut remplir son parterre de fleurs avec des plantes. Ses fleurs feront {plant_width,30} cm de large, et le guide de jardinage indique qu'il faut planter une fleur tous les {space,45} cm le long du parterre. {name,Sophie} possède déjà {owned,17} fleurs. Chaque plante à fleurs coûte {cost,40} {cur,euros} en magasin. Combien d'argent {name,Sophie} doit-elle dépenser pour remplir son parterre de fleurs ?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $length = arange(25, 40, 0.2)
+- $plant_width = range(20, 40)
+- $space = range(20, 60)
+- $owned = range(5, 20)
+- $cost = range(20, 100)
+
+#conditions:
+- plant_width * 3 < length*100
+- plant_width < space
+- is_int(length*100 / space)
+- length*100 / space > owned
+
+#answer: int((length*100 / space - owned) * cost)
+"""
+
+answer_annotated = """
+Son parterre de fleurs mesure {length} m / {space} cm par plante = <<{length*100}/{space}={int(length*100/space)}>>{int(length*100/space)} plantes nécessaires.
+{name} doit acheter {int(length*100/space)} plantes - {owned} plantes = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} plantes à acheter.
+{name} doit dépenser {int(length*100/space)-owned} plantes * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
+#### {int(length*100/space - owned) * cost}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

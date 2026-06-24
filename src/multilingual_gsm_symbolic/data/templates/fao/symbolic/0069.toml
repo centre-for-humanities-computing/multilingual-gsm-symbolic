@@ -1,0 +1,37 @@
+question = "Týsdagin vil Peter venja í tvær ferðir so langa tíð, sum hann gjørdi mánadagin og sunnudagin tilsamans. Sunnudagin vandi hann í 23 minuttir. Mánadagin vandi hann í 16 minuttir. Hvussu nógvar minuttir skal hann venja týsdagin fyri at røkka málinum?"
+
+answer = """
+Sunnudagin og mánadagin vandi hann tilsamans í 39 minuttir tí 23 + 16 = <<23+16=39>>39
+Týsdagin skal hann venja í 78 minuttir tí 39*2=<<39*2=78>>78
+#### 78
+"""
+
+id_orig = 300
+
+id_shuffled = 69
+
+question_annotated = """
+{day3,týsdag}in vil {name,Peter} venja í {mult_txt,tvær ferðir} so langa tíð, sum hann gjørdi {day2,mánadag}in og {day1,sunnudag}in tilsamans. {day1,sunnudag}in vandi hann í {t1,23} minuttir. {day2,mánadag}in vandi hann í {t2,16} minuttir. Hvussu nógvar minuttir skal hann venja {day3,týsdag}in fyri at røkka málinum?
+
+#init:
+- name = sample(names)
+- day1, day2, day3 = sample_sequential(weekdays, 3)
+- $t1 = range(10, 60)
+- $t2 = range(10, 60)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- t1 + t2 > 0
+- (t1 + t2) * mult_val / 60 < 14
+#answer: (t1 + t2) * mult_val
+"""
+
+answer_annotated = """
+{day1}in og {day2}in vandi hann tilsamans í {t1+t2} minuttir tí {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}
+{day3}in skal hann venja í {(t1+t2)*mult_val} minuttir tí {t1+t2}*{mult_val}=<<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val}
+#### {(t1+t2)*mult_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

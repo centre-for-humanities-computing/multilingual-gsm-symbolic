@@ -1,0 +1,45 @@
+question = "Martin correspondait avec 5 personnes. Il a arrêté de correspondre avec 2 d'entre elles. Elles envoient chacune 2 lettres par semaine, longues de 5 pages. Il répond immédiatement. Il peut écrire une page toutes les 6 minutes. Combien d'heures passe-t-il à écrire par semaine ?"
+
+answer = """
+Martin correspond avec 5-2=<<5-2=3>>3 personnes
+Il reçoit donc 3*2=<<3*2=6>>6 lettres par semaine
+Donc il écrit 6*5=<<6*5=30>>30 pages par semaine
+Donc il écrit pendant 30*6=<<30*6=180>>180 minutes par semaine
+Donc il écrit 180/60=<<180/60=3>>3 heures par semaine
+#### 3
+"""
+
+id_orig = 242
+
+id_shuffled = 72
+
+question_annotated = """
+{name,Martin} correspondait avec {n1,5} personnes. Il a arrêté de correspondre avec {n2,2} d'entre elles. Elles envoient chacune {l,2} lettres par semaine, longues de {p,5} pages. Il répond immédiatement. Il peut écrire une page toutes les {t,6} minutes. Combien d'heures passe-t-il à écrire par semaine ?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(5, 15)
+- $n2 = range(1, 5)
+- $l = range(2, 5)
+- $p = range(5, 12)
+- $t = range(4, 15)
+
+#conditions:
+- n2 < n1
+- is_int(((n1 - n2) * l * p * t) / 60)
+
+#answer: ((n1 - n2) * l * p * t) // 60
+"""
+
+answer_annotated = """
+{name} correspond avec {n1}-{n2}=<<{n1}-{n2}={n1-n2}>>{n1-n2} personnes
+Il reçoit donc {n1-n2}*{l}=<<{n1-n2}*{l}={(n1-n2)*l}>>{(n1-n2)*l} lettres par semaine
+Donc il écrit {(n1-n2)*l}*{p}=<<{(n1-n2)*l}*{p}={((n1-n2)*l*p)}>>{((n1-n2)*l*p)} pages par semaine
+Donc il écrit pendant {((n1-n2)*l*p)}*{t}=<<{((n1-n2)*l*p)}*{t}={((n1-n2)*l*p*t)}>>{((n1-n2)*l*p*t)} minutes par semaine
+Donc il écrit {((n1-n2)*l*p*t)}/60=<<{((n1-n2)*l*p*t)}/60={((n1-n2)*l*p*t)//60}>>{((n1-n2)*l*p*t)//60} heures par semaine
+#### {((n1-n2)*l*p*t)//60}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

@@ -1,0 +1,40 @@
+question = "La comète Halley fait le tour du soleil tous les 75 ans. Henri a un père qui a vu la comète à l'âge de 30 ans. Henri a vu la comète pour la deuxième fois quand il avait trois fois l'âge qu'avait son père quand il a vu la comète. Quel âge avait Henri quand il a vu la comète pour la première fois ?"
+
+answer = """
+Henri a vu la comète pour la deuxième fois quand il avait 30 ans * 3= <<30*3=90>>90 ans.
+La comète Halley est visible tous les 75 ans, donc Henri a vu la comète pour la première fois quand il avait 90 ans - 75 ans = <<90-75=15>>15 ans.
+#### 15
+"""
+
+id_orig = 991
+
+id_shuffled = 73
+
+question_annotated = """
+La comète {comet_name,Halley} fait le tour du soleil tous les {orbit_period,75} ans. {name,Henri} a un {relative,père} qui a vu la comète à l'âge de {relative_age,30} ans. {name,Henri} a vu la comète pour la deuxième fois quand il avait {multiple_txt,trois fois} l'âge qu'avait son {relative,père} quand il a vu la comète. Quel âge avait {name,Henri} quand il a vu la comète pour la première fois ?
+
+#init:
+- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])
+- name = sample(names_male)
+- relative = sample(['père', 'grand-père maternel', 'grand-père', 'oncle'])
+- $orbit_period = range(50, 101, 5)
+- $relative_age = range(20, 51)
+- multiple_txt, multiple_val = sample(multi_times)
+
+#conditions:
+- multiple_val * relative_age < 100
+- multiple_val * relative_age > orbit_period
+- is_int(multiple_val * relative_age - orbit_period)
+
+#answer: multiple_val * relative_age - orbit_period
+"""
+
+answer_annotated = """
+{name} a vu la comète pour la deuxième fois quand il avait {relative_age} ans * {multiple_val}= <<{relative_age}*{multiple_val}={relative_age*multiple_val}>>{relative_age*multiple_val} ans.
+La comète {comet_name} est visible tous les {orbit_period} ans, donc {name} a vu la comète pour la première fois quand il avait {relative_age*multiple_val} ans - {orbit_period} ans = <<{relative_age*multiple_val}-{orbit_period}={relative_age*multiple_val-orbit_period}>>{relative_age*multiple_val-orbit_period} ans.
+#### {relative_age*multiple_val-orbit_period}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

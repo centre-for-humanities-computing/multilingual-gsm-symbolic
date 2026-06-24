@@ -1,0 +1,45 @@
+question = "William arbeiðir eina 10-tíma vakt hvønn dag, fimm dagar um vikuna. Hann tjenar 10 kr um tíman og fær ein bonus upp á 300 kr hvørja viku, um fyritøkan klárar seg væl. Hvussu nógvar pengar tjenti William í apríl, um fyritøkan kláraði seg sera væl allan mánaðin?"
+
+answer = """
+Ein dag tjenar William 10 * 10 = <<10*10=100>>100 kr
+Um hann arbeiðir fimm dagar um vikuna, er samlaða talið av døgum allan mánaðin 5*4 = <<5*4=20>>20 dagar.
+Tá ið hann tjenar 100 kr um dagin, er samlaða upphæddin fyri allan mánaðin 20 * 100 = <<20*100=2000>>2000 kr.
+Hann fekk eisini ein 300 * 4 = <<300*4=1200>>1200 kr bonus, tí fyritøkan kláraði seg væl allar vikurnar í apríl.
+Við endan av apríl hevði hann tjent 2000 + 1200 = <<2000+1200=3200>>3200 kr.
+#### 3200
+"""
+
+id_orig = 304
+
+id_shuffled = 60
+
+question_annotated = """
+{name,William} arbeiðir eina {h,10}-tíma vakt hvønn dag, {d_txt,fimm} dagar um vikuna. Hann tjenar {r,10} {cur,kr} um tíman og fær ein bonus upp á {b,300} {cur,kr} hvørja viku, um fyritøkan klárar seg væl. Hvussu nógvar pengar tjenti {name,William} í {month,apríl}, um fyritøkan kláraði seg sera væl allan mánaðin?
+
+#init:
+- name = sample(names_male)
+- month = sample(["januar", "februar", "mars", "apríl", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"])
+- cur = sample(currencies_sym)
+- $h = range(6, 13)
+- d_txt, d_val = range_str(3, 7, 1, numbers)
+- $r = range(8, 31)
+- $b = range(100, 601)
+
+#conditions:
+- is_int(h * r)
+
+#answer: h * r * d_val * 4 + b * 4
+"""
+
+answer_annotated = """
+Ein dag tjenar {name} {h} * {r} = <<{h}*{r}={h*r}>>{h*r} {cur}
+Um hann arbeiðir {d_txt} dagar um vikuna, er samlaða talið av døgum allan mánaðin {d_val}*4 = <<{d_val}*4={d_val*4}>>{d_val*4} dagar.
+Tá ið hann tjenar {h*r} {cur} um dagin, er samlaða upphæddin fyri allan mánaðin {d_val*4} * {h*r} = <<{d_val*4}*{h*r}={d_val*4*h*r}>>{d_val*4*h*r} {cur}.
+Hann fekk eisini ein {b} * 4 = <<{b}*4={b*4}>>{b*4} {cur} bonus, tí fyritøkan kláraði seg væl allar vikurnar í {month}.
+Við endan av {month} hevði hann tjent {d_val*4*h*r} + {b*4} = <<{d_val*4*h*r}+{b*4}={d_val*4*h*r+b*4}>>{d_val*4*h*r+b*4} {cur}.
+#### {d_val*4*h*r+b*4}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

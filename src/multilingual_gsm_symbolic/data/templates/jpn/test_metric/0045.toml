@@ -1,0 +1,8 @@
+question = "パットは長さ111メートルの花壇を持っています。パットはその花壇を植物でいっぱいにしたいと思っています。パットの花は幅12センチメートルまで育ち、園芸の目安では花壇に沿って1.5メートルごとに1本の花を植えるとされています。パットはすでに17本の花を持っています。開花する植物は1本6ドルです。花壇をいっぱいにするために、パットは店でいくら使いますか？"
+answer = "パットの花壇は、111メートル ÷ 1.5メートル/本 = <<111/1.5=74>>74本必要です。\nパットが買う必要があるのは、74本 - 17本 = <<74-17=57>>57本です。\nパットが店で使う金額は、57本 × 6ドル = <<57*6=342>>342ドルです。\n#### 342\n"
+id_orig = 984
+id_shuffled = 45
+question_annotated = "{name,パット}は長さ{length,111}{unit_length,メートル}の花壇を持っています。{name,パット}はその花壇を植物でいっぱいにしたいと思っています。{name,パット}の花は幅{plant_width,12}センチメートルまで育ち、園芸の目安では花壇に沿って{space,1.5}{unit_length,メートル}ごとに1本の花を植えるとされています。{name,パット}はすでに{owned,17}本の花を持っています。開花する植物は1本{cost,6}ドルです。花壇をいっぱいにするために、{name,パット}は店でいくら使いますか？\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['メートル'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)\n"
+answer_annotated = "{name}の花壇は、{length}{unit_length} ÷ {space}{unit_length}/本 = <<{length}/{space}={int(length/space)}>>{int(length/space)}本必要です。\n{name}が買う必要があるのは、{int(length/space)}本 - {owned}本 = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned}本です。\n{name}が店で使う金額は、{int(length/space)-owned}本 × {cost}ドル = <<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}ドルです。\n#### {int((length/space - owned) * cost)}\n"
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated"
+language = "jpn"

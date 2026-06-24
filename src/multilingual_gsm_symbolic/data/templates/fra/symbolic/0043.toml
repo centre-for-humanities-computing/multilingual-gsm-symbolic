@@ -1,0 +1,39 @@
+question = "Daniel est allé à leur ferme pour cueillir des pommes. Le nombre de coccinelles dans le jardin était la moitié du nombre de fourmis. S'il y avait 50 fourmis, calculez le nombre total de coccinelles dans le jardin."
+
+answer = """
+S'il y avait 50 fourmis, le nombre total de coccinelles dans le jardin est 1/2*50 fourmis = 25 coccinelles
+Le nombre total de coccinelles dans le jardin est 25 coccinelles + 50 fourmis = <<25+50=75>>75 coccinelles
+#### 75
+"""
+
+id_orig = 232
+
+id_shuffled = 43
+
+question_annotated = """
+{name,Daniel} est allé à leur {place,ferme} pour cueillir des {fruit,pommes}. Le nombre de {insect1,coccinelles} dans {location,le jardin} était {frac_txt,la moitié} du nombre de {insect2,fourmis}. S'il y avait {n,50} {insect2,fourmis}, calculez le nombre total de {insect1,coccinelles} dans {location,le jardin}.
+
+#init:
+- name = sample(names_male)
+- place = sample(["verger", "jardin", "serre", "jardin ouvrier"])
+- fruit = sample(["fraises", "cerises", "myrtilles", "framboises"])
+- location = sample(["le jardin", "le champ", "le sol"])
+- insect1, insect2 = sample(["fourmis", "scarabées", "coccinelles", "sauterelles", "larves", "mouches", "guêpes"], 2)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(20, 201)
+
+#conditions:
+- is_int(n * frac_val)
+
+#answer: n + int(n * frac_val)
+"""
+
+answer_annotated = """
+S'il y avait {n} {insect2}, le nombre total de {insect1} dans {location} est {frac_val}*{n} {insect2} = {int(n * frac_val)} {insect1}
+Le nombre total de {insect1} dans {location} est {int(n * frac_val)} {insect1} + {n} {insect2} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} {insect1}
+#### {n + int(n * frac_val)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

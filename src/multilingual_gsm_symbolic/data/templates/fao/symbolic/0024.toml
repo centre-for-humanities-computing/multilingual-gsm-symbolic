@@ -1,0 +1,46 @@
+question = "Sambært upplýsingunum um næringarinnihald hevur ein posi av flísum 250 kaloriur fyri hvønn skamt. Um ein 300 gram posi hevur 5 skamtar, hvussu nógv gram kanst tú eta, um títt dagliga kalorimál er 2000 og tú longu hevur fingið tær 1800 kaloriur?"
+
+answer = """
+Um tað samlaða kalorimálið er 2000 og eg havi fingið mær 1800 kaloriur, so havi eg 2000-1800 = <<2000-1800=200>>200 kaloriur eftir at eta
+Um hvør skamtur av flísum hevur 250 kaloriur og eg bara havi 200 kaloriur eftir at eta, so kann eg bara eta 200/250 av einum skamti = 4/5 av einum skamti
+Vit vita eisini, at ein 300 gram posi av flísum hevur 5 skamtar, tí hevur hvør skamtur 300 gram/5 = <<300/5=60>>60 gram
+Um eg bara kann eta 4/5 av einum skamti, so kann eg bara eta 60 gram*4/5 = 48 gram
+#### 48
+"""
+
+id_orig = 43
+
+id_shuffled = 24
+
+question_annotated = """
+Sambært upplýsingunum um næringarinnihald hevur ein posi av {food,flísum} {cal,250} kaloriur fyri hvønn skamt. Um ein {size,300} {unit,gram} posi hevur {n,5} skamtar, hvussu nógv {unit,gram} kanst tú eta, um títt dagliga kalorimál er {total,2000} og tú longu hevur fingið tær {spent,1800} kaloriur?
+
+#init:
+- food = sample(["popcorn", "góðgæti",  "smákøkur"])
+- unit = sample(["gram", "g"])
+- $cal = range(150, 500, 25)
+- $size = range(100, 400, 25)
+- $n = range(4, 8)
+- $total = range(1900, 2500, 5)
+- $spent = range(600, 1900, 25)
+
+#conditions:
+- spent < total
+- is_int( 5 * (total - spent) / cal)
+- divides(size, n)
+- divides(size//n, (total-spent)/cal)
+
+#answer: size//n * (total-spent)/cal
+"""
+
+answer_annotated = """
+Um tað samlaða kalorimálið er {total} og eg havi fingið mær {spent} kaloriur, so havi eg {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} kaloriur eftir at eta
+Um hvør skamtur av {food} hevur {cal} kaloriur og eg bara havi {total-spent} kaloriur eftir at eta, so kann eg bara eta {total-spent}/{cal} av einum skamti = {Fraction((total-spent)/cal)} av einum skamti
+Vit vita eisini, at ein {size} {unit} posi av {food} hevur {n} skamtar, tí hevur hvør skamtur {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit}
+Um eg bara kann eta {Fraction((total-spent)/cal)} av einum skamti, so kann eg bara eta {size//n} {unit}*{Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit}
+#### {size//n * (total-spent)/cal}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

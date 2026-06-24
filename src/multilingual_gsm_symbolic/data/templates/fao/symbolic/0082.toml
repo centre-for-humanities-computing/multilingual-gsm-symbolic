@@ -1,0 +1,46 @@
+question = "Í byrjanini av veitsluni vóru 25 menn og 15 kvinnur. Eftir ein tíma fóru 1/4 av samlaða talinum av fólki. Hvussu nógvar kvinnur eru eftir, um 22 menn vóru eftir til veitsluna?"
+
+answer = """
+Tilsamans vóru 25 menn + 15 kvinnur = <<25+15=40>>40 fólk, sum vóru við í veitsluni.
+Eftir ein tíma fóru 40 fólk*1/4 = <<40*1/4=10>>10 fólk av veitsluni.
+Hetta merkir, at 40 fólk - 10 fólk = <<40-10=30>>30 fólk vóru eftir.
+Av teimum 30, sum vóru eftir, vóru 30 fólk - 22 menn = <<30-22=8>>8 kvinnur.
+#### 8
+"""
+
+id_orig = 320
+
+id_shuffled = 82
+
+question_annotated = """
+Í byrjanini av {event,veitsluni} vóru {m,25} {group1,menn} og {w,15} {group2,kvinnur}. Eftir {t,ein tíma} fóru {frac,1/4} av samlaða talinum av fólki. Hvussu nógvar {group2,kvinnur} eru eftir, um {m_left,22} {group1,menn} vóru eftir til veitsluna?
+
+#init:
+- event = sample(['veitsluni', 'haldinum', 'føðingardegnum', 'ráðstevnuni', 'samkomuni', 'tiltakinum'])
+- group1, group2 = sample([ "lærarar", "læknar", "verkfrøðingar", "sjúkrarøktarfrøðingar", "listafólk", "advokatar",], 2)
+- t = sample(['ein tíma', 'tveir tímar', 'ein hálvan tíma', '45 minuttir'])
+- $frac = sample(fractions)
+- $m = range(20, 75)
+- $w = range(10, 80)
+- $m_left = range(15, 35)
+
+#conditions:
+- m_left < m
+- is_int((m + w) * frac)
+- (m + w) * (1-frac) > m_left
+- m + w - (m + w) * frac > m_left
+
+#answer: m + w - int((m + w) * frac) - m_left
+"""
+
+answer_annotated = """
+Tilsamans vóru {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} fólk, sum vóru við í {event}.
+Eftir {t} fóru {m+w} fólk*{frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} fólk av {event}.
+Hetta merkir, at {m+w} fólk - {int((m+w)*frac)} fólk = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} fólk vóru eftir.
+Av teimum {m+w-int((m+w)*frac)}, sum vóru eftir, vóru {m+w-int((m+w)*frac)} fólk - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {group2}.
+#### {m+w-int((m+w)*frac)-m_left}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

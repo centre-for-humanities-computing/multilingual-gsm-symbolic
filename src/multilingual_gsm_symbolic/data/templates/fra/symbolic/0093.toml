@@ -1,0 +1,46 @@
+question = "Quand l'eau est froide, Rasmus nage un km en 16 minutes. Quand l'eau est chaude, Rasmus nage un km en 2 minutes de plus que deux fois ce temps. Combien de temps de plus faut-il à Rasmus pour nager 3 km un jour chaud qu'un jour froid ?"
+
+answer = """
+Eau froide km = <<16=16>>16 minutes
+Eau chaude km = 2+2*16=34 minutes
+3 km en eau froide : 3*16=<<3*16=48>>48 minutes
+3 km en eau chaude : 3*34=<<3*34=102>>102 minutes
+Rasmus met 102-48=<<102-48=54>>54 minutes de plus
+#### 54
+"""
+
+id_orig = 554
+
+id_shuffled = 93
+
+question_annotated = """
+Quand l'eau est froide, {name,Rasmus} nage un {unit,km} en {t1,16} minutes. Quand l'eau est chaude, {name,Rasmus} nage un {unit,km} en {n,2} minutes de plus que {mult_txt,deux fois} ce temps. Combien de temps de plus faut-il à {name,Rasmus} pour nager {d,3} {unit,km} un jour chaud qu'un jour froid ?
+
+#init:
+- name = sample(names)
+- unit = sample(['km', 'm'])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- mult_txt, mult_val = sample(multi_times)
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+
+answer_annotated = """
+Eau froide {unit} = <<{t1}={t1}>>{t1} minutes
+Eau chaude {unit} = {n}+{mult_val}*{t1}={n + mult_val * t1} minutes
+{d} {unit} en eau froide : {d}*{t1}=<<{d}*{t1}={d*t1}>>{d*t1} minutes
+{d} {unit} en eau chaude : {d}*{n + mult_val * t1}=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minutes
+{name} met {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} minutes de plus
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

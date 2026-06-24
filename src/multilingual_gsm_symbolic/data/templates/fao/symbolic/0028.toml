@@ -1,0 +1,46 @@
+question = "Eitt sjúkrahús hevur pláss fyri 1000 seingjum, har 1/5 er upptikið. Vegna koronuútbrotinum verða 50 sjúklingar innlagdir á sjúkrahúsið hvønn dag. Rokna samlaða talið av leysum seingjum á sjúkrahúsinum eftir tvær vikur."
+
+answer = """
+Um 1/5 av samlaðu seingjarkapasitetinum er upptikið, merkir tað, at 1/5 * 1000 = <<1000*1/5=200>>200 seingir hava sjúklingar, sum brúka teir.
+Samlaða talið av seingjum á sjúkrahúsinum uttan nýggjar innleggingar er 1000 seingir - 200 seingir = <<1000-200=800>>800 seingir.
+Um 50 fólk verða innløgd hvønn dag, er samlaða talið av sjúklingum á sjúkrahúsinum eftir eina viku 50 sjúklingar/dag * 7 dagar/viku = 350 sjúklingar.
+Eftir tvær vikur er samlaða talið av sjúklingum, sum eru innlagdir á sjúkrahúsinum, 350 sjúklingar/viku*2 vikur = <<350*2=700>>700 sjúklingar, sum hvør brúkar eina seing.
+Um tað vóru 800 leysir seingir á sjúkrahúsinum áðrenn nýggju innleggingarnar, minkar samlaða talið til 800 seingir - 700 seingir = <<800-700=100>>100 leysir seingir.
+#### 100
+"""
+
+id_orig = 955
+
+id_shuffled = 28
+
+question_annotated = """
+{facility_article, eitt} {facility, sjúkrahús} hevur pláss fyri {total, 1000} {item_plural, seingjum}, har {frac, 1/5} er upptikið. Vegna {event, koronuútbrotinum} verða {daily, 50} sjúklingar innlagdir á {facility_definite, sjúkrahúsið} hvønn dag. Rokna samlaða talið av leysum {item_plural, seingjum} á {facility_definite, sjúkrahúsinum} eftir {period_txt,two} vikur.
+
+#init:
+- facility, facility_article, facility_definite = sample([("sjúkrahús", "eitt", "sjúkrahúsið"), ("klinikk", "ein", "klinikkin"), ("heilsumiðstøð", "eitt", "heilsumiðstøðin"), ("røktarheim", "eitt", "røktarheimið")])
+- item, item_plural = sample([("seing","seingir"), ("rúm","rúm"), ("deild","deildir")])
+- event = sample(["koronuútbrotinum", "influensatíðini", "einari náttúruvanlukku", "einari stórari vanlukku", "farsóttini"])
+- $total = range(500, 2000, 100)
+- $frac = sample(fractions)
+- $daily = range(20, 100, 5)
+- period_txt, period_val = range_str(2, 5, 1, numbers)
+
+#conditions:
+- is_int(total * frac)
+- total * frac + daily * period_val * 7 < total
+
+#answer: total - (total * frac + daily * period_val * 7)
+"""
+
+answer_annotated = """
+Um {frac} av samlaðu kapasitetinum av {item_plural} er upptikið, merkir tað, at {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} hava sjúklingar, sum brúka teir.
+Samlaða talið av {item_plural} á {facility_definite} uttan nýggjar innleggingar er {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
+Um {daily} fólk verða innløgd hvønn dag, er samlaða talið av sjúklingum á {facility_definite} eftir eina viku {daily} sjúklingar/dag * 7 dagar/viku = {daily*7} sjúklingar.
+Eftir {period_txt} vikur er samlaða talið av sjúklingum, sum eru innlagdir á {facility_definite} {daily*7} sjúklingar/viku*{period_val} vikur = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} sjúklingar, sum hvør brúkar eina {item}.
+Um tað vóru {total-int(total*frac)} leysar {item_plural} á {facility_definite} áðrenn nýggju innleggingarnar, minkar samlaða talið til {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} leysar {item_plural}.
+#### {total - (total * frac + daily * period_val * 7)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

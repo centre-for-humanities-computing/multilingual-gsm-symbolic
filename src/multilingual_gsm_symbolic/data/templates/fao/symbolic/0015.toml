@@ -1,0 +1,42 @@
+question = "Hundurin hjá Julie hevur 8 valpar, og 3 av teimum hava blettir. Hundurin hjá Bo hevur 12 valpar, og 4 av teimum hava blettir. Hvør nógv prosent av øllum valpunum hava blettir?"
+
+answer = """
+Fyrst finnur tú samlaða talið av valpum: 8 valpar + 12 valpar = <<8+12=20>>20 valpar
+Síðani finnur tú samlaða talið av valpum við blettum: 3 valpar + 4 valpar = <<3+4=7>>7 valpar
+Síðani býrt tú talið av blettutum valpum við samlaða talinum av valpum og gongur við 100% fyri at finna prosentpartin av valpum við blettum: 7 valpar / 20 valpar * 100% = 35%
+#### 35
+"""
+
+id_orig = 458
+
+id_shuffled = 15
+
+question_annotated = """
+Hundurin hjá {name1, Julie} hevur {n1, 8} valpar, og {k1,3} av teimum hava blettir. Hundurin hjá {name2, Bo} hevur {n2,12} valpar, og {k2,4} av teimum hava blettir. Hvør nógv prosent av øllum valpunum hava blettir?
+
+#init:
+- name1, name2 = sample(names, 2)
+- $n1 = range(5, 16)
+- $n2 = range(4, 20)
+- $k1 = range(2, 12)
+- $k2 = range(2, 12)
+
+#conditions:
+- k1 < n1
+- k2 < n2
+- divides(n1 + n2, k1 + k2)
+- is_int(100 * (k1+k2) / (n1+n2))
+
+#answer: int(100 * (k1+k2) / (n1+n2))
+"""
+
+answer_annotated = """
+Fyrst finnur tú samlaða talið av valpum: {n1} valpar + {n2} valpar = <<{n1}+{n2}={n1+n2}>>{n1+n2} valpar
+Síðani finnur tú samlaða talið av valpum við blettum: {k1} valpar + {k2} valpar = <<{k1}+{k2}={k1+k2}>>{k1+k2} valpar
+Síðani býrt tú talið av blettutum valpum við samlaða talinum av valpum og gongur við 100% fyri at finna prosentpartin av valpum við blettum: {k1+k2} valpar / {n1+n2} valpar * 100% = {int(100 * (k1+k2) / (n1+n2))}%
+#### {int(100 * (k1+k2) / (n1+n2))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"
