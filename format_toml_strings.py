@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 import argparse
-from pathlib import Path
 import tomllib
+from pathlib import Path
+
 import tomlkit
 
 
@@ -45,9 +46,7 @@ def rewrite_toml(path: Path):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Rewrite TOML files using multiline strings for readability."
-    )
+    parser = argparse.ArgumentParser(description="Rewrite TOML files using multiline strings for readability.")
     parser.add_argument(
         "directory",
         help="Directory containing TOML files",

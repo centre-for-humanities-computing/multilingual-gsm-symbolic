@@ -63,6 +63,7 @@ class AnnotatedQuestion:
     answer_annotated: str
     language: str = "eng"
     creation: str = ""
+
     def __post_init__(self) -> None:
         constrained_derived = [v for v in self.derived_variables if is_variable_mentioned(v, self.conditions)]
         if constrained_derived:
@@ -276,13 +277,14 @@ class AnnotatedQuestion:
                         evaluable_dep_matches = [
                             all(
                                 value == assignments[var] or str(value) == str(assignments[var])
-                                for var, value in self._assign_from_ast(derived_vars, derived_ast, candidate_env).items()
+                                for var, value in self._assign_from_ast(
+                                    derived_vars, derived_ast, candidate_env
+                                ).items()
                                 if var in assignments
                             )
                             for derived_vars, derived_ast in dependent_defaults
-                            if (
-                                {node.id for node in ast.walk(derived_ast) if isinstance(node, ast.Name)} & init_vars
-                            ) <= set(candidate_env)
+                            if ({node.id for node in ast.walk(derived_ast) if isinstance(node, ast.Name)} & init_vars)
+                            <= set(candidate_env)
                         ]
                         dep_defaults_ok = not evaluable_dep_matches or any(evaluable_dep_matches)
                         if known_vars_ok and dep_defaults_ok:

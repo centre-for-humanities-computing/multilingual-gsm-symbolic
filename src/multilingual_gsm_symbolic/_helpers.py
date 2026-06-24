@@ -156,6 +156,7 @@ def _make_arange_sample(rng: Random):
 
     return arange_sample
 
+
 # Ukrainian specific
 def ukr_month_form_on_number(num):
     num = abs(num)
@@ -171,6 +172,7 @@ def ukr_month_form_on_number(num):
         return "місяці"
     else:
         return "місяців"
+
 
 def ukr_plural_measurements(number, *forms):
     """
@@ -192,21 +194,24 @@ def ukr_plural_measurements(number, *forms):
     else:
         return forms[2]
 
+
 def ukr_weekday_to_when(weekday):
     """Obtain form for: У ....; У вівторок, У середу і тд"""
     if weekday in ["понеділок", "вівторок", "четвер"]:
         return weekday
-    if weekday =="середа":
+    if weekday == "середа":
         return "середу"
-    if weekday =="п’ятниця":
+    if weekday == "п’ятниця":
         return "п’ятницю"
-    if weekday =="субота":
+    if weekday == "субота":
         return "суботу"
-    if weekday =="неділя":
+    if weekday == "неділя":
         return "неділю"
+
 
 def to_title(text):
     return text[0].upper() + text[1:]
+
 
 def ensure_int(value: Any) -> int:
     """Convert a value to int if it's a float representing an integer, else return an error"""
