@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas"]
 # ///
 """Measure whether every number in each prompt appears in the model response.
 
@@ -16,7 +16,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import math
 import re
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -28,36 +27,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 from inspect_ai.log import read_eval_log
 from matplotlib.ticker import PercentFormatter
+from plot_config import (
+    HUMAN_VERIFIED_LANGUAGES,
+    LANGUAGE_LABELS,
+    LANGUAGE_ORDER,
+    LANGUAGE_SPEAKERS,
+    language_order,
+    model_sort_key,
+)
+from visualizegrid import select_logs
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "prompt_number_coverage"
 NUMBER_RE = re.compile(r"(?<![\w.])[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?!\w|\.\d)")
-LANGUAGE_LABELS = {
-    "dan": "Danish",
-    "deu": "German",
-    "eng": "English",
-    "fra": "French",
-    "isl": "Icelandic",
-    "ita": "Italian",
-    "nob": "Norwegian Bokmal",
-    "por": "Portuguese",
-    "rus": "Russian",
-    "spa": "Spanish",
-    "ukr": "Ukrainian",
-    "zho": "Chinese",
-}
-LANGUAGE_SPEAKERS = {
-    "zho": 940_000_000,
-    "eng": 380_000_000,
-    "rus": 150_000_000,
-    "deu": 100_000_000,
-    "dan": 6_000_000,
-    "nob": 5_000_000,
-    "isl": 370_000,
-}
-HUMAN_VERIFIED_LANGUAGES = {"eng", "dan", "rus", "zho"}
-
 plt.rcParams.update(
     {
         "axes.spines.right": False,
@@ -250,25 +233,6 @@ def model_name(raw_model: str) -> str:
     return raw_model.rstrip("/").split("/")[-1]
 
 
-def model_sort_key(raw_model: str) -> tuple[int, float, str]:
-    """Keep common model families and sizes together in the heatmap."""
-    name = model_name(raw_model)
-    lower = name.lower()
-    family_order = 4
-    if "qwen" in lower:
-        family_order = 0
-    elif "llama" in lower:
-        family_order = 1
-    elif "gemma" in lower:
-        family_order = 2
-    elif raw_model.lower().startswith("openai/") or lower.startswith(("gpt-", "o1", "o3", "o4")):
-        family_order = 3
-
-    size_match = re.search(r"(?<![\d.])(\d+(?:\.\d+)?)\s*b(?:\b|[-_])", lower)
-    size = float(size_match.group(1)) if size_match else math.inf
-    return family_order, size, name
-
-
 def format_speaker_count(count: int) -> str:
     if count >= 1_000_000:
         return f"{count / 1_000_000:g}M"
@@ -291,17 +255,14 @@ def number_coverage_grid(
     for row in rows:
         model = str(row.get("model") or "").strip()
         language = str(row.get("language") or "").strip()
-        if not model or not language:
+        if not model or language not in LANGUAGE_ORDER:
             continue
         cell = counts[(model, language)]
         cell[0] += int(bool(row["all_prompt_numbers_present"]))
         cell[1] += 1
 
     models = sorted({model for model, _ in counts}, key=model_sort_key)
-    languages = sorted(
-        {language for _, language in counts},
-        key=lambda language: (-LANGUAGE_SPEAKERS.get(language, -1), language),
-    )
+    languages = language_order(language for _, language in counts)
     rates = np.full((len(models), len(languages)), np.nan)
     samples = np.zeros((len(models), len(languages)), dtype=int)
     for model_index, model in enumerate(models):
@@ -440,7 +401,9 @@ def main() -> None:
         workers = resolve_worker_count(args.workers, len(logs))
     except ValueError as error:
         parser.error(str(error))
-    print(f"Analyzing {len(logs)} log(s) with {workers} worker(s).")
+    selected = select_logs(logs, include_incomplete=False, workers=workers)
+    logs = [path for path, _header in selected]
+    print(f"Analyzing {len(logs)} successful deduplicated log(s) with {workers} worker(s).")
 
     summaries: list[dict[str, Any]] = []
     sample_rows: list[dict[str, Any]] = []

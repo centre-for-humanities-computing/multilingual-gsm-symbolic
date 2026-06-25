@@ -26,33 +26,15 @@ from inspect_ai.log import read_eval_log
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from matplotlib.ticker import PercentFormatter
+from plot_config import HUMAN_VERIFIED_LANGUAGES, LANGUAGE_LABELS, language_order, model_sort_key
 from scipy.stats import norm
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "language_ridgeline"
 
-LANGUAGE_LABELS = {
-    "eng": "English",
-    "dan": "Danish",
-    "deu": "German",
-    "nob": "Norwegian Bokmal",
-    "isl": "Icelandic",
-    "rus": "Russian",
-    "zho": "Chinese",
-}
 COMMON_CRAWL_LANGUAGE_CODES = {"nob": "nor"}
 DEFAULT_COMMON_CRAWL_CSV = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "languages.csv"
-LANGUAGE_SPEAKERS = {
-    "zho": 940_000_000,
-    "eng": 380_000_000,
-    "rus": 150_000_000,
-    "deu": 100_000_000,
-    "dan": 6_000_000,
-    "nob": 5_000_000,
-    "isl": 370_000,
-}
-HUMAN_VERIFIED_LANGUAGES = {"eng", "dan"}
 
 SYNTHETIC_COLOR = "#173B75"
 SYNTHETIC_FILL = "#AFC0DD"
@@ -610,12 +592,6 @@ def write_summary(stats: list[PlotStats], out_csv: Path) -> None:
     ).to_csv(out_csv, index=False)
 
 
-def language_order(available: set[str], requested: list[str] | None) -> list[str]:
-    if requested:
-        return requested
-    return sorted(available, key=lambda language: (-LANGUAGE_SPEAKERS.get(language, -1), language))
-
-
 def main() -> None:
     cpu_count = os.cpu_count() or 1
     parser = argparse.ArgumentParser(description=__doc__)
@@ -686,7 +662,7 @@ def main() -> None:
     if problems.empty:
         raise SystemExit("No scored samples found in the selected logs.")
 
-    models = sorted(problems["model"].unique(), key=lambda model: (model_family(model), model.lower()))
+    models = sorted(problems["model"].unique(), key=model_sort_key)
     all_languages = language_order(set(problems["language"].unique()), args.languages)
     common_crawl_log10_pages = load_common_crawl_log10_pages(args.common_crawl_csv, all_languages)
     print(f"Models ({len(models)}): {', '.join(models)}")

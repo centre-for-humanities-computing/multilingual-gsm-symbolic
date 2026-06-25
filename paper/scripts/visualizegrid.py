@@ -37,6 +37,17 @@ from inspect_ai.log import read_eval_log
 from matplotlib.colors import Normalize
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
+from plot_config import (
+    FAMILY_ORDER,
+    HUMAN_VERIFIED_LANGUAGES,
+    LANGUAGE_LABELS,
+    LANGUAGE_SPEAKERS,
+    language_order,
+    model_family,
+    model_size_b,
+    model_sort_key,
+    ordered_families,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -74,57 +85,35 @@ MODEL_CATALOG = {
     "apertus-8b-instruct-2509": ModelInfo("Apertus", 8),
 }
 
-LANGUAGE_LABELS = {
-    "dan": "Danish",
-    "deu": "German",
-    "eng": "English",
-    "fra": "French",
-    "isl": "Icelandic",
-    "ita": "Italian",
-    "nob": "Norwegian Bokmal",
-    "por": "Portuguese",
-    "rus": "Russian",
-    "spa": "Spanish",
-    "ukr": "Ukrainian",
-    "zho": "Chinese",
-}
-
-LANGUAGE_SPEAKERS = {
-    "zho": 940_000_000,
-    "eng": 380_000_000,
-    "rus": 150_000_000,
-    "deu": 100_000_000,
-    "dan": 6_000_000,
-    "nob": 5_000_000,
-    "isl": 370_000,
-}
-
-HUMAN_VERIFIED_LANGUAGES = {"eng", "dan", "rus", "zho"}
-
 FAMILY_COLORS = {
     "Qwen2.5": "#7B2CBF",
+    "Qwen3": "#5A189A",
+    "Qwen": "#9D4EDD",
+    "DeepSeek-R1-Distill-Qwen": "#9D4EDD",
     "Llama 3": "#E76F51",
+    "DeepSeek-R1-Distill-Llama": "#F4A261",
     "OLMo 2": "#D62828",
     "Gemma 3": "#2A9D8F",
+    "EuroLLM": "#118AB2",
     "Apertus": "#6A994E",
+    "BLOOMZ": "#BC6C25",
+    "Pythia": "#3D405B",
     "OpenAI": "#457B9D",
-}
-
-FAMILY_ORDER = {
-    "Qwen2.5": 0,
-    "Llama 3": 1,
-    "Gemma 3": 2,
-    "OLMo 2": 3,
-    "Apertus": 4,
-    "OpenAI": 5,
 }
 
 FAMILY_MARKERS = {
     "Qwen2.5": "o",
+    "Qwen3": "v",
+    "Qwen": ">",
+    "DeepSeek-R1-Distill-Qwen": "h",
     "Llama 3": "s",
+    "DeepSeek-R1-Distill-Llama": "p",
     "Gemma 3": "^",
     "OLMo 2": "D",
+    "EuroLLM": "<",
     "Apertus": "P",
+    "BLOOMZ": "*",
+    "Pythia": "d",
     "OpenAI": "X",
 }
 OUTLIER_LABEL_COUNT = 5
@@ -160,29 +149,14 @@ def infer_model_info(raw_model: str) -> ModelInfo:
     if catalog_info:
         return catalog_info
 
-    lower = name.lower()
-    if "qwen" in lower:
-        family = "Qwen2.5" if "2.5" in lower else "Qwen"
-    elif "llama" in lower:
-        family = "Llama 3" if re.search(r"llama[-_. ]?3", lower) else "Llama"
-    elif "gemma" in lower:
-        family = "Gemma 3" if re.search(r"gemma[-_. ]?3", lower) else "Gemma"
-    elif "olmo" in lower:
-        family = "OLMo 2" if re.search(r"olmo[-_. ]?2", lower) else "OLMo"
-    elif "apertus" in lower:
-        family = "Apertus"
-    elif raw_model.lower().startswith("openai/") or lower.startswith(("gpt-", "o1", "o3", "o4")):
-        family = "OpenAI"
-    else:
-        family = name.split("-", 1)[0].split("_", 1)[0].split(".", 1)[0]
-
-    size_match = re.search(r"(?<![\d.])(\d+(?:\.\d+)?)\s*b(?:\b|[-_])", lower)
-    params_b = float(size_match.group(1)) if size_match else None
+    family = model_family(raw_model)
+    size = model_size_b(raw_model)
+    params_b = None if math.isinf(size) else size
     return ModelInfo(family, params_b)
 
 
 def parse_task(task: str) -> tuple[str, str] | None:
-    matches = re.findall(r"(original|synthetic)[_-]([a-z]{3})", task.lower())
+    matches = re.findall(r"(original|synthetic)[_-]([a-z]{3}(?:_[a-z]+)?)", task.lower())
     return matches[-1] if matches else None
 
 
@@ -433,10 +407,7 @@ def summarize(samples: pd.DataFrame) -> pd.DataFrame:
 
 
 def model_order(summary: pd.DataFrame) -> list[str]:
-    models = summary[["model", "family", "params_b"]].drop_duplicates().copy()
-    models["family_order"] = models["family"].map(FAMILY_ORDER).fillna(99)
-    models["size_order"] = models["params_b"].fillna(math.inf)
-    return models.sort_values(["family_order", "size_order", "model"])["model"].tolist()
+    return sorted(summary["model"].dropna().unique(), key=model_sort_key)
 
 
 def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
@@ -446,13 +417,6 @@ def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     return ordered.sort_values(["family_order", "size_order", "model", "language", "split"]).drop(
         columns=["family_order", "size_order"]
     )
-
-
-def ordered_families(families: pd.Series | set[str] | list[str]) -> list[str]:
-    unique_families = set(families)
-    known = [family for family in FAMILY_ORDER if family in unique_families]
-    extra = sorted(unique_families - set(FAMILY_ORDER))
-    return known + extra
 
 
 def format_speaker_count(count: int) -> str:
@@ -531,10 +495,7 @@ def annotated_heatmap(
 
 def plot_heatmaps(summary: pd.DataFrame, out: Path) -> None:
     order = model_order(summary)
-    languages = sorted(
-        summary["language"].unique(),
-        key=lambda language: (-LANGUAGE_SPEAKERS.get(language, -1), language),
-    )
+    languages = language_order(summary["language"].unique())
 
     available_splits = [split for split in ("original", "synthetic") if split in set(summary["split"])]
 
@@ -717,10 +678,7 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
     """Plot each language's accuracy difference from the same model's English score."""
     order = model_order(summary)
     splits = [split for split in ("original", "synthetic") if split in set(summary["split"])]
-    languages = sorted(
-        (language for language in summary["language"].unique() if language != "eng"),
-        key=lambda language: (-LANGUAGE_SPEAKERS.get(language, -1), language),
-    )
+    languages = language_order(language for language in summary["language"].unique() if language != "eng")
 
     panels: list[tuple[str, pd.DataFrame]] = []
     for split in splits:
@@ -867,10 +825,7 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
         return False
 
     order = model_order(summary)
-    languages = sorted(
-        summary["language"].unique(),
-        key=lambda language: (-LANGUAGE_SPEAKERS.get(language, -1), language),
-    )
+    languages = language_order(summary["language"].unique())
     paired = summary.pivot_table(
         index="model",
         columns=["split", "language"],
@@ -960,7 +915,7 @@ def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
     )
 
     markers = ["o", "s", "^", "D", "P", "X", "v", "<", ">"]
-    languages = sorted(scaled["language"].unique(), key=lambda x: (x != "eng", x))
+    languages = language_order(scaled["language"].unique(), english_first=True)
     legend_handles: list[Any] = []
     legend_labels: list[str] = []
 

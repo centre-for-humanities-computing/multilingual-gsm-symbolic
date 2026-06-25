@@ -19,16 +19,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from inspect_ai.log import read_eval_log
+from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, language_order
 from scipy.stats import gaussian_kde
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
-
-# ── colours: flag / football kit inspired ────────────────────────────────────
-# England: Union Jack navy   Denmark: Danish red   Norwegian: Norwegian blue
-_LANG_COLOR = {"eng": "#012169", "dan": "#C60C30", "nob": "#002868", "deu": "#FFCE00", "isl": "#003897"}
-_LANG_LABEL = {"eng": "English", "dan": "Danish", "nob": "Norwegian Bokmål", "deu": "German", "isl": "Icelandic"}
 
 plt.rcParams.update(
     {
@@ -96,7 +92,7 @@ def build_tables(splits: dict[str, pd.DataFrame]) -> dict[str, dict]:
 
 
 def plot_distribution(tables: dict, out: Path) -> None:
-    langs = [l for l in tables if "synthetic" in tables[l]]
+    langs = language_order(l for l in tables if "synthetic" in tables[l])
     fig, axes = plt.subplots(1, len(langs), figsize=(5.5 * len(langs), 4.5), sharey=False)
     if len(langs) == 1:
         axes = [axes]
@@ -105,7 +101,7 @@ def plot_distribution(tables: dict, out: Path) -> None:
     n_sets = 500
 
     for ax, lang in zip(axes, langs):
-        color = _LANG_COLOR.get(lang, "steelblue")
+        color = LANGUAGE_COLORS.get(lang, "steelblue")
         syn = tables[lang]["synthetic"].copy()
 
         # Build lookup: source_id → array of per-problem accuracies
@@ -162,7 +158,7 @@ def plot_distribution(tables: dict, out: Path) -> None:
 
         ax.set_xlabel("Mean accuracy")
         ax.set_ylabel("Density")
-        ax.set_title(_LANG_LABEL.get(lang, lang))
+        ax.set_title(LANGUAGE_LABELS.get(lang, lang))
         ax.legend(fontsize=8)
 
     fig.suptitle("Performance degradation across languages", y=1.02)
@@ -186,10 +182,11 @@ def plot_by_steps(tables: dict, out: Path) -> None:
 
     rng = np.random.default_rng(42)
 
-    for lang, splits in tables.items():
+    for lang in language_order(tables):
+        splits = tables[lang]
         if "synthetic" not in splits:
             continue
-        color = _LANG_COLOR.get(lang, "grey")
+        color = LANGUAGE_COLORS.get(lang, "grey")
         df = splits["synthetic"]
         grouped = df.groupby("steps")["correct"]
         stats = grouped.agg(["mean", "count"]).reset_index()
@@ -211,7 +208,7 @@ def plot_by_steps(tables: dict, out: Path) -> None:
             linewidth=2,
             marker="o",
             markersize=5,
-            label=f"{_LANG_LABEL.get(lang, lang)} (synthetic)",
+            label=f"{LANGUAGE_LABELS.get(lang, lang)} (synthetic)",
             zorder=3,
         )
         ax.fill_between(
