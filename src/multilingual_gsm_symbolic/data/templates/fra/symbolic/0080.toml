@@ -1,0 +1,49 @@
+question = "Les automates vendent des chips pour 40 centimes et des barres de bonbons pour 75 centimes. George a dépensé 5 euros et a obtenu 3 paquets de chips et il lui restait 1 % de son argent en monnaie. Combien a-t-il acheté de barres de bonbons ?"
+
+answer = """
+George a obtenu 0,05 euros en monnaie car 5*1/100 = <<5*1/100=0,05>>0,05
+George a dépensé 4,95 euros car 5 - 0,05 = <<5-0,05=4,95>>4,95
+George a dépensé 1,2 euros en chips car 3*0,4 = <<3*0,4=1,2>>1,2
+George a dépensé 3,75 euros en barres de bonbons car 4,95 - 1,2 = <<4,95-1,2=3,75>>3,75
+George a acheté 5 barres de bonbons car 3,75 / 0,75 = <<5=5>>5
+#### 5
+"""
+
+id_orig = 434
+
+id_shuffled = 80
+
+question_annotated = """
+Les automates vendent des {item1,chips} pour {price1,40} centimes et des {item2,barres de bonbons} pour {price2,75} centimes. {name,George} a dépensé {total,5} {cur,euros} et a obtenu {n1,3} paquets de {item1,chips} et il lui restait {p,1} % de son argent en monnaie. Combien a-t-il acheté de {item2,barres de bonbons} ?
+
+#init:
+- name = sample(names_male)
+- item1, item2 = sample(['barres chocolatées', 'chewing-gums', 'cookies', 'muffins', 'crackers'], 2)
+- cur = sample(currencies_sym)
+- $price1 = range(25, 100, 5)
+- $price2 = range(50, 150, 5)
+- $total = range(5, 21)
+- $n1 = range(1, 10)
+- $p = range(1, 10)
+
+#conditions:
+- price2 > price1
+- is_int(total * p / 100)
+- total * (100 - p) > n1 * price1
+- (total * (100 - p) - n1 * price1) % price2 == 0
+
+#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)
+"""
+
+answer_annotated = """
+{name} a obtenu {total * p / 100} {cur} en monnaie car {total}*{p}/100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}
+{name} a dépensé {total * (100 - p) / 100} {cur} car {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}
+{name} a dépensé {n1 * price1 / 100} {cur} en {item1} car {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}
+{name} a dépensé {(total * (100 - p) / 100 - n1 * price1 / 100)} {cur} en {item2} car {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}
+{name} a acheté {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} {item2} car {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}={ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}>>{ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+#### {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

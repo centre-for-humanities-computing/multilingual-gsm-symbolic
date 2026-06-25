@@ -1,0 +1,47 @@
+question = "Antoine va au magasin pour acheter du café. La marque de café qu'il achète habituellement coûte 35 euros par kg. Il a dû acheter une marque plus chère qui coûtait 20 % de plus, car sa marque préférée était en rupture de stock. Il décide d'acheter du café pour une semaine et il utilise 1 kg de café par jour. Il a aussi décidé d'acheter un donut à 15 euros. Combien a coûté le tout ?"
+
+answer = """
+Le café qu'il a acheté coûtait 35*0,2=<<35*0,2=7>>7 euros de plus par kg que ce qu'il achète habituellement
+Donc cela coûtait 35+7=<<35+7=42>>42 euros par kg
+Il utilise 1*7=<<1*7=7>>7 kg de café par semaine
+Donc il a payé 42*7=<<42*7=294>>294 euros pour le café
+Cela signifie que sa facture totale était de 294+15=<<294+15=309>>309 euros
+#### 309
+"""
+
+id_orig = 661
+
+id_shuffled = 42
+
+question_annotated = """
+{name,Antoine} va au magasin pour acheter du {item,café}. La marque de {item,café} qu'il achète habituellement coûte {price,35} {cur,euros} par {unit,kg}. Il a dû acheter une marque plus chère qui coûtait {percent,20} % de plus, car sa marque préférée était en rupture de stock. Il décide d'acheter du {item,café} pour une semaine et il utilise {usage,1} {unit,kg} de {item,café} par jour. Il a aussi décidé d'acheter un {extra_item,donut} à {extra_price,15} {cur,euros}. Combien a coûté le tout ?
+
+#init:
+- name = sample(names_male)
+- item, item_definite = sample([("café", "le café"),("thé", "le thé"), ("sucre", "le sucre"), ("cacao", "le cacao"), ("riz", "le riz")])
+- cur = sample(currencies_sym)
+- unit = sample(["kg", "g"])
+- extra_item = sample(['cookie', 'muffin', 'bagel'])
+- $price = range(20, 160)
+- $percent = range(10, 50, 5)
+- $usage = range(1, 3)
+- $extra_price = range(8, 35)
+
+#conditions:
+- is_int(price * percent / 100)
+
+#answer: (price + price * percent / 100) * 7 * usage + extra_price
+"""
+
+answer_annotated = """
+{item_definite} qu'il a acheté coûtait {price}*{percent/100}=<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {cur} de plus par {unit} que ce qu'il achète habituellement
+Donc cela coûtait {price}+{price*percent//100}=<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} {cur} par {unit}
+Il utilise {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {unit} de {item} par semaine
+Donc il a payé {price+price*percent/100}*{usage*7}=<<{price+price*percent/100}*{usage*7}={int((price+price*percent/100)*usage*7)}>>{int((price+price*percent/100)*usage*7)} {cur} pour {item_definite}
+Cela signifie que sa facture totale était de {int((price+price*percent/100)*usage*7)}+{extra_price}=<<{int((price+price*percent/100)*usage*7)}+{extra_price}={int((price+price*percent/100)*usage*7)+extra_price}>>{int((price+price*percent/100)*usage*7)+extra_price} {cur}
+#### {int((price+price*percent/100)*usage*7)+extra_price}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

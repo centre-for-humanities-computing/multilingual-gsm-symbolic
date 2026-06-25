@@ -1,0 +1,45 @@
+question = "Maria achète 8 actions d'un titre à 8 euros chacune. Le cours de l'action augmente de 50 % la première année où Maria les possède, puis baisse de 25 % la deuxième année. Quelle est la valeur finale de toutes ses actions ?"
+
+answer = """
+D'abord, nous trouvons la valeur totale initiale de son achat : 8 actions * 8 euros/action = <<8*8=64>>64 euros
+Ensuite, nous trouvons le montant de la première hausse de prix : 64 euros*0,5 = <<64*0,5=32>>32 euros
+Ajoutez ce montant à la valeur initiale pour trouver la valeur après la première année : 64 euros + 32 euros = <<64+32=96>>96 euros
+Ensuite, multipliez ce montant par 25 % pour trouver la baisse la deuxième année : 96 euros * 25 % = <<96*25*0,01=24>>24 euros
+Soustrayez ensuite ce montant de la valeur après la première année pour trouver la valeur finale : 96 euros - 24 euros = <<96-24=72>>72 euros
+#### 72
+"""
+
+id_orig = 336
+
+id_shuffled = 84
+
+question_annotated = """
+{name,Maria} achète {n,8} actions d'un titre à {p,8} {cur,euros} chacune. Le cours de l'action augmente de {r1,50} % la première année où {name,Maria} les possède, puis baisse de {r2,25} % la deuxième année. Quelle est la valeur finale de toutes ses actions ?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $n = range(5, 20)
+- $p = range(5, 100)
+- $r1 = range(10, 100, 5)
+- $r2 = range(5, 50, 5)
+
+#conditions:
+- is_int(n * p * r1/100)
+- is_int(n * p * (1 + r1/100) * (1 - r2/100))
+
+#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))
+"""
+
+answer_annotated = """
+D'abord, nous trouvons la valeur totale initiale de son achat : {n} actions * {p} {cur}/action = <<{n}*{p}={n*p}>>{n*p} {cur}
+Ensuite, nous trouvons le montant de la première hausse de prix : {n*p} {cur}*{r1/100} = <<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)} {cur}
+Ajoutez ce montant à la valeur initiale pour trouver la valeur après la première année : {n*p} {cur} + {n*p*r1/100} {cur} = <<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))} {cur}
+Ensuite, multipliez ce montant par {r2} % pour trouver la baisse la deuxième année : {n*p*(1+r1/100)} {cur} * {r2} % = <<{n*p*(1+r1/100)}*{r2}*0.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)} {cur}
+Soustrayez ensuite ce montant de la valeur après la première année pour trouver la valeur finale : {int(n*p*(1+r1/100))} {cur} - {int(n*p*(1+r1/100)*r2/100)} {cur} = <<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))} {cur}
+#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

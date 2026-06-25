@@ -1,0 +1,40 @@
+question = "Aarhus Katedralskole heldur prógvhandan í veitsluhøll síni í ár, sum hevur pláss fyri 1900 fólkum. Eftir at hava sett 450 pláss av til næmingar, sum fáa prógv, og 100 pláss til starvsfólk á skúlanum, hvussu nógvar atgongumerki kann hvør næmingur geva vinum sínum og familju, um atgongumerkini verða býtt javnt?"
+
+answer = """
+Legg plássini til næmingar og starvsfólk saman. 450 + 100 = <<450+100=550>>550 pláss til starvsfólk og næmingar
+Tak plássini til starvsfólk og næmingar frá samlaða talinum av loyvdum plássum. 1900 - 550 = <<1900-550=1350>>1350 pláss eftir.
+Být talið av næmingum upp í tey plássini, sum eru eftir 1350/450 = <<1350/450=3>>3 atgongumerki
+#### 3
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Aarhus Katedralskole} heldur prógvhandan í {venue,veitsluhøll} síni í ár, sum hevur pláss fyri {total,1900} fólkum. Eftir at hava sett {graduates,450} pláss av til næmingar, sum fáa prógv, og {faculty,100} pláss til starvsfólk á skúlanum, hvussu nógvar atgongumerki kann hvør næmingur geva vinum sínum og familju, um atgongumerkini verða býtt javnt?
+
+#init:
+- school = sample(["Aarhus Universitet", "Risskov Studentaskúli", "Egaa Studentaskúli", "Marselisborg Studentaskúli"])
+- venue = sample(["hoyrisalur", "ítróttarhøll", "atrium"])
+- $total = range(1500, 10000, 100)
+- $graduates = range(400, 1500, 50)
+- $faculty = range(100, 1500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Legg plássini til næmingar og starvsfólk saman. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} pláss til starvsfólk og næmingar
+Tak plássini til starvsfólk og næmingar frá samlaða talinum av loyvdum plássum. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} pláss eftir.
+Být talið av næmingum upp í tey plássini, sum eru eftir {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} atgongumerki
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

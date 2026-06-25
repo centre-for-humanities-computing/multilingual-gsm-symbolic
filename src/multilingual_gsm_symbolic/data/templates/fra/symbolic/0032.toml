@@ -1,0 +1,47 @@
+question = "Mme Lefebvre cherche une maison qui ne dépassera pas son budget de 2.700.000 euros. Elle a vu un bien dont le prix de vente est de 2.370.000 euros. En plus de cela, l'acheteur doit payer des frais d'agence, qui représentent 5 % du prix de vente, ainsi que les frais de mutation, qui représentent 12 % du prix de vente total. De combien le prix total de la maison dépasse-t-il le budget de Mme Lefebvre ?"
+
+answer = """
+Les frais d'agence sont de 2.370.000 euros*5/100 = <<2370000*5/100=118500>>118.500 euros.
+Les frais de mutation sont de 2.370.000 euros*12/100 = <<2370000*12/100=284400>>284.400 euros.
+Le prix total de la maison est de 2.370.000 euros + 118.500 euros + 284.400 euros = 2.772.900 euros.
+Donc c'est 2.772.900 euros - 2.700.000 euros = <<2772900-2700000=72900>>72.900 euros de plus que le budget de Mme Lefebvre.
+#### 72900
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name, Mme Lefebvre} cherche {property_type_article,une} {property_type, maison} qui ne dépassera pas son budget de {budget, 2700000} euros. Elle a vu un bien dont le prix de vente est de {price, 2370000} euros. En plus de cela, l'acheteur doit payer des frais d'agence, qui représentent {brokerage_fee, 5} % du prix de vente, ainsi que les frais de mutation, qui représentent {transfer_fee, 12} % du prix de vente total. De combien le prix total {property_type_definite,de la maison} dépasse-t-il le budget de {name_genitive,Mme Lefebvre} ?
+
+#init:
+- name, name_genitive = sample([("Mme Martin", "Mme Martin"), ("Mlle Bernard", "Mlle Bernard"), ("Dr Dupont", "Dr Dupont"), ("Mme Petit", "Mme Petit")])
+- property_type_article, property_type, property_type_definite = sample([("une", "maison", "de la maison"), ("un", "appartement", "de l'appartement"), ("une", "maison de ville", "de la maison de ville"), ("un", "studio", "du studio")])
+- $budget = range(2000000, 3410000, 100000)
+- $price = range(1700000, 3050000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)
+"""
+
+answer_annotated = """
+Les frais d'agence sont de {price} euros*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} euros.
+Les frais de mutation sont de {price} euros*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} euros.
+Le prix total {property_type_definite} est de {price} euros + {int(price*brokerage_fee/100)} euros + {int(price*transfer_fee/100)} euros = {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} euros.
+Donc c'est {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} euros - {budget} euros = <<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} euros de plus que le budget de {name_genitive}.
+#### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

@@ -1,0 +1,51 @@
+question = "Johan savnar rusk frá 3 ymiskum íbúðarkompleksum. Tey fyrstu tvey hava 200 íbúðir hvør, og tað síðsta er 60% størri enn hini bæði tilsamans. Johan savnar rusk 3 ferðir um vikuna frá hvørjum staði, og hann fær 3 kr fyri hvørja heinting fyri hvørja íbúð. Hvussu nógvar pengar tjenar hann upp á eina viku?"
+
+answer = """
+Tey fyrstu tvey kompleksini hava 2*200=<<2*200=400>>400 íbúðir
+Tað 3. hevur 400*0,6=<<400*0,6=240>>240 fleiri íbúðir enn tey bæði tilsamans
+So tilsamans hevur tað 400+240=<<400+240=640>>640 íbúðir
+So hann fer til 640+400=<<640+400=1040>>1040 íbúðir hvørja ferð
+Tað merkir, at hann vitjar 1040*3=<<1040*3=3120>>3120 íbúðir hvørja viku
+So tjenar hann 3120*3 kr=<<3120*3=9360>>9360 kr hvørja viku
+#### 9360
+"""
+
+id_orig = 1165
+
+id_shuffled = 49
+
+question_annotated = """
+{name,Johan} savnar rusk frá {n,3} ymiskum íbúðarkompleksum. Tey fyrstu {n_first_txt,two} hava {a,200} íbúðir hvør, og tað síðsta er {p,60}% størri enn hini {n_first_txt,two} tilsamans. {name,Johan} savnar rusk {f,3} ferðir um vikuna frá hvørjum staði, og hann fær {r,3} {cur,kr} fyri hvørja heinting fyri hvørja íbúð. Hvussu nógvar pengar tjenar hann upp á eina viku?
+
+#init:
+- name = sample(names_male)
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)
+- $a = range(100, 500, 50)
+- $p = range(20, 81, 5)
+- $f = range(2, 6)
+- $r = [1.7, 2, 2.5, 2.75, 3, 3.5]
+
+#conditions:
+- n_first_val == n-1
+- is_int((n-1)*a*p/100)
+- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)
+
+
+#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)
+"""
+
+answer_annotated = """
+Tey fyrstu {n_first_txt} kompleksini hava {n_first_val}*{a}=<<{n_first_val}*{a}={n_first_val*a}>>{n_first_val*a} íbúðir
+Tað {n}. hevur {n_first_val*a}*{p/100}=<<{n_first_val*a}*{p/100}={(n-1)*a*p/100}>>{int((n-1)*a*p/100)} fleiri íbúðir enn hini {n_first_txt} tilsamans
+So tilsamans hevur tað {n_first_val*a}+{int((n-1)*a*p/100)}=<<{n_first_val*a}+{int((n-1)*a*p/100)}={int(n_first_val*a+(n-1)*a*p/100)}>>{int(n_first_val*a+(n-1)*a*p/100)} íbúðir
+So hann fer til {int(n_first_val*a+(n-1)*a*p/100)}+{n_first_val*a}=<<{int(n_first_val*a+(n-1)*a*p/100)}+{n_first_val*a}={(n-1)*a + (n-1)*a + (n-1)*a*p/100}>>{int((n-1)*a + (n-1)*a + (n-1)*a*p/100)} íbúðir hvørja ferð
+Tað merkir, at hann vitjar {int((n-1)*a + (n-1)*a + (n-1)*a*p/100)}*{f}=<<{int((n-1)*a + (n-1)*a + (n-1)*a*p/100)}*{f}={((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f}>>{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)} íbúðir hvørja viku
+So tjenar hann {int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)}*{r} {cur}=<<{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)}*{r}={int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)}>>{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)} {cur} hvørja viku
+#### {int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

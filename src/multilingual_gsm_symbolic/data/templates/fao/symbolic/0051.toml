@@ -1,0 +1,50 @@
+question = "Albert hevur ein blómustand á marknaðinum. Hann selur trý sløg av blómum: tulipanir, liljur og sólblómur. Hann selur vanliga tulipanir fyri 18,1 kr fyri hvønn pott, liljur fyri 12,3 kr fyri hvønn pott og sólblómur fyri 14,9 kr fyri hvønn pott. Albert hevur eingar oyru í dag, so hann hevur avgjørt at runda til nærmastu krónu. Um hann selur 12 pottar við tulipanum, 9 pottar við liljum og 17 pottar við sólblómum, hvussu nógv fer hann at vinna?"
+
+answer = """
+Albert fer at runda sínar tulipanir niður frá 18,1 kr til 18 kr, tí talið eftir 18 er lægri enn 5.
+Albert fer at runda sínar sólblómur upp frá 14,9 kr til 15 kr, tí talið eftir 14 er 5 ella hægri.
+Albert selur 12 pottar við tulipanum*18 kr = <<12*18=216>>216 kr
+Albert selur 9 pottar við liljum*12 kr = <<9*12=108>>108 kr
+Albert selur 17 pottar við sólblómum*15 kr = <<17*15=255>>255 kr
+Til samans fer Albert at vinna 216 kr + 108 kr + 255 kr = <<216+108+255=579>>579 kr
+#### 579
+"""
+
+id_orig = 74
+
+id_shuffled = 51
+
+question_annotated = """
+{name,Albert} hevur ein blómustand á {location,marknaðinum}. Hann selur trý sløg av {product,blómum}: {item1,tulipanir}, {item2,liljur} og {item3,sólblómur}. Hann selur vanliga {item1,tulipanir} fyri {p1,18,1} {cur,kr} fyri hvønn {unit,pott}, {item2,liljur} fyri {p2,12,3} {cur,kr} fyri hvønn {unit,pott} og {item3,sólblómur} fyri {p3,14,9} {cur,kr} fyri hvønn {unit,pott}. {name,Albert} hevur eingar oyru í dag, so hann hevur avgjørt at runda til nærmastu krónu. Um hann selur {n1,12} {unit_plural,pottar} við {item1,tulipanum}, {n2,9} {unit_plural,pottar} við {item2,liljum} og {n3,17} {unit_plural,pottar} við {item3,sólblómum}, hvussu nógv fer hann at vinna?
+
+#init:
+- name = sample(names_male)
+- product = sample(["grønsakir", "blómur", "urtir", "plantur"])
+- location = sample(["marknaðurin", "messan", "basarurin", "gøtan", "torgið"])
+- item1, item2, item3 = sample(["rósur", "marguerittur", "orkideir", "pæonir", "anemonur", "kornblómur"], 3)
+- unit, unit_plural = sample([("pottur", "pottar"), ("vøndur", "vendir"), ("kurv", "kurvar"), ("knippi", "knippi"), ("hondfull", "hondfullar")])
+- cur = sample(currencies_sym)
+- $p1 = arange(8.1, 23.3, 2.7)
+- $p2 = arange(14.9, 36.4, 1.7)
+- $p3 = arange(31.9, 42.8, 2.2)
+- $n1 = range(5, 21)
+- $n2 = range(15, 31)
+- $n3 = range(35, 41)
+
+
+#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)
+"""
+
+answer_annotated = """
+{name} fer at runda sínar {item1} niður frá {p1} {cur} til {round(p1)} {cur}, tí talið eftir {int(p1)} er lægri enn 5.
+{name} fer at runda sínar {item3} {'upp' if round(p3) > p3 else 'niður'} frá {p3} {cur} til {round(p3)} {cur}, tí talið eftir {int(p3)} er {'5 ella hægri' if round(p3) > p3 else 'lægri enn 5'}.
+{name} selur {n1} pottar við {item1}*{round(p1)} {cur} = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}
+{name} selur {n2} pottar við {item2}*{round(p2)} {cur} = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}
+{name} selur {n3} pottar við {item3}*{round(p3)} {cur} = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}
+Til samans fer {name} at vinna {n1*round(p1)} {cur} + {n2*round(p2)} {cur} + {n3*round(p3)} {cur} = <<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)} {cur}
+#### {n1*round(p1) + n2*round(p2) + n3*round(p3)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

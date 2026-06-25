@@ -1,0 +1,46 @@
+question = "Sara ger poppkorn sum ein snarl. Tá ið pannan við maiskjørnunum verður heit, byrja kjørnini at poppa skjótari. 20 poppa tey fyrstu 30 sekundini av tilgerðini, síðani tre ferðir tað talið tey næstu 30 sekundini. Kjørnini økjast til fýra ferðir upprunaligu popphraðina tey næstu 30 sekundini, men tey seinastu 30 sekundini minkar popphraðin niður í helvtina av hraðanum tey fyrru 30 sekundini. Eftir at Sara hevur tikið pannu av hitanum, poppar ein fjórðingur av talinum av kjørnum, sum poppaðu tey seinastu 30 sekundini av tilgerðini orsakað av hitanum, sum er eftir. Hvussu nógv poppkorn hevur Sara at eta?"
+
+answer = """
+Í teimum næstu 30 sekundunum av tilgerðini poppa 3*20=<<3*20=60>>60 korn.
+Í teimum triðju 30 sekundunum poppa 4*20=<<4*20=80>>80 korn.
+Í teimum seinastu 30 sekundunum poppa 80/2=<<80/2=40>>40 korn.
+Eftir tilgerðina fær hitin, sum er eftir, 40/4=<<40/4=10>>10 korn at poppa.
+Sostatt hevur Sara 20 + 60 + 80 + 40 + 10 = <<20+60+80+40+10=210>>210 poppkorn at eta.
+#### 210
+"""
+
+id_orig = 1264
+
+id_shuffled = 4
+
+question_annotated = """
+{name,Sara} ger poppkorn sum ein snarl. Tá ið {p,pannan} við maiskjørnunum verður heit, byrja kjørnini at poppa skjótari. {n,20} poppa tey fyrstu {s,30} sekundini av tilgerðini, síðani {k_2_txt, tre} ferðir tað talið tey næstu {s,30} sekundini. Kjørnini økjast til {k_3_txt,fýra} ferðir upprunaligu popphraðina tey næstu {s,30} sekundini, men tey seinastu {s,30} sekundini minkar popphraðin niður í helvtina av hraðanum tey fyrru {s,30} sekundini. Eftir at {name,Sara} hevur tikið {p,pannuna} av hitanum, poppar ein fjórðingur av talinum av kjørnum, sum poppaðu tey seinastu {s,30} sekundini av tilgerðini orsakað av hitanum, sum er eftir. Hvussu nógv poppkorn hevur {name,Sara} at eta?
+
+
+#init:
+- name = sample(names)
+- p = sample(['pannan', 'grýtuna'])
+- $n = range(10, 101, 10)
+- $s = range(10, 31, 2)
+- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)
+- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)
+
+#conditions:
+- k_3_val > k_2_val
+- divides(k_3_val * n, 8)
+
+#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)
+"""
+
+answer_annotated = """
+Í teimum næstu {s} sekundunum av tilgerðini poppa {k_2_val}*{n}=<<{k_2_val}*{n}={k_2_val*n}>>{k_2_val*n} korn.
+Í teimum triðju {s} sekundunum poppa {k_3_val}*{n}=<<{k_3_val}*{n}={k_3_val*n}>>{k_3_val*n} korn.
+Í teimum seinastu {s} sekundunum poppa {k_3_val*n}/2=<<{k_3_val*n}/2={k_3_val*n//2}>>{k_3_val*n//2} korn.
+Eftir tilgerðina fær hitin, sum er eftir, {k_3_val*n//2}/4=<<{k_3_val*n//2}/4={k_3_val*n//8}>>{k_3_val*n//8} korn at poppa.
+Sostatt hevur {name} {n} + {k_2_val * n} + {k_3_val * n} + {k_3_val * n // 2} + {k_3_val * n // 8} = <<{n}+{k_2_val * n}+{k_3_val * n}+{k_3_val * n // 2}+{k_3_val * n // 8}={n+(k_2_val * n + k_3_val * n)+(k_3_val * n // 2) + (k_3_val * n // 8)}>>{n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)} poppkorn at eta.
+#### {n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

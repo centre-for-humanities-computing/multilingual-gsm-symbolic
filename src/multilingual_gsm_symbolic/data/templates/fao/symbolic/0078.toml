@@ -1,0 +1,47 @@
+question = "Tað eru 6 undirvísingartímar um dagin hjá einum vanligum næmingi, men Johannes skal taka 2 eyka tímar. Hvør tími varir 40 minuttir. Hann fær undirvísing 5 dagar um vikuna. Síðani brúkar hann 1/16 av sínum vikuligu minuttum bæði leygardag og sunnudag sum eyka læritíð. Hvussu nógvar tímar um vikuna brúkar hann til at læra?"
+
+answer = """
+Hann tekur 6+2=<<6+2=8>>8 tímar um dagin
+Tað merkir, at hann brúkar 40*8=<<40*8=320>>320 minuttir um dagin í flokkinum
+So brúkar hann 320*5=<<320*5=1600>>1600 minuttir um vikuna
+Tað merkir, at hann brúkar 1600*1/16=<<1600*1/16=100>>100 minuttir bæði leygardag og sunnudag.
+So brúkar hann 1600+100+100=<<1600+100+100=1800>>1800 minuttir um vikuna
+So brúkar hann 1800/60=<<1800/60=30>>30 tímar um vikuna
+#### 30
+"""
+
+id_orig = 1088
+
+id_shuffled = 78
+
+question_annotated = """
+Tað eru {n1,6} undirvísingartímar um dagin hjá einum vanligum næmingi, men {name,Johannes} skal taka {n2,2} eyka tímar. Hvør tími varir {t,40} minuttir. Hann fær undirvísing {d,5} dagar um vikuna. Síðani brúkar hann {frac,1/16} av sínum vikuligu minuttum bæði leygardag og sunnudag sum eyka læritíð. Hvussu nógvar tímar um vikuna brúkar hann til at læra?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(5, 10)
+- $n2 = range(1, 5)
+- $t = range(30, 61, 5)
+- $d = range(4, 7)
+- $frac = sample(fractions)
+
+#conditions:
+- is_int((n1 + n2) * t * d * frac)
+- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)
+
+#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60
+"""
+
+answer_annotated = """
+Hann tekur {n1}+{n2}=<<{n1}+{n2}={n1+n2}>>{n1+n2} tímar um dagin
+Tað merkir, at hann brúkar {t}*{n1+n2}=<<{t}*{n1+n2}={t*(n1+n2)}>>{t*(n1+n2)} minuttir um dagin í flokkinum
+So brúkar hann {t*(n1+n2)}*{d}=<<{t*(n1+n2)}*{d}={t*(n1+n2)*d}>>{t*(n1+n2)*d} minuttir um vikuna
+Tað merkir, at hann brúkar {t*(n1+n2)*d}*{frac}=<<{t*(n1+n2)*d}*{frac}={int((n1 + n2) * t * d * frac)}>>{int((n1 + n2) * t * d * frac)} minuttir bæði leygardag og sunnudag.
+So brúkar hann {t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}=<<{t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}={t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}>>{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)} minuttir um vikuna
+So brúkar hann {t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60=<<{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60={((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}>>{((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60} tímar um vikuna
+#### {((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

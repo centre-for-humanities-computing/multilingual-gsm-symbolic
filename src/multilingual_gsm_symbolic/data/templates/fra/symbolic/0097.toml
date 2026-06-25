@@ -1,0 +1,38 @@
+question = "Julie tient la caisse exactement deux fois plus vite que sa collègue moins expérimentée Sophie. Chaque jour, Sophie sert 50 clients. Quelle est la production hebdomadaire totale des deux, si elles travaillent tous les jours de la semaine ?"
+
+answer = """
+Quand Sophie traite 50 commandes en une journée, Julie traite 50 commandes/jour*2=<<50*2=100>>100 commandes/jour.
+En une journée, elles traitent 100 commandes/jour + 50 commandes/jour = <<100+50=150>>150 commandes ensemble.
+Le nombre total de commandes que les deux traitent en une semaine est 150 commandes/jour * 7 jours/semaine = <<150*7=1050>>1050 commandes
+#### 1050
+"""
+
+id_orig = 636
+
+id_shuffled = 97
+
+question_annotated = """
+{name1,Julie} tient la caisse exactement {mult_txt,deux fois} plus vite que sa collègue moins expérimentée {name2,Sophie}. Chaque jour, {name2,Sophie} sert {n,50} clients. Quelle est la production hebdomadaire totale des deux, si elles travaillent tous les jours de la semaine ?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(30, 100)
+
+#conditions:
+- is_int(n * mult_val)
+- is_int((n + n * mult_val) * 7)
+
+#answer: (n + n * mult_val) * 7
+"""
+
+answer_annotated = """
+Quand {name2} traite {n} commandes en une journée, {name1} traite {n} commandes/jour*{mult_val}=<<{n}*{mult_val}={n*mult_val}>>{n*mult_val} commandes/jour.
+En une journée, elles traitent {n*mult_val} commandes/jour + {n} commandes/jour = <<{n*mult_val}+{n}={n+n*mult_val}>>{n+n*mult_val} commandes ensemble.
+Le nombre total de commandes que les deux traitent en une semaine est {n+n*mult_val} commandes/jour * 7 jours/semaine = <<{n+n*mult_val}*7={(n+n*mult_val)*7}>>{(n+n*mult_val)*7} commandes
+#### {(n+n*mult_val)*7}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

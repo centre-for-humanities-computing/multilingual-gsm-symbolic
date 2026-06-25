@@ -1,0 +1,38 @@
+question = "Carl hevur tríggjar ferðir so nógvar Facebook-vinir sum Diana. Johannes hevur fýra ferðir so nógvar vinir á Facebook sum Diana. Um Carl hevur 12 vinir á Facebook, hvussu nógvar Facebook-vinir hevur Johannes?"
+
+answer = """
+Diana hevur 12/3=<<12/3=4>>4 Facebook-vinir.
+Johannes hevur 4*4=<<4*4=16>>16 Facebook-vinir.
+#### 16
+"""
+
+id_orig = 149
+
+id_shuffled = 90
+
+question_annotated = """
+{name1,Carl} hevur {mult1_txt,tríggjar ferðir} so nógvar {platform,Facebook}-vinir sum {name2,Diana}. {name3,Johannes} hevur {mult2_txt,fýra ferðir} so nógvar vinir á {platform,Facebook} sum {name2,Diana}. Um {name1,Carl} hevur {n,12} vinir á {platform,Facebook}, hvussu nógvar {platform,Facebook}-vinir hevur {name3,Johannes}?
+
+#init:
+- name1, name2, name3 = sample(names, 3)
+- platform = sample(["Instagram", "Twitter", "LinkedIn", "TikTok", "Snapchat"])
+- mult1_txt, mult1_val = sample(multi_times)
+- mult2_txt, mult2_val = sample(multi_times)
+- $n = range(10, 201)
+
+#conditions:
+- mult2_val != mult1_val
+- is_int(n / mult1_val)
+
+#answer: int((n / mult1_val) * mult2_val)
+"""
+
+answer_annotated = """
+{name2} hevur {n}/{mult1_val}=<<{n}/{mult1_val}={n//mult1_val}>>{n//mult1_val} {platform}-vinir.
+{name3} hevur {mult2_val}*{n//mult1_val}=<<{mult2_val}*{n//mult1_val}={int((n / mult1_val) * mult2_val)}>>{int((n / mult1_val) * mult2_val)} {platform}-vinir.
+#### {int((n / mult1_val) * mult2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

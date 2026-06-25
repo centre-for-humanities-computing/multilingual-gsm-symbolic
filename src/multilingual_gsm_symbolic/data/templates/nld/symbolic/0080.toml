@@ -1,11 +1,11 @@
-question = "De automaten verkopen chips voor 40 cent en snoeprepen voor 75 cent. George heeft $5 uitgegeven en kreeg 3 zakken chips en had 1% van zijn geld over als wisselgeld. Hoeveel snoeprepen heeft hij gekocht?"
+question = "De automaten verkopen chips voor 40 cent en snoeprepen voor 75 cent. Emil heeft €5 uitgegeven en kreeg 3 zakken chips en had 1% van zijn geld over als wisselgeld. Hoeveel snoeprepen heeft hij gekocht?"
 
 answer = """
-George kreeg $0.05 aan wisselgeld omdat $5*1/100 = <<5*1/100=0.05>>0.05
-George gaf $4.95 uit omdat 5 - 0.05 = <<5-0.05=4.95>>4.95
-George gaf $1.2 uit aan chips omdat 3*0.4 = <<3*0.4=1.2>>1.2
-George gaf 3.75 uit aan snoeprepen omdat 4.95 - 1.2 = <<4.95-1.2=3.75>>3.75
-George kocht 5 snoeprepen omdat 3.75 / 0.75 = <<5=5>>5
+Emil kreeg €0,05 aan wisselgeld omdat €5*1/100 = <<5*1/100=0,05>>0,05
+Emil gaf €4,95 uit omdat 5 - 0,05 = <<5-0,05=4,95>>4,95
+Emil gaf €1,2 uit aan chips omdat 3*0,4 = <<3*0,4=1,2>>1,2
+Emil gaf 3,75 uit aan snoeprepen omdat 4,95 - 1,2 = <<4,95-1,2=3,75>>3,75
+Emil kocht 5 snoeprepen omdat 3,75 / 0,75 = <<5=5>>5
 #### 5
 """
 
@@ -14,7 +14,7 @@ id_orig = 434
 id_shuffled = 80
 
 question_annotated = """
-De automaten verkopen {item1,chips} voor {price1,40} cent en {item2,snoeprepen} voor {price2,75} cent. {name,George} heeft {cur,$}{total,5} uitgegeven en kreeg {n1,3} zakken {item1,chips} en had {p,1}% van zijn geld over als wisselgeld. Hoeveel {item2,snoeprepen} heeft hij gekocht?
+De automaten verkopen {item1,chips} voor {price1,40} cent en {item2,snoeprepen} voor {price2,75} cent. {name,Emil} heeft {cur,€}{total,5} uitgegeven en kreeg {n1,3} zakken {item1,chips} en had {p,1}% van zijn geld over als wisselgeld. Hoeveel {item2,snoeprepen} heeft hij gekocht?
 
 #init:
 - name = sample(names_male)
@@ -22,17 +22,17 @@ De automaten verkopen {item1,chips} voor {price1,40} cent en {item2,snoeprepen} 
 - cur = sample(currencies_sym)
 - $price1 = range(25, 100, 5)
 - $price2 = range(50, 150, 5)
-- $total = range(5, 15, 1)
+- $total = range(5, 21)
 - $n1 = range(1, 10)
 - $p = range(1, 10)
 
 #conditions:
 - price2 > price1
-- is_int(total * p /100)
-- is_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))
-- (total * (100 - p) / 100 - n1 * price1 / 100) % (price2 / 100) == 0
+- is_int(total * p / 100)
+- total * (100 - p) > n1 * price1
+- (total * (100 - p) - n1 * price1) % price2 == 0
 
-#answer: ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))
+#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)
 """
 
 answer_annotated = """
@@ -44,6 +44,6 @@ answer_annotated = """
 #### {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
 """
 
-creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4-nano, based on Danish templates; computationally validated; validated by a native speaker."
 
 language = "nld"

@@ -1,0 +1,46 @@
+question = "Au début de la fête, il y avait 25 hommes et 15 femmes. Après une heure, 1/4 du nombre total de personnes sont parties. Combien en reste-t-il, si 22 hommes sont restés à la fête ?"
+
+answer = """
+Il y avait au total 25 hommes + 15 femmes = <<25+15=40>>40 personnes qui ont participé à la fête.
+Après une heure, 40 personnes*1/4 = <<40*1/4=10>>10 personnes sont parties de la fête.
+Cela signifie que 40 personnes - 10 personnes = <<40-10=30>>30 personnes sont restées.
+Sur les 30 qui sont restées, 30 personnes - 22 hommes = <<30-22=8>>8 femmes.
+#### 8
+"""
+
+id_orig = 320
+
+id_shuffled = 82
+
+question_annotated = """
+Au début {event_de,de la fête}, il y avait {m,25} {group1,hommes} et {w,15} {group2,femmes}. Après {t,une heure}, {frac,1/4} du nombre total de personnes sont parties. Combien en reste-t-il, si {m_left,22} {group1,hommes} sont restés {event_a,à la fête} ?
+
+#init:
+- event_de, event_a = sample([("de la fête", "à la fête"), ("de la célébration", "à la célébration"), ("de l'anniversaire", "à l'anniversaire"), ("de la conférence", "à la conférence"), ("du rassemblement", "au rassemblement"), ("de l'événement", "à l'événement")])
+- group1, group2 = sample([ "enseignants", "médecins", "ingénieurs", "infirmiers", "artistes", "avocats",], 2)
+- t = sample(["une heure", "deux heures", "une demi-heure", "45 minutes"])
+- $frac = sample(fractions)
+- $m = range(20, 75)
+- $w = range(10, 80)
+- $m_left = range(15, 35)
+
+#conditions:
+- m_left < m
+- is_int((m + w) * frac)
+- (m + w) * (1-frac) > m_left
+- m + w - (m + w) * frac > m_left
+
+#answer: m + w - int((m + w) * frac) - m_left
+"""
+
+answer_annotated = """
+Il y avait au total {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} personnes qui ont participé {event_a}.
+Après {t}, {m+w} personnes*{frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} personnes sont parties {event_de}.
+Cela signifie que {m+w} personnes - {int((m+w)*frac)} personnes = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} personnes sont restées.
+Sur les {m+w-int((m+w)*frac)} qui sont restées, {m+w-int((m+w)*frac)} personnes - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {group2}.
+#### {m+w-int((m+w)*frac)-m_left}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

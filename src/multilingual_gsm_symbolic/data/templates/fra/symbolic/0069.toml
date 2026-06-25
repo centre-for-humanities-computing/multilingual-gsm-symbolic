@@ -1,0 +1,37 @@
+question = "Mardi, Pierre s'entraînera deux fois plus longtemps qu'il ne l'a fait lundi et dimanche réunis. Dimanche, il s'est entraîné 23 minutes. Lundi, il s'est entraîné 16 minutes. Combien de minutes doit-il s'entraîner mardi pour atteindre son objectif ?"
+
+answer = """
+Le dimanche et le lundi, il s'est entraîné au total 39 minutes car 23 + 16 = <<23+16=39>>39
+Le mardi, il doit s'entraîner 78 minutes car 39*2=<<39*2=78>>78
+#### 78
+"""
+
+id_orig = 300
+
+id_shuffled = 69
+
+question_annotated = """
+{day3,mardi}, {name,Pierre} s'entraînera {mult_txt,deux fois} plus longtemps qu'il ne l'a fait {day2,lundi} et {day1,dimanche} réunis. {day1,dimanche}, il s'est entraîné {t1,23} minutes. {day2,lundi}, il s'est entraîné {t2,16} minutes. Combien de minutes doit-il s'entraîner {day3,mardi} pour atteindre son objectif ?
+
+#init:
+- name = sample(names_male)
+- day1, day2, day3 = sample_sequential(weekdays, 3)
+- $t1 = range(10, 60)
+- $t2 = range(10, 60)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- t1 + t2 > 0
+- (t1 + t2) * mult_val / 60 < 14
+#answer: (t1 + t2) * mult_val
+"""
+
+answer_annotated = """
+Le {day1} et le {day2}, il s'est entraîné au total {t1+t2} minutes car {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}
+Le {day3}, il doit s'entraîner {(t1+t2)*mult_val} minutes car {t1+t2}*{mult_val}=<<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val}
+#### {(t1+t2)*mult_val}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

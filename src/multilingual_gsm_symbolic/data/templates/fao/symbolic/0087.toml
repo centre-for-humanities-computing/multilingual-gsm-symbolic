@@ -1,0 +1,44 @@
+question = "Størsta vatnrutjibreytin í Djurs Sommerland er 300 cm long, og fólk glíða niður við 60 cm/minutt. Næststørsta vatnrutjibreytin er 240 cm long, men brattari, so fólk glíða niður við 80 cm/minutt. Hvussu nógv longri tekur tað at koyra á størstu rutjibreytini samanborið við ta næststørstu?"
+
+answer = """
+Fyrst skalt tú finna koyritíðina á størstu rutjibreytini: 300 cm / 60 cm/minutt = <<300/60=5>>5 minuttir
+Síðani skalt tú finna koyritíðina á næststørstu rutjibreytini: 240 cm / 80 cm/minutt = <<240/80=3>>3 minuttir
+Drag síðani koyritíðina á næstlongstu rutjibreytini frá teirri longstu fyri at finna munin: 5 minuttir - 3 minuttir = <<5-3=2>>2 minuttir
+#### 2
+"""
+
+id_orig = 1099
+
+id_shuffled = 87
+
+question_annotated = """
+Størsta vatnrutjibreytin í {park_name,Djurs Sommerland} er {l1,300} {unit,cm} long, og fólk glíða niður við {s1,60} {unit,cm}/minutt. Næststørsta vatnrutjibreytin er {l2,240} {unit,cm} long, men brattari, so fólk glíða niður við {s2,80} {unit,cm}/minutt. Hvussu nógv longri tekur tað at koyra á størstu rutjibreytini samanborið við ta næststørstu?
+
+#init:
+- park_name = sample(["Fårup Sommerland", "Aqua Park", "vatnlandið", "Legoland"])
+- unit = sample(['centimeter', 'cm', 'meter', 'm'])
+- $l1 = range(250, 401, 10)
+- $l2 = range(200, 301, 10)
+- $s1 = range(40, 81, 5)
+- $s2 = range(60, 101, 5)
+
+#conditions:
+- l1 > l2
+- s2 > s1
+- is_int(l1/s1)
+- is_int(l2/s2)
+- l1/s1 > l2/s2
+
+#answer: l1/s1 - l2/s2
+"""
+
+answer_annotated = """
+Fyrst skalt tú finna koyritíðina á størstu rutjibreytini: {l1} {unit} / {s1} {unit}/minutt = <<{l1}/{s1}={l1//s1}>>{l1//s1} minuttir
+Síðani skalt tú finna koyritíðina á næststørstu rutjibreytini: {l2} {unit} / {s2} {unit}/minutt = <<{l2}/{s2}={l2//s2}>>{l2//s2} minuttir
+Drag síðani koyritíðina á næstlongstu rutjibreytini frá teirri longstu fyri at finna munin: {l1//s1} minuttir - {l2//s2} minuttir = <<{l1//s1}-{l2//s2}={l1//s1 - l2//s2}>>{l1//s1 - l2//s2} minuttir
+#### {l1//s1 - l2//s2}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

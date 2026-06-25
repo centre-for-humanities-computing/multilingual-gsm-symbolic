@@ -1,0 +1,48 @@
+question = "Í eini spurnarkapping við 60 spurningum eru 40% av spurningunum lættir, og restin er javnt býtt sum miðal og torførir spurningar. Um Alma er vís í at fáa 75% av teimum lættu spurningunum rættar og hálvan part av teimum miðal og torføru spurningunum rætt, hvussu nógv stig er hon vís í at fáa?"
+
+answer = """
+Teir miðal og torføru spurningarnir eru 100% - 40% = 60% av spurnarkappingini.
+Tað eru 60 spurningar*40/100 = <<60*40/100=24>>24 lættir spurningar.
+Tað eru tilsamans 60 spurningar*60/100 = <<60*60/100=36>>36 miðal og torførir spurningar.
+Um Alma er vís í at fáa 75% av teimum lættu spurningunum, merkir tað, at hon er vís í sínum 24 spurningar*75/100 = <<24*75/100=18>>18 stigum.
+Frá teimum miðal og torføru spurningunum er hon vís í at fáa hálvan part rætt, so tað er 36 spurningar*1/2 = <<36*1/2=18>>18 stig.
+Sostatt er hon vís í at fáa 18 stig + 18 stig = <<18+18=36>>36 stig í síni spurnarkapping.
+#### 36
+"""
+
+id_orig = 1021
+
+id_shuffled = 19
+
+question_annotated = """
+Í eini spurnarkapping við {n,60} spurningum eru {p1,40}% av spurningunum {s1,lættir} og restin er javnt býtt sum {s2,miðal} og {s3,torførir} spurningar. Um {name,Alma} er vís í at fáa {r1,75}% av teimum {s1,lættir} spurningunum rættar og {frac_txt,hálvan part} av teimum {s2,miðal} og {s3,torførir} spurningunum rætt, hvussu nógv stig er hon vís í at fáa?
+
+#init:
+- s1, s2, s3 = sample(["søga", "landalæra", "lívfrøði", "evnafrøði", "alisfrøði", "búskapur", "bókmentir", "algebra", "rúmfrøði"], 3)
+- name = sample(names_female)
+- $frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(5, 71, 5)
+- $r1 = range(5, 101, 5)
+- $n = range(10, 151, 10)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (r1/100))
+- is_int(n*(1-(p1/100))*frac_val)
+
+#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)
+"""
+
+answer_annotated = """
+Teir {s2} og {s3} spurningarnir eru 100% - {p1}% = {100-p1}% av spurnarkappingini.
+Tað eru {n} spurningar*{p1}/100 = <<{n}*{p1}/100={int(n * (p1/100))}>>{int(n * (p1/100))} {s1} spurningar.
+Tað eru tilsamans {n} spurningar*{100-p1}/100 = <<{n}*{100-p1}/100={int(n*(1-(p1/100)))}>>{int(n*(1-(p1/100)))} {s2} og {s3} spurningar.
+Um {name} er vís í at fáa {r1}% av teimum {s1} spurningunum, merkir tað, at hon er vís í sínum {int(n * (p1/100))} spurningar*{r1}/100 = <<{int(n * (p1/100))}*{r1}/100={int(n * (p1/100) * (r1/100))}>>{int(n * (p1/100) * (r1/100))} stigum.
+Frá teimum {s2} og {s3} spurningunum er hon vís í at fáa {frac_txt} rætt, so tað er {int(n*(1-(p1/100)))} spurningar*{frac_val} = <<{int(n*(1-(p1/100)))}*{frac_val}={ensure_int(n*(1-(p1/100))*frac_val)}>>{ensure_int(n*(1-(p1/100))*frac_val)} stig.
+Sostatt er hon vís í at fáa {int(n * (p1/100) * (r1/100))} stig + {ensure_int(n*(1-(p1/100))*frac_val)} stig = <<{int(n * (p1/100) * (r1/100))}+{ensure_int(n*(1-(p1/100))*frac_val)}={ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)}>>{ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)} stig í síni spurnarkapping.
+#### {ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"
