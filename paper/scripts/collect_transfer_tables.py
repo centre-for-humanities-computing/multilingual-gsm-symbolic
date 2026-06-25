@@ -26,10 +26,12 @@ from visualizegrid import (  # noqa: E402
     discover_logs,
     infer_model_info,
     model_name,
+    model_order,
     parse_task,
     sample_score,
     select_logs,
 )
+from plot_config import language_order  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -150,7 +152,14 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         + "|"
         + observations["id"].astype(str)
     )
-    return observations.sort_values(["model", "language", "split", "id"]).reset_index(drop=True)
+    model_categories = model_order(observations)
+    language_categories = language_order(observations["language"].dropna().unique())
+    observations["model"] = pd.Categorical(observations["model"], categories=model_categories, ordered=True)
+    observations["language"] = pd.Categorical(observations["language"], categories=language_categories, ordered=True)
+    observations = observations.sort_values(["model", "language", "split", "id"]).reset_index(drop=True)
+    observations["model"] = observations["model"].astype(str)
+    observations["language"] = observations["language"].astype(str)
+    return observations
 
 
 def build_analysis_tables(

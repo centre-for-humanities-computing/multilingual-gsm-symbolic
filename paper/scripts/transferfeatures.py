@@ -39,26 +39,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.ticker import PercentFormatter
+from plot_config import FAMILY_ORDER, LANGUAGE_LABELS, language_order, ordered_families
 from transformers import AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
 DEFAULT_OUT_DIR = ARTIFACTS_DIR / "transfer_features"
-
-LANGUAGE_LABELS = {
-    "dan": "Danish",
-    "deu": "German",
-    "eng": "English",
-    "fra": "French",
-    "isl": "Icelandic",
-    "ita": "Italian",
-    "nob": "Norwegian Bokmal",
-    "por": "Portuguese",
-    "rus": "Russian",
-    "spa": "Spanish",
-    "ukr": "Ukrainian",
-    "zho": "Chinese",
-}
 
 COMMON_CRAWL_LANGUAGE_CODES = {"nob": "nor"}
 DEFAULT_COMMON_CRAWL_CSV = ARTIFACTS_DIR / "transfer_features" / "languages.csv"
@@ -94,15 +80,6 @@ FAMILY_COLORS = {
     "OpenAI": "#457B9D",
 }
 
-FAMILY_ORDER = {
-    "Qwen2.5": 0,
-    "Llama 3": 1,
-    "Gemma 3": 2,
-    "OLMo 2": 3,
-    "Apertus": 4,
-    "OpenAI": 5,
-}
-
 SPLIT_LABELS = {
     "original": "Original benchmark questions",
     "synthetic": "Synthetic numerical variants",
@@ -116,13 +93,6 @@ plt.rcParams.update(
         "font.family": "sans-serif",
     }
 )
-
-
-def ordered_families(families: pd.Series | set[str] | list[str]) -> list[str]:
-    unique_families = set(families)
-    known = [family for family in FAMILY_ORDER if family in unique_families]
-    extra = sorted(unique_families - set(FAMILY_ORDER))
-    return known + extra
 
 
 def load_common_crawl_pages(source: str | Path, languages: list[str]) -> pd.DataFrame:
@@ -482,7 +452,7 @@ def main() -> None:
     summary = pd.read_csv(args.summary)
     if "eng" not in set(summary["language"]):
         raise SystemExit("English results are required to calculate transfer gaps.")
-    languages = sorted(set(summary["language"]))
+    languages = language_order(summary["language"].unique())
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     language_features_path = args.out_dir / "language_features.csv"
