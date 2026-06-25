@@ -12,6 +12,7 @@ from random import Random
 
 from inspect_ai import Task, task
 from inspect_ai.dataset import MemoryDataset, Sample
+from inspect_ai.model._model_output import ModelOutput, ModelUsage
 from inspect_ai.scorer import pattern
 from inspect_ai.solver import generate, prompt_template
 
@@ -28,6 +29,56 @@ ITALIAN_PROMPT_TEMPLATE = (
 )
 
 ANSWER_PATTERN = r"####\s*(.+)"
+
+
+def _optional_int(value: object) -> int | None:
+    return value if isinstance(value, int) else None
+
+
+def _install_openai_compatible_usage_patch() -> None:
+    """Handle SGLang/OpenAI-compatible responses that report null usage fields.
+
+    Inspect 0.3.241 assumes usage.prompt_tokens is always an int. Some local
+    OpenAI-compatible servers return a usage object with null token counts,
+    which otherwise crashes the eval before scoring the model answer.
+    """
+
+    def safe_model_output_from_openai(completion, choices):  # type: ignore[no-untyped-def]
+        usage = None
+        if completion.usage:
+            prompt_tokens = _optional_int(getattr(completion.usage, "prompt_tokens", None)) or 0
+            completion_tokens = _optional_int(getattr(completion.usage, "completion_tokens", None)) or 0
+            total_tokens = _optional_int(getattr(completion.usage, "total_tokens", None))
+            prompt_details = getattr(completion.usage, "prompt_tokens_details", None)
+            cached_tokens = (
+                _optional_int(getattr(prompt_details, "cached_tokens", None)) or 0 if prompt_details is not None else 0
+            )
+            completion_details = getattr(completion.usage, "completion_tokens_details", None)
+            reasoning_tokens = (
+                _optional_int(getattr(completion_details, "reasoning_tokens", None))
+                if completion_details is not None
+                else None
+            )
+            usage = ModelUsage(
+                input_tokens=max(prompt_tokens - cached_tokens, 0),
+                output_tokens=completion_tokens,
+                input_tokens_cache_read=cached_tokens if prompt_details is not None else None,
+                reasoning_tokens=reasoning_tokens,
+                total_tokens=total_tokens if total_tokens is not None else prompt_tokens + completion_tokens,
+            )
+
+        return ModelOutput(model=completion.model, choices=choices, usage=usage)
+
+    import inspect_ai.model._openai as openai_model
+    import inspect_ai.model._providers.openai_compatible as openai_compatible
+    import inspect_ai.model._providers.openai_completions as openai_completions
+
+    openai_model.model_output_from_openai = safe_model_output_from_openai
+    openai_compatible.model_output_from_openai = safe_model_output_from_openai
+    openai_completions.model_output_from_openai = safe_model_output_from_openai
+
+
+_install_openai_compatible_usage_patch()
 
 
 def _target_from_answer(answer: str) -> str:
