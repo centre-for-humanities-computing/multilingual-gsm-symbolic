@@ -10,7 +10,6 @@ import argparse
 import os
 import subprocess
 import sys
-from typing import Any
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -94,22 +93,6 @@ def load_tasks(path: Path = EVAL_YAML) -> list[Task]:
     return [Task(item["id"], item["config"], item["split"]) for item in raw_tasks]
 
 
-def load_task_configs(path: Path = EVAL_YAML) -> list[dict[str, Any]]:
-    try:
-        return yaml.safe_load(path.read_text(encoding="utf-8"))["tasks"]
-    except (OSError, yaml.YAMLError) as error:
-        raise RunnerError(f"Could not read {path}: {error}") from error
-
-
-def local_dataset_path() -> Path:
-    return REPO_ROOT / "hf_dataset"
-
-
-def local_task_name(task_id: str) -> str:
-    spec = f"hf/{DATASET}/{task_id}@{REVISION}" if REVISION else f"hf/{DATASET}/{task_id}"
-    return f"{spec}/{task_id}"
-
-
 def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
@@ -128,11 +111,6 @@ def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.Ar
             f"--{name}", nargs="+", default=["all"], metavar=metavar,
             help=f"{label}(s), or 'all' (available: {choices})",
         )
-    parser.add_argument(
-        "--local-dataset",
-        action="store_true",
-        help="load dataset samples from the local hf_dataset/ directory instead of Hugging Face Hub",
-    )
     return parser
 
 
@@ -182,36 +160,11 @@ def model_args(model: str) -> list[str]:
     return []
 
 
-def model_kwargs(model: str) -> dict[str, Any]:
-    kwargs: dict[str, Any] = {
-        "dtype": "auto",
-        "attention_backend": "FLASH_ATTN",
-        "max_num_seqs": 512,
-    }
-    lower = model.lower()
-    if lower.startswith("qwen/qwen3-"):
-        kwargs["reasoning_parser"] = "qwen3"
-    elif lower.startswith("deepseek-ai/deepseek-r1-distill-"):
-        kwargs["reasoning_parser"] = "deepseek_r1"
-    return kwargs
-
-
-def task_specs(tasks: Sequence[Task], local_dataset: bool = False) -> list[str]:
-    if local_dataset:
-        raise ValueError("Local dataset runs do not use Hugging Face task specs")
-    dataset = DATASET
-    revision = REVISION
+def inspect_command(model: str, tasks: Sequence[Task]) -> list[str]:
     # place the revision after the task id so the HF loader parses it correctly
-    return [
-        f"hf/{dataset}/{task.task_id}@{revision}" if revision else f"hf/{dataset}/{task.task_id}"
-        for task in tasks
+    specs = [
+        f"hf/{DATASET}/{task.task_id}@{REVISION}" if REVISION else f"hf/{DATASET}/{task.task_id}" for task in tasks
     ]
-
-
-def inspect_command(model: str, tasks: Sequence[Task], local_dataset: bool = False) -> list[str]:
-    if local_dataset:
-        raise ValueError("Local dataset runs are executed in-process, not via inspect eval-set CLI")
-    specs = task_specs(tasks, local_dataset=local_dataset)
     return [
         # Eval sets use the log directory to skip successful tasks and retry
         # interrupted tasks without repeating their completed samples.
@@ -229,35 +182,6 @@ def inspect_command(model: str, tasks: Sequence[Task], local_dataset: bool = Fal
     ]
 
 
-def local_inspect_tasks(tasks: Sequence[Task]) -> list[Any]:
-    from inspect_ai import Task as InspectTask
-    from inspect_ai.dataset import FieldSpec, hf_dataset
-    from inspect_ai.util import registry_create
-
-    task_configs = {task["id"]: task for task in load_task_configs()}
-    dataset_root = str(local_dataset_path())
-    inspect_tasks = []
-    for task in tasks:
-        config = task_configs[task.task_id]
-        field_spec = config["field_spec"]
-        dataset = hf_dataset(
-            path=dataset_root,
-            name=config["config"],
-            split=config["split"],
-            sample_fields=FieldSpec(
-                input=field_spec["input"],
-                target=field_spec["target"],
-                metadata=field_spec.get("metadata"),
-            ),
-        )
-        solvers = [registry_create("solver", solver["name"], **solver.get("args", {})) for solver in config["solvers"]]
-        scorers = [registry_create("scorer", scorer["name"], **scorer.get("args", {})) for scorer in config["scorers"]]
-        inspect_tasks.append(
-            InspectTask(name=local_task_name(config["id"]), dataset=dataset, solver=solvers, scorer=scorers)
-        )
-    return inspect_tasks
-
-
 def vllm_environment() -> dict[str, str]:
     env = os.environ.copy()
     # The CUDA 13 packages in this environment have mismatched nvcc/headers.
@@ -271,26 +195,8 @@ def show_command(message: str, command: Sequence[str]) -> None:
     print(f"{message}\n  {' '.join(command)}")
 
 
-def run_inspect(model: str, tasks: Sequence[Task], local_dataset: bool = False) -> None:
-    if local_dataset:
-        from inspect_ai import eval_set
-
-        print(f"Running {len(tasks)} Inspect task(s) for {model} from local hf_dataset/")
-        success, _ = eval_set(
-            tasks=local_inspect_tasks(tasks),
-            log_dir=str(LOG_DIR),
-            log_dir_allow_dirty=True,
-            model=f"vllm/{model}",
-            model_args=model_kwargs(model),
-            max_connections=128,
-            max_samples=128,
-            max_tasks=8,
-        )
-        if not success:
-            raise RunnerError(f"Inspect failed for {model}")
-        return
-
-    command = inspect_command(model, tasks, local_dataset=local_dataset)
+def run_inspect(model: str, tasks: Sequence[Task]) -> None:
+    command = inspect_command(model, tasks)
     show_command(f"Running {len(tasks)} Inspect task(s) for {model}", command)
     try:
         subprocess.run(command, check=True, env=vllm_environment())
@@ -348,7 +254,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         for model in selected["model"]:
             try:
-                run_inspect(model, selected_tasks, local_dataset=args.local_dataset)
+                run_inspect(model, selected_tasks)
             except RunnerError as error:
                 failures.append((model, str(error)))
                 print(f"Model failed: {error}", file=sys.stderr)
