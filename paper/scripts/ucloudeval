@@ -105,6 +105,11 @@ def local_dataset_path() -> Path:
     return REPO_ROOT / "hf_dataset"
 
 
+def local_task_name(task_id: str) -> str:
+    spec = f"hf/{DATASET}/{task_id}@{REVISION}" if REVISION else f"hf/{DATASET}/{task_id}"
+    return f"{spec}/{task_id}"
+
+
 def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
@@ -247,7 +252,9 @@ def local_inspect_tasks(tasks: Sequence[Task]) -> list[Any]:
         )
         solvers = [registry_create("solver", solver["name"], **solver.get("args", {})) for solver in config["solvers"]]
         scorers = [registry_create("scorer", scorer["name"], **scorer.get("args", {})) for scorer in config["scorers"]]
-        inspect_tasks.append(InspectTask(name=config["id"], dataset=dataset, solver=solvers, scorer=scorers))
+        inspect_tasks.append(
+            InspectTask(name=local_task_name(config["id"]), dataset=dataset, solver=solvers, scorer=scorers)
+        )
     return inspect_tasks
 
 
@@ -276,7 +283,8 @@ def run_inspect(model: str, tasks: Sequence[Task], local_dataset: bool = False) 
             model=f"vllm/{model}",
             model_args=model_kwargs(model),
             max_connections=128,
-            limit=128,
+            max_samples=128,
+            max_tasks=8,
         )
         if not success:
             raise RunnerError(f"Inspect failed for {model}")
