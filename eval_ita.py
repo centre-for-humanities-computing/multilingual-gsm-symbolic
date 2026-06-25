@@ -1,8 +1,9 @@
 """Inspect AI tasks for evaluating the Italian GSM-Symbolic templates.
 
 These tasks intentionally load only ``ita/symbolic`` so templates parked under
-``ita/exclude`` and the language-level ``ita/ignore`` marker are not considered.
+``ita/symbolic_todo`` and the language-level ``ita/ignore`` marker are not considered.
 They mirror the prompt and pattern-scorer shape used in ``eval.yaml``.
+# TODO: adapt once ita/symbolic_todo templates are ready for evaluation.
 """
 
 from __future__ import annotations
