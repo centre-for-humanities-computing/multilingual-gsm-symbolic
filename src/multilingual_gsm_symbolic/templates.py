@@ -307,6 +307,7 @@ class AnnotatedQuestion:
                     continue
                 candidate = dict(zip(line_vars, values))
                 candidate_env = env | {k: parse_value(v) for k, v in candidate.items()}
+                # Assignments must match all default assingments in question and pass check from matches_dependent_default
                 dependent_match = matches_dependent_default(candidate_env, set(candidate))
                 if known_line_vars:
                     if not all(same(candidate[v], assignments[v]) for v in known_line_vars) or dependent_match is False:
