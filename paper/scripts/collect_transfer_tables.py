@@ -172,7 +172,9 @@ def build_analysis_tables(
             "language_name",
             "typological_feature_set",
             "common_crawl_language",
+            "common_crawl_crawl",
             "resource_source_path",
+            "n_observations",
         ],
         errors="ignore",
     ).rename(
@@ -190,6 +192,7 @@ def build_analysis_tables(
             "non_whitespace_character_count",
             "english_token_count",
             "english_non_whitespace_character_count",
+            "tokenizer_repo",
         ],
         errors="ignore",
     ).rename(columns={"fertility_tokens_per_character": "tokenizer_fertility"})
