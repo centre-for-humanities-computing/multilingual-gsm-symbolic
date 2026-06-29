@@ -160,7 +160,7 @@ def build_analysis_tables(
     languages = language_features.copy()
     if not languages.empty:
         language_counts = main.groupby("language", as_index=False).agg(
-            n_observations=("correct", "size"), mean_accuracy=("score", "mean")
+            n_observations=("correct", "size"), mean_accuracy=("correct", "mean")
         )
         languages = languages.merge(language_counts, on="language", how="outer")
 
