@@ -167,26 +167,44 @@ def build_analysis_tables(
         )
         languages = languages.merge(language_counts, on="language", how="outer")
 
+    analysis_languages = languages.drop(
+        columns=[
+            "language_name",
+            "typological_feature_set",
+            "common_crawl_language",
+            "resource_source_path",
+        ],
+        errors="ignore",
+    ).rename(
+        columns={
+            "typological_distance_from_english": "typological_distance",
+            "common_crawl_pages": "resource_quantity",
+        }
+    )
+    analysis_fertility = fertility.drop(
+        columns=[
+            "family",
+            "family_model_language",
+            "n_matched_questions",
+            "token_count",
+            "non_whitespace_character_count",
+            "english_token_count",
+            "english_non_whitespace_character_count",
+        ],
+        errors="ignore",
+    ).rename(columns={"fertility_tokens_per_character": "tokenizer_fertility"})
+
     analysis = working.copy()
-    if not languages.empty:
-        analysis = analysis.merge(languages, on="language", how="left", suffixes=("", "_language"))
+    if not analysis_languages.empty:
+        analysis = analysis.merge(analysis_languages, on="language", how="left", suffixes=("", "_language"))
     if not fertility.empty:
         analysis = analysis.merge(
-            fertility,
+            analysis_fertility,
             on=["model", "model_raw", "language"],
             how="left",
             suffixes=("", "_model_language"),
         )
     analysis = analysis.drop(columns=["model_raw"], errors="ignore")
-
-    feature_aliases = {
-        "common_crawl_pages": "resource_quantity",
-        "typological_distance_from_english": "typological_distance",
-        "fertility_tokens_per_character": "tokenizer_fertility",
-    }
-    for source, alias in feature_aliases.items():
-        if source in analysis.columns and alias not in analysis.columns:
-            analysis[alias] = analysis[source]
 
     return main, models, languages, model_languages, analysis
 
