@@ -16,29 +16,27 @@ class ModelInfo:
     family: str
     params_b: float | None
     vocab_size: int | None = None
-    training_language: str = ""
-    pretrain_tokens_t: float | None = None
 
 
 MODEL_CATALOG = {
-    "qwen2.5-0.5b-instruct": ModelInfo("Qwen2.5", 0.5, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-1.5b-instruct": ModelInfo("Qwen2.5", 1.5, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-3b-instruct": ModelInfo("Qwen2.5", 3, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-7b-instruct": ModelInfo("Qwen2.5", 7, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-14b-instruct": ModelInfo("Qwen2.5", 14, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-32b-instruct": ModelInfo("Qwen2.5", 32, 151_936, "Chinese-English; multilingual", 18),
-    "llama-3.2-1b-instruct": ModelInfo("Llama 3", 1, 128_256, "English-centric", 9),
-    "llama-3.2-3b-instruct": ModelInfo("Llama 3", 3, 128_256, "English-centric", 9),
-    "llama-3.1-8b-instruct": ModelInfo("Llama 3", 8, 128_256, "English-centric", 15),
-    "llama-3.2-8b-instruct": ModelInfo("Llama 3", 8, 128_256, "English-centric", 15),
+    "qwen2.5-0.5b-instruct": ModelInfo("Qwen2.5", 0.5, 151_936),
+    "qwen2.5-1.5b-instruct": ModelInfo("Qwen2.5", 1.5, 151_936),
+    "qwen2.5-3b-instruct": ModelInfo("Qwen2.5", 3, 151_936),
+    "qwen2.5-7b-instruct": ModelInfo("Qwen2.5", 7, 151_936),
+    "qwen2.5-14b-instruct": ModelInfo("Qwen2.5", 14, 151_936),
+    "qwen2.5-32b-instruct": ModelInfo("Qwen2.5", 32, 151_936),
+    "llama-3.2-1b-instruct": ModelInfo("Llama 3", 1, 128_256),
+    "llama-3.2-3b-instruct": ModelInfo("Llama 3", 3, 128_256),
+    "llama-3.1-8b-instruct": ModelInfo("Llama 3", 8, 128_256),
+    "llama-3.2-8b-instruct": ModelInfo("Llama 3", 8, 128_256),
     "olmo-2-0425-1b-instruct": ModelInfo("OLMo 2", 1),
     "olmo-2-1124-7b-instruct": ModelInfo("OLMo 2", 7),
     "olmo-2-1124-13b-instruct": ModelInfo("OLMo 2", 13),
     "olmo-2-0325-32b-instruct": ModelInfo("OLMo 2", 32),
-    "gemma-3-1b-it": ModelInfo("Gemma 3", 1, 262_144, "English-oriented", 2),
-    "gemma-3-4b-it": ModelInfo("Gemma 3", 4, 262_144, "Multilingual; 140+ languages", 4),
-    "gemma-3-12b-it": ModelInfo("Gemma 3", 12, 262_144, "Multilingual; 140+ languages", 12),
-    "gemma-3-27b-it": ModelInfo("Gemma 3", 27, 262_144, "Multilingual; 140+ languages", 14),
+    "gemma-3-1b-it": ModelInfo("Gemma 3", 1, 262_144),
+    "gemma-3-4b-it": ModelInfo("Gemma 3", 4, 262_144),
+    "gemma-3-12b-it": ModelInfo("Gemma 3", 12, 262_144),
+    "gemma-3-27b-it": ModelInfo("Gemma 3", 27, 262_144),
     "apertus-8b-instruct-2509": ModelInfo("Apertus", 8),
 }
 

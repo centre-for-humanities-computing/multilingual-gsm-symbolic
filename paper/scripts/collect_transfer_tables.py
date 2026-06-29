@@ -71,28 +71,21 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
         rows.append(
             {
                 "id": sample_id,
-                "sample_id": sample_id,
                 "source_id": scalar(metadata.get("source_id")),
                 "language": language,
                 "correct": bool(correct),
-                "correct_label": "correct" if correct else "incorrect",
-                "score": float(score),
                 "model": model,
                 "model_raw": log.eval.model,
                 "family": info.family,
                 "params_b": info.params_b,
                 "vocab_size": info.vocab_size,
-                "training_language": info.training_language,
-                "pretrain_tokens_t": info.pretrain_tokens_t,
                 "split": split,
-                "question_type": split,
                 "target": scalar(getattr(sample, "target", None)),
                 "prompt_chars": len(str(getattr(sample, "input", "") or "")),
                 "completion_chars": len(str(getattr(sample, "output", "") or "")),
                 "started_at": scalar(getattr(sample, "started_at", None)),
                 "completed_at": scalar(getattr(sample, "completed_at", None)),
                 "total_time": scalar(getattr(sample, "total_time", None)),
-                "epoch": scalar(getattr(sample, "epoch", None)),
                 "scorer": scorer or "auto",
                 "eval_id": log.eval.eval_id,
                 "task": log.eval.task,
@@ -146,7 +139,10 @@ def build_analysis_tables(
     language_features: pd.DataFrame,
     fertility: pd.DataFrame,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    main = observations.copy()
+    main = observations.drop(
+        columns=["training_language", "pretrain_tokens_t", "question_type", "correct_label", "epoch"],
+        errors="ignore",
+    ).copy()
 
     model_columns = [
         "model",
@@ -154,8 +150,6 @@ def build_analysis_tables(
         "family",
         "params_b",
         "vocab_size",
-        "training_language",
-        "pretrain_tokens_t",
     ]
     models = (
         main[[column for column in model_columns if column in main.columns]].drop_duplicates().reset_index(drop=True)
