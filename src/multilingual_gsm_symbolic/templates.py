@@ -282,7 +282,7 @@ class AnnotatedQuestion:
                 env.update({k: v for k, v in derived.items() if k not in assignments})
                 related.update(derived)
             return matched or None
-        
+
         # Loop through possible variable values and find the valid one
         # If sample([(1, 2), (1, 3)]) only exposes {a,1}, b is ambiguous;
         # a later visible {c,3} from c=b disambiguates it.
