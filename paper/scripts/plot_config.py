@@ -65,9 +65,26 @@ FAMILY_ORDER = {
     "OLMo 2": 7,
     "EuroLLM": 8,
     "Apertus": 9,
-    "BLOOMZ": 10,
-    "Pythia": 11,
-    "OpenAI": 12,
+    "OpenAI": 10,
+}
+
+FAMILY_COLORS = {
+    "Qwen2.5": "#7B2CBF",
+    "Qwen3": "#5A189A",
+    "Qwen": "#9D4EDD",
+    "DeepSeek-R1-Distill-Qwen": "#9D4EDD",
+    "Llama 3": "#E76F51",
+    "DeepSeek-R1-Distill-Llama": "#F4A261",
+    "OLMo 2": "#D62828",
+    "Gemma 3": "#2A9D8F",
+    "EuroLLM": "#118AB2",
+    "Apertus": "#6A994E",
+    "OpenAI": "#457B9D",
+}
+
+SPLIT_LABELS = {
+    "original": "Original benchmark questions",
+    "synthetic": "Synthetic numerical variants",
 }
 
 LANGUAGE_ORDER = {
@@ -115,10 +132,6 @@ def model_family(raw_model: str) -> str:
         return "Llama 3"
     if "apertus" in lower:
         return "Apertus"
-    if "bloomz" in lower:
-        return "BLOOMZ"
-    if "pythia" in lower:
-        return "Pythia"
     if raw_lower.startswith("openai/") or lower.startswith(("gpt-", "o1", "o3", "o4")):
         return "OpenAI"
     return name.split("-", 1)[0].split("_", 1)[0].split(".", 1)[0]

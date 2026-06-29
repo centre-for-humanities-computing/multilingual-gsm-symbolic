@@ -10,19 +10,12 @@ Example:
 from __future__ import annotations
 
 import argparse
-import sys
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from inspect_ai.log import read_eval_log
-
-SCRIPT_DIR = Path(__file__).resolve().parent
-if str(SCRIPT_DIR) not in sys.path:
-    sys.path.insert(0, str(SCRIPT_DIR))
-
-from eval_log_utils import (  # noqa: E402
+from eval_log_utils import (
     discover_logs,
     infer_model_info,
     model_name,
@@ -30,7 +23,8 @@ from eval_log_utils import (  # noqa: E402
     sample_score,
     select_logs,
 )
-from plot_config import language_order, ordered_models  # noqa: E402
+from inspect_ai.log import read_eval_log
+from plot_config import language_order, ordered_models
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -115,20 +109,11 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     frames: list[pd.DataFrame] = []
-    results = []
     if workers <= 1:
-        for path in paths:
-            result = load_log_rows(path, scorer)
-            print(f"Loaded log: {path}")
-            results.append(result)
+        results = [load_log_rows(path, scorer) for path in paths]
     else:
         with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
-            futures = {pool.submit(load_log_rows, path, scorer): path for path in paths}
-            for future in as_completed(futures):
-                path = futures[future]
-                result = future.result()
-                print(f"Loaded log: {path}")
-                results.append(result)
+            results = list(pool.map(load_log_rows, paths, [scorer] * len(paths)))
 
     for label, frame, warning in results:
         if warning:
@@ -142,14 +127,9 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     observations = pd.concat(frames, ignore_index=True)
-    observations["observation_id"] = (
-        observations["model"].astype(str)
-        + "|"
-        + observations["split"].astype(str)
-        + "|"
-        + observations["language"].astype(str)
-        + "|"
-        + observations["id"].astype(str)
+    observations["observation_id"] = observations[["model", "split", "language", "id"]].astype(str).agg(
+        "|".join,
+        axis=1,
     )
     model_categories = ordered_models(observations["model"].dropna().unique())
     language_categories = language_order(observations["language"].dropna().unique())
@@ -166,14 +146,7 @@ def build_analysis_tables(
     language_features: pd.DataFrame,
     fertility: pd.DataFrame,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    observations = observations.copy()
-    if "question_type" not in observations.columns and "split" in observations.columns:
-        observations["question_type"] = observations["split"]
-
-    core = ["id", "language", "correct", "model"]
-    rest = [column for column in observations.columns if column not in core]
-    main = observations[core + rest].copy()
-    main["correct"] = main["correct"].map(lambda value: bool(value)).astype(object)
+    main = observations.copy()
 
     model_columns = [
         "model",
@@ -189,13 +162,6 @@ def build_analysis_tables(
     )
 
     model_languages = fertility.copy()
-    if not fertility.empty:
-        if "normalized_fertility" in model_languages.columns:
-            model_languages["language_specific_normalized_fertility"] = model_languages["normalized_fertility"]
-        if "fertility_tokens_per_character" in model_languages.columns:
-            model_languages["language_specific_fertility_tokens_per_character"] = model_languages[
-                "fertility_tokens_per_character"
-            ]
 
     languages = language_features.copy()
     if not languages.empty:

@@ -44,10 +44,12 @@ from matplotlib.colors import Normalize
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
 from plot_config import (
+    FAMILY_COLORS,
     FAMILY_ORDER,
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_LABELS,
     LANGUAGE_SPEAKERS,
+    SPLIT_LABELS,
     language_order,
     model_sort_key,
     ordered_families,
@@ -57,22 +59,6 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
 
-
-FAMILY_COLORS = {
-    "Qwen2.5": "#7B2CBF",
-    "Qwen3": "#5A189A",
-    "Qwen": "#9D4EDD",
-    "DeepSeek-R1-Distill-Qwen": "#9D4EDD",
-    "Llama 3": "#E76F51",
-    "DeepSeek-R1-Distill-Llama": "#F4A261",
-    "OLMo 2": "#D62828",
-    "Gemma 3": "#2A9D8F",
-    "EuroLLM": "#118AB2",
-    "Apertus": "#6A994E",
-    "BLOOMZ": "#BC6C25",
-    "Pythia": "#3D405B",
-    "OpenAI": "#457B9D",
-}
 
 FAMILY_MARKERS = {
     "Qwen2.5": "o",
@@ -87,17 +73,25 @@ FAMILY_MARKERS = {
     "Apertus": "P",
     "OpenAI": "X",
 }
-OUTLIER_LABEL_COUNT = 5
 EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
-HARD_CODED_SPLIT_PAIR_LABELS = {
+SPLIT_PAIR_LABELS = {
     ("Qwen2.5-1.5B-Instruct", "nob"): "Qwen2.5 1.5B (Norwegian)",
     ("Llama-3.2-3B-Instruct", "dan"): "Llama 3.2 3B (Danish)",
 }
 
-SPLIT_LABELS = {
-    "original": "Original benchmark questions",
-    "synthetic": "Synthetic numerical variants",
-}
+PROBLEM_KEYS = [
+    "model_raw",
+    "model",
+    "family",
+    "params_b",
+    "vocab_size",
+    "training_language",
+    "pretrain_tokens_t",
+    "language",
+    "split",
+    "sample_id",
+    "source_id",
+]
 
 plt.rcParams.update(
     {
@@ -161,21 +155,7 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
 
     samples = pd.DataFrame(rows)
 
-    problem_keys = [
-        "model_raw",
-        "model",
-        "family",
-        "params_b",
-        "vocab_size",
-        "training_language",
-        "pretrain_tokens_t",
-        "language",
-        "split",
-        "sample_id",
-        "source_id",
-    ]
-
-    grouped = samples.groupby(problem_keys, dropna=False, as_index=False)["correct"].agg(
+    grouped = samples.groupby(PROBLEM_KEYS, dropna=False, as_index=False)["correct"].agg(
         correct_sum="sum", correct_count="size"
     )
 
@@ -222,21 +202,7 @@ def load_samples(
 
     combined = pd.concat(frames, ignore_index=True)
 
-    problem_keys = [
-        "model_raw",
-        "model",
-        "family",
-        "params_b",
-        "vocab_size",
-        "training_language",
-        "pretrain_tokens_t",
-        "language",
-        "split",
-        "sample_id",
-        "source_id",
-    ]
-
-    samples = combined.groupby(problem_keys, dropna=False, as_index=False).agg(
+    samples = combined.groupby(PROBLEM_KEYS, dropna=False, as_index=False).agg(
         correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum")
     )
     samples["correct"] = samples["correct_sum"] / samples["correct_count"]
@@ -365,9 +331,7 @@ def plot_heatmaps(summary: pd.DataFrame, out: Path) -> None:
             values="accuracy",
         ).reindex(index=order, columns=languages)
 
-    panels: list[tuple[str, pd.DataFrame, str, float, float, bool]] = [
-        (SPLIT_LABELS[split], matrices[split], "viridis", 0, 1, False) for split in available_splits
-    ]
+    panels = [(SPLIT_LABELS[split], matrices[split]) for split in available_splits]
 
     height = max(4.0, 0.42 * len(order) + 1.5)
     fig, axes = plt.subplots(
@@ -380,8 +344,8 @@ def plot_heatmaps(summary: pd.DataFrame, out: Path) -> None:
     axes = axes[0]
 
     images = [
-        annotated_heatmap(ax, matrix, title, cmap, vmin, vmax, signed)
-        for ax, (title, matrix, cmap, vmin, vmax, signed) in zip(axes, panels, strict=True)
+        annotated_heatmap(ax, matrix, title, "viridis", 0, 1, False)
+        for ax, (title, matrix) in zip(axes, panels, strict=True)
     ]
 
     axes[0].set_ylabel("Evaluated instruction-tuned model")
@@ -458,27 +422,10 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
                 linewidths=0.5,
             )
 
-    outliers = (
-        sized.dropna(subset=["params_b"])
-        .assign(gap=lambda rows: (rows["synthetic"] - rows["original"]).abs())
-        .sort_values("gap", ascending=False)
-        .drop_duplicates("model")
-        .head(OUTLIER_LABEL_COUNT)
-    )
-    annotations = []
     for row in sized.itertuples():
-        label = HARD_CODED_SPLIT_PAIR_LABELS.get((row.model, row.language))
+        label = SPLIT_PAIR_LABELS.get((row.model, row.language))
         if label:
-            annotations.append(
-                ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
-            )
-
-    for row in outliers.itertuples():
-        family = row.family if row.family != "Other" else row.model.split("-")[0]
-        label = f"{family} {row.params_b:g}B ({LANGUAGE_LABELS.get(row.language, row.language)})"
-        annotations.append(
             ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
-        )
 
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable.set_array([])
@@ -517,14 +464,6 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     fig.tight_layout(rect=(0, 0.09, 1, 1))
-    fig.canvas.draw()
-    renderer = fig.canvas.get_renderer()
-    label_bounds = []
-    for annotation in annotations:
-        if any(annotation.get_window_extent(renderer).overlaps(bounds) for bounds in label_bounds):
-            annotation.remove()
-        else:
-            label_bounds.append(annotation.get_window_extent(renderer))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
 
@@ -857,19 +796,13 @@ def main() -> None:
         "--workers",
         type=int,
         default=32,
-        help="Processes used for full log loading. Use 1 to disable multiprocessing.",
-    )
-    parser.add_argument(
-        "--header-workers",
-        type=int,
-        default=32,
-        help="Threads used for the header-only deduplication pass.",
+        help="Workers used for log selection and full log loading. Use 1 to disable parallelism.",
     )
 
     args = parser.parse_args()
 
     paths = discover_logs(args.log_dir)
-    selected = select_logs(paths, args.include_incomplete, workers=args.header_workers)
+    selected = select_logs(paths, args.include_incomplete, workers=args.workers)
 
     print(f"Discovered {len(paths)} logs; selected {len(selected)} after status filtering and deduplication.")
     print(f"Loading selected logs with {args.workers} worker(s).")

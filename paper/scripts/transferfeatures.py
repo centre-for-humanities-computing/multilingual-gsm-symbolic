@@ -5,6 +5,7 @@
 #   "numpy",
 #   "pandas",
 #   "pyarrow",
+#   "scipy",
 #   "setuptools<81",
 #   "transformers",
 # ]
@@ -39,7 +40,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.ticker import PercentFormatter
-from plot_config import FAMILY_ORDER, LANGUAGE_LABELS, language_order, ordered_families
+from plot_config import FAMILY_COLORS, FAMILY_ORDER, LANGUAGE_LABELS, SPLIT_LABELS, language_order, ordered_families
+from scipy.spatial import distance
 from transformers import AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -48,41 +50,20 @@ DEFAULT_OUT_DIR = ARTIFACTS_DIR / "transfer_features"
 
 COMMON_CRAWL_LANGUAGE_CODES = {"nob": "nor"}
 DEFAULT_COMMON_CRAWL_CSV = ARTIFACTS_DIR / "transfer_features" / "languages.csv"
-
-TOKENIZER_REPOS = {
-    "qwen2.5-0.5b-instruct": "Qwen/Qwen2.5-0.5B-Instruct",
-    "qwen2.5-1.5b-instruct": "Qwen/Qwen2.5-1.5B-Instruct",
-    "qwen2.5-3b-instruct": "Qwen/Qwen2.5-3B-Instruct",
-    "qwen2.5-7b-instruct": "Qwen/Qwen2.5-7B-Instruct",
-    "qwen2.5-14b-instruct": "Qwen/Qwen2.5-14B-Instruct",
-    "qwen2.5-32b-instruct": "Qwen/Qwen2.5-32B-Instruct",
-    "llama-3.2-1b-instruct": "meta-llama/Llama-3.2-1B-Instruct",
-    "llama-3.2-3b-instruct": "meta-llama/Llama-3.2-3B-Instruct",
-    "llama-3.1-8b-instruct": "meta-llama/Llama-3.1-8B-Instruct",
-    "llama-3.2-8b-instruct": "meta-llama/Llama-3.2-8B-Instruct",
-    "olmo-2-0425-1b-instruct": "allenai/OLMo-2-0425-1B-Instruct",
-    "olmo-2-1124-7b-instruct": "allenai/OLMo-2-1124-7B-Instruct",
-    "olmo-2-1124-13b-instruct": "allenai/OLMo-2-1124-13B-Instruct",
-    "olmo-2-0325-32b-instruct": "allenai/OLMo-2-0325-32B-Instruct",
-    "gemma-3-1b-it": "google/gemma-3-1b-it",
-    "gemma-3-4b-it": "google/gemma-3-4b-it",
-    "gemma-3-12b-it": "google/gemma-3-12b-it",
-    "gemma-3-27b-it": "google/gemma-3-27b-it",
-    "apertus-8b-instruct-2509": "swiss-ai/Apertus-8B-Instruct-2509",
-}
-
-FAMILY_COLORS = {
-    "Qwen2.5": "#7B2CBF",
-    "Llama 3": "#E76F51",
-    "OLMo 2": "#D62828",
-    "Gemma 3": "#2A9D8F",
-    "Apertus": "#6A994E",
-    "OpenAI": "#457B9D",
-}
-
-SPLIT_LABELS = {
-    "original": "Original benchmark questions",
-    "synthetic": "Synthetic numerical variants",
+SOURCE_METADATA = {
+    "definitions": {
+        "transfer_gap": "English accuracy minus target-language accuracy for the same model and split",
+        "tokenizer_fertility": "Tokenizer tokens divided by non-whitespace Unicode characters, with no special tokens",
+        "normalized_fertility": "Target-language fertility divided by English fertility on matched source_id questions",
+        "typological_distance": "Cosine distance from English over concatenated URIEL/lang2vec syntax_knn and inventory_knn vectors",
+        "resource_quantity": "Common Crawl page count; plots use log10(page count)",
+    },
+    "sources": {
+        "tokenizers": "https://huggingface.co/docs/transformers/en/model_doc/auto",
+        "uriel_lang2vec": "https://github.com/antonisa/lang2vec",
+        "uriel_paper": "https://aclanthology.org/E17-2002/",
+        "common_crawl_language_counts": str(DEFAULT_COMMON_CRAWL_CSV),
+    },
 }
 
 plt.rcParams.update(
@@ -121,14 +102,6 @@ def load_common_crawl_pages(source: str | Path, languages: list[str]) -> pd.Data
     return pd.DataFrame(rows)
 
 
-def cosine_distance(left: np.ndarray, right: np.ndarray) -> float:
-    denominator = np.linalg.norm(left) * np.linalg.norm(right)
-    if denominator == 0:
-        return math.nan
-    distance = float(1 - np.dot(left, right) / denominator)
-    return 0.0 if abs(distance) < 1e-12 else distance
-
-
 def collect_language_features(
     languages: list[str],
     common_crawl_resources: pd.DataFrame,
@@ -146,9 +119,11 @@ def collect_language_features(
             {
                 "language": language,
                 "language_name": LANGUAGE_LABELS.get(language, language),
-                "typological_distance_from_english": cosine_distance(
-                    np.asarray(vectors[language], dtype=float),
-                    english,
+                "typological_distance_from_english": float(
+                    distance.cosine(
+                        np.asarray(vectors[language], dtype=float),
+                        english,
+                    )
                 ),
                 "typological_feature_set": "URIEL syntax_knn",
                 **resource,
@@ -172,11 +147,7 @@ def load_questions(data_dir: Path, languages: list[str]) -> dict[str, pd.DataFra
     return questions
 
 
-def tokenizer_repo(model: str, model_raw: str) -> str | None:
-    known = TOKENIZER_REPOS.get(model.lower())
-    if known:
-        return known
-
+def tokenizer_repo(model_raw: str) -> str | None:
     raw = model_raw.rstrip("/")
     for prefix in ("vllm/", "hf/", "transformers/"):
         if raw.lower().startswith(prefix):
@@ -205,7 +176,6 @@ def text_fertility(tokenizer: Any, texts: list[str]) -> tuple[float, int, int]:
 def collect_tokenizer_fertility(
     summary: pd.DataFrame,
     questions: dict[str, pd.DataFrame],
-    local_files_only: bool,
 ) -> pd.DataFrame:
     """Calculate model-specific fertility on source-matched translated questions."""
     if "eng" not in questions:
@@ -215,7 +185,7 @@ def collect_tokenizer_fertility(
     rows: list[dict[str, Any]] = []
 
     for model_row in models.itertuples(index=False):
-        repo = tokenizer_repo(model_row.model, model_row.model_raw)
+        repo = tokenizer_repo(model_row.model_raw)
         if repo is None:
             print(f"Skipping tokenizer fertility for {model_row.model}: no open tokenizer repository")
             continue
@@ -224,7 +194,6 @@ def collect_tokenizer_fertility(
         try:
             tokenizer = AutoTokenizer.from_pretrained(
                 repo,
-                local_files_only=local_files_only,
                 trust_remote_code=False,
             )
         except Exception as exc:
@@ -384,9 +353,7 @@ def relationship_plot(
     legend_entries: dict[str, Any] = {}
     for ax in axes:
         handles, labels = ax.get_legend_handles_labels()
-        legend_entries.update(
-            (label, handle) for handle, label in zip(handles, labels, strict=True) if label not in legend_entries
-        )
+        legend_entries.update(dict(zip(labels, handles, strict=True)))
     if legend_entries:
         fig.legend(
             list(legend_entries.values()),
@@ -402,31 +369,6 @@ def relationship_plot(
     plt.close(fig)
     return True
 
-
-def source_metadata() -> dict[str, Any]:
-    return {
-        "definitions": {
-            "transfer_gap": "English accuracy minus target-language accuracy for the same model and split",
-            "tokenizer_fertility": (
-                "Tokenizer tokens divided by non-whitespace Unicode characters, with no special tokens"
-            ),
-            "normalized_fertility": (
-                "Target-language fertility divided by English fertility on matched source_id questions"
-            ),
-            "typological_distance": (
-                "Cosine distance from English over concatenated URIEL/lang2vec syntax_knn and inventory_knn vectors"
-            ),
-            "resource_quantity": "Common Crawl page count; plots use log10(page count)",
-        },
-        "sources": {
-            "tokenizers": "https://huggingface.co/docs/transformers/en/model_doc/auto",
-            "uriel_lang2vec": "https://github.com/antonisa/lang2vec",
-            "uriel_paper": "https://aclanthology.org/E17-2002/",
-            "common_crawl_language_counts": str(DEFAULT_COMMON_CRAWL_CSV),
-        },
-    }
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -441,11 +383,6 @@ def main() -> None:
         type=Path,
         default=DEFAULT_COMMON_CRAWL_CSV,
         help="Common Crawl language page-count CSV.",
-    )
-    parser.add_argument(
-        "--local-files-only",
-        action="store_true",
-        help="Do not download tokenizer files; use the Hugging Face cache only.",
     )
     args = parser.parse_args()
 
@@ -470,7 +407,6 @@ def main() -> None:
     fertility = collect_tokenizer_fertility(
         summary,
         questions,
-        local_files_only=args.local_files_only,
     )
     fertility_path = args.out_dir / "tokenizer_fertility.csv"
     fertility.to_csv(fertility_path, index=False)
@@ -481,7 +417,7 @@ def main() -> None:
 
     metadata_path = args.out_dir / "feature_sources.json"
     metadata_path.write_text(
-        json.dumps(source_metadata(), indent=2) + "\n",
+        json.dumps(SOURCE_METADATA, indent=2) + "\n",
         encoding="utf-8",
     )
 
