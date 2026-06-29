@@ -11,13 +11,16 @@ id_orig = 269
 id_shuffled = 8
 
 question_annotated = """
-एक कसरत करणारा {n, १६} चेंडू हवेत उडवून खेळवू शकतो. चेंडूंपैकी {frac_1_txt,अर्धा} {ball_type, गोल्फ}चे चेंडू आहेत, आणि {ball_type,गोल्फ}च्या चेंडूंपैकी {frac_2_txt,अर्धा} {color, blue} आहेत. {color, blue} {ball_type,गोल्फ}चे चेंडू किती आहेत?
+एक कसरत करणारा {n, १६} चेंडू हवेत उडवून खेळवू शकतो. चेंडूंपैकी {frac_1_neut,अर्धे} {ball_type, गोल्फ}चे चेंडू आहेत, आणि {ball_type,गोल्फ}च्या चेंडूंपैकी {frac_2_neut,अर्धे} {color_pl,निळे} आहेत. {color_pl,निळे} {ball_type,गोल्फ}चे चेंडू किती आहेत?
 
 #init:
 - ball_type = sample(["गोल्फ", "टेनिस"])
 - color = sample(colors)
+- color_pl = mar_color_form(color, 'plural')
 - frac_1_txt, frac_1_val = sample(fraction_alnum)
 - frac_2_txt, frac_2_val = sample(fraction_alnum)
+- frac_1_neut = mar_fraction_form(frac_1_txt, 'neut')
+- frac_2_neut = mar_fraction_form(frac_2_txt, 'neut')
 - $n = range(16, 100, 2)
 
 #conditions:
@@ -29,7 +32,7 @@ question_annotated = """
 
 answer_annotated = """
 {ball_type}चे चेंडू:{n}*{frac_1_val}=<<{n}*{frac_1_val}={n*frac_1_val}>>{int(n*frac_1_val)}.
-{color} {ball_type}चे चेंडू:{int(n*frac_1_val)}*{frac_2_val}=<<{int(n*frac_1_val)}*{frac_2_val}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} चेंडू
+{color_pl} {ball_type}चे चेंडू:{int(n*frac_1_val)}*{frac_2_val}=<<{int(n*frac_1_val)}*{frac_2_val}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} चेंडू
 #### {int(n*frac_1_val*frac_2_val)}
 """
 
