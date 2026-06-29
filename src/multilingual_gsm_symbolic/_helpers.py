@@ -290,6 +290,8 @@ def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, A
         "ukr_plural_measurements": ukr_plural_measurements,
         "to_title": to_title,
         "ukr_weekday_to_when": ukr_weekday_to_when,
+        "mar_fraction_form": mar_fraction_form,
+        "mar_color_form": mar_color_form,
         **replacements,
     }
 
