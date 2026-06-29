@@ -11,7 +11,6 @@ every source template, then averages correctness across the selected problems.
 from __future__ import annotations
 
 import argparse
-import math
 import os
 import re
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
@@ -24,17 +23,21 @@ import numpy as np
 import pandas as pd
 from inspect_ai.log import read_eval_log
 from matplotlib.lines import Line2D
-from matplotlib.patches import Patch
 from matplotlib.ticker import PercentFormatter
-from plot_config import HUMAN_VERIFIED_LANGUAGES, LANGUAGE_LABELS, language_order, model_sort_key
+from plot_config import (
+    HUMAN_VERIFIED_LANGUAGES,
+    LANGUAGE_LABELS,
+    LANGUAGE_SPEAKERS,
+    language_order,
+    model_family,
+    model_name,
+    model_sort_key,
+)
 from scipy.stats import norm
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "language_ridgeline"
-
-COMMON_CRAWL_LANGUAGE_CODES = {"nob": "nor"}
-DEFAULT_COMMON_CRAWL_CSV = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "languages.csv"
 
 SYNTHETIC_COLOR = "#173B75"
 SYNTHETIC_FILL = "#AFC0DD"
@@ -67,56 +70,9 @@ class PlotStats:
     n_models: int
     n_templates: int
     n_sampled_sets: int
-
-
-def model_name(raw_model: str) -> str:
-    """Remove provider prefixes while preserving the model identifier."""
-    return raw_model.rstrip("/").split("/")[-1]
-
-
-def model_family(model: str) -> str:
-    lower = model.lower()
-    if "qwen2.5" in lower:
-        return "Qwen2.5"
-    if "olmo-2" in lower:
-        return "OLMo 2"
-    if "gemma-3" in lower:
-        return "Gemma 3"
-    if re.search(r"llama[-_. ]?3", lower):
-        return "Llama 3"
-    if "apertus" in lower:
-        return "Apertus"
-    if model.lower().startswith("openai/") or lower.startswith(("gpt-", "o1", "o3", "o4")):
-        return "OpenAI"
-    return "Other"
-
-
 def path_slug(value: str) -> str:
     slug = re.sub(r"[^a-z0-9.]+", "-", value.lower()).strip("-")
     return slug or "unknown"
-
-
-def load_common_crawl_log10_pages(source: str | Path, languages: list[str]) -> dict[str, float]:
-    """Return the latest Common Crawl page count for each language on a log10 scale."""
-    frame = pd.read_csv(source)
-    required = {"crawl", "primary_language", "pages"}
-    missing = required - set(frame.columns)
-    if missing:
-        raise ValueError(f"{source} is missing required columns: {', '.join(sorted(missing))}")
-
-    resources: dict[str, float] = {}
-    for language in languages:
-        common_crawl_language = COMMON_CRAWL_LANGUAGE_CODES.get(language, language)
-        matches = frame.loc[frame["primary_language"] == common_crawl_language].sort_values("crawl")
-        if matches.empty:
-            raise ValueError(f"No Common Crawl page count found for {language} ({common_crawl_language}).")
-        pages = int(matches.iloc[-1]["pages"])
-        resources[language] = math.log10(pages) if pages > 0 else math.nan
-    return resources
-
-
-def common_crawl_title(language: str, log10_pages: float) -> str:
-    return f"{LANGUAGE_LABELS.get(language, language)} (log10 Common Crawl pages: {log10_pages:.2f})"
 
 
 def format_speaker_count(count: int) -> str:
@@ -394,7 +350,6 @@ def collect_plot_data(
 def plot_distributions(
     distributions: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]],
     stats: list[PlotStats],
-    common_crawl_log10_pages: dict[str, float],
     scope_label: str,
     out_png: Path,
 ) -> None:
@@ -541,22 +496,14 @@ def plot_distributions(
             linewidth=0,
             label="Original benchmark accuracy",
         ),
-        Patch(
-            facecolor=SYNTHETIC_FILL,
-            edgecolor=SYNTHETIC_COLOR,
-            label="Sampled synthetic sets",
-        ),
         Line2D(
             [0],
             [0],
-            marker="$★$",
-            color="#E0A800",
-            markersize=10,
-            linewidth=0,
-            label="Human verified",
+            color=SYNTHETIC_COLOR,
+            linewidth=2.2,
+            label="Sampled synthetic sets",
         ),
     ]
-    legend_handles = legend_handles[:2]
     axes[0].legend(
         handles=legend_handles,
         loc="upper right",
@@ -612,12 +559,6 @@ def main() -> None:
         help="Optional three-letter language codes in display order; defaults to all discovered languages.",
     )
     parser.add_argument(
-        "--common-crawl-csv",
-        type=Path,
-        default=DEFAULT_COMMON_CRAWL_CSV,
-        help="Common Crawl language page-count CSV.",
-    )
-    parser.add_argument(
         "--samples",
         type=int,
         default=2_000,
@@ -636,22 +577,16 @@ def main() -> None:
         "--workers",
         type=int,
         default=max(12, cpu_count),
-        help="Processes used for full log loading; use 1 to disable multiprocessing.",
-    )
-    parser.add_argument(
-        "--header-workers",
-        type=int,
-        default=min(32, max(4, cpu_count * 2)),
-        help="Threads used to inspect and deduplicate log headers.",
+        help="Workers used for header scans and full log loading; use 1 to disable parallelism.",
     )
     args = parser.parse_args()
 
     if args.samples < 2:
         parser.error("--samples must be at least 2")
-    if args.workers < 1 or args.header_workers < 1:
-        parser.error("--workers and --header-workers must be at least 1")
+    if args.workers < 1:
+        parser.error("--workers must be at least 1")
 
-    paths = discover_selected_logs(args.log_dir, args.model, args.header_workers)
+    paths = discover_selected_logs(args.log_dir, args.model, args.workers)
     if not paths:
         requested = f" for models {args.model!r}" if args.model else ""
         raise SystemExit(f"No successful logs found{requested} in {args.log_dir}.")
@@ -664,7 +599,6 @@ def main() -> None:
 
     models = sorted(problems["model"].unique(), key=model_sort_key)
     all_languages = language_order(set(problems["language"].unique()), args.languages)
-    common_crawl_log10_pages = load_common_crawl_log10_pages(args.common_crawl_csv, all_languages)
     print(f"Models ({len(models)}): {', '.join(models)}")
     print(f"Languages ({len(all_languages)}): {', '.join(all_languages)}")
 
@@ -693,7 +627,7 @@ def main() -> None:
         out_png = out_dir / f"{base_name}.png"
         out_csv = out_dir / f"{base_name}.csv"
 
-        plot_distributions(curves, stats, common_crawl_log10_pages, model, out_png)
+        plot_distributions(curves, stats, model, out_png)
         write_summary(stats, out_csv)
 
         print(f"Saved {out_png}")
