@@ -1,0 +1,44 @@
+question = "Mathéo nourrit ses animaux avec du foin. Chaque chèvre a besoin de 5 kg et chaque mouton a besoin de 3 kg de moins que le double de ce dont chaque chèvre a besoin. S'il y a 15 chèvres et 12 moutons, de combien de kg de foin Mathéo a-t-il besoin ?"
+
+answer = """
+D'abord, déterminez de combien de foin chaque mouton a besoin : 5 kg * 2 - 3 = <<5*2-3=7>>7 kg/mouton
+Ensuite, calculez de combien de foin les moutons ont besoin au total : 7 kg/mouton * 12 moutons = <<7*12=84>>84 kg
+Ensuite, calculez de combien de foin les chèvres ont besoin au total : 5 kg/chèvre * 15 chèvres = <<5*15=75>>75 kg
+Enfin, additionnez les deux quantités de foin pour trouver le total : 84 kg + 75 kg = <<84+75=159>>159 kg
+#### 159
+"""
+
+id_orig = 937
+
+id_shuffled = 71
+
+question_annotated = """
+{name,Mathéo} nourrit ses animaux avec du {food,foin}. Chaque {animal1,chèvre} a besoin de {n1,5} {unit,kg} et chaque {animal2,mouton} a besoin de {n2,3} {unit,kg} de moins que le double de ce dont chaque {animal1,chèvre} a besoin. S'il y a {k1,15} {animal1,chèvre}s et {k2,12} {animal2,mouton}s, de combien de {unit,kg} de {food,foin} {name,Mathéo} a-t-il besoin ?
+
+#init:
+- name = sample(names_male)
+- food = sample(["foin", "grain", "fourrage", "maïs"])
+- animal1, animal2 = sample(["chèvre", "vache", "poney", "âne", "lama", "alpaga", "cochon", "dinde", "canard"], 2)
+- unit = sample(["kg", "g"])
+- $n1 = range(3, 15)
+- $n2 = range(1, 10)
+- $k1 = range(10, 50)
+- $k2 = range(10, 50)
+
+#conditions:
+- 2*n1 - n2 > 0
+
+#answer: k1*n1 + k2*(2*n1 - n2)
+"""
+
+answer_annotated = """
+D'abord, déterminez de combien de {food} chaque {animal2} a besoin : {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2}
+Ensuite, calculez de combien de {food} les {animal2}s ont besoin au total : {2*n1-n2} {unit}/{animal2} * {k2} {animal2}s = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
+Ensuite, calculez de combien de {food} les {animal1}s ont besoin au total : {n1} {unit}/{animal1} * {k1} {animal1}s = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
+Enfin, additionnez les deux quantités de {food} pour trouver le total : {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
+#### {k1*n1 + k2*(2*n1 - n2)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

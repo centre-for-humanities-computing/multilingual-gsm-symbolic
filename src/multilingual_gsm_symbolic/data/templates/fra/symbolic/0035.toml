@@ -1,0 +1,44 @@
+question = "Théo collecte de l'argent pour une sortie scolaire. Il a demandé de l'aide à l'école, qui a décidé de couvrir la moitié des coûts de la sortie scolaire. Combien d'argent manque-t-il à Théo, s'il a 350 euros et que la sortie scolaire coûte 2000 euros ?"
+
+answer = """
+L'école a décidé de payer 2000*1/2=<<2000*1/2=1000>>1000 euros pour la sortie scolaire.
+Au total, Théo a couvert 1000 + 350 = <<1000+350=1350>>1350 euros de la sortie scolaire
+Donc Théo a besoin de 2000 - 1350 = <<2000-1350=650>>650 euros de plus pour la sortie scolaire.
+#### 650
+"""
+
+id_orig = 788
+
+id_shuffled = 35
+
+question_annotated = """
+{name,Théo} collecte de l'argent pour {event_article,une} {event,sortie scolaire}. Il a demandé de l'aide {organization_a,à l'école}, qui a décidé de couvrir {fraction_txt,la moitié} des coûts {event_genitive,de la sortie scolaire}. Combien d'argent manque-t-il à {name,Théo}, s'il a {current,350} {cur,euros} et que {event_definite,la sortie scolaire} coûte {total,2000} {cur,euros} ?
+
+#init:
+- name = sample(names_male)
+- event_article, event, event_definite, event_genitive = sample([("une", "excursion", "l'excursion", "de l'excursion"), ("un", "tournoi sportif", "le tournoi sportif", "du tournoi sportif"), ("une", "conférence", "la conférence", "de la conférence"), ("un", "festival", "le festival", "du festival"), ("une", "foire scientifique", "la foire scientifique", "de la foire scientifique")])
+- cur = sample(currencies_sym)
+- organization_a, organization_definite = sample([("à l'école", "l'école"), ("à la municipalité", "la municipalité"), ("à l'association caritative locale", "l'association caritative locale"), ("au club de jeunes", "le club de jeunes"), ("aux parents", "les parents")])
+- $fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(50, 1350, 50)
+- $total = range(1350, 7000, 50)
+
+#conditions:
+- total > current
+- total - (total * fraction_val + current) > 0
+- is_int(total * (fraction_val))
+- is_int(total - (total * (fraction_val) + current))
+
+#answer: total - (total * (fraction_val) + current)
+"""
+
+answer_annotated = """
+{organization_definite} a décidé de payer {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur} pour {event_definite}.
+Au total, {name} a couvert {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} {event_genitive}
+Donc {name} a besoin de {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} de plus pour {event_definite}.
+#### {total-(total*(fraction_val)+current)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

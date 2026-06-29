@@ -1,0 +1,45 @@
+question = "Morten var brævavinur við 5 persónum. Hann helt uppat at vera brævavinur við 2 av teimum. Tey senda hvørt 2 brøv um vikuna, sum eru 5 síður long. Hann svarar beinanvegin. Hann kann skriva eina síðu upp á 6 minuttir. Hvussu nógvar tímar brúkar hann upp á at skriva um vikuna?"
+
+answer = """
+Morten er brævavinur við 5-2=<<5-2=3>>3 persónum
+Sostatt fær hann 3*2=<<3*2=6>>6 brøv um vikuna
+So hann skrivar 6*5=<<6*5=30>>30 síður um vikuna
+So hann skrivar í 30*6=<<30*6=180>>180 minuttir um vikuna
+So hann skrivar 180/60=<<180/60=3>>3 tímar um vikuna
+#### 3
+"""
+
+id_orig = 242
+
+id_shuffled = 72
+
+question_annotated = """
+{name,Morten} var brævavinur við {n1,5} persónum. Hann helt uppat at vera brævavinur við {n2,2} av teimum. Tey senda hvørt {l,2} brøv um vikuna, sum eru {p,5} síður long. Hann svarar beinanvegin. Hann kann skriva eina síðu upp á {t,6} minuttir. Hvussu nógvar tímar brúkar hann upp á at skriva um vikuna?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(5, 15)
+- $n2 = range(1, 5)
+- $l = range(2, 5)
+- $p = range(5, 12)
+- $t = range(4, 15)
+
+#conditions:
+- n2 < n1
+- is_int(((n1 - n2) * l * p * t) / 60)
+
+#answer: ((n1 - n2) * l * p * t) // 60
+"""
+
+answer_annotated = """
+{name} er brævavinur við {n1}-{n2}=<<{n1}-{n2}={n1-n2}>>{n1-n2} persónum
+Sostatt fær hann {n1-n2}*{l}=<<{n1-n2}*{l}={(n1-n2)*l}>>{(n1-n2)*l} brøv um vikuna
+So hann skrivar {(n1-n2)*l}*{p}=<<{(n1-n2)*l}*{p}={((n1-n2)*l*p)}>>{((n1-n2)*l*p)} síður um vikuna
+So hann skrivar í {((n1-n2)*l*p)}*{t}=<<{((n1-n2)*l*p)}*{t}={((n1-n2)*l*p*t)}>>{((n1-n2)*l*p*t)} minuttir um vikuna
+So hann skrivar {((n1-n2)*l*p*t)}/60=<<{((n1-n2)*l*p*t)}/60={((n1-n2)*l*p*t)//60}>>{((n1-n2)*l*p*t)//60} tímar um vikuna
+#### {((n1-n2)*l*p*t)//60}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

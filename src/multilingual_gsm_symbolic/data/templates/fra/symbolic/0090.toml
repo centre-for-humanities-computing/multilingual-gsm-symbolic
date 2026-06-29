@@ -1,0 +1,38 @@
+question = "Diane a des amis sur Facebook. Carl en a trois fois plus et Jonas en a quatre fois plus. Si Carl a 12 amis sur Facebook, combien d'amis Facebook a Jonas ?"
+
+answer = """
+Diane a 12/3=<<12/3=4>>4 amis Facebook.
+Jonas a 4*4=<<4*4=16>>16 amis Facebook.
+#### 16
+"""
+
+id_orig = 149
+
+id_shuffled = 90
+
+question_annotated = """
+{name2,Diane} a des amis sur {platform,Facebook}. {name1,Carl} en a {mult1_txt,trois fois} plus et {name3,Jonas} en a {mult2_txt,quatre fois} plus. Si {name1,Carl} a {n,12} amis sur {platform,Facebook}, combien d'amis {platform,Facebook} a {name3,Jonas} ?
+
+#init:
+- name1, name2, name3 = sample(names, 3)
+- platform = sample(["Instagram", "Twitter", "LinkedIn", "TikTok", "Snapchat"])
+- mult1_txt, mult1_val = sample(multi_times)
+- mult2_txt, mult2_val = sample(multi_times)
+- $n = range(10, 201)
+
+#conditions:
+- mult2_val != mult1_val
+- is_int(n / mult1_val)
+
+#answer: int((n / mult1_val) * mult2_val)
+"""
+
+answer_annotated = """
+{name2} a {n}/{mult1_val}=<<{n}/{mult1_val}={n//mult1_val}>>{n//mult1_val} amis {platform}.
+{name3} a {mult2_val}*{n//mult1_val}=<<{mult2_val}*{n//mult1_val}={int((n / mult1_val) * mult2_val)}>>{int((n / mult1_val) * mult2_val)} amis {platform}.
+#### {int((n / mult1_val) * mult2_val)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

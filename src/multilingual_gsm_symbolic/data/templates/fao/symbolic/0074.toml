@@ -1,0 +1,41 @@
+question = "Tað eru 96 næmingar í fjórða flokki í Frederiksbjerg skúla. 43 av teimum eru gentur. Fríggjadag vóru 5 gentur í fjórða flokki og 4 dreingir í fjórða flokki burturstaddir. Hvussu nógvir dreingir í fjórða flokki vóru í Frederiksbjerg skúla fríggjadag?"
+
+answer = """
+Av teimum 96 næmingunum í fjórða flokki eru 43 gentur, so 96 næmingar - 43 gentur = <<96-43=53>>53 dreingir.
+Fríggjadag vóru tað 53 dreingir - 4 burturstaddir = <<53-4=49>>49 dreingir.
+#### 49
+"""
+
+id_orig = 364
+
+id_shuffled = 74
+
+question_annotated = """
+Tað eru {total,96} næmingar í {grade,fjórða} flokki í {school_name,Frederiksbjerg} skúla. {num_girls,43} av teimum eru gentur. {day,fríggjadag} vóru {absent_girls,5} gentur í {grade,fjórða} flokki og {absent_boys,4} dreingir í {grade,fjórða} flokki burturstaddir. Hvussu nógvir dreingir í {grade,fjórða} flokki vóru í {school_name,Frederiksbjerg} skúla {day,fríggjadag}?
+
+#init:
+- school_name = sample(["", "Læssøesgades", "Elise Smith", "Bygade"])
+- grade = sample(["fyrsta", "aðra", "triðja", "fjórða", "fimta"])
+- day = sample(["mánadag", "týsdag", "mikudag", "hósdag", "fríggjadag"])
+- $total = range(50, 200)
+- $num_girls = range(20, 100)
+- $absent_girls = range(2, 10)
+- $absent_boys = range(2, 10)
+
+#conditions:
+- num_girls < total
+- absent_girls < num_girls
+- absent_boys < (total - num_girls)
+
+#answer: total - num_girls - absent_boys
+"""
+
+answer_annotated = """
+Av teimum {total} næmingunum í {grade} flokki eru {num_girls} gentur, so {total} næmingar - {num_girls} gentur = <<{total}-{num_girls}={total-num_girls}>>{total-num_girls} dreingir.
+{day} vóru tað {total-num_girls} dreingir - {absent_boys} burturstaddir = <<{total-num_girls}-{absent_boys}={total-num_girls-absent_boys}>>{total-num_girls-absent_boys} dreingir.
+#### {total-num_girls-absent_boys}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

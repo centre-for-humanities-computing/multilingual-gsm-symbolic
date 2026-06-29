@@ -1,0 +1,8 @@
+question = "公衆電話から電話をかけるには、通話1分ごとに$0.25を支払わなければなりません。16分を過ぎると、その料金は1分あたり$0.2に下がります。36分間の通話料金はいくらですか？"
+answer = "最初の16分の料金は、16 * 0.25 = $<<16*0.25=4>>4です。\nその後、36 - 16 = <<36-16=20>>20分の通話が残っています。\nそして、この20分の料金は20 * 0.2 = $<<20*0.2=4>>4です。\nしたがって、36分間の通話料金は合計で4 + 4 = $8です。\n#### 8\n"
+id_orig = 1223
+id_shuffled = 10
+question_annotated = "{dev,公衆電話}から電話をかけるには、通話1分ごとに{currency,$}{frac1,0.25}を支払わなければなりません。{t,16}分を過ぎると、その料金は1分あたり{currency,$}{frac2,0.2}に下がります。{total,36}分間の通話料金はいくらですか？\n\n#init:\n- dev = sample(['電話ボックス', 'ホテルの部屋の電話'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))\n"
+answer_annotated = "最初の{t}分の料金は、{t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)}です。\nその後、{total} - {t} = <<{total}-{t}={total-t}>>{total-t}分の通話が残っています。\nそして、この{total-t}分の料金は{total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)}です。\nしたがって、{total}分間の通話料金は合計で{int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))}です。\n#### {int((frac1 * t) + frac2*(total-t))}\n"
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated"
+language = "jpn"

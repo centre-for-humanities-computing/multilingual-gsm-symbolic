@@ -1,0 +1,47 @@
+question = "Frú Jensen leitar eftir einum húsi, sum ikki fer upp um hennara fíggjarætlan upp á 2.700.000 kr. Hon sá eina ogn, sum hevur ein søluprís upp á 2.370.000 kr. Harumframt skal keyparin gjalda eitt meklaragjald, sum er 5% av søluprísinum, og eisini flytingargjaldið, sum er 12% av samlaða søluprísinum. Hvussu nógv meira er samlaði prísurin á húsinum enn fíggjarætlanin hjá frú Jensen?"
+
+answer = """
+Meklaragjaldið er 2.370.000 kr*5/100 = <<2370000*5/100=118500>>118.500 kr.
+Flytingargjaldið er 2.370.000 kr*12/100 = <<2370000*12/100=284400>>284.400 kr.
+Samlaði prísurin á húsinum er 2.370.000 kr + 118.500 kr + 284.400 kr = 2.772.900 kr.
+So tað er 2.772.900 kr - 2.700.000 kr = <<2772900-2700000=72900>>72.900 kr meira enn fíggjarætlanin hjá frú Jensen.
+#### 72900
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name, Frú Jensen} leitar eftir {property_type_article,einum} {property_type,húsi}, sum ikki fer upp um hennara fíggjarætlan upp á {budget, 2.700.000} kr. Hon sá eina ogn, sum hevur ein søluprís upp á {price, 2.370.000} kr. Harumframt skal keyparin gjalda eitt meklaragjald, sum er {brokerage_fee, 5}% av søluprísinum, og eisini flytingargjaldið, sum er {transfer_fee, 12}% av samlaða søluprísinum. Hvussu nógv meira er samlaði prísurin á {property_type_definite,húsinum} enn fíggjarætlanin hjá {name_genitive,frú Jensen}?
+
+#init:
+- name, name_genitive = sample([("Fru Madsen", "fru Madsens"), ("Frøken Hansen", "frøken Hansens"), ("Dr. Sørensen", "dr. Sørensens"), ("Fru Andersen", "fru Andersens")])
+- property_type_article, property_type, property_type_definite = sample([("et", "hus", "huset"), ("en", "lejlighed", "lejligheden"), ("et", "byhus", "byhuset"), ("en", "andelslejlighed", "andelslejligheden")])
+- $budget = range(2000000, 3410000, 100000)
+- $price = range(1700000, 3050000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)
+"""
+
+answer_annotated = """
+Meklaragjaldið er {price} kr*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} kr.
+Flytingargjaldið er {price} kr*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} kr.
+Samlaði prísurin á {property_type_definite} er {price} kr + {int(price*brokerage_fee/100)} kr + {int(price*transfer_fee/100)} kr = {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kr.
+So tað er {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kr - {budget} kr = <<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} kr meira enn fíggjarætlanin hjá {name_genitive}.
+#### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

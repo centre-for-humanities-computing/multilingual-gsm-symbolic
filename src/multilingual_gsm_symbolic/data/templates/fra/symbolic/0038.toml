@@ -1,0 +1,42 @@
+question = "Un pain à la boulangerie coûte 30 euros. Les bagels coûtent 10 euros pièce. Combien de plus coûtent 3 pains que 2 bagels ?"
+
+answer = """
+3 pains coûtent 3 * 30 euros = <<3*30=90>>90 euros.
+2 bagels coûtent 2 * 10 euros = <<2*10=20>>20 euros.
+Les pains coûtent 90 euros - 20 euros = <<90-20=70>>70 euros de plus que les bagels.
+#### 70
+"""
+
+id_orig = 799
+
+id_shuffled = 38
+
+question_annotated = """
+Un {item1,pain} {shop,à la boulangerie} coûte {price1,30} {cur,euros}. Les {item2,bagels} coûtent {price2,10} {cur,euros} pièce. Combien de plus coûtent {n1,3} {item1,pain}s que {n2,2} {item2,bagels} ?
+
+#init:
+- item1 = sample(["pain", "pain au levain", "pain de seigle"])
+- item2 = sample(["bagels", "muffins", "croissants", "biscuits"])
+- shop = sample(["à la boulangerie", "au café", "au supermarché", "au kiosque"])
+- cur = sample(currencies_sym)
+- $price1 = range(30, 100)
+- $price2 = range(10, 35)
+- $n1 = range(2, 10)
+- $n2 = range(2, 10)
+
+#conditions:
+- n1 * price1 > n2 * price2
+
+#answer: n1 * price1 - n2 * price2
+"""
+
+answer_annotated = """
+{n1} {item1}s coûtent {n1} * {price1} {cur} = <<{n1}*{price1}={n1*price1}>>{n1*price1} {cur}.
+{n2} {item2} coûtent {n2} * {price2} {cur} = <<{n2}*{price2}={n2*price2}>>{n2*price2} {cur}.
+Les {item1}s coûtent {n1*price1} {cur} - {n2*price2} {cur} = <<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} {cur} de plus que les {item2}.
+#### {n1*price1-n2*price2}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

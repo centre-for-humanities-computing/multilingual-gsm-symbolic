@@ -1,0 +1,46 @@
+question = "M. Lefebvre a vendu sa maison pour 2.700.000 euros. Il a payé des frais de mutation qui représentent 3 % du prix de vente et a aussi payé des frais d'agence qui représentent 5 % du prix de vente. S'il a également payé 1.700.000 euros pour le montant restant du prêt de la maison, quel est le produit net de M. Lefebvre sur la vente de la maison ?"
+
+answer = """
+M. Lefebvre a payé 2.700.000 euros*3/100 = <<2700000*3/100=81000>>81.000 euros pour les frais de mutation.
+Il a payé 2.700.000 euros*5/100 = <<2700000*5/100=135000>>135.000 euros pour les frais d'agence.
+Donc M. Lefebvre a payé au total 81.000 euros + 135.000 euros + 1.700.000 euros = <<81000+135000+1700000=1916000>>1.916.000 euros pour les frais de mutation, les frais d'agence et le montant du prêt.
+Donc le produit net de M. Lefebvre est de 2.700.000 euros - 1.916.000 euros = <<2700000-1916000=784000>>784.000 euros.
+#### 784000
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{title,M.} {name,Lefebvre} a vendu sa {property,maison} pour {price,2700000} euros. Il a payé des frais {fee1_name,de mutation} qui représentent {fee1_percent,3} % du prix de vente et a aussi payé des frais {fee2_name,d'agence} qui représentent {fee2_percent,5} % du prix de vente. S'il a également payé {loan,1700000} euros pour le montant restant du prêt de la {property,maison}, quel est le produit net de {title,M.} {name,Lefebvre} sur la vente de la {property,maison} ?
+
+#init:
+- title = sample(["M.", "Prof.", "Dr."])
+- name = sample(["Dubois", "Martin", "Lambert", "Mercier", "Girard", "Bonnet", "Rousseau", "Moreau", "Lefebvre"])
+- property = sample(["maison", "maison de campagne"])
+- fee1_name = sample(["de mutation", "d'enregistrement", "d'avocat"])
+- fee2_name = sample(["d'agence", "d'agent", "d'agent immobilier"])
+- $price = range(1300000, 6700000, 70000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(700000, 4700000, 100000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{title} {name} a payé {price} euros*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{price * fee1_percent // 100} euros pour les frais {fee1_name}.
+Il a payé {price} euros*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{price * fee2_percent // 100} euros pour les frais {fee2_name}.
+Donc {title} {name} a payé au total {price * fee1_percent // 100} euros + {price * fee2_percent // 100} euros + {loan} euros = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{price * (fee1_percent + fee2_percent) // 100 + loan} euros pour les frais {fee1_name}, les frais {fee2_name} et le montant du prêt.
+Donc le produit net de {title} {name} est de {price} euros - {price * (fee1_percent + fee2_percent) // 100 + loan} euros = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} euros.
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"
