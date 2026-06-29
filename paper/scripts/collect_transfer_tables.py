@@ -22,16 +22,15 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from visualizegrid import (  # noqa: E402
+from eval_log_utils import (  # noqa: E402
     discover_logs,
     infer_model_info,
     model_name,
-    model_order,
     parse_task,
     sample_score,
     select_logs,
 )
-from plot_config import language_order  # noqa: E402
+from plot_config import language_order, ordered_models  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -152,7 +151,7 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         + "|"
         + observations["id"].astype(str)
     )
-    model_categories = model_order(observations)
+    model_categories = ordered_models(observations["model"].dropna().unique())
     language_categories = language_order(observations["language"].dropna().unique())
     observations["model"] = pd.Categorical(observations["model"], categories=model_categories, ordered=True)
     observations["language"] = pd.Categorical(observations["language"], categories=language_categories, ordered=True)

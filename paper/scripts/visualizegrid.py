@@ -24,9 +24,7 @@ from __future__ import annotations
 
 import argparse
 import math
-import re
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +32,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from inspect_ai.log import read_eval_log
+from eval_log_utils import (
+    discover_logs,
+    infer_model_info,
+    model_name,
+    parse_task,
+    sample_score,
+    select_logs,
+)
 from matplotlib.colors import Normalize
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
@@ -43,8 +49,6 @@ from plot_config import (
     LANGUAGE_LABELS,
     LANGUAGE_SPEAKERS,
     language_order,
-    model_family,
-    model_size_b,
     model_sort_key,
     ordered_families,
 )
@@ -53,37 +57,6 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
 
-
-@dataclass(frozen=True)
-class ModelInfo:
-    family: str
-    params_b: float | None
-    vocab_size: int | None = None
-    training_language: str = ""
-    pretrain_tokens_t: float | None = None
-
-
-MODEL_CATALOG = {
-    "qwen2.5-0.5b-instruct": ModelInfo("Qwen2.5", 0.5, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-1.5b-instruct": ModelInfo("Qwen2.5", 1.5, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-3b-instruct": ModelInfo("Qwen2.5", 3, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-7b-instruct": ModelInfo("Qwen2.5", 7, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-14b-instruct": ModelInfo("Qwen2.5", 14, 151_936, "Chinese-English; multilingual", 18),
-    "qwen2.5-32b-instruct": ModelInfo("Qwen2.5", 32, 151_936, "Chinese-English; multilingual", 18),
-    "llama-3.2-1b-instruct": ModelInfo("Llama 3", 1, 128_256, "English-centric", 9),
-    "llama-3.2-3b-instruct": ModelInfo("Llama 3", 3, 128_256, "English-centric", 9),
-    "llama-3.1-8b-instruct": ModelInfo("Llama 3", 8, 128_256, "English-centric", 15),
-    "llama-3.2-8b-instruct": ModelInfo("Llama 3", 8, 128_256, "English-centric", 15),
-    "olmo-2-0425-1b-instruct": ModelInfo("OLMo 2", 1),
-    "olmo-2-1124-7b-instruct": ModelInfo("OLMo 2", 7),
-    "olmo-2-1124-13b-instruct": ModelInfo("OLMo 2", 13),
-    "olmo-2-0325-32b-instruct": ModelInfo("OLMo 2", 32),
-    "gemma-3-1b-it": ModelInfo("Gemma 3", 1, 262_144, "English-oriented", 2),
-    "gemma-3-4b-it": ModelInfo("Gemma 3", 4, 262_144, "Multilingual; 140+ languages", 4),
-    "gemma-3-12b-it": ModelInfo("Gemma 3", 12, 262_144, "Multilingual; 140+ languages", 12),
-    "gemma-3-27b-it": ModelInfo("Gemma 3", 27, 262_144, "Multilingual; 140+ languages", 14),
-    "apertus-8b-instruct-2509": ModelInfo("Apertus", 8),
-}
 
 FAMILY_COLORS = {
     "Qwen2.5": "#7B2CBF",
@@ -112,8 +85,6 @@ FAMILY_MARKERS = {
     "OLMo 2": "D",
     "EuroLLM": "<",
     "Apertus": "P",
-    "BLOOMZ": "*",
-    "Pythia": "d",
     "OpenAI": "X",
 }
 OUTLIER_LABEL_COUNT = 5
@@ -136,120 +107,6 @@ plt.rcParams.update(
         "font.family": "sans-serif",
     }
 )
-
-
-def model_name(raw_model: str) -> str:
-    """Drop provider/organization prefixes while preserving the model id."""
-    return raw_model.rstrip("/").split("/")[-1]
-
-
-def infer_model_info(raw_model: str) -> ModelInfo:
-    name = model_name(raw_model)
-    catalog_info = MODEL_CATALOG.get(name.lower())
-    if catalog_info:
-        return catalog_info
-
-    family = model_family(raw_model)
-    size = model_size_b(raw_model)
-    params_b = None if math.isinf(size) else size
-    return ModelInfo(family, params_b)
-
-
-def parse_task(task: str) -> tuple[str, str] | None:
-    matches = re.findall(r"(original|synthetic)[_-]([a-z]{3}(?:_[a-z]+)?)", task.lower())
-    return matches[-1] if matches else None
-
-
-def score_to_float(score: Any) -> float | None:
-    value = getattr(score, "value", score)
-    if isinstance(value, bool):
-        return float(value)
-    if isinstance(value, (int, float)):
-        return float(value)
-    if isinstance(value, str):
-        normalized = value.strip().upper()
-        if normalized in {"C", "CORRECT", "TRUE"}:
-            return 1.0
-        if normalized in {"I", "INCORRECT", "FALSE"}:
-            return 0.0
-        try:
-            return float(normalized)
-        except ValueError:
-            return None
-    return None
-
-
-def sample_score(sample: Any, scorer: str | None) -> float | None:
-    scores = sample.scores or {}
-    if scorer:
-        return score_to_float(scores.get(scorer)) if scorer in scores else None
-
-    for preferred in ("math", "pattern"):
-        if preferred in scores:
-            return score_to_float(scores[preferred])
-
-    for score in scores.values():
-        value = score_to_float(score)
-        if value is not None:
-            return value
-
-    return None
-
-
-def discover_logs(log_dirs: list[Path]) -> list[Path]:
-    paths: set[Path] = set()
-    for log_dir in log_dirs:
-        paths.update(path for path in log_dir.rglob("*.eval") if path.stat().st_size >= 1_000)
-    return sorted(paths)
-
-
-def _read_log_header(path: Path) -> tuple[Path, Any | None, str | None]:
-    try:
-        return path, read_eval_log(str(path), header_only=True), None
-    except Exception as exc:
-        return path, None, str(exc)
-
-
-def select_logs(paths: list[Path], include_incomplete: bool, workers: int) -> list[tuple[Path, Any]]:
-    """Deduplicate log snapshots, preferring successful and newer entries."""
-    selected: dict[tuple[str, str], tuple[Path, Any]] = {}
-
-    if not paths:
-        return []
-
-    if workers <= 1:
-        results = [_read_log_header(path) for path in paths]
-    else:
-        max_workers = min(workers, len(paths))
-        with ThreadPoolExecutor(max_workers=max_workers) as pool:
-            futures = [pool.submit(_read_log_header, path) for path in paths]
-            results = [future.result() for future in as_completed(futures)]
-
-    for path, log, error in results:
-        if error:
-            print(f"Skipping unreadable log {path.name}: {error}")
-            continue
-
-        status = str(log.status)
-        if not include_incomplete and status != "success":
-            continue
-
-        key = (log.eval.eval_id, log.eval.task)
-        rank = (status == "success", path.stat().st_mtime_ns)
-
-        previous = selected.get(key)
-        if previous is None:
-            selected[key] = (path, log)
-            continue
-
-        previous_rank = (
-            str(previous[1].status) == "success",
-            previous[0].stat().st_mtime_ns,
-        )
-        if rank > previous_rank:
-            selected[key] = (path, log)
-
-    return sorted(selected.values(), key=lambda item: item[0].name)
 
 
 def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | None, str | None]:
