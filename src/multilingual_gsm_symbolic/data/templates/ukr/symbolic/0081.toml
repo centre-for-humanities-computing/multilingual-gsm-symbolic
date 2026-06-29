@@ -1,8 +1,36 @@
-question = "Команда з пошуку великодніх яєць сховала 100 яєць. Близнюки Єнсен знайшли по 30 яєць кожен. Усі інші яйця, крім 10, знайшли їхні друзі. Скільки яєць знайшли друзі?"
-answer = "Близнюки Єнсен знайшли 30 * 2 = <<30*2=60>>60 яєць.\nКількість, що залишилася схованою, становила 100 - 60 = <<100-60=40>>40 яєць\nОскільки 10 яєць не знайшли, це означає, що друзі знайшли 40 - 10 = 30 яєць.\n#### 30\n"
+question = "Організатори конкурсу сховали 100 яєць. Близнюки взяли участь в конкурсі та кожен з них знайшов 30 яєць кожен. Усі інші яйця, крім 10, знайшли їхні друзі. Скільки яєць знайшли друзі?"
+
+answer = """Близнюки знайшли 30 * 2 = <<30*2=60>>60 яєць.
+Кількість, що залишилася схованою, становила 100 - 60 = <<100-60=40>>40 яєць
+Оскільки 10 яєць не знайшли, це означає, що друзі знайшли 40 - 10 = 30 яєць.
+#### 30
+"""
 id_orig = 1025
 id_shuffled = 81
-question_annotated = "Команда з пошуку великодніх яєць {event,мисливці} сховала {total,100} {item,яєць}. Близнюки {family,Єнсен} знайшли по {n,30} {item,яєць} кожен. Усі інші яйця, крім {m,10}, знайшли їхні друзі. Скільки {item,яєць} знайшли друзі?\n\n#init:\n- event = sample([\"мисливці\", \"шукачі скарбів\", \"учасники\"])\n- item = sample([\"яєць\", \"ласощів\", \"іграшок\", \"монет\", \"цукерок\", \"скарбів\"])\n- family = sample([\"Мадсен\", \"Гансен\", \"Ебельгор\", \"Поульсен\", \"Крістенсен\"])\n- $total = range(50, 201, 10)\n- $n = range(10, 51)\n- $m = range(5, 21)\n\n#conditions:\n- 2*n + m < total\n\n#answer: total - 2*n - m\n"
-answer_annotated = "Близнюки {family} знайшли {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.\nКількість, що залишилася схованою, становила {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}\nОскільки {m} {item} не знайшли, це означає, що друзі знайшли {total-2*n} - {m} = {total - 2*n - m} {item}.\n#### {total - 2*n - m}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """Організатори конкурсу сховали {total,100} {n_total_item,яєць}. Близнюки взяли участь в конкурсі та кожен з них знайшов {n,30} {n_item,яєць} кожен. Усі інші {item_pl1, яйця}, крім {m,10}, знайшли їхні друзі. Скільки {item_pl2,яєць} знайшли друзі?
+
+#init:
+- event = sample(["мисливці", "шукачі скарбів", "учасники"])
+- item_s, item_pl1, item_pl2 = sample([("яйце", "яйця", "яєць"), ("ласощі", "ласощі", "ласощів"), ("іграшка", "іграшки", "іграшок"), ("монета", "монети", "монет"), ("цукерка", "цукерки", "цукерок"), ("скарб", "скарби", "скарбів")])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+- n_total_item = ukr_plural_measurements(total, item_s, item_pl1, item_pl2)
+- n_item = ukr_plural_measurements(n, item_s, item_pl1, item_pl2)
+- n2_item = ukr_plural_measurements(2*n, item_s, item_pl1, item_pl2)
+- rem_item = ukr_plural_measurements(total-2*n, item_s, item_pl1, item_pl2)
+- m_item = ukr_plural_measurements(m, item_s, item_pl1, item_pl2)
+- ans_item = ukr_plural_measurements(total-2*n-m, item_s, item_pl1, item_pl2)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+answer_annotated = """Близнюки знайшли {n} * 2 = <<{n}*2={2*n}>>{2*n} {n2_item}.
+Кількість, що залишилася схованою, становила {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {rem_item}
+Оскільки {m} {m_item} не знайшли, це означає, що друзі знайшли {total-2*n} - {m} = {total-2*n-m} {ans_item}.
+#### {total-2*n-m}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

@@ -1,36 +1,15 @@
 question = """
-{name,Sarah} ging op vakantie naar de kust. Haar ouders gaven haar {total,75} kr om precies te kopen wat ze maar wilde. In de kiosk waren karamels te koop voor "Koop {n1,500} gram voor {p1,20} kr, krijg {n2,500} gram voor {discount,1/2} prijs." Ze nam {n12,1100} gram. Ze kocht ook een gemengde zak met schelpen die {p2,17} kr kostte en {n3,4} magneten die {p3,2} kr per stuk kostten. Hoeveel geld heeft {name} over?
-
-#init:
-- $total = range(30, 100, 15)
-- $n1 = range(200, 651, 150)
-- $n2 = range(200, 651, 150)
-- $n12 = range(650, 1301, 150)
-- $n3 = range(4, 15, 2)
-- $p1 = range(20, 55, 5)
-- $p2 = range(17, 40, 4)
-- $p3 = range(2, 35, 3)
-- name = sample(names_female)
-- $discount = sample(fractions)
-
-#conditions:
-- n2 <= n1
-- n12 - n1 - n2 > 0
-- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)
-- p1 + n2/n1 * (1-discount) * p1 + (n12 - n1 - n2)/n1 * p1 + p2 + n3 * p3 < total
-- total - int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3) > 0
-
-#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)
+Ella ging op vakantie naar de kust. Haar ouders gaven haar 75 euro om precies te kopen wat ze maar wilde. In de kiosk waren karamels te koop voor "Koop 500 gram voor 20 euro, krijg 500 gram voor 1/2 prijs." Ze nam 1100 gram. Ze kocht ook een gemengde zak met schelpen die 17 euro kostte en 4 magneten die 2 euro per stuk kostten. Hoeveel geld heeft Ella over?
 """
 
 answer = """
-{name} is karamels aan het kopen voor {p1} kr en krijgt {n2} gram {discount} korting. Dus {discount} korting op {n2} gram is {n2}/{n1}*{discount}*{p1} kr = {(n2/n1)*discount*p1} kr.
-Samen kost dat {(n2/n1)*discount*p1} kr + {p1} kr = {(n1/n2)*discount*p1 + p1} kr.
-De resterende {n12 - n1 - n2} gram hebben geen korting en kosten {(n12 - n1 - n2)/n1*p1} kr, dus de totale prijs is {p1} kr + {n2/n1*discount*p1} kr + {(n12 - n1 - n2)/n1*p1} kr = <<{p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} kr
-{n3} magneten van {p3} kr per stuk zijn {n3}*{p3} kr=<<{n3}*{p3}={n3*p3}>>{n3*p3} kr
-Als je al haar aankopen optelt, {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} kr + {p2} kr + {n3*p3} kr = <<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr
-Ze had {total} kr en gaf {int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr uit, dus ze heeft {total} kr - {int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr = <<{total}-{int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr over
-#### {total-int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}
+Ella is karamels aan het kopen voor 20 euro en krijgt 500 gram 1/2 korting. Dus 1/2 korting op 500 gram is 500/500*1/2*20 euro = 10 euro.
+Samen kost dat 10 euro + 20 euro = 30 euro.
+De resterende 100 gram hebben geen korting en kosten 4 euro, dus de totale prijs is 20 euro + 10 euro + 4 euro = <<20+10+4=34>>34 euro
+4 magneten van 2 euro per stuk zijn 4*2 euro=<<4*2=8>>8 euro
+Als je al haar aankopen optelt, 34 euro + 17 euro + 8 euro = <<34+17+8=59>>59 euro
+Ze had 75 euro en gaf 59 euro uit, dus ze heeft 75 euro - 59 euro = <<75-59=16>>16 euro over
+#### 16
 """
 
 id_orig = 410
@@ -38,7 +17,7 @@ id_orig = 410
 id_shuffled = 40
 
 question_annotated = """
-{name} ging op vakantie naar de kust. Haar ouders gaven haar {total,75} kr om precies te kopen wat ze maar wilde. In de kiosk waren karamels te koop voor "Koop {n1,500} gram voor {p1,20} kr, krijg {n2,500} gram voor {discount,1/2} prijs." Ze nam {n12,1100} gram. Ze kocht ook een gemengde zak met schelpen die {p2,17} kr kostte en {n3,4} magneten die {p3,2} kr per stuk kostten. Hoeveel geld heeft {name} over?
+{name,Ella} ging op vakantie naar de kust. Haar ouders gaven haar {total,75} euro om precies te kopen wat ze maar wilde. In de kiosk waren karamels te koop voor "Koop {n1,500} gram voor {p1,20} euro, krijg {n2,500} gram voor {discount,1/2} prijs." Ze nam {n12,1100} gram. Ze kocht ook een gemengde zak met schelpen die {p2,17} euro kostte en {n3,4} magneten die {p3,2} euro per stuk kostten. Hoeveel geld heeft {name,Ella} over?
 
 #init:
 - $total = range(30, 100, 15)
@@ -63,15 +42,15 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name} is karamels aan het kopen voor {p1} kr en krijgt {n2} gram {discount} korting. Dus {discount} korting op {n2} gram is {n2}/{n1}*{discount}*{p1} kr = {(n2/n1)*discount*p1} kr.
-Samen kost dat {(n2/n1)*discount*p1} kr + {p1} kr = {(n1/n2)*discount*p1 + p1} kr.
-De resterende {n12 - n1 - n2} gram hebben geen korting en kosten {(n12 - n1 - n2)/n1*p1} kr, dus de totale prijs is {p1} kr + {n2/n1*discount*p1} kr + {(n12 - n1 - n2)/n1*p1} kr = <<{p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} kr
-{n3} magneten van {p3} kr per stuk zijn {n3}*{p3} kr=<<{n3}*{p3}={n3*p3}>>{n3*p3} kr
-Als je al haar aankopen optelt, {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} kr + {p2} kr + {n3*p3} kr = <<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr
-Ze had {total} kr en gaf {int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr uit, dus ze heeft {total} kr - {int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr = <<{total}-{int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr over
+{name} is karamels aan het kopen voor {p1} euro en krijgt {n2} gram {discount} korting. Dus {discount} korting op {n2} gram is {n2}/{n1}*{discount}*{p1} euro = {(n2/n1)*discount*p1} euro.
+Samen kost dat {(n2/n1)*discount*p1} euro + {p1} euro = {(n1/n2)*discount*p1 + p1} euro.
+De resterende {n12 - n1 - n2} gram hebben geen korting en kosten {(n12 - n1 - n2)/n1*p1} euro, dus de totale prijs is {p1} euro + {n2/n1*discount*p1} euro + {(n12 - n1 - n2)/n1*p1} euro = <<{p1}+{n2/n1*discount*p1}+{(n12 - n1 - n2)/n1*p1}={p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} euro
+{n3} magneten van {p3} euro per stuk zijn {n3}*{p3} euro=<<{n3}*{p3}={n3*p3}>>{n3*p3} euro
+Als je al haar aankopen optelt, {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} euro + {p2} euro + {n3*p3} euro = <<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} euro
+Ze had {total} euro en gaf {int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} euro uit, dus ze heeft {total} euro - {int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} euro = <<{total}-{int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} euro over
 #### {total-int(p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated; validated by a native speaker."
 
 language = "nld"

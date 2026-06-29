@@ -1,0 +1,44 @@
+question = "Bertrand a un sac de billes avec 10 à l'intérieur. Il a trébuché sur une pierre en le portant et en a perdu la moitié. Il s'est empressé de les chercher, mais n'en a trouvé que 3. En rentrant chez lui, il a inspecté les billes de plus près. Deux de celles qu'il a ramassées n'étaient pas des billes, mais en fait des perles en bois, alors il les a jetées. Combien de billes Bertrand a-t-il au final ?"
+
+answer = """
+Bertrand a perdu ses billes et il lui restait 10*1/2=<<10*1/2=5>>5 billes.
+Il a cherché et retrouvé certaines de ses billes perdues, ce qui l'a ramené à 5+3=<<5+3=8>>8 billes.
+Il est rentré chez lui et a enlevé les perles en bois, ce qui lui a laissé 8-2=<<8-2=6>>6 billes.
+#### 6
+"""
+
+id_orig = 1247
+
+id_shuffled = 61
+
+question_annotated = """
+{name,Bertrand} a un sac de {objects,billes} avec {n,10} à l'intérieur. Il a trébuché sur une {obstacle,pierre} en le portant et en a perdu {frac_txt,la moitié}. Il s'est empressé de les chercher, mais n'en a trouvé que {k,3}. En rentrant chez lui, il a inspecté les {objects,billes} de plus près. {fake_num_txt,deux} de celles qu'il a ramassées n'étaient pas des {objects,billes}, mais en fait des {fake_object,perles en bois}, alors il les a jetées. Combien de {objects,billes} {name,Bertrand} a-t-il au final ?
+
+#init:
+- name = sample(names_male)
+- objects = sample(['billes', 'pièces', 'boutons', 'perles'])
+- obstacle = sample(['pierre', 'branche', 'racine', 'souche'])
+- fake_object = sample(['billes en verre', 'perles en bois', 'cailloux'])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+
+answer_annotated = """
+{name} a perdu ses {objects} et il lui restait {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects}.
+Il a cherché et retrouvé certaines de ses {objects} perdues, ce qui l'a ramené à {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects}.
+Il est rentré chez lui et a enlevé les {fake_object}, ce qui lui a laissé {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects}.
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

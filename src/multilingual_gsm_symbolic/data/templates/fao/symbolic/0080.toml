@@ -1,0 +1,49 @@
+question = "Sjálvsølurnar selja chips fyri 40 oyru og góðgætisstengur fyri 75 oyru. George brúkti 5 kr og fekk 3 posar av chips og hevði 1% av pengunum eftir sum vekslipengar. Hvussu nógvar góðgætisstengur keypti hann?"
+
+answer = """
+George fekk 0,05 kr í vekslipengum tí 5*1/100 = <<5*1/100=0,05>>0,05
+George brúkti 4,95 kr tí 5 - 0,05 = <<5-0,05=4,95>>4,95
+George brúkti 1,2 kr upp á chips tí 3*0,4 = <<3*0,4=1,2>>1,2
+George brúkti 3,75 kr upp á góðgætisstengur tí 4,95 - 1,2 = <<4,95-1,2=3,75>>3,75
+George keypti 5 góðgætisstengur tí 3,75 / 0,75 = <<5=5>>5
+#### 5
+"""
+
+id_orig = 434
+
+id_shuffled = 80
+
+question_annotated = """
+Sjálvsølurnar selja {item1,chips} fyri {price1,40} oyru og {item2,góðgætisstengur} fyri {price2,75} oyru. {name,George} brúkti {total,5} {cur,kr} og fekk {n1,3} posar av {item1,chips} og hevði {p,1}% av pengunum eftir sum vekslipengar. Hvussu nógvar {item2,góðgætisstengur} keypti hann?
+
+#init:
+- name = sample(names_male)
+- item1, item2 = sample(['sjokulátustengur', 'tyggigummi', 'smákøkur', 'muffins', 'keks'], 2)
+- cur = sample(currencies_sym)
+- $price1 = range(25, 100, 5)
+- $price2 = range(50, 150, 5)
+- $total = range(5, 21)
+- $n1 = range(1, 10)
+- $p = range(1, 10)
+
+#conditions:
+- price2 > price1
+- is_int(total * p / 100)
+- total * (100 - p) > n1 * price1
+- (total * (100 - p) - n1 * price1) % price2 == 0
+
+#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)
+"""
+
+answer_annotated = """
+{name} fekk {total * p / 100} {cur} í vekslipengum tí {total}*{p}/100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}
+{name} brúkti {total * (100 - p) / 100} {cur} tí {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}
+{name} brúkti {n1 * price1 / 100} {cur} upp á {item1} tí {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}
+{name} brúkti {(total * (100 - p) / 100 - n1 * price1 / 100)} {cur} upp á {item2} tí {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}
+{name} keypti {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} {item2} tí {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}={ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}>>{ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+#### {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

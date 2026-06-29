@@ -222,43 +222,119 @@ class AnnotatedQuestion:
         assignment_tuples = RE_TEMPLATE_VAR.findall(self.question_template)
         return {var: parse_value(val) for var, val in assignment_tuples}
 
+    # assumes that init lines are in dependency order
+    # this means that no init lines should depend on later lines
     def _get_full_default_assignments(self, replacements: dict[str, Any]) -> dict[str, Any]:
-        """Return defaults for all variables, deriving paired variables not in the question template."""
-        assignments = self.get_default_assignments()
+        """Return defaults for all variables, following init order."""
 
-        for var in self.variables:
-            if var in assignments:
+        # Start with defaults written in the question text.
+        assignments = self.get_default_assignments()
+        init_vars = set(self.variables)
+
+        def same(a: Any, b: Any) -> bool:
+            return a == b or str(a) == str(b)
+
+        # Get the set of variables an init line depends on
+        def refs(ast_node: ast.expr) -> set[str]:
+            return {node.id for node in ast.walk(ast_node) if isinstance(node, ast.Name)} & init_vars
+
+        # matches_dependent_default has two functions, recovery of sampled tuples and conflict checking
+
+        # 1
+        # Example: 0076.toml has `fish_info = sample([...])`, then
+        # `fish_nom, fish_gen, ... = fish_info`; the question only has
+        # `{fish_nom,тунець}`, so use that derived default to recover which tuple was sampled from fish_info.
+        # matches_dependent_default lets us get the value for fish_gen by looking it up in the matching tuple
+
+        # 2
+        # the variable matched tells us if this candidate conflicts with or matches a later default
+        # for example:
+        # $a, b = sample([(1, 3), (1, 2)])
+        # $c = b
+        # visible defaults: {a,1} and {c,2}
+        # Both tuples match the a = 1 default, but the later c = b default means we reject (1,3)
+
+        def matches_dependent_default(env: dict[str, Any], related: set[str]) -> bool | None:
+            matched = False
+            for derived_vars, derived_ast in self._init_line_asts:
+                derived_refs = refs(derived_ast)
+                if not derived_refs or not derived_refs & related or not derived_refs <= set(env):
+                    continue
+                derived = self._assign_from_ast(derived_vars, derived_ast, env)
+
+                # Ukrainian plural annotations sometimes use a different surface form
+                # than ukr_plural_measurements would compute
+                # Don't let conflicts from ukr_plural_measurements reject otherwise good candidates
+                strict = not any(
+                    isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Name)
+                    and node.func.id == "ukr_plural_measurements"
+                    for node in ast.walk(derived_ast)
+                )
+                for var, value in derived.items():
+                    if var in assignments:
+                        if not strict:
+                            matched = matched or same(value, assignments[var])
+                            continue
+                        if not same(value, assignments[var]):
+                            return False
+                        matched = True
+                env.update({k: v for k, v in derived.items() if k not in assignments})
+                related.update(derived)
+            return matched or None
+
+        # Loop through possible variable values and find the valid one
+        # If sample([(1, 2), (1, 3)]) only exposes {a,1}, b is ambiguous;
+        # a later visible {c,3} from c=b disambiguates it.
+        # If there are multiple possible candidates we error
+        # This is because because hidden values can affect rendered answers
+        for line_vars, ast_node in self._init_line_asts:
+            if set(line_vars) <= set(assignments):
                 continue
-            logger.debug(f"Variable {var} not in question template; deriving from init in question {self.id_shuffled}.")
-            assignment_line = next(
-                (line for line in self.init if var in self._extract_variables_from_init_line(line)),
-                None,
+
+            assigned = {k: parse_value(v) for k, v in assignments.items()}
+            env = build_eval_context(Random(0), replacements) | assigned
+            known_line_vars = [v for v in line_vars if v in assignments]
+
+            possible_values = eval_node(ast_node, COMBINATION_HELPERS | replacements | assigned)
+            if not isinstance(possible_values, list):
+                possible_values = [possible_values]
+
+            matching_candidates = []
+            for val in possible_values:
+                values = [val] if len(line_vars) == 1 else align_values_to_variables(line_vars, val)
+                if len(values) != len(line_vars):
+                    continue
+                candidate = dict(zip(line_vars, values))
+                candidate_env = env | {k: parse_value(v) for k, v in candidate.items()}
+                # Assignments must match all default assingments in question and pass check from matches_dependent_default
+                dependent_match = matches_dependent_default(candidate_env, set(candidate))
+                if known_line_vars:
+                    if not all(same(candidate[v], assignments[v]) for v in known_line_vars) or dependent_match is False:
+                        continue
+                elif dependent_match is not True:
+                    continue
+                matching_candidates.append(candidate)
+
+            if len(matching_candidates) > 1:
+                raise ValueError(
+                    f"Multiple default candidates for {', '.join(line_vars)} in question {self.id_shuffled}: "
+                    f"{matching_candidates}"
+                )
+            if matching_candidates:
+                assignments.update(matching_candidates[0])
+            else:
+                if refs(ast_node) <= set(assignments):
+                    new_assignments = self._assign_from_ast(line_vars, ast_node, env)
+                    assignments.update({k: v for k, v in new_assignments.items() if k not in assignments})
+
+        missing = init_vars - set(assignments)
+        if missing:
+            var = next(iter(missing))
+            raise ValueError(
+                f"Variable {var} not found in assignments, and no other variable to derive from "
+                f"in question {self.id_shuffled}."
             )
-            if not assignment_line:
-                raise ValueError(f"Variable {var} not found in any assignment line in question {self.id_shuffled}.")
-            line_vars = self._extract_variables_from_init_line(assignment_line)
-            definition_part = assignment_line.split("=", 1)[1].strip()
-            other_var = next((v for v in line_vars if v != var), None)
-            if not (other_var and other_var in assignments):
-                raise ValueError(
-                    f"Variable {var} not found in assignments, and no other variable to derive from "
-                    f"in question {self.id_shuffled}."
-                )
-            other_value = assignments[other_var]
-            potential_values = eval_node(parse_expr(definition_part), COMBINATION_HELPERS | replacements)
-            for val in potential_values:
-                if isinstance(val, (tuple, list)) and len(val) == 2:
-                    if val[0] == other_value or str(val[0]) == str(other_value):
-                        assignments[var] = val[1]
-                        break
-                    if val[1] == other_value or str(val[1]) == str(other_value):
-                        assignments[var] = val[0]
-                        break
-            if var not in assignments:
-                raise ValueError(
-                    f"Could not derive value for {var} (other_var={other_var}, value={other_value}) "
-                    f"from line '{assignment_line}' in question {self.id_shuffled}."
-                )
 
         return assignments
 
@@ -547,7 +623,8 @@ class AnnotatedQuestion:
 
     def _assign_from_ast(self, variables: list[str], ast_node: ast.expr, env: dict[str, Any]) -> dict[str, Any]:
         """Evaluate one init-line expression against ``env`` and zip results to variables."""
-        values = align_values_to_variables(variables, eval_node(ast_node, env))
+        result = eval_node(ast_node, env)
+        values = [result] if len(variables) == 1 else align_values_to_variables(variables, result)
         if len(values) != len(variables):
             logger.warning(f"Incompatible variables {variables} and values {values} in template {self.id_shuffled}.")
             return {}

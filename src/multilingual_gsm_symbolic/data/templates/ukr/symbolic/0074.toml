@@ -1,8 +1,39 @@
-question = "У школі Frederiksbjerg є 96 учнів четвертого класу. 43 з них — дівчата. У п’ятницю 5 дівчат четвертого класу і 4 хлопці четвертого класу були відсутні. Скільки хлопців четвертого класу було у школі Frederiksbjerg у п’ятницю?"
-answer = "Із 96 учнів четвертого класу 43 — дівчата, отже 96 учнів - 43 дівчини = <<96-43=53>>53 хлопці.\nУ п’ятницю було 53 хлопці - 4 відсутні = <<53-4=49>>49 хлопців.\n#### 49\n"
+question = "У школі №1 є 96 учнів четвертого класу. З них 43 дівчинки. У п’ятницю 5 дівчат четвертого класу і 4 хлопці четвертого класу були відсутні. Скільки хлопців четвертого класу було у школі №1 у п’ятницю?"
+
+answer = """Оскільки із 96 учнів четвертого класу 43 дівчинки, то хлопців у класі 96 - 43 = <<96-43=53>>53 хлопці.
+У п’ятницю було 53 хлопці, з яких 4 хлопці були відсутні, тож у школі було 53 - 4 = <<53-4=49>>49 хлопців.
+#### 49
+"""
 id_orig = 364
 id_shuffled = 74
-question_annotated = "У школі {school_name,Frederiksbjerg} є {total,96} учнів {grade,четвертого} класу. {num_girls,43} з них — дівчата. У {day,п’ятницю} {absent_girls,5} дівчат {grade,четвертого} класу і {absent_boys,4} хлопці {grade,четвертого} класу були відсутні. Скільки хлопців {grade,четвертого} класу було у школі {school_name,Frederiksbjerg} у {day,п’ятницю}?\n\n#init:\n- school_name = sample([\"\", \"Læssøesgades\", \"Elise Smith\", \"Bygade\"])\n- grade = sample([\"першого\", \"другого\", \"третього\", \"четвертого\", \"п’ятого\"])\n- day = sample([\"понеділок\", \"вівторок\", \"середа\", \"четвер\", \"п’ятниця\"])\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys\n"
-answer_annotated = "Із {total} учнів {grade} класу {num_girls} — дівчата, отже {total} учнів - {num_girls} дівчини = <<{total}-{num_girls}={total-num_girls}>>{total-num_girls} хлопці.\nУ {day} було {total-num_girls} хлопці - {absent_boys} відсутні = <<{total-num_girls}-{absent_boys}={total-num_girls-absent_boys}>>{total-num_girls-absent_boys} хлопців.\n#### {total-num_girls-absent_boys}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """У школі {school_name,№1} є {total,96} {total_students_nom, учнів} {grade_gen,четвертого} класу. З них {num_girls,43} {girls_nom, дівчинки}. У {day_acc,п’ятницю} {absent_girls,5} {absent_girls_form, дівчат} {grade_gen,четвертого} класу і {absent_boys,4} {absent_boys_form, хлопці} {grade_gen,четвертого} класу були відсутні. Скільки хлопців {grade_gen,четвертого} класу було у школі {school_name,№1} у {day_acc,п’ятницю}?
+
+#init:
+- school_name = sample(["№1", "№5", "«Ерудит»", "«Перспектива»", "імені Драгоманова"])
+- grade_gen = sample(["першого", "другого", "третього", "четвертого", "п’ятого"])
+- day_acc = sample(["понеділок", "вівторок", "середу", "четвер", "п’ятницю"])
+- $total = range(50, 200)
+- $num_girls = range(20, 100)
+- $absent_girls = range(2, 10)
+- $absent_boys = range(2, 10)
+- total_students_nom = ukr_plural_measurements(total, "учень", "учні", "учнів")
+- total_students_gen = ukr_plural_measurements(total, "учня", "учнів", "учнів")
+- girls_nom = ukr_plural_measurements(num_girls, "дівчина", "дівчини", "дівчат")
+- absent_girls_form = ukr_plural_measurements(absent_girls, "дівчина", "вівчини", "дівчат")
+- absent_boys_form = ukr_plural_measurements(absent_boys, "хлопець", "хлопці", "хлопців")
+- boys_nom = ukr_plural_measurements(total - num_girls, "хлопець", "хлопці", "хлопців")
+- final_boys_form = ukr_plural_measurements(total - num_girls - absent_boys, "хлопець", "хлопці", "хлопців")
+
+#conditions:
+- num_girls < total
+- absent_girls < num_girls
+- absent_boys < (total - num_girls)
+
+#answer: total - num_girls - absent_boys
+"""
+answer_annotated = """Оскільки із {total} {total_students_gen} {grade_gen} класу {num_girls} {girls_nom}, то хлопців у класі {total} - {num_girls} = <<{total}-{num_girls}={total-num_girls}>>{total-num_girls} {boys_nom}.
+У {day_acc} було {total-num_girls} {boys_nom}, з яких {absent_boys} {absent_boys_form} були відсутні, тож у школі було {total-num_girls} - {absent_boys} = <<{total-num_girls}-{absent_boys}={total-num_girls-absent_boys}>>{total-num_girls-absent_boys} {final_boys_form}.
+#### {total-num_girls-absent_boys}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

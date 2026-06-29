@@ -1,0 +1,41 @@
+question = "Léo a marqué 278 points dans une partie de bowling. Nadia a marqué 11 points de plus que la moitié de ce score. Combien de points Léo et Nadia ont-ils eu au total ?"
+
+answer = """
+Léo = <<278=278>>278 points
+Nadia = 1/2*278 + 11 = 150 points
+278 + 150 = <<278+150=428>>428 points
+Ensemble, Léo et Nadia ont eu 428 points.
+#### 428
+"""
+
+id_orig = 800
+
+id_shuffled = 53
+
+question_annotated = """
+{name1,Léo} a marqué {n1,278} points dans une partie de {game,bowling}. {name2,Nadia} a marqué {n2,11} points de plus que {frac_txt,la moitié} de ce score. Combien de points {name1,Léo} et {name2,Nadia} ont-ils eu au total ?
+
+#init:
+- name1, name2 = sample(names, 2)
+- game = sample(["bowling", "fléchettes", "tir à l'arc", "basketball", "tennis"])
+- $n1 = range(200, 500)
+- $n2 = range(5, 50)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(frac_val * n1)
+
+#answer: n1 + int(frac_val * n1 + n2)
+"""
+
+answer_annotated = """
+{name1} = <<{n1}={n1}>>{n1} points
+{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} points
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} points
+Ensemble, {name1} et {name2} ont eu {n1 + int(frac_val * n1 + n2)} points.
+#### {n1 + int(frac_val * n1 + n2)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

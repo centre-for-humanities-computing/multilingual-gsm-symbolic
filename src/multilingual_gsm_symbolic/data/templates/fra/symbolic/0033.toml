@@ -1,0 +1,41 @@
+question = "Caroline et Juliette sont des sœurs de Paris qui adorent collectionner les autographes de célébrités. Pendant leurs vacances d'été, les sœurs passent chaque après-midi à collectionner des autographes. Après cinq semaines, Caroline et Juliette comparent leurs carnets d'autographes et comptent le nombre d'autographes que chaque sœur a collectés. Caroline a 20 autographes dans son carnet et Juliette en a 44. Il reste trois semaines de vacances d'été aux sœurs et elles décident d'atteindre 100 autographes à elles deux avant la fin de l'été. Combien d'autographes les sœurs doivent-elles collectionner pour atteindre leur objectif ?"
+
+answer = """
+Caroline et Juliette ont déjà collecté 20 + 44 autographes = <<20+44=64>>64 autographes.
+Comme leur objectif est de 100, elles doivent en collecter 100 - 64. 100 - 64 = <<100-64=36>>36 autographes
+#### 36
+"""
+
+id_orig = 677
+
+id_shuffled = 33
+
+question_annotated = """
+{name1,Caroline} et {name2,Juliette} sont des sœurs de {city,Paris} qui adorent collectionner les autographes {celebrity_type,de célébrités}. Pendant leurs {vacation_type,vacances d'été}, les sœurs passent chaque après-midi à collectionner des autographes. Après {n1_txt,cinq} semaines, {name1,Caroline} et {name2,Juliette} comparent leurs carnets d'autographes et comptent le nombre d'autographes que chaque sœur a collectés. {name1,Caroline} a {s1,20} autographes dans son carnet et {name2,Juliette} en a {s2,44}. Il reste {n2_txt,trois} semaines de {vacation_type,vacances d'été} aux sœurs et elles décident d'atteindre {goal,100} autographes à elles deux avant la fin de l'été. Combien d'autographes les sœurs doivent-elles collectionner pour atteindre leur objectif ?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- city = sample(cities)
+- celebrity_type = sample(["de stars de cinéma", "d'athlètes", "de musiciens", "de politiciens", "d'écrivains"])
+- vacation_type = sample(["vacances d'hiver", "vacances de Pâques", "vacances d'été", "vacances d'automne"])
+- n1_txt, n1_val = range_str(3, 8, 1, numbers)
+- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+- $s1 = range(15, 40)
+- $s2 = range(30, 60)
+- $goal = range(90, 150, 5)
+
+#conditions:
+- s1 + s2 < goal
+
+#answer: goal - (s1 + s2)
+"""
+
+answer_annotated = """
+{name1} et {name2} ont déjà collecté {s1} + {s2} autographes = <<{s1}+{s2}={s1+s2}>>{s1+s2} autographes.
+Comme leur objectif est de {goal}, elles doivent en collecter {goal} - {s1+s2}. {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} autographes
+#### {goal-(s1+s2)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

@@ -1,0 +1,49 @@
+question = "Ein húsavørður skal gera reint í einum skúla við 80 flokshølum. Tey hava 5 dagar til at fáa tað gjørt. Tað tekur teimum 15 minuttir fyri hvørt flokshøli. Um tey arbeiða 8 tímar um dagin, hvussu stórur prosentpartur av degnum hjá teimum, í miðal, fer til at reingerða flokshølini?"
+
+answer = """
+Tey skulu gera reint 16 flokshøli um dagin, tí 80/5 = <<80/5=16>>16
+Tey brúka 240 minuttir til at gera reint um dagin, tí 16*15 = <<16*15=240>>240
+Tey brúka 4 tímar um dagin, tí 240 / 60 = <<240/60=4>>4
+Tey brúka 1/2 av degnum hjá teimum til at reingerða flokshølini, tí 4 / 8 = <<4/8=0,5>>0,5
+Tey brúka 50% av degnum hjá teimum til at reingerða flokshølini, tí 0,5*100 = <<0,5*100=50>>50
+#### 50
+"""
+
+id_orig = 1239
+
+id_shuffled = 39
+
+question_annotated = """
+Ein {job,húsavørður} skal gera reint í {building_article,einum} {building,skúla} við {n,80} {room_plural,flokshølum}. Tey hava {d,5} dagar til at fáa tað gjørt. Tað tekur teimum {t,15} minuttir fyri hvørt {room,flokshøli}. Um tey arbeiða {h,8} tímar um dagin, hvussu stórur prosentpartur av degnum hjá teimum, í miðal, fer til at reingerða flokshølini?
+
+#init:
+- job = sample(["húsavørður", "reingerðarfólk", "pedell"])
+- building_article, building = sample([("ein", "skrivstovubygning"), ("eitt", "sjúkrahús"), ("eitt", "universitet")])
+- room, room_plural = sample([("flokshøli", "flokshøli"), ("rúm", "rúm"), ("hædd", "hæddir")])
+- $n = range(50, 221, 5)
+- $d = range(3, 12)
+- $t = range(10, 46, 5)
+- $h = range(6, 17)
+
+#conditions:
+- divides(n, d)
+- divides(60, t)
+- (n/d) * t < h * 60
+- is_int( 10 * (n/d) * t / (h * 60))
+- is_int(100 * (n/d) * t / (h * 60))
+
+#answer: int(100 * (n/d) * t / (h * 60))
+"""
+
+answer_annotated = """
+Tey skulu gera reint {n//d} {room_plural} um dagin, tí {n}/{d} = <<{n}/{d}={n//d}>>{n//d}
+Tey brúka {(n//d)*t} minuttir til at gera reint um dagin, tí {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
+Tey brúka {(n//d)*t/60} tímar um dagin, tí {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
+Tey brúka {Fraction((n//d)*t/(h*60))} av degnum hjá teimum til at reingerða flokshølini, tí {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
+Tey brúka {int(100 * (n/d) * t / (h * 60))}% av degnum hjá teimum til at reingerða flokshølini, tí {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
+#### {int(100 * (n/d) * t / (h * 60))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

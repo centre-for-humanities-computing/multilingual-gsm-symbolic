@@ -1,0 +1,39 @@
+question = "Tað eru 6 næmingar, sum spæla tennis, og tvær ferðir so nógv spæla hondbólt. Tað eru 16 dreingir og 22 gentur, sum spæla fótbólt. Um hvør næmingur bara luttekur í einum bólki, hvussu nógvir næmingar eru tilsamans?"
+
+answer = """
+Tað eru 6*2=<<6*2=12>>12 næmingar, sum spæla hondbólt.
+Tað eru 16 + 22 = <<16+22=38>>38 næmingar, sum spæla fótbólt.
+Tilsamans eru 6 + 12 + 38 = <<6+12+38=56>>56 næmingar.
+#### 56
+"""
+
+id_orig = 918
+
+id_shuffled = 95
+
+question_annotated = """
+Tað eru {n1,6} næmingar, sum spæla {sport1,tennis}, og {mult_txt,tvær ferðir} so nógv spæla {sport2,hondbólt}. Tað eru {n2,16} dreingir og {n3,22} gentur, sum spæla {sport3,fótbólt}. Um hvør næmingur bara luttekur í einum bólki, hvussu nógvir næmingar eru tilsamans?
+
+#init:
+- sport1, sport2, sport3 = sample(['badminton', 'sigling', 'borðtennis',  'fótbólt', 'hondbólt', 'frælsur ítróttur'], 3)
+- mult_txt, mult_val = sample(multi_times)
+- $n1 = range(4, 21)
+- $n2 = range(10, 31)
+- $n3 = range(10, 31)
+
+#conditions:
+- n1 * mult_val + n2 + n3 <= 250
+
+#answer: n1 + n1 * mult_val[1] + n2 + n3
+"""
+
+answer_annotated = """
+Tað eru {n1}*{mult_val}=<<{n1}*{mult_val}={n1*mult_val}>>{n1*mult_val} næmingar, sum spæla {sport2}.
+Tað eru {n2} + {n3} = <<{n2}+{n3}={n2+n3}>>{n2+n3} næmingar, sum spæla {sport3}.
+Tilsamans eru {n1} + {n1*mult_val} + {n2+n3} = <<{n1}+{n1*mult_val}+{n2+n3}={n1 + n1*mult_val + n2 + n3}>>{n1 + n1*mult_val + n2 + n3} næmingar.
+#### {n1 + n1*mult_val + n2 + n3}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

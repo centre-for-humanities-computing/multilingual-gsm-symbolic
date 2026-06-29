@@ -1,0 +1,43 @@
+question = "Émilie peut éplucher 6 crevettes par minute et faire sauter 30 crevettes en 10 minutes. Combien de temps lui faudra-t-il pour éplucher et faire sauter 90 crevettes ? Émilie ne peut pas éplucher et faire sauter en même temps."
+
+answer = """
+D'abord, déterminez combien de temps il faut à Émilie pour éplucher les crevettes : 90 crevettes / 6 crevettes/minute = <<90/6=15>>15 minutes
+Ensuite, déterminez combien de portions elle doit préparer : 90 crevettes / 30 crevettes/portion = <<90/30=3>>3 portions
+Ensuite, multipliez le nombre de portions par le temps par portion pour trouver le temps de cuisson total : 3 portions * 10 minutes/portion = <<3*10=30>>30 minutes
+Enfin, ajoutez le temps d'épluchage pour trouver le temps total passé par Émilie : 30 minutes + 15 minutes = <<30+15=45>>45 minutes
+#### 45
+"""
+
+id_orig = 989
+
+id_shuffled = 48
+
+question_annotated = """
+{name,Émilie} peut éplucher {n1,6} {food,crevettes} par minute et faire sauter {n2,30} {food,crevettes} en {t,10} minutes. Combien de temps lui faudra-t-il pour éplucher et faire sauter {total,90} {food,crevettes} ? {name,Émilie} ne peut pas éplucher et faire sauter en même temps.
+
+#init:
+- name = sample(names_female)
+- food = sample(["crevettes", "oignons", "carottes", "champignons", "moules"])
+- $n1 = range(4, 15)
+- $n2 = range(20, 50, 5)
+- $t = range(5, 20)
+- $total = range(60, 200, 10)
+
+#conditions:
+- divides(total, n1)
+- divides(total, n2)
+
+#answer: total // n1 + (total // n2) * t
+"""
+
+answer_annotated = """
+D'abord, déterminez combien de temps il faut à {name} pour éplucher les {food} : {total} {food} / {n1} {food}/minute = <<{total}/{n1}={total//n1}>>{total//n1} minutes
+Ensuite, déterminez combien de portions elle doit préparer : {total} {food} / {n2} {food}/portion = <<{total}/{n2}={total//n2}>>{total//n2} portions
+Ensuite, multipliez le nombre de portions par le temps par portion pour trouver le temps de cuisson total : {total//n2} portions * {t} minutes/portion = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t} minutes
+Enfin, ajoutez le temps d'épluchage pour trouver le temps total passé par {name} : {(total//n2)*t} minutes + {total//n1} minutes = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1} minutes
+#### {(total//n2)*t + total//n1}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

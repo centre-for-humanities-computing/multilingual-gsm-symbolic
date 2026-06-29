@@ -1,8 +1,43 @@
-question = "Один хліб у пекарні коштує 30 кр. Бейгли коштують 10 кр за штуку. На скільки дорожчі 3 хліби, ніж 2 бейгли?"
-answer = "3 хліби коштують 3 * 30 кр = <<3*30=90>>90 кр.\n2 бейгли коштують 2 * 10 кр = <<2*10=20>>20 кр.\nХліби коштують на 90 кр - 20 кр = <<90-20=70>>70 кр більше, ніж бейгли.\n#### 70\n"
+question = "Одна буханка хліба у пекарні коштує 30 гривень. Бейгл коштує 10 гривень за штуку. На скільки дорожчі 3 буханки хліба, ніж 2 бейгли?"
+
+answer = """3 буханки хліба коштують 3 * 30 = <<3*30=90>>90 гривень.
+2 бейгли коштують 2 * 10 = <<2*10=20>>20 гривень.
+Буханки хліба коштують на 90 - 20 = <<90-20=70>>70 гривень більше, ніж бейгли.
+#### 70
+"""
 id_orig = 799
 id_shuffled = 38
-question_annotated = "Один {item1,хліб} у {shop,пекарні} коштує {price1,30} {cur,кр}. {item2,бейгли} коштують {price2,10} {cur,кр} за штуку. На скільки дорожчі {n1,3} {item1,хліби}, ніж {n2,2} {item2,бейгли}?\n\n#init:\n- item1 = sample([\"хліб\", \"заквасний хліб\", \"житній хліб\"])\n- item2 = sample([\"бейгли\", \"мафіни\", \"круасани\", \"печиво\"])\n- shop = sample([\"пекарні\", \"кафе\", \"супермаркеті\", \"кіоску\"])\n- cur = sample(currencies_sym)\n- $price1 = range(30, 100)\n- $price2 = range(10, 35)\n- $n1 = range(2, 10)\n- $n2 = range(2, 10)\n\n#conditions:\n- n1 * price1 > n2 * price2\n\n#answer: n1 * price1 - n2 * price2\n"
-answer_annotated = "{n1} {item1} коштують {n1} * {price1} {cur} = <<{n1}*{price1}={n1*price1}>>{n1*price1} {cur}.\n{n2} {item2} коштують {n2} * {price2} {cur} = <<{n2}*{price2}={n2*price2}>>{n2*price2} {cur}.\n{item1} коштують на {n1*price1} {cur} - {n2*price2} {cur} = <<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} {cur} більше, ніж {item2}.\n#### {n1*price1-n2*price2}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """Одна {item1_s,буханка хліба} у {shop,пекарні} коштує {price1,30} {p1_cur_form,гривень}. {item2_sup,Бейгл} коштує {price2,10} {p2_cur_form,гривень} за штуку. На скільки дорожчі {n1,3} {n1_item1_form,буханки хліба}, ніж {n2,2} {n2_item2_form,бейгли}?
+
+#init:
+- item1_s, item1_pl1, item1_pl2 = sample([["буханка хліба", "буханки хліба", "буханок хліба"], ["пачка соломки", "пачки соломки", "пачок соломки"], ["пачка печива", "пачки печива", "пачок печива"], ["коробка цукерок", "коробки цукерок", "коробок цукерок"]])
+- item2_s, item2_pl1, item2_pl2 = sample([["бейгл", "бейгли", "бейглів"], ["круасан", "круасани", "круасанів"], ["тістечко", "тістечка", "тістечок"], ["мафін", "мафіни", "мафінів"], ["кекс", "кекси", "кексів"], ["зефір", "зефіри", "зефірів"]])
+- item2_sup = to_title(item2_s)
+- item1_pl1_sup = to_title(item1_pl1)
+- shop = sample(["пекарні", "кафе", "супермаркеті", "кіоску"])
+- cur_s, cur_pl1, cur_pl2 = sample(currencies_sym)
+- $price1 = range(30, 100)
+- $price2 = range(10, 35)
+- $n1 = range(2, 10)
+- $n2 = range(2, 10)
+- p1_cur_form = ukr_plural_measurements(price1, cur_s, cur_pl1, cur_pl2)
+- p2_cur_form = ukr_plural_measurements(price2, cur_s, cur_pl1, cur_pl2)
+- n1_item1_form = ukr_plural_measurements(n1, item1_s, item1_pl1, item1_pl2)
+- n2_item2_form = ukr_plural_measurements(n1, item2_s, item2_pl1, item2_pl2)
+- n1p1_cur_form = ukr_plural_measurements(n1*price1, cur_s, cur_pl1, cur_pl2)
+- n2p2_cur_form = ukr_plural_measurements(n2*price2, cur_s, cur_pl1, cur_pl2)
+- d_cur_form = ukr_plural_measurements(n1*price1-n2*price2, cur_s, cur_pl1, cur_pl2)
+
+
+#conditions:
+- n1 * price1 > n2 * price2
+
+#answer: n1 * price1 - n2 * price2
+"""
+answer_annotated = """{n1} {n1_item1_form} коштують {n1} * {price1} = <<{n1}*{price1}={n1*price1}>>{n1*price1} {n1p1_cur_form}.
+{n2} {n2_item2_form} коштують {n2} * {price2} = <<{n2}*{price2}={n2*price2}>>{n2*price2} {n2p2_cur_form}.
+{item1_pl1_sup} коштують на {n1*price1} - {n2*price2} = <<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} {d_cur_form} більше, ніж {item2_pl1}.
+#### {n1*price1-n2*price2}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

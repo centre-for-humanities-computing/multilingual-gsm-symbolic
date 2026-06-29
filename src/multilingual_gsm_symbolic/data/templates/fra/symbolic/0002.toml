@@ -1,0 +1,41 @@
+question = "Adam lance un dé à six faces. De combien de points de pourcentage est-il plus probable d'obtenir un nombre supérieur à 3 que d'obtenir deux fois de suite un nombre pair ?"
+
+answer = """
+Il y a 3 nombres supérieurs à 3 sur le dé, donc la probabilité d'en obtenir un est de 3/6 = 50 %.
+La probabilité d'obtenir un nombre pair est de 50 %, donc la probabilité d'en obtenir deux d'affilée est de 50 % * 50 % = 25 %.
+La différence entre ces deux probabilités est de 50 % - 25 % = 25 %.
+#### 25
+"""
+
+id_orig = 184
+
+id_shuffled = 2
+
+question_annotated = """
+{name,Adam} lance un dé {sides_txt,à six faces}. De combien de points de pourcentage est-il plus probable d'obtenir un nombre supérieur à {target,3} que d'obtenir deux fois de suite un nombre {z,pair} ?
+
+#init:
+- name=sample(names_male)
+- sides_txt, sides_val = sample([("à quatre faces", 4), ("à six faces", 6), ("à 8 faces", 8), ("à 10 faces", 10), ("à 12 faces", 12), ("à 14 faces", 14), ("à 16 faces", 16), ("à 18 faces", 18), ("à 20 faces", 20), ("à 22 faces", 22), ("à 24 faces", 24), ("à 26 faces", 26), ("à 28 faces", 28), ("à 30 faces", 30), ("à 32 faces", 32), ("à 34 faces", 34), ("à 36 faces", 36), ("à 38 faces", 38), ("à 40 faces", 40), ("à 42 faces", 42), ("à 44 faces", 44), ("à 46 faces", 46), ("à 48 faces", 48), ("à 50 faces", 50), ("à 52 faces", 52), ("à 54 faces", 54), ("à 56 faces", 56), ("à 58 faces", 58), ("à 60 faces", 60), ("à 62 faces", 62), ("à 64 faces", 64), ("à 66 faces", 66), ("à 68 faces", 68), ("à 70 faces", 70), ("à 72 faces", 72), ("à 74 faces", 74), ("à 76 faces", 76), ("à 78 faces", 78), ("à 80 faces", 80), ("à 82 faces", 82), ("à 84 faces", 84), ("à 86 faces", 86), ("à 88 faces", 88), ("à 90 faces", 90), ("à 92 faces", 92), ("à 94 faces", 94), ("à 96 faces", 96), ("à 98 faces", 98), ("à 100 faces", 100)])
+- $target = range(1, 100)
+- z = sample(["pair", "impair"])
+
+#conditions:
+- target < sides_val
+- divides(sides_val-target, target)
+- is_int((sides_val-target)/sides_val * 100)
+- int((sides_val-target)/sides_val * 100) > 25
+
+#answer: int((sides_val-target)/sides_val * 100) - 25
+"""
+
+answer_annotated = """
+Il y a {sides_val-target} nombres supérieurs à {target} sur le dé, donc la probabilité d'en obtenir un est de {sides_val-target}/{sides_val} = {int((sides_val-target)/sides_val * 100)} %.
+La probabilité d'obtenir un nombre {z} est de 50 %, donc la probabilité d'en obtenir deux d'affilée est de 50 % * 50 % = 25 %.
+La différence entre ces deux probabilités est de {int((sides_val-target)/sides_val * 100)} % - 25 % = { int((sides_val-target)/sides_val * 100) - 25} %.
+#### { int((sides_val-target)/sides_val * 100) - 25}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

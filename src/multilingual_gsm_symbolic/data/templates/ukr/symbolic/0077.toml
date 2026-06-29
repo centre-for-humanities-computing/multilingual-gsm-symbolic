@@ -1,8 +1,33 @@
 question = "Сара має здати наукову статтю на 15 сторінок. Вона вже написала одну третину наукової статті. Скільки сторінок їй ще залишилося написати?"
-answer = "Сара вже написала одну третину наукової статті, тобто 15 сторінок*1/3=<<15*1/3=5>>5 сторінок.\nОтже, їй ще залишилося написати 15 сторінок - 5 сторінок = <<15-5=10>>10 сторінок.\n#### 10\n"
+answer = """Сара вже написала одну третину наукової статті, тобто 15 сторінок*1/3=<<15*1/3=5>>5 сторінок.
+Отже, їй ще залишилося написати 15 сторінок - 5 сторінок = <<15-5=10>>10 сторінок.
+#### 10
+"""
 id_orig = 655
 id_shuffled = 77
-question_annotated = "{name,Сара} має здати {document,наукова стаття} на {n,15} сторінок. Вона вже написала {frac_txt,1 tredjedel} {document_definite,наукової статті}. Скільки сторінок їй ще залишилося написати?\n\n#init:\n- name = sample(names_female)\n- document, document_definite = sample([(\"звіт\",\"звіту\"), (\"дисертація\",\"дисертації\"), (\"завдання\",\"завдання\"), (\"стаття\",\"статті\"), (\"наукова стаття\",\"наукової статті\")])\n- $n = range(10, 325)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * frac_val)\n- n * frac_val < n\n\n#answer: n - int(n * frac_val)\n"
-answer_annotated = "{name} вже написала одну третину {document_definite}, тобто {n} сторінок*{frac_val}=<<{n}*{frac_val}={int(n*frac_val)}>>{int(n*frac_val)} сторінок.\nОтже, їй ще залишилося написати {n} сторінок - {int(n*frac_val)} сторінок = <<{n}-{int(n*frac_val)}={n-int(n*frac_val)}>>{n-int(n*frac_val)} сторінок.\n#### {n-int(n*frac_val)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name,Сара} має здати {document_acc,наукову статтю} на {n,15} {n_pages_form,сторінок}. Вона вже написала {frac_txt,одну третину} {document_gen,наукової статті}. Скільки сторінок їй ще залишилося написати?
+
+#init:
+- name = sample(names_female)
+- document_info = sample([["наукову статтю", "наукової статті"],["дисертацію", "дисертації"],["курсову роботу", "курсової роботи"],["дипломну роботу", "дипломної роботи"],["реферат", "реферату"],["звіт", "звіту"],["статтю", "статті"]])
+- document_acc, document_gen = document_info
+- $frac_txt, frac_val = sample([["одну третину", "1/3"],["половину", "1/2"],["одну чверть", "1/4"],["дві третіх", "2/3"],["три чверті", "3/4"],["одну п'яту", "1/5"]])
+- $n = range(10, 150)
+- n_pages_form = ukr_plural_measurements(n, "сторінка", "сторінки", "сторінок")
+- written_pages_form = ukr_plural_measurements(int(n*frac_val), "сторінка", "сторінки", "сторінок")
+- rem_pages_form = ukr_plural_measurements(n-int(n*frac_val), "сторінка", "сторінки", "сторінок")
+
+#conditions:
+- is_int(n * frac_val)
+- n * frac_val < n
+
+#answer: n - int(n * frac_val)
+"""
+
+answer_annotated = """{name} вже написала {frac_txt} {document_gen}, тобто {n} {n_pages_form}*{frac_val}=<<{n}*{frac_val}={int(n*frac_val)}>>{int(n*frac_val)} {written_pages_form}.
+Отже, їй ще залишилося написати {n} {n_pages_form} - {int(n*frac_val)} {written_pages_form} = <<{n}-{int(n*frac_val)}={n-int(n*frac_val)}>>{n-int(n*frac_val)} {rem_pages_form}.
+#### {n-int(n*frac_val)}
+"""
+
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
