@@ -44,6 +44,7 @@ _LANGUAGE_NAMES = {
     "nld": "Dutch",
     "fin": "Finnish",
     "isl": "Icelandic",
+    "fao": "Faroese",
     "spa": "Spanish",
     "ita": "Italian",
     "pol": "Polish",

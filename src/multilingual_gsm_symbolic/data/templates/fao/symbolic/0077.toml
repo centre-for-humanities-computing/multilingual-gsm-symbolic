@@ -1,0 +1,37 @@
+question = "Sarah skal lata inn eina 15-síðu langa granskingargrein. Hon hevur longu skrivað ein triðing av granskingargreinini. Hvussu nógvar síður manglar hon framvegis at skriva?"
+
+answer = """
+Sarah hevur longu skrivað ein triðing av granskingargreinini, sum er 15 síður*1/3=<<15*1/3=5>>5 síður.
+So manglar hon framvegis at skriva 15 síður - 5 síður = <<15-5=10>>10 síður.
+#### 10
+"""
+
+id_orig = 655
+
+id_shuffled = 77
+
+question_annotated = """
+{name,Sarah} skal lata inn eina {n,15}-síðu langa {document,granskingargrein}. Hon hevur longu skrivað {frac_txt,1/3} av {document_definite,granskingargreinini}. Hvussu nógvar síður manglar hon framvegis at skriva?
+
+#init:
+- name = sample(names_female)
+- document, document_definite = sample([("frágreiðing","frágreiðingin"), ("ritgerð","ritgerðin"), ("uppgáva","uppgávan"), ("grein","greinin"), ("granskingargrein","granskingargreinin")])
+- $n = range(10, 325)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * frac_val)
+- n * frac_val < n
+
+#answer: n - int(n * frac_val)
+"""
+
+answer_annotated = """
+{name} hevur longu skrivað {frac_txt} av {document_definite}, sum er {n} síður*{frac_val}=<<{n}*{frac_val}={int(n*frac_val)}>>{int(n*frac_val)} síður.
+So manglar hon framvegis at skriva {n} síður - {int(n*frac_val)} síður = <<{n}-{int(n*frac_val)}={n-int(n*frac_val)}>>{n-int(n*frac_val)} síður.
+#### {n-int(n*frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

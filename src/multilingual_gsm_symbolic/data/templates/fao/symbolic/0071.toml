@@ -1,0 +1,44 @@
+question = "Niels gevur sínum húsdýrum hoyggj. Hvør geit hevur brúk fyri 5 kg, og hvørt seyður hevur brúk fyri 3 kg minni enn tvífalt so nógv sum tað, hvør geit hevur brúk fyri. Um tað eru 15 geitir og 12 seyðir, hvussu nógv kg av hoyggi hevur Niels brúk fyri?"
+
+answer = """
+Rokna fyrst út, hvussu nógv hoyggj hvørt seyður hevur brúk fyri: 5 kg * 2 - 3 = <<5*2-3=7>>7 kg/seyður
+Rokna so út, hvussu nógv hoyggj seyðirnir til samans hava brúk fyri: 7 kg/seyður * 12 seyðir = <<7*12=84>>84 kg
+Rokna síðani út, hvussu nógv hoyggj geitirnar til samans hava brúk fyri: 5 kg/geit * 15 geitir = <<5*15=75>>75 kg
+At enda leggur tú tær báðar nøgdirnar av hoyggi saman fyri at finna samlaða talið: 84 kg + 75 kg = <<84+75=159>>159 kg
+#### 159
+"""
+
+id_orig = 937
+
+id_shuffled = 71
+
+question_annotated = """
+{name,Niels} gevur sínum húsdýrum {food,hoyggj}. Hvør {animal1,geit} hevur brúk fyri {n1,5} {unit,kg}, og hvørt {animal2,seyður} hevur brúk fyri {n2,3} {unit,kg} minni enn tvífalt so nógv sum tað, hvør {animal1,geit} hevur brúk fyri. Um tað eru {k1,15} {animal1,geit}ir og {k2,12} seyðir, hvussu nógv {unit,kg} av hoyggi hevur {name,Niels} brúk fyri?
+
+#init:
+- name = sample(names_male)
+- food = sample(["hoyggj", "korn", "fóður", "hálmur"])
+- animal1, animal2 = sample(["geit", "kúgv", "hestur", "esil", "lama", "alpaka", "grísur", "kalkun", "ont"], 2)
+- unit = sample(["kg", "kilogram"])
+- $n1 = range(3, 15)
+- $n2 = range(1, 10)
+- $k1 = range(10, 50)
+- $k2 = range(10, 50)
+
+#conditions:
+- 2*n1 - n2 > 0
+
+#answer: k1*n1 + k2*(2*n1 - n2)
+"""
+
+answer_annotated = """
+Rokna fyrst út, hvussu nógv {food} hvørt {animal2} hevur brúk fyri: {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2}
+Rokna so út, hvussu nógv {food} seyðirnir til samans hava brúk fyri: {2*n1-n2} {unit}/{animal2} * {k2} seyðir = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
+Rokna síðani út, hvussu nógv {food} geitirnar til samans hava brúk fyri: {n1} {unit}/{animal1} * {k1} geitir = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
+At enda leggur tú tær báðar nøgdirnar av hoyggi saman fyri at finna samlaða talið: {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
+#### {k1*n1 + k2*(2*n1 - n2)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

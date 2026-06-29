@@ -1,8 +1,45 @@
-question = "Денніс упіймав 3 тунців у понеділок, перший тунець, якого він упіймав, важить 56 кілограмів, другий тунець, якого він упіймав, важить 46 кілограмів, а останній тунець, якого він упіймав, важить 26 кілограмів. Якщо один кілограм тунця коштує 0,5 крон, скільки він заробить після продажу всіх тунців на ринку?"
-answer = "Денніс заробить 56*0,5 крон = <<56*0,5=28>>28 крон за першого тунця.\nВін заробить 46*0,5 крон = <<46*0,5=23>>23 крон за другого тунця.\nІ він заробить 26*0,5 крон = <<26*0,5=13>>13 крон за третього тунця.\nОтже, загальна сума, яку він заробить за всіх тунців, становить 28 крон + 23 крон + 13 крон = <<28+23+13=64>>64 крон.\n#### 64\n"
+question = "Денніс упіймав 3 тунці у понеділок. Перший тунець, якого він упіймав, важить 56 кілограм, другий тунець, якого він упіймав, важить 46 кілограм, а останній тунець, якого він упіймав, важить 26 кілограм. Якщо один кілограм тунця коштує 0.5$, скільки він заробить після продажу всіх тунців на ринку?"
+
+answer = """Денніс заробить 56*0.5$ = <<56*0.5=28>>28$ за першого тунця.
+Він заробить 46*0.5$ = <<46*0.5=23>>23$ за другого тунця.
+І він заробить 26*0.5$ = <<26*0.5=13>>13$ за третього тунця.
+Отже, загальна сума, яку він заробить за всіх тунців, становить 28$ + 23$ + 13$ = <<28+23+13=64>>64$.
+#### 64
+"""
 id_orig = 1207
 id_shuffled = 76
-question_annotated = "{name,Денніс} упіймав {n,3} тунців у {day,понеділок}, перший {fish,тунець}, якого він упіймав, важить {w1,56} {unit,кілограмів}, другий {fish,тунець}, якого він упіймав, важить {w2,46} {unit,кілограмів}, а останній {fish,тунець}, якого він упіймав, важить {w3,26} {unit,кілограмів}. Якщо один {unit,кілограм} тунця коштує {price,0,5} {cur,крон}, скільки він заробить після продажу всіх тунців на ринку?\n\n#init:\n- name = sample(names_male)\n- fish = sample([\"тунець\", \"лосось\", \"тріска\", \"форель\", \"палтус\"])\n- day = sample(weekdays)\n- unit = sample([\"кілограм\", \"кг\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)\n"
-answer_annotated = "{name} заробить {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} за першого {fish}.\nВін заробить {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} за другого {fish}.\nІ він заробить {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} за третього тунця.\nОтже, загальна сума, яку він заробить за всіх тунців, становить {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.\n#### {int((w1 + w2 + (n-2)*w3) * price)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name,Денніс} упіймав {n,3} {fish_count_form, тунці} у {day,понеділок}. Перший {fish_nom,тунець}, якого він упіймав, важить {w1,56} {unit_w1, кілограм}, другий {fish_nom,тунець}, якого він упіймав, важить {w2,46} {unit_w2, кілограм}, а останній {fish_nom,тунець}, якого він упіймав, важить {w3,26} {unit_w3, кілограм}. Якщо один {unit_sing,кілограм} {fish_gen,тунця} коштує {price, 0.5}{cur_p, $}, скільки він заробить після продажу всіх {fish_gen_pl,тунців} на ринку?
+
+#init:
+- name = sample(names_male)
+- fish_info = sample([["тунець", "тунця", "тунців", "тунця", "тунець", "тунці", "тунців"],["лосось", "лосося", "лососів", "лосося", "лосось", "лососі", "лососів"],["короп", "коропа", "коропів", "коропа", "короп", "коропи", "коропів"],["окунь", "окуня", "окунів", "окуня", "окунь", "окуні", "окунів"],["судак", "судака", "судаків", "судака", "судак", "судаки", "судаків"]])
+- fish_nom, fish_gen, fish_gen_pl, fish_acc_sing_anim, f_c1, f_c2, f_c5 = fish_info
+- day = sample(["понеділок", "вівторок", "середу", "четвер", "п'ятницю", "суботу", "неділю"])
+- unit_info = sample([["кілограм", "кілограми", "кілограмів"],["кг", "кг", "кг"]])
+- unit_sing, unit_pl1, unit_pl2 = unit_info
+- cur_p=sample([" грн", "$", "£", " євро"])
+- $price = arange(0.25, 2.5, 0.25)
+- $n = range(3, 4)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- fish_count_form = ukr_plural_measurements(n, f_c1, f_c2, f_c5)
+- unit_w1 = ukr_plural_measurements(w1, unit_sing, unit_pl1, unit_pl2)
+- unit_w2 = ukr_plural_measurements(w2, unit_sing, unit_pl1, unit_pl2)
+- unit_w3 = ukr_plural_measurements(w3, unit_sing, unit_pl1, unit_pl2)
+
+#conditions:
+- is_int(w1 * price)
+- is_int(w2 * price)
+- is_int(w3 * price)
+
+#answer: int(w1*price + w2*price + w3*price)
+"""
+answer_annotated = """{name} заробить {w1}*{price}{cur_p} = <<{w1}*{price}={int(w1*price)}>>{int(w1*price)}{cur_p} за першого {fish_acc_sing_anim}.
+Він заробить {w2}*{price}{cur_p} = <<{w2}*{price}={int(w2*price)}>>{int(w2*price)}{cur_p} за другого {fish_acc_sing_anim}.
+І він заробить {w3}*{price}{cur_p} = <<{w3}*{price}={int(w3*price)}>>{int(w3*price)}{cur_p} за третього {fish_acc_sing_anim}.
+Отже, загальна сума, яку він заробить за всіх {fish_gen_pl}, становить {int(w1*price)}{cur_p} + {int(w2*price)}{cur_p} + {int(w3*price)}{cur_p} = <<{int(w1*price)}+{int(w2*price)}+{int(w3*price)}={int(w1*price) + int(w2*price) + int(w3*price)}>>{int(w1*price) + int(w2*price) + int(w3*price)}{cur_p}.
+#### {int(w1*price) + int(w2*price) + int(w3*price)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

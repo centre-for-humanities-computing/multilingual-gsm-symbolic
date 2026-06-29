@@ -1,0 +1,40 @@
+question = "Hugo et Léo ont 30 minutes pour rejoindre l'école ensemble. Il leur faut 6 minutes pour arriver au coin où se trouve la bibliothèque. Il leur faut 13 minutes de plus pour rejoindre la caserne de pompiers. Combien de temps leur reste-t-il pour rejoindre l'école sans être en retard ?"
+
+answer = """
+Hugo et Léo arrivent là où se trouve la bibliothèque avec 30 - 6 = <<30-6=24>>24 minutes restantes pour rejoindre la caserne de pompiers.
+Ensuite, ils rejoignent la caserne de pompiers et il leur reste 24 - 13 = <<24-13=11>>11 minutes pour rejoindre l'école sans être en retard.
+#### 11
+"""
+
+id_orig = 684
+
+id_shuffled = 14
+
+question_annotated = """
+{n1,Hugo} et {n2,Léo} ont {t,30} minutes pour rejoindre {loc1,l'école} ensemble. Il leur faut {t1,6} minutes pour arriver au coin où se trouve {loc2,la bibliothèque}. Il leur faut {t2,13} minutes de plus pour rejoindre {loc3, la caserne de pompiers}. Combien de temps leur reste-t-il pour rejoindre {loc1,l'école} sans être en retard ?
+
+#init:
+- n1, n2 = sample(names, 2)
+- loc1, loc2, loc3 = sample(["l'école", "le centre commercial", "la bibliothèque", "le parc", "la salle de sport", "la banque", "la caserne de pompiers"], 3)
+- $t1 = range(6, 30)
+- $t2 = range(10, 70)
+- $t = range(30, 140)
+
+#conditions:
+- not divides(t1, 5)
+- not divides(t2, 5)
+- not divides(t, 5)
+- t > t1 + t2
+
+#answer: t - t1 - t2
+"""
+
+answer_annotated = """
+{n1} et {n2} arrivent là où se trouve {loc2} avec {t} - {t1} = <<{t}-{t1}={t-t1}>>{t-t1} minutes restantes pour rejoindre {loc3}.
+Ensuite, ils rejoignent {loc3} et il leur reste {t-t1} - {t2} = <<{t-t1}-{t2}={t-t1-t2}>>{t-t1-t2} minutes pour rejoindre {loc1} sans être en retard.
+#### {t-t1-t2}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

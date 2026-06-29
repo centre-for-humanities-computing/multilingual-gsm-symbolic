@@ -1,0 +1,38 @@
+question = "Julie arbeiðir við kassanum júst tvær ferðir so skjótt sum hennara minni roynda starvsfelagi Sofie. Hvønn dag avgreiðir Sofie 50 kundar. Hvat er samlaða framleiðslan hjá teimum báðum um vikuna, um tær arbeiða allar dagar í vikuni?"
+
+answer = """
+Meðan Sofie avgreiðir 50 bíleggingar um dagin, avgreiðir Julie 50 bíleggingar/dag*2=<<50*2=100>>100 bíleggingar/dag.
+Um dagin avgreiða tær 100 bíleggingar/dag + 50 bíleggingar/dag = <<100+50=150>>150 bíleggingar saman.
+Samlaða talið av bíleggingum, sum tær báðar avgreiða um eina viku, er 150 bíleggingar/dag * 7 dagar/viku = <<150*7=1050>>1050 bíleggingar
+#### 1050
+"""
+
+id_orig = 636
+
+id_shuffled = 97
+
+question_annotated = """
+{name1,Julie} arbeiðir við kassanum júst {mult_txt,tvær ferðir} so skjótt sum hennara minni roynda starvsfelagi {name2,Sofie}. Hvønn dag avgreiðir {name2,Sofie} {n,50} kundar. Hvat er samlaða framleiðslan hjá teimum báðum um vikuna, um tær arbeiða allar dagar í vikuni?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(30, 100)
+
+#conditions:
+- is_int(n * mult_val)
+- is_int((n + n * mult_val) * 7)
+
+#answer: (n + n * mult_val) * 7
+"""
+
+answer_annotated = """
+Meðan {name2} avgreiðir {n} bíleggingar um dagin, avgreiðir {name1} {n} bíleggingar/dag*{mult_val}=<<{n}*{mult_val}={n*mult_val}>>{n*mult_val} bíleggingar/dag.
+Um dagin avgreiða tær {n*mult_val} bíleggingar/dag + {n} bíleggingar/dag = <<{n*mult_val}+{n}={n+n*mult_val}>>{n+n*mult_val} bíleggingar saman.
+Samlaða talið av bíleggingum, sum tær báðar avgreiða um eina viku, er {n+n*mult_val} bíleggingar/dag * 7 dagar/viku = <<{n+n*mult_val}*7={(n+n*mult_val)*7}>>{(n+n*mult_val)*7} bíleggingar
+#### {(n+n*mult_val)*7}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

@@ -1,0 +1,45 @@
+question = "Guillaume travaille un poste de 10 heures chaque jour, cinq jours par semaine. Il gagne 10 euros de l'heure et reçoit une prime de 300 euros chaque semaine, si l'entreprise se porte bien. Combien d'argent Guillaume a-t-il gagné en avril, si l'entreprise s'est très bien portée tout le mois ?"
+
+answer = """
+En un jour, Guillaume gagne 10 * 10 = <<10*10=100>>100 euros
+S'il travaille cinq jours par semaine, le nombre total de jours pour tout le mois est 5*4 = <<5*4=20>>20 jours.
+Comme il gagne 100 euros par jour, le montant total pour tout le mois est 20 * 100 = <<20*100=2000>>2000 euros.
+Il a aussi reçu une prime de 300 * 4 = <<300*4=1200>>1200 euros, parce que l'entreprise s'est bien portée toutes les semaines du mois.
+À la fin du mois, il avait gagné 2000 + 1200 = <<2000+1200=3200>>3200 euros.
+#### 3200
+"""
+
+id_orig = 304
+
+id_shuffled = 60
+
+question_annotated = """
+{name,Guillaume} travaille un poste de {h,10} heures chaque jour, {d_txt,cinq} jours par semaine. Il gagne {r,10} {cur,euros} de l'heure et reçoit une prime de {b,300} {cur,euros} chaque semaine, si l'entreprise se porte bien. Combien d'argent {name,Guillaume} a-t-il gagné en {month,avril}, si l'entreprise s'est très bien portée tout le mois ?
+
+#init:
+- name = sample(names_male)
+- month = sample(["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"])
+- cur = sample(currencies_sym)
+- $h = range(6, 13)
+- d_txt, d_val = range_str(3, 7, 1, numbers)
+- $r = range(8, 31)
+- $b = range(100, 601)
+
+#conditions:
+- is_int(h * r)
+
+#answer: h * r * d_val * 4 + b * 4
+"""
+
+answer_annotated = """
+En un jour, {name} gagne {h} * {r} = <<{h}*{r}={h*r}>>{h*r} {cur}
+S'il travaille {d_txt} jours par semaine, le nombre total de jours pour tout le mois est {d_val}*4 = <<{d_val}*4={d_val*4}>>{d_val*4} jours.
+Comme il gagne {h*r} {cur} par jour, le montant total pour tout le mois est {d_val*4} * {h*r} = <<{d_val*4}*{h*r}={d_val*4*h*r}>>{d_val*4*h*r} {cur}.
+Il a aussi reçu une prime de {b} * 4 = <<{b}*4={b*4}>>{b*4} {cur}, parce que l'entreprise s'est bien portée toutes les semaines du mois.
+À la fin du mois, il avait gagné {d_val*4*h*r} + {b*4} = <<{d_val*4*h*r}+{b*4}={d_val*4*h*r+b*4}>>{d_val*4*h*r+b*4} {cur}.
+#### {d_val*4*h*r+b*4}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

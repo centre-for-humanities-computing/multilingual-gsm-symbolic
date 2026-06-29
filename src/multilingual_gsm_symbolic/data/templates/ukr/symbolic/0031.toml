@@ -1,8 +1,34 @@
-question = "Зараз різниця у віці між Мією та Еммою становить 16 років. Якщо Мії, яка молодша за Емму, 40 років, який середній вік у них обох?"
-answer = "Якщо Мії 40 років, то Еммі 40+16 = <<40+16=56>>56 років.\nСума їхніх віків становить 56+40 = <<56+40=96>>96 років\nСередній вік їх обох дорівнює 96/2 = <<96/2=48>>48 років\n#### 48\n"
+question ="Анна та Марія дружать. Зараз різниця у віці між ними становить 16 років. Якщо Анні, яка молодша за свою подругу Марію, 40 років, то Марії 16 років більше. Який середній вік у них обох?"
+
+answer = """Якщо Анні 40 років, то Марії 40+16 = <<40+16=56>>56 років.
+Сума їхніх віків становить 56+40 = <<56+40=96>>96 років
+Середній вік їх обох дорівнює 96/2 = <<96/2=48>>48 років
+#### 48
+"""
 id_orig = 1277
 id_shuffled = 31
-question_annotated = "Зараз різниця у віці між {name1,Мією} та {name2,Еммою} становить {age_diff,16} років. Якщо {name1,Мії}, яка молодша за {name2,Емму}, {age1,40} років, який середній вік у них обох?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2\n"
-answer_annotated = "Якщо {name1} {age1} років, то {name2} {age1}+{age_diff} = <<{age1}+{age_diff}={age1+age_diff}>>{age1+age_diff} років.\nСума їхніх віків становить {age1+age_diff}+{age1} = <<{age1+age_diff}+{age1}={2*age1+age_diff}>>{2*age1+age_diff} років\nСередній вік їх обох дорівнює {2*age1+age_diff}/2 = <<{2*age1+age_diff}/2={(2*age1+age_diff)//2}>>{(2*age1+age_diff)//2} років\n#### {(2*age1+age_diff)//2}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name1,Анна} та {name2,Марія} дружать. Зараз різниця у віці між ними становить {age_diff,16} {years_form, років}. Якщо {name1_who,Анні}, яка молодша за свою подругу {name2_whom, Марію}, {age1,40} {a1_years_form, років}, то {name2_who,Марії} {age_diff,16} {years_form,років} більше. Який середній вік у них обох?
+
+#init:
+- name1, name1_who = sample([("Анна", "Анні"), ("Марія", "Марії"), ("Надія", "Надії"), ("Віка", "Віці"), ("Наталя", "Наталі"), ("Жанна", "Жанні"), ("Леся", "Лесі"), ("Альона", "Альоні")])
+- name2, name2_who, name2_whom = sample([("Христина", "Христині", "Христину"), ("Тетяна", "Тетяні", "Тетяну"), ("Оля", "Олі", "Олю"), ("Софія", "Софії", "Софію"), ("Оксана", "Оксані", "Оксану"), ("Аліна", "Аліні", "Аліну"), ("Настя", "Насті", "Настю"), ("Ліза", "Лізі", "Лізу")])
+- $age_diff = range(5, 30)
+- $age1 = range(15, 75)
+- years_form = ukr_plural_measurements(age_diff, "рік", "роки", "років")
+- a1_years_form = ukr_plural_measurements(age1, "рік", "роки", "років")
+- agediff_years_form = ukr_plural_measurements(age1+age_diff, "рік", "роки", "років")
+- agediff2_years_form = ukr_plural_measurements(2*age1+age_diff, "рік", "роки", "років")
+- agediff3_years_form = ukr_plural_measurements((2*age1+age_diff)//2, "рік", "роки", "років")
+
+#conditions:
+- is_int((2*age1 + age_diff) / 2)
+
+#answer: (2*age1 + age_diff) // 2
+"""
+answer_annotated = """Якщо {name1_who} {age1} років, то {name2_who} {age1}+{age_diff} = <<{age1}+{age_diff}={age1+age_diff}>>{age1+age_diff} {agediff_years_form}.
+Сума їхніх віків становить {age1+age_diff}+{age1} = <<{age1+age_diff}+{age1}={2*age1+age_diff}>>{2*age1+age_diff} {agediff2_years_form}
+Середній вік їх обох дорівнює {2*age1+age_diff}/2 = <<{2*age1+age_diff}/2={(2*age1+age_diff)//2}>>{(2*age1+age_diff)//2} {agediff3_years_form}
+#### {(2*age1+age_diff)//2}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

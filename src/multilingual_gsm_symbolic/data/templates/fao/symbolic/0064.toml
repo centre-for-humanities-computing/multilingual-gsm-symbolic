@@ -1,0 +1,40 @@
+question = "Marie hevur 6 krukkur við krymmli í sínum matkamari. Hvør krukka við krymmli kann pynta 8 muffins. Marie vil baka nóg mikið av muffinsum til at brúka alt sítt krymmul. Um hvør bakiformur rúmar 12 muffinsum, hvussu nógvar bakiformar skal hon baka?"
+
+answer = """
+Hon hevur nóg mikið av krymmli til 6 * 8 = <<6*8=48>>48 muffins.
+Hon hevur brúk fyri 48 / 12 = <<48/12=4>>4 bakiformum fyri at baka allar muffins.
+#### 4
+"""
+
+id_orig = 469
+
+id_shuffled = 64
+
+question_annotated = """
+{name,Marie} hevur {n,6} krukkur við {item,krymmli} í sínum {location,matkamari}. Hvør krukka við {item,krymmli} kann pynta {m,8} {food,muffins}. {name,Marie} vil baka nóg mikið av muffinsum til at brúka alt sítt {item,krymmul}. Um hvør {container,bakiformur} rúmar {k,12} muffinsum, hvussu nógvar {container_plural,bakiformar} skal hon baka?
+
+#init:
+- name = sample(names_female)
+- item = sample(["krymmli", "frosting", "glasur", "sjokulátiknappar"])
+- food = sample(["cupcakes", "cookies", "brownies", "muffins"])
+- location = sample(["matkamari", "skáp", "køkskáp", "goymslurúm"])
+- container, container_plural = sample([("panna", "pannur"), ("bakki","bakkar"), ("bakipláta","bakiplátur"), ("stativ", "stativ"), ("bakiformur", "bakiformar")])
+- $n = range(3, 15)
+- $m = range(6, 20)
+- $k = range(6, 24)
+
+#conditions:
+- divides(n*m, k)
+
+#answer: (n*m)//k
+"""
+
+answer_annotated = """
+Hon hevur nóg mikið av {item} til {n} * {m} = <<{n}*{m}={n*m}>>{n*m} {food}.
+Hon hevur brúk fyri {n*m} / {k} = <<{n*m}/{k}={(n*m)//k}>>{(n*m)//k} {container_plural} fyri at baka allar {food}.
+#### {(n*m)//k}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

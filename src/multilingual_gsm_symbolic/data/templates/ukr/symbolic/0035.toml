@@ -1,8 +1,34 @@
-question = "Нільс збирає гроші на шкільну екскурсію. Він звернувся по допомогу до школи, яка вирішила покрити половину вартості шкільної екскурсії. Скільки грошей не вистачає Нільсу, якщо в нього є 350 кр і шкільна екскурсія коштує 2000 кр?"
-answer = "Школа Нільса вирішила заплатити 2000*1/2=<<2000*1/2=1000>>1000 кр за його шкільну екскурсію.\nЗагалом Нільс покрив 1000 + 350 = <<1000+350=1350>>1350 кр вартості своєї шкільної екскурсії\nТому Нільсу потрібно ще 2000 - 1350 = <<2000-1350=650>>650 кр на шкільну екскурсію.\n#### 650\n"
+question = "Нільс збирає гроші щоб купити квиток на екскурсію. Він звернувся по допомогу до школи, яка вирішила покрити 1/2 вартості поїздки. Скільки грошей Нільс має знайти, якщо в нього є 350 крон, а квиток коштує 2000 крон?"
+answer = """Допомога від школи становить 2000*1/2=<<2000*1/2=1000>>1000 крон.
+Загалом Нільс покрив 1000 + 350 = <<1000+350=1350>>1350 крон від вартості квитка.
+Тому йому потрібно ще 2000 - 1350 = <<2000-1350=650>>650 крон щоб купити квиток на екскурсію.
+#### 650
+"""
 id_orig = 788
 id_shuffled = 35
-question_annotated = "{name,Нільс} збирає гроші на {event_article,шкільну} {event,екскурсію}. Він звернувся по допомогу до {organization_definite,школи}, яка вирішила покрити {fraction_txt,половину} вартості {event_genitive,шкільної екскурсії}. Скільки грошей не вистачає {name,Нільсу}, якщо в нього є {current,350} {cur,кр} і {event_definite,шкільна екскурсія} коштує {total,2000} {cur,кр}?\n\n#init:\n- name = sample(names_male)\n- event_article, event, event_definite, event_genitive = sample([(\"шкільну\", \"екскурсію\", \"шкільна екскурсія\", \"шкільної екскурсії\"), (\"спортивний\", \"турнір\", \"спортивний турнір\", \"спортивного турніру\"), (\"наукову\", \"конференцію\", \"наукова конференція\", \"наукової конференції\"), (\"музичний\", \"фестиваль\", \"музичний фестиваль\", \"музичного фестивалю\"), (\"науковий\", \"ярмарок\", \"науковий ярмарок\", \"наукового ярмарку\")])\n- cur = sample(currencies_sym)\n- organization, organization_definite = sample([(\"школа\", \"школи\"), (\"муніципалітет\", \"муніципалітету\"), (\"місцева благодійна організація\", \"місцевої благодійної організації\"), (\"молодіжний клуб\", \"молодіжного клубу\"), (\"батьки\", \"батьків\")])\n- $fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(50, 1350, 50)\n- $total = range(1350, 7000, 50)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * (fraction_val))\n- is_int(total - (total * (fraction_val) + current))\n\n#answer: total - (total * (fraction_val) + current)\n"
-answer_annotated = "{organization_definite} {name} вирішила заплатити {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur} за його {event_definite}.\nЗагалом {name} покрив {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} вартості своєї {event_genitive}\nТому {name} потрібно ще {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} на {event_article} {event}.\n#### {total-(total*(fraction_val)+current)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name,Нільс} збирає гроші щоб купити квиток на {event,екскурсію}. Він звернувся по допомогу до {organization_definite,школи}, яка вирішила покрити {fraction_val,1/2} вартості поїздки. Скільки грошей {name,Нільс} має знайти, якщо в нього є {current,350} {cur, крон}, а квиток коштує {total,2000} {cur, крон}?
+
+#init:
+- name = sample(names_male)
+- event = sample(["екскурсію", "спортивний турнір", "конференцію", "музичний фестиваль", "ярмарку"])
+- organization_definite = sample(["школи", "фінансової організації", "місцевої благодійної організації"])
+- cur = sample(curr_short)
+- $fraction_val = sample(fractions)
+- $current = range(50, 1350, 50)
+- $total = range(1350, 7000, 50)
+
+#conditions:
+- total > current
+- total - (total * fraction_val + current) > 0
+- is_int(total * (fraction_val))
+- is_int(total - (total * (fraction_val) + current))
+
+#answer: total - (total * (fraction_val) + current)
+"""
+answer_annotated = """Допомога від {organization_definite} становить {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur}.
+Загалом {name} покрив {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} від вартості квитка.
+Тому йому потрібно ще {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} щоб купити квиток на {event}.
+#### {total-(total*(fraction_val)+current)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

@@ -1,0 +1,39 @@
+question = "Laura gjørdi seg klára til eina døgurðaveitslu í húsinum hjá sær, har hon hevði ætlað at borðreiða við grýturætti. Hon legði til merkis, at hon var gingin undan plastskeiðum, so hon keypti ein nýggjan pakka við skeiðum. Seinni keypti maður hennara eisini ein pakka við fimm nýggjum skeiðum og gav teimum til Lauru. Meðan Laura gjørdi grýturætt, brúkti hon trettan skeiðir til at smakka upp á grýturættin. Seinni, tá ið hon fór at dekka borðið, hevði hon tilsamans 12 skeiðir. Hvussu nógvar skeiðir vóru í pakkanum, sum Laura keypti?"
+
+answer = """
+Samanlagda talið av skeiðum frá Lauru og manni hennara var 12+3=<<12+3=15>>15 skeiðir.
+Tá ið maðurin keypti ein pakka við fimm skeiðum, vóru 15-5=<<15-5=10>>10 skeiðir í pakkanum hjá Lauru.
+#### 10
+"""
+
+id_orig = 125
+
+id_shuffled = 22
+
+question_annotated = """
+{name,Laura} gjørdi seg klára til eina {event,døgurðaveitslu} í húsinum hjá sær, har hon hevði ætlað at borðreiða við {food,grýturætti}. Hon legði til merkis, at hon var gingin undan plast {obj,skeiðum}, so hon keypti ein nýggjan pakka við {obj,skeiðum}. Seinni keypti maður hennara eisini ein pakka við {n1_txt,fimm} nýggjum {obj,skeiðum} og gav teimum til {name,Laura}. Meðan {name,Laura} gjørdi {food,grýturætt}, brúkti hon {n2_txt,trettan} {obj,skeiðir} til at smakka upp á sín {food,grýturætt}. Seinni, tá ið hon fór at dekka borðið, hevði hon tilsamans {total,12} {obj,skeiðir}. Hvussu nógvar {obj,skeiðir} vóru í pakkanum, sum {name,Laura} keypti?
+
+#init:
+- name = sample(names_female)
+- event = sample(["døgurðaveitsla", "føðingardagsveitsla", "samkoma", "baby shower", "spælikvøld"])
+- food = sample(["steiktur kyllingur", "grillaður laksur", "oksagrýturættur", "vegetar lasagna", "fyltar piparfruktir", "creme brulee"])
+- obj = sample(["skeiðir", "gafflar", "tallerkar"])
+- n1_txt, n1_val = range_str(5, 20, 1, numbers)
+- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- $total = range(12, 40)
+
+#conditions:
+- total+n2_val-n1_val > 0
+
+#answer: total+n2_val-n1_val
+"""
+
+answer_annotated = """
+Samanlagda talið av {obj} frá {name} og manni hennara var {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj}.
+Tá ið maðurin keypti ein pakka við {n1_txt} {obj}, vóru {total+n2_val}-{n1_val}=<<{total+n2_val}-{n1_val}={total+n2_val-n1_val}>>{total+n2_val-n1_val} {obj} í pakkanum hjá {name}.
+#### {total+n2_val-n1_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"
