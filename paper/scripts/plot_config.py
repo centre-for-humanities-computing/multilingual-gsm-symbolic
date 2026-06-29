@@ -57,20 +57,22 @@ LANGUAGE_COLORS = {
 FAMILY_ORDER = {
     "Qwen2.5": 0,
     "Qwen3": 1,
-    "Qwen": 2,
-    "DeepSeek-R1-Distill-Qwen": 3,
-    "Llama 3": 4,
-    "DeepSeek-R1-Distill-Llama": 5,
-    "Gemma 3": 6,
-    "OLMo 2": 7,
-    "EuroLLM": 8,
-    "Apertus": 9,
-    "OpenAI": 10,
+    "Qwen3.5": 2,
+    "Qwen": 3,
+    "DeepSeek-R1-Distill-Qwen": 4,
+    "Llama 3": 5,
+    "DeepSeek-R1-Distill-Llama": 6,
+    "Gemma 3": 7,
+    "OLMo 2": 8,
+    "EuroLLM": 9,
+    "Apertus": 10,
+    "OpenAI": 11,
 }
 
 FAMILY_COLORS = {
     "Qwen2.5": "#7B2CBF",
     "Qwen3": "#5A189A",
+    "Qwen3.5": "#7B2CBF",
     "Qwen": "#9D4EDD",
     "DeepSeek-R1-Distill-Qwen": "#9D4EDD",
     "Llama 3": "#E76F51",
@@ -118,6 +120,8 @@ def model_family(raw_model: str) -> str:
         return "DeepSeek-R1-Distill-Llama"
     if "qwen2.5" in lower:
         return "Qwen2.5"
+    if "qwen3.5" in lower:
+        return "Qwen3.5"
     if "qwen3" in lower:
         return "Qwen3"
     if "qwen" in lower:
