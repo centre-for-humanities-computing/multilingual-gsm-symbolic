@@ -404,14 +404,7 @@ def plural(n: float, *forms: str) -> str:
 def mar_fraction_form(frac_txt: str, form: str) -> str:
     """Return the inflected grammatical form of a Marathi fraction."""
     if frac_txt == "अर्धा":
-        mapping = {
-            "masc": "अर्धा",
-            "neut": "अर्धे",
-            "plural": "अर्धे",
-            "oblique": "अर्ध्या",
-            "obl": "अर्ध्या",
-            "fem": "अर्धी"
-        }
+        mapping = {"masc": "अर्धा", "neut": "अर्धे", "plural": "अर्धे", "oblique": "अर्ध्या", "obl": "अर्ध्या", "fem": "अर्धी"}
         return mapping.get(form, frac_txt)
     return frac_txt
 
@@ -434,7 +427,7 @@ def mar_color_form(color: str, form: str) -> str:
             "काळा": "काळ्या",
             "काळे": "काळ्या",
             "पांढरा": "पांढऱ्या",
-            "पांढरे": "पांढऱ्या"
+            "पांढरे": "पांढऱ्या",
         }
         return mapping.get(color, color)
     if form in ("plural", "pl", "neut"):
@@ -450,7 +443,7 @@ def mar_color_form(color: str, form: str) -> str:
             "पांढरा": "पांढरे",
             "पांढरे": "पांढरे",
             "जांभळा": "जांभळे",
-            "जांभळे": "जांभळे"
+            "जांभळे": "जांभळे",
         }
         return mapping.get(color, color)
     return color
