@@ -1,8 +1,47 @@
-question = "Лікарня має місткість 1000 ліжок, з яких 1/5 зайнята. Через спалах коронавірусу до лікарні щодня госпіталізують 50 пацієнтів. Обчисліть загальну кількість вільних ліжок у лікарні через два тижні."
-answer = "Якщо 1/5 від загальної місткості ліжок зайнята, це означає, що 1/5 * 1000 = <<1000*1/5=200>>200 ліжок зайняті пацієнтами.\nЗагальна кількість ліжок у лікарні без нових госпіталізацій становить 1000 ліжок - 200 ліжок = <<1000-200=800>>800 ліжок.\nЯкщо щодня госпіталізують 50 осіб, то загальна кількість пацієнтів у лікарні через один тиждень становить 50 пацієнтів/день * 7 днів/тиждень = 350 пацієнтів.\nЧерез два тижні загальна кількість госпіталізованих до лікарні пацієнтів становить 350 пацієнтів/тиждень*2 тижні = <<350*2=700>>700 пацієнтів, кожен з яких займає одне ліжко.\nЯкщо до нових госпіталізацій у лікарні було 800 вільних ліжок, то загальна кількість зменшується до 800 ліжок - 700 ліжок = <<800-700=100>>100 вільних ліжок.\n#### 100\n"
+question = "Лікарня має місткість 1000 ліжок, з яких 1/5 зайнята. Через спалах коронавірусу, лікарня щодня приймає 50 пацієнтів на госпіталізацію. Обчисліть загальну кількість вільних ліжок, які матиме лікарня через два тижні."
+
+answer = """Якщо 1/5 від загальної місткості ліжок зайнята, це означає, що 1/5 * 1000 = <<1000*1/5=200>>200 ліжок зайняті пацієнтами.
+Загальна кількість ліжок без нових госпіталізацій становить 1000 ліжок - 200 ліжок = <<1000-200=800>>800 ліжок.
+Якщо щодня госпіталізують 50 пацієнтів, то загальна кількість пацієнтів через один тиждень становить 50 пацієнтів/день * 7 днів/тиждень = 350 пацієнтів.
+Через два тижні загальна кількість госпіталізованих пацієнтів становить 350 пацієнтів/тиждень*2 тижні = <<350*2=700>>700 пацієнтів, кожен з яких займає одне ліжко.
+Якщо до нових госпіталізацій лікарня мала 800 вільних ліжок, то загальна кількість зменшується до 800 ліжок - 700 ліжок = <<800-700=100>>100 вільних ліжок.
+#### 100
+"""
 id_orig = 955
 id_shuffled = 28
-question_annotated = "{facility_article, a} {facility, лікарня} має місткість {total, 1000} {item_plural, ліжок} , з яких {frac, 1/5} зайнята. Через {event, спалах коронавірусу} до {facility_definite, лікарні} щодня госпіталізують {daily, 50} пацієнтів. Обчисліть загальну кількість вільних {item_plural, ліжок} у {facility_definite, лікарні} через {period_txt,два} тижні.\n\n#init:\n- facility, facility_article, facility_definite = sample([(\"hospital\", \"et\", \"hospitalet\"), (\"klinik\", \"en\", \"klinikken\"), (\"medicinsk center\", \"et\", \"det medicinske center\"), (\"plejefacilitet\", \"en\", \"plejefaciliteten\")])\n- item, item_plural = sample([(\"seng\",\"senge\"), (\"rum\",\"rum\"), (\"afdeling\",\"afdelinger\")])\n- event = sample([\"coronavirus-udbruddet\", \"influenza sæsonen\", \"en naturlig katastrofe\", \"en stor ulykke\", \"pandemien\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- period_txt, period_val = range_str(2, 5, 1, numbers)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period_val * 7 < total\n\n#answer: total - (total * frac + daily * period_val * 7)\n"
-answer_annotated = "Якщо {frac} від загальної місткості {item_plural} зайнята, це означає, що {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} зайняті пацієнтами.\nЗагальна кількість {item_plural} у {facility_definite} без нових госпіталізацій становить {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.\nЯкщо щодня госпіталізують {daily} осіб, то загальна кількість пацієнтів у {facility_definite} через один тиждень становить {daily} пацієнтів/день * 7 днів/тиждень = {daily*7} пацієнтів.\nЧерез {period_txt} тижні загальна кількість госпіталізованих до {facility_definite} пацієнтів становить {daily*7} пацієнтів/тиждень*{period_val} тижні = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} пацієнтів, кожен з яких займає одне {item}.\nЯкщо до нових госпіталізацій у {facility_definite} було {total-int(total*frac)} вільних {item_plural}, то загальна кількість зменшується до {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} вільних {item_plural}.\n#### {total - (total * frac + daily * period_val * 7)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{facility_up, лікарня} має місткість {total, 1000} {n_item_form, ліжок}, з яких {frac, 1/5} зайнята. Через {event, спалах коронавірусу}, {facility, лікарня} щодня приймає {daily, 50} {patient_form, пацієнтів} на госпіталізацію. Обчисліть загальну кількість вільних {item_pl2, ліжок}, які матиме {facility, лікарня} через {period_txt,два} тижні.
+
+#init:
+- facility = sample(["лікарня", "поліклініка", "медичний центр", "госпіталь"])
+- facility_up = to_title(facility)
+- item, item_pl1, item_pl2 = sample([("ліжко", "ліжка", "ліжок"), ("місце", "місця", "місць")])
+- event = sample(["епідемію", "спалах коронавірусу", "сезон грипу", "війну", "пандемію"])
+- $total = range(500, 2000, 100)
+- $frac = sample(fractions)
+- $daily = range(20, 100, 5)
+- period_txt, period_val = range_str(2, 5, 1, numbers)
+- n_item_form = ukr_plural_measurements(total, item, item_pl1, item_pl2)
+- patient_form = ukr_plural_measurements(daily, "пацієнт", "пацієнти", "пацієнтів")
+- tfr_item_form = ukr_plural_measurements(int(total*frac), item, item_pl1, item_pl2)
+- ttfr_item_form = ukr_plural_measurements(total-int(total*frac), item, item_pl1, item_pl2)
+- d_patients = ukr_plural_measurements(daily*7, "пацієнт", "пацієнти", "пацієнтів")
+- period_val_week = ukr_plural_measurements(period_val,  "тиждень", "тижні", "тижнів")
+- dp_patients = ukr_plural_measurements(daily*period_val*7, "пацієнт", "пацієнти", "пацієнтів")
+- dpv_item_form = ukr_plural_measurements(daily*period_val*7, item, item_pl1, item_pl2)
+- t_free = ukr_plural_measurements(total - (total * frac + daily * period_val * 7), item, item_pl1, item_pl2)
+
+#conditions:
+- is_int(total * frac)
+- total * frac + daily * period_val * 7 < total
+
+#answer: total - (total * frac + daily * period_val * 7)
+"""
+answer_annotated = """Якщо {frac} від загальної місткості {item_pl2} зайнята, це означає, що {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {tfr_item_form} зайняті пацієнтами.
+Загальна кількість {item_pl2} без нових госпіталізацій становить {total} {n_item_form} - {int(total*frac)} {tfr_item_form} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {ttfr_item_form}.
+Якщо щодня госпіталізують {daily} {patient_form}, то загальна кількість пацієнтів через один тиждень становить {daily} {patient_form}/день * 7 днів/тиждень = {daily*7} {d_patients}.
+Через {period_txt} {period_val_week} загальна кількість госпіталізованих пацієнтів становить {daily*7} {d_patients}/тиждень*{period_val} {period_val_week} = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} {dp_patients}, кожен з яких займає одне {item}.
+Якщо до нових госпіталізацій {facility} мала {total-int(total*frac)} вільних {ttfr_item_form}, то загальна кількість зменшується до {total-int(total*frac)} {ttfr_item_form} - {daily*period_val*7} {dpv_item_form} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} вільних {t_free}.
+#### {total - (total * frac + daily * period_val * 7)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

@@ -1,8 +1,44 @@
-question = "Коли вода холодна, Расмус пропливає один км за 16 хвилин. Коли вода тепла, Расмус пропливає один км за на 2 хвилини більше, ніж удвічі довший час. На скільки довше Расмус пливе 3 км у теплий день, ніж у холодний день?"
-answer = "Холодна вода км = <<16=16>>16 хвилин\nТепла вода км = 2+2*16=34 хвилини\n3 км у холодній воді: 3*16=<<3*16=48>>48 хвилин\n3 км у теплій воді: 3*34=<<3*34=102>>102 хвилини\nРасмус пливе на 102-48=<<102-48=54>>54 хвилини довше\n#### 54\n"
+question ="Коли вода холодна, Расмус пропливає один км за 16 хвилин. Коли вода тепла, Расмус пропливає один км на 2 хвилини більше, аніж у двічі довший час. На скільки довше Расмус пливе 3 км у теплій воді, ніж у холодній воді?"
+answer = """Час на один км у холодній воді: 16 хвилин
+Час на один км у теплій воді: 2+5*16=<<2+5*16=82>>82 хвилини
+3 км у холодній воді: 3*16=<<3*16=48>>48 хвилин
+3 км у теплій воді: 3*82=<<3*82=246>>246 хвилин
+Расмус пливе на 246-48=<<246-48=198>>198 хвилин довше
+#### 198
+"""
 id_orig = 554
 id_shuffled = 93
-question_annotated = "Коли вода холодна, {name,Расмус} пропливає один {unit,км} за {t1,16} хвилин. Коли вода тепла, {name,Расмус} пропливає один {unit,км} за на {n,2} хвилини більше, ніж {mult_txt,2 gange} довший час. На скільки довше {name,Расмус} пливе {d,3} {unit,км} у теплий день, ніж у холодний день?\n\n#init:\n- name = sample(names)\n- unit = sample(['км', 'кілометр'])\n- $t1 = range(10, 50)\n- $n = range(1, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $d = range(2, 10)\n\n#conditions:\n- t1 < 60\n- n + mult_val * t1 < 60\n- d * (n + mult_val * t1) - d * t1 > 0\n\n#answer: d * (n + mult_val * t1) - d * t1\n"
-answer_annotated = "Холодна вода {unit} = <<{t1}={t1}>>{t1} хвилин\nТепла вода {unit} = {n}+{mult_val}*{t1}={n + mult_val * t1} хвилини\n{d} {unit} у холодній воді: {d}*{t1}=<<{d}*{t1}={d*t1}>>{d*t1} хвилин\n{d} {unit} у теплій воді: {d}*{n + mult_val * t1}=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} хвилини\n{name} пливе на {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} хвилини довше\n#### {d * (n + mult_val * t1) - d * t1}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """Коли вода холодна, {name,Расмус} пропливає один {unit_s,км} за {t1,16} {t1_min_form,хвилин}. Коли вода тепла, {name,Расмус} пропливає один {unit_s,км} на {n,2} {n_min_form,хвилини} більше, аніж у {mult_txt,двічі} довший час. На скільки довше {name,Расмус} пливе {d,3} {d_unit_form,км} у теплій воді, ніж у холодній воді?
+
+#init:
+- name = sample(names_male)
+- unit_s, unit_pl1, unit_pl2 = sample([("км", "км", "км"), ("кілометр", "кілометри", "кілометрів")])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- mult_txt, mult_val = sample(multi_times)
+- $d = range(2, 10)
+- t1_min_form = ukr_plural_measurements(t1, "хвилина", "хвилини", "хвилин")
+- n_min_form = ukr_plural_measurements(n, "хвилина", "хвилини", "хвилин")
+- d_unit_form = ukr_plural_measurements(d, unit_s, unit_pl1, unit_pl2)
+- t2 = n + mult_val * t1
+- t2_min_form = ukr_plural_measurements(t2, "хвилина", "хвилини", "хвилин")
+- dt1_min_form = ukr_plural_measurements(d * t1, "хвилина", "хвилини", "хвилин")
+- dt2_min_form = ukr_plural_measurements(d * t2, "хвилина", "хвилини", "хвилин")
+- diff_min_form = ukr_plural_measurements(d * t2 - d * t1, "хвилина", "хвилини", "хвилин")
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+answer_annotated = """Час на один {unit_s} у холодній воді: {t1} {t1_min_form}
+Час на один {unit_s} у теплій воді: {n}+{mult_val}*{t1}=<<{n}+{mult_val}*{t1}={t2}>>{t2} {t2_min_form}
+{d} {d_unit_form} у холодній воді: {d}*{t1}=<<{d}*{t1}={d*t1}>>{d*t1} {dt1_min_form}
+{d} {d_unit_form} у теплій воді: {d}*{t2}=<<{d}*{t2}={d*t2}>>{d*t2} {dt2_min_form}
+{name} пливе на {d*t2}-{d*t1}=<<{d*t2}-{d*t1}={d*t2-d*t1}>>{d*t2-d*t1} {diff_min_form} довше
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

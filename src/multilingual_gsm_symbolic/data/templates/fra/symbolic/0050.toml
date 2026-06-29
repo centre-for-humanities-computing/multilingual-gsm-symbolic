@@ -1,0 +1,39 @@
+question = "Bruno a une chambre rectangulaire dont l'aire est de 33 mètres carrés. Si la longueur de sa pièce est de 300 cm, quel est le périmètre de la pièce en mètres ?"
+
+answer = """
+La longueur de la pièce est de 300 cm * 1/100 mètre/cm = <<300*(1/100)=3>>3 mètres.
+La largeur de la pièce est de 33 mètres carrés / 3 mètres = <<33/3=11>>11 mètres.
+Le périmètre de la pièce est 2*(11+3) = 28 mètres
+#### 28
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+{name,Bruno} a {room_type,une chambre} rectangulaire dont l'aire est de {area,33} mètres carrés. Si la longueur de sa pièce est de {length,300} cm, quel est le périmètre de la pièce en mètres ?
+
+#init:
+- name = sample(names_male)
+- room_type = sample(["un salon", "un bureau", "une cuisine", "une entrée"])
+- $area = range(18, 121)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+
+answer_annotated = """
+La longueur de la pièce est de {length} cm * 1/100 mètre/cm = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} mètres.
+La largeur de la pièce est de {area} mètres carrés / {length * (1/100)} mètres = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} mètres.
+Le périmètre de la pièce est 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} mètres
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

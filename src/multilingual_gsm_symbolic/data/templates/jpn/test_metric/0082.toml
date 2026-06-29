@@ -1,0 +1,8 @@
+question = "パーティーの初めに、男性が25人、女性が15人いました。1時間後、全体の人数の1/4が帰りました。22人の男性がパーティーに残ったとすると、残った女性は何人ですか？"
+answer = "パーティーに参加していた人数は、男性25人 + 女性15人 = <<25+15=40>>40人でした。\n1時間後、40人 * 1/4 = <<40*1/4=10>>10人がパーティーを去りました。\nつまり、40人 - 10人 = <<40-10=30>>30人が残りました。\n残った30人のうち、30人 - 男性22人 = <<30-22=8>>8人が女性でした。\n#### 8\n"
+id_orig = 320
+id_shuffled = 82
+question_annotated = "{event,パーティー}の初めに、{group1,男性}が{m,25}人、{group2,女性}が{w,15}人いました。{t,1時間}後、全体の人数の{frac,1/4}が帰りました。{m_left,22}人の{group1,男性}が{event,パーティー}に残ったとすると、残った{group2,女性}は何人ですか？\n\n#init:\n- event = sample(['party', 'meeting', 'conference', 'gathering', 'celebration'])\n- group1, group2 = sample([ \"teachers\", \"doctors\", \"engineers\", \"nurses\", \"artists\", \"lawyers\",], 2)\n- t = sample(['an hour', 'two hours', 'half an hour', '45 minutes'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left\n"
+answer_annotated = "{event}に参加していた人数は、{group1}{m}人 + {group2}{w}人 = <<{m}+{w}={m+w}>>{m+w}人でした。\n{t}後、{m+w}人 * {frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)}人が{event}を去りました。\nつまり、{m+w}人 - {int((m+w)*frac)}人 = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)}人が残りました。\n残った{m+w-int((m+w)*frac)}人のうち、{m+w-int((m+w)*frac)}人 - {group1}{m_left}人 = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left}人が{group2}でした。\n#### {m+w-int((m+w)*frac)-m_left}\n"
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated"
+language = "jpn"

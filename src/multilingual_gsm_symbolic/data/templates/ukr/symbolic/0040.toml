@@ -1,8 +1,64 @@
-question = "{name,Сара} поїхала на узбережжя у відпустку. Її батьки дали їй 75 крон, щоб купити все, що вона захоче. У кіоску карамельки продавалися за акцією: \"Купи 500 грамів за 20 крон, отримай 500 грамів за 1/2 ціни.\" Вона взяла 1100 грамів. Вона також купила змішаний пакетик із мушлями, який коштував 17 крон, і 4 магніти, які коштували по 2 крони за штуку. Скільки грошей у Сари залишилося?"
-answer = "Карамельки коштують 20 крон за 500 грамів, а 500 грамів можна отримати за 1/2 ціни. Отже, 1/2 від ціни 500 грамів становить 500/500*1/2*20 крон = 10 крон.\nРазом це коштує 10 крон + 20 крон = 30 крон.\nРешта 100 грамів не має знижки і коштує 4 крони, тож загальна ціна становить 20 крон + 10 крон + 4 крони = <<20 + 10 + 4 = 34>>34 крони\n4 магніти по 2 крони за штуку коштують 4*2 крон=<<4*2=8>>8 крон\nЯкщо додати всі її покупки, 34 крони + 17 крон + 8 крон = <<34+17+8=59>>59 крон\nУ неї було 75 крон, і вона витратила 59 крон, тож у неї залишилося 75 крон - 59 крон = <<75-59=16>>16 крон\n#### 16\n"
+question ="""Сара поїхала на узбережжя у відпустку. Її батьки дали їй 75 крон, щоб купити все, що вона захоче. У кіоску карамельки продавалися за акцією: "Купи 500 грамів за 20 крон, отримай 500 грамів за 1/2 ціни." Вона взяла 1100 грамів. Вона також купила змішаний пакетик із мушлями, який коштував 17 крон, і 4 магніти, які коштували по 2 крони за штуку. Скільки грошей у неї залишилося?"""
+
+answer = """Карамельки коштують 20 крон за 500 грамів, а 500 грамів можна отримати за 1/2 ціни. Отже, 1/2 від ціни 500 грамів становить 500/500*1/2*20 = 10 крон.
+Разом це коштує 10 + 20 = 30 крон.
+Решта 100 грамів не має знижки і коштує 4 крони, тож загальна ціна становить 20 + 10 + 4 = <<20 + 10 + 4 = 34>>34 крони
+4 магніти по 2 крони за штуку коштують 4*2=<<4*2=8>>8 крон
+Якщо додати всі її покупки, 34 + 17 + 8 = <<34+17+8=59>>59 крон
+У неї було 75 крон, і вона витратила 59, тож у неї залишилося 75 - 59 = <<75-59=16>>16 крон
+#### 16
+"""
 id_orig = 410
 id_shuffled = 40
-question_annotated = "{name} поїхала на узбережжя у відпустку. Її батьки дали їй {total,75} крон, щоб купити все, що вона захоче. У кіоску карамельки продавалися за акцією: \"Купи {n1,500} грамів за {p1,20} крон, отримай {n2,500} грамів за {discount,1/2} ціни.\" Вона взяла {n12,1100} грамів. Вона також купила змішаний пакетик із мушлями, який коштував {p2,17} крон, і {n3,4} магніти, які коштували по {p3,2} крони за штуку. Скільки грошей у Сари залишилося?\n\n#init:\n- $total = range(30, 100, 15)\n- $n1 = range(200, 651, 150)\n- $n2 = range(200, 651, 150)\n- $n12 = range(650, 1301, 150)\n- $n3 = range(4, 15, 2)\n- $p1 = range(20, 55, 5)\n- $p2 = range(17, 40, 4)\n- $p3 = range(2, 35, 3)\n- name = sample(names_female)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- p1 + n2/n1 * (1-discount) * p1 + (n12 - n1 - n2)/n1 * p1 + p2 + n3 * p3 < total\n- total - int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3) > 0\n\n#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)\n"
-answer_annotated = "Карамельки коштують {p1} крон за {n1} грамів, а {n2} грамів можна отримати за {discount} ціни. Отже, {discount} від ціни {n2} грамів становить {n2}/{n1}*{discount}*{p1} крон = {(n2/n1)*discount*p1} крон.\nРазом це коштує {(n2/n1)*discount*p1} крон + {p1} крон = {(n1/n2)*discount*p1 + p1} крон.\nРешта {n12 - n1 - n2} грамів не має знижки і коштує {(n12 - n1 - n2)/n1*p1} крони, тож загальна ціна становить {p1} крон + {n2/n1*discount*p1} крон + {(n12 - n1 - n2)/n1*p1} крони = <<{p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} крони\n{n3} магніти по {p3} крони за штуку коштують {n3}*{p3} крон=<<{n3}*{p3}={n3*p3}>>{n3*p3} крон\nЯкщо додати всі її покупки, {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} крони + {p2} крон + {n3*p3} крон = <<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}>>{int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} крон\nУ неї було {total} крон, і вона витратила {int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} крон, тож у неї залишилося {total} крон - {int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} крон = <<{total}-{int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} крон\n#### {total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name, Сара} поїхала на узбережжя у відпустку. Її батьки дали їй {total,75} {t_cur, крон}, щоб купити все, що вона захоче. У кіоску карамельки продавалися за акцією: "Купи {n1,500} {n1_gr, грамів} за {p1,20} {p1_cur, крон}, отримай {n2,500} {n2_gr, грамів} за {discount,1/2} ціни." Вона взяла {n12,1100} {n12_gr, грамів}. Вона також купила змішаний пакетик із мушлями, який коштував {p2,17} {p2_cur, крон}, і {n3,4} {n3_mag, магніти}, які коштували по {p3,2} {p3_cur, крони} за штуку. Скільки грошей у неї залишилося?
+
+#init:
+- cur_s, cur_pl1, cur_pl2 = sample(currencies_sym)
+- $total = range(30, 100, 15)
+- $n1 = range(200, 651, 150)
+- $n2 = range(200, 651, 150)
+- $n12 = range(650, 1301, 150)
+- $n3 = range(4, 15, 2)
+- $p1 = range(20, 55, 5)
+- $p2 = range(17, 40, 4)
+- $p3 = range(2, 35, 3)
+- name = sample(names_female)
+- $discount = sample(fractions)
+- t_cur = ukr_plural_measurements(total, cur_s, cur_pl1, cur_pl2)
+- n1_gr = ukr_plural_measurements(n1, "грам", "грами", "грамів")
+- p1_cur = ukr_plural_measurements(p1, cur_s, cur_pl1, cur_pl2)
+- n2_gr = ukr_plural_measurements(n2, "грам", "грами", "грамів")
+- n12_gr = ukr_plural_measurements(n12, "грам", "грами", "грамів")
+- p2_cur = ukr_plural_measurements(p2, cur_s, cur_pl1, cur_pl2)
+- n3_mag = ukr_plural_measurements(n3, "магніт", "магніти", "магнітів")
+- p3_cur = ukr_plural_measurements(p2, cur_s, cur_pl1, cur_pl2)
+- disc_cur = ukr_plural_measurements((n2/n1)*discount*p1, cur_s, cur_pl1, cur_pl2)
+- disc1_cur = ukr_plural_measurements((n1/n2)*discount*p1 + p1, cur_s, cur_pl1, cur_pl2)
+- n1212_gr = ukr_plural_measurements(n12 - n1 - n2, "грам", "грами", "грамів")
+- disc2_cur = ukr_plural_measurements((n12 - n1 - n2)/n1*p1, cur_s, cur_pl1, cur_pl2)
+- disc3_cur = ukr_plural_measurements(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1, cur_s, cur_pl1, cur_pl2)
+- disc4_cur = ukr_plural_measurements(n3*p3, cur_s, cur_pl1, cur_pl2)
+- disc5_cur = ukr_plural_measurements(int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3), cur_s, cur_pl1, cur_pl2)
+- disc6_cur = ukr_plural_measurements(total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3), cur_s, cur_pl1, cur_pl2)
+
+
+#conditions:
+- n2 <= n1
+- n12 - n1 - n2 > 0
+- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)
+- p1 + n2/n1 * (1-discount) * p1 + (n12 - n1 - n2)/n1 * p1 + p2 + n3 * p3 < total
+- total - int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3) > 0
+
+#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)
+"""
+
+answer_annotated = """Карамельки коштують {p1} {p1_cur} за {n1} {n1_gr}, а {n2} {n2_gr} можна отримати за {discount} ціни. Отже, {discount} від ціни {n2} {n2_gr} становить {n2}/{n1}*{discount}*{p1} = {(n2/n1)*discount*p1} {disc_cur}.
+Разом це коштує {(n2/n1) * discount * p1} + {p1} = {(n2/n1) * discount * p1 + p1} {disc1_cur}.
+Решта {n12 - n1 - n2} {n1212_gr} не має знижки і коштує {(n12 - n1 - n2)/n1*p1} {disc2_cur}, тож загальна ціна становить {p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = <<{p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} {disc3_cur}
+{n3} магніти по {p3} {p3_cur} за штуку коштують {n3}*{p3}=<<{n3}*{p3}={n3*p3}>>{n3*p3} {disc4_cur}
+Якщо додати всі її покупки, {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} + {p2} + {n3*p3} = <<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}>>{int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} {disc5_cur}
+У неї було {total} {t_cur}, і вона витратила {int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}, тож у неї залишилося {total} - {int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} = <<{total}-{int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} {disc6_cur}
+#### {total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

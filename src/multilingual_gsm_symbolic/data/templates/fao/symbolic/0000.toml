@@ -1,0 +1,44 @@
+question = "Henrik sá ein 3 metrar langan háv við 2 merkingum á 15 cm hvør á síðuni. Hvussu nógv prosent av kroppslongdini hjá hávinum er samlaða longdin av merkingunum?"
+
+answer = """
+Fyrst finnur tú samlaðu longdina av merkingunum í cm: 15 cm/merking * 2 merkingar = <<15*2=30>>30 cm.
+Síðani býtir tú tað talið við 100 fyri at umrokna tað til metrar: 30 cm / 100 cm/m = <<30/100=0,3>>0,3 m.
+Síðani býtir tú samlaðu merkingarlongdina í metrum við longdina hjá hávinum og gongur við 100% fyri at skriva svarið sum eitt prosenttal: 0,3/3 metrar * 100% = 10%
+
+#### 10
+"""
+
+id_orig = 473
+
+id_shuffled = 0
+
+question_annotated = """
+{n,Henrik} sá ein {x,3} metrar langan {big_fish,háv} við {k,2} merkingum á {y,15} cm hvør á síðuni. Hvussu nógv prosent av kroppslongdini hjá {big_fish,háv}inum er samlaða longdin av merkingunum?
+
+#init:
+- n = sample(names)
+- big_fish = sample(["delfinur", "hvalur", "hávur"])
+- $x = range(2, 21, 1)
+- $k = range(2, 21)
+- $y = range(2, 100)
+
+#conditions:
+- k * y  < x* 100
+- divides(k*y,100)
+- divides(x * 100, k*y)
+- divides(100, x * 100 / (k*y))
+
+#answer: int((k * y)/(x * 100) * 100)
+"""
+
+answer_annotated = """
+Fyrst finnur tú samlaðu longdina av merkingunum í cm: {y} cm/merking * {k} merkingar = <<{y}*{k}={k*y}>>{k*y} cm.
+Síðani býtir tú tað talið við 100 fyri at umrokna tað til metrar: {k*y} cm / 100 cm/m = <<{k*y}/100={k*y/100}>>{k*y/100} m.
+Síðani býtir tú samlaðu merkingarlongdina í metrum við longdina hjá {big_fish}inum og gongur við 100% fyri at skriva svarið sum eitt prosenttal: {k*y/100}/{x} metrar * 100% = {int(k*y/(100*x)*100)}%
+
+#### {int(k*y/(100*x)*100)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

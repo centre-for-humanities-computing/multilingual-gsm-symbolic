@@ -1,0 +1,47 @@
+question = "Dennis fangaði 3 tunfiskar mánadagin, tann fyrsti tunfiskurin hann fangaði vigar 56 kilogram, tann næsti tunfiskurin hann fangaði vigar 46 kilogram og tann síðsti tunfiskurin hann fangaði vigar 26 kilogram. Um eitt kilogram av tunfiski kostar 0,5 kr, hvussu nógv fer hann at vinna eftir at hava selt allar tunfiskarnar á marknaðinum?"
+
+answer = """
+Dennis fer at vinna 56*0,5 kr = <<56*0,5=28>>28 kr frá tí fyrsta tunfiskinum.
+Hann fer at vinna 46*0,5 kr = <<46*0,5=23>>23 kr fyri tann næsta tunfiskin.
+Og hann fer at vinna 26*0,5 kr = <<26*0,5=13>>13 kr frá tí triðja tunfiskinum.
+Tí er samlaða upphæddin, hann fer at vinna fyri allar tunfiskarnar, 28 kr + 23 kr + 13 kr = <<28+23+13=64>>64 kr.
+#### 64
+"""
+
+id_orig = 1207
+
+id_shuffled = 76
+
+question_annotated = """
+{name,Dennis} fangaði {n,3} {fish,tunfiskar} {day,mánadagin}, tann fyrsti {fish,tunfiskurin} hann fangaði vigar {w1,56} {unit,kilogram}, tann næsti {fish,tunfiskurin} hann fangaði vigar {w2,46} {unit,kilogram} og tann síðsti {fish,tunfiskurin} hann fangaði vigar {w3,26} {unit,kilogram}. Um eitt {unit,kilogram} av {fish,tunfiski} kostar {price,0.5} {cur,kr}, hvussu nógv fer hann at vinna eftir at hava selt allar {fish,tunfisk}arnar á marknaðinum?
+
+#init:
+- name = sample(names_male)
+- fish = sample(["tunfiskur", "laksur", "toskur", "síl", "hvasskvøsa"])
+- day = sample(weekdays)
+- unit = sample(["kilogram", "kg"])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(0.25, 2.5, 0.25)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+
+answer_annotated = """
+{name} fer at vinna {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} frá tí fyrsta tunfiskinum.
+Hann fer at vinna {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} fyri tann næsta tunfiskin.
+Og hann fer at vinna {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} frá tí triðja tunfiskinum.
+Tí er samlaða upphæddin, hann fer at vinna fyri allar {fish}arnar, {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

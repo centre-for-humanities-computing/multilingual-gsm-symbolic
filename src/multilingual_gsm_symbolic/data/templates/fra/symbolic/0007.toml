@@ -1,0 +1,55 @@
+question = "Un agriculteur achète de la nourriture pour ses chevaux. Il achète plusieurs types différents de foin, maïs, carottes et morceaux de sucre. Comme les morceaux de sucre sont une friandise rare, il n'achète que deux boîtes de 1 kg pour toute l'écurie. Il ne veut que suffisamment de carottes pour nourrir les chevaux pendant que les légumes sont frais, alors il achète quatre sacs de 12 kg. Le foin est l'aliment principal du régime des chevaux, alors il achète quarante-deux balles de 75 kg. Le maïs est un produit de base pour compléter le foin, alors il achète vingt sacs de 65 kg. Si son camion de ferme peut transporter 2250 kg à la fois, combien de trajets l'agriculteur doit-il faire pour transporter toute la nourriture ?"
+
+answer = """
+L'agriculteur achète 2*1=<<2*1=2>>2 kg de morceaux de sucre.
+Il achète 4*12=<<4*12=48>>48 kg de carottes.
+Il achète 42*75=<<42*75=3150>>3150 kg de foin.
+Il achète 20*65=<<20*65=1300>>1300 kg de maïs.
+Le poids de toute la nourriture est de 2 + 48 + 3150 + 1300 = <<2+48+3150+1300=4500>>4500 kg.
+Donc l'agriculteur doit faire 4500 / 2250 = <<4500/2250=2>>2 trajets pour transporter toute la nourriture avec son camion de ferme.
+#### 2
+"""
+
+id_orig = 459
+
+id_shuffled = 7
+
+question_annotated = """
+Un agriculteur achète de la nourriture pour ses {animals,chevaux}. Il achète plusieurs types différents de {o1,foin}, {o2,maïs}, {o3,carottes} et {o4,morceaux de sucre}. Comme les {o4,morceaux de sucre} sont une friandise rare, il n'achète que {n4_txt,deux} boîtes de {w4,1} {unit,kg} pour toute l'écurie. Il ne veut que suffisamment de {o3,carottes} pour nourrir {animals_definite,les chevaux} pendant que les légumes sont frais, alors il achète {n3_txt,quatre} sacs de {w3,12} {unit,kg}. Le {o1,foin} est l'aliment principal du régime des {animals,chevaux}, alors il achète {n1_txt,quarante-deux} balles de {w1,75} {unit,kg}. Le {o2,maïs} est un produit de base pour compléter le {o1,foin}, alors il achète {n2_txt,vingt} sacs de {w2,65} {unit,kg}. Si son camion de ferme peut transporter {total,2250} {unit,kg} à la fois, combien de trajets l'agriculteur doit-il faire pour transporter toute la nourriture ?
+
+#init:
+- animals, animals_definite = sample([('chevaux', 'les chevaux'), ('vaches', 'les vaches'), ('moutons', 'les moutons'), ('cochons', 'les cochons'), ('alpagas', 'les alpagas')])
+- unit = sample(["kg", "g"])
+- o1, o2 = sample(["foin", "maïs", "blé", "seigle", "sorgho"], 2)
+- o3 = sample(["carottes", "betteraves", "concombres"])
+- o4 = sample(["morceaux de sucre", "pastèques"])
+- n4_txt, n4_val = range_str(2, 7, 2, numbers)
+- n3_txt, n3_val = range_str(4, 11, 2, numbers)
+- n2_txt, n2_val = range_str(15, 21, 1, numbers)
+- n1_txt, n1_val = range_str(30, 43, 2, numbers)
+- $w4 = range(1, 4)
+- $w3 = range(8, 13, 2)
+- $w2 = range(45, 70, 5)
+- $w1 = range(55, 80, 5)
+- $total = range(1500, 2300, 150)
+
+#conditions:
+- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val
+- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)
+
+#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total
+"""
+
+answer_annotated = """
+L'agriculteur achète {n4_val}*{w4}=<<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit} de {o4}.
+Il achète {n3_val}*{w3}=<<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {unit} de {o3}.
+Il achète {n1_val}*{w1}=<<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {unit} de {o1}.
+Il achète {n2_val}*{w2}=<<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {unit} de {o2}.
+Le poids de toute la nourriture est de {n4_val*w4} + {n3_val*w3} + {n1_val*w1} + {n2_val*w2} = <<{n4_val*w4}+{n3_val*w3}+{n1_val*w1}+{n2_val*w2}={n1_val*w1+n2_val*w2+ n3_val*w3 + n4_val*w4}>>{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} {unit}.
+Donc l'agriculteur doit faire {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total} = <<{n1_val*w1+n2_val*w2+n3_val*w3+n4_val*w4}/{total}={(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}>>{(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total} trajets pour transporter toute la nourriture avec son camion de ferme.
+#### {(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

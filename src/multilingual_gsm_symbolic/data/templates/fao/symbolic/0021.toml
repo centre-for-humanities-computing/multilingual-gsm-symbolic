@@ -1,0 +1,55 @@
+question = "Søren hyggur sjónvarp eftir at hann er liðugur við heimaarbeiðið. Mánadag og týsdag hugdi hann at einum 1-tíma parti av sínum yndisshowi. Mikudag hugdi hann at nøkrum pørtum av einum 30-minutta showi. Hósdag varð hann tíðliga liðugur við heimaarbeiðið og hugdi at einum 1-tíma parti og einum 30-minutta showi. Fríggjadag fekk hann loyvi at vera leingi uppi, so hann hugdi at tveir 1-tíma partar. Um hann tilsamans hugdi 7 tímar sjónvarp, hvussu nógvar 30-minutta partar hugdi hann at mikudag?"
+
+answer = """
+Lat E vera talið av pørtum, hann hugdi at mikudag.
+Eftir mánadag hevði hann 7 - 1 = <<7-1=6>>6 tímar av sjónvarpi eftir.
+Eftir týsdag hevði hann 6 - 1 = <<6-1=5>>5 tímar av sjónvarpi eftir.
+Eftir hósdag hevði hann 5 - 1 - 0,5 = 3,5 tímar av sjónvarpi eftir.
+Eftir fríggjadag hevði hann 3,5 - 2 = 1,5 tímar av sjónvarpi eftir.
+Hvør 30-minutta partur er 0,5 tími.
+Sostatt er E = 1,5/0,5 = 3 partar.
+#### 3
+"""
+
+id_orig = 107
+
+id_shuffled = 21
+
+question_annotated = """
+{name,Søren} hyggur sjónvarp eftir at hann er liðugur við heimaarbeiðið. {d1,mánadag} og {d2,týsdag} hugdi hann at einum {h1,1}-tíma parti av sínum yndisshowi. {d3,mikudag} hugdi hann at nøkrum pørtum av einum {m1,30}-minutta showi. {d4,hósdag} varð hann tíðliga liðugur við heimaarbeiðið og hugdi at einum {h2,1}-tíma parti og einum {m2,30}-minutta showi. {d5,fríggjadag} fekk hann loyvi at vera leingi uppi, so hann hugdi at {n2_txt,tveir} {h3,1}-tíma partar. Um hann tilsamans hugdi {total,7} tímar sjónvarp, hvussu nógvar {m1,30}-minutta partar hugdi hann at {d3,mikudag}?
+
+#init:
+- name = sample(names_male)
+- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)
+- $total = range(7, 33)
+- $h1 = range(1, 7)
+- $h3 = range(1, 6)
+- $m1 = range(5, 61, 5)
+- $m2 = range(5, 61, 5)
+- $h2 = range(1, 7)
+- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+
+#conditions: 
+- divides(m1, 15)
+- divides(m2, 15)
+- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)
+- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0
+- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 
+
+#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)
+"""
+
+answer_annotated = """
+Lat E vera talið av pørtum, hann hugdi at {d3}.
+Eftir {d1} hevði hann {total} - {h1} = <<{total}-{h1}={total-h1}>>{total-h1} tímar av sjónvarpi eftir.
+Eftir {d2} hevði hann {total-h1} - {h1} = <<{total-h1}-{h1}={total-2*h1}>>{total-2*h1} tímar av sjónvarpi eftir.
+Eftir {d4} hevði hann {total-2*h1} - {h2} - {m2/60} = {total-2*h1-h2- m2/60} tímar av sjónvarpi eftir.
+Eftir {d5} hevði hann {total-2*h1-h2- m2/60} - {n2_val*h3} = {total-2*h1-h2- m2/60-n2_val*h3} tímar av sjónvarpi eftir.
+Hvør {m1}-minutta partur er {m1/60} tími.
+Sostatt er E = {total-2*h1-h2-m2/60-n2_val*h3}/{m1/60} = {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)} partar.
+#### {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

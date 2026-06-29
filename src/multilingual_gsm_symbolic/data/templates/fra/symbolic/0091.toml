@@ -1,0 +1,44 @@
+question = "Chez Alain, il y a deux fois plus de poires que de bananes. Il a au total 40 bananes chez lui. Alain a acheté 60 bananes de plus au magasin et 40 poires de moins que le nombre de bananes. Quel est le nombre total de poires et de bananes réunis que possède Alain ?"
+
+answer = """
+Avant d'acheter des poires et des bananes, Alain avait deux fois plus de poires que de bananes, soit 2*40 = <<2*40=80>>80 poires
+Le nombre total de poires et de bananes qu'il avait avant est 80 poires + 40 bananes = <<80+40=120>>120 articles
+Comme il a acheté 40 poires de moins que de bananes, il a acheté 60 - 40 = <<60-40=20>>20 poires
+Au total, il a acheté 20 poires + 60 bananes = <<20+60=80>>80 articles
+Après les achats, Alain a 120 articles + 80 articles = <<120+80=200>>200 poires et bananes au total.
+#### 200
+"""
+
+id_orig = 406
+
+id_shuffled = 91
+
+question_annotated = """
+Chez {name, Alain}, il y a {mult_txt,deux fois} plus de {food1, poires} que de {food2, bananes}. Il a au total {n, 40} {food2, bananes} chez lui. {name, Alain} a acheté {m, 60} {food2, bananes} de plus au magasin et {k, 40} {food1, poires} de moins que le nombre de {food2, bananes}. Quel est le nombre total de {food1, poires} et de {food2, bananes} réunis que possède {name, Alain} ?
+
+#init:
+- name = sample(names_male)
+- food1, food2 = sample(["poires", "pommes", "pêches", "citrons", "figues", "nectarines", "prunes", "fraises", "kiwis", "myrtilles"], 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(20, 100)
+- $m = range(30, 100)
+- $k = range(10, 50)
+
+#conditions:
+- m > k
+
+#answer: mult_val*n + n + m + (m-k)
+"""
+
+answer_annotated = """
+Avant d'acheter des {food1} et des {food2}, {name} avait {mult_txt} plus de {food1} que de {food2}, soit {mult_val}*{n} = <<{mult_val}*{n}={n*mult_val}>>{n*mult_val} {food1}
+Le nombre total de {food1} et de {food2} qu'il avait avant est {n*mult_val} {food1} + {n} {food2} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} articles
+Comme il a acheté {k} {food1} de moins que de {food2}, il a acheté {m} - {k} = <<{m}-{k}={m-k}>>{m-k} {food1}
+Au total, il a acheté {m-k} {food1} + {m} {food2} = <<{m-k}+{m}={2*m-k}>>{2*m-k} articles
+Après les achats, {name} a {n*mult_val+n} articles + {2*m-k} articles = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} {food1} et {food2} au total.
+#### {n*mult_val+n+2*m-k}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

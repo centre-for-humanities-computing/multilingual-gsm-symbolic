@@ -1,0 +1,41 @@
+question = "Í einum setti av gandakortum eru 15 reyð kort og 60% fleiri grøn kort. Gul kort eru líka nógv sum summan av reyðum og grønum kortum. Hvussu nógv kort av øllum nevndu litunum eru har?"
+
+answer = """
+Tað eru 60/100 * 15 = <<60/100*15=9>>9 fleiri grøn kort enn reyð kort.
+Tað merkir, at tað eru 15 + 9 = <<15+9=24>>24 grøn kort.
+Gul kort eru tilsamans 15 + 24 = <<15+24=39>>39 kort.
+So tilsamans eru 39 + 39 = <<39+39=78>>78 kort í ymiskum litum.
+#### 78
+"""
+
+id_orig = 456
+
+id_shuffled = 62
+
+question_annotated = """
+Í einum setti av {item,ganda}-kortum eru {n1,15} {c1,reyð} kort og {p,60}% fleiri {c2,grøn} kort. {c3,gul} kort eru líka nógv sum summan av {c1,reyðum} og {c2,grønum} kortum. Hvussu nógv kort av øllum nevndu litunum eru har?
+
+#init:
+- item = sample(["gandur", "gandakallur", "gandamaður", "listamaður", "gandi"])
+- c1, c2, c3 = sample(["reyð", "blá", "grøn", "gul", "lilla", "appilsingul"], 3)
+- $n1 = range(15, 81)
+- $p = range(20, 90)
+
+#conditions:
+- p < 100
+- is_int(p/100 * n1)
+
+#answer: 2 * (n1 + (p/100 * n1))
+"""
+
+answer_annotated = """
+Tað eru {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} fleiri {c2} kort enn {c1} kort.
+Tað merkir, at tað eru {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)} {c2} kort.
+{c3} kort eru tilsamans {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} kort.
+So tilsamans eru {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{ 2*(n1+(n1+int(p/100*n1)))} kort í ymiskum litum.
+#### {2*(n1+(n1+int(p/100*n1)))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

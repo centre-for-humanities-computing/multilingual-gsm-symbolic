@@ -1,0 +1,51 @@
+question = "Alice kvalifiseraði seg til eitt pláss á rennihópinum, so hon fór út at keypa sær nakað av ítróttarútgerð. Hon keypti ein tanktop fyri 10 kr, eitt par av rennishortsum fyri 5 kr meira enn tanktopurin kostaði og eitt par av sneakers, sum upprunaliga kostaðu 48 kr, men vóru á tilboði fyri hálvt av prísinum. Hon hevði ein avsláttarkupong upp á 2 kr í avslátti á pakkanum við 8 kr ítróttarstokkum, sum hon eisini keypti. Hvussu nógv brúkti hon upp á ítróttarútgerð?"
+
+answer = """
+Shortsini kostaðu 5 kr meira enn tanktopurin, so tey kostaðu 5 kr + 10 kr = <<5+10=15>>15 kr.
+Hennara sneakers kostaðu hálvt av upprunaliga prísinum á 48 kr, so tey kostaðu 48 kr*1/2=24 kr.
+Við kupongini kostaðu stokkarnir 8 kr - 2 kr = <<8-2=6>>6 kr.
+Tanktopurin, shortsini, sneakers og stokkarnir kostaðu tilsamans 10 kr + 15 kr + 24 kr + 6 kr = <<10+15+24+6=55>>55 kr.
+#### 55
+"""
+
+id_orig = 1053
+
+id_shuffled = 86
+
+question_annotated = """
+{name,Alice} kvalifiseraði seg til eitt pláss á {sport,renni}hópinum, so hon fór út at keypa sær nakað av ítróttarútgerð. Hon keypti ein {item1,tanktop} fyri {p1,10} {cur,kr}, eitt par av {sport, renni}{item2,shorts} fyri {p2,5} {cur,kr} meira enn {item1_definite, tanktopurin} kostaði og eitt par av {item3,sneakers}, sum upprunaliga kostaðu {p3,48} {cur,kr}, men vóru á tilboði fyri {frac_txt,hálvt} av prísinum. Hon hevði ein kupong upp á {d,2} {cur,kr} í avslátti á pakkanum við {p4,8} {cur,kr} ítróttar{item4,stokkar}, sum hon eisini keypti. Hvussu nógv brúkti hon upp á ítróttarútgerð?
+
+#init:
+- name = sample(names_female)
+- sport = sample(["svimji", "súkkling", "basketball", "fótbólt", "hondbólt"])
+- item1, item1_definite = sample([("tanktop", "tanktopurin"), ("t-shirt", "t-shirtið"), ("troyggja", "troyggjan"), ("sports-bh", "sports-bh'in")])
+- item2, item2_definite = sample([("shorts", "shortsini"), ("leggings", "leggingsini"), ("sweatpants", "sweatpantsini")])
+- item3, item3_definite = sample([("sneakers", "sneakers"), ("tennisskógvar","tennisskógvarnir"), ("venjingarskógvar", "venjingarskógvarnir")])
+- item4, item4_definite = sample([("stokkar", "stokkarnir"),("sokkar","sokkarnir"),("høvuðsband","høvuðsbandið"), ("sveittiband","sveittibandið")])
+- cur = sample(currencies_sym)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(8, 25)
+- $p2 = range(3, 15)
+- $p3 = range(30, 80, 2)
+- $p4 = range(5, 15)
+- $d = range(1, 5)
+
+#conditions:
+- is_int(p3*frac_val)
+- p3 % 2 == 0
+- p4 > d
+
+#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)
+"""
+
+answer_annotated = """
+{item2_definite} kostaðu {p2} {cur} meira enn {item1_definite}, so tey kostaðu {p2} {cur} + {p1} {cur} = <<{p2}+{p1}={p1+p2}>>{p1+p2} {cur}.
+Hennara {item3} kostaðu {frac_txt} av upprunaliga prísinum á {p3} {cur}, so tey kostaðu {p3} {cur}*{frac_val}={p3*frac_val} {cur}.
+Við kupongini kostaðu {item4_definite} {p4} {cur} - {d} {cur} = <<{p4}-{d}={p4-d}>>{p4-d} {cur}.
+{item1_definite}, {item2_definite}, {item3_definite} og {item4_definite} kostaðu tilsamans {p1} {cur} + {p1+p2} {cur} + {p3*frac_val} {cur} + {p4-d} {cur} = <<{p1}+{p1+p2}+{p3*frac_val}+{p4-d}={p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}>>{p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)} {cur}.
+#### {p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

@@ -1,0 +1,54 @@
+question = "Sarah fór til strondina í feriu. Foreldur hennara góvu henni 75 kr at keypa júst tað, hon vildi. Í sølubúðini vóru karamellur til sølu fyri \"Keyp 500 gramm fyri 20 kr, fá 500 gramm fyri 1/2 prís.\" Hon tók 1100 gramm. Hon keypti eisini ein blandaðan posa við skeljum, sum kostaði 17 kr, og 4 magnetir, sum kostaðu 2 kr hvør. Hvussu nógvar pengar hevur Sarah eftir?"
+
+answer = """
+Karamellurnar kosta 20 kr fyri 500 gramm og fá 500 gramm fyri 1/2 prís. So 1/2 av prísinum á 500 grammum er 500/500*1/2*20 kr = 10 kr.
+Til samans kostar tað 10 kr + 20 kr = 30 kr.
+Tey 100 gramm, sum eru eftir, hava ongan avsláttur og kosta 4 kr, so samlaði prísurin er 20 kr + 10 kr + 4 kr = <<20 + 10 + 4 = 34>>34 kr
+4 magnetir fyri 2 kr hvør eru 4*2 kr=<<4*2=8>>8 kr
+Tá ið tú leggur øll keyp hennara saman, 34 kr + 17 kr + 8 kr = <<34+17+8=59>>59 kr
+Hon hevði 75 kr og brúkti 59 kr, so hon hevur 75 kr - 59 kr = <<75-59=16>>16 kr eftir
+#### 16
+"""
+
+id_orig = 410
+
+id_shuffled = 40
+
+question_annotated = """
+{name,Sarah} fór til strondina í feriu. Foreldur hennara góvu henni {total,75} kr at keypa júst tað, hon vildi. Í sølubúðini vóru karamellur til sølu fyri "Keyp {n1,500} gramm fyri {p1,20} kr, fá {n2,500} gramm fyri {discount,1/2} prís." Hon tók {n12,1100} gramm. Hon keypti eisini ein blandaðan posa við skeljum, sum kostaði {p2,17} kr, og {n3,4} magnetir, sum kostaðu {p3,2} kr hvør. Hvussu nógvar pengar hevur {name,Sarah} eftir?
+
+#init:
+- $total = range(30, 100, 15)
+- $n1 = range(200, 651, 150)
+- $n2 = range(200, 651, 150)
+- $n12 = range(650, 1301, 150)
+- $n3 = range(4, 15, 2)
+- $p1 = range(20, 55, 5)
+- $p2 = range(17, 40, 4)
+- $p3 = range(2, 35, 3)
+- name = sample(names_female)
+- $discount = sample(fractions)
+
+#conditions:
+- n2 <= n1
+- n12 - n1 - n2 > 0
+- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)
+- p1 + n2/n1 * (1-discount) * p1 + (n12 - n1 - n2)/n1 * p1 + p2 + n3 * p3 < total
+- total - int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3) > 0
+
+#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)
+"""
+
+answer_annotated = """
+Karamellurnar kosta {p1} kr fyri {n1} gramm og fá {n2} gramm fyri {discount} prís. So {discount} av prísinum á {n2} grammum er {n2}/{n1}*{discount}*{p1} kr = {(n2/n1)*discount*p1} kr.
+Til samans kostar tað {(n2/n1)*discount*p1} kr + {p1} kr = {(n1/n2)*discount*p1 + p1} kr.
+Tey {n12 - n1 - n2} gramm, sum eru eftir, hava ongan avsláttur og kosta {(n12 - n1 - n2)/n1*p1} kr, so samlaði prísurin er {p1} kr + {n2/n1*discount*p1} kr + {(n12 - n1 - n2)/n1*p1} kr = <<{p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} kr
+{n3} magnetir fyri {p3} kr hvør eru {n3}*{p3} kr=<<{n3}*{p3}={n3*p3}>>{n3*p3} kr
+Tá ið tú leggur øll keyp hennara saman, {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} kr + {p2} kr + {n3*p3} kr = <<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}>>{int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} kr
+Hon hevði {total} kr og brúkti {int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} kr, so hon hevur {total} kr - {int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr = <<{total}-{int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr eftir
+#### {total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

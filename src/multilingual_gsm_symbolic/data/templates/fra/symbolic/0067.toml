@@ -1,0 +1,44 @@
+question = "Jean possède une voiture qui tombe en panne. La voiture pèse 1200 kg et il a des bagages dedans, qui pèsent 250 kg. Il a aussi ses deux enfants, qui pèsent chacun 75 kg, dedans. Si la force nécessaire pour déplacer la voiture est de 1 % du poids, de combien de force a-t-il besoin pour pousser la voiture ?"
+
+answer = """
+Ses deux enfants pèsent 75*2=<<75*2=150>>150 kg
+Donc le poids total du véhicule et de tout le reste est 1200+250+150=<<1200+250+150=1600>>1600 kg
+Donc il doit générer 1600*0,01=<<1600*0,01=16>>16 kg
+#### 16
+"""
+
+id_orig = 1275
+
+id_shuffled = 67
+
+question_annotated = """
+{name,Jean} possède {v_indef,une voiture} qui tombe en panne. {v_defcap,La voiture} pèse {weight_vehicle,1200} {unit,kg} et il a {item,des bagages} dedans, qui pèsent {weight_item,250} {unit,kg}. Il a aussi ses {num_passengers_txt,deux} {passenger_type,enfants}, qui pèsent chacun {weight_passenger,75} {unit,kg}, dedans. Si la force nécessaire pour déplacer {v_def,la voiture} est de {force_percent,1} % du poids, de combien de force a-t-il besoin pour pousser {v_def,la voiture} ?
+
+#init:
+- name = sample(names_male)
+- v_defcap, v_def, v_indef = sample([("La voiture", "la voiture", "une voiture"), ("La camionnette", "la camionnette", "une camionnette"), ("Le camion", "le camion", "un camion"), ("Le SUV", "le SUV", "un SUV")])
+- item = sample(['des bagages', 'des courses', "de l'équipement", 'des meubles'])
+- passenger_type = sample(['enfants', 'amis', 'collègues', 'frères et sœurs'])
+- unit = sample(['kg', 'g'])
+- $weight_vehicle = range(1000, 3000, 50)
+- $weight_item = range(100, 500, 25)
+- $weight_passenger = range(50, 100, 5)
+- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- $force_percent = range(1, 6)
+
+#conditions:
+- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+
+#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+"""
+
+answer_annotated = """
+Ses {num_passengers_txt} {passenger_type} pèsent {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
+Donc le poids total du véhicule et de tout le reste est {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
+Donc il doit générer {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}
+#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"
