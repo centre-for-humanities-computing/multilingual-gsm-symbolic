@@ -175,12 +175,13 @@ def build_analysis_tables(
             "common_crawl_crawl",
             "resource_source_path",
             "n_observations",
+            "mean_accuracy",
         ],
         errors="ignore",
     ).rename(
         columns={
             "typological_distance_from_english": "typological_distance",
-            "common_crawl_pages": "resource_quantity",
+            "common_crawl_pages": "commoncrawl_page_count",
         }
     )
     analysis_fertility = fertility.drop(
@@ -193,6 +194,7 @@ def build_analysis_tables(
             "english_token_count",
             "english_non_whitespace_character_count",
             "tokenizer_repo",
+            "normalized_fertility",
         ],
         errors="ignore",
     ).rename(columns={"fertility_tokens_per_character": "tokenizer_fertility"})
