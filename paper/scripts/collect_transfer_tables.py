@@ -83,13 +83,10 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
                 "target": scalar(getattr(sample, "target", None)),
                 "prompt_chars": len(str(getattr(sample, "input", "") or "")),
                 "completion_chars": len(str(getattr(sample, "output", "") or "")),
-                "started_at": scalar(getattr(sample, "started_at", None)),
-                "completed_at": scalar(getattr(sample, "completed_at", None)),
                 "total_time": scalar(getattr(sample, "total_time", None)),
                 "scorer": scorer or "auto",
                 "eval_id": log.eval.eval_id,
                 "task": log.eval.task,
-                "log_file": path.name,
             }
         )
 
@@ -120,10 +117,6 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     observations = pd.concat(frames, ignore_index=True)
-    observations["observation_id"] = observations[["model", "split", "language", "id"]].astype(str).agg(
-        "|".join,
-        axis=1,
-    )
     model_categories = ordered_models(observations["model"].dropna().unique())
     language_categories = language_order(observations["language"].dropna().unique())
     observations["model"] = pd.Categorical(observations["model"], categories=model_categories, ordered=True)
@@ -139,14 +132,24 @@ def build_analysis_tables(
     language_features: pd.DataFrame,
     fertility: pd.DataFrame,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    main = observations.drop(
-        columns=["training_language", "pretrain_tokens_t", "question_type", "correct_label", "epoch"],
+    working = observations.drop(
+        columns=[
+            "observation_id",
+            "started_at",
+            "completed_at",
+            "training_language",
+            "pretrain_tokens_t",
+            "question_type",
+            "correct_label",
+            "epoch",
+            "log_file",
+        ],
         errors="ignore",
     ).copy()
+    main = working.drop(columns=["model_raw"], errors="ignore")
 
     model_columns = [
         "model",
-        "model_raw",
         "family",
         "params_b",
         "vocab_size",
@@ -155,7 +158,7 @@ def build_analysis_tables(
         main[[column for column in model_columns if column in main.columns]].drop_duplicates().reset_index(drop=True)
     )
 
-    model_languages = fertility.copy()
+    model_languages = fertility.drop(columns=["model_raw"], errors="ignore").copy()
 
     languages = language_features.copy()
     if not languages.empty:
@@ -164,16 +167,26 @@ def build_analysis_tables(
         )
         languages = languages.merge(language_counts, on="language", how="outer")
 
-    analysis = main.copy()
+    analysis = working.copy()
     if not languages.empty:
         analysis = analysis.merge(languages, on="language", how="left", suffixes=("", "_language"))
     if not fertility.empty:
         analysis = analysis.merge(
-            model_languages,
+            fertility,
             on=["model", "model_raw", "language"],
             how="left",
             suffixes=("", "_model_language"),
         )
+    analysis = analysis.drop(columns=["model_raw"], errors="ignore")
+
+    feature_aliases = {
+        "common_crawl_pages": "resource_quantity",
+        "typological_distance_from_english": "typological_distance",
+        "fertility_tokens_per_character": "tokenizer_fertility",
+    }
+    for source, alias in feature_aliases.items():
+        if source in analysis.columns and alias not in analysis.columns:
+            analysis[alias] = analysis[source]
 
     return main, models, languages, model_languages, analysis
 
