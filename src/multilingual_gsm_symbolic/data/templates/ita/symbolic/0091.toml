@@ -1,0 +1,44 @@
+question = "Nella casa di Guglielmo, ci sono due volte il numero di fichi rispetto ai cannoli. Guglielmo ha un totale di 40 cannoli nella sua casa. Guglielmo ha comprato 60 cannoli in più al negozio e 40 fichi in meno rispetto al numero di cannoli. Trova il totale combinato del numero di fichi e cannoli che Guglielmo ha nella casa."
+
+answer = """
+Prima di comprare altri fichi e cannoli, Guglielmo aveva due volte il numero di fichi rispetto ai cannoli, cioè 40 cannoli*2 fichi/cannoli = <<40*2=80>>80 fichi
+Il numero totale di fichi e cannoli che Guglielmo aveva prima era 80 fichi + 40 cannoli = <<80+40=120>>120 elementi
+Quando ha comprato 40 fichi in meno rispetto ai cannoli, ha comprato 60 fichi - 40 fichi = <<60-40=20>>20 fichi
+In totale, ha comprato 20 fichi + 60 cannoli = <<20+60=80>>80 elementi
+Dopo gli acquisti, Guglielmo ha 120 elementi + 80 elementi = <<120+80=200>>200 fichi e cannoli totali combinati.
+#### 200
+"""
+
+id_orig = 406
+
+id_shuffled = 91
+
+question_annotated = """
+Nella casa di {name,Guglielmo}, ci sono {mult_txt,due volte} il numero di {food1,fichi} rispetto ai {food2,cannoli}. {name,Guglielmo} ha un totale di {n,40} {food2,cannoli} nella sua casa. {name,Guglielmo} ha comprato {m,60} {food2,cannoli} in più al negozio e {k,40} {food1,fichi} in meno rispetto al numero di {food2,cannoli}. Trova il totale combinato del numero di {food1,fichi} e {food2,cannoli} che {name,Guglielmo} ha nella casa.
+
+#init:
+- name = sample(names_male)
+- food1, food2 = sample(["cannoli","fichi","kiwi","budini","gelati","ghiaccioli","cioccolatini"], 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(20, 100)
+- $m = range(30, 100)
+- $k = range(10, 50)
+
+#conditions:
+- m > k
+
+#answer: mult_val*n + n + m + (m-k)
+"""
+
+answer_annotated = """
+Prima di comprare altri {food1} e {food2}, {name} aveva {mult_txt} il numero di {food1} rispetto ai {food2}, cioè {n} {food2}*{mult_val} {food1}/{food2} = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} {food1}
+Il numero totale di {food1} e {food2} che {name} aveva prima era {n*mult_val} {food1} + {n} {food2} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} elementi
+Quando ha comprato {k} {food1} in meno rispetto ai {food2}, ha comprato {m} {food1} - {k} {food1} = <<{m}-{k}={m-k}>>{m-k} {food1}
+In totale, ha comprato {m-k} {food1} + {m} {food2} = <<{m-k}+{m}={2*m-k}>>{2*m-k} elementi
+Dopo gli acquisti, {name} ha {n*mult_val+n} elementi + {2*m-k} elementi = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} {food1} e {food2} totali combinati.
+#### {n*mult_val+n+2*m-k}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

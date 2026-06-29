@@ -1,0 +1,38 @@
+question = "La famiglia Rossi è impegnata a preparare biscotti. Finora ne hanno fatti 7995. Ne hanno 2595 all'arancia, 3075 all'avena e alcuni al cioccolato. Quanti biscotti al cioccolato hanno fatto?"
+
+answer = """
+Il numero totale di pezzi di biscotti ai gusti all'arancia e all'avena è 2595 + 3075 = <<2595+3075=5670>>5670.
+Quindi, hanno fatto 7995 - 5670 = <<7995-5670=2325>>2325 biscotti al cioccolato.
+#### 2325
+"""
+
+id_orig = 1305
+
+id_shuffled = 83
+
+question_annotated = """
+La famiglia {family,Rossi} è impegnata a preparare {item,biscotti}. Finora ne hanno fatti {total,7995}. Ne hanno {n1,2595} {flavor1,all'arancia}, {n2,3075} {flavor2,all'avena} e alcuni {flavor3,al cioccolato}. Quanti {item,biscotti} {flavor3,al cioccolato} hanno fatto?
+
+#init:
+- family = sample(["Rossi", "Bianchi", "Verdi", "Basso"])
+- item = sample(["grissini", "taralli", "cannoli", "biscotti"])
+- flavor1, flavor2, flavor3 = sample(["all'arancia", "all'avena", "al cioccolato", "vaniglia", "alla fragola", "ai mirtilli", "al limone", "al burro d'arachidi"], 3)
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3200, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+
+answer_annotated = """
+Il numero totale di pezzi di {item} ai gusti {flavor1} e {flavor2} è {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}.
+Quindi, hanno fatto {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {item} {flavor3}.
+#### {total-(n1+n2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
+language = "ita"

@@ -489,7 +489,7 @@ def capitalize_sentences(text: str) -> str:
 
 
 # Languages that use comma as decimal separator and period as thousands separator
-_COMMA_DECIMAL_LANGUAGES = {"dan", "nob", "nno", "swe", "deu", "fin", "isl", "nld", "fra"}
+_COMMA_DECIMAL_LANGUAGES = {"dan", "nob", "nno", "swe", "deu", "fin", "isl", "nld", "fra", "ita"}
 
 
 def format_numbers_by_language(text: str, language: str) -> str:
