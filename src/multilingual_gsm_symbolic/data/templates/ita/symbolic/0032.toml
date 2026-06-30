@@ -1,10 +1,12 @@
-question = "La signora Jensen sta cercando una casa che non superi il suo budget di 2.700.000 kr. Ha visto un immobile con un prezzo di vendita di 2.370.000 kr. Inoltre, l'acquirente deve pagare una commissione d'agenzia pari al 5% del prezzo di vendita e anche la tassa di trasferimento, che è il 12% del prezzo di vendita totale. Di quanto il prezzo totale della casa supera il budget della signora Jensen?"
+question = """
+La signora Bianchi sta cercando una casa che non superi il suo budget di 2.700.000 euro. Ha visto un immobile con un prezzo di vendita di 2.370.000 euro. Inoltre, l'acquirente deve pagare una commissione d'agenzia pari al 5% del prezzo di vendita e anche la tassa di trasferimento, che è il 12% del prezzo di vendita. Di quanto il prezzo totale della casa supera il budget della signora Bianchi?
+"""
 
 answer = """
-La commissione d'agenzia è 2.370.000 kr*5/100 = $<<2370000*5/100=118500>>118.500 kr.
-La tassa di trasferimento è 2.370.000 kr*12/100 = $<<2370000*12/100=284400>>284.400 kr.
-Il prezzo totale della casa è 2.370.000 kr + 118.500 kr + 284.400 kr = 2.772.900 kr.
-Quindi è 2.772.900 kr - 2.700.000 kr = $<<2772900-2700000=72900>>72.900 kr in più del budget della signora Jensen.
+La commissione d'agenzia è 2.370.000 euro*5/100 = <<2370000*5/100=118500>>118.500 euro.
+La tassa di trasferimento è 2.370.000 euro*12/100 = <<2370000*12/100=284400>>284.400 euro.
+Il prezzo totale della casa è 2.370.000 euro + 118.500 euro + 284.400 euro = 2.772.900 euro.
+Quindi è 2.772.900 euro - 2.700.000 euro = <<2772900-2700000=72900>>72.900 euro in più del budget della signora Bianchi.
 #### 72900
 """
 
@@ -13,15 +15,15 @@ id_orig = 265
 id_shuffled = 32
 
 question_annotated = """
-{name, la signora Jensen} sta cercando una {property_type, casa} che non superi il suo budget di {budget, 2700000} kr. Ha visto un immobile con un prezzo di vendita di {price, 2370000} kr. Inoltre, l'acquirente deve pagare una commissione d'agenzia pari al {brokerage_fee, 5}% del prezzo di vendita e anche la tassa di trasferimento, che è il {transfer_fee, 12}% del prezzo di vendita totale. Di quanto il prezzo totale della {property_type, casa} supera il budget della signora Jensen?
+La signora {name,Bianchi} sta cercando una {property_type, casa} che non superi il suo budget di {budget, 2700000} euro. Ha visto un immobile con un prezzo di vendita di {price, 2370000} euro. Inoltre, l'acquirente deve pagare una commissione d'agenzia pari al {brokerage_fee, 5}% del prezzo di vendita e anche la tassa di trasferimento, che è il {transfer_fee, 12}% del prezzo di vendita. Di quanto il prezzo totale della {property_type, casa} supera il budget della signora Bianchi?
 
 #init:
-- name = sample(["Fru Madsen", "Frøken Hansen", "Dr. Sørensen", "Fru Andersen"])
+- name = sample(["Bianchi", "Rossi", "Verdi", "Ferrari", "Porcu"])
 - property_type = sample(["casa", "appartamento", "condominio", "villetta a schiera"])
-- $budget = range(2000000, 3410000, 100000)
-- $price = range(1700000, 3050000, 10000)
-- $brokerage_fee = range(3, 8)
-- $transfer_fee = range(10, 15)
+- budget = range(2000000, 3410000, 100000)
+- price = range(1700000, 3050000, 10000)
+- brokerage_fee = range(3, 8)
+- transfer_fee = range(10, 15)
 
 #conditions:
 - brokerage_fee < 100
@@ -35,10 +37,10 @@ question_annotated = """
 """
 
 answer_annotated = """
-La commissione d'agenzia è ${price} kr*{brokerage_fee}/100 = $<<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} kr.
-La tassa di trasferimento è ${price} kr*{transfer_fee}/100 = $<<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} kr.
-Il prezzo totale della casa è ${price} kr + ${int(price*brokerage_fee/100)} kr + ${int(price*transfer_fee/100)} kr = ${int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kr.
-Quindi è ${int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kr - ${budget} kr = $<<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} kr in più del budget di {name}.
+La commissione d'agenzia è {price} euro*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} euro.
+La tassa di trasferimento è {price} euro*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} euro.
+Il prezzo totale della casa è {price} euro + {int(price*brokerage_fee/100)} euro + {int(price*transfer_fee/100)} euro = {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} euro.
+Quindi è {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} euro - {budget} euro = <<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} euro in più del budget della signora {name}.
 #### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
 """
 

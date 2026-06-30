@@ -1,10 +1,12 @@
-question = "{name,Sally} è andata al mare per le vacanze. I suoi genitori le hanno dato 15 dollari per comprare quello che voleva. Nel negozio di souvenir, il taffy era in offerta per \"Compra 1 libbra a 3 dollari a libbra, prendi 1 libbra scontata della metà.\" Ne ha preso 4 libbre. Ha anche comprato un sacchetto misto di conchiglie per 1,5 dollari e 4 magneti che costavano 0,25 dollari ciascuno. Quanti soldi ha rimasto {name}?"
+question = """
+Silvia è andata al mare per le vacanze. I suoi genitori le hanno dato 15 euro da spendere come voleva. Nel negozio di souvenir, le caramelle erano in offerta: "Compra 1 kg a 3 euro al kg e prendi 1 kg a 1/2 del prezzo." Ne ha presi 4 kg. Ha comprato anche un sacchetto assortito di conchiglie a 1,5 euro e 4 calamite che costavano 0,25 euro ciascuna. Quanti soldi sono rimasti a Silvia?
+"""
 
 answer = """
-{name} sta comprando 1 libbra a 3 dollari e ne ottiene 1 libbra scontata della metà. Quindi lo sconto di metà su 1 libbra è 3*1/2 = 1,5 dollari. Le restanti 2 libbre non hanno sconto e costano 2*3 = 6, quindi il totale è 3+3/2+6=21/2
-4 magneti a 0,25 dollari ciascuno è 4*0,25=$<<4*0.25=1>>1
-Quando sommi tutti i suoi acquisti, 21/2+1,5+1 = $<<21/2+1.5+1=13>>13
-Aveva 15 dollari e ne ha spesi 13, quindi le restano 15-13 = $<<15-13=2>>2
+Silvia compra 1 kg a 3 euro al kg e prende 1 kg a 1/2 del prezzo. Quindi il prezzo scontato per 1 kg è 1*3*(1-1/2) = 1,5 euro. I restanti 2 kg non sono scontati e costano 2*3 = 6 euro, quindi il totale delle caramelle è 3+3/2+6=21/2 euro.
+4 calamite a 0,25 euro ciascuna costano 4*0,25=<<4*0,25=1>>1 euro.
+Sommando tutti gli acquisti, Silvia spende 21/2+1,5+1 = <<21/2+1,5+1=13>>13 euro.
+Aveva 15 euro e ne ha spesi 13, quindi le restano 15-13 = <<15-13=2>>2 euro.
 #### 2
 """
 
@@ -13,19 +15,19 @@ id_orig = 410
 id_shuffled = 40
 
 question_annotated = """
-{name} è andata al mare per le vacanze. I suoi genitori le hanno dato ${total,15} per comprare quello che voleva. Nel negozio di souvenir, il taffy era in offerta per "Compra {n1,1} libbra a ${p1,3} dollari a libbra, prendi {n2,1} libbra {discount,1/2} scontata." Ne ha preso {n12,4} libbre. Ha anche comprato un sacchetto misto di conchiglie per ${p2,1.5} e {n3,4} magneti che costavano ${p3,0.25} dollari ciascuno. Quanti soldi ha rimasto {name}?
+{name,Silvia} è andata al mare per le vacanze. I suoi genitori le hanno dato {total,15} euro da spendere come voleva. Nel negozio di souvenir, le caramelle erano in offerta: "Compra {n1,1} kg a {p1,3} euro al kg e prendi {n2,1} kg a {discount,1/2} del prezzo." Ne ha presi {n12,4} kg. Ha comprato anche un sacchetto assortito di conchiglie a {p2,1.5} euro e {n3,4} calamite che costavano {p3,0.25} euro ciascuna. Quanti soldi sono rimasti a {name,Silvia}?
 
 #init:
-- $total = range(10, 40, 5)
-- $n1 = range(1, 6)
-- $n2 = range(1, 6)
-- $n12 = range(2, 12)
-- $n3 = range(4, 12, 4)
-- $p1 = range(1, 10)
-- $p2 = arange(1, 3.5, 0.5)
-- $p3 = arange(0.25, 1.5, 0.25)
+- total = range(10, 40, 5)
+- n1 = range(1, 6)
+- n2 = range(1, 6)
+- n12 = range(2, 12)
+- n3 = range(4, 12, 4)
+- p1 = range(1, 10)
+- p2 = arange(1, 3.5, 0.5)
+- p3 = arange(0.25, 1.5, 0.25)
 - name = sample(names_female)
-- $discount = sample(fractions)
+- discount = sample(fractions)
 
 #conditions:
 - n2 <= n1
@@ -37,10 +39,10 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name} sta comprando {n1} libbra a ${p1} e ne ottiene {n2} libbra {discount} scontata. Quindi lo sconto {discount} su {n2} libbra è ${p1}*{discount} = ${float(n2*discount*p1)}. Le restanti {n12-n1-n2} libbre non hanno sconto e costano {n12-n1-n2}*${p1} = ${(n12-n1-n2)*p1}, quindi il totale è ${n1*p1}+${n2*(1-discount)*p1}+${(n12-n1-n2)*p1}=${n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}
-{n3} magneti a ${p3} ciascuno è {n3}*{p3}=$<<{n3}*{p3}={n3*p3}>>{n3*p3}
-Quando sommi tutti i suoi acquisti, ${n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+${p2}+${n3*p3} = $<<{n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+{p2}+{n3*p3}={int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}
-Aveva ${total} e ne ha spesi ${int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}, quindi le restano ${total}-${int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} = $<<{total}-{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}={total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}
+{name} compra {n1} kg a {p1} euro al kg e prende {n2} kg a {discount} del prezzo. Quindi il prezzo scontato per {n2} kg è {n2}*{p1}*(1-{discount}) = {float(n2*(1-discount)*p1)} euro. I restanti {n12-n1-n2} kg non sono scontati e costano {n12-n1-n2}*{p1} = {(n12-n1-n2)*p1} euro, quindi il totale delle caramelle è {n1*p1}+{n2*(1-discount)*p1}+{(n12-n1-n2)*p1}={n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1} euro.
+{n3} calamite a {p3} euro ciascuna costano {n3}*{p3}=<<{n3}*{p3}={n3*p3}>>{n3*p3} euro.
+Sommando tutti gli acquisti, {name} spende {n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+{p2}+{n3*p3} = <<{n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+{p2}+{n3*p3}={int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} euro.
+Aveva {total} euro e ne ha spesi {int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}, quindi le restano {total}-{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} = <<{total}-{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}={total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} euro.
 #### {total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}
 """
 

@@ -1,11 +1,13 @@
-question = "Roger va al negozio per comprare un po’ di caffè. Il marchio normale di caffè che compra costa $5 al chilo. Doveva comprare un marchio più costoso che costa il 20% in più perché il suo marchio preferito era finito. Decide di comprare una settimana di caffè e usa 1 chilo di caffè al giorno. Ha anche deciso di comprarsi una ciambella da $2. Quanto è costato tutto?"
+question = """
+Roger va al negozio per comprare un po' di caffè. Il marchio normale di caffè che compra costa 5 euro al chilo. Doveva comprare un marchio più costoso che costa 20% in più perché il suo marchio preferito era finito. Decide di comprare una settimana di caffè e usa 1 chilo di caffè al giorno. Ha anche deciso di comprarsi una ciambella da 2 euro. Quanto è costato tutto?
+"""
 
 answer = """
-Il caffè che ha comprato era 5*0.2=$<<5*0.2=1>>1 più costoso al chilo di quello che compra normalmente
-Quindi gli è costato 5+1=$<<5+1=6>>6 al chilo
-Consuma 1*7=<<1*7=7>>7 chili di caffè in una settimana
-Quindi ha pagato 6*7=$<<6*7=42>>42 per il caffè
-Questo significa che il conto totale era 42+2=$<<42+2=44>>44
+Il caffè che ha comprato era 5*0,2=<<5*0,2=1>>1 euro più costoso al chilo di quello che compra normalmente
+Quindi gli è costato 5+1=<<5+1=6>>6 euro al chilo
+Consuma 1*7=<<1*7=7>>7 chilo di caffè in una settimana
+Quindi ha pagato 6*7=<<6*7=42>>42 euro per il caffè
+Questo significa che il conto totale era 42+2=<<42+2=44>>44 euro
 #### 44
 """
 
@@ -14,13 +16,14 @@ id_orig = 661
 id_shuffled = 42
 
 question_annotated = """
-{name,Roger} va al negozio per comprare un po’ di {item,caffè}. Il marchio normale di {item,caffè} che compra costa {cur,$}{price,5} al {unit,chilo}. Doveva comprare un marchio più costoso che costa {percent,20}% in più perché il suo marchio preferito era finito. Decide di comprare una settimana di {item,caffè} e usa {usage,1} {unit,chilo} di {item,caffè} al giorno. Ha anche deciso di comprarsi una {extra_item,ciambella} da {cur,$}{extra_price,2}. Quanto è costato tutto?
+{name,Roger} va al negozio per comprare un po' di {item,caffè}. Il marchio normale di {item,caffè} che compra costa {price,5} {cur,euro} al {unit_sing,chilo}. Doveva comprare un marchio più costoso che costa {percent,20}% in più perché il suo marchio preferito era finito. Decide di comprare una settimana di {item,caffè} e usa {usage,1} {unit,chilo} di {item,caffè} al giorno. Ha anche deciso di comprarsi una {extra_item,ciambella} da {extra_price,2} {cur,euro}. Quanto è costato tutto?
 
 #init:
 - name = sample(names_male)
 - item = sample(['tè', 'zucchero', 'farina', 'riso'])
 - cur = sample(currencies_sym)
-- unit = sample(['chilogrammo', 'kg'])
+- unit = sample(['chili', 'kg'])
+- unit_sing = sample(['chilo', 'kg'])
 - extra_item = sample(['biscotto', 'muffin', 'bagel'])
 - $price = range(3, 25)
 - $percent = range(10, 50, 5)
@@ -34,11 +37,11 @@ question_annotated = """
 """
 
 answer_annotated = """
-Il {item} che ha comprato era {price}*{percent/100}={cur}<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} più costoso al {unit} di quello che compra normalmente
-Quindi gli è costato {price}+{price*percent//100}={cur}<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} al {unit}
-Consuma {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {unit}s di {item} in una settimana
-Quindi ha pagato {price+price*percent/100}*{usage*7}={cur}<<{price+price*percent/100}*{usage*7}={int((price+price*percent/100)*usage*7)}>>{int((price+price*percent/100)*usage*7)} per il {item}
-Questo significa che il conto totale era {int((price+price*percent/100)*usage*7)}+{extra_price}={cur}<<{int((price+price*percent/100)*usage*7)}+{extra_price}={int((price+price*percent/100)*usage*7)+extra_price}>>{int((price+price*percent/100)*usage*7)+extra_price}
+Il {item} che ha comprato era {price}*{percent/100}=<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {cur} più costoso al {unit} di quello che compra normalmente
+Quindi gli è costato {price}+{price*percent//100}=<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} {cur} al {unit}
+Consuma {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {unit} di {item} in una settimana
+Quindi ha pagato {price+price*percent/100}*{usage*7}=<<{price+price*percent/100}*{usage*7}={int((price+price*percent/100)*usage*7)}>>{int((price+price*percent/100)*usage*7)} {cur} per il {item}
+Questo significa che il conto totale era {int((price+price*percent/100)*usage*7)}+{extra_price}=<<{int((price+price*percent/100)*usage*7)}+{extra_price}={int((price+price*percent/100)*usage*7)+extra_price}>>{int((price+price*percent/100)*usage*7)+extra_price} {cur}
 #### {int((price+price*percent/100)*usage*7)+extra_price}
 """
 

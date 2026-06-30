@@ -1,9 +1,9 @@
-question = "L’auto di John si guasta. L’auto pesa 1200 libbre e lui ha al suo interno dei bagagli che pesano 250 libbre. Ha anche i suoi due bambini piccoli che pesano 75 libbre ciascuno. Se la forza per muovere l’auto è l’1% del peso, quanta forza deve applicare per spingere l’auto?"
+question = "La macchina di Guglielmo si guasta. La macchina pesa 1200 kg e lui ha al suo interno dei bagagli che pesano 250 kg. Ha anche i suoi due bambini che pesano 75 kg ciascuno. Se la forza per muovere la macchina è l'1% del peso, quanta forza deve applicare per spingere la macchina?"
 
 answer = """
-I due bambini pesano 75*2=<<75*2=150>>150 libbre
-Quindi il peso totale dell’auto e di tutto ciò che contiene è 1200+250+150=<<1200+250+150=1600>>1600 libbre
-Quindi deve generare 1600*0.01=<<1600*0.01=16>>16 libbre
+I due bambini pesano 75*2=<<75*2=150>>150 kg
+Quindi il peso totale della macchina e di tutto ciò che contiene è 1200+250+150=<<1200+250+150=1600>>1600 kg
+Quindi deve generare 1600*0,01=<<1600*0,01=16>>16 kg
 #### 16
 """
 
@@ -12,19 +12,20 @@ id_orig = 1275
 id_shuffled = 67
 
 question_annotated = """
-{name,John}'s {vehicle,car} si guasta. La {vehicle,car} pesa {weight_vehicle,1200} {unit,pounds} e lui ha {item,luggage} al suo interno che pesa {weight_item,250} {unit,pounds}. Ha anche i suoi {num_passengers_txt,two} giovani {passenger_type,children} che pesano {weight_passenger,75} {unit,pounds} ciascuno. Se la forza per muovere la {vehicle,car} è {force_percent,1}% del peso, quanta forza deve applicare per spingere la {vehicle,car}?
+La {vehicle,macchina} di {name,Guglielmo} si guasta. La {vehicle,macchina} pesa {weight_vehicle,1200} {unit,kg} e lui ha al suo interno {item,dei bagagli} che pesano {weight_item,250} {unit,kg}. Ha anche i suoi {num_passengers_txt,due} {passenger_type,bambini} che pesano {weight_passenger,75} {unit,kg} ciascuno. Se la forza per muovere la {vehicle,macchina} è {force_percent_article,l'}{force_percent,1}% del peso, quanta forza deve applicare per spingere la {vehicle,macchina}?
 
 #init:
 - name = sample(names_male)
-- vehicle = sample(['car', 'van', 'truck', 'SUV'])
-- item = sample(['luggage', 'groceries', 'equipment', 'furniture'])
-- passenger_type = sample(['children', 'friends', 'colleagues', 'teammates'])
-- unit = sample(['pounds', 'kilograms'])
+- vehicle = sample(["vettura", "berlina", "macchina", "monovolume"])
+- item = sample(['dei bagagli', 'degli attrezzi', 'dei pacchi', 'dei mobili'])
+- passenger_type = sample(['bambini', 'amici', 'colleghi', 'compagni di squadra'])
+- unit = sample(['kilogrammi', 'kg'])
 - $weight_vehicle = range(1000, 3000, 50)
 - $weight_item = range(100, 500, 25)
 - $weight_passenger = range(50, 100, 5)
 - num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
 - $force_percent = range(1, 6)
+- force_percent_article = "l'" if force_percent == 1 else "il "
 
 #conditions:
 - is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)

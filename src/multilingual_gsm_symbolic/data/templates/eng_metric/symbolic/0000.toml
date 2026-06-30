@@ -1,0 +1,43 @@
+question = "Benny saw a 3-meter shark with 2 15-centimeter remoras attached to it. What percentage of the shark's body length is the combined length of the remoras?"
+
+answer = """
+First, find the combined length of the remoras in cm: 15 cm/remora * 2 remoras = <<15*2=30>>30 cm.
+Then divide that number by 100 to convert it to meters: 30 cm / 100 cm/m = <<30/100=0.3>>0.3 m.
+Then divide the combined remora length in meters by the shark's length and multiply by 100% to express the answer as a percentage: 0.3/3 meters * 100% = 10%
+
+#### 10
+"""
+
+id_orig = 473
+
+id_shuffled = 0
+
+question_annotated = """
+{n, Benny} saw a {x,3}-meter {big_fish,shark} with {k,2} {y,15}-centimeter remoras attached to it. What percentage of the {big_fish,shark}'s body length is the combined length of the remoras?
+
+#init:
+- n = sample(names)
+- big_fish = sample(["dolphin", "whale", "shark"])
+- $x = range(2, 21, 1)
+- $k = range(2, 21)
+- $y = range(2, 100)
+
+#conditions:
+- k * y < x * 100
+- divides(100 * x, k*y)
+- divides(100, x * 100 / (k*y))
+
+#answer: int((k * y)/ (x * 100) * 100)
+"""
+
+answer_annotated = """
+First, find the combined length of the remoras in cm: {y} cm/remora * {k} remoras = <<{y}*{k}={k*y}>>{k*y} cm.
+Then divide that number by 100 to convert it to meters: {k*y} cm / 100 cm/m = <<{k*y}/100={k*y/100}>>{k*y/100} m.
+Then divide the combined remora length in meters by the {big_fish}'s length and multiply by 100% to express the answer as a percentage: {k*y/100}/{x} meters * 100% = {int(k*y/(100*x)*100)}%
+
+#### {int(k*y/(100*x)*100)}
+"""
+
+creation = "derived from GSM-Symbolic (Apple) templates; samples may differ from the original paper where templates were inconsistent or incorrect; computationally validated"
+
+language = "eng_metric"
