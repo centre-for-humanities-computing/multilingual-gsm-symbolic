@@ -131,7 +131,7 @@ def build_analysis_tables(
     observations: pd.DataFrame,
     language_features: pd.DataFrame,
     fertility: pd.DataFrame,
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+) -> pd.DataFrame:
     working = observations.drop(
         columns=[
             "observation_id",
@@ -147,18 +147,6 @@ def build_analysis_tables(
         errors="ignore",
     ).copy()
     main = working.drop(columns=["model_raw"], errors="ignore")
-
-    model_columns = [
-        "model",
-        "family",
-        "params_b",
-        "vocab_size",
-    ]
-    models = (
-        main[[column for column in model_columns if column in main.columns]].drop_duplicates().reset_index(drop=True)
-    )
-
-    model_languages = fertility.drop(columns=["model_raw"], errors="ignore").copy()
 
     languages = language_features.copy()
     if not languages.empty:
@@ -211,7 +199,7 @@ def build_analysis_tables(
         )
     analysis = analysis.drop(columns=["model_raw"], errors="ignore")
 
-    return main, models, languages, model_languages, analysis
+    return analysis
 
 
 def write_tables(
@@ -221,22 +209,12 @@ def write_tables(
     out_dir: Path,
 ) -> dict[str, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
-    main, models, languages, model_languages, analysis = build_analysis_tables(
+    analysis = build_analysis_tables(
         observations,
         language_features,
         fertility,
     )
-    outputs = {
-        "main": out_dir / "main.csv",
-        "models": out_dir / "models.csv",
-        "languages": out_dir / "languages.csv",
-        "model_languages": out_dir / "model_language_features.csv",
-        "analysis": out_dir / "analysis.csv",
-    }
-    main.to_csv(outputs["main"], index=False)
-    models.to_csv(outputs["models"], index=False)
-    languages.to_csv(outputs["languages"], index=False)
-    model_languages.to_csv(outputs["model_languages"], index=False)
+    outputs = {"analysis": out_dir / "analysis.csv"}
     analysis.to_csv(outputs["analysis"], index=False)
     return outputs
 
