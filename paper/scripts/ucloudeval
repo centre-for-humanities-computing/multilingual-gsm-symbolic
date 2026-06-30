@@ -212,9 +212,13 @@ def model_runs(models: Iterable[str]) -> list[ModelRun]:
         base_args = tuple(model_args(model))
         if reasoning_toggleable(model):
             on_kwargs, off_kwargs = reasoning_kwargs(model)
+            lower = model.lower()
+            on_args = base_args
+            if not (lower.startswith("qwen/qwen3-") or lower.startswith("qwen/qwen3.5-")):
+                on_args = base_args + ("-M", on_kwargs)
             runs.extend(
                 [
-                    ModelRun(model, base_args + ("-M", on_kwargs), "on"),
+                    ModelRun(model, on_args, "on"),
                     ModelRun(model, base_args + ("-M", off_kwargs), "off"),
                 ]
             )
