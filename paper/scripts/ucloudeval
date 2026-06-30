@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -200,9 +201,11 @@ def reasoning_kwargs(model: str) -> tuple[str, str]:
         key = "thinking"
     else:
         key = "enable_thinking"
+    on = json.dumps({key: True}).replace("'", "'\"'\"'")
+    off = json.dumps({key: False}).replace("'", "'\"'\"'")
     return (
-        f'default_chat_template_kwargs={{"{key}": true}}',
-        f'default_chat_template_kwargs={{"{key}": false}}',
+        f"default_chat_template_kwargs='{on}'",
+        f"default_chat_template_kwargs='{off}'",
     )
 
 
