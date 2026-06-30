@@ -789,8 +789,19 @@ def reasoning_variant_name(model: str) -> tuple[str, str | None]:
 def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     rows = summary.copy()
     parsed = rows["model"].map(reasoning_variant_name)
-    rows["base_model"] = [item[0] for item in parsed]
+    rows["base_model_candidate"] = [item[0] for item in parsed]
     rows["reasoning"] = [item[1] for item in parsed]
+
+    off_name_by_raw = rows[rows["reasoning"] == "off"].groupby("model_raw")["base_model_candidate"].first()
+    rows["canonical_base_model"] = rows["model_raw"].map(off_name_by_raw).fillna(rows["base_model_candidate"])
+
+    rows.loc[rows["reasoning"].isin(["on", "off"]), "base_model"] = rows["canonical_base_model"]
+    rows.loc[
+        rows["reasoning"].isna() & (rows["model"] == rows["canonical_base_model"]),
+        "reasoning",
+    ] = "on"
+    rows.loc[rows["base_model"].isna(), "base_model"] = rows["canonical_base_model"]
+
     rows = rows[rows["reasoning"].isin(["on", "off"])]
     if rows.empty:
         return False
@@ -806,33 +817,39 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     paired["delta"] = paired["on"] - paired["off"]
     matrix = paired["delta"].unstack(["split", "language"])
     order = sorted(matrix.index, key=model_sort_key)
-    columns = [
-        (split, language)
-        for split in ("original", "synthetic")
-        for language in language_order([language for s, language in matrix.columns if s == split])
-    ]
-    matrix = matrix.reindex(index=order, columns=pd.MultiIndex.from_tuples(columns))
-    matrix.columns = [
-        f"{SPLIT_LABELS[split].split()[0]}\n{LANGUAGE_LABELS.get(language, language)}"
-        for split, language in matrix.columns
-    ]
+    languages = language_order(matrix.columns.get_level_values("language").unique())
+    available_splits = [split for split in ("original", "synthetic") if split in matrix.columns.get_level_values("split")]
+
+    matrices: list[tuple[str, pd.DataFrame]] = []
+    for split in available_splits:
+        split_matrix = matrix.xs(split, level="split", axis=1).reindex(index=order, columns=languages)
+        matrices.append((SPLIT_LABELS[split], split_matrix))
+
+    if not matrices:
+        return False
 
     limit = max(float(np.nanmax(np.abs(matrix.to_numpy()))), 0.05)
     height = max(4.0, 0.42 * len(order) + 1.5)
-    fig, ax = plt.subplots(figsize=(max(7, 0.9 * len(matrix.columns)), height))
-    image = annotated_heatmap(
-        ax,
-        matrix,
-        "Reasoning enabled minus disabled accuracy",
-        "RdBu",
-        -limit,
-        limit,
-        signed=True,
+    fig, axes = plt.subplots(
+        1,
+        len(matrices),
+        figsize=(max(6, 2.5 * len(languages) * len(matrices)), height),
+        sharey=True,
+        squeeze=False,
     )
-    ax.set_ylabel("Evaluated model")
-    colorbar = fig.colorbar(image, ax=ax, shrink=0.8, label="Accuracy difference: reasoning on - off")
+    axes = axes[0]
+
+    images = [
+        annotated_heatmap(ax, matrix, title, "RdBu", -limit, limit, signed=True)
+        for ax, (title, matrix) in zip(axes, matrices, strict=True)
+    ]
+
+    axes[0].set_ylabel("Evaluated model")
+    fig.suptitle("Reasoning enabled minus disabled accuracy")
+    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.28, top=0.84, wspace=0.18)
+
+    colorbar = fig.colorbar(images[0], ax=axes, shrink=0.8, label="Accuracy difference: reasoning on - off")
     colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1))
-    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.28, top=0.84)
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
