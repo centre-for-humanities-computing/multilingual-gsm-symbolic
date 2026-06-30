@@ -10,7 +10,7 @@ import argparse
 import os
 import subprocess
 import sys
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,12 +18,12 @@ import yaml
 
 MODELS = (
     # Qwen2.5 Instruct
-    "Qwen/Qwen2.5-0.5B-Instruct",
-    "Qwen/Qwen2.5-1.5B-Instruct",
-    "Qwen/Qwen2.5-3B-Instruct",
-    "Qwen/Qwen2.5-7B-Instruct",
-    "Qwen/Qwen2.5-14B-Instruct",
-    "Qwen/Qwen2.5-32B-Instruct",
+  # "Qwen/Qwen2.5-0.5B-Instruct",
+  #  "Qwen/Qwen2.5-1.5B-Instruct",
+  #  "Qwen/Qwen2.5-3B-Instruct",
+  #  "Qwen/Qwen2.5-7B-Instruct",
+  #  "Qwen/Qwen2.5-14B-Instruct",
+  #  "Qwen/Qwen2.5-32B-Instruct",
 
     # Qwen3 dense reasoning-capable models
     "Qwen/Qwen3-0.6B",
@@ -40,16 +40,24 @@ MODELS = (
     "Qwen/Qwen3.5-27B",
 
     # DeepSeek-R1 distills up to 32B
-    "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
-    "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
-    "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B",
-    "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+  #  "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+  #  "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+  #  "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B",
+  #  "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
 
     # OLMo 2 Instruct
     "allenai/OLMo-2-0425-1B-Instruct",
     "allenai/OLMo-2-1124-7B-Instruct",
     "allenai/OLMo-2-1124-13B-Instruct",
     "allenai/OLMo-2-0325-32B-Instruct",
+
+    # OLMo 3
+    "allenai/Olmo-3-7B-Think",
+    "allenai/Olmo-3-32B-Think",
+
+    # Granite 3.2
+    "ibm-granite/granite-3.2-2b-instruct",
+    "ibm-granite/granite-3.2-8b-instruct",
 
     # Gemma 3 IT
     "google/gemma-3-1b-it",
@@ -85,6 +93,13 @@ class Task:
     task_id: str
     language: str
     split: str
+
+
+@dataclass(frozen=True)
+class ModelRun:
+    model: str
+    args: tuple[str, ...] = ()
+    reasoning: str | None = None
 
 
 def unique(values: Sequence[str]) -> list[str]:
@@ -167,7 +182,48 @@ def model_args(model: str) -> list[str]:
     return []
 
 
-def inspect_command(model: str, tasks: Sequence[Task]) -> list[str]:
+def reasoning_toggleable(model: str) -> bool:
+    lower = model.lower()
+    return (
+        lower.startswith("qwen/qwen3-")
+        or lower.startswith("qwen/qwen3.5-")
+        or (lower.startswith("allenai/olmo-3-") and lower.endswith("-think"))
+        or lower.startswith("ibm-granite/granite-3.2-")
+    )
+
+
+def reasoning_kwargs(model: str) -> tuple[str, str]:
+    lower = model.lower()
+    if lower.startswith("allenai/olmo-3-"):
+        key = "think"
+    elif lower.startswith("ibm-granite/granite-3.2-"):
+        key = "thinking"
+    else:
+        key = "enable_thinking"
+    return (
+        f'default_chat_template_kwargs={{"{key}": true}}',
+        f'default_chat_template_kwargs={{"{key}": false}}',
+    )
+
+
+def model_runs(models: Iterable[str]) -> list[ModelRun]:
+    runs = []
+    for model in models:
+        base_args = tuple(model_args(model))
+        if reasoning_toggleable(model):
+            on_kwargs, off_kwargs = reasoning_kwargs(model)
+            runs.extend(
+                [
+                    ModelRun(model, base_args + ("-M", on_kwargs), "on"),
+                    ModelRun(model, base_args + ("-M", off_kwargs), "off"),
+                ]
+            )
+        else:
+            runs.append(ModelRun(model, base_args))
+    return runs
+
+
+def inspect_command(run: ModelRun, tasks: Sequence[Task]) -> list[str]:
     # place the revision after the task id so the HF loader parses it correctly
     specs = [
         f"hf/{DATASET}/{task.task_id}@{REVISION}" if REVISION else f"hf/{DATASET}/{task.task_id}" for task in tasks
@@ -176,8 +232,8 @@ def inspect_command(model: str, tasks: Sequence[Task]) -> list[str]:
         # Eval sets use the log directory to skip successful tasks and retry
         # interrupted tasks without repeating their completed samples.
         "inspect", "eval-set", *specs,
-        "--model", f"vllm/{model}",
-        *model_args(model),
+        "--model", f"vllm/{run.model}",
+        *run.args,
         "-M", "dtype=auto",
         "-M", "attention_backend=FLASH_ATTN",
         "-M", "max_num_seqs=512",
@@ -202,15 +258,16 @@ def show_command(message: str, command: Sequence[str]) -> None:
     print(f"{message}\n  {' '.join(command)}")
 
 
-def run_inspect(model: str, tasks: Sequence[Task]) -> None:
-    command = inspect_command(model, tasks)
-    show_command(f"Running {len(tasks)} Inspect task(s) for {model}", command)
+def run_inspect(run: ModelRun, tasks: Sequence[Task]) -> None:
+    command = inspect_command(run, tasks)
+    suffix = f" (reasoning {run.reasoning})" if run.reasoning else ""
+    show_command(f"Running {len(tasks)} Inspect task(s) for {run.model}{suffix}", command)
     try:
         subprocess.run(command, check=True, env=vllm_environment())
     except subprocess.CalledProcessError as error:
-        raise RunnerError(f"Inspect failed for {model} with status {error.returncode}") from error
+        raise RunnerError(f"Inspect failed for {run.model}{suffix} with status {error.returncode}") from error
     except OSError as error:
-        raise RunnerError(f"Could not start Inspect for {model}: {error}") from error
+        raise RunnerError(f"Could not start Inspect for {run.model}{suffix}: {error}") from error
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -248,8 +305,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.error(str(error))
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
+    selected_runs = model_runs(selected["model"])
+
     for label, values in (
-        ("Models", selected["model"]),
+        ("Models", [f"{run.model} (reasoning {run.reasoning})" if run.reasoning else run.model for run in selected_runs]),
         ("Languages", selected["language"]),
         ("Splits", selected["split"]),
         ("Tasks", [task.task_id for task in selected_tasks]),
@@ -259,11 +318,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     failures = []
     try:
-        for model in selected["model"]:
+        for run in selected_runs:
             try:
-                run_inspect(model, selected_tasks)
+                run_inspect(run, selected_tasks)
             except RunnerError as error:
-                failures.append((model, str(error)))
+                failures.append((run.model, str(error)))
                 print(f"Model failed: {error}", file=sys.stderr)
     except KeyboardInterrupt:
         print("\nInterrupted.", file=sys.stderr)

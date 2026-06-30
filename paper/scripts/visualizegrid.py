@@ -10,8 +10,10 @@ The script reads Inspect ``.eval`` logs and writes:
 * ``original_vs_synthetic.png``: paired split performance for each model/language.
 * ``family_scaling.png``: within-family accuracy as a function of parameter count.
 * ``english_normalized_transfer.png``: language accuracy relative to English.
+* ``eng_vs_eng_metric.png``: paired English and English-metric accuracy by model.
 * ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
 * ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
+* ``reasoning_delta_heatmap.png``: reasoning-on minus reasoning-off accuracy.
 
 Only successful logs are included by default. Repeated/resumed logs with the same
 evaluation id are deduplicated, preferring a successful and then newer log.
@@ -31,7 +33,6 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from inspect_ai.log import read_eval_log
 from eval_log_utils import (
     discover_logs,
     infer_model_info,
@@ -40,6 +41,7 @@ from eval_log_utils import (
     sample_score,
     select_logs,
 )
+from inspect_ai.log import read_eval_log
 from matplotlib.colors import Normalize
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
@@ -69,6 +71,8 @@ FAMILY_MARKERS = {
     "DeepSeek-R1-Distill-Llama": "p",
     "Gemma 3": "^",
     "OLMo 2": "D",
+    "OLMo 3": "d",
+    "Granite": "X",
     "EuroLLM": "<",
     "Apertus": "P",
     "OpenAI": "X",
@@ -117,7 +121,7 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
         return path.name, None, f"Skipping unrecognized task {log.eval.task!r}"
 
     split, task_language = parsed_task
-    label = f"{model_name(log.eval.model)} / {task_language} / {split}"
+    label = f"{model_name(log.eval.model, log.eval.model_args)} / {task_language} / {split}"
 
     if not log.samples:
         return label, pd.DataFrame(), None
@@ -134,7 +138,7 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
         rows.append(
             {
                 "model_raw": log.eval.model,
-                "model": model_name(log.eval.model),
+                "model": model_name(log.eval.model, log.eval.model_args),
                 "family": info.family,
                 "params_b": info.params_b,
                 "vocab_size": info.vocab_size,
@@ -234,6 +238,33 @@ def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     return ordered.sort_values(["family_order", "size_order", "model", "language", "split"]).drop(
         columns=["family_order", "size_order"]
     )
+
+
+def english_metric_pairs(summary: pd.DataFrame, split: str = "synthetic") -> pd.DataFrame:
+    paired = summary[summary["split"] == split].pivot_table(
+        index=["model", "family", "params_b"],
+        columns="language",
+        values="accuracy",
+    )
+    if not {"eng", "eng_metric"}.issubset(paired.columns):
+        return pd.DataFrame(columns=["model", "family", "params_b", "eng", "eng_metric", "metric_minus_eng"])
+
+    result = paired[["eng", "eng_metric"]].dropna().reset_index()
+    result["metric_minus_eng"] = (result["eng_metric"] - result["eng"]).round(10)
+    result = sort_summary(result.assign(language="eng", split=split)).drop(columns=["language", "split"])
+    average = pd.DataFrame(
+        [
+            {
+                "model": "Average",
+                "family": "Average",
+                "params_b": np.nan,
+                "eng": result["eng"].mean(),
+                "eng_metric": result["eng_metric"].mean(),
+                "metric_minus_eng": result["metric_minus_eng"].mean(),
+            }
+        ]
+    )
+    return pd.concat([average, result], ignore_index=True)
 
 
 def format_speaker_count(count: int) -> str:
@@ -375,9 +406,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
 
     fig, ax = plt.subplots(figsize=(6.8, 6.4))
     sized = paired.reset_index()
-    sized = sized[
-        ~((sized["model"] == EXCLUDED_SPLIT_PAIR[0]) & (sized["language"] == EXCLUDED_SPLIT_PAIR[1]))
-    ]
+    sized = sized[~((sized["model"] == EXCLUDED_SPLIT_PAIR[0]) & (sized["language"] == EXCLUDED_SPLIT_PAIR[1]))]
     finite_sizes = sized["params_b"].dropna()
     norm = Normalize(
         vmin=float(finite_sizes.min()) if not finite_sizes.empty else 0,
@@ -521,6 +550,65 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
         label="Accuracy difference: target language - English",
     )
     colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1))
+    fig.savefig(out, bbox_inches="tight")
+    plt.close(fig)
+    return True
+
+
+def plot_eng_metric_comparison(summary: pd.DataFrame, out: Path, split: str = "synthetic") -> bool:
+    paired = english_metric_pairs(summary, split)
+    if paired.empty:
+        return False
+
+    paired = paired.reset_index(drop=True)
+    y = np.arange(len(paired))
+    height = max(4.0, 0.34 * len(paired) + 1.6)
+    fig, ax = plt.subplots(figsize=(9.5, height))
+
+    for index, row in paired.iterrows():
+        color = FAMILY_COLORS.get(row["family"], "#4B5563")
+        ax.plot(
+            [row["eng"], row["eng_metric"]],
+            [index, index],
+            color=color,
+            linewidth=3.0,
+            solid_capstyle="round",
+            alpha=0.85,
+        )
+        ax.scatter(row["eng"], index, color="white", edgecolor=color, linewidth=1.8, s=44, zorder=3)
+        ax.scatter(row["eng_metric"], index, color=color, edgecolor=color, linewidth=1.2, s=44, zorder=3)
+
+        label_x = max(row["eng"], row["eng_metric"]) + 0.012
+        ax.text(
+            min(label_x, 0.985),
+            index,
+            f"{row['metric_minus_eng']:+.1%}",
+            va="center",
+            ha="left" if label_x < 0.985 else "right",
+            fontsize=8,
+            color="#374151",
+        )
+
+    ax.set_yticks(y, paired["model"])
+    ax.invert_yaxis()
+    ax.set_xlim(0, 1)
+    ax.set_xlabel("Exact-answer accuracy")
+    ax.set_ylabel("Evaluated instruction-tuned model")
+    ax.xaxis.set_major_formatter(PercentFormatter(1))
+    ax.grid(axis="x", color="#E5E7EB", linewidth=0.8)
+    ax.set_axisbelow(True)
+    ax.set_title(f"English metric vs English accuracy ({SPLIT_LABELS.get(split, split)})")
+    ax.legend(
+        handles=[
+            Line2D(
+                [0], [0], marker="o", color="none", markerfacecolor="white", markeredgecolor="#4B5563", label="English"
+            ),
+            Line2D([0], [0], marker="o", color="#4B5563", markerfacecolor="#4B5563", label="English metric"),
+        ],
+        loc="lower right",
+        frameon=False,
+    )
+    fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -687,6 +775,69 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
+def reasoning_variant_name(model: str) -> tuple[str, str | None]:
+    suffixes = {
+        " (reasoning on)": "on",
+        " (reasoning off)": "off",
+    }
+    for suffix, mode in suffixes.items():
+        if model.endswith(suffix):
+            return model[: -len(suffix)], mode
+    return model, None
+
+
+def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
+    rows = summary.copy()
+    parsed = rows["model"].map(reasoning_variant_name)
+    rows["base_model"] = [item[0] for item in parsed]
+    rows["reasoning"] = [item[1] for item in parsed]
+    rows = rows[rows["reasoning"].isin(["on", "off"])]
+    if rows.empty:
+        return False
+
+    paired = rows.pivot_table(
+        index=["base_model", "split", "language"],
+        columns="reasoning",
+        values="accuracy",
+    ).dropna(subset=["on", "off"])
+    if paired.empty:
+        return False
+
+    paired["delta"] = paired["on"] - paired["off"]
+    matrix = paired["delta"].unstack(["split", "language"])
+    order = sorted(matrix.index, key=model_sort_key)
+    columns = [
+        (split, language)
+        for split in ("original", "synthetic")
+        for language in language_order([language for s, language in matrix.columns if s == split])
+    ]
+    matrix = matrix.reindex(index=order, columns=pd.MultiIndex.from_tuples(columns))
+    matrix.columns = [
+        f"{SPLIT_LABELS[split].split()[0]}\n{LANGUAGE_LABELS.get(language, language)}"
+        for split, language in matrix.columns
+    ]
+
+    limit = max(float(np.nanmax(np.abs(matrix.to_numpy()))), 0.05)
+    height = max(4.0, 0.42 * len(order) + 1.5)
+    fig, ax = plt.subplots(figsize=(max(7, 0.9 * len(matrix.columns)), height))
+    image = annotated_heatmap(
+        ax,
+        matrix,
+        "Reasoning enabled minus disabled accuracy",
+        "RdBu",
+        -limit,
+        limit,
+        signed=True,
+    )
+    ax.set_ylabel("Evaluated model")
+    colorbar = fig.colorbar(image, ax=ax, shrink=0.8, label="Accuracy difference: reasoning on - off")
+    colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1))
+    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.28, top=0.84)
+    fig.savefig(out, bbox_inches="tight")
+    plt.close(fig)
+    return True
+
+
 def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
     scaled = summary.dropna(subset=["params_b"])
     families = ordered_families(scaled["family"])
@@ -820,6 +971,10 @@ def main() -> None:
         summary,
         args.out_dir / "english_normalized_transfer.png",
     )
+    made_metric = plot_eng_metric_comparison(
+        summary,
+        args.out_dir / "eng_vs_eng_metric.png",
+    )
     made_robustness = plot_transfer_robustness(
         summary,
         args.out_dir / "transfer_robustness.png",
@@ -827,6 +982,10 @@ def main() -> None:
     made_degradation = plot_split_degradation(
         summary,
         args.out_dir / "split_degradation_heatmaps.png",
+    )
+    made_reasoning = plot_reasoning_delta(
+        summary,
+        args.out_dir / "reasoning_delta_heatmap.png",
     )
 
     print(f"Saved {summary_path}")
@@ -847,6 +1006,11 @@ def main() -> None:
     else:
         print("Skipped english_normalized_transfer.png: paired English/non-English results are required.")
 
+    if made_metric:
+        print(f"Saved {args.out_dir / 'eng_vs_eng_metric.png'}")
+    else:
+        print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
+
     if made_robustness:
         print(f"Saved {args.out_dir / 'transfer_robustness.png'}")
     else:
@@ -856,6 +1020,11 @@ def main() -> None:
         print(f"Saved {args.out_dir / 'split_degradation_heatmaps.png'}")
     else:
         print("Skipped split_degradation_heatmaps.png: paired original/synthetic results are required.")
+
+    if made_reasoning:
+        print(f"Saved {args.out_dir / 'reasoning_delta_heatmap.png'}")
+    else:
+        print("Skipped reasoning_delta_heatmap.png: paired reasoning on/off results are required.")
 
 
 if __name__ == "__main__":

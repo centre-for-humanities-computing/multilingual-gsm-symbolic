@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import json
 import math
 import re
 from collections.abc import Iterable
-
+from typing import Any
 
 LANGUAGE_LABELS = {
     "zho": "Chinese",
@@ -64,9 +65,11 @@ FAMILY_ORDER = {
     "DeepSeek-R1-Distill-Llama": 6,
     "Gemma 3": 7,
     "OLMo 2": 8,
-    "EuroLLM": 9,
-    "Apertus": 10,
-    "OpenAI": 11,
+    "OLMo 3": 9,
+    "Granite": 10,
+    "EuroLLM": 11,
+    "Apertus": 12,
+    "OpenAI": 13,
 }
 
 FAMILY_COLORS = {
@@ -78,6 +81,8 @@ FAMILY_COLORS = {
     "Llama 3": "#E76F51",
     "DeepSeek-R1-Distill-Llama": "#F4A261",
     "OLMo 2": "#D62828",
+    "OLMo 3": "#8A1C7C",
+    "Granite": "#5E6472",
     "Gemma 3": "#2A9D8F",
     "EuroLLM": "#118AB2",
     "Apertus": "#6A994E",
@@ -106,8 +111,33 @@ LANGUAGE_ORDER = {
 }
 
 
-def model_name(raw_model: str) -> str:
-    return raw_model.rstrip("/").split("/")[-1]
+def reasoning_mode(model_args: dict[str, Any] | None) -> str | None:
+    if not model_args:
+        return None
+
+    kwargs = model_args.get("default_chat_template_kwargs") or model_args.get("chat_template_kwargs")
+    if isinstance(kwargs, str):
+        try:
+            kwargs = json.loads(kwargs)
+        except json.JSONDecodeError:
+            return None
+
+    if not isinstance(kwargs, dict):
+        return None
+
+    if "enable_thinking" in kwargs:
+        return "on" if kwargs["enable_thinking"] else "off"
+    if "think" in kwargs:
+        return "on" if kwargs["think"] else "off"
+    if "thinking" in kwargs:
+        return "on" if kwargs["thinking"] else "off"
+    return None
+
+
+def model_name(raw_model: str, model_args: dict[str, Any] | None = None) -> str:
+    name = raw_model.rstrip("/").split("/")[-1]
+    mode = reasoning_mode(model_args)
+    return f"{name} (reasoning {mode})" if mode else name
 
 
 def model_family(raw_model: str) -> str:
@@ -128,6 +158,10 @@ def model_family(raw_model: str) -> str:
         return "Qwen"
     if "olmo-2" in lower:
         return "OLMo 2"
+    if "olmo-3" in lower:
+        return "OLMo 3"
+    if "granite" in lower:
+        return "Granite"
     if "eurollm" in lower:
         return "EuroLLM"
     if "gemma-3" in lower:
@@ -175,7 +209,9 @@ def ordered_families(families: Iterable[str]) -> list[str]:
     return known + extra
 
 
-def language_order(languages: Iterable[str], requested: list[str] | None = None, *, english_first: bool = False) -> list[str]:
+def language_order(
+    languages: Iterable[str], requested: list[str] | None = None, *, english_first: bool = False
+) -> list[str]:
     if requested:
         return [language for language in requested if language in set(languages) or not set(languages)]
 

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from inspect_ai.log import read_eval_log
-from plot_config import model_family, model_name, model_size_b
+from plot_config import model_family, model_name, model_size_b, reasoning_mode
 
 
 @dataclass(frozen=True)
@@ -131,7 +131,7 @@ def select_logs(paths: list[Path], include_incomplete: bool, workers: int) -> li
         if not include_incomplete and status != "success":
             continue
 
-        key = (log.eval.eval_id, log.eval.task)
+        key = (log.eval.eval_id, log.eval.task, reasoning_mode(log.eval.model_args))
         rank = (status == "success", path.stat().st_mtime_ns)
 
         previous = selected.get(key)
