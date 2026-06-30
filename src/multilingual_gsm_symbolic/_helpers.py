@@ -523,6 +523,7 @@ def try_parse_float(value: Any) -> Any:
     if not isinstance(value, str):
         return value
     try:
+        # handle languages like marathi (mar), and hindu (hin)
         val_ascii = value.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
         return float(val_ascii)
     except ValueError:
@@ -534,6 +535,7 @@ def try_parse_fraction(value: Any) -> Any:
         return value
     if value.count("/") == 1:
         num, denom = value.split("/")
+        # handle languages like marathi (mar), and hindu (hin)
         num_ascii = num.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
         denom_ascii = denom.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
         if num_ascii.lstrip("-").isdigit() and denom_ascii.lstrip("-").isdigit():
@@ -552,7 +554,6 @@ _COMMA_DECIMAL_LANGUAGES = {"dan", "nob", "nno", "swe", "deu", "fin", "isl", "nl
 
 def format_numbers_by_language(text: str, language: str) -> str:
     if language in ("hin", "mar"):
-        text = text.replace("$", "₹")
         return text.translate(str.maketrans("0123456789", "०१२३४५६७८९"))
 
     comma_decimal = language in _COMMA_DECIMAL_LANGUAGES
