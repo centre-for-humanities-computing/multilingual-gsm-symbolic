@@ -1,8 +1,8 @@
-question = "Caroline og Johanne eru systur frá Kaupmannahöfn sem elska að safna eiginhandaráritunum frá frægu fólki. Í sumarfríinu sínu verja systurnar hverjum síðdegi í að safna eiginhandaráritunum. Eftir fimm vikur bera Caroline og Johanne saman eiginhandaráritanabækurnar sínar og telja fjölda eiginhandaráritana sem hvor systir hefur safnað. Caroline er með 20 eiginhandaráritanir í bókinni sinni og Johanne er með 44. Systurnar eiga þrír vikur af sumarfríinu eftir og þær ákveða að þær ætli að ná 100 eiginhandaráritunum samanlagt áður en sumarið er á enda. Hversu mörgum eiginhandaráritunum þurfa systurnar að safna til að ná markmiði sínu?"
+question = "Sara og Klara eru systur frá Reykjavík sem elska að safna eiginhandaráritunum frá frægu fólki. Í sumarfríinu sínu verja systurnar hverju síðdegi í að safna eiginhandaráritunum. Eftir fimm vikur bera Sara og Klara saman eiginhandaráritanabækurnar sínar og telja fjölda eiginhandaráritana sem hvor systir hefur safnað. Sara er með 20 eiginhandaráritanir í bókinni sinni og Klara er með 44. Systurnar eiga þrjár vikur eftir af sumarfríinu og þær ákveða að þær ætli að ná 100 eiginhandaráritunum samanlagt áður en fríið er á enda. Hversu mörgum eiginhandaráritunum þurfa systurnar að safna til að ná markmiði sínu?"
 
 answer = """
-Caroline og Johanne hafa þegar safnað 20 + 44 eiginhandaráritunum = <<20+44=64>>64 eiginhandaráritunum.
-Þar sem markmið þeirra er 100, þurfa þær að safna 100 - 64 eiginhandaráritunum. 100 - 64 = <<100-64=36>>36 eiginhandaráritunum
+Sara og Klara hafa þegar safnað 20 + 44 = <<20+44=64>>64 eiginhandaráritunum.
+Þar sem markmið þeirra er 100, þurfa þær að safna 100 - 64 = <<100-64=36>>36 eiginhandaráritunum.
 #### 36
 """
 
@@ -11,18 +11,19 @@ id_orig = 677
 id_shuffled = 33
 
 question_annotated = """
-{name1,Caroline} og {name2,Johanne} eru systur frá {city,Kaupmannahöfn} sem elska að safna eiginhandaráritunum frá {celebrity_type,frægu fólki}. Í {vacation_type,sumarfríinu} sínu verja systurnar hverjum síðdegi í að safna eiginhandaráritunum. Eftir {n1_txt,fimm} vikur bera {name1,Caroline} og {name2,Johanne} saman eiginhandaráritanabækurnar sínar og telja fjölda eiginhandaráritana sem hvor systir hefur safnað. {name1,Caroline} er með {s1,20} eiginhandaráritanir í bókinni sinni og {name2,Johanne} er með {s2,44}. Systurnar eiga {n2_txt,þrír} vikur af {vacation_type,sumarfríinu} eftir og þær ákveða að þær ætli að ná {goal,100} eiginhandaráritunum samanlagt áður en sumarið er á enda. Hversu mörgum eiginhandaráritunum þurfa systurnar að safna til að ná markmiði sínu?
+{name1,Sara} og {name2,Klara} eru systur frá {city,Reykjavík} sem elska að safna eiginhandaráritunum frá {celebrity_type,frægu fólki}. Í {vacation_type,sumarfríinu} sínu verja systurnar hverju síðdegi í að safna eiginhandaráritunum. Eftir {n1_txt,fimm} vikur bera {name1,Sara} og {name2,Klara} saman eiginhandaráritanabækurnar sínar og telja fjölda eiginhandaráritana sem hvor systir hefur safnað. {name1,Sara} er með {s1,20} {s1_noun,eiginhandaráritanir} í bókinni sinni og {name2,Klara} er með {s2,44}. Systurnar eiga {n2_txt,þrjár} vikur eftir af {vacation_type,sumarfríinu} og þær ákveða að þær ætli að ná {goal,100} eiginhandaráritunum samanlagt áður en fríið er á enda. Hversu mörgum eiginhandaráritunum þurfa systurnar að safna til að ná markmiði sínu?
 
 #init:
 - name1, name2 = sample(names_female, 2)
 - city = sample(cities)
-- celebrity_type = sample(["filmstjerner", "atleter", "musikere", "politikere", "forfattere"])
-- vacation_type = sample(["vinterferie", "påskeferie", "sommerferie", "efterårsferie"])
-- n1_txt, n1_val = range_str(3, 8, 1, numbers)
-- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+- celebrity_type = sample(["kvikmyndastjörnum", "íþróttamönnum", "tónlistarmönnum", "stjórnmálamönnum", "rithöfundum"])
+- vacation_type = sample(["vetrarfríinu", "páskafríinu", "sumarfríinu", "haustfríinu"])
+- n1_txt = sample(["þrjár", "fjórar", "fimm", "sex", "sjö"])
+- n2_txt = sample(["tvær", "þrjár", "fjórar"])
 - $s1 = range(15, 40)
 - $s2 = range(30, 60)
 - $goal = range(90, 150, 5)
+- s1_noun = "eiginhandaráritun" if (s1 % 10 == 1 and s1 % 100 != 11) else "eiginhandaráritanir"
 
 #conditions:
 - s1 + s2 < goal
@@ -31,11 +32,11 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name1} og {name2} hafa þegar safnað {s1} + {s2} eiginhandaráritunum = <<{s1}+{s2}={s1+s2}>>{s1+s2} eiginhandaráritunum.
-Þar sem markmið þeirra er {goal}, þurfa þær að safna {goal} - {s1+s2} eiginhandaráritunum. {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} eiginhandaráritunum
+{name1} og {name2} hafa þegar safnað {s1} + {s2} = <<{s1}+{s2}={s1+s2}>>{s1+s2} {"eiginhandaráritun" if ((s1+s2) % 10 == 1 and (s1+s2) % 100 != 11) else "eiginhandaráritunum"}.
+Þar sem markmið þeirra er {goal}, þurfa þær að safna {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} {"eiginhandaráritun" if ((goal-(s1+s2)) % 10 == 1 and (goal-(s1+s2)) % 100 != 11) else "eiginhandaráritunum"}.
 #### {goal-(s1+s2)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

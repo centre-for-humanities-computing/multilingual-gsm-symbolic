@@ -1,11 +1,11 @@
 question = "Pétur vill búa til ísmola af mismunandi stærðum með 32 grömmum af vatni. Hann getur búið til stóra ísmola sem nota 4 grömm á hvern mola, meðalstóra ísmola sem nota 2 grömm og litla ísmola sem nota 1/2 gramm. Ef hann býr til 3 stóra ísmola, 7 meðalstóra ísmola og 8 litla ísmola, hversu mörg grömm af vatni á hann eftir?"
 
 answer = """
-Stóru molarnir notuðu 12 grömmum af vatni, því 3 sinnum 4 er jafnt og <<3*4=12>>12.
-Meðalstóru molarnir notuðu 14 grömmum af vatni, því 7 sinnum 2 er jafnt og <<7*2=14>>14.
-Litlu molarnir notuðu 4 grömmum af vatni, því 8 sinnum 1/2 er 4.
-Þetta þýðir að Pétur hefur notað 30 grömmum af vatni, því 12 plús 14 plús 4 er 30.
-Pétur á 2 grömmum af vatni eftir, því 32 mínus 30 er jafnt og <<32-30=2>>2.
+Stóru molarnir notuðu 12 grömm af vatni, því 3 sinnum 4 er jafnt og <<3*4=12>>12.
+Meðalstóru molarnir notuðu 14 grömm af vatni, því 7 sinnum 2 er jafnt og <<7*2=14>>14.
+Litlu molarnir notuðu 4 grömm af vatni, því 8 sinnum 1/2 er 4.
+Þetta þýðir að Pétur hefur notað 30 grömm af vatni, því 12 plús 14 plús 4 er 30.
+Pétur á 2 grömm af vatni eftir, því 32 mínus 30 er jafnt og <<32-30=2>>2.
 #### 2
 """
 
@@ -14,11 +14,11 @@ id_orig = 737
 id_shuffled = 11
 
 question_annotated = """
-{name, Pétur} vill búa til ísmola af mismunandi stærðum með {n,32} {unit,grömmum} af vatni. Hann getur búið til stóra ísmola sem nota {w1,4} grömm á hvern mola, meðalstóra ísmola sem nota {w2,2} grömm og litla ísmola sem nota {w3,1/2} gramm. Ef hann býr til {n1,3} stóra ísmola, {n2,7} meðalstóra ísmola og {n3,8} litla ísmola, hversu mörg grömm af vatni á hann eftir?
+{name, Pétur} vill búa til ísmola af mismunandi stærðum með {n,32} {u_þgf_ft,grömmum} af vatni. Hann getur búið til stóra ísmola sem nota {w1,4} {u_þf_ft,grömm} á hvern mola, meðalstóra ísmola sem nota {w2,2} {u_þf_ft,grömm} og litla ísmola sem nota {w3,1/2} {u_þf_et,gramm}. Ef hann býr til {n1,3} stóra ísmola, {n2,7} meðalstóra ísmola og {n3,8} litla ísmola, hversu mörg {u_þf_ft,grömm} af vatni á hann eftir?
 
 #init:
 - name = sample(names_male)
-- unit = sample(weights_sm)
+- u_þf_et, u_þf_ft, u_þgf_ft = sample([("gramm","grömm","grömmum"),("kílógramm","kílógrömm","kílógrömmum"),("kíló","kíló","kílóum"),("kg","kg","kg"),("g","g","g")])
 - $w1 = range(4, 10)
 - $w2 = range(2, 10)
 - $w3 = sample(fractions)
@@ -36,15 +36,14 @@ question_annotated = """
 """
 
 answer_annotated = """
-Stóru molarnir notuðu {n1*w1} {unit} af vatni, því {n1} sinnum {w1} er jafnt og <<{n1}*{w1}={n1*w1}>>{n1*w1}.
-Meðalstóru molarnir notuðu {n2*w2} {unit} af vatni, því {n2} sinnum {w2} er jafnt og <<{n2}*{w2}={n2*w2}>>{n2*w2}.
-Litlu molarnir notuðu {int(w3*n3)} {unit} af vatni, því {n3} sinnum {w3} er {int(n3*w3)}.
-Þetta þýðir að {name} hefur notað {int(n3*w3+n2*w2+n1*w1)} {unit} af vatni, því {n1*w1} plús {n2*w2} plús {int(w3*n3)} er {int(n3*w3+n2*w2+n1*w1)}.
-{name} á {(n - (n1*w1) - (n2*w2) - int(n3*w3))} {unit} af vatni eftir, því {n} mínus {int(n3*w3+n2*w2+n1*w1)} er jafnt og <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{(n - (n1*w1) - (n2*w2) - int(n3*w3))}.
+Stóru molarnir notuðu {n1*w1} {u_þf_et if ((n1*w1) % 10 == 1 and (n1*w1) % 100 != 11) else u_þf_ft} af vatni, því {n1} sinnum {w1} er jafnt og <<{n1}*{w1}={n1*w1}>>{n1*w1}.
+Meðalstóru molarnir notuðu {n2*w2} {u_þf_et if ((n2*w2) % 10 == 1 and (n2*w2) % 100 != 11) else u_þf_ft} af vatni, því {n2} sinnum {w2} er jafnt og <<{n2}*{w2}={n2*w2}>>{n2*w2}.
+Litlu molarnir notuðu {int(w3*n3)} {u_þf_et if (int(w3*n3) % 10 == 1 and int(w3*n3) % 100 != 11) else u_þf_ft} af vatni, því {n3} sinnum {w3} er {int(n3*w3)}.
+Þetta þýðir að {name} hefur notað {int(n3*w3+n2*w2+n1*w1)} {u_þf_et if (int(n3*w3+n2*w2+n1*w1) % 10 == 1 and int(n3*w3+n2*w2+n1*w1) % 100 != 11) else u_þf_ft} af vatni, því {n1*w1} plús {n2*w2} plús {int(w3*n3)} er {int(n3*w3+n2*w2+n1*w1)}.
+{name} á {(n - (n1*w1) - (n2*w2) - int(n3*w3))} {u_þf_et if ((n - (n1*w1) - (n2*w2) - int(n3*w3)) % 10 == 1 and (n - (n1*w1) - (n2*w2) - int(n3*w3)) % 100 != 11) else u_þf_ft} af vatni eftir, því {n} mínus {int(n3*w3+n2*w2+n1*w1)} er jafnt og <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{(n - (n1*w1) - (n2*w2) - int(n3*w3))}.
 #### {(n - (n1*w1) - (n2*w2) - int(n3*w3))}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"
-

@@ -1,28 +1,27 @@
-question = "Albert er með blómabás á markaðnum. Hann selur þrjár tegundir af blómum: túlípönum, liljum og sólblómum. Hann selur venjulega túlípönum á 18,1 kr á hvern pott, liljum á 12,3 kr á hvern pott og sólblómum á 14,9 kr á hvern pott. Albert er ekki með neina aura í dag, svo hann hefur ákveðið að námunda að næstu krónu. Ef hann selur 12 potta af túlípönum, 9 potta af liljum og 17 potta af sólblómum, hversu mikið mun hann græða?"
+question = "Albert er með blómabás á markaðnum. Hann selur þrjár tegundir af blómum: túlípana, liljur og sólblóm. Hann selur venjulega túlípana á 18,1 kr á hvern pott, liljur á 12,3 kr á hvern pott og sólblóm á 14,9 kr á hvern pott. Albert er ekki með neina skiptimynt í dag, svo hann hefur ákveðið að námunda öll verð að næstu heilu krónu. Ef hann selur 12 {unit_thf_et if n1 % 10 == 1 and n1 % 100 != 11 else unit_thf_ft,potta} af túlípönum, 9 {unit_thf_et if n2 % 10 == 1 and n2 % 100 != 11 else unit_thf_ft,potta} af liljum og 17 {unit_thf_et if n3 % 10 == 1 and n3 % 100 != 11 else unit_thf_ft,potta} af sólblómum, hversu mikið mun hann þéna?"
 
-answer = """
-Albert mun námunda verðið á túlípönumunum sínum niður úr 18,1 kr í 18 kr, þar sem talan á eftir 18 er lægri en 5.
-Albert mun námunda verðið á sólblómumunum sínum op úr 14,9 kr í 15 kr, þar sem talan á eftir 14 er 5 eller højere.
+answer = """Albert mun námunda verðið á túlípönum niður úr 18,1 kr í 18 kr, þar sem talan á eftir 18 er lægri en 5.
+Albert mun námunda verðið á liljum niður úr 12,3 kr í 12 kr, þar sem talan á eftir 12 er lægri en 5.
+Albert mun námunda verðið á sólblómum upp úr 14,9 kr í 15 kr, þar sem talan á eftir 14 er 5 eða hærri.
 Albert selur 12 potta af túlípönum*18 kr = <<12*18=216>>216 kr
 Albert selur 9 potta af liljum*12 kr = <<9*12=108>>108 kr
 Albert selur 17 potta af sólblómum*15 kr = <<17*15=255>>255 kr
-Samtals mun Albert græða 216 kr + 108 kr + 255 kr = <<216+108+255=579>>579 kr
-#### 579
-"""
+Samtals mun Albert þéna 216 kr + 108 kr + 255 kr = <<216+108+255=579>>579 kr
+#### 579"""
 
 id_orig = 74
 
 id_shuffled = 51
 
 question_annotated = """
-{name,Albert} er með {product,blóma}bás á {location,markaðnum}. Hann selur þrjár tegundir af blómum: {item1,túlípana}, {item2,liljur} og {item3,sólblóm}. Hann selur venjulega {item1,túlípana} á {p1,18.1} {cur,kr} á hvern {unit,pott}, {item2,liljur} á {p2,12.3} {cur,kr} á hvern {unit,pott} og {item3,sólblóm} á {p3,14.9} {cur,kr} á hvern {unit,pott}. {name,Albert} er ekki með neina aura í dag, svo hann hefur ákveðið að námunda að næstu krónu. Ef hann selur {n1,12} {unit_plural,potta} af {item1,túlípönum}, {n2,9} {unit_plural,potta} af {item2,liljum} og {n3,17} {unit_plural,potta} af {item3,sólblómum}, hversu mikið mun hann græða?
+{name,Albert} er með {product_prefix,blóma}bás á {location,markaðnum}. Hann selur þrjár tegundir af {product_dat,blómum}: {item1_thf,túlípana}, {item2_thf,liljur} og {item3_thf,sólblóm}. Hann selur venjulega {item1_thf,túlípana} á {p1,18.1} {cur,kr} á hvern {unit_thf_et,pott}, {item2_thf,liljur} á {p2,12.3} {cur,kr} á hvern {unit_thf_et,pott} og {item3_thf,sólblóm} á {p3,14.9} {cur,kr} á hvern {unit_thf_et,pott}. {name,Albert} er ekki með neina skiptimynt í dag, svo hann hefur ákveðið að námunda öll verð að næstu heilu krónu. Ef hann selur {n1,12} {unit_thf_et if n1 % 10 == 1 and n1 % 100 != 11 else unit_thf_ft,potta} af {item1_thgf,túlípönum}, {n2,9} {unit_thf_et if n2 % 10 == 1 and n2 % 100 != 11 else unit_thf_ft,potta} af {item2_thgf,liljum} og {n3,17} {unit_thf_et if n3 % 10 == 1 and n3 % 100 != 11 else unit_thf_ft,potta} af {item3_thgf,sólblómum}, hversu mikið mun hann þéna?
 
 #init:
 - name = sample(names_male)
-- product = sample(["grænmeti", "blóm", "jurtir", "plöntur"])
-- location = sample(["markedet", "messen", "basaren", "gaden", "torvet"])
-- item1, item2, item3 = sample(["rósir", "baldursbrár", "orkídear", "peóníur", "anemónur", "kornblóm"], 3)
-- unit, unit_plural = sample([("pottur", "pottar"), ("blómvöndull", "blómvöndlar"), ("karfa", "körfur"), ("búnt", "búnt"), ("handfylli", "handfyllir")])
+- product_prefix, product_dat = sample([("grænmetis", "grænmeti"), ("blóma", "blómum"), ("jurta", "jurtum"), ("plöntu", "plöntum")])
+- location = sample(["markaðnum", "vörusýningunni", "basarnum", "götunni", "torginu"])
+- (item1_thf, item1_thgf), (item2_thf, item2_thgf), (item3_thf, item3_thgf) = sample([("rósir", "rósum"), ("baldursbrár", "baldursbrám"), ("orkídeur", "orkídeum"), ("bóndarósir", "bóndarósum"), ("anemónur", "anemónum"), ("kornblóm", "kornblómum"), ("túlípana", "túlípönum"), ("liljur", "liljum"), ("sólblóm", "sólblómum")], 3)
+- unit_thf_et, unit_thf_ft = sample([("pott", "potta"), ("blómvönd", "blómvendi"), ("vönd", "vendi"), ("kassa", "kassa"), ("poka", "poka")])
 - cur = sample(currencies_sym)
 - $p1 = arange(8.1, 23.3, 2.7)
 - $p2 = arange(14.9, 36.4, 1.7)
@@ -36,15 +35,16 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name} mun námunda verðið á {item1}unum sínum niður úr {p1} {cur} í {round(p1)} {cur}, þar sem talan á eftir {int(p1)} er lægri en 5.
-{name} mun námunda verðið á {item3}unum sínum {'op' if round(p3) > p3 else 'ned'} úr {p3} {cur} í {round(p3)} {cur}, þar sem talan á eftir {int(p3)} er {'5 eller højere' if round(p3) > p3 else 'lavere end 5'}.
-{name} selur {n1} potta af {item1}*{round(p1)} {cur} = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}
-{name} selur {n2} potta af {item2}*{round(p2)} {cur} = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}
-{name} selur {n3} potta af {item3}*{round(p3)} {cur} = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}
-Samtals mun {name} græða {n1*round(p1)} {cur} + {n2*round(p2)} {cur} + {n3*round(p3)} {cur} = <<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)} {cur}
+{name} mun námunda verðið á {item1_thgf} {'upp' if round(p1) > p1 else 'niður'} úr {p1} {cur} í {round(p1)} {cur}, þar sem talan á eftir {int(p1)} er {'5 eða hærri' if round(p1) > p1 else 'lægri en 5'}.
+{name} mun námunda verðið á {item2_thgf} {'upp' if round(p2) > p2 else 'niður'} úr {p2} {cur} í {round(p2)} {cur}, þar sem talan á eftir {int(p2)} er {'5 eða hærri' if round(p2) > p2 else 'lægri en 5'}.
+{name} mun námunda verðið á {item3_thgf} {'upp' if round(p3) > p3 else 'niður'} úr {p3} {cur} í {round(p3)} {cur}, þar sem talan á eftir {int(p3)} er {'5 eða hærri' if round(p3) > p3 else 'lægri en 5'}.
+{name} selur {n1} {unit_thf_et if n1 % 10 == 1 and n1 % 100 != 11 else unit_thf_ft} af {item1_thgf}*{round(p1)} {cur} = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}
+{name} selur {n2} {unit_thf_et if n2 % 10 == 1 and n2 % 100 != 11 else unit_thf_ft} af {item2_thgf}*{round(p2)} {cur} = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}
+{name} selur {n3} {unit_thf_et if n3 % 10 == 1 and n3 % 100 != 11 else unit_thf_ft} af {item3_thgf}*{round(p3)} {cur} = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}
+Samtals mun {name} þéna {n1*round(p1)} {cur} + {n2*round(p2)} {cur} + {n3*round(p3)} {cur} = <<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)} {cur}
 #### {n1*round(p1) + n2*round(p2) + n3*round(p3)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

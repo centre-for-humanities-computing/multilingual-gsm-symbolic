@@ -1,7 +1,7 @@
-question = "Sarah á að skila 15 blaðsíðna rannsóknargrein. Hún hefur þegar skrifað einn þriðji af rannsóknargreininni. Hversu margar blaðsíður á hún enn eftir að skrifa?"
+question = "Sara á að skila 15 blaðsíðna rannsóknargrein. Hún hefur þegar skrifað einn þriðja af rannsóknargreininni. Hversu margar blaðsíður á hún enn eftir að skrifa?"
 
 answer = """
-Sarah hefur þegar skrifað einn þriðji af rannsóknargreininni, sem er 15 blaðsíður*1/3=<<15*1/3=5>>5 blaðsíður.
+Sara hefur þegar skrifað einn þriðja af rannsóknargreininni, sem er 15 blaðsíður*1/3 = <<15*1/3=5>>5 blaðsíður.
 Svo á hún enn eftir að skrifa 15 blaðsíður - 5 blaðsíður = <<15-5=10>>10 blaðsíður.
 #### 10
 """
@@ -11,13 +11,14 @@ id_orig = 655
 id_shuffled = 77
 
 question_annotated = """
-{name,Sarah} á að skila {n,15} blaðsíðna {document,rannsóknargrein}. Hún hefur þegar skrifað {frac_txt,einn þriðji} af {document_definite,rannsóknargreininni}. Hversu margar blaðsíður á hún enn eftir að skrifa?
+{name,Sara} á að skila {n,15} {bladsidna,blaðsíðna} {document,rannsóknargrein}. Hún hefur þegar skrifað {frac_txt,einn þriðja} af {document_definite,rannsóknargreininni}. Hversu margar blaðsíður á hún enn eftir að skrifa?
 
 #init:
 - name = sample(names_female)
-- document, document_definite = sample([("rapport","rapporten"), ("afhandling","afhandlingen"), ("opgave","opgaven"), ("artikel","artiklen"), ("forskningsartikel","forskningsartiklen")])
+- document, document_definite = sample([("skýrslu","skýrslunni"), ("ritgerð","ritgerðinni"), ("verkefni","verkefninu"), ("grein","greininni"), ("rannsóknargrein","rannsóknargreininni")])
 - $n = range(10, 325)
-- frac_txt, frac_val = sample(fraction_alnum)
+- frac_txt, frac_val = sample([("helming", "1/2"), ("einn þriðja", "1/3"), ("tvo þriðju", "2/3"), ("einn fjórða", "1/4"), ("þrjá fjórðu", "3/4"), ("einn fimmta", "1/5"), ("tvo fimmtu", "2/5"), ("þrjá fimmtu", "3/5"), ("fjóra fimmtu", "4/5")])
+- bladsidna = "blaðsíðu" if (n % 10 == 1 and n % 100 != 11) else "blaðsíðna"
 
 #conditions:
 - is_int(n * frac_val)
@@ -27,11 +28,11 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name} hefur þegar skrifað {frac_txt} af {document_definite}, sem er {n} blaðsíður*{frac_val}=<<{n}*{frac_val}={int(n*frac_val)}>>{int(n*frac_val)} blaðsíður.
-Svo á hún enn eftir að skrifa {n} blaðsíður - {int(n*frac_val)} blaðsíður = <<{n}-{int(n*frac_val)}={n-int(n*frac_val)}>>{n-int(n*frac_val)} blaðsíður.
+{name} hefur þegar skrifað {frac_txt} af {document_definite}, sem er {n} {"blaðsíða" if (n % 10 == 1 and n % 100 != 11) else "blaðsíður"}*{frac_val} = <<{n}*{frac_val}={int(n*frac_val)}>>{int(n*frac_val)} {"blaðsíða" if (int(n*frac_val) % 10 == 1 and int(n*frac_val) % 100 != 11) else "blaðsíður"}.
+Svo á hún enn eftir að skrifa {n} {"blaðsíða" if (n % 10 == 1 and n % 100 != 11) else "blaðsíður"} - {int(n*frac_val)} {"blaðsíða" if (int(n*frac_val) % 10 == 1 and int(n*frac_val) % 100 != 11) else "blaðsíður"} = <<{n}-{int(n*frac_val)}={n-int(n*frac_val)}>>{n-int(n*frac_val)} {"blaðsíða" if ((n-int(n*frac_val)) % 10 == 1 and (n-int(n*frac_val)) % 100 != 11) else "blaðsíður"}.
 #### {n-int(n*frac_val)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

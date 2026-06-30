@@ -1,7 +1,7 @@
-question = "Það eru 6 stelpur í garðinum. Ef það eru tvær ferðir fleiri strákar í garðinum, hversu mörg börn eru þá í garðinum?"
+question = "Það eru 6 stelpur í garðinum. Ef það eru tvisvar sinnum fleiri strákar í garðinum, hversu mörg börn eru þá í garðinum?"
 
 answer = """
-Það eru 6 stelpur*2 strákar/stelpur = <<6*2=12>>12 strákar í garðinum.
+Það eru 6 stelpur*2 strákar/stelpu = <<6*2=12>>12 strákar í garðinum.
 Samtals eru 6 stelpur + 12 strákar = <<6+12=18>>18 börn í garðinum
 #### 18
 """
@@ -11,12 +11,13 @@ id_orig = 365
 id_shuffled = 44
 
 question_annotated = """
-Það eru {n,6} stelpur í {place,garðinum}. Ef það eru {mult_txt,tvær ferðir} fleiri strákar í {place,garðinum}, hversu mörg börn eru þá í {place,garðinum}?
+Það eru {n,6} {stelpur_n,stelpur} {prep,í} {place,garðinum}. Ef það eru {mult_txt,tvisvar sinnum} fleiri strákar {prep,í} {place,garðinum}, hversu mörg börn eru þá {prep,í} {place,garðinum}?
 
 #init:
-- place = sample(["parken", "gården", "haven", "legepladsen", "skolegården"])
+- prep, place = sample([("í", "garðinum"), ("í", "almenningsgarðinum"), ("á", "leikvellinum"), ("í", "skólagarðinum"), ("á", "túninu")])
 - $n = range(5, 51)
-- mult_txt, mult_val = sample(multi_times)
+- mult_txt, mult_val = sample([("tvisvar sinnum", 2), ("þrisvar sinnum", 3), ("fjórum sinnum", 4), ("fimm sinnum", 5)])
+- stelpur_n = "stelpa" if (n % 10 == 1 and n % 100 != 11) else "stelpur"
 
 #conditions:
 - is_int(n * mult_val + 1)
@@ -26,11 +27,11 @@ question_annotated = """
 """
 
 answer_annotated = """
-Það eru {n} stelpur*{mult_val} strákar/stelpur = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} strákar í {place}.
-Samtals eru {n} stelpur + {n*mult_val} strákar = <<{n}+{n*mult_val}={n*(mult_val+1)}>>{n*(mult_val+1)} börn í {place}
+Það eru {n} {stelpur_n}*{mult_val} strákar/stelpu = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} {"strákur" if ((n*mult_val) % 10 == 1 and (n*mult_val) % 100 != 11) else "strákar"} {prep} {place}.
+Samtals eru {n} {stelpur_n} + {n*mult_val} {"strákur" if ((n*mult_val) % 10 == 1 and (n*mult_val) % 100 != 11) else "strákar"} = <<{n}+{n*mult_val}={n*(mult_val+1)}>>{n*(mult_val+1)} {"barn" if ((n*(mult_val+1)) % 10 == 1 and (n*(mult_val+1)) % 100 != 11) else "börn"} {prep} {place}
 #### {n*(mult_val+1)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"
