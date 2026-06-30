@@ -1,8 +1,36 @@
-question = "Юлія обслуговує касу рівно вдвічі швидше, ніж її менш досвідчена колега Софія. Щодня Софія обслуговує 50 клієнтів. Який їхній загальний тижневий виробіток, якщо вони працюють усі дні тижня?"
-answer = "Поки Софія обробляє 50 замовлень за день, Юлія обробляє 50 замовлень/день*2=<<50*2=100>>100 замовлень/день.\nЗа один день вони разом обробляють 100 замовлень/день + 50 замовлень/день = <<100+50=150>>150 замовлень.\nЗагальна кількість замовлень, які вони обидві обробляють за тиждень, становить 150 замовлень/день * 7 днів/тиждень = <<150*7=1050>>1050 замовлень\n#### 1050\n"
+question = "Юлія обслуговує клієнтів рівно в два рази швидше, ніж її менш досвідчена колега Софія. Щодня Софія обслуговує 50 клієнтів. Який їхній загальний тижневий виробіток (кількість обслугованих клієнтів), якщо вони працюють усі дні тижня без вихідних?"
+answer = """Поки Софія обслуговує 50 клієнтів/день, Юлія обслуговує 50*2=<<50*2=100>>100 клієнтів/день.
+За один день вони разом обслуговують 100+50=<<100+50=150>>150 клієнтів.
+Загальна кількість клієньів, які вони обидві обслуговують за тиждень, становить 150*7=<<150*7=1050>>1050 клієнтів.
+#### 1050
+"""
 id_orig = 636
 id_shuffled = 97
-question_annotated = "{name1,Юлія} обслуговує касу рівно {mult_txt,to gange} швидше, ніж її менш досвідчена колега {name2,Софія}. Щодня {name2,Софія} обслуговує {n,50} клієнтів. Який їхній загальний тижневий виробіток, якщо вони працюють усі дні тижня?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_val)\n- is_int((n + n * mult_val) * 7)\n\n#answer: (n + n * mult_val) * 7\n"
-answer_annotated = "Поки {name2} обробляє {n} замовлень за день, {name1} обробляє {n} замовлень/день*{mult_val}=<<{n}*{mult_val}={n*mult_val}>>{n*mult_val} замовлень/день.\nЗа один день вони разом обробляють {n*mult_val} замовлень/день + {n} замовлень/день = <<{n*mult_val}+{n}={n+n*mult_val}>>{n+n*mult_val} замовлень.\nЗагальна кількість замовлень, які вони обидві обробляють за тиждень, становить {n+n*mult_val} замовлень/день * 7 днів/тиждень = <<{n+n*mult_val}*7={(n+n*mult_val)*7}>>{(n+n*mult_val)*7} замовлень\n#### {(n+n*mult_val)*7}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name1,Юлія} обслуговує клієнтів рівно в {mult_txt,два рази} швидше, ніж її менш досвідчена колега {name2,Софія}. Щодня {name2,Софія} обслуговує {n,50} {n_clients_form,клієнтів}. Який їхній загальний тижневий виробіток (кількість обслугованих клієнтів), якщо вони працюють усі дні тижня без вихідних?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(30, 100)
+- n1 = n * mult_val
+- n_day = n + n1
+- n_week = n_day * 7
+- n_clients_form = ukr_plural_measurements(n, "клієнт", "клієнти", "клієнтів")
+- n_orders_form = ukr_plural_measurements(n, "клієнт", "клієнти", "клієнтів")
+- n1_orders_form = ukr_plural_measurements(n1, "клієнт", "клієнти", "клієнтів")
+- n_day_orders_form = ukr_plural_measurements(n_day, "клієнт", "клієнти", "клієнтів")
+- n_week_orders_form = ukr_plural_measurements(n_week, "клієнт", "клієнти", "клієнтів")
+
+#conditions:
+- is_int(n * mult_val)
+- is_int((n + n * mult_val) * 7)
+
+#answer: (n + n * mult_val) * 7
+"""
+answer_annotated = """Поки {name2} обслуговує {n} {n_clients_form}/день, {name1} обслуговує {n}*{mult_val}=<<{n}*{mult_val}={n1}>>{n1} {n1_orders_form}/день.
+За один день вони разом обслуговують {n1}+{n}=<<{n1}+{n}={n_day}>>{n_day} {n_day_orders_form}.
+Загальна кількість клієньів, які вони обидві обслуговують за тиждень, становить {n_day}*7=<<{n_day}*7={n_week}>>{n_week} {n_week_orders_form}.
+#### {n_week}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

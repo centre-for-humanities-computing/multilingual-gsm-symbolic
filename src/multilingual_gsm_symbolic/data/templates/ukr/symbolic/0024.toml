@@ -1,8 +1,42 @@
-question = "Згідно з інформацією про харчову цінність, пакет чипсів містить 250 калорій на порцію. Якщо пакет вагою 300 грамів має 5 порцій, скільки грамів ти можеш з’їсти, якщо твоя денна норма калорій становить 2000, а ти вже спожив 1800 калорій?"
-answer = "Якщо загальна норма калорій становить 2000 і я спожив 1800 калорій, то мені залишилося з’їсти 2000-1800 = <<2000-1800=200>>200 калорій\nЯкщо кожна порція чипсів містить 250 калорій, а мені залишилося з’їсти лише 200 калорій, то я можу з’їсти лише 200/250 порції = 4/5 порції\nМи також знаємо, що пакет чипсів вагою 300 грамів має 5 порцій, отже кожна порція важить 300 грамів/5 = <<300/5=60>>60 грамів\nЯкщо я можу з’їсти лише 4/5 порції, то я можу з’їсти лише 60 грамів*4/5 = 48 грамів\n#### 48\n"
+question = "Згідно з інформацією про харчову цінність, пакет чипсів містить 250 калорій на порцію. Якщо пакет важить 300 грамів та розрахований на 5 порцій, скільки грамів ти можеш з’їсти, якщо твоя денна норма калорій становить 2000, а ти вже спожив 1800 калорій?"
+
+answer = """Якщо загальна норма калорій становить 2000 і я спожив 1800 калорій, то мені залишилося з’їсти 2000-1800 = <<2000-1800=200>>200 калорій
+Якщо кожна порція чипсів містить 250 калорій, а мені залишилося з’їсти лише 200 калорій, то я можу з’їсти стільки порцій: 200/250 = 4/5
+Ми також знаємо, що пакет чипсів важить 300 грамів і розрахований на 5 порцій, отже кожна порція важить 300 грамів/5 = <<300/5=60>>60 грамів
+Якщо я можу з’їсти лише 4/5, то я можу з’їсти лише 60 * 4/5 = 48 грамів
+#### 48
+"""
 id_orig = 43
 id_shuffled = 24
-question_annotated = "Згідно з інформацією про харчову цінність, пакет {food,чипсів} містить {cal,250} калорій на порцію. Якщо пакет вагою {size,300} {unit,грамів} має {n,5} порцій, скільки {unit,грамів} ти можеш з’їсти, якщо твоя денна норма калорій становить {total,2000}, а ти вже спожив {spent,1800} калорій?\n\n#init:\n- food = sample([\"попкорну\", \"цукерок\",  \"печива\"])\n- unit = sample([\"грамів\", \"г\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * (total-spent)/cal\n"
-answer_annotated = "Якщо загальна норма калорій становить {total} і я спожив {spent} калорій, то мені залишилося з’їсти {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} калорій\nЯкщо кожна порція {food} містить {cal} калорій, а мені залишилося з’їсти лише {total-spent} калорій, то я можу з’їсти лише {total-spent}/{cal} порції = {Fraction((total-spent)/cal)} порції\nМи також знаємо, що пакет {food} вагою {size} {unit} має {n} порцій, отже кожна порція важить {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit}\nЯкщо я можу з’їсти лише {Fraction((total-spent)/cal)} порції, то я можу з’їсти лише {size//n} {unit}*{Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit}\n#### {size//n * (total-spent)/cal}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """Згідно з інформацією про харчову цінність, пакет {food,чипсів} містить {cal,250} {cal_form, калорій} на порцію. Якщо пакет важить {size,300} {unit,грамів} та розрахований на {n,5} {n_portion_form, порцій}, скільки {unit,грамів} ти можеш з’їсти, якщо твоя денна норма калорій становить {total,2000}, а ти вже спожив {spent,1800} {spent_form, калорій}?
+
+#init:
+- food = sample(["попкорну", "цукерок",  "печива", "чипсів", "сухариків", "черезос"])
+- unit = sample(["грамів", "кілограмів", "кг", "г"])
+- $cal = range(150, 500, 25)
+- $size = range(100, 400, 25)
+- $n = range(4, 8)
+- $total = range(1900, 2500, 5)
+- $spent = range(600, 1900, 25)
+- cal_form = ukr_plural_measurements(cal, "калорія", "калорії", "калорій")
+- n_portion_form = ukr_plural_measurements(n, "порція", "порції", "порцій")
+- spent_form = ukr_plural_measurements(spent, "калорія", "калорії", "калорій")
+- t_spent_form = ukr_plural_measurements(total - spent, "калорія", "калорії", "калорій")
+- t_spentcal_form = ukr_plural_measurements(int((total-spent)/cal), "порція", "порції", "порцій")
+
+#conditions:
+- spent < total
+- is_int( 5 * (total - spent) / cal)
+- divides(size, n)
+- divides(size//n, (total-spent)/cal)
+
+#answer: size//n * (total-spent)/cal
+"""
+answer_annotated = """Якщо загальна норма калорій становить {total} і я спожив {spent} {spent_form}, то мені залишилося з’їсти {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} {t_spent_form}
+Якщо кожна порція {food} містить {cal} {cal_form}, а мені залишилося з’їсти лише {total-spent} {t_spent_form}, то я можу з’їсти стільки порцій: {total-spent}/{cal} = {Fraction((total-spent)/cal)}
+Ми також знаємо, що пакет {food} важить {size} {unit} і розрахований на {n} {n_portion_form}, отже кожна порція важить {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit}
+Якщо я можу з’їсти лише {Fraction((total-spent)/cal)}, то я можу з’їсти лише {size//n} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit}
+#### {size//n * (total-spent)/cal}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

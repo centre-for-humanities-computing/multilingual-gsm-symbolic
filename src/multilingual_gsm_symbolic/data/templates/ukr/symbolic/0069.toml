@@ -1,8 +1,32 @@
-question = "У вівторок Петро хоче тренуватися вдвічі довше, ніж він тренувався в понеділок і неділю разом. У неділю він тренувався 23 хвилини. У понеділок він тренувався 16 хвилин. Скільки хвилин він має тренуватися у вівторок, щоб досягти своєї мети?"
-answer = "У неділю і понеділок він тренувався загалом 39 хвилин, тому що 23 + 16 = <<23+16=39>>39\nУ вівторок він має тренуватися 78 хвилин, тому що 39*2=<<39*2=78>>78\n#### 78\n"
+question = "У вівторок Петро хоче тренуватися вдвічі довше, ніж він тренувався у понеділок і неділю разом. У неділю він тренувався 23 хвилини. У понеділок він тренувався 16 хвилин. Скільки хвилин він має тренуватися у вівторок, щоб досягти своєї мети?"
+
+answer = """У неділю і понеділок він тренувався загалом 23 + 16 = <<23+16=39>>39 хвилин
+У вівторок він має тренуватися 39*2=<<39*2=78>>78 хвилин
+#### 78
+"""
 id_orig = 300
 id_shuffled = 69
-question_annotated = "У {day3,вівторок} {name,Петро} хоче тренуватися {mult_txt,to gange} довше, ніж він тренувався у {day2,понеділок} і {day1,неділя} разом. У {day1,неділя} він тренувався {t1,23} хвилини. У {day2,понеділок} він тренувався {t2,16} хвилин. Скільки хвилин він має тренуватися у {day3,вівторок}, щоб досягти своєї мети?\n\n#init:\n- name = sample(names)\n- day1, day2, day3 = sample_sequential(weekdays, 3)\n- $t1 = range(10, 60)\n- $t2 = range(10, 60)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- t1 + t2 > 0\n- (t1 + t2) * mult_val / 60 < 14\n#answer: (t1 + t2) * mult_val\n"
-answer_annotated = "У {day1} і {day2} він тренувався загалом {t1+t2} хвилин, тому що {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}\nУ {day3} він має тренуватися {(t1+t2)*mult_val} хвилин, тому що {t1+t2}*{mult_val}=<<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val}\n#### {(t1+t2)*mult_val}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """У {day3,вівторок} {name,Петро} хоче тренуватися {mult_txt,вдвічі} довше, ніж він тренувався у {day2,понеділок} і {day1,неділю} разом. У {day1,неділю} він тренувався {t1,23} {t1_form,хвилини}. У {day2,понеділок} він тренувався {t2,16} {t2_form,хвилин}. Скільки хвилин він має тренуватися у {day3,вівторок}, щоб досягти своєї мети?
+
+#init:
+- name = sample(names_male)
+- day1, day2, day3 = sample(["неділю", "понеділок", "вівторок", "середу", "четвер", "п'ятницю", "суботу"], 3)
+- mult_txt, mult_val = sample([["вдвічі", 2], ["втричі", 3], ["в чотири рази", 4], ["в пʼять разів", 5], ["в шість разів", 6], ["в сім разів", 7]])
+- $t1 = range(10, 60)
+- $t2 = range(10, 60)
+- t1_form = ukr_plural_measurements(t1, "хвилина", "хвилини", "хвилин")
+- t2_form = ukr_plural_measurements(t2, "хвилина", "хвилини", "хвилин")
+- t1t2_form = ukr_plural_measurements(t1 + t2, "хвилина", "хвилини", "хвилин")
+- total_form = ukr_plural_measurements((t1 + t2) * mult_val, "хвилина", "хвилини", "хвилин")
+
+#conditions:
+- (t1 + t2) * mult_val <= 360
+
+#answer: (t1 + t2) * mult_val
+"""
+answer_annotated = """У {day1} і {day2} він тренувався загалом {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2} {t1t2_form}
+У {day3} він має тренуватися {t1+t2}*{mult_val}=<<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val} {total_form}
+#### {(t1+t2)*mult_val}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

@@ -1,8 +1,34 @@
-question = "Даніель пішов до свого подвір’я, щоб назбирати трохи яблук, і знайшов у саду вдвічі менше сонечок, ніж мурах. Якщо було 50 мурах, обчисліть загальну кількість сонечок у саду."
-answer = "Якщо було 50 мурах, то загальна кількість сонечок у саду становить 1/2*50 мурах = 25 сонечок\nЗагальна кількість сонечок у саду становить 25 сонечок + 50 мурах = <<25+50=75>>75 сонечок\n#### 75\n"
+question = "Даніель пішов до свого саду, щоб назбирати трохи яблук, і знайшов там у два рази менше сонечок, ніж мурах. Якщо було 50 мурах, обчисліть загальну кількість комах у саду."
+
+answer = """Якщо було 50 мурах, то загальна кількість сонечок у саду становить 1/2*50 мурах = 25 сонечок
+Загальна кількість комах у саду становить 25 сонечок + 50 мурах = <<25+50=75>>75 сонечок
+#### 75
+"""
 id_orig = 232
 id_shuffled = 43
-question_annotated = "{name,Даніель} пішов до свого {place,подвір’я}, щоб назбирати трохи {fruit,яблук}, і знайшов у {location,саду} {frac_txt,вдвічі менше} {insect1,сонечок}, ніж {insect2,мурах}. Якщо було {n,50} {insect2,мурах}, обчисліть загальну кількість {insect1,сонечок} у {location,саду}.\n\n#init:\n- name = sample(names)\n- place = sample([\"фруктовий сад\", \"задній двір\", \"теплиця\", \"дачна ділянка\"])\n- fruit = sample([\"полуниця\", \"вишня\", \"чорниця\", \"малина\"])\n- location = sample([\"сад\", \"поле\", \"земля\"])\n- insect1, insect2 = sample([\"мурахи\", \"жуки\", \"сонечка\", \"коники\", \"личинки\", \"бджоли\", \"оси\"], 2)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)\n"
-answer_annotated = "Якщо було {n} {insect2}, то загальна кількість {insect1} у {location} становить {frac_val}*{n} {insect2} = {int(n * frac_val)} {insect1}\nЗагальна кількість {insect1} у {location} становить {int(n * frac_val)} {insect1} + {n} {insect2} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} сонечок\n#### {n + int(n * frac_val)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name,Даніель} пішов до свого {location,саду}, щоб назбирати трохи {fruit_3,яблук}, і знайшов там у {frac_txt,два рази} менше {insect1_pl2,сонечок}, ніж {insect2_pl2,мурах}. Якщо було {n,50} {n_insect2,мурах}, обчисліть загальну кількість комах у {location,саду}.
+
+#init:
+- name = sample(names_male)
+- place = sample(["фруктового саду", "заднього двору", "сараю", "лісу"])
+- fruit_1,fruit_2,fruit_3,fruit_4 = sample(fruits)
+- location = sample(["саду", "полі", "землі", "дуплі дерева"])
+- (insect1,insect1_pl1, insect1_pl2), (insect2, insect2_pl1, insect2_pl2) = sample([["мурахa", "мурахи", "мурах"], ["жук", "жуки", "жуків"], ["сонечко", "сонечки", "сонечок"], ["коник", "коники", "коників"], ["личинка", "личинки", "личинок"], ["бджола", "бджоли", "бджіл"]], 2)
+- frac_txt, frac_val = sample(multi_times)
+- $n = range(20, 201)
+- n_insect2 = ukr_plural_measurements(n, insect2, insect2_pl1, insect2_pl2)
+- nf_insect1 = ukr_plural_measurements(int(n / frac_val), insect1, insect1_pl1, insect1_pl2)
+- inv_frac = 1 / frac_val
+
+
+#conditions:
+- is_int(n / frac_val)
+
+#answer: n + int(n / frac_val)
+"""
+answer_annotated = """Якщо було {n} {n_insect2}, то загальна кількість {insect1_pl2} у {location} становить {Fraction(inv_frac)}*{n} {insect2_pl2} = {int(n / frac_val)} {nf_insect1}
+Загальна кількість комах у {location} становить {int(n/frac_val)} {nf_insect1} + {n} {n_insect2} = <<{int(n/frac_val)}+{n}={n + int(n/frac_val)}>>{n + int(n / frac_val)} {nf_insect1}
+#### {n + int(n / frac_val)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

@@ -157,11 +157,112 @@ def _make_arange_sample(rng: Random):
     return arange_sample
 
 
+# Ukrainian specific
+def ukr_month_form_on_number(num):
+    num = abs(num)
+
+    if 11 <= num % 100 <= 14:
+        return "місяців"
+
+    last_digit = num % 10
+
+    if last_digit == 1:
+        return "місяць"
+    elif last_digit in (2, 3, 4):
+        return "місяці"
+    else:
+        return "місяців"
+
+
+def ukr_plural_measurements(number, *forms):
+    """
+    forms = [singular, paucal, plural]
+    Example:
+        ["кілограм", "кілограми", "кілограмів"]
+    """
+    number = abs(int(number))
+
+    if 11 <= number % 100 <= 14:
+        return forms[2]
+
+    last_digit = number % 10
+
+    if last_digit == 1:
+        return forms[0]
+    elif last_digit in (2, 3, 4):
+        return forms[1]
+    else:
+        return forms[2]
+
+
+def ukr_weekday_to_when(weekday):
+    """Obtain form for: У ....; У вівторок, У середу і тд"""
+    if weekday in ["понеділок", "вівторок", "четвер"]:
+        return weekday
+    if weekday == "середа":
+        return "середу"
+    if weekday == "п’ятниця":
+        return "п’ятницю"
+    if weekday == "субота":
+        return "суботу"
+    if weekday == "неділя":
+        return "неділю"
+
+
+def to_title(text):
+    return text[0].upper() + text[1:]
+
+
 def ensure_int(value: Any) -> int:
     """Convert a value to int if it's a float representing an integer, else return an error"""
     if is_int(value):
         return round(value)
     raise ValueError(f"Value {value} cannot be converted to int.")
+
+
+def parse_lhs_variables(variable_part: str) -> list[str]:
+    """Parse the variable names from the left-hand side of an init line.
+
+    Handles plain (``a, b``), ``$``-prefixed (``$a, $b``), and tuple-unpacking
+    (``(a, a_reg), (b, b_reg)``) forms, returning a flat list of clean names.
+
+    Args:
+        variable_part: The text to the left of ``=`` on an init line.
+
+    Returns:
+        The variable names, with parentheses, ``$`` markers, and surrounding
+        whitespace removed.
+    """
+    cleaned = variable_part.replace("(", "").replace(")", "").replace("$", "")
+    return [name.strip() for name in cleaned.split(",") if name.strip()]
+
+
+def align_values_to_variables(variables: list[str], values: Any) -> list:
+    """Align a sampled value sequence with a flat list of unpacking variables.
+
+    Tuple-unpacking init lines like ``(a, a_reg), (b, b_reg) = [[1, 2], [3, 4]]``
+    parse to four flat variables but only two nested value pairs. When the counts
+    disagree, flatten one level so the values zip element-wise with the variables.
+    A non-sequence value (or a string) is wrapped/kept intact rather than split.
+
+    Args:
+        variables: The flat list of variable names from the init-line LHS.
+        values: The evaluated right-hand side.
+
+    Returns:
+        A flat list of values; ``len`` equal to ``variables`` when the nesting matches.
+    """
+    if not isinstance(values, (list, tuple)):
+        return [values]
+    if len(values) == len(variables):
+        return list(values)
+    flat: list = []
+    for value in values:
+        if isinstance(value, (list, tuple)):
+            flat.extend(value)
+        else:
+            flat.append(value)
+    return flat
 
 
 def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, Any]:
@@ -184,6 +285,10 @@ def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, A
         "Fraction": frac_format,
         "plural": plural,
         "ensure_int": ensure_int,
+        "ukr_month_form_on_number": ukr_month_form_on_number,
+        "ukr_plural_measurements": ukr_plural_measurements,
+        "to_title": to_title,
+        "ukr_weekday_to_when": ukr_weekday_to_when,
         **replacements,
     }
 
@@ -260,49 +365,8 @@ def sample_sequential_possibilities(items: list, n: int) -> list[list]:
     return [[items[(i + j) % len(items)] for j in range(n)] for i in range(len(items))]
 
 
-def parse_lhs_variables(variable_part: str) -> list[str]:
-    """Parse the variable names from the left-hand side of an init line.
-
-    Handles plain (``a, b``), ``$``-prefixed (``$a, $b``), and tuple-unpacking
-    (``(a, a_reg), (b, b_reg)``) forms, returning a flat list of clean names.
-
-    Args:
-        variable_part: The text to the left of ``=`` on an init line.
-
-    Returns:
-        The variable names, with parentheses, ``$`` markers, and surrounding
-        whitespace removed.
-    """
-    cleaned = variable_part.replace("(", "").replace(")", "").replace("$", "")
-    return [name.strip() for name in cleaned.split(",") if name.strip()]
-
-
-def align_values_to_variables(variables: list[str], values: Any) -> list:
-    """Align a sampled value sequence with a flat list of unpacking variables.
-
-    Tuple-unpacking init lines like ``(a, a_reg), (b, b_reg) = [[1, 2], [3, 4]]``
-    parse to four flat variables but only two nested value pairs. When the counts
-    disagree, flatten one level so the values zip element-wise with the variables.
-    A non-sequence value (or a string) is wrapped/kept intact rather than split.
-
-    Args:
-        variables: The flat list of variable names from the init-line LHS.
-        values: The evaluated right-hand side.
-
-    Returns:
-        A flat list of values; ``len`` equal to ``variables`` when the nesting matches.
-    """
-    if not isinstance(values, (list, tuple)):
-        return [values]
-    if len(values) == len(variables):
-        return list(values)
-    flat: list = []
-    for value in values:
-        if isinstance(value, (list, tuple)):
-            flat.extend(value)
-        else:
-            flat.append(value)
-    return flat
+def strip_elements(lst: list[str]) -> list[str]:
+    return [s.strip() for s in lst]
 
 
 def plural(n: float, *forms: str) -> str:
@@ -351,7 +415,6 @@ _BASE_HELPERS: dict[str, Any] = {
     "ensure_int": ensure_int,
 }
 
-
 # Legacy alias used by condition evaluation and answer formatting (no sampling needed there).
 EVAL_CONTEXT_HELPERS: dict[str, Any] = _BASE_HELPERS
 
@@ -373,6 +436,12 @@ COMBINATION_HELPERS: dict[str, Any] = {
     "divides": divides,
     "Fraction": frac_format,
     "plural": plural,
+    "ensure_int": ensure_int,
+    # Ukrainian-specific helpers (needed for dependent-default resolution in _get_full_default_assignments)
+    "ukr_plural_measurements": ukr_plural_measurements,
+    "ukr_month_form_on_number": ukr_month_form_on_number,
+    "ukr_weekday_to_when": ukr_weekday_to_when,
+    "to_title": to_title,
 }
 
 # Pre-compiled regex patterns used in hot paths

@@ -1,8 +1,34 @@
-question = "Давид має 85,5 крон і хоче купити 16 болтів із коробки в будівельному магазині. Кожен болт коштує 0,2 крони. Скільки грошей залишиться у Давида після оплати болтів?"
-answer = "Давид заплатив 16*0,2 крони = <<16*0,2=3,2>>3,2 крони за болти.\nУ Давида залишилося 85,5 крони - 3,2 крони = 82,3 крони.\n#### 82,3\n"
+question ="Давид має 85.5 крони і хоче купити 16 болти із коробки в будівельному магазині. Кожен болт коштує 0.2 крони. Скільки грошей Давид матиме після оплати болти?"
+
+answer = """Давид має заплатити 16*0.2 крони = <<16*0.2=3.2>>3.2 крони за гайки.
+Давид має в залишку 85.5 крони - 3.2 крони = 82.3 крони.
+#### 82.3
+"""
 id_orig = 873
 id_shuffled = 30
-question_annotated = "{name,Давид} має {initial_amount,85.5} {cur,крони} і хоче купити {quantity,16} {item_plural,болти} із коробки в {store_type,будівельному магазині}. Кожен {item,болт} коштує {unit_price,0.2} {cur,крони}. Скільки грошей залишиться у {name,Давид} після оплати {item_plural,болти}?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item, item_plural = sample([(\"болт\", \"болти\"),(\"гвинт\", \"гвинти\"), (\"шайба\", \"шайби\"), (\"гайка\", \"гайки\"), (\"анкер\", \"анкери\")])\n- store_type = sample([\"будівельний магазин\", \"господарський магазин\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(85.5, 175, 5.5)\n- $unit_price = arange(0.2, 4.8, 0.1)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: round(initial_amount - quantity * unit_price)\n"
-answer_annotated = "{name} заплатив {quantity}*{round(unit_price} {cur} = <<{quantity}*{round(unit_price}={round(quantity*unit_price}>>{round(quantity*unit_price} {cur} за {item_plural}.\nУ {name} залишилося {initial_amount} {cur} - {round(quantity*unit_price} {cur} = {round(initial_amount - quantity * unit_price)} {cur}.\n#### {round(initial_amount - quantity * unit_price)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name,Давид} має {initial_amount,85.5} {cur,крони} і хоче купити {quantity,16} {q_item_form,болти} із коробки в {store_type,будівельному магазині}. Кожен {item,болт} коштує {unit_price,0.2} {cur,крони}. Скільки грошей {name,Давид} матиме після оплати {item_pl2,болти}?
+
+#init:
+- name = sample(names)
+- cur = sample(["грн", "$", "£", "євро"])
+- item, item_pl1, item_pl2 = sample([("болт", "болти", "болтів"),("гвинт", "гвинти", "гвинтів"), ("шайба", "шайби", "шайб"), ("гайка", "гайки", "гайок"), ("саморіз", "саморізи", "саморізів")])
+- store_type = sample(["будівельному магазині", "Епіцентрі", "магазині", "спеціалізованому магазині", "онлайн маразині"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(85.5, 175, 5.5)
+- $unit_price = arange(0.2, 4.8, 0.1)
+- q_item_form = ukr_plural_measurements(quantity, item, item_pl1, item_pl2)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: round(initial_amount - quantity * unit_price)
+"""
+answer_annotated = """{name} має заплатити {quantity}*{unit_price} {cur} = <<{quantity}*{unit_price}={quantity*unit_price}>>{quantity*unit_price} {cur} за {item_pl1}.
+{name} має в залишку {initial_amount} {cur} - {quantity*unit_price} {cur} = {initial_amount - quantity * unit_price} {cur}.
+#### {initial_amount - quantity * unit_price}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

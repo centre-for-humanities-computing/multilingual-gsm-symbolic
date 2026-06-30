@@ -1,8 +1,49 @@
-question = "Нова чума заражає десять людей. Щодня кожна заражена людина заражає ще шість інших. Скільки людей заражено через три дні?"
-answer = "У перший день початкові десять людей заражають по шість людей кожен, тож 10*6=<<10*6=60>>60 додаткових людей заражаються.\nПісля першого дня заражено 10+60=<<10+60=70>>70 людей.\nУ другий день заражаються ще 70*6=<<70*6=420>>420 людей.\nПісля другого дня заражено 70 + 420 = <<70+420=490>>490 людей.\nУ третій день заражаються ще 490*6=2940 людей. Отже, після трьох днів заражено 490 + 2940 = 3430 людей.\n#### 3430\n"
+question = "Нова чума заразила десять людей. Щодня кожна заражена людина заражає ще шість інших. Скільки людей заражено через три дні?"
+answer = """У перший день початкові десять людей заражають по 6 людей кожен, тож 10*6=<<10*6=60>>60 людей заражаються додатково.
+Після першого дня заражено 10+60=<<10+60=70>>70 людей.
+У другий день заражаються ще 70*6=<<70*6=420>>420 людей.
+Після другого дня заражено 70+420=<<70+420=490>>490 людей.
+У третій день заражаються ще 490*6=<<490*6=2940>>2940 людей.
+Отже, після три дні заражено 490+2940=<<490+2940=3430>>3430 людей.
+#### 3430
+"""
 id_orig = 858
 id_shuffled = 98
-question_annotated = "Нова {sygdom,чума} заражає {n0_txt,десять} людей. Щодня кожна заражена людина заражає ще {r_txt,шість} інших. Скільки людей заражено через три дні?\n\n#init:\n- sygdom = sample(['вірус', 'бактерія', 'паразит', 'інфекція'])\n- n0_txt, n0_val = range_str(5, 22, 1, numbers)\n- r_txt, r_val = range_str(2, 8, 1, numbers)\n\n#conditions:\n- n0_val * (r_val + 1)**3 < 20000\n\n#answer: n0_val * (r_val + 1)**3\n"
-answer_annotated = "У перший день початкові {n0_txt} людей заражають по {r_txt} людей кожен, тож {n0_val}*{r_val}=<<{n0_val}*{r_val}={n0_val*r_val}>>{n0_val*r_val} додаткових людей заражаються.\nПісля першого дня заражено {n0_val}+{n0_val*r_val}=<<{n0_val}+{n0_val*r_val}={n0_val+n0_val*r_val}>>{n0_val+n0_val*r_val} людей.\nУ другий день заражаються ще {n0_val+n0_val*r_val}*{r_val}=<<{n0_val+n0_val*r_val}*{r_val}={(n0_val+n0_val*r_val)*r_val}>>{(n0_val+n0_val*r_val)*r_val} людей.\nПісля другого дня заражено {n0_val+n0_val*r_val} + {(n0_val+n0_val*r_val)*r_val} = <<{n0_val+n0_val*r_val}+{(n0_val+n0_val*r_val)*r_val}={n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val}>>{n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val} людей.\nУ третій день заражаються ще {n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val}*{r_val}={(n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val)*r_val} людей. Отже, після трьох днів заражено {n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val} + {(n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val)*r_val} = {n0_val * (r_val + 1)**3} людей.\n#### {n0_val * (r_val + 1)**3}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{sygdom,Нова чума заразила} {n0_txt,десять} {n0_people_form,людей}. Щодня кожна заражена людина заражає ще {r_txt,шість} {r_people_form,інших}. Скільки людей заражено через {d_txt,три} {d_days_form,дні}?
+
+#init:
+- sygdom = sample(["Новий вірус заразив", "Нова бактерія заразила", "Новий паразит заразив", "Нова інфекція заразила"])
+- n0_txt, n0_val = range_str(5, 22, 1, numbers)
+- r_txt, r_val = range_str(2, 8, 1, numbers)
+- d_txt, d_val = range_str(3, 4, 1, numbers)
+- n0_people_form = ukr_plural_measurements(n0_val, "людина", "людини", "людей")
+- r_people_form = ukr_plural_measurements(r_val, "людина", "людини", "людей")
+- d_days_form = ukr_plural_measurements(d_val, "день", "дні", "днів")
+- p1_new = n0_val * r_val
+- p1_total = n0_val + p1_new
+- p2_new = p1_total * r_val
+- p2_total = p1_total + p2_new
+- p3_new = p2_total * r_val
+- p3_total = n0_val * (r_val + 1)**d_val
+- p1_new_form = ukr_plural_measurements(p1_new, "людина", "людини", "людей")
+- p1_total_form = ukr_plural_measurements(p1_total, "людина", "людини", "людей")
+- p2_new_form = ukr_plural_measurements(p2_new, "людина", "людини", "людей")
+- p2_total_form = ukr_plural_measurements(p2_total, "людина", "людини", "людей")
+- p3_new_form = ukr_plural_measurements(p3_new, "людина", "людини", "людей")
+- p3_total_form = ukr_plural_measurements(p3_total, "людина", "людини", "людей")
+
+#conditions:
+- n0_val * (r_val + 1)**d_val < 20000
+
+#answer: n0_val * (r_val + 1)**d_val
+"""
+answer_annotated = """У перший день початкові {n0_txt} людей заражають по {r_val} людей кожен, тож {n0_val}*{r_val}=<<{n0_val}*{r_val}={p1_new}>>{p1_new} {p1_new_form} заражаються додатково.
+Після першого дня заражено {n0_val}+{p1_new}=<<{n0_val}+{p1_new}={p1_total}>>{p1_total} {p1_total_form}.
+У другий день заражаються ще {p1_total}*{r_val}=<<{p1_total}*{r_val}={p2_new}>>{p2_new} {p2_new_form}.
+Після другого дня заражено {p1_total}+{p2_new}=<<{p1_total}+{p2_new}={p2_total}>>{p2_total} {p2_total_form}.
+У третій день заражаються ще {p2_total}*{r_val}=<<{p2_total}*{r_val}={p3_new}>>{p3_new} {p3_new_form}.
+Отже, після {d_txt} {d_days_form} заражено {p2_total}+{p3_new}=<<{p2_total}+{p3_new}={p3_total}>>{p3_total} {p3_total_form}.
+#### {p3_total}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

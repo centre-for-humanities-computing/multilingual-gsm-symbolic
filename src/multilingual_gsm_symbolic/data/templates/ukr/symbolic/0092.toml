@@ -1,8 +1,41 @@
-question = "Принц Теодор убив 100 драконів своїм могутнім мечем, тоді як принц Артур, який користувався списом, убив три чверті від кількості драконів, яких убив принц Теодор. За допомогою іржавої залізної сокири принц Вільгельм убив удвічі більше драконів, ніж принц Артур. Але принц Стефан, який забув свій меч удома, убив одну п’яту від кількості драконів, яких убив принц Вільгельм, за допомогою пилочки для нігтів. Скільки драконів убив принц Стефан?"
-answer = "Принц Артур убив три чверті від кількості драконів, яких убив принц Теодор, тобто 100*3/4=<<100*3/4=75>>75 драконів.\nПринц Вільгельм убив удвічі більше драконів, ніж принц Артур, тобто 2*75=<<2*75=150>>150 драконів.\nПринц Стефан убив одну п’яту від кількості драконів, яких убив принц Вільгельм, тобто 150*1/5=<<150*1/5=30>>30 драконів.\n#### 30\n"
+question = "Принц Теодор убив 100 драконів своїм могутнім мечем, тоді як принц Артур, який користувався списом, убив 3/4 від кількості драконів, яких убив принц Теодор. За допомогою іржавої залізної сокири принц Вільгельм убив у два рази більше драконів, ніж принц Артур. Але принц Стефан, який забув свій меч удома, убив 1/5 від кількості драконів, яких убив принц Вільгельм, за допомогою пилочки для нігтів. Скільки драконів убив принц Стефан?"
+answer = """Принц Артур убив 3/4 від кількості драконів, яких убив принц Теодор, тобто 100*3/4=<<100*3/4=75>>75 драконів.
+Принц Вільгельм убив у два рази більше драконів, ніж принц Артур, тобто 2*75=<<2*75=150>>150 драконів.
+Принц Стефан убив 1/5 від кількості драконів, яких убив принц Вільгельм, тобто 150*1/5=<<150*1/5=30>>30 драконів.
+#### 30
+"""
 id_orig = 432
 id_shuffled = 92
-question_annotated = "Принц {name1,Теодор} убив {n1,100} {creature,драконів} своїм могутнім {weapon1,мечем}, тоді як принц {name2,Артур}, який користувався {weapon2,списом}, убив {frac1_txt,three fourths} від кількості {creature,драконів}, яких убив принц {name1,Теодор}. За допомогою {weapon3,іржавої залізної сокири} принц {name3,Вільгельм} убив {mult1_txt,удвічі більше} {creature,драконів}, ніж принц {name2,Артур}. Але принц {name4,Стефан}, який забув свій {weapon4,меч} удома, убив {frac2_txt,one fifth} від кількості {creature,драконів}, яких убив принц {name3,Вільгельм}, за допомогою {weapon5,пилочки для нігтів}. Скільки {creature,драконів} убив принц {name4,Стефан}?\n\n#init:\n- name1, name2, name3, name4 = sample(names_male, 4)\n- creature = sample([\"орки\", \"тролі\", \"гобліни\", \"гіганти\"])\n- weapon1 = sample([\"меч\", \"бойова сокира\", \"бойовий молот\"])\n- weapon2 = sample([\"спис\", \"ланца\", \"алебарда\"])\n- weapon3 = sample([\"іржава залізна сокира\", \"кам'яний молот\", \"дерев'яний молот\"])\n- weapon4 = sample([\"меч\", \"сокира\", \"молот\"])\n- weapon5 = sample([\"пилочка для нігтів\", \"ніж для масла\", \"ложка\", \"перо\"])\n- $n1 = range(50, 501, 50)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n1 * frac1_val * mult1_val)\n- is_int(n1 * frac1_val * mult1_val * frac2_val)\n\n#answer: int(n1 * frac1_val * mult1_val * frac2_val)\n"
-answer_annotated = "Принц {name2} убив {frac1_txt} від кількості {creature}, яких убив принц {name1}, тобто {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.\nПринц {name3} убив {mult1_txt} {creature}, ніж принц {name2}, тобто {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.\nПринц {name4} убив {frac2_txt} від кількості {creature}, яких убив принц {name3}, тобто {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.\n#### {int(n1*frac1_val*mult1_val*frac2_val)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """Принц {name1,Теодор} убив {n1,100} {n_creature_n1,драконів} своїм могутнім {weapon1_ins,мечем}, тоді як принц {name2,Артур}, який користувався {weapon2_ins,списом}, убив {frac1_val,3/4} від кількості {creature_pl2,драконів}, яких убив принц {name1,Теодор}. За допомогою {weapon3_gen,іржавої залізної сокири} принц {name3,Вільгельм} убив у {mult1_txt,два рази} більше {creature_pl2,драконів}, ніж принц {name2,Артур}. Але принц {name4,Стефан}, який забув свій {weapon4_acc,меч} удома, убив {frac2_val,1/5} від кількості {creature_pl2,драконів}, яких убив принц {name3,Вільгельм}, за допомогою {weapon5_gen,пилочки для нігтів}. Скільки {creature_pl2,драконів} убив принц {name4,Стефан}?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature_s, creature_pl1, creature_pl2 = sample([("дракон", "дракони", "драконів"), ("орк", "орки", "орків"), ("троль", "тролі", "тролів"), ("гоблін", "гобліни", "гоблінів"), ("гігант", "гіганти", "гігантів")])
+- weapon1_ins = sample(["мечем", "бойовим молотом", "кинжалом"])
+- weapon2_ins = sample(["списом", "ланцею", "булавою"])
+- weapon3_gen = sample(["іржавої залізної сокири", "кам'яного молота", "дерев'яного молота", "лопати"])
+- weapon4_acc = sample(["меч", "лук", "ніж"])
+- weapon5_gen = sample(["пилочки для нігтів", "ножа для масла", "ложки", "пера", "сили духу"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+- n_creature_n1 = ukr_plural_measurements(n1, creature_s, creature_pl1, creature_pl2)
+- n_creature_1 = ukr_plural_measurements(int(n1*frac1_val), creature_s, creature_pl1, creature_pl2)
+- n_creature_2 = ukr_plural_measurements(int(n1*frac1_val*mult1_val), creature_s, creature_pl1, creature_pl2)
+- n_creature_3 = ukr_plural_measurements(int(n1*frac1_val*mult1_val*frac2_val), creature_s, creature_pl1, creature_pl2)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+answer_annotated = """Принц {name2} убив {frac1_val} від кількості {creature_pl2}, яких убив принц {name1}, тобто {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {n_creature_1}.
+Принц {name3} убив у {mult1_txt} більше {creature_pl2}, ніж принц {name2}, тобто {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {n_creature_2}.
+Принц {name4} убив {frac2_val} від кількості {creature_pl2}, яких убив принц {name3}, тобто {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {n_creature_3}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
