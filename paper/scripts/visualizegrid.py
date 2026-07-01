@@ -13,7 +13,7 @@ The script reads Inspect ``.eval`` logs and writes:
 * ``eng_vs_eng_metric.png``: paired English and English-metric accuracy by model.
 * ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
 * ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
-* ``reasoning_delta_heatmap.png``: reasoning-on minus reasoning-off accuracy.
+* ``reasoning_delta_heatmap.png``: reasoning-on vs reasoning-off accuracy.
 
 Only successful logs are included by default. Repeated/resumed logs with the same
 evaluation id are deduplicated, preferring a successful and then newer log.
@@ -95,6 +95,10 @@ PROBLEM_KEYS = [
     "sample_id",
     "source_id",
 ]
+
+EXCLUDED_SUMMARY_MODELS = {
+    "Qwen3-0.6B (reasoning on)",
+}
 
 plt.rcParams.update(
     {
@@ -226,6 +230,10 @@ def summarize(samples: pd.DataFrame) -> pd.DataFrame:
         .agg(accuracy="mean", n_problems="size", stderr="sem")
         .reset_index()
     )
+
+
+def filter_summary_models(summary: pd.DataFrame) -> pd.DataFrame:
+    return summary[~summary["model"].isin(EXCLUDED_SUMMARY_MODELS)].copy()
 
 
 def model_order(summary: pd.DataFrame) -> list[str]:
@@ -809,49 +817,117 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
         return False
 
     paired = rows.pivot_table(
-        index=["base_model", "split", "language"],
+        index=["base_model", "split", "language", "family", "params_b"],
         columns="reasoning",
         values="accuracy",
     ).dropna(subset=["on", "off"])
     if paired.empty:
         return False
 
-    paired["delta"] = paired["on"] - paired["off"]
-    matrix = paired["delta"].unstack(["split", "language"])
-    order = sorted(matrix.index, key=lambda x: (model_sort_key(x[0]), 0 if x[1] == "off" else 1))
-    languages = language_order(matrix.columns.get_level_values("language").unique())
-    available_splits = [split for split in ("original", "synthetic") if split in matrix.columns.get_level_values("split")]
-
-    matrices: list[tuple[str, pd.DataFrame]] = []
-    for split in available_splits:
-        split_matrix = matrix.xs(split, level="split", axis=1).reindex(index=order, columns=languages)
-        matrices.append((SPLIT_LABELS[split], split_matrix))
-
-    if not matrices:
+    paired = paired.reset_index()
+    splits = [split for split in ("original", "synthetic") if split in paired["split"].unique()]
+    if not splits:
         return False
 
-    limit = max(float(np.nanmax(np.abs(matrix.to_numpy()))), 0.05)
-    height = max(4.0, 0.42 * len(order) + 1.5)
+    finite_sizes = paired["params_b"].dropna()
+    norm = Normalize(
+        vmin=float(finite_sizes.min()) if not finite_sizes.empty else 0,
+        vmax=float(finite_sizes.max()) if not finite_sizes.empty else 1,
+    )
+    cmap = plt.get_cmap("viridis")
+
     fig, axes = plt.subplots(
         1,
-        len(matrices),
-        figsize=(max(6, 2.5 * len(languages) * len(matrices)), height),
-        sharey=True,
+        len(splits),
+        figsize=(6.8 * len(splits), 6.4),
         squeeze=False,
+        sharex=True,
+        sharey=True,
     )
     axes = axes[0]
 
-    images = [
-        annotated_heatmap(ax, matrix, title, "RdBu", -limit, limit, signed=True)
-        for ax, (title, matrix) in zip(axes, matrices, strict=True)
-    ]
+    legend_handles: list[Any] = []
+    legend_labels: list[str] = []
+    for split, ax in zip(splits, axes, strict=True):
+        split_rows = paired[paired["split"] == split]
 
-    axes[0].set_ylabel("Evaluated model")
-    fig.suptitle("Reasoning enabled minus disabled accuracy")
-    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.28, top=0.84, wspace=0.18)
+        for family in ordered_families(split_rows["family"]):
+            family_rows = split_rows[split_rows["family"] == family]
+            if family_rows.empty:
+                continue
 
-    colorbar = fig.colorbar(images[0], ax=axes, shrink=0.8, label="Accuracy difference: reasoning on - off")
-    colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1))
+            marker = FAMILY_MARKERS.get(family, "v")
+            known_size = family_rows.dropna(subset=["params_b"])
+            if not known_size.empty:
+                ax.scatter(
+                    known_size["off"],
+                    known_size["on"],
+                    c=known_size["params_b"],
+                    cmap=cmap,
+                    norm=norm,
+                    marker=marker,
+                    s=58,
+                    alpha=0.9,
+                    edgecolors="white",
+                    linewidths=0.5,
+                )
+
+            unknown_size = family_rows[family_rows["params_b"].isna()]
+            if not unknown_size.empty:
+                ax.scatter(
+                    unknown_size["off"],
+                    unknown_size["on"],
+                    color="#888888",
+                    marker=marker,
+                    s=58,
+                    alpha=0.8,
+                    edgecolors="white",
+                    linewidths=0.5,
+                )
+
+            if family not in legend_labels:
+                legend_handles.append(
+                    Line2D(
+                        [0],
+                        [0],
+                        marker=marker,
+                        linestyle="none",
+                        markerfacecolor="#777777",
+                        markeredgecolor="white",
+                        markersize=7,
+                    )
+                )
+                legend_labels.append(family)
+
+        ax.plot([0, 1], [0, 1], linestyle="--", color="black", linewidth=1, alpha=0.6)
+        ax.set(
+            xlim=(0, 1),
+            ylim=(0, 1),
+            xlabel="Accuracy with reasoning disabled",
+            ylabel="Accuracy with reasoning enabled",
+        )
+        ax.xaxis.set_major_formatter(PercentFormatter(1))
+        ax.yaxis.set_major_formatter(PercentFormatter(1))
+        ax.set_title(SPLIT_LABELS.get(split, split))
+
+    mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
+    mappable.set_array([])
+    colorbar_axis = fig.add_axes([0.92, 0.16, 0.015, 0.7])
+    colorbar = fig.colorbar(mappable, cax=colorbar_axis)
+    colorbar.set_label("Model parameters (billions)")
+
+    if legend_handles:
+        fig.legend(
+            legend_handles,
+            legend_labels,
+            loc="lower center",
+            ncol=min(6, len(legend_labels)),
+            frameon=False,
+            title="Model family",
+        )
+
+    fig.suptitle("Reasoning-enabled vs reasoning-disabled accuracy")
+    fig.tight_layout(rect=(0, 0.06, 0.9, 0.95))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -976,7 +1052,7 @@ def main() -> None:
     if samples.empty:
         raise SystemExit("No scored samples found in the selected logs.")
 
-    summary = summarize(samples)
+    summary = filter_summary_models(summarize(samples))
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
