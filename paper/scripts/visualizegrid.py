@@ -55,6 +55,7 @@ from plot_config import (
     language_order,
     model_sort_key,
     ordered_families,
+    reasoning_sort_bucket,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -233,10 +234,11 @@ def model_order(summary: pd.DataFrame) -> list[str]:
 
 def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     ordered = summary.copy()
+    ordered["reasoning_order"] = ordered["model"].map(reasoning_sort_bucket)
     ordered["family_order"] = ordered["family"].map(FAMILY_ORDER).fillna(99)
     ordered["size_order"] = ordered["params_b"].fillna(math.inf)
-    return ordered.sort_values(["family_order", "size_order", "model", "language", "split"]).drop(
-        columns=["family_order", "size_order"]
+    return ordered.sort_values(["family_order", "reasoning_order", "size_order", "model", "language", "split"]).drop(
+        columns=["reasoning_order", "family_order", "size_order"]
     )
 
 
