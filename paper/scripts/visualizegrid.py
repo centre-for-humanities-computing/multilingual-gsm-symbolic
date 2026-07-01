@@ -14,6 +14,7 @@ The script reads Inspect ``.eval`` logs and writes:
 * ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
 * ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
 * ``reasoning_delta_heatmap.png``: reasoning-on vs reasoning-off accuracy.
+* ``correction_comparison/*.png``: optional uncorrected vs corrected synthetic distributions.
 
 Only successful logs are included by default. Repeated/resumed logs with the same
 evaluation id are deduplicated, preferring a successful and then newer log.
@@ -27,6 +28,7 @@ from __future__ import annotations
 import argparse
 import math
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -100,6 +102,12 @@ EXCLUDED_SUMMARY_MODELS = {
     "Qwen3-0.6B (reasoning on)",
 }
 
+UNCORRECTED_COLOR = "#D95F50"
+UNCORRECTED_FILL = "#F0A095"
+CORRECTED_COLOR = "#5CA950"
+CORRECTED_FILL = "#BCE6A8"
+ORIGINAL_COLOR = "#111827"
+
 plt.rcParams.update(
     {
         "axes.spines.right": False,
@@ -108,6 +116,14 @@ plt.rcParams.update(
         "font.family": "sans-serif",
     }
 )
+
+
+@dataclass(frozen=True)
+class CorrectionComparisonRow:
+    model: str
+    original_accuracy: float
+    uncorrected_sets: np.ndarray
+    corrected_sets: np.ndarray
 
 
 def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | None, str | None]:
@@ -248,6 +264,97 @@ def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     return ordered.sort_values(["family_order", "reasoning_order", "size_order", "model", "language", "split"]).drop(
         columns=["reasoning_order", "family_order", "size_order"]
     )
+
+
+def path_slug(value: str) -> str:
+    return "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
+
+
+def _synthetic_models(samples: pd.DataFrame, language: str) -> set[str]:
+    rows = samples[(samples["language"] == language) & (samples["split"] == "synthetic")]
+    return set(rows["model"].unique())
+
+
+def paired_correction_languages(
+    uncorrected: pd.DataFrame,
+    corrected: pd.DataFrame,
+    requested: list[str] | None,
+) -> list[str]:
+    old = set(uncorrected.loc[uncorrected["split"] == "synthetic", "language"].unique())
+    new = set(corrected.loc[corrected["split"] == "synthetic", "language"].unique())
+    return language_order(old & new, requested)
+
+
+def _sample_synthetic_sets(
+    synthetic: pd.DataFrame,
+    n_sets: int,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    variants = [
+        group["correct"].to_numpy(dtype=float)
+        for _source_id, group in synthetic.groupby("source_id", sort=True, dropna=False)
+    ]
+    if not variants:
+        raise ValueError("Synthetic data contains no source templates.")
+
+    set_totals = np.zeros(n_sets, dtype=float)
+    for values in variants:
+        set_totals += rng.choice(values, size=n_sets, replace=True)
+    return set_totals / len(variants)
+
+
+def _normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
+    mean = float(values.mean())
+    std = max(float(values.std(ddof=1)), 0.005)
+    lower = max(0.0, mean - 4 * std)
+    upper = min(1.0, mean + 4 * std)
+    x = np.linspace(lower, upper, 500)
+    density = np.exp(-0.5 * ((x - mean) / std) ** 2) / (std * math.sqrt(2 * math.pi))
+    return x, density, mean
+
+
+def _original_accuracy(corrected: pd.DataFrame, uncorrected: pd.DataFrame) -> float:
+    for rows in (corrected, uncorrected):
+        original = rows[rows["split"] == "original"]
+        if not original.empty:
+            return float(original["correct"].mean())
+    return float("nan")
+
+
+def collect_correction_comparison_rows(
+    uncorrected: pd.DataFrame,
+    corrected: pd.DataFrame,
+    language: str,
+    n_sets: int,
+    seed: int,
+) -> list[CorrectionComparisonRow]:
+    models = sorted(
+        _synthetic_models(uncorrected, language) & _synthetic_models(corrected, language),
+        key=model_sort_key,
+    )
+    rows: list[CorrectionComparisonRow] = []
+
+    for index, model in enumerate(models):
+        old_rows = uncorrected[(uncorrected["language"] == language) & (uncorrected["model"] == model)]
+        new_rows = corrected[(corrected["language"] == language) & (corrected["model"] == model)]
+        rows.append(
+            CorrectionComparisonRow(
+                model=model,
+                original_accuracy=_original_accuracy(new_rows, old_rows),
+                uncorrected_sets=_sample_synthetic_sets(
+                    old_rows[old_rows["split"] == "synthetic"],
+                    n_sets,
+                    np.random.default_rng(seed + index),
+                ),
+                corrected_sets=_sample_synthetic_sets(
+                    new_rows[new_rows["split"] == "synthetic"],
+                    n_sets,
+                    np.random.default_rng(seed + index),
+                ),
+            )
+        )
+
+    return rows
 
 
 def english_metric_pairs(summary: pd.DataFrame, split: str = "synthetic") -> pd.DataFrame:
@@ -933,6 +1040,59 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
+def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: str, out: Path) -> None:
+    fig, axes = plt.subplots(
+        len(rows),
+        1,
+        figsize=(8.8, 1.45 * len(rows) + 1.35),
+        sharex=True,
+        squeeze=False,
+    )
+
+    for ax, row in zip(axes[:, 0], rows, strict=True):
+        old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
+        new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
+        peak = max(float(old_density.max()), float(new_density.max()))
+
+        ax.fill_between(old_x, 0, old_density, color=UNCORRECTED_FILL, alpha=0.75, linewidth=0)
+        ax.plot(old_x, old_density, color=UNCORRECTED_COLOR, linewidth=1.8)
+        ax.axvline(old_mean, color=UNCORRECTED_COLOR, linewidth=1.2)
+
+        ax.fill_between(new_x, 0, new_density, color=CORRECTED_FILL, alpha=0.75, linewidth=0)
+        ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8)
+        ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2)
+
+        if np.isfinite(row.original_accuracy):
+            ax.axvline(row.original_accuracy, color=ORIGINAL_COLOR, linewidth=1.4)
+
+        ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=11)
+        ax.set_yticks([])
+        ax.set_ylim(0, peak * 1.2)
+        ax.grid(axis="x", color="#D8DEE8", linewidth=0.7, alpha=0.6)
+
+    axes[-1, 0].set_xlim(0, 1)
+    axes[-1, 0].xaxis.set_major_formatter(PercentFormatter(1))
+    axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
+
+    legend = [
+        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label="Uncorrected"),
+        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label="Corrected"),
+        Line2D([0], [0], color=ORIGINAL_COLOR, lw=1.4, label="Original accuracy"),
+    ]
+    axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
+    fig.suptitle(
+        f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
+        x=0.08,
+        ha="left",
+        fontsize=17,
+        fontweight="bold",
+    )
+    fig.tight_layout(rect=(0.06, 0.02, 1, 0.94))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
 def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
     scaled = summary.dropna(subset=["params_b"])
     families = ordered_families(scaled["family"])
@@ -1024,6 +1184,18 @@ def main() -> None:
         default=DEFAULT_OUT_DIR,
     )
     parser.add_argument(
+        "--corrected-log-dir",
+        type=Path,
+        help="Optional corrected-log directory for correction comparison figures.",
+    )
+    parser.add_argument(
+        "--correction-samples",
+        type=int,
+        default=2_000,
+        help="Synthetic benchmark sets to sample for correction comparison figures.",
+    )
+    parser.add_argument("--correction-seed", type=int, default=0)
+    parser.add_argument(
         "--scorer",
         help="Inspect scorer name to use; defaults to math, pattern, then first numeric score.",
     )
@@ -1040,6 +1212,9 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    if args.correction_samples < 2:
+        parser.error("--correction-samples must be at least 2")
 
     paths = discover_logs(args.log_dir)
     selected = select_logs(paths, args.include_incomplete, workers=args.workers)
@@ -1082,6 +1257,30 @@ def main() -> None:
         summary,
         args.out_dir / "reasoning_delta_heatmap.png",
     )
+    correction_outputs: list[Path] = []
+    if args.corrected_log_dir:
+        corrected_paths = discover_logs([args.corrected_log_dir])
+        corrected_selected = select_logs(corrected_paths, args.include_incomplete, workers=args.workers)
+        print(
+            f"Discovered {len(corrected_paths)} corrected logs; "
+            f"selected {len(corrected_selected)} after status filtering and deduplication."
+        )
+        corrected = load_samples(corrected_selected, args.scorer, workers=args.workers)
+        languages = paired_correction_languages(samples, corrected, requested=None)
+        for language in languages:
+            rows = collect_correction_comparison_rows(
+                samples,
+                corrected,
+                language,
+                args.correction_samples,
+                args.correction_seed,
+            )
+            if not rows:
+                print(f"Skipping {language}: no paired corrected models.")
+                continue
+            out = args.out_dir / "correction_comparison" / f"{path_slug(language)}.png"
+            plot_correction_comparison(rows, language, out)
+            correction_outputs.append(out)
 
     print(f"Saved {summary_path}")
     print(f"Saved {args.out_dir / 'accuracy_heatmaps.png'}")
@@ -1120,6 +1319,9 @@ def main() -> None:
         print(f"Saved {args.out_dir / 'reasoning_delta_heatmap.png'}")
     else:
         print("Skipped reasoning_delta_heatmap.png: paired reasoning on/off results are required.")
+
+    for out in correction_outputs:
+        print(f"Saved {out}")
 
 
 if __name__ == "__main__":
