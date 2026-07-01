@@ -816,7 +816,7 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
 
     paired["delta"] = paired["on"] - paired["off"]
     matrix = paired["delta"].unstack(["split", "language"])
-    order = sorted(matrix.index, key=model_sort_key)
+    order = sorted(matrix.index, key=lambda x: (model_sort_key(x[0]), 0 if x[1] == "off" else 1))
     languages = language_order(matrix.columns.get_level_values("language").unique())
     available_splits = [split for split in ("original", "synthetic") if split in matrix.columns.get_level_values("split")]
 
