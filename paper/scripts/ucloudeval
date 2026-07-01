@@ -78,10 +78,14 @@ MODELS = (
 # Repository id (no revision) and optional revision to apply to each task
 DATASET = "danish-foundation-models/multilingual-gsm-symbolic"
 REVISION = "main"
+HISTORICAL_SYNTHETIC_REVISIONS = {
+    "isl": ("0850f21ea3197a67221af050c288883caabd36f6",),
+}
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EVAL_YAML = REPO_ROOT / "paper" / "eval.yaml"
 LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
+HISTORICAL_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 OPTIONAL_LANGUAGES = {"eng_metric"}
 
 
@@ -134,6 +138,19 @@ def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.Ar
             f"--{name}", nargs="+", default=["all"], metavar=metavar,
             help=f"{label}(s), or 'all' (available: {choices})",
         )
+    parser.add_argument("--revision", default=REVISION, help="Dataset revision for normal runs.")
+    parser.add_argument(
+        "--historical-revisions",
+        action="store_true",
+        help="Evaluate configured historical synthetic revisions into isolated log directories.",
+    )
+    parser.add_argument(
+        "--log-dir",
+        type=Path,
+        default=LOG_DIR,
+        help="Inspect log directory for normal runs.",
+    )
+    parser.add_argument("--reasoning-effort", help="Forwarded to Inspect for models that support it.")
     return parser
 
 
@@ -230,16 +247,28 @@ def model_runs(models: Iterable[str]) -> list[ModelRun]:
     return runs
 
 
-def inspect_command(run: ModelRun, tasks: Sequence[Task]) -> list[str]:
+def model_ref(model: str) -> str:
+    if model.startswith(("openai/", "vllm/")):
+        return model
+    return f"vllm/{model}"
+
+
+def inspect_command(
+    run: ModelRun,
+    tasks: Sequence[Task],
+    log_dir: Path = LOG_DIR,
+    revision: str = REVISION,
+    reasoning_effort: str | None = None,
+) -> list[str]:
     # place the revision after the task id so the HF loader parses it correctly
     specs = [
-        f"hf/{DATASET}/{task.task_id}@{REVISION}" if REVISION else f"hf/{DATASET}/{task.task_id}" for task in tasks
+        f"hf/{DATASET}/{task.task_id}@{revision}" if revision else f"hf/{DATASET}/{task.task_id}" for task in tasks
     ]
-    return [
+    command = [
         # Eval sets use the log directory to skip successful tasks and retry
         # interrupted tasks without repeating their completed samples.
         "inspect", "eval-set", *specs,
-        "--model", f"vllm/{run.model}",
+        "--model", model_ref(run.model),
         *run.args,
         "-M", "dtype=auto",
         "-M", "attention_backend=FLASH_ATTN",
@@ -247,9 +276,44 @@ def inspect_command(run: ModelRun, tasks: Sequence[Task]) -> list[str]:
         "--max-connections", "128",
         "--max-samples", "128",
         "--max-tasks", "8",
-        "--log-dir", str(LOG_DIR),
+        "--log-dir", str(log_dir),
         "--log-dir-allow-dirty",
     ]
+    if reasoning_effort:
+        command.extend(["--reasoning-effort", reasoning_effort])
+    return command
+
+
+def inspect_commands(
+    run: ModelRun,
+    tasks: Sequence[Task],
+    historical: bool = False,
+    base_log_dir: Path = LOG_DIR,
+    revision: str = REVISION,
+    reasoning_effort: str | None = None,
+) -> list[tuple[Path, list[str]]]:
+    if not historical:
+        return [(base_log_dir, inspect_command(run, tasks, base_log_dir, revision, reasoning_effort))]
+
+    unsupported_splits = sorted({task.split for task in tasks if task.split != "test_synthetic"})
+    if unsupported_splits:
+        raise RunnerError(f"--historical-revisions only supports test_synthetic, got: {', '.join(unsupported_splits)}")
+
+    missing = sorted({task.language for task in tasks if task.language not in HISTORICAL_SYNTHETIC_REVISIONS})
+    if missing:
+        raise RunnerError(f"No historical revisions configured for language(s): {', '.join(missing)}")
+
+    commands = []
+    for task in tasks:
+        for historical_revision in HISTORICAL_SYNTHETIC_REVISIONS[task.language]:
+            log_dir = base_log_dir / task.language / historical_revision[:12]
+            commands.append(
+                (
+                    log_dir,
+                    inspect_command(run, [task], log_dir, historical_revision, reasoning_effort),
+                )
+            )
+    return commands
 
 
 def vllm_environment() -> dict[str, str]:
@@ -265,16 +329,23 @@ def show_command(message: str, command: Sequence[str]) -> None:
     print(f"{message}\n  {' '.join(command)}")
 
 
-def run_inspect(run: ModelRun, tasks: Sequence[Task]) -> None:
-    command = inspect_command(run, tasks)
+def run_inspect(
+    run: ModelRun,
+    tasks: Sequence[Task],
+    historical: bool,
+    base_log_dir: Path,
+    revision: str,
+    reasoning_effort: str | None,
+) -> None:
     suffix = f" (reasoning {run.reasoning})" if run.reasoning else ""
-    show_command(f"Running {len(tasks)} Inspect task(s) for {run.model}{suffix}", command)
-    try:
-        subprocess.run(command, check=True, env=vllm_environment())
-    except subprocess.CalledProcessError as error:
-        raise RunnerError(f"Inspect failed for {run.model}{suffix} with status {error.returncode}") from error
-    except OSError as error:
-        raise RunnerError(f"Could not start Inspect for {run.model}{suffix}: {error}") from error
+    for _log_dir, command in inspect_commands(run, tasks, historical, base_log_dir, revision, reasoning_effort):
+        show_command(f"Running {len(tasks)} Inspect task(s) for {run.model}{suffix}", command)
+        try:
+            subprocess.run(command, check=True, env=vllm_environment())
+        except subprocess.CalledProcessError as error:
+            raise RunnerError(f"Inspect failed for {run.model}{suffix} with status {error.returncode}") from error
+        except OSError as error:
+            raise RunnerError(f"Could not start Inspect for {run.model}{suffix}: {error}") from error
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -289,13 +360,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         "language": unique([task.language for task in tasks]),
         "split": unique([task.split for task in tasks]),
     }
-    default_all = {
-        "model": available["model"],
-        "language": [language for language in available["language"] if language not in OPTIONAL_LANGUAGES],
-        "split": available["split"],
-    }
     parser = build_parser(available["language"], available["split"])
     args = parser.parse_args(argv)
+    historical_languages = sorted(HISTORICAL_SYNTHETIC_REVISIONS)
+    default_all = {
+        "model": available["model"],
+        "language": historical_languages
+        if args.historical_revisions
+        else [language for language in available["language"] if language not in OPTIONAL_LANGUAGES],
+        "split": ["test_synthetic"] if args.historical_revisions else available["split"],
+    }
     selected = {
         name: expand(parser, name, getattr(args, name), values, default_all=default_all[name])
         for name, values in available.items()
@@ -306,12 +380,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             tasks,
             selected["language"],
             selected["split"],
-            all_defined=set(args.language) == {"all"} and set(args.split) == {"all"},
+            all_defined=not args.historical_revisions and set(args.language) == {"all"} and set(args.split) == {"all"},
         )
     except RunnerError as error:
         parser.error(str(error))
 
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    log_dir = HISTORICAL_LOG_DIR if args.historical_revisions and args.log_dir == LOG_DIR else args.log_dir
+    log_dir.mkdir(parents=True, exist_ok=True)
     selected_runs = model_runs(selected["model"])
 
     for label, values in (
@@ -321,13 +396,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         ("Tasks", [task.task_id for task in selected_tasks]),
     ):
         print(f"{label}: {', '.join(values)}")
-    print(f"Logs: {LOG_DIR}")
+    print(f"Logs: {log_dir}")
 
     failures = []
     try:
         for run in selected_runs:
             try:
-                run_inspect(run, selected_tasks)
+                run_inspect(
+                    run,
+                    selected_tasks,
+                    args.historical_revisions,
+                    log_dir,
+                    args.revision,
+                    args.reasoning_effort,
+                )
             except RunnerError as error:
                 failures.append((run.model, str(error)))
                 print(f"Model failed: {error}", file=sys.stderr)
