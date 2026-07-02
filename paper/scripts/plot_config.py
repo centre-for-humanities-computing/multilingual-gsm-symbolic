@@ -193,6 +193,14 @@ def model_size_b(raw_model: str) -> float:
     return math.inf
 
 
+def reasoning_sort_bucket(model: str) -> int:
+    if model.endswith(" (reasoning off)"):
+        return 0
+    if model.endswith(" (reasoning on)"):
+        return 2
+    return 1
+
+
 def model_sort_key(raw_model: str) -> tuple[int, float, str]:
     family = model_family(raw_model)
     return FAMILY_ORDER.get(family, 99), model_size_b(raw_model), model_name(raw_model).lower()
