@@ -81,6 +81,7 @@ REVISION = "main"
 HISTORICAL_SYNTHETIC_REVISIONS = {
     "isl": ("0850f21ea3197a67221af050c288883caabd36f6",),
 }
+HISTORICAL_SPLITS = ("test_original", "test_synthetic")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EVAL_YAML = REPO_ROOT / "paper" / "eval.yaml"
@@ -295,9 +296,11 @@ def inspect_commands(
     if not historical:
         return [(base_log_dir, inspect_command(run, tasks, base_log_dir, revision, reasoning_effort))]
 
-    unsupported_splits = sorted({task.split for task in tasks if task.split != "test_synthetic"})
+    unsupported_splits = sorted({task.split for task in tasks if task.split not in HISTORICAL_SPLITS})
     if unsupported_splits:
-        raise RunnerError(f"--historical-revisions only supports test_synthetic, got: {', '.join(unsupported_splits)}")
+        raise RunnerError(
+            f"--historical-revisions only supports {', '.join(HISTORICAL_SPLITS)}, got: {', '.join(unsupported_splits)}"
+        )
 
     missing = sorted({task.language for task in tasks if task.language not in HISTORICAL_SYNTHETIC_REVISIONS})
     if missing:
@@ -368,7 +371,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "language": historical_languages
         if args.historical_revisions
         else [language for language in available["language"] if language not in OPTIONAL_LANGUAGES],
-        "split": ["test_synthetic"] if args.historical_revisions else available["split"],
+        "split": HISTORICAL_SPLITS if args.historical_revisions else available["split"],
     }
     selected = {
         name: expand(parser, name, getattr(args, name), values, default_all=default_all[name])
