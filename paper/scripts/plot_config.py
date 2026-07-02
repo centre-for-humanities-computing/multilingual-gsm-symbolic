@@ -201,9 +201,10 @@ def reasoning_sort_bucket(model: str) -> int:
     return 1
 
 
-def model_sort_key(raw_model: str) -> tuple[int, float, str]:
+def model_sort_key(raw_model: str) -> tuple[int, int, float, str]:
+    name = model_name(raw_model)
     family = model_family(raw_model)
-    return FAMILY_ORDER.get(family, 99), model_size_b(raw_model), model_name(raw_model).lower()
+    return FAMILY_ORDER.get(family, 99), reasoning_sort_bucket(name), model_size_b(raw_model), name.lower()
 
 
 def ordered_models(models: Iterable[str]) -> list[str]:
