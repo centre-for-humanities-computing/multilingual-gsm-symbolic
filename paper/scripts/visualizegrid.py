@@ -939,9 +939,9 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
         .mean()
         .reset_index()
     )
-    by_language = averaged.set_index(["base_model", "reasoning", "family", "params_b", "language"])[
-        "accuracy"
-    ].unstack("language")
+    by_language = averaged.set_index(["base_model", "reasoning", "family", "params_b", "language"])["accuracy"].unstack(
+        "language"
+    )
     if "eng" not in by_language.columns:
         return False
 
@@ -954,6 +954,7 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     gaps = by_language[["gap", "relative_gap"]].dropna().reset_index()
 
     gaps = gaps[np.isfinite(gaps["params_b"])]
+    gaps = gaps[gaps.groupby("base_model")["reasoning"].transform("nunique") == 2]
     if gaps.empty:
         return False
 
@@ -983,11 +984,14 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     ax.grid(axis="y", color="#E5E7EB", linewidth=0.7)
     family_handles = [
-        Line2D([0], [0], color=FAMILY_COLORS.get(family, "#666666"), marker=FAMILY_MARKERS.get(family, "o"), label=family)
+        Line2D(
+            [0], [0], color=FAMILY_COLORS.get(family, "#666666"), marker=FAMILY_MARKERS.get(family, "o"), label=family
+        )
         for family in families
     ]
     mode_handles = [
-        Line2D([0], [0], color="#111827", linestyle=line_styles[mode], label=mode_labels[mode]) for mode in ["on", "off"]
+        Line2D([0], [0], color="#111827", linestyle=line_styles[mode], label=mode_labels[mode])
+        for mode in ["on", "off"]
     ]
     first_legend = ax.legend(handles=family_handles, title="Model family", frameon=False, loc="upper left")
     ax.add_artist(first_legend)
@@ -1302,7 +1306,9 @@ def main() -> None:
     if made_reasoning:
         print(f"Saved {args.out_dir / 'reasoning_delta_heatmap.png'}")
     else:
-        print("Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results are required.")
+        print(
+            "Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results with model sizes are required."
+        )
 
     for out in correction_outputs:
         print(f"Saved {out}")
