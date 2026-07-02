@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
 # ///
 """Visualize multilingual GSM evaluation logs across models and splits.
 
@@ -59,6 +59,7 @@ from plot_config import (
     ordered_families,
     reasoning_sort_bucket,
 )
+from scipy.stats import norm
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -320,8 +321,7 @@ def _normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
     lower = max(0.0, mean - 4 * std)
     upper = min(1.0, mean + 4 * std)
     x = np.linspace(lower, upper, 500)
-    density = np.exp(-0.5 * ((x - mean) / std) ** 2) / (std * math.sqrt(2 * math.pi))
-    return x, density, mean
+    return x, norm.pdf(x, loc=mean, scale=std), mean
 
 
 def _original_accuracy(corrected: pd.DataFrame, uncorrected: pd.DataFrame) -> float:
