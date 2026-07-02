@@ -14,7 +14,7 @@ The script reads Inspect ``.eval`` logs and writes:
 * ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
 * ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
 * ``reasoning_delta_heatmap.png``: reasoning-on vs reasoning-off accuracy.
-* ``correction_comparison/*.png``: optional uncorrected vs corrected synthetic distributions.
+* ``correction_comparison/*.png``: uncorrected vs corrected synthetic distributions when corrected logs exist.
 
 Only successful logs are included by default. Repeated/resumed logs with the same
 evaluation id are deduplicated, preferring a successful and then newer log.
@@ -62,7 +62,9 @@ from plot_config import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
+DEFAULT_CORRECTED_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+CORRECTION_COMPARISON_WIDTH = 13.5
 
 
 FAMILY_MARKERS = {
@@ -280,6 +282,15 @@ def paired_correction_languages(
     corrected: pd.DataFrame,
     requested: list[str] | None,
 ) -> list[str]:
+    required = {"split", "language"}
+    if (
+        uncorrected.empty
+        or corrected.empty
+        or not required.issubset(uncorrected.columns)
+        or not required.issubset(corrected.columns)
+    ):
+        return []
+
     old = set(uncorrected.loc[uncorrected["split"] == "synthetic", "language"].unique())
     new = set(corrected.loc[corrected["split"] == "synthetic", "language"].unique())
     return language_order(old & new, requested)
@@ -1044,26 +1055,51 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
     fig, axes = plt.subplots(
         len(rows),
         1,
-        figsize=(8.8, 1.45 * len(rows) + 1.35),
+        figsize=(CORRECTION_COMPARISON_WIDTH, 1.45 * len(rows) + 1.35),
         sharex=True,
         squeeze=False,
     )
 
     for ax, row in zip(axes[:, 0], rows, strict=True):
+        old_counts, _, _ = ax.hist(
+            row.uncorrected_sets,
+            bins=18,
+            density=True,
+            color=UNCORRECTED_FILL,
+            edgecolor="white",
+            linewidth=0.35,
+            alpha=0.38,
+            zorder=1,
+        )
+        new_counts, _, _ = ax.hist(
+            row.corrected_sets,
+            bins=18,
+            density=True,
+            color=CORRECTED_FILL,
+            edgecolor="white",
+            linewidth=0.35,
+            alpha=0.38,
+            zorder=1,
+        )
         old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
         new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
-        peak = max(float(old_density.max()), float(new_density.max()))
+        peak = max(
+            float(old_counts.max()),
+            float(new_counts.max()),
+            float(old_density.max()),
+            float(new_density.max()),
+        )
 
-        ax.fill_between(old_x, 0, old_density, color=UNCORRECTED_FILL, alpha=0.75, linewidth=0)
-        ax.plot(old_x, old_density, color=UNCORRECTED_COLOR, linewidth=1.8)
-        ax.axvline(old_mean, color=UNCORRECTED_COLOR, linewidth=1.2)
+        ax.fill_between(old_x, 0, old_density, color=UNCORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
+        ax.plot(old_x, old_density, color=UNCORRECTED_COLOR, linewidth=1.8, zorder=3)
+        ax.axvline(old_mean, color=UNCORRECTED_COLOR, linewidth=1.2, zorder=4)
 
-        ax.fill_between(new_x, 0, new_density, color=CORRECTED_FILL, alpha=0.75, linewidth=0)
-        ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8)
-        ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2)
+        ax.fill_between(new_x, 0, new_density, color=CORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
+        ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8, zorder=3)
+        ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2, zorder=4)
 
         if np.isfinite(row.original_accuracy):
-            ax.axvline(row.original_accuracy, color=ORIGINAL_COLOR, linewidth=1.4)
+            ax.axvline(row.original_accuracy, color=ORIGINAL_COLOR, linewidth=1.4, zorder=4)
 
         ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=11)
         ax.set_yticks([])
@@ -1186,7 +1222,8 @@ def main() -> None:
     parser.add_argument(
         "--corrected-log-dir",
         type=Path,
-        help="Optional corrected-log directory for correction comparison figures.",
+        default=DEFAULT_CORRECTED_LOG_DIR,
+        help="Corrected-log directory for correction comparison figures.",
     )
     parser.add_argument(
         "--correction-samples",
@@ -1266,21 +1303,24 @@ def main() -> None:
             f"selected {len(corrected_selected)} after status filtering and deduplication."
         )
         corrected = load_samples(corrected_selected, args.scorer, workers=args.workers)
-        languages = paired_correction_languages(samples, corrected, requested=None)
-        for language in languages:
-            rows = collect_correction_comparison_rows(
-                samples,
-                corrected,
-                language,
-                args.correction_samples,
-                args.correction_seed,
-            )
-            if not rows:
-                print(f"Skipping {language}: no paired corrected models.")
-                continue
-            out = args.out_dir / "correction_comparison" / f"{path_slug(language)}.png"
-            plot_correction_comparison(rows, language, out)
-            correction_outputs.append(out)
+        if corrected.empty:
+            print(f"Skipped correction comparison: no scored corrected samples found in {args.corrected_log_dir}.")
+        else:
+            languages = paired_correction_languages(samples, corrected, requested=None)
+            for language in languages:
+                rows = collect_correction_comparison_rows(
+                    samples,
+                    corrected,
+                    language,
+                    args.correction_samples,
+                    args.correction_seed,
+                )
+                if not rows:
+                    print(f"Skipping {language}: no paired corrected models.")
+                    continue
+                out = args.out_dir / "correction_comparison" / f"{path_slug(language)}.png"
+                plot_correction_comparison(rows, language, out)
+                correction_outputs.append(out)
 
     print(f"Saved {summary_path}")
     print(f"Saved {args.out_dir / 'accuracy_heatmaps.png'}")
