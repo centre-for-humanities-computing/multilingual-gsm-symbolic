@@ -7,6 +7,8 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import hashlib
 import json
 import os
 import subprocess
@@ -14,17 +16,18 @@ import sys
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import yaml
 
 MODELS = (
     # Qwen2.5 Instruct
-  # "Qwen/Qwen2.5-0.5B-Instruct",
-  #  "Qwen/Qwen2.5-1.5B-Instruct",
-  #  "Qwen/Qwen2.5-3B-Instruct",
-  #  "Qwen/Qwen2.5-7B-Instruct",
-  #  "Qwen/Qwen2.5-14B-Instruct",
-  #  "Qwen/Qwen2.5-32B-Instruct",
+   "Qwen/Qwen2.5-0.5B-Instruct",
+    "Qwen/Qwen2.5-1.5B-Instruct",
+    "Qwen/Qwen2.5-3B-Instruct",
+    "Qwen/Qwen2.5-7B-Instruct",
+    "Qwen/Qwen2.5-14B-Instruct",
+    "Qwen/Qwen2.5-32B-Instruct",
 
     # Qwen3 dense reasoning-capable models
     "Qwen/Qwen3-0.6B",
@@ -88,6 +91,24 @@ EVAL_YAML = REPO_ROOT / "paper" / "eval.yaml"
 LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 HISTORICAL_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 OPTIONAL_LANGUAGES = {"eng_metric"}
+DEFAULT_VLLM_SERVER_ARGS: dict[str, Any] = {
+    "dtype": "auto",
+    "attention_backend": "FLASH_ATTN",
+    "max_num_seqs": 512,
+}
+RESUME_IGNORED_MODEL_ARG_KEYS = frozenset(
+    {
+        "dtype",
+        "attention_backend",
+        "max_num_seqs",
+        "speculative_config",
+        "speculative_model",
+        "num_speculative_tokens",
+        "ngram_prompt_lookup_max",
+        "ngram_prompt_lookup_min",
+    }
+)
+EVAL_SET_ID_FILE = ".eval-set-id"
 
 
 class RunnerError(RuntimeError):
@@ -152,6 +173,13 @@ def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.Ar
         help="Inspect log directory for normal runs.",
     )
     parser.add_argument("--reasoning-effort", help="Forwarded to Inspect for models that support it.")
+    parser.add_argument(
+        "--vllm-server-arg",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
+        help="vLLM server argument merged into VLLM_DEFAULT_SERVER_ARGS. Repeat for multiple args.",
+    )
     return parser
 
 
@@ -254,6 +282,68 @@ def model_ref(model: str) -> str:
     return f"vllm/{model}"
 
 
+def _normalize_model_arg_value(value: Any) -> Any:
+    if not isinstance(value, str):
+        return value
+
+    stripped = value.strip()
+    if len(stripped) >= 2 and stripped[0] == stripped[-1] and stripped[0] in {"'", '"'}:
+        stripped = stripped[1:-1]
+    try:
+        return json.loads(stripped)
+    except json.JSONDecodeError:
+        return stripped
+
+
+def model_arg_dict(args: Sequence[str]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    index = 0
+    while index < len(args):
+        flag = args[index]
+        if flag != "-M":
+            index += 1
+            continue
+        if index + 1 >= len(args):
+            raise RunnerError("Model argument flag '-M' requires a key=value argument")
+        raw = args[index + 1]
+        key, separator, value = raw.partition("=")
+        if not separator or not key:
+            raise RunnerError(f"Model argument must use key=value syntax: {raw!r}")
+        result[key] = _normalize_model_arg_value(value)
+        index += 2
+    return result
+
+
+def canonical_resume_model_args(model_args: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: _normalize_model_arg_value(value)
+        for key, value in sorted(model_args.items())
+        if key not in RESUME_IGNORED_MODEL_ARG_KEYS
+    }
+
+
+def deterministic_eval_set_id(model: str, revision: str, model_args: dict[str, Any]) -> str:
+    payload = {
+        "kind": "ucloudeval-eval-set-v1",
+        "dataset": DATASET,
+        "revision": revision or "",
+        "model": model_ref(model),
+        "model_args": canonical_resume_model_args(model_args),
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    digest = hashlib.sha256(encoded).digest()
+    return base64.b32encode(digest).decode("ascii").rstrip("=").lower()[:26]
+
+
+def eval_set_id_for_run(run: ModelRun, revision: str) -> str:
+    return deterministic_eval_set_id(run.model, revision, model_arg_dict(run.args))
+
+
+def prepare_eval_set_id(log_dir: Path, eval_set_id: str) -> None:
+    log_dir.mkdir(parents=True, exist_ok=True)
+    (log_dir / EVAL_SET_ID_FILE).write_text(f"{eval_set_id}\n", encoding="utf-8")
+
+
 def inspect_command(
     run: ModelRun,
     tasks: Sequence[Task],
@@ -261,6 +351,7 @@ def inspect_command(
     revision: str = REVISION,
     reasoning_effort: str | None = None,
 ) -> list[str]:
+    eval_set_id = eval_set_id_for_run(run, revision)
     # place the revision after the task id so the HF loader parses it correctly
     specs = [
         f"hf/{DATASET}/{task.task_id}@{revision}" if revision else f"hf/{DATASET}/{task.task_id}" for task in tasks
@@ -269,11 +360,9 @@ def inspect_command(
         # Eval sets use the log directory to skip successful tasks and retry
         # interrupted tasks without repeating their completed samples.
         "inspect", "eval-set", *specs,
+        "--id", eval_set_id,
         "--model", model_ref(run.model),
         *run.args,
-        "-M", "dtype=auto",
-        "-M", "attention_backend=FLASH_ATTN",
-        "-M", "max_num_seqs=512",
         "--max-connections", "128",
         "--max-samples", "128",
         "--max-tasks", "8",
@@ -292,9 +381,9 @@ def inspect_commands(
     base_log_dir: Path = LOG_DIR,
     revision: str = REVISION,
     reasoning_effort: str | None = None,
-) -> list[tuple[Path, list[str]]]:
+) -> list[tuple[Path, str, list[str]]]:
     if not historical:
-        return [(base_log_dir, inspect_command(run, tasks, base_log_dir, revision, reasoning_effort))]
+        return [(base_log_dir, revision, inspect_command(run, tasks, base_log_dir, revision, reasoning_effort))]
 
     unsupported_splits = sorted({task.split for task in tasks if task.split not in HISTORICAL_SPLITS})
     if unsupported_splits:
@@ -314,18 +403,49 @@ def inspect_commands(
             commands.append(
                 (
                     log_dir,
+                    historical_revision,
                     inspect_command(run, language_tasks, log_dir, historical_revision, reasoning_effort),
                 )
             )
     return commands
 
 
-def vllm_environment() -> dict[str, str]:
+def parse_server_arg_values(values: Sequence[str]) -> dict[str, Any]:
+    parsed: dict[str, Any] = {}
+    for raw in values:
+        key, separator, value = raw.partition("=")
+        if not separator or not key:
+            raise RunnerError(f"--vllm-server-arg must use KEY=VALUE syntax: {raw!r}")
+        parsed[key] = _normalize_model_arg_value(value)
+    return parsed
+
+
+def merged_vllm_server_args(env: dict[str, str], overrides: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(DEFAULT_VLLM_SERVER_ARGS)
+    existing = env.get("VLLM_DEFAULT_SERVER_ARGS")
+    if existing:
+        try:
+            decoded = json.loads(existing)
+        except json.JSONDecodeError as error:
+            raise RunnerError(f"VLLM_DEFAULT_SERVER_ARGS is not valid JSON: {error}") from error
+        if not isinstance(decoded, dict):
+            raise RunnerError("VLLM_DEFAULT_SERVER_ARGS must decode to a JSON object")
+        merged.update(decoded)
+    merged.update(overrides)
+    return merged
+
+
+def vllm_environment(server_args: dict[str, Any] | None = None) -> dict[str, str]:
     env = os.environ.copy()
     # The CUDA 13 packages in this environment have mismatched nvcc/headers.
     # Avoid vLLM paths that require FlashInfer or DeepGEMM runtime compilation.
-    env.setdefault("VLLM_USE_FLASHINFER_SAMPLER", "0")
-    env.setdefault("VLLM_USE_DEEP_GEMM", "0")
+    env["VLLM_USE_FLASHINFER_SAMPLER"] = "0"
+    env["VLLM_USE_DEEP_GEMM"] = "0"
+    env["VLLM_DEFAULT_SERVER_ARGS"] = json.dumps(
+        merged_vllm_server_args(env, server_args or {}),
+        sort_keys=True,
+        separators=(",", ":"),
+    )
     return env
 
 
@@ -340,12 +460,21 @@ def run_inspect(
     base_log_dir: Path,
     revision: str,
     reasoning_effort: str | None,
+    server_args: dict[str, Any],
 ) -> None:
     suffix = f" (reasoning {run.reasoning})" if run.reasoning else ""
-    for _log_dir, command in inspect_commands(run, tasks, historical, base_log_dir, revision, reasoning_effort):
+    for log_dir, command_revision, command in inspect_commands(
+        run,
+        tasks,
+        historical,
+        base_log_dir,
+        revision,
+        reasoning_effort,
+    ):
+        prepare_eval_set_id(log_dir, eval_set_id_for_run(run, command_revision))
         show_command(f"Running {len(tasks)} Inspect task(s) for {run.model}{suffix}", command)
         try:
-            subprocess.run(command, check=True, env=vllm_environment())
+            subprocess.run(command, check=True, env=vllm_environment(server_args))
         except subprocess.CalledProcessError as error:
             raise RunnerError(f"Inspect failed for {run.model}{suffix} with status {error.returncode}") from error
         except OSError as error:
@@ -389,6 +518,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     except RunnerError as error:
         parser.error(str(error))
 
+    try:
+        server_args = parse_server_arg_values(args.vllm_server_arg)
+    except RunnerError as error:
+        parser.error(str(error))
+
     log_dir = HISTORICAL_LOG_DIR if args.historical_revisions and args.log_dir == LOG_DIR else args.log_dir
     log_dir.mkdir(parents=True, exist_ok=True)
     selected_runs = model_runs(selected["model"])
@@ -413,6 +547,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     log_dir,
                     args.revision,
                     args.reasoning_effort,
+                    server_args,
                 )
             except RunnerError as error:
                 failures.append((run.model, str(error)))
