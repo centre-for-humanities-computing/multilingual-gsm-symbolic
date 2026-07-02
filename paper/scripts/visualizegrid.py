@@ -935,13 +935,13 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
         return False
 
     averaged = (
-        rows.groupby(["base_model", "reasoning", "family", "params_b", "language"], dropna=False)["accuracy"]
-        .mean()
+        rows.groupby(["base_model", "reasoning", "family", "params_b", "language"], dropna=False)
+        .agg(accuracy=("accuracy", "mean"), stderr=("stderr", "mean"))
         .reset_index()
     )
-    by_language = averaged.set_index(["base_model", "reasoning", "family", "params_b", "language"])["accuracy"].unstack(
-        "language"
-    )
+    by_model = averaged.set_index(["base_model", "reasoning", "family", "params_b", "language"])
+    by_language = by_model["accuracy"].unstack("language")
+    stderr_by_language = by_model["stderr"].unstack("language").fillna(0)
     if "eng" not in by_language.columns:
         return False
 
@@ -951,10 +951,16 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
 
     by_language["gap"] = by_language["eng"] - by_language[non_english].mean(axis=1)
     by_language["relative_gap"] = by_language["gap"] / by_language["eng"].replace(0, np.nan)
-    relative_by_language = (
-        by_language[non_english].rsub(by_language["eng"], axis=0).div(by_language["eng"].replace(0, np.nan), axis=0)
+    english_accuracy = by_language["eng"].replace(0, np.nan)
+    non_english_accuracy = by_language[non_english].mean(axis=1)
+    non_english_stderr = np.sqrt(stderr_by_language[non_english].pow(2).sum(axis=1)) / by_language[non_english].count(
+        axis=1
     )
-    by_language["relative_gap_ci95"] = (relative_by_language.sem(axis=1) * norm.ppf(0.975)).fillna(0)
+    relative_gap_stderr = np.sqrt(
+        (non_english_accuracy / english_accuracy.pow(2)).pow(2) * stderr_by_language["eng"].pow(2)
+        + (non_english_stderr / english_accuracy).pow(2)
+    )
+    by_language["relative_gap_ci95"] = (relative_gap_stderr * norm.ppf(0.975)).fillna(0)
     gaps = by_language[["gap", "relative_gap", "relative_gap_ci95"]].dropna().reset_index()
 
     gaps = gaps[np.isfinite(gaps["params_b"])]
