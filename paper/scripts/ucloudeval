@@ -307,13 +307,14 @@ def inspect_commands(
         raise RunnerError(f"No historical revisions configured for language(s): {', '.join(missing)}")
 
     commands = []
-    for task in tasks:
-        for historical_revision in HISTORICAL_SYNTHETIC_REVISIONS[task.language]:
-            log_dir = base_log_dir / task.language / historical_revision[:12]
+    for language in unique([task.language for task in tasks]):
+        language_tasks = [task for task in tasks if task.language == language]
+        for historical_revision in HISTORICAL_SYNTHETIC_REVISIONS[language]:
+            log_dir = base_log_dir / language / historical_revision[:12]
             commands.append(
                 (
                     log_dir,
-                    inspect_command(run, [task], log_dir, historical_revision, reasoning_effort),
+                    inspect_command(run, language_tasks, log_dir, historical_revision, reasoning_effort),
                 )
             )
     return commands
