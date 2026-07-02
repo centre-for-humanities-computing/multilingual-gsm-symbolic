@@ -945,7 +945,7 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     if "eng" not in by_language.columns:
         return False
 
-    non_english = [language for language in by_language.columns if language != "eng"]
+    non_english = [language for language in by_language.columns if language not in {"eng", "eng_metric"}]
     if not non_english:
         return False
 
