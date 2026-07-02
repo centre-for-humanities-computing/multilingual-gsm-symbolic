@@ -13,7 +13,7 @@ The script reads Inspect ``.eval`` logs and writes:
 * ``eng_vs_eng_metric.png``: paired English and English-metric accuracy by model.
 * ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
 * ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
-* ``reasoning_delta_heatmap.png``: reasoning-on vs reasoning-off accuracy.
+* ``reasoning_delta_heatmap.png``: English-vs-non-English synthetic gap by reasoning mode.
 * ``correction_comparison/*.png``: uncorrected vs corrected synthetic distributions when corrected logs exist.
 
 Only successful logs are included by default. Repeated/resumed logs with the same
@@ -915,7 +915,7 @@ def reasoning_variant_name(model: str) -> tuple[str, str | None]:
 
 
 def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
-    rows = summary.copy()
+    rows = summary[summary["split"] == "synthetic"].copy()
     parsed = rows["model"].map(reasoning_variant_name)
     rows["base_model_candidate"] = [item[0] for item in parsed]
     rows["reasoning"] = [item[1] for item in parsed]
@@ -934,118 +934,50 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     if rows.empty:
         return False
 
-    paired = rows.pivot_table(
-        index=["base_model", "split", "language", "family", "params_b"],
-        columns="reasoning",
-        values="accuracy",
-    ).dropna(subset=["on", "off"])
+    averaged = (
+        rows.groupby(["base_model", "reasoning", "family", "params_b", "language"], dropna=False)["accuracy"]
+        .mean()
+        .reset_index()
+    )
+    by_language = averaged.set_index(["base_model", "reasoning", "family", "params_b", "language"])[
+        "accuracy"
+    ].unstack("language")
+    if "eng" not in by_language.columns:
+        return False
+
+    non_english = [language for language in by_language.columns if language != "eng"]
+    if not non_english:
+        return False
+
+    by_language["gap"] = by_language["eng"] - by_language[non_english].mean(axis=1)
+    gaps = by_language["gap"].dropna().reset_index()
+
+    paired = gaps.set_index(["base_model", "family", "params_b", "reasoning"])["gap"].unstack("reasoning")
+    if not {"on", "off"}.issubset(paired.columns):
+        return False
+
+    paired = paired.dropna(subset=["on", "off"]).reset_index()
     if paired.empty:
         return False
 
-    paired = paired.reset_index()
-    splits = [split for split in ("original", "synthetic") if split in paired["split"].unique()]
-    if not splits:
-        return False
+    paired["sort_key"] = [model_sort_key(model) for model in paired["base_model"]]
+    paired = paired.sort_values("sort_key").drop(columns="sort_key")
 
-    finite_sizes = paired["params_b"].dropna()
-    norm = Normalize(
-        vmin=float(finite_sizes.min()) if not finite_sizes.empty else 0,
-        vmax=float(finite_sizes.max()) if not finite_sizes.empty else 1,
+    x = np.arange(len(paired))
+    width = 0.36
+    fig, ax = plt.subplots(figsize=(max(7.0, 0.58 * len(paired) + 2.4), 4.8))
+    ax.bar(x - width / 2, paired["off"], width, label="reasoning off", color="#6B7280")
+    ax.bar(x + width / 2, paired["on"], width, label="reasoning on", color="#2563EB")
+    ax.axhline(0, color="#111827", linewidth=0.8, alpha=0.7)
+    ax.set(
+        ylabel="English synthetic accuracy - non-English synthetic accuracy",
+        xlabel="Model",
+        title="Synthetic English advantage by reasoning mode",
     )
-    cmap = plt.get_cmap("viridis")
-
-    fig, axes = plt.subplots(
-        1,
-        len(splits),
-        figsize=(6.8 * len(splits), 6.4),
-        squeeze=False,
-        sharex=True,
-        sharey=True,
-    )
-    axes = axes[0]
-
-    legend_handles: list[Any] = []
-    legend_labels: list[str] = []
-    for split, ax in zip(splits, axes, strict=True):
-        split_rows = paired[paired["split"] == split]
-
-        for family in ordered_families(split_rows["family"]):
-            family_rows = split_rows[split_rows["family"] == family]
-            if family_rows.empty:
-                continue
-
-            marker = FAMILY_MARKERS.get(family, "v")
-            known_size = family_rows.dropna(subset=["params_b"])
-            if not known_size.empty:
-                ax.scatter(
-                    known_size["off"],
-                    known_size["on"],
-                    c=known_size["params_b"],
-                    cmap=cmap,
-                    norm=norm,
-                    marker=marker,
-                    s=58,
-                    alpha=0.9,
-                    edgecolors="white",
-                    linewidths=0.5,
-                )
-
-            unknown_size = family_rows[family_rows["params_b"].isna()]
-            if not unknown_size.empty:
-                ax.scatter(
-                    unknown_size["off"],
-                    unknown_size["on"],
-                    color="#888888",
-                    marker=marker,
-                    s=58,
-                    alpha=0.8,
-                    edgecolors="white",
-                    linewidths=0.5,
-                )
-
-            if family not in legend_labels:
-                legend_handles.append(
-                    Line2D(
-                        [0],
-                        [0],
-                        marker=marker,
-                        linestyle="none",
-                        markerfacecolor="#777777",
-                        markeredgecolor="white",
-                        markersize=7,
-                    )
-                )
-                legend_labels.append(family)
-
-        ax.plot([0, 1], [0, 1], linestyle="--", color="black", linewidth=1, alpha=0.6)
-        ax.set(
-            xlim=(0, 1),
-            ylim=(0, 1),
-            xlabel="Accuracy with reasoning disabled",
-            ylabel="Accuracy with reasoning enabled",
-        )
-        ax.xaxis.set_major_formatter(PercentFormatter(1))
-        ax.yaxis.set_major_formatter(PercentFormatter(1))
-        ax.set_title(SPLIT_LABELS.get(split, split))
-
-    mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
-    mappable.set_array([])
-    colorbar_axis = fig.add_axes([0.92, 0.16, 0.015, 0.7])
-    colorbar = fig.colorbar(mappable, cax=colorbar_axis)
-    colorbar.set_label("Model parameters (billions)")
-
-    if legend_handles:
-        fig.legend(
-            legend_handles,
-            legend_labels,
-            loc="lower center",
-            ncol=min(6, len(legend_labels)),
-            frameon=False,
-            title="Model family",
-        )
-
-    fig.suptitle("Reasoning-enabled vs reasoning-disabled accuracy")
-    fig.tight_layout(rect=(0, 0.06, 0.9, 0.95))
+    ax.set_xticks(x, paired["base_model"], rotation=40, ha="right")
+    ax.yaxis.set_major_formatter(PercentFormatter(1))
+    ax.legend(frameon=False)
+    fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -1354,7 +1286,7 @@ def main() -> None:
     if made_reasoning:
         print(f"Saved {args.out_dir / 'reasoning_delta_heatmap.png'}")
     else:
-        print("Skipped reasoning_delta_heatmap.png: paired reasoning on/off results are required.")
+        print("Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results are required.")
 
     for out in correction_outputs:
         print(f"Saved {out}")
