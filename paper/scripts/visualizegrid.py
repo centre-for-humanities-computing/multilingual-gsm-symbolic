@@ -951,7 +951,11 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
 
     by_language["gap"] = by_language["eng"] - by_language[non_english].mean(axis=1)
     by_language["relative_gap"] = by_language["gap"] / by_language["eng"].replace(0, np.nan)
-    gaps = by_language[["gap", "relative_gap"]].dropna().reset_index()
+    relative_by_language = (
+        by_language[non_english].rsub(by_language["eng"], axis=0).div(by_language["eng"].replace(0, np.nan), axis=0)
+    )
+    by_language["relative_gap_ci95"] = (relative_by_language.sem(axis=1) * norm.ppf(0.975)).fillna(0)
+    gaps = by_language[["gap", "relative_gap", "relative_gap_ci95"]].dropna().reset_index()
 
     gaps = gaps[np.isfinite(gaps["params_b"])]
     gaps = gaps[gaps.groupby("base_model")["reasoning"].transform("nunique") == 2]
@@ -968,14 +972,16 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
             line = family_rows[family_rows["reasoning"] == mode].sort_values("params_b")
             if line.empty:
                 continue
-            ax.plot(
+            ax.errorbar(
                 line["params_b"],
                 line["relative_gap"],
+                yerr=line["relative_gap_ci95"],
                 color=FAMILY_COLORS.get(family, "#666666"),
                 linestyle=line_styles[mode],
                 marker=FAMILY_MARKERS.get(family, "o"),
                 linewidth=1.8,
                 markersize=6,
+                capsize=2,
                 label=f"{family} {mode_labels[mode]}",
             )
 
