@@ -1098,9 +1098,6 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
         ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8, zorder=3)
         ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2, zorder=4)
 
-        if np.isfinite(row.original_accuracy):
-            ax.axvline(row.original_accuracy, color=ORIGINAL_COLOR, linewidth=1.4, zorder=4)
-
         ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=11)
         ax.set_yticks([])
         ax.set_ylim(0, peak * 1.2)
@@ -1113,7 +1110,6 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
     legend = [
         Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label="Uncorrected"),
         Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label="Corrected"),
-        Line2D([0], [0], color=ORIGINAL_COLOR, lw=1.4, label="Original accuracy"),
     ]
     axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
     fig.suptitle(
