@@ -950,13 +950,19 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
         return False
 
     by_language["gap"] = by_language["eng"] - by_language[non_english].mean(axis=1)
-    gaps = by_language["gap"].dropna().reset_index()
+    by_language["relative_gap"] = by_language["gap"] / by_language["eng"].replace(0, np.nan)
+    gaps = by_language[["gap", "relative_gap"]].dropna().reset_index()
 
-    paired = gaps.set_index(["base_model", "family", "params_b", "reasoning"])["gap"].unstack("reasoning")
-    if not {"on", "off"}.issubset(paired.columns):
+    index_cols = ["base_model", "family", "params_b"]
+    absolute = gaps.set_index([*index_cols, "reasoning"])["gap"].unstack("reasoning")
+    relative = gaps.set_index([*index_cols, "reasoning"])["relative_gap"].unstack("reasoning")
+    if not {"on", "off"}.issubset(absolute.columns) or not {"on", "off"}.issubset(relative.columns):
         return False
 
-    paired = paired.dropna(subset=["on", "off"]).reset_index()
+    paired = absolute[["off", "on"]].join(
+        relative[["off", "on"]].rename(columns={"off": "off_relative", "on": "on_relative"})
+    )
+    paired = paired.dropna().reset_index()
     if paired.empty:
         return False
 
@@ -965,18 +971,20 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
 
     x = np.arange(len(paired))
     width = 0.36
-    fig, ax = plt.subplots(figsize=(max(7.0, 0.58 * len(paired) + 2.4), 4.8))
-    ax.bar(x - width / 2, paired["off"], width, label="reasoning off", color="#6B7280")
-    ax.bar(x + width / 2, paired["on"], width, label="reasoning on", color="#2563EB")
-    ax.axhline(0, color="#111827", linewidth=0.8, alpha=0.7)
-    ax.set(
-        ylabel="English synthetic accuracy - non-English synthetic accuracy",
-        xlabel="Model",
-        title="Synthetic English advantage by reasoning mode",
-    )
-    ax.set_xticks(x, paired["base_model"], rotation=40, ha="right")
-    ax.yaxis.set_major_formatter(PercentFormatter(1))
-    ax.legend(frameon=False)
+    fig, axes = plt.subplots(1, 2, figsize=(max(10.5, 1.0 * len(paired) + 4.8), 4.8), sharex=True)
+    for ax, off_col, on_col, title, ylabel in [
+        (axes[0], "off", "on", "Absolute gap", "English synthetic accuracy - non-English synthetic accuracy"),
+        (axes[1], "off_relative", "on_relative", "Relative gap", "Gap / English synthetic accuracy"),
+    ]:
+        ax.bar(x - width / 2, paired[off_col], width, label="reasoning off", color="#6B7280")
+        ax.bar(x + width / 2, paired[on_col], width, label="reasoning on", color="#2563EB")
+        ax.axhline(0, color="#111827", linewidth=0.8, alpha=0.7)
+        ax.set(ylabel=ylabel, xlabel="Model", title=title)
+        ax.set_xticks(x, paired["base_model"], rotation=40, ha="right")
+        ax.yaxis.set_major_formatter(PercentFormatter(1))
+
+    axes[1].legend(frameon=False)
+    fig.suptitle("English vs Non English gap with reasoning on/off")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
