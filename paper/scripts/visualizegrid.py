@@ -412,7 +412,6 @@ def heatmap_language_label(language: str) -> str:
 def annotated_heatmap(
     ax: plt.Axes,
     matrix: pd.DataFrame,
-    title: str,
     cmap: str,
     vmin: float,
     vmax: float,
@@ -456,7 +455,6 @@ def annotated_heatmap(
         )
 
     ax.set_yticks(range(len(matrix.index)), matrix.index)
-    ax.set_title(title)
 
     for row in range(values.shape[0]):
         for col in range(values.shape[1]):
@@ -484,7 +482,7 @@ def plot_heatmaps(summary: pd.DataFrame, out: Path) -> None:
             values="accuracy",
         ).reindex(index=order, columns=languages)
 
-    panels = [(SPLIT_LABELS[split], matrices[split]) for split in available_splits]
+    panels = [matrices[split] for split in available_splits]
 
     height = max(4.0, 0.42 * len(order) + 1.5)
     fig, axes = plt.subplots(
@@ -496,16 +494,12 @@ def plot_heatmaps(summary: pd.DataFrame, out: Path) -> None:
     )
     axes = axes[0]
 
-    images = [
-        annotated_heatmap(ax, matrix, title, "viridis", 0, 1, False)
-        for ax, (title, matrix) in zip(axes, panels, strict=True)
-    ]
+    images = [annotated_heatmap(ax, matrix, "viridis", 0, 1, False) for ax, matrix in zip(axes, panels, strict=True)]
 
     axes[0].set_ylabel("Evaluated instruction-tuned model")
-    fig.suptitle("Exact-answer accuracy by model, problem language, and benchmark split")
     fig.text(0.465, 0.02, "*", color="#FFC107", fontweight="bold", ha="right", fontsize=8)
     fig.text(0.467, 0.02, "Human verified", ha="left", fontsize=8)
-    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.28, top=0.84, wspace=0.18)
+    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.28, top=0.92, wspace=0.18)
 
     colorbar = fig.colorbar(
         images[0],
@@ -659,18 +653,16 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
         annotated_heatmap(
             ax,
             matrix,
-            title,
             "RdBu",
             -max_gap,
             max_gap,
             signed=True,
         )
-        for ax, (title, matrix) in zip(axes, panels, strict=True)
+        for ax, (_title, matrix) in zip(axes, panels, strict=True)
     ]
 
     axes[0].set_ylabel("Evaluated instruction-tuned model")
-    fig.suptitle("Target-language accuracy minus English accuracy for the same model")
-    fig.subplots_adjust(left=0.2, right=0.89, bottom=0.27, top=0.84, wspace=0.18)
+    fig.subplots_adjust(left=0.2, right=0.89, bottom=0.27, top=0.92, wspace=0.18)
     colorbar_axis = fig.add_axes([0.91, 0.25, 0.012, 0.55])
     colorbar = fig.colorbar(
         images[0],
@@ -725,7 +717,6 @@ def plot_eng_metric_comparison(summary: pd.DataFrame, out: Path, split: str = "s
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.grid(axis="x", color="#E5E7EB", linewidth=0.8)
     ax.set_axisbelow(True)
-    ax.set_title(f"English metric vs English accuracy ({SPLIT_LABELS.get(split, split)})")
     ax.legend(
         handles=[
             Line2D(
@@ -814,13 +805,11 @@ def plot_transfer_robustness(summary: pd.DataFrame, out: Path) -> bool:
             ax.set_xlabel("Model parameters (billions; logarithmic scale)")
             ax.set_ylabel(label)
             ax.yaxis.set_major_formatter(PercentFormatter(1))
-            ax.set_title(SPLIT_LABELS[split])
 
     handles, labels = axes[0, 0].get_legend_handles_labels()
     if handles:
         fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False)
-    fig.suptitle("English-to-non-English accuracy gaps and variability by model parameter count")
-    fig.tight_layout(rect=(0, 0.05, 1, 0.96))
+    fig.tight_layout(rect=(0, 0.05, 1, 1))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -859,7 +848,6 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
     absolute_image = annotated_heatmap(
         axes[0],
         absolute,
-        "Absolute accuracy drop: original - synthetic",
         "RdBu_r",
         -absolute_limit,
         absolute_limit,
@@ -868,14 +856,12 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
     relative_image = annotated_heatmap(
         axes[1],
         relative,
-        "Relative accuracy drop: (original - synthetic) / original",
         "RdBu_r",
         -relative_limit,
         relative_limit,
         signed=True,
     )
     axes[0].set_ylabel("Evaluated instruction-tuned model")
-    fig.suptitle("Accuracy decrease from original benchmark questions to synthetic numerical variants")
     absolute_colorbar = fig.colorbar(
         absolute_image,
         ax=axes[0],
@@ -897,7 +883,7 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
         ha="center",
         fontsize=8,
     )
-    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.3, top=0.84, wspace=0.18)
+    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.3, top=0.92, wspace=0.18)
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -1008,7 +994,6 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     first_legend = ax.legend(handles=family_handles, title="Model family", frameon=False, loc="upper left")
     ax.add_artist(first_legend)
     ax.legend(handles=mode_handles, title="Variant", frameon=False, loc="upper right")
-    fig.suptitle("Relative transfer gap by model size and reasoning mode")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -1076,14 +1061,7 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
         Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label="Corrected"),
     ]
     axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
-    fig.suptitle(
-        f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
-        x=0.08,
-        ha="left",
-        fontsize=17,
-        fontweight="bold",
-    )
-    fig.tight_layout(rect=(0.06, 0.02, 1, 0.94))
+    fig.tight_layout(rect=(0.06, 0.02, 1, 1))
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -1134,7 +1112,6 @@ def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
             ax.set_xscale("log")
             ax.set_ylim(0, 1)
             ax.grid(alpha=0.2)
-            ax.set_title(f"{family} on {SPLIT_LABELS[split].lower()}")
             ax.set_xlabel("Model parameters (billions; logarithmic scale)")
 
             if col_index == 0:
@@ -1156,8 +1133,7 @@ def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
             frameon=False,
         )
 
-    fig.suptitle("Exact-answer accuracy by model size within each model family and problem language")
-    fig.tight_layout(rect=(0, 0.06, 1, 0.96))
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
 

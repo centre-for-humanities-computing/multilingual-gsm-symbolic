@@ -450,12 +450,14 @@ def plot_distributions(
             zorder=7,
         )
 
-        ax.set_title(
+        ax.set_ylabel(
             language_title(row.language),
-            loc="left",
+            rotation=0,
+            ha="right",
+            va="center",
+            labelpad=70,
             fontsize=13,
             fontweight="semibold",
-            pad=8,
         )
         ax.set_ylim(0, peak_density * 1.32)
         ax.grid(axis="y", color=GRID_COLOR, linewidth=0.7, alpha=0.65)
@@ -467,17 +469,9 @@ def plot_distributions(
     axes[-1].tick_params(axis="x", labelsize=10)
     axes[-1].set_xlabel("Exact-answer accuracy", fontsize=13, labelpad=10)
     fig.supylabel("Density", fontsize=13, x=0.03)
-    fig.suptitle(
-        "Original accuracy and synthetic-set distributions",
-        x=0.08,
-        ha="left",
-        fontsize=19,
-        fontweight="bold",
-        y=0.985,
-    )
     fig.text(
         0.08,
-        0.955,
+        0.985,
         f"{scope_label} | one random variant per template in each sampled set",
         fontsize=11,
         color="#596579",
@@ -515,7 +509,7 @@ def plot_distributions(
         columnspacing=1.7,
     )
 
-    fig.tight_layout(rect=(0.045, 0.03, 1, 0.925))
+    fig.tight_layout(rect=(0.045, 0.03, 1, 0.955))
     fig.savefig(out_png, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 

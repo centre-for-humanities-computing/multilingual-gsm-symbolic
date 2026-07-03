@@ -158,10 +158,8 @@ def plot_distribution(tables: dict, out: Path) -> None:
 
         ax.set_xlabel("Mean accuracy")
         ax.set_ylabel("Density")
-        ax.set_title(LANGUAGE_LABELS.get(lang, lang))
         ax.legend(fontsize=8)
 
-    fig.suptitle("Performance degradation across languages", y=1.02)
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -242,7 +240,6 @@ def plot_by_steps(tables: dict, out: Path) -> None:
     lines, labels = ax.get_legend_handles_labels()
     bars, blabels = ax2.get_legend_handles_labels()
     ax.legend(lines + bars, labels + blabels, fontsize=9)
-    ax.set_title("Accuracy by problem difficulty")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -261,7 +258,7 @@ def plot_language_gap(tables: dict, out: Path) -> None:
     peaks: dict[str, tuple[float, float]] = {}  # lang → (peak_x, peak_y)
 
     for lang in langs:
-        color = _LANG_COLOR.get(lang, "steelblue")
+        color = LANGUAGE_COLORS.get(lang, "steelblue")
         syn = tables[lang]["synthetic"].copy()
         by_template = {sid: grp["correct"].values for sid, grp in syn.groupby("source_id")}
         templates = sorted(by_template)
@@ -271,7 +268,7 @@ def plot_language_gap(tables: dict, out: Path) -> None:
         kde = gaussian_kde(set_means, bw_method=0.3)
         x = np.linspace(set_means.min() - 0.02, set_means.max() + 0.02, 400)
         y = kde(x)
-        ax.plot(x, y, color=color, linewidth=2, zorder=3, label=f"{_LANG_LABEL.get(lang, lang)} (synthetic)")
+        ax.plot(x, y, color=color, linewidth=2, zorder=3, label=f"{LANGUAGE_LABELS.get(lang, lang)} (synthetic)")
 
         peak_x = x[np.argmax(y)]
         peak_y = y.max()
@@ -301,7 +298,6 @@ def plot_language_gap(tables: dict, out: Path) -> None:
     ax.set_xlabel("Mean accuracy")
     ax.set_ylabel("Density")
     ax.legend(fontsize=9)
-    ax.set_title("Language gap")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -326,7 +322,7 @@ def plot_speakers(tables: dict, out: Path) -> None:
 
     fig, ax = plt.subplots(figsize=(6, 4.5))
     for l in langs:
-        color = _LANG_COLOR.get(l, "steelblue")
+        color = LANGUAGE_COLORS.get(l, "steelblue")
         x = _SPEAKERS[l]
         vals = tables[l]["synthetic"]["correct"].values
         y = vals.mean()
@@ -335,7 +331,7 @@ def plot_speakers(tables: dict, out: Path) -> None:
 
         ax.errorbar(x, y, yerr=[[y - ci_lo], [ci_hi - y]], fmt="o", color=color, capsize=4, markersize=7, zorder=3)
         ax.annotate(
-            _LANG_LABEL.get(l, l),
+            LANGUAGE_LABELS.get(l, l),
             (x, y),
             textcoords="offset points",
             xytext=(6, 4),
@@ -347,7 +343,6 @@ def plot_speakers(tables: dict, out: Path) -> None:
     ax.set_xlabel("Number of native speakers (log scale)")
     ax.set_ylabel("Mean accuracy (95% CI)")
     ax.set_ylim(0, 1)
-    ax.set_title("Speakers vs. accuracy")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)

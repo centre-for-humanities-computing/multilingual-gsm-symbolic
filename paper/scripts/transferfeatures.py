@@ -40,7 +40,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.ticker import PercentFormatter
-from plot_config import FAMILY_COLORS, FAMILY_ORDER, LANGUAGE_LABELS, SPLIT_LABELS, language_order, ordered_families
+from plot_config import FAMILY_COLORS, FAMILY_ORDER, LANGUAGE_LABELS, language_order, ordered_families
 from scipy.spatial import distance
 from transformers import AutoTokenizer
 
@@ -285,7 +285,6 @@ def relationship_plot(
     data: pd.DataFrame,
     x_column: str,
     xlabel: str,
-    title: str,
     out: Path,
 ) -> bool:
     """Plot a descriptive feature relationship separately for each split."""
@@ -348,7 +347,6 @@ def relationship_plot(
         ax.grid(alpha=0.2)
         ax.set_ylabel("Accuracy gap: English - target language")
         ax.yaxis.set_major_formatter(PercentFormatter(1))
-        ax.set_title(SPLIT_LABELS[split])
 
     legend_entries: dict[str, Any] = {}
     for ax in axes:
@@ -363,8 +361,7 @@ def relationship_plot(
             frameon=False,
         )
     fig.supxlabel(xlabel, y=0.08)
-    fig.suptitle(title)
-    fig.tight_layout(rect=(0, 0.13, 1, 0.94))
+    fig.tight_layout(rect=(0, 0.13, 1, 1))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -425,24 +422,21 @@ def main() -> None:
         (
             "normalized_fertility",
             "TFR: target-language tokens/character divided by English tokens/character. Computed on GSM8K templates.",
-            "English-minus-target-language accuracy gap versus tokenizer fertility ratio (TFR)",
             args.out_dir / "tokenizer_fertility_vs_transfer.png",
         ),
         (
             "typological_distance_from_english",
             "URIEL cosine distance from English (syntax features)",
-            "English-minus-target-language accuracy gap versus typological distance from English",
             args.out_dir / "typological_distance_vs_transfer.png",
         ),
         (
             "log10_common_crawl_pages",
             "Language-resource proxy: log10 Common Crawl page count",
-            "English-minus-target-language accuracy gap versus Common Crawl resource quantity",
             args.out_dir / "resource_quantity_vs_transfer.png",
         ),
     ]
-    for column, xlabel, title, path in plots:
-        if relationship_plot(transfer, column, xlabel, title, path):
+    for column, xlabel, path in plots:
+        if relationship_plot(transfer, column, xlabel, path):
             print(f"Saved {path}")
         else:
             print(f"Skipped {path.name}: no paired transfer observations with this feature.")
