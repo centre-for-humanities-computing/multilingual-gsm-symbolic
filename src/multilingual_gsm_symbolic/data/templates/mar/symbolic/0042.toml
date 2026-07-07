@@ -1,0 +1,47 @@
+question = "प्रणव काही कॉफी खरेदी करण्यासाठी दुकानात जातो. तो नेहमी जी कॉफी घेतो त्या ब्रँडची किंमत प्रति किलोग्रॅम ₹५ आहे. त्याचा आवडता ब्रँड संपला असल्यामुळे त्याला २०% जास्त महाग असलेला दुसरा ब्रँड घ्यावा लागला. तो एका आठवड्यापुरती कॉफी खरेदी करण्याचे ठरवतो आणि तो दररोज १ किलोग्रॅम कॉफी वापरतो. त्याने स्वतःसाठी ₹२ ला एक डोनटही घेतला. सगळ्याची एकूण किंमत किती झाली?"
+
+answer = """
+त्याने घेतलेली कॉफी तो नेहमी घेतो त्या कॉफीपेक्षा प्रति किलोग्रॅम ५*०.२=₹<<५*०.२=१>>१ ने जास्त महाग होती
+म्हणून तिची किंमत ५+१=₹<<५+१=६>>६ प्रति किलोग्रॅम झाली
+तो एका आठवड्यात १*७=<<१*७=७>>७ किलोग्रॅम कॉफी वापरतो
+म्हणून त्याने कॉफीसाठी ६*७=₹<<६*७=४२>>४२ दिले
+म्हणजे त्याचे एकूण बिल ४२+२=₹<<४२+२=४४>>४४ झाले
+#### ४४
+"""
+
+id_orig = 661
+
+id_shuffled = 42
+
+question_annotated = """
+{name,प्रणव} काही {item,कॉफी} खरेदी करण्यासाठी दुकानात जातो. तो नेहमी जी {item,कॉफी} घेतो त्या ब्रँडची किंमत प्रति {unit,किलोग्रॅम} {cur,₹}{price,५} आहे. त्याचा आवडता ब्रँड संपला असल्यामुळे त्याला {percent,२०}% जास्त महाग असलेला दुसरा ब्रँड घ्यावा लागला. तो एका आठवड्यापुरती {item,कॉफी} खरेदी करण्याचे ठरवतो आणि तो दररोज {usage,१} {unit,किलोग्रॅम} {item,कॉफी} वापरतो. त्याने स्वतःसाठी {cur,₹}{extra_price,२} ला एक {extra_item,डोनट}ही घेतला. सगळ्याची एकूण किंमत किती झाली?
+
+#init:
+- name = sample(names_male)
+- item = sample(['चहा', 'साखर', 'पीठ', 'तांदूळ'])
+- cur = sample(currencies_sym)
+- unit = sample(['किलोग्रॅम', 'कि.ग्रॅ.'])
+- extra_item = sample(['कुकी', 'मफिन', 'बेगल'])
+- $price = range(3, 25)
+- $percent = range(10, 50, 5)
+- $usage = range(1, 3)
+- $extra_price = range(1, 5)
+
+#conditions:
+- is_int(price * percent / 100)
+
+#answer: (price + price * percent / 100) * 7 * usage + extra_price
+"""
+
+answer_annotated = """
+त्याने घेतलेली {item} तो नेहमी घेतो त्या {item}पेक्षा प्रति {unit} {price}*{percent/100}={cur}<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} ने जास्त महाग होती
+म्हणून तिची किंमत {price}+{price*percent//100}={cur}<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} प्रति {unit} झाली
+तो एका आठवड्यात {usage}*७=<<{usage}*७={usage*7}>>{usage*7} {unit} {item} वापरतो
+म्हणून त्याने {item}साठी {price+price*percent/100}*{usage*7}={cur}<<{price+price*percent/100}*{usage*7}={int((price+price*percent/100)*usage*7)}>>{int((price+price*percent/100)*usage*7)} दिले
+म्हणजे त्याचे एकूण बिल {int((price+price*percent/100)*usage*7)}+{extra_price}={cur}<<{int((price+price*percent/100)*usage*7)}+{extra_price}={int((price+price*percent/100)*usage*7)+extra_price}>>{int((price+price*percent/100)*usage*7)+extra_price} झाले
+#### {int((price+price*percent/100)*usage*7)+extra_price}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

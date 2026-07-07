@@ -1,9 +1,9 @@
 question = "Maður borðar 5 samlokur á dag, konan hans borðar 4 samlokur á dag og sonur þeirra borðar 2 samlokur á dag. Hversu margar samlokur borðar þessi fjölskylda á einni viku?"
 
 answer = """
-Fjöldi samloka sem þau borða á einum dag er 5 + 4 + 2 = <<5+4+2=11>>11 samlokur.
-Fjöldi samloka sem þau borða á einni viku er 11 * 30 = <<11*30=330>>330 samlokur.
-#### 330
+Fjöldi samloka sem þau borða á einum degi er 5 + 4 + 2 = <<5+4+2=11>>11 samlokur.
+Fjöldi samloka sem þau borða á einni viku er 11 * 7 = <<11*7=77>>77 samlokur.
+#### 77
 """
 
 id_orig = 1023
@@ -11,29 +11,30 @@ id_orig = 1023
 id_shuffled = 26
 
 question_annotated = """
-{name1,maður} borðar {n1,5} {food,samlokur} á {time_unit,dag}, {name2,konan hans} borðar {n2,4} {food,samlokur} á {time_unit,dag} og {relation,sonur} þeirra borðar {n3,2} {food,samlokur} á {time_unit,dag}. Hversu margar {food,samlokur} borðar þessi fjölskylda á einni {time_period,viku}{placeholder_txt,?}
+{name1,Maður} borðar {n1,5} {food_acc_pl,samlokur} á {time_unit_acc,dag}, {name2,konan hans} borðar {n2,4} {food_acc_pl,samlokur} á {time_unit_acc,dag} og {relation,sonur} þeirra borðar {n3,2} {food_acc_pl,samlokur} á {time_unit_acc,dag}. Hversu {quant,margar} {food_acc_pl,samlokur} borðar þessi fjölskylda á {einn_dat,einni} {time_period,viku}{placeholder_txt,?}
 
 #init:
-- name1 = sample(["Faðir", "Afi", "Frændi"])
-- name2 = sample(["kona hans", "félagi hans", "maki hans"])
-- relation = sample(["dóttir", "sonur", "barnabarn"])
-- food = sample(["pizzaer", "burritos", "tacos", "sushi-ruller", "hamburgere"])
-- time_unit = sample(["dagur"])
-- time_period = sample(["vika", "mánuður"])
-- placeholder_txt = "? Gerið ráð fyrir að mánuður hafi 30 daga." if time_period == "mánuður" else "?"
+- name1 = sample(["Maður", "Faðir", "Afi", "Frændi"])
+- name2 = sample(["konan hans", "sambýliskona hans", "makinn hans"])
+- relation = sample(["sonur", "dóttir", "barnabarn"])
+- food_acc_pl, food_gen_pl = sample([("samlokur", "samloka"), ("pítsur", "pítsa"), ("vefjur", "vefja"), ("hamborgara", "hamborgara"), ("sushibita", "sushibita")])
+- quant = "margar" if food_acc_pl == "samlokur" or food_acc_pl == "pítsur" or food_acc_pl == "vefjur" else "marga"
+- time_unit_acc, time_unit_dat = sample([("dag", "degi")])
+- time_period, einn_dat = sample([("viku", "einni"), ("mánuði", "einum")])
+- placeholder_txt = "? Gerið ráð fyrir að mánuður hafi 30 daga." if time_period == "mánuði" else "?"
 - $n1 = range(2, 9)
 - $n2 = range(2, 9)
 - $n3 = range(2, 9)
 
-#answer: (n1 + n2 + n3) * (7 if time_period == "week" else 30)
+#answer: (n1 + n2 + n3) * (7 if time_period == "viku" else 30)
 """
 
 answer_annotated = """
-Fjöldi samloka sem þau borða á einum {time_unit} er {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food}.
-Fjöldi samloka sem þau borða á einni {time_period} er {n1+n2+n3} * {7 if time_period == "uge" else 30} = <<{n1+n2+n3}*{7 if time_period == "uge" else 30}={(n1+n2+n3)*(7 if time_period == "uge" else 30)}>>{(n1+n2+n3)*(7 if time_period == "uge" else 30)} {food}.
-#### {(n1+n2+n3)*(7 if time_period == "uge" else 30)}
+Fjöldi {food_gen_pl} sem þau borða á einum {time_unit_dat} er {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food_acc_pl}.
+Fjöldi {food_gen_pl} sem þau borða á {einn_dat} {time_period} er {n1+n2+n3} * {7 if time_period == "viku" else 30} = <<{n1+n2+n3}*{7 if time_period == "viku" else 30}={(n1+n2+n3)*(7 if time_period == "viku" else 30)}>>{(n1+n2+n3)*(7 if time_period == "viku" else 30)} {food_acc_pl}.
+#### {(n1+n2+n3)*(7 if time_period == "viku" else 30)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

@@ -1,0 +1,42 @@
+question = "मयूरकडे ₹१२.४८ आहेत आणि त्याला हार्डवेअर दुकानातील डब्यातून १६ बोल्ट खरेदी करायचे आहेत. प्रत्येक बोल्ट ची किंमत ₹०.०३ आहे. बोल्ट चे पैसे दिल्यानंतर मयूरकडे किती पैसे उरतील?"
+
+answer = """
+मयूरने बोल्टs साठी १६ * ₹० = ₹<<१६*०=०>>० दिले.
+मयूरकडे ₹१२.४८ - ₹० = ₹१२ उरतात.
+#### १२
+"""
+
+id_orig = 873
+
+id_shuffled = 30
+
+question_annotated = """
+{name,मयूर}कडे {cur,₹}{initial_amount,१२.४८} आहेत आणि त्याला {store_type,हार्डवेअर} दुकानातील डब्यातून {quantity,१६} {item,बोल्ट} खरेदी करायचे आहेत. प्रत्येक {item,बोल्ट} ची किंमत {cur,₹}{unit_price,०.०३} आहे. {item,बोल्ट} चे पैसे दिल्यानंतर {name,मयूर}कडे किती पैसे उरतील?
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- item = sample(["स्क्रू", "खिळा", "वॉशर", "नट", "अँकर"])
+- store_type = sample(["हार्डवेअर", "घर दुरुस्ती", "बांधकाम साहित्य"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(12.48, 105, 0.48)
+- $unit_price = arange(0.01, 1, 0.01)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: round(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name}ने {item}s साठी {quantity} * {cur}{round(unit_price)} = {cur}<<{quantity}*{round(unit_price)}={round(quantity*unit_price)}>>{round(quantity*unit_price)} दिले.
+{name}कडे {cur}{initial_amount} - {cur}{round(quantity*unit_price)} = {cur}{round(initial_amount - quantity * unit_price)} उरतात.
+#### {round(initial_amount - quantity * unit_price)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

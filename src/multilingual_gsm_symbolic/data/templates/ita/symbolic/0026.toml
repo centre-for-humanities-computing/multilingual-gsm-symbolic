@@ -11,27 +11,26 @@ id_orig = 1023
 id_shuffled = 26
 
 question_annotated = """
-{name1,un uomo} mangia {n1,5} {food,panini} al {time_unit,giorno}, {name2,sua moglie} mangia {n2,4} {food,panini} al {time_unit,giorno} e il loro {relation,figlio} mangia {n3,2} {food,panini} al {time_unit,giorno}. Quanti {food,panini} mangia questa famiglia in una {time_period,settimana}{placeholder_txt,?}
+{name1,un uomo} mangia {n1,5} {food,panini} al {time_unit,giorno}, {name2,sua moglie} mangia {n2,4} {food,panini} al {time_unit,giorno} e il loro {relation,figlio} mangia {n3,2} {food,panini} al {time_unit,giorno}. Quanti {food,panini} mangia questa famiglia in {time_period_article,una} {time_period,settimana}{placeholder_txt,?}
 
 #init:
-- name1 = sample(["En far", "En bedstefar", "En onkel"])
-- name2 = sample(["hans kone", "hans partner", "hans ægtefælle"])
-- relation = sample(["datter", "søn", "barnebarn"])
-- food = sample(["pizzaer", "burritos", "tacos", "sushi-ruller", "hamburgere"])
-- time_unit = sample(["dag"])
-- time_period = sample(["uge", "måned"])
-- placeholder_txt = "? Supponi che un mese abbia 30 giorni." if time_period == "måned" else "?"
+- name1 = sample(["Un padre", "Un nonno", "Uno zio"])
+- name2 = sample(["sua moglie", "il suo partner"])
+- relation = sample(["figlio", "nipote"])
+- food = sample(["pizze", "hamburger", "piatti di pasta"])
+- time_unit = sample(["giorno"])
+- time_period, time_period_article, days, placeholder_txt = sample([["settimana", "una", 7, "?"], ["mese", "un", 30, "? Supponi che un mese abbia 30 giorni."]])
 - $n1 = range(2, 9)
 - $n2 = range(2, 9)
 - $n3 = range(2, 9)
 
-#answer: (n1 + n2 + n3) * (7 if time_period == "week" else 30)
+#answer: (n1 + n2 + n3) * days
 """
 
 answer_annotated = """
 Il numero di {food} che mangiano in un {time_unit} è {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food}.
-Il numero di {food} che mangiano in una {time_period} è {n1+n2+n3} * {7 if time_period == "week" else 30} = <<{n1+n2+n3}*{7 if time_period == "week" else 30}={(n1+n2+n3)*(7 if time_period == "week" else 30)}>>{(n1+n2+n3)*(7 if time_period == "week" else 30)} {food}.
-#### {(n1+n2+n3)*(7 if time_period == "week" else 30)}
+Il numero di {food} che mangiano in {time_period_article} {time_period} è {n1+n2+n3} * {days} = <<{n1+n2+n3}*{days}={(n1+n2+n3)*days}>>{(n1+n2+n3)*days} {food}.
+#### {(n1+n2+n3)*days}
 """
 
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"

@@ -1,10 +1,13 @@
-question = "Pat ha un’aiuola lunga 111 piedi. Pat vuole riempire la sua aiuola con piante. I fiori di Pat crescono larghi 12 pollici, e le linee guida di giardinaggio dicono di piantare un fiore ogni 1.5 piedi lungo l’aiuola. Pat possiede già 17 fiori. Ogni pianta in fiore costa $6 al negozio. Quanto denaro spenderà Pat per riempire la sua aiuola?"
+question = """
+Laura ha un'aiuola lunga 30 metri. Laura vuole riempire la sua aiuola con piante. I fiori di Laura crescono larghi 30 centimetri, e le linee guida di giardinaggio dicono di piantare un fiore ogni 50 centimetri lungo l'aiuola. Laura possiede già 17 fiori. Ogni pianta in fiore costa 6 euro al negozio. Quanto denaro spenderà Laura per riempire la sua aiuola?
+"""
 
 answer = """
-L’aiuola di Pat è lunga 111 piedi / 1.5 piedi per pianta = <<111/1.5=74>>74 piante necessarie.
-Pat deve comprare 74 piante - 17 piante = <<74-17=57>>57 piante da acquistare.
-Pat spenderà 57 piante * $6 = $<<57*6=342>>342.
-#### 342
+L'aiuola di Laura è lunga 30 metri, cioè 3000 centimetri.
+Servono 3000 centimetri / 50 centimetri per pianta = <<3000/50=60>>60 piante.
+Laura deve comprare 60 piante - 17 piante = <<60-17=43>>43 piante da acquistare.
+Laura spenderà 43 piante * 6 euro = <<43*6=258>>258 euro.
+#### 258
 """
 
 id_orig = 984
@@ -12,34 +15,34 @@ id_orig = 984
 id_shuffled = 45
 
 question_annotated = """
-{name,Pat} ha un’aiuola lunga {length,111} {unit_length,piedi}. {name,Pat} vuole riempire la sua aiuola con piante. I fiori di {name,Pat} crescono larghi {plant_width,12} pollici, e le linee guida di giardinaggio dicono di piantare un fiore ogni {space,1.5} {unit_length,piedi} lungo l’aiuola. {name,Pat} possiede già {owned,17} fiori. Ogni pianta in fiore costa {cur,$}{cost,6} al negozio. Quanto denaro spenderà {name,Pat} per riempire la sua aiuola?
+{name,Laura} ha un'aiuola lunga {length,30} {unit_length,metri}. {name,Laura} vuole riempire la sua aiuola con piante. I fiori di {name,Laura} crescono larghi {plant_width,30} centimetri, e le linee guida di giardinaggio dicono di piantare un fiore ogni {space,50} centimetri lungo l'aiuola. {name,Laura} possiede già {owned,17} fiori. Ogni pianta in fiore costa {cost,6} {cur,euro} al negozio. Quanto denaro spenderà {name,Laura} per riempire la sua aiuola?
 
 #init:
-- name = sample(names_female)
-- unit_length = sample(['piedi', 'metri'])
+- name = sample(["Laura"])
+- unit_length = sample(["metri"])
 - cur = sample(currencies_sym)
-- $length = range(110, 220)
-- $plant_width = range(2, 13)
-- $space = arange(1, 20, 0.25)
+- $length = range(30, 60)
+- $plant_width = range(5, 35)
+- $space = range(35, 100)
 - $owned = range(10, 30)
 - $cost = range(3, 15)
 
 #conditions:
-- plant_width * 3 < length
 - plant_width < space
-- is_int(length / space)
-- length / space > owned
+- is_int((length * 100) / space)
+- (length * 100) / space > owned
 
-#answer: int((length / space - owned) * cost)
+#answer: int(((length * 100) / space - owned) * cost)
 """
 
 answer_annotated = """
-L’aiuola di {name} è lunga {length} {unit_length} / {space} {unit_length} per pianta = <<{length}/{space}={int(length/space)}>>{int(length/space)} piante necessarie.
-{name} deve comprare {int(length/space)} piante - {owned} piante = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} piante da acquistare.
-{name} spenderà {int(length/space)-owned} piante * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}.
-#### {int((length/space - owned) * cost)}
+L'aiuola di {name} è lunga {length} {unit_length}, cioè {int(length*100)} centimetri.
+Servono {int(length*100)} centimetri / {space} centimetri per pianta = <<{int(length*100)}/{space}={int((length*100)/space)}>>{int((length*100)/space)} piante.
+{name} deve comprare {int((length*100)/space)} piante - {owned} piante = <<{int((length*100)/space)}-{owned}={int((length*100)/space)-owned}>>{int((length*100)/space)-owned} piante da acquistare.
+{name} spenderà {int((length*100)/space)-owned} piante * {cost} {cur} = <<{int((length*100)/space)-owned}*{cost}={int((((length*100)/space) - owned) * cost)}>>{int((((length*100)/space) - owned) * cost)} {cur}.
+#### {int((((length*100)/space) - owned) * cost)}
 """
 
-creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated; adapted to metric units"
 
 language = "ita"

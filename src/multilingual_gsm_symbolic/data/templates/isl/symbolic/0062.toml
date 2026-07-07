@@ -1,9 +1,9 @@
-question = "Í safni af galdrakortum eru 15 rauðra spil og 60% fleiri grænna spil. Gul spil eru jafnmörg og samanlagður fjöldi rauðra og grænna spila. Hversu mörg spil af öllum nefndum litum eru þar?"
+question = "Í safni af galdraspilum eru 15 rauð spil og 60% fleiri græn spil. Fjöldi gulra spila er jafn samanlögðum fjölda rauðra og grænna spila. Hversu mörg spil af öllum nefndum litum eru þar?"
 
 answer = """
-Það eru 60/100 * 15 = <<60/100*15=9>>9 fleiri grænna spil en rauðra spil.
-Sem þýðir að það eru 15 + 9 = <<15+9=24>>24 grænna spil.
-Gul spil eru alls 15 + 24 = <<15+24=39>>39 spil.
+Það eru 60/100 * 15 = <<60/100*15=9>>9 fleiri græn spil en rauð spil.
+Sem þýðir að það eru 15 + 9 = <<15+9=24>>24 græn spil.
+Það eru því 15 + 24 = <<15+24=39>>39 gul spil.
 Samtals eru því 39 + 39 = <<39+39=78>>78 spil í mismunandi litum.
 #### 78
 """
@@ -13,29 +13,32 @@ id_orig = 456
 id_shuffled = 62
 
 question_annotated = """
-Í safni af {item,galdra}kortum eru {n1,15} {c1,rauð} spil og {p,60}% fleiri {c2,græn} spil. {c3,gul} spil eru jafnmörg og samanlagður fjöldi {c1,rauðra} og {c2,grænna} spila. Hversu mörg spil af öllum nefndum litum eru þar?
+Í safni af {item,galdra}spilum eru {n1,15} {c1_nf,rauð} spil og {p,60}% fleiri {c2_nf,græn} spil. Fjöldi {c3_ef,gulra} spila er jafn samanlögðum fjölda {c1_ef,rauðra} og {c2_ef,grænna} spila. Hversu mörg spil af öllum nefndum litum eru þar?
 
 #init:
-- item = sample(["trylle", "tryllekunstner", "magiker", "kunstner", "magi"])
-- c1, c2, c3 = sample(["rauðar", "bláar", "grænar", "gular", "fjólubláar", "orange"], 3)
+- item = sample(["galdra", "töfra", "galdramanna", "töframanna", "lista"])
+- (c1_nf, c1_ef), (c2_nf, c2_ef) = sample([("rauð", "rauðra"), ("blá", "blárra"), ("græn", "grænna"), ("gul", "gulra"), ("fjólublá", "fjólublárra"), ("appelsínugul", "appelsínugulra")], 2)
+- c3_nf, c3_ef = sample([("rauð", "rauðra"), ("blá", "blárra"), ("græn", "grænna"), ("gul", "gulra"), ("fjólublá", "fjólublárra"), ("appelsínugul", "appelsínugulra")])
 - $n1 = range(15, 81)
 - $p = range(20, 90)
 
 #conditions:
 - p < 100
 - is_int(p/100 * n1)
+- c3_nf != c1_nf
+- c3_nf != c2_nf
 
 #answer: 2 * (n1 + (p/100 * n1))
 """
 
 answer_annotated = """
-Það eru {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} fleiri {c2} spil en {c1} spil.
-Sem þýðir að það eru {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)} {c2} spil.
-{c3} spil eru alls {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} spil.
-Samtals eru því {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{ 2*(n1+(n1+int(p/100*n1)))} spil í mismunandi litum.
+Það eru {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} fleiri {c2_nf} spil en {c1_nf} spil.
+Sem þýðir að það eru {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)} {c2_nf} spil.
+Það eru því {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} {c3_nf} spil.
+Samtals eru því {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{2*(n1+(n1+int(p/100*n1)))} spil í mismunandi litum.
 #### {2*(n1+(n1+int(p/100*n1)))}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

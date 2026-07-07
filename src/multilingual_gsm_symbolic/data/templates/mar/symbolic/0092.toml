@@ -1,0 +1,47 @@
+question = "राजपुत्र आदित्य ने आपल्या पराक्रमी तलवार ने १०० ड्रॅगन मारले, तर राजपुत्र सचिन ने भाला वापरून राजपुत्र आदित्य ने मारलेल्या ड्रॅगन च्या तीन चतुर्थांश इतके ड्रॅगन मारले. गंजलेली लोखंडी कुऱ्हाड वापरून राजपुत्र अर्जुन ने राजपुत्र सचिन पेक्षा दुप्पट ड्रॅगन मारले. पण राजपुत्र अजय ने आपली तलवार घरी विसरल्यामुळे, नख घासायची फाईल वापरून राजपुत्र अर्जुन ने मारलेल्या ड्रॅगन च्या एक पंचमांश इतके ड्रॅगन मारले. राजपुत्र अजय ने किती ड्रॅगन मारले?"
+
+answer = """
+राजपुत्र सचिन ने राजपुत्र आदित्य ने मारलेल्या ड्रॅगन च्या तीन चतुर्थांश इतके ड्रॅगन मारले, म्हणजे १००*३/४=<<१००*३/४=७५>>७५ ड्रॅगन.
+राजपुत्र अर्जुन ने राजपुत्र सचिन पेक्षा दुप्पट ड्रॅगन मारले, म्हणजे २*७५=<<२*७५=१५०>>१५० ड्रॅगन.
+राजपुत्र अजय ने राजपुत्र अर्जुन ने मारलेल्या ड्रॅगन च्या एक पंचमांश इतके ड्रॅगन मारले, म्हणजे १५०*१/५=<<१५०*१/५=३०>>३० ड्रॅगन.
+#### ३०
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+राजपुत्र {name1,आदित्य} ने आपल्या पराक्रमी {weapon1,तलवार} ने {n1,१००} {creature,ड्रॅगन} मारले, तर राजपुत्र {name2,सचिन} ने {weapon2,भाला} वापरून राजपुत्र {name1,आदित्य} ने मारलेल्या {creature,ड्रॅगन} च्या {frac1_txt,तीन चतुर्थांश} इतके {creature,ड्रॅगन} मारले. {weapon3,गंजलेली लोखंडी कुऱ्हाड} वापरून राजपुत्र {name3,अर्जुन} ने राजपुत्र {name2,सचिन} पेक्षा {mult1_txt,दुप्पट} {creature,ड्रॅगन} मारले. पण राजपुत्र {name4,अजय} ने आपली {weapon4,तलवार} घरी विसरल्यामुळे, {weapon5,नख घासायची फाईल} वापरून राजपुत्र {name3,अर्जुन} ने मारलेल्या {creature,ड्रॅगन} च्या {frac2_txt,एक पंचमांश} इतके {creature,ड्रॅगन} मारले. राजपुत्र {name4,अजय} ने किती {creature,ड्रॅगन} मारले?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["राक्षस", "ट्रोल", "गोब्लिन", "ऑर्क", "दानव"])
+- weapon1 = sample(["तलवार", "गदा", "युद्धकुऱ्हाड", "युद्धहातोडा"])
+- weapon2 = sample(["भाला", "लान्स", "फेकभाला", "हॅलबर्ड"])
+- weapon3 = sample(["गंजलेली लोखंडी कुऱ्हाड", "लाकडी दांडा", "दगडी हातोडा", "हाडाची कट्यार"])
+- weapon4 = sample(["तलवार", "कुऱ्हाड", "गदा", "हातोडा"])
+- weapon5 = sample(["नख घासायची फाईल", "बटर नाइफ", "लाकडी चमचा", "पिस"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times2)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+राजपुत्र {name2} ने राजपुत्र {name1} ने मारलेल्या {creature} च्या {frac1_txt} इतके {creature} मारले, म्हणजे {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+राजपुत्र {name3} ने राजपुत्र {name2} पेक्षा {mult1_txt} {creature} मारले, म्हणजे {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+राजपुत्र {name4} ने राजपुत्र {name3} ने मारलेल्या {creature} च्या {frac2_txt} इतके {creature} मारले, म्हणजे {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

@@ -1,0 +1,48 @@
+question = "लता के पिता ने कहा कि उसके जन्मदिन की पार्टी के लिए ₹९० का बजट रखा गया है। वह यह सुनिश्चित करना चाहती है कि वह और उसके सभी दोस्त मिनी गोल्फ का एक राउंड खेलें, आर्केड टोकन में ₹५ हों, और गो-कार्ट्स की सवारी दो बार कर सकें। मिनी गोल्फ का एक राउंड ₹५ का है। गो-कार्ट्स की एक सवारी की कीमत ₹१० है। वह कितने दोस्तों को निमंत्रित कर सकती है?"
+
+answer = """
+गो-कार्ट्स की लागत प्रति व्यक्ति ₹२० होगी क्योंकि १०*२ = <<१०*२=२०>>२०
+प्रत्येक व्यक्ति पर ₹३० खर्च होगा क्योंकि ५ + ५ + २० = <<५+५+२०=३०>>३०
+कुल ३ लोग आ सकते हैं क्योंकि ९० / ३० = <<९०/३०=३>>३
+वह २ दोस्तों को निमंत्रित कर सकती है क्योंकि ३ - १ =<<३-१=२>>२
+#### २
+"""
+
+id_orig = 357
+
+id_shuffled = 96
+
+question_annotated = """
+{name,लता} के {parent,पिता} ने कहा कि उसके जन्मदिन की पार्टी के लिए {cur,₹}{budget,९०} का बजट रखा गया है। वह यह सुनिश्चित करना चाहती है कि वह और उसके सभी दोस्त {activity1,मिनी गोल्फ} का एक राउंड खेलें, {activity2,आर्केड} टोकन में {cur,₹}{tokens,५} हों, और {activity3,गो-कार्ट्स} की सवारी {times_txt,दो बार} कर सकें। {activity1,मिनी गोल्फ} का एक राउंड {cur,₹}{cost1,५} का है। {activity3,गो-कार्ट्स} की एक सवारी की कीमत {cur,₹}{cost2,१०} है। वह कितने दोस्तों को निमंत्रित कर सकती है?
+
+#init:
+- name = sample(names_female)
+- parent = sample(["माँ", "पिता", "चाची", "चाचा"])
+- activity1 = sample(["मिनी गोल्फ", "बॉलिंग", "लेज़र टैग"])
+- activity2 = sample(["आर्केड", "गेम रूम", "पिनबॉल"])
+- activity3 = sample(["गो-कार्ट्स", "बम्पर कारें", "रोलर कोस्टर"])
+- cur = sample(currencies_sym)
+- times_txt, times_val = sample(multi_times)
+- $budget = range(50, 301, 10)
+- $tokens = range(3, 11)
+- $cost1 = range(3, 11)
+- $cost2 = range(5, 21)
+
+#conditions:
+- budget % (tokens + cost1 + cost2 * times_val) == 0
+- budget // (tokens + cost1 + cost2 * times_val) > 1
+
+#answer: budget // (tokens + cost1 + cost2 * times_val) - 1
+"""
+
+answer_annotated = """
+{activity3} की लागत प्रति व्यक्ति {cur}{cost2 * times_val} होगी क्योंकि {cost2}*{times_val} = <<{cost2}*{times_val}={cost2*times_val}>>{cost2*times_val}
+प्रत्येक व्यक्ति पर {cur}{tokens + cost1 + cost2*times_val} खर्च होगा क्योंकि {tokens} + {cost1} + {cost2*times_val} = <<{tokens}+{cost1}+{cost2*times_val}={tokens + cost1 + cost2*times_val}>>{tokens + cost1 + cost2*times_val}
+कुल {budget // (tokens + cost1 + cost2 * times_val)} लोग आ सकते हैं क्योंकि {budget} / {tokens + cost1 + cost2*times_val} = <<{budget}/{tokens + cost1 + cost2*times_val}={budget // (tokens + cost1 + cost2 * times_val)}>>{budget // (tokens + cost1 + cost2 * times_val)}
+वह {budget // (tokens + cost1 + cost2 * times_val) - 1} दोस्तों को निमंत्रित कर सकती है क्योंकि {budget // (tokens + cost1 + cost2 * times_val)} - १ =<<{budget // (tokens + cost1 + cost2 * times_val)}-१={budget // (tokens + cost1 + cost2 * times_val) - 1}>>{budget // (tokens + cost1 + cost2 * times_val) - 1}
+#### {budget // (tokens + cost1 + cost2 * times_val) - 1}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

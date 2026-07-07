@@ -1,9 +1,9 @@
-question = "Niels safnar peningum fyrir skólaferð. Hann hefur sótt um aðstoð frá skólanum, sem hefur ákveðið að greiða hálfan kostnaðinn við skólaferðina. Hversu mikla peninga vantar Niels, ef hann á 350 kr og skólaferðin kostar 2000 kr?"
+question = "Jónas safnar peningum fyrir skólaferð. Hann hefur sótt um aðstoð frá skólanum, sem hefur ákveðið að greiða helming kostnaðarins við skólaferðina. Hversu mikla peninga þarf Jónas í viðbót, ef hann á 350 kr og skólaferðin kostar 2000 kr?"
 
 answer = """
-Skóla Niels hefur ákveðið að greiða 2000*1/2=<<2000*1/2=1000>>1000 kr fyrir skólaferðina hans.
-Samtals hefur Niels greitt 1000 + 350 = <<1000+350=1350>>1350 kr af skólaferðinni sinni
-Þess vegna þarf Niels 2000 - 1350 = <<2000-1350=650>>650 kr meira fyrir skólaferðina.
+Skólinn hefur ákveðið að greiða 2000*1/2=<<2000*1/2=1000>>1000 kr fyrir skólaferðina hans.
+Samtals er Jónas kominn með 1000 + 350 = <<1000+350=1350>>1350 kr fyrir skólaferðina.
+Þess vegna þarf Jónas 2000 - 1350 = <<2000-1350=650>>650 kr í viðbót fyrir skólaferðina.
 #### 650
 """
 
@@ -12,14 +12,14 @@ id_orig = 788
 id_shuffled = 35
 
 question_annotated = """
-{name,Niels} safnar peningum fyrir {event,skólaferð}. Hann hefur sótt um aðstoð frá {organization,skóla}num, sem hefur ákveðið að greiða {fraction_txt,hálfan} kostnaðinn við {event,skólaferð}ina. Hversu mikla peninga vantar {name,Niels}, ef hann á {current,350} {cur,kr} og {event,skólaferð}in kostar {total,2000} {cur,kr}?
+{name,Jónas} safnar peningum fyrir {event,skólaferð}. Hann hefur sótt um aðstoð frá {organization_dat_def,skólanum}, sem hefur ákveðið að greiða {fraction_txt,helming} kostnaðarins við {event,skólaferð}ina. Hversu mikla peninga þarf {name,Jónas} í viðbót, ef hann á {current,350} {cur,kr} og {event,skólaferð}in kostar {total,2000} {cur,kr}?
 
 #init:
 - name = sample(names_male)
-- event = sample(["ekskursion", "sportsturnering", "konference", "festival", "videnskabsmesse"])
+- event = sample(["skólaferð", "vettvangsferð", "tónlistarhátíð", "íþróttahátíð", "vísindahátíð"])
 - cur = sample(currencies_sym)
-- organization = sample(["skole", "kommune", "lokale velgørenhedsorganisation", "ungdomsklub", "forældre"])
-- $fraction_txt, fraction_val = sample(fraction_alnum)
+- organization_nom_def, organization_dat_def = sample([("Skólinn", "skólanum"), ("Félagsmiðstöðin", "félagsmiðstöðinni"), ("Góðgerðarfélagið", "góðgerðarfélaginu"), ("Ungmennafélagið", "ungmennafélaginu"), ("Foreldrafélagið", "foreldrafélaginu")])
+- $fraction_txt, fraction_val = sample([("helming", "1/2"), ("þriðjung", "1/3"), ("fjórðung", "1/4"), ("fimmtung", "1/5")])
 - $current = range(50, 1350, 50)
 - $total = range(1350, 7000, 50)
 
@@ -33,12 +33,12 @@ question_annotated = """
 """
 
 answer_annotated = """
-{organization} {name} hefur ákveðið að greiða {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur} fyrir {event}ina hans.
-Samtals hefur {name} greitt {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} af {event}inni sinni
-Þess vegna þarf {name} {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} meira fyrir {event}ina.
+{organization_nom_def} hefur ákveðið að greiða {total}*{fraction_val}=<<{total}*{fraction_val}={total*(fraction_val)}>>{total*(fraction_val)} {cur} fyrir {event}ina hans.
+Samtals er {name} kominn með {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} fyrir {event}ina.
+Þess vegna þarf {name} {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} í viðbót fyrir {event}ina.
 #### {total-(total*(fraction_val)+current)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

@@ -1,9 +1,9 @@
-question = "Julie afgreiðir kassann nákvæmlega tvisvar hraðar en minna reyndi samstarfsfélagi hennar Sofie. Sofie afgreiðir 50 viðskiptavini á dag. Hver er samanlögð vikuleg afköst þeirra tveggja ef þær vinna alla daga vikunnar?"
+question = "Júlía afgreiðir á kassanum nákvæmlega tvisvar hraðar en minna reyndi samstarfsfélaginn hennar, Sofie. Sofie afgreiðir 50 viðskiptavini á dag. Hver eru samanlögð vikuleg afköst þeirra tveggja ef þær vinna alla daga vikunnar?"
 
 answer = """
-Á meðan Sofie afgreiðir 50 pantanir á dag, afgreiðir Julie 50 pantanir/dag*2=<<50*2=100>>100 pantanir/dag.
-Á einum degi afgreiða þær 100 pantanir/dag + 50 pantanir/dag = <<100+50=150>>150 pantanir saman.
-Heildarfjöldi pantana sem þær tvær afgreiða á einni viku er 150 pantanir/dag * 7 dagar/vika = <<150*7=1050>>1050 pantanir
+Á meðan Sofie afgreiðir 50 pantanir á dag, afgreiðir Júlía 50 pantanir á dag * 2 = <<50*2=100>>100 pantanir á dag.
+Á einum degi afgreiða þær 100 pantanir á dag + 50 pantanir á dag = <<100+50=150>>150 pantanir saman.
+Heildarfjöldi pantana sem þær tvær afgreiða á einni viku er 150 pantanir á dag * 7 dagar í viku = <<150*7=1050>>1050 pantanir.
 #### 1050
 """
 
@@ -12,12 +12,13 @@ id_orig = 636
 id_shuffled = 97
 
 question_annotated = """
-{name1,Julie} afgreiðir kassann nákvæmlega {mult_txt,tvisvar} hraðar en minna reyndi samstarfsfélagi hennar {name2,Sofie}. {name2,Sofie} afgreiðir {n,50} viðskiptavini á dag. Hver er samanlögð vikuleg afköst þeirra tveggja ef þær vinna alla daga vikunnar?
+{name1,Júlía} afgreiðir á kassanum nákvæmlega {mult_txt,tvisvar} hraðar en minna reyndi samstarfsfélaginn hennar, {name2,Sofie}. {name2,Sofie} afgreiðir {n,50} {vidskiptavini,viðskiptavini} á dag. Hver eru samanlögð vikuleg afköst þeirra tveggja ef þær vinna alla daga vikunnar?
 
 #init:
 - name1, name2 = sample(names_female, 2)
-- mult_txt, mult_val = sample(multi_times)
+- mult_txt, mult_val = sample([("tvisvar", 2), ("þrisvar", 3), ("fjórum sinnum", 4), ("fimm sinnum", 5)])
 - $n = range(30, 100)
+- vidskiptavini = "viðskiptavin" if (n % 10 == 1 and n % 100 != 11) else "viðskiptavini"
 
 #conditions:
 - is_int(n * mult_val)
@@ -27,12 +28,12 @@ question_annotated = """
 """
 
 answer_annotated = """
-Á meðan {name2} afgreiðir {n} pantanir á dag, afgreiðir {name1} {n} pantanir/dag*{mult_val}=<<{n}*{mult_val}={n*mult_val}>>{n*mult_val} pantanir/dag.
-Á einum degi afgreiða þær {n*mult_val} pantanir/dag + {n} pantanir/dag = <<{n*mult_val}+{n}={n+n*mult_val}>>{n+n*mult_val} pantanir saman.
-Heildarfjöldi pantana sem þær tvær afgreiða á einni viku er {n+n*mult_val} pantanir/dag * 7 dagar/vika = <<{n+n*mult_val}*7={(n+n*mult_val)*7}>>{(n+n*mult_val)*7} pantanir
+Á meðan {name2} afgreiðir {n} {"pöntun" if (n % 10 == 1 and n % 100 != 11) else "pantanir"} á dag, afgreiðir {name1} {n} {"pöntun" if (n % 10 == 1 and n % 100 != 11) else "pantanir"} á dag * {mult_val} = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} {"pöntun" if ((n*mult_val) % 10 == 1 and (n*mult_val) % 100 != 11) else "pantanir"} á dag.
+Á einum degi afgreiða þær {n*mult_val} {"pöntun" if ((n*mult_val) % 10 == 1 and (n*mult_val) % 100 != 11) else "pantanir"} á dag + {n} {"pöntun" if (n % 10 == 1 and n % 100 != 11) else "pantanir"} á dag = <<{n*mult_val}+{n}={n+n*mult_val}>>{n+n*mult_val} {"pöntun" if ((n+n*mult_val) % 10 == 1 and (n+n*mult_val) % 100 != 11) else "pantanir"} saman.
+Heildarfjöldi pantana sem þær tvær afgreiða á einni viku er {n+n*mult_val} {"pöntun" if ((n+n*mult_val) % 10 == 1 and (n+n*mult_val) % 100 != 11) else "pantanir"} á dag * 7 dagar í viku = <<{n+n*mult_val}*7={(n+n*mult_val)*7}>>{(n+n*mult_val)*7} {"pöntun" if (((n+n*mult_val)*7) % 10 == 1 and ((n+n*mult_val)*7) % 100 != 11) else "pantanir"}.
 #### {(n+n*mult_val)*7}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

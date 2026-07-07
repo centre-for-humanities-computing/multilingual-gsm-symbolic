@@ -1,0 +1,39 @@
+question = "मयूर च्या आयताकृती शयनकक्ष चे क्षेत्रफळ ३३ चौरस मीटर आहे. जर खोलीची लांबी ३०० सेमी असेल, तर खोलीचा परिमिती मीटरमध्ये किती आहे?"
+
+answer = """
+खोलीची लांबी ३०० सेमी * १/१०० मीटर/सेमी = <<३००*(१/१००)=३>>३ मीटर आहे.
+खोलीची रुंदी ३३ चौरस मीटर / ३ मीटर = <<३३/३=११>>११ मीटर आहे.
+खोलीचा परिमिती २*(११+३) = २८ मीटर आहे
+#### २८
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+{name,मयूर} च्या आयताकृती {room_type,शयनकक्ष} चे क्षेत्रफळ {area,३३} चौरस मीटर आहे. जर खोलीची लांबी {length,३००} सेमी असेल, तर खोलीचा परिमिती मीटरमध्ये किती आहे?
+
+#init:
+- name = sample(names_male)
+- room_type = sample(["बैठक खोली", "अभ्यासिका", "कार्यालय", "स्वयंपाकघर"])
+- $area = range(18, 121)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+
+answer_annotated = """
+खोलीची लांबी {length} सेमी * १/१०० मीटर/सेमी = <<{length}*(१/१००)={length * (1/100)}>>{length * (1/100)} मीटर आहे.
+खोलीची रुंदी {area} चौरस मीटर / {length * (1/100)} मीटर = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} मीटर आहे.
+खोलीचा परिमिती २*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} मीटर आहे
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

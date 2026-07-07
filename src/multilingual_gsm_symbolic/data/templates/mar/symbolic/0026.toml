@@ -1,0 +1,37 @@
+question = "एक माणूस दररोज ५ सँडविच खातो, त्याची पत्नी दररोज ४ सँडविच खाते, आणि त्यांचा मुलगा दररोज २ सँडविच खातो. हे कुटुंब एका आठवड्यात किती सँडविच खाते?"
+
+answer = """
+ते एका रोजात खात असलेल्या सँडविचची संख्या ५ + ४ + २ = <<५+४+२=११>>११ सँडविच आहे.
+ते एका आठवड्यात खात असलेल्या सँडविचची संख्या ११ * ३० = <<११*३०=३३०>>३३० सँडविच आहे.
+#### ३३०"""
+
+id_orig = 1023
+
+id_shuffled = 26
+
+question_annotated = """
+{name1,एक माणूस} दर{time_unit,रोज} {n1,५} {food,सँडविच} खातो, {name2,त्याची पत्नी} दर{time_unit,रोज} {n2,४} {food,सँडविच} खाते, आणि त्यांचा {relation,मुलगा} दर{time_unit,रोज} {n3,२} {food,सँडविच} खातो. हे कुटुंब एका {time_period,आठवड्यात} किती {food,सँडविच} खाते?
+
+#init:
+- name1 = sample(["एक वडील", "एक आजोबा", "एक काका"])
+- name2 = sample(["त्याची पत्नी", "त्याची जोडीदार", "त्याची सहचारिणी"])
+- relation = sample(["मुलगी", "मुलगा", "नातवंड"])
+- food = sample(["पिझ्झा", "बुरिटो", "टॅको", "सुशी रोल", "हॅम्बर्गर"])
+- time_unit = sample(["रोज"])
+- time_period = sample(["आठवड्यात", "महिन्यात"])
+- $n1 = range(2, 9)
+- $n2 = range(2, 9)
+- $n3 = range(2, 9)
+
+#answer: (n1 + n2 + n3) * (7 if time_period == "week" else 30)
+"""
+
+answer_annotated = """
+ते एका {time_unit}ात खात असलेल्या {food}ची संख्या {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food} आहे.
+ते एका {time_period} खात असलेल्या {food}ची संख्या {n1+n2+n3} * {7 if time_period == "week" else 30} = <<{n1+n2+n3}*{7 if time_period == "week" else 30}={(n1+n2+n3)*(7 if time_period == "week" else 30)}>>{(n1+n2+n3)*(7 if time_period == "week" else 30)} {food} आहे.
+#### {(n1+n2+n3)*(7 if time_period == "week" else 30)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

@@ -1,10 +1,10 @@
-question = "Emilie getur afhýtt 6 rækjur á mínútu og steikt 30 rækjur á 10 mínútum. Hversu langan tíma mun það taka hana að afhýða og steikja 90 rækjur? Emilie getur ekki afhýtt og steikt á sama tíma."
+question = "Emilía getur skelflett 6 rækjur á mínútu og steikt 30 rækjur á 10 mínútum. Hversu langan tíma mun það taka hana að skelfletta og steikja 90 rækjur? Emilía getur ekki skelflett og steikt á sama tíma."
 
 answer = """
-Finndu fyrst út hversu langan tíma það tekur Emilie að afhýða rækjurnar: 90 rækjur / 6 rækjur/mínútu = <<90/6=15>>15 mínútur
-Síðan finnurðu út hversu marga skammta af rækjur hún þarf að elda: 90 rækjur / 30 rækjur/skammt = <<90/30=3>>3 skammtar
-Síðan margfaldarðu fjölda skammta með tímanum á hvern skammt til að finna heildareldunartímann: 3 skammtar * 10 mínútur/skammt = <<3*10=30>>30 mínútur
-Að lokum bætirðu afhýðingartímanum við til að finna heildartímann sem Emilie notar: 30 mínútur + 15 mínútur = <<30+15=45>>45 mínútur
+Fyrst finnum við hversu langan tíma það tekur Emilía að skelfletta rækjurnar: 90 rækjur / 6 rækjur/mínútu = <<90/6=15>>15 mínútur
+Síðan finnum við hversu marga skammta hún þarf að elda: 90 rækjur / 30 rækjur/skammt = <<90/30=3>>3 skammtar
+Því næst margföldum við fjölda skammta með tímanum á hvern skammt til að finna heildareldunartímann: 3 skammtar * 10 mínútur/skammt = <<3*10=30>>30 mínútur
+Að lokum bætum við tímanum sem fór í að skelfletta við til að finna heildartímann sem Emilía notar: 30 mínútur + 15 mínútur = <<30+15=45>>45 mínútur
 #### 45
 """
 
@@ -13,11 +13,13 @@ id_orig = 989
 id_shuffled = 48
 
 question_annotated = """
-{name,Emilie} getur afhýtt {n1,6} {food,rækjur} á mínútu og steikt {n2,30} {food,rækjur} á {t,10} mínútum. Hversu langan tíma mun það taka hana að afhýða og steikja {total,90} {food,rækjur}? {name,Emilie} getur ekki afhýtt og steikt á sama tíma.
+{name,Emilía} getur {verb_supine,skelflett} {n1,6} {food_acc_pl,rækjur} á mínútu og steikt {n2,30} {food_acc_pl,rækjur} á {t,10} mínútum. Hversu langan tíma mun það taka hana að {verb_inf,skelfletta} og steikja {total,90} {food_acc_pl,rækjur}? {name,Emilía} getur ekki {verb_supine,skelflett} og steikt á sama tíma.
 
 #init:
 - name = sample(names_female)
-- food = sample(["rækjur", "gulrætur", "kartöflur", "perur", "ertur"])
+- food_acc_pl, food_acc_pl_def = sample([("rækjur", "rækjurnar"), ("kartöflur", "kartöflurnar"), ("gulrætur", "gulræturnar"), ("sætkartöflur", "sætkartöflurnar"), ("rófur", "rófurnar")])
+- verb_supine = "skelflett" if food_acc_pl == "rækjur" else "afhýtt"
+- verb_inf = "skelfletta" if food_acc_pl == "rækjur" else "afhýða"
 - $n1 = range(4, 15)
 - $n2 = range(20, 50, 5)
 - $t = range(5, 20)
@@ -31,13 +33,13 @@ question_annotated = """
 """
 
 answer_annotated = """
-Finndu fyrst út hversu langan tíma það tekur {name} að afhýða {food}nar: {total} {food} / {n1} {food}/mínútu = <<{total}/{n1}={total//n1}>>{total//n1} mínútur
-Síðan finnurðu út hversu marga skammta af {food} hún þarf að elda: {total} {food} / {n2} {food}/skammt = <<{total}/{n2}={total//n2}>>{total//n2} skammtar
-Síðan margfaldarðu fjölda skammta með tímanum á hvern skammt til að finna heildareldunartímann: {total//n2} skammtar * {t} mínútur/skammt = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t} mínútur
-Að lokum bætirðu afhýðingartímanum við til að finna heildartímann sem {name} notar: {(total//n2)*t} mínútur + {total//n1} mínútur = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1} mínútur
+Fyrst finnum við hversu langan tíma það tekur {name} að {verb_inf} {food_acc_pl_def}: {total} {food_acc_pl} / {n1} {food_acc_pl}/mínútu = <<{total}/{n1}={total//n1}>>{total//n1} mínútur
+Síðan finnum við hversu marga skammta hún þarf að elda: {total} {food_acc_pl} / {n2} {food_acc_pl}/skammt = <<{total}/{n2}={total//n2}>>{total//n2} skammtar
+Því næst margföldum við fjölda skammta með tímanum á hvern skammt til að finna heildareldunartímann: {total//n2} skammtar * {t} mínútur/skammt = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t} {"mínúta" if ((total//n2)*t) % 10 == 1 and ((total//n2)*t) % 100 != 11 else "mínútur"}
+Að lokum bætum við tímanum sem fór í að {verb_inf} við til að finna heildartímann sem {name} notar: {(total//n2)*t} {"mínúta" if ((total//n2)*t) % 10 == 1 and ((total//n2)*t) % 100 != 11 else "mínútur"} + {total//n1} mínútur = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1} {"mínúta" if ((total//n2)*t + total//n1) % 10 == 1 and ((total//n2)*t + total//n1) % 100 != 11 else "mínútur"}
 #### {(total//n2)*t + total//n1}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

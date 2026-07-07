@@ -1,0 +1,40 @@
+question = "एका ब्रेडची भाकरीचे २४ स्लाइस आहेत. जर ललित दररोज २ स्लाइस खाऊ शकते आणि सुमित दुप्पट खाऊ शकतो, तर ब्रेडची भाकरी किती दिवस टिकेल?"
+
+answer = """
+सुमित दररोज २*२=<<२*२=४>>४ स्लाइस खाऊ शकतो.
+एकत्र, ललित आणि सुमित दररोज २ + ४ = <<२+४=६>>६ स्लाइस खाऊ शकतात.
+म्हणून, एक ब्रेडची भाकरी २४/६ = <<२४/६=४>>४ दिवस टिकेल.
+#### ४
+"""
+
+id_orig = 921
+
+id_shuffled = 37
+
+question_annotated = """
+एका {item,ब्रेडची भाकरी}चे {n,२४} {unit,स्लाइस} आहेत. जर {name1,ललित} दररोज {x,२} {unit,स्लाइस} खाऊ शकते आणि {name2,सुमित} {mult_txt,दुप्पट} खाऊ शकतो, तर {item,ब्रेडची भाकरी} किती दिवस टिकेल?
+
+#init:
+- item = sample(["पिझ्झा", "केक", "पाय", "लसग्ना"])
+- unit = sample(["तुकडे", "भाग", "सर्व्हिंग्स"])
+- name1, name2 = sample(names, 2)
+- $n = range(12, 76, 3)
+- $x = range(2, 13)
+- mult_txt, mult_val = sample(multi_times2)
+
+#conditions:
+- divides(n, x + x*mult_val)
+
+#answer: n // (x + x*mult_val)
+"""
+
+answer_annotated = """
+{name2} दररोज {x}*{mult_val}=<<{x}*{mult_val}={x*mult_val}>>{x*mult_val} {unit} खाऊ शकतो.
+एकत्र, {name1} आणि {name2} दररोज {x} + {x*mult_val} = <<{x}+{x*mult_val}={x+x*mult_val}>>{x+x*mult_val} {unit} खाऊ शकतात.
+म्हणून, एक {item} {n}/{x+x*mult_val} = <<{n}/{x+x*mult_val}={n//(x+x*mult_val)}>>{n//(x+x*mult_val)} दिवस टिकेल.
+#### {n//(x+x*mult_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

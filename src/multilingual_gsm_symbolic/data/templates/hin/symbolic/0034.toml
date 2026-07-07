@@ -1,0 +1,46 @@
+question = "श्री टैन ने अपना घर ₹४००००० में बेचा। उन्होंने हस्तांतरण शुल्क चुकाया, जो बिक्री मूल्य का ३% है, और साथ ही ५% का दलाली शुल्क भी चुकाया। यदि उन्होंने घर की शेष ऋण राशि के लिए ₹२५०००० भी चुकाए, तो घर बेचने से श्री टैन की शुद्ध प्राप्ति कितनी है?"
+
+answer = """
+श्री टैन ने हस्तांतरण शुल्क के लिए ₹४०००००*३/१०० = <<४०००००*३/१००=१२०००>>₹१२००० चुकाए।
+उन्होंने दलाली शुल्क के लिए ₹४०००००*५/१०० = <<४०००००*५/१००=२००००>>₹२०००० चुकाए।
+इसलिए, श्री टैन ने हस्तांतरण, दलाली, और ऋण शुल्क के लिए कुल ₹१२००० + ₹२०००० + ₹२५०००० = <<१२०००+२००००+२५००००=२८२०००>>₹२८२००० चुकाए।
+अतः, श्री टैन की शुद्ध प्राप्ति ₹४००००० - ₹२८२००० = <<४०००००-२८२०००=११८०००>>₹११८००० है।
+#### ११८०००
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{title,श्री} {name,टैन} ने अपना {property,घर} ₹{price,४०००००} में बेचा। उन्होंने {fee1_name,हस्तांतरण} शुल्क चुकाया, जो बिक्री मूल्य का {fee1_percent,३}% है, और साथ ही {fee2_percent,५}% का {fee2_name,दलाली} शुल्क भी चुकाया। यदि उन्होंने {property,घर} की शेष ऋण राशि के लिए ₹{loan,२५००००} भी चुकाए, तो {property,घर} बेचने से {title,श्री} {name,टैन} की शुद्ध प्राप्ति कितनी है?
+
+#init:
+- title = sample(['Mr.', 'Prof.', 'Dr.'])
+- name = sample(['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'])
+- property = sample(['घर', 'अपार्टमेंट', 'कॉन्डो', 'विला', 'कॉटेज'])
+- fee1_name = sample(['हस्तांतरण', 'पंजीकरण', 'कानूनी'])
+- fee2_name = sample(['दलाली', 'एजेंट', 'रियल्टर'])
+- $price = range(200000, 1000000, 10000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(100000, 700000, 10000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{title} {name} ने {fee1_name} शुल्क के लिए ₹{price}*{fee1_percent}/१०० = <<{price}*{fee1_percent}/१००={price * fee1_percent // 100}>>₹{price * fee1_percent // 100} चुकाए।
+उन्होंने {fee2_name} शुल्क के लिए ₹{price}*{fee2_percent}/१०० = <<{price}*{fee2_percent}/१००={price * fee2_percent // 100}>>₹{price * fee2_percent // 100} चुकाए।
+इसलिए, {title} {name} ने {fee1_name}, {fee2_name}, और ऋण शुल्क के लिए कुल ₹{price * fee1_percent // 100} + ₹{price * fee2_percent // 100} + ₹{loan} = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>₹{price * (fee1_percent + fee2_percent) // 100 + loan} चुकाए।
+अतः, {title} {name} की शुद्ध प्राप्ति ₹{price} - ₹{price * (fee1_percent + fee2_percent) // 100 + loan} = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>₹{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} है।
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

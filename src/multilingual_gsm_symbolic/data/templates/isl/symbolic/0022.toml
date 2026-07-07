@@ -1,8 +1,8 @@
-question = "Laura var að undirbúa matarboð heima hjá sér, þar sem hún ætlaði að bera fram pottrétt. Hún tók eftir því að hún var búin með plastskeiðar, svo hún keypti nýjan pakka af skeiðar. Síðar keypti maðurinn hennar líka pakka með fimm nýjum skeiðar og gaf þeim til Laura. Á meðan Laura eldaði pottrétt notaði hún þrír skeiðar til að smakka á pottréttnum sínum. Síðar, þegar hún fór að leggja á borð, átti hún alls 12 skeiðar. Hversu margar skeiðar voru í pakkanum sem Laura keypti?"
+question = "Lára var að undirbúa matarboð heima hjá sér, þar sem hún ætlaði að bera fram pottrétt. Hún tók eftir því að hún var búin með plastskeiðar, svo hún keypti nýjan pakka af skeiðum. Síðar keypti maðurinn hennar líka pakka með fimm nýjum skeiðum og gaf henni þær. Á meðan Lára eldaði pottrétt notaði hún þrjár skeiðar til að smakka á pottréttnum sínum. Síðar, þegar hún fór að leggja á borð, átti hún alls 12 skeiðar. Hversu margar skeiðar voru í pakkanum sem Lára keypti?"
 
 answer = """
-Heildarfjöldi skeiðar frá Laura og manni hennar var 12+3=<<12+3=15>>15 skeiðar.
-Þar sem maðurinn keypti pakka með fimm skeiðar, voru 15-5=<<15-5=10>>10 skeiðar í pakka Laura.
+Lára og maðurinn hennar keyptu samtals 12+3=<<12+3=15>>15 skeiðar.
+Þar sem maðurinn keypti pakka með fimm skeiðum, voru 15-5=<<15-5=10>>10 skeiðar í pakkanum sem Lára keypti.
 #### 10
 """
 
@@ -11,15 +11,15 @@ id_orig = 125
 id_shuffled = 22
 
 question_annotated = """
-{name,Laura} var að undirbúa {event,matarboð} heima hjá sér, þar sem hún ætlaði að bera fram {food,pottrétt}. Hún tók eftir því að hún var búin með plast{obj,skeiðar}, svo hún keypti nýjan pakka af {obj,skeiðar}. Síðar keypti maðurinn hennar líka pakka með {n1_txt,fimm} nýjum {obj,skeiðar} og gaf þeim til {name,Laura}. Á meðan {name,Laura} eldaði {food,pottrétt} notaði hún {n2_txt,þrír} {obj,skeiðar} til að smakka á {food,pottrétt}num sínum. Síðar, þegar hún fór að leggja á borð, átti hún alls {total,12} {obj,skeiðar}. Hversu margar {obj,skeiðar} voru í pakkanum sem {name,Laura} keypti?
+{name,Lára} var að undirbúa {event,matarboð} heima hjá sér, þar sem hún ætlaði að bera fram {food,pottrétt}. Hún tók eftir því að hún var búin með plast{obj_þf,skeiðar}, svo hún keypti nýjan pakka af {obj_þgf,skeiðum}. Síðar keypti maðurinn hennar líka pakka með {n1_txt,fimm} nýjum {obj_þgf,skeiðum} og gaf henni þær. Á meðan {name,Lára} eldaði {food,pottrétt} notaði hún {n2_txt,þrjár} {obj_þf,skeiðar} til að smakka á {food,pottrétt}num sínum. Síðar, þegar hún fór að leggja á borð, átti hún alls {total,12} {obj_þf,skeiðar}. Hversu margar {obj_nf,skeiðar} voru í pakkanum sem {name,Lára} keypti?
 
 #init:
 - name = sample(names_female)
 - event = sample(["hádegisveisla", "afmælisveisla", "samkoma", "babyveisla", "leikjakvöld"])
-- food = sample(["steikt kjúklingur", "grillað lax", "nautakjöt í potti", "grænmetislasagna", "fylltar papriku", "crème brûlée"])
-- obj = sample(["skeið", "gafflar", "diskar"])
+- food = sample(["steiktur kjúklingur", "grillaður lax", "nautakjöt í potti", "grænmetislasagna", "fylltar paprikur", "crème brûlée"])
+- obj_nf, obj_þf, obj_þgf = sample([("skeiðar", "skeiðar", "skeiðum"), ("skálar", "skálar", "skálum"), ("könnur", "könnur", "könnum")])
 - n1_txt, n1_val = range_str(5, 20, 1, numbers)
-- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- n2_txt, n2_val = sample([("þrjár", 3), ("fjórar", 4), ("fimm", 5), ("sex", 6), ("sjö", 7), ("átta", 8), ("níu", 9), ("tíu", 10)])
 - $total = range(12, 40)
 
 #conditions:
@@ -29,11 +29,11 @@ question_annotated = """
 """
 
 answer_annotated = """
-Heildarfjöldi {obj} frá {name} og manni hennar var {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj}.
-Þar sem maðurinn keypti pakka með {n1_txt} {obj}, voru {total+n2_val}-{n1_val}=<<{total+n2_val}-{n1_val}={total+n2_val-n1_val}>>{total+n2_val-n1_val} {obj} í pakka {name}.
+{name} og maðurinn hennar keyptu samtals {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj_nf}.
+Þar sem maðurinn keypti pakka með {n1_txt} {obj_þgf}, voru {total+n2_val}-{n1_val}=<<{total+n2_val}-{n1_val}={total+n2_val-n1_val}>>{total+n2_val-n1_val} {obj_nf} í pakkanum sem {name} keypti.
 #### {total+n2_val-n1_val}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

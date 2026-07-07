@@ -1,0 +1,46 @@
+question = "श्री. टॅन यांनी त्यांचे घर ₹४००००० ला विकले. त्यांनी विक्री किमतीच्या ३% इतकी हस्तांतरण शुल्के भरली आणि विक्री किमतीच्या ५% इतके दलाली शुल्कही भरले. जर त्यांनी घर उर्वरित कर्जरकमेपोटी ₹२५०००० देखील भरले, तर घर विकल्यावर श्री. टॅन यांना निव्वळ किती रक्कम मिळाली?"
+
+answer = """
+श्री. टॅन यांनी हस्तांतरण शुल्कासाठी ₹४०००००*३/१०० = <<४०००००*३/१००=१२०००>>₹१२००० भरले.
+त्यांनी दलाली शुल्कासाठी ₹४०००००*५/१०० = <<४०००००*५/१००=२००००>>₹२०००० भरले.
+म्हणून, श्री. टॅन यांनी हस्तांतरण, दलाली आणि कर्ज शुल्कांसाठी एकूण ₹१२००० + ₹२०००० + ₹२५०००० = <<१२०००+२००००+२५००००=२८२०००>>₹२८२००० भरले.
+म्हणून, श्री. टॅन यांना मिळालेली निव्वळ रक्कम ₹४००००० - ₹२८२००० = <<४०००००-२८२०००=११८०००>>₹११८००० आहे.
+#### ११८०००
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{title,श्री.} {name,टॅन} यांनी त्यांचे {property,घर} ₹{price,४०००००} ला विकले. त्यांनी विक्री किमतीच्या {fee1_percent,३}% इतकी {fee1_name,हस्तांतरण} शुल्के भरली आणि विक्री किमतीच्या {fee2_percent,५}% इतके {fee2_name,दलाली} शुल्कही भरले. जर त्यांनी {property,घराच्या} उर्वरित कर्जरकमेपोटी ₹{loan,२५००००} देखील भरले, तर {property,घर} विकल्यावर {title,श्री.} {name,टॅन} यांना निव्वळ किती रक्कम मिळाली?
+
+#init:
+- title = sample(['श्री.', 'प्रा.', 'डॉ.'])
+- name = sample(['स्मिथ', 'जॉन्सन', 'विल्यम्स', 'ब्राउन', 'जोन्स', 'गार्सिया', 'मिलर', 'डेव्हिस', 'रोड्रिगेझ', 'मार्टिनेझ'])
+- property = sample(['घर', 'अपार्टमेंट', 'कॉन्डो', 'व्हिला', 'कॉटेज'])
+- fee1_name = sample(['हस्तांतरण', 'नोंदणी', 'कायदेशीर'])
+- fee2_name = sample(['दलाली', 'एजंट', 'रिअल्टर'])
+- $price = range(200000, 1000000, 10000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(100000, 700000, 10000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{title} {name} यांनी {fee1_name} शुल्कासाठी ₹{price}*{fee1_percent}/१०० = <<{price}*{fee1_percent}/१००={price * fee1_percent // 100}>>₹{price * fee1_percent // 100} भरले.
+त्यांनी {fee2_name} शुल्कासाठी ₹{price}*{fee2_percent}/१०० = <<{price}*{fee2_percent}/१००={price * fee2_percent // 100}>>₹{price * fee2_percent // 100} भरले.
+म्हणून, {title} {name} यांनी {fee1_name}, {fee2_name} आणि कर्ज शुल्कांसाठी एकूण ₹{price * fee1_percent // 100} + ₹{price * fee2_percent // 100} + ₹{loan} = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>₹{price * (fee1_percent + fee2_percent) // 100 + loan} भरले.
+म्हणून, {title} {name} यांना मिळालेली निव्वळ रक्कम ₹{price} - ₹{price * (fee1_percent + fee2_percent) // 100 + loan} = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>₹{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} आहे.
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

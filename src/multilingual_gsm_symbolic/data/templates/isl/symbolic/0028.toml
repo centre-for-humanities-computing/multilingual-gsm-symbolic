@@ -1,11 +1,11 @@
-question = "Eitt sjúkrahús hefur afkastagetu upp á 1000 rúm og 1/5 er upptekið. Vegna kórónuveirufaraldursins leggjast 50 sjúklingar inn á sjúkrahúsið á hverjum degi. Reiknaðu heildarfjölda lausra rúm á sjúkrahúsið eftir tveir vikur."
+question = "Eitt sjúkrahús hefur pláss fyrir 1000 rúm og 1/5 þeirra er í notkun. Vegna kórónuveirufaraldursins leggjast 50 sjúklingar inn á sjúkrahúsið á hverjum degi. Reiknaðu heildarfjölda lausra rúma á sjúkrahúsinu eftir tvær vikur."
 
 answer = """
-Ef 1/5 af heildarfjölda rúm er upptekinn, þýðir það að 1/5 * 1000 = <<1000*1/5=200>>200 rúm eru í notkun af sjúklingum.
-Heildarfjöldi rúm á sjúkrahúsið án nýrra innlagna er 1000 rúm - 200 rúm = <<1000-200=800>>800 rúm.
-Ef 50 manns leggjast inn á hverjum degi, er heildarfjöldi sjúklinga á sjúkrahúsið eftir eina viku 50 sjúklingar/dag * 7 dagar/vika = 350 sjúklingar.
-Eftir tveir vikur er heildarfjöldi sjúklinga sem hafa lagst inn á sjúkrahúsið 350 sjúklingar/viku*2 vikur = <<350*2=700>>700 sjúklingar, sem hver um sig notar eitt rúm.
-Ef það voru 800 laus rúm á sjúkrahúsið fyrir nýju innlagnirnar, fækkar þeim í 800 rúm - 700 rúm = <<800-700=100>>100 laus rúm.
+Ef 1/5 af heildarfjölda rúma er í notkun, þýðir það að 1/5 * 1000 = <<1000*1/5=200>>200 rúm eru notuð af sjúklingum.
+Heildarfjöldi rúma á sjúkrahúsinu án nýrra innlagna er 1000 rúm - 200 rúm = <<1000-200=800>>800 rúm.
+Ef 50 manns leggjast inn á hverjum degi, er heildarfjöldi sjúklinga á sjúkrahúsinu eftir eina viku 50 sjúklingar/dag * 7 dagar/vika = 350 sjúklingar.
+Eftir tvær vikur er heildarfjöldi sjúklinga sem hafa lagst inn á sjúkrahúsið 350 sjúklingar/viku * 2 vikur = <<350*2=700>>700 sjúklingar, sem hver um sig notar eitt rúm.
+Ef það voru 800 laus rúm á sjúkrahúsinu fyrir nýju innlagnirnar, fækkar þeim í 800 rúm - 700 rúm = <<800-700=100>>100 laus rúm.
 #### 100
 """
 
@@ -14,16 +14,16 @@ id_orig = 955
 id_shuffled = 28
 
 question_annotated = """
-{facility_article, eitt} {facility, sjúkrahús} hefur afkastagetu upp á {total, 1000} {item_plural, rúm} og {frac, 1/5} er upptekið. Vegna {event, kórónuveirufaraldursins} leggjast {daily, 50} sjúklingar inn á {facility_definite, sjúkrahúsið} á hverjum degi. Reiknaðu heildarfjölda lausra {item_plural, rúm} á {facility_definite, sjúkrahúsið} eftir {period_txt,tveir} vikur.
+{facility_art,Eitt} {facility_nom,sjúkrahús} hefur pláss fyrir {total,1000} {item_nom_pl,rúm} og {frac,1/5} þeirra er í notkun. Vegna {event,kórónuveirufaraldursins} leggjast {daily,50} sjúklingar inn á {facility_acc_def,sjúkrahúsið} á hverjum degi. Reiknaðu heildarfjölda lausra {item_gen_pl,rúma} á {facility_dat_def,sjúkrahúsinu} eftir {period_txt,tvær} vikur.
 
 #init:
-- facility, facility_article, facility_definite = sample([("sjúkrahús", "eitt", "sjúkrahúsið"), ("læknastofa", "ein", "læknastofan"), ("heilsugæsla", "ein", "heilsugæslan"), ("hjúkrunarheimili", "eitt", "hjúkrunarheimilið")])
-- item, item_plural = sample([("rúm","rúm"), ("herbergi","herbergi"), ("deild","deildir")])
-- event = sample(["COVID-19 faraldurinn", "inflúensutímabilið", "náttúruhamfarirnar", "stórt slys", "heimsfaraldurinn"])
+- facility_nom, facility_art, facility_acc_def, facility_dat_def = sample([("sjúkrahús", "Eitt", "sjúkrahúsið", "sjúkrahúsinu"), ("læknastofa", "Ein", "læknastofuna", "læknastofunni"), ("heilsugæsla", "Ein", "heilsugæsluna", "heilsugæslunni"), ("hjúkrunarheimili", "Eitt", "hjúkrunarheimilið", "hjúkrunarheimilinu")])
+- item_nom_pl, item_gen_pl = sample([("rúm", "rúma"), ("herbergi", "herbergja"), ("deildir", "deilda")])
+- event = sample(["kórónuveirufaraldursins", "inflúensutímabilsins", "náttúruhamfaranna", "stórs slyss", "heimsfaraldursins"])
 - $total = range(500, 2000, 100)
 - $frac = sample(fractions)
 - $daily = range(20, 100, 5)
-- period_txt, period_val = range_str(2, 5, 1, numbers)
+- period_txt, period_val = sample([("tvær", 2), ("þrjár", 3), ("fjórar", 4)])
 
 #conditions:
 - is_int(total * frac)
@@ -33,15 +33,14 @@ question_annotated = """
 """
 
 answer_annotated = """
-Ef {frac} af heildarfjölda {item_plural} er upptekinn, þýðir það að {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_plural} eru í notkun af sjúklingum.
-Heildarfjöldi {item_plural} á {facility_definite} án nýrra innlagna er {total} {item_plural} - {int(total*frac)} {item_plural} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_plural}.
-Ef {daily} manns leggjast inn á hverjum degi, er heildarfjöldi sjúklinga á {facility_definite} eftir eina viku {daily} sjúklingar/dag * 7 dagar/vika = {daily*7} sjúklingar.
-Eftir {period_txt} vikur er heildarfjöldi sjúklinga sem hafa lagst inn á {facility_definite} {daily*7} sjúklingar/viku*{period_val} vikur = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} sjúklingar, sem hver um sig notar eitt {item}.
-Ef það voru {total-int(total*frac)} laus {item_plural} á {facility_definite} fyrir nýju innlagnirnar, fækkar þeim í {total-int(total*frac)} {item_plural} - {daily*period_val*7} {item_plural} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} laus {item_plural}.
+Ef {frac} af heildarfjölda {item_gen_pl} er í notkun, þýðir það að {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_nom_pl} eru notuð af sjúklingum.
+Heildarfjöldi {item_gen_pl} á {facility_dat_def} án nýrra innlagna er {total} {item_nom_pl} - {int(total*frac)} {item_nom_pl} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_nom_pl}.
+Ef {daily} manns leggjast inn á hverjum degi, er heildarfjöldi sjúklinga á {facility_dat_def} eftir eina viku {daily} sjúklingar/dag * 7 dagar/vika = {daily*7} sjúklingar.
+Eftir {period_txt} vikur er heildarfjöldi sjúklinga sem hafa lagst inn á {facility_acc_def} {daily*7} sjúklingar/viku * {period_val} vikur = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} sjúklingar, sem hver um sig notar {"eitt" if item_nom_pl == "rúm" or item_nom_pl == "herbergi" else "eina"} {"rúm" if item_nom_pl == "rúm" else "herbergi" if item_nom_pl == "herbergi" else "deild"}.
+Ef það voru {total-int(total*frac)} {"laus" if item_nom_pl == "rúm" or item_nom_pl == "herbergi" else "lausar"} {item_nom_pl} á {facility_dat_def} fyrir nýju innlagnirnar, fækkar þeim í {total-int(total*frac)} {item_nom_pl} - {daily*period_val*7} {item_nom_pl} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} {"laus" if item_nom_pl == "rúm" or item_nom_pl == "herbergi" else "lausar"} {item_nom_pl}.
 #### {total - (total * frac + daily * period_val * 7)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"
-

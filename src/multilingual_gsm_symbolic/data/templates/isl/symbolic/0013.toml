@@ -1,4 +1,4 @@
-question = "Marie er ákafur garðyrkjumaður. Í gær fékk hún 18 nýjar pottaplöntur frá uppáhaldsplönturæktinni sinni. Hún á nú þegar 2 pottaplöntur á hverri af 40 gluggakistunum í stóra sveitasetrinu sínu. Hún hefur ákveðið að gefa 1 af pottaplöntunum af hverri gluggakistu til vina og fjölskyldu. Hversu margar pottaplöntur mun Marie eiga eftir?"
+question = "Marie er áhugasamur garðyrkjumaður. Í gær fékk hún 18 nýjar pottaplöntur frá uppáhaldsgróðrarstöðinni sinni. Hún á nú þegar 2 pottaplöntur á hverri af 40 gluggakistunum í stóra sveitasetrinu sínu. Hún hefur ákveðið að gefa vinum og fjölskyldu 1 af pottaplöntunum af hverri gluggakistu. Hversu margar pottaplöntur mun Marie eiga eftir?"
 
 answer = """
 Í gær, áður en hún fékk plönturnar, átti Marie 2*40 = <<2*40=80>>80 pottaplöntur
@@ -13,7 +13,7 @@ id_orig = 99
 id_shuffled = 13
 
 question_annotated = """
-{name,Marie} er ákafur garðyrkjumaður. {time,Í gær} fékk hún {x,18} nýjar pottaplöntur frá uppáhaldsplönturæktinni sinni. Hún á nú þegar {r,2} pottaplöntur á hverri af {w,40} gluggakistunum í stóra sveitasetrinu sínu. Hún hefur ákveðið að gefa {n,1} af pottaplöntunum af hverri gluggakistu til vina og fjölskyldu. Hversu margar pottaplöntur mun {name,Marie} eiga eftir?
+{name,Marie} er áhugasamur garðyrkjumaður. {time,Í gær} fékk hún {x,18} {plontur_x,nýjar pottaplöntur} frá uppáhaldsgróðrarstöðinni sinni. Hún á nú þegar {r,2} pottaplöntur á hverri af {w,40} {gluggakistur_w,gluggakistunum} í stóra sveitasetrinu sínu. Hún hefur ákveðið að gefa vinum og fjölskyldu {n,1} af pottaplöntunum af hverri gluggakistu. Hversu margar pottaplöntur mun {name,Marie} eiga eftir?
 
 #init:
 - name = sample(names_female)
@@ -21,7 +21,9 @@ question_annotated = """
 - $x = range(18, 50)
 - $r = range(2, 13)
 - $w = range(40, 70)
-- $n = range(1, 8)
+- $n = range(1, 3)
+- plontur_x = "nýja pottaplöntu" if (x % 10 == 1 and x % 100 != 11) else "nýjar pottaplöntur"
+- gluggakistur_w = "gluggakistu" if (w % 10 == 1 and w % 100 != 11) else "gluggakistunum"
 
 #conditions:
 - w * r + x - w*n > 0
@@ -30,13 +32,13 @@ question_annotated = """
 """
 
 answer_annotated = """
-{time}, áður en hún fékk plönturnar, átti {name} {r}*{w} = <<{r}*{w}={r*w}>>{r*w} pottaplöntur
-Eftir að hafa fengið {x} plöntur til viðbótar átti hún því samtals {w*r} + {x} = <<{w*r}+{x}={w*r+x}>>{w*r+x} pottaplöntur
-{name} mun gefa {w}*{n} = <<{w}*{n}={w*n}>>{w*n} pottaplöntur.
-Hún mun því eiga {w*r+x} - {w*n} = <<{w*r+x}-{w*n}={w*r+x-w*n}>>{w*r+x-w*n} pottaplöntur eftir.
+{time}, áður en hún fékk plönturnar, átti {name} {r}*{w} = <<{r}*{w}={r*w}>>{r*w} {"pottaplöntu" if ((r*w) % 10 == 1 and (r*w) % 100 != 11) else "pottaplöntur"}
+Eftir að hafa fengið {x} {"plöntu" if (x % 10 == 1 and x % 100 != 11) else "plöntur"} til viðbótar átti hún því samtals {w*r} + {x} = <<{w*r}+{x}={w*r+x}>>{w*r+x} {"pottaplöntu" if ((w*r+x) % 10 == 1 and (w*r+x) % 100 != 11) else "pottaplöntur"}
+{name} mun gefa {w}*{n} = <<{w}*{n}={w*n}>>{w*n} {"pottaplöntu" if ((w*n) % 10 == 1 and (w*n) % 100 != 11) else "pottaplöntur"}.
+Hún mun því eiga {w*r+x} - {w*n} = <<{w*r+x}-{w*n}={w*r+x-w*n}>>{w*r+x-w*n} {"pottaplöntu" if ((w*r+x-w*n) % 10 == 1 and (w*r+x-w*n) % 100 != 11) else "pottaplöntur"} eftir.
 #### {w*r+x-w*n}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

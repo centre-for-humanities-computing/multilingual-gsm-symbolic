@@ -1,10 +1,10 @@
-question = "Dennis veiddi 3 túnfiski á mánudag, fyrsti túnfiskurinn sem hann veiddi vegur 56 kílógramm, annar túnfiskurinn sem hann veiddi vegur 46 kílógramm og síðasti túnfiskurinn sem hann veiddi vegur 26 kílógramm. Ef eitt kílógramm af túnfiski kostar 0,5 kr, hversu mikið mun hann græða eftir að hafa selt alla túnfiskana á markaðnum?"
+question = "Davíð veiddi 3 túnfiska á mánudag, fyrsti túnfiskurinn sem hann veiddi vegur 56 kílógrömm, annar túnfiskurinn sem hann veiddi vegur 46 kílógrömm og afgangurinn af aflanum vegur 26 kílógrömm á hvern fisk. Ef eitt kílógramm af túnfiski kostar 0,5 kr, hversu mikið mun hann þéna eftir að hafa selt alla túnfiskana á markaðnum?"
 
 answer = """
-Dennis mun græða 56*0,5 kr = <<56*0,5=28>>28 kr af fyrsta túnfiskinum.
-Hann mun græða 46*0,5 kr = <<46*0,5=23>>23 kr af öðrum túnfiskinum.
-Og hann mun græða 26*0,5 kr = <<26*0,5=13>>13 kr af þriðja túnfiskinum.
-Þess vegna er heildarupphæðin sem hann mun græða fyrir alla túnfiskana 28 kr + 23 kr + 13 kr = <<28+23+13=64>>64 kr.
+Davíð mun þéna 56*0,5 kr = <<56*0,5=28>>28 kr fyrir fyrsta fiskinn.
+Hann mun þéna 46*0,5 kr = <<46*0,5=23>>23 kr fyrir annan fiskinn.
+Afgangurinn af aflanum er 3 - 2 = <<3-2=1>>1 fiskur. Hann mun þéna 26*0,5 kr = <<26*0,5=13>>13 kr fyrir hvern fisk. Svo hann mun þéna 1 * 13 = <<1*13=13>>13 kr fyrir afganginn.
+Þess vegna er heildarupphæðin sem hann mun þéna fyrir alla túnfiskana 28 kr + 23 kr + 13 kr = <<28+23+13=64>>64 kr.
 #### 64
 """
 
@@ -13,13 +13,13 @@ id_orig = 1207
 id_shuffled = 76
 
 question_annotated = """
-{name,Dennis} veiddi {n,3} {fish,túnfiskar} á {day,mánudag}, fyrsti túnfiskurinn sem hann veiddi vegur {w1,56} {unit,kílógrömm}, annar túnfiskurinn sem hann veiddi vegur {w2,46} {unit,kílógrömm} og síðasti túnfiskurinn sem hann veiddi vegur {w3,26} {unit,kílógrömm}. Ef eitt {unit,kílógramm} af {fish,túnfiski} kostar {price,0.5} {cur,kr}, hversu mikið mun hann græða eftir að hafa selt alla túnfiskana á markaðnum?
+{name,Davíð} veiddi {n,3} {fish_þf_ft,túnfiska} á {day,mánudag}, fyrsti {fish_nf_et_gr,túnfiskurinn} sem hann veiddi vegur {w1,56} {unit_plural,kílógrömm}, annar {fish_nf_et_gr,túnfiskurinn} sem hann veiddi vegur {w2,46} {unit_plural,kílógrömm} og afgangurinn af aflanum vegur {w3,26} {unit_plural,kílógrömm} á hvern fisk. Ef eitt {unit,kílógramm} af {fish_þgf_et,túnfiski} kostar {price,0.5} {cur,kr}, hversu mikið mun hann þéna eftir að hafa selt alla {fish_þf_ft_gr,túnfiskana} á markaðnum?
 
 #init:
 - name = sample(names_male)
-- fish = sample(["túnfiskur", "lax", "þorskur", "silungur", "sandhverfa"])
+- fish_þf_ft, fish_nf_et_gr, fish_þgf_et, fish_þf_ft_gr = sample([("túnfiska", "túnfiskurinn", "túnfiski", "túnfiskana"), ("laxa", "laxinn", "laxi", "laxana"), ("þorska", "þorskinn", "þorski", "þorskana"), ("silunga", "silunginn", "silungi", "silungana"), ("karfa", "karfinn", "karfa", "karfana")])
 - day = sample(weekdays)
-- unit = sample(["kilogram", "kg"])
+- unit, unit_plural = sample([("kílógramm", "kílógrömm"), ("kg", "kg")])
 - cur = sample(currencies_sym)
 - $n = range(3, 8)
 - $w1 = range(40, 80)
@@ -35,14 +35,13 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name} mun græða {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} af fyrsta túnfiskinum.
-Hann mun græða {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} af öðrum túnfiskinum.
-Og hann mun græða {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} af þriðja túnfiskinum.
-Þess vegna er heildarupphæðin sem hann mun græða fyrir alla túnfiskana {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+{name} mun þéna {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} fyrir fyrsta fiskinn.
+Hann mun þéna {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} fyrir annan fiskinn.
+Afgangurinn af aflanum er {n} - 2 = <<{n}-2={n-2}>>{n-2} {"fiskur" if n-2 == 1 else "fiskar"}. Hann mun þéna {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} fyrir hvern fisk. Svo hann mun þéna {n-2} * {w3*price} = <<{n-2}*{w3*price}={((n-2)*w3*price)}>>{((n-2)*w3*price)} {cur} fyrir afganginn.
+Þess vegna er heildarupphæðin sem hann mun þéna fyrir alla {fish_þf_ft_gr} {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
 #### {int((w1 + w2 + (n-2)*w3) * price)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"
-

@@ -93,6 +93,7 @@ def eval_node(node: ast.expr, env: dict[str, Any]) -> Any:
 
 
 def parse_expr(source: str) -> ast.expr:
+    source = source.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
     return ast.parse(source, mode="eval").body
 
 
@@ -289,6 +290,8 @@ def build_eval_context(rng: Random, replacements: dict[str, Any]) -> dict[str, A
         "ukr_plural_measurements": ukr_plural_measurements,
         "to_title": to_title,
         "ukr_weekday_to_when": ukr_weekday_to_when,
+        "mar_fraction_form": mar_fraction_form,
+        "mar_color_form": mar_color_form,
         **replacements,
     }
 
@@ -400,6 +403,54 @@ def plural(n: float, *forms: str) -> str:
     raise ValueError(f"plural() expects 2 (singular/plural) or 3 (one/few/many) forms, got {len(forms)}")
 
 
+def mar_fraction_form(frac_txt: str, form: str) -> str:
+    """Return the inflected grammatical form of a Marathi fraction."""
+    if frac_txt == "अर्धा":
+        mapping = {"masc": "अर्धा", "neut": "अर्धे", "plural": "अर्धे", "oblique": "अर्ध्या", "obl": "अर्ध्या", "fem": "अर्धी"}
+        return mapping.get(form, frac_txt)
+    return frac_txt
+
+
+def mar_color_form(color: str, form: str) -> str:
+    """Return the inflected grammatical form of a Marathi color."""
+    if form in ("oblique", "obl"):
+        mapping = {
+            "लाल": "लाल",
+            "निळा": "निळ्या",
+            "निळे": "निळ्या",
+            "हिरवा": "हिरव्या",
+            "हिरवे": "हिरव्या",
+            "पिवळा": "पिवळ्या",
+            "पिवळे": "पिवळ्या",
+            "जांभळा": "जांभळ्या",
+            "जांभळे": "जांभळ्या",
+            "नारिंगी": "नारिंगी",
+            "गुलाबी": "गुलाबी",
+            "काळा": "काळ्या",
+            "काळे": "काळ्या",
+            "पांढरा": "पांढऱ्या",
+            "पांढरे": "पांढऱ्या",
+        }
+        return mapping.get(color, color)
+    if form in ("plural", "pl", "neut"):
+        mapping = {
+            "निळा": "निळे",
+            "निळे": "निळे",
+            "हिरवा": "हिरवे",
+            "हिरवे": "हिरवे",
+            "पिवळा": "पिवळे",
+            "पिवळे": "पिवळे",
+            "काळा": "काळे",
+            "काळे": "काळे",
+            "पांढरा": "पांढरे",
+            "पांढरे": "पांढरे",
+            "जांभळा": "जांभळे",
+            "जांभळे": "जांभळे",
+        }
+        return mapping.get(color, color)
+    return color
+
+
 # Non-random helpers shared by both eval contexts and combination enumeration.
 _BASE_HELPERS: dict[str, Any] = {
     "is_int": is_int,
@@ -413,6 +464,8 @@ _BASE_HELPERS: dict[str, Any] = {
     "Fraction": frac_format,
     "plural": plural,
     "ensure_int": ensure_int,
+    "mar_fraction_form": mar_fraction_form,
+    "mar_color_form": mar_color_form,
 }
 
 # Legacy alias used by condition evaluation and answer formatting (no sampling needed there).
@@ -436,6 +489,8 @@ COMBINATION_HELPERS: dict[str, Any] = {
     "divides": divides,
     "Fraction": frac_format,
     "plural": plural,
+    "mar_fraction_form": mar_fraction_form,
+    "mar_color_form": mar_color_form,
     "ensure_int": ensure_int,
     # Ukrainian-specific helpers (needed for dependent-default resolution in _get_full_default_assignments)
     "ukr_plural_measurements": ukr_plural_measurements,
@@ -468,7 +523,9 @@ def try_parse_float(value: Any) -> Any:
     if not isinstance(value, str):
         return value
     try:
-        return float(value)
+        # handle languages like marathi (mar), and hindu (hin)
+        val_ascii = value.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
+        return float(val_ascii)
     except ValueError:
         return value
 
@@ -478,8 +535,11 @@ def try_parse_fraction(value: Any) -> Any:
         return value
     if value.count("/") == 1:
         num, denom = value.split("/")
-        if num.lstrip("-").isdigit() and denom.lstrip("-").isdigit():
-            return Fraction(int(num), int(denom))
+        # handle languages like marathi (mar), and hindu (hin)
+        num_ascii = num.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
+        denom_ascii = denom.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
+        if num_ascii.lstrip("-").isdigit() and denom_ascii.lstrip("-").isdigit():
+            return Fraction(int(num_ascii), int(denom_ascii))
     return value
 
 
@@ -489,10 +549,13 @@ def capitalize_sentences(text: str) -> str:
 
 
 # Languages that use comma as decimal separator and period as thousands separator
-_COMMA_DECIMAL_LANGUAGES = {"dan", "nob", "nno", "swe", "deu", "fin", "isl", "nld", "fra"}
+_COMMA_DECIMAL_LANGUAGES = {"dan", "nob", "nno", "swe", "deu", "fin", "isl", "nld", "fra", "ita"}
 
 
 def format_numbers_by_language(text: str, language: str) -> str:
+    if language in ("hin", "mar"):
+        return text.translate(str.maketrans("0123456789", "०१२३४५६७८९"))
+
     comma_decimal = language in _COMMA_DECIMAL_LANGUAGES
 
     def format_number(match: re.Match) -> str:

@@ -1,0 +1,42 @@
+question = "मिहिर ने बॉलिंगच्या एका खेळात २७८ गुण मिळवले. निखिल ने मिहिरच्या अर्ध्या इतक्यापेक्षा ११ गुण जास्त मिळवले. मिहिर आणि निखिल यांचे एकूण किती गुण होते?"
+
+answer = """
+मिहिर = <<२७८=२७८>>२७८ गुण
+निखिल = १/२*२७८ + ११ = १५० गुण
+२७८ + १५० = <<२७८+१५०=४२८>>४२८ गुण
+एकत्रितपणे, मिहिर आणि निखिल यांनी ४२८ गुण मिळवले.
+#### ४२८
+"""
+
+id_orig = 800
+
+id_shuffled = 53
+
+question_annotated = """
+{name1,मिहिर} ने {game,बॉलिंग}च्या एका खेळात {n1,२७८} गुण मिळवले. {name2,निखिल} ने {name1,मिहिर}च्या {frac_obl,अर्ध्या} इतक्यापेक्षा {n2,११} गुण जास्त मिळवले. {name1,मिहिर} आणि {name2,निखिल} यांचे एकूण किती गुण होते?
+
+#init:
+- name1, name2 = sample(names, 2)
+- game = sample(["बॉलिंग", "डार्ट्स", "तिरंदाजी", "बास्केटबॉल", "टेनिस"])
+- $n1 = range(200, 500)
+- $n2 = range(5, 50)
+- frac_txt, frac_val = sample(fraction_alnum)
+- frac_obl = mar_fraction_form(frac_txt, 'oblique')
+
+#conditions:
+- is_int(frac_val * n1)
+
+#answer: n1 + int(frac_val * n1 + n2)
+"""
+
+answer_annotated = """
+{name1} = <<{n1}={n1}>>{n1} गुण
+{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} गुण
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} गुण
+एकत्रितपणे, {name1} आणि {name2} यांनी {n1 + int(frac_val * n1 + n2)} गुण मिळवले.
+#### {n1 + int(frac_val * n1 + n2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"
