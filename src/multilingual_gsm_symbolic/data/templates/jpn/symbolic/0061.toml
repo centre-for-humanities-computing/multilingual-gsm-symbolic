@@ -1,0 +1,34 @@
+question = "ひろゆきはビー玉10個入りの袋を持っています。小石につまずいて、その半分を落としてしまいました。慌てて探しましたが、見つかったのは3個だけでした。家に帰ってからさらにビー玉を調べると、拾ったもののうち2個はビー玉ではなく、実はビーズだったので捨てました。ひろゆきは最後に何個のビー玉を持っていましたか？"
+answer = """ひろゆきはビー玉を落としてしまい、10*1/2=<<10*1/2=5>>5個のビー玉が残りました。
+探して失くしたビー玉の一部を見つけたので、5+3=<<5+3=8>>8個のビー玉になりました。
+家に帰ってから2個のビーズを取り除いたので、8-2=<<8-2=6>>6個のビー玉が残りました。
+#### 6
+"""
+id_orig = 1247
+id_shuffled = 61
+question_annotated = """{name,ひろゆき}は{objects,ビー玉}{n,10}個入りの袋を持っています。{obstacle,小石}につまずいて、その{frac_txt,半分}を落としてしまいました。慌てて探しましたが、見つかったのは{k,3}個だけでした。家に帰ってからさらに{objects,ビー玉}を調べると、拾ったもののうち{fake_num_txt,2}個は{objects,ビー玉}ではなく、実は{fake_object,ビーズ}だったので捨てました。{name,ひろゆき}は最後に何個の{objects,ビー玉}を持っていましたか？
+
+#init:
+- name = sample(names)
+- objects = sample(['ビー玉', '硬貨', 'ボタン', 'ビーズ', '小石'])
+- obstacle = sample(['小石', '枝', 'おもちゃ', '木の根'])
+- fake_object = sample(['ボタン', '硬貨', '小石', 'ビーズ'])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+answer_annotated = """{name}は{objects}を落としてしまい、{n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))}個の{objects}が残りました。
+探して失くした{objects}の一部を見つけたので、{int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k}個の{objects}になりました。
+家に帰ってから{fake_num_txt}個の{fake_object}を取り除いたので、{int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val}個の{objects}が残りました。
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

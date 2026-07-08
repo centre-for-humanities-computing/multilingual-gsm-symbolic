@@ -1,0 +1,28 @@
+question = "ひまりは、後輩のこはるよりレジを打つ速さがちょうど2倍です。こはるは1日に50人の客を対応します。2人が1週間のすべての日に働くとすると、1週間の合計処理数はいくつですか？"
+answer = """こはるが1日に50件の注文を処理する間、ひまりは 50件/日*2=<<50*2=100>>100件/日 を処理します。
+1日では、2人で 100件/日 + 50件/日 = <<100+50=150>>150件 を一緒に処理します。
+2人が1週間に処理する注文の合計は 150件/日 * 7日/週 = <<150*7=1050>>1050件 です。
+#### 1050
+"""
+id_orig = 636
+id_shuffled = 97
+question_annotated = """{name1,ひまり}は、後輩の{name2,こはる}よりレジを打つ速さがちょうど{mult_txt,2倍}です。{name2,こはる}は1日に{n,50}人の客を対応します。2人が1週間のすべての日に働くとすると、1週間の合計処理数はいくつですか？
+
+#init:
+- name1, name2 = sample(names, 2)
+- mult_txt, mult_var = sample(multi_times)
+- $n = range(30, 100)
+
+#conditions:
+- is_int(n * mult_var)
+- is_int((n + n * mult_var) * 7)
+
+#answer: (n + n * mult_var) * 7
+"""
+answer_annotated = """{name2}が1日に{n}件の注文を処理する間、{name1}は {n}件/日*{mult_var}=<<{n}*{mult_var}={n*mult_var}>>{n*mult_var}件/日 を処理します。
+1日では、2人で {n*mult_var}件/日 + {n}件/日 = <<{n*mult_var}+{n}={n+n*mult_var}>>{n+n*mult_var}件 を一緒に処理します。
+2人が1週間に処理する注文の合計は {n+n*mult_var}件/日 * 7日/週 = <<{n+n*mult_var}*7={(n+n*mult_var)*7}>>{(n+n*mult_var)*7}件 です。
+#### {(n+n*mult_var)*7}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

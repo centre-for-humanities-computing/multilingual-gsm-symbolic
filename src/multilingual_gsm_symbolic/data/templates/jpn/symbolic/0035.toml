@@ -1,0 +1,34 @@
+question = "みどりは修学旅行のためのお金を集めています。学校に援助を申請したところ、学校は修学旅行の費用の半分を負担することに決めました。みどりが￥5000持っていて、修学旅行に￥30000かかる場合、みどりはいくら不足していますか？"
+answer = """みどりの学校は、修学旅行のために 30,000*1/2=￥<<30000*1/2=15000>>15,000 支払うことに決めました。
+合計で、みどりは修学旅行のために 15,000 + 5000 = ￥<<15000+5000=20000>>20,000 をまかなっています。
+したがって、みどりが修学旅行のためにさらに必要な金額は 30,000 - 20,000 = ￥<<30000-20000=10000>>10,000 です。
+#### 10000
+"""
+id_orig = 788
+id_shuffled = 35
+question_annotated = """{name,みどり}は{event,修学旅行}のためのお金を集めています。{organization,学校}に援助を申請したところ、{organization,学校}は{event,修学旅行}の費用の{fraction_txt,半分}を負担することに決めました。{name,みどり}が{cur,￥}{current, 5000}持っていて、{event,修学旅行}に{cur,￥}{total, 30000}かかる場合、{name,みどり}はいくら不足していますか？
+
+#init:
+- name = sample(names)
+- event = sample([\"修学旅行\", \"校外学習\", \"スポーツ大会\", \"音楽祭\", \"科学フェア\"])
+- cur = sample(currencies_sym)
+- organization = sample([\"学校\", \"地域センター\", \"地元の慈善団体\", \"保護者会\"])
+- fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(1000, 20000, 500)
+- $total = range(20000, 100000, 1000)
+
+#conditions:
+- total > current
+- total - (total * fraction_val + current) > 0
+- is_int(total * fraction_val)
+- is_int(total - (total * fraction_val + current))
+
+#answer: total - (total * fraction_val + current)
+"""
+answer_annotated = """{name}の{organization}は、{event}のために {total}*{fraction_val}={cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} 支払うことに決めました。
+合計で、{name}は{event}のために {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} をまかなっています。
+したがって、{name}が{event}のためにさらに必要な金額は {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} です。
+#### {total-(total*fraction_val+current)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

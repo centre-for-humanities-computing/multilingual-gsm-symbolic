@@ -1,0 +1,29 @@
+question = "かずおの長方形の寝室の面積は33平方メートルです。部屋の長さが300cmのとき、部屋の周の長さは何メートルですか？"
+answer = """部屋の長さは 300 cm * 1/100 メートル/cm = <<300*(1/100)=3>>3メートルです。
+部屋の幅は 33平方メートル / 3メートル = <<33/3=11>>11メートルです。
+部屋の周の長さは 2*(11+3) = 28メートルです
+#### 28
+"""
+id_orig = 440
+id_shuffled = 50
+question_annotated = """{name,かずお}の長方形の{room_type,寝室}の面積は{area,33}平方メートルです。部屋の長さが{length,300}cmのとき、部屋の周の長さは何メートルですか？
+
+#init:
+- name = sample(names)
+- room_type = sample([\"居間\", \"オフィス\", \"台所\"])
+- $area = range(18, 121)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+answer_annotated = """部屋の長さは {length} cm * 1/100 メートル/cm = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)}メートルです。
+部屋の幅は {area}平方メートル / {length * (1/100)}メートル = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))}メートルです。
+部屋の周の長さは 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))}メートルです
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

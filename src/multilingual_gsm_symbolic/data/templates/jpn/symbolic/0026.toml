@@ -1,0 +1,28 @@
+question = "ある男性は1日にサンドイッチを5個食べ、妻は1日にサンドイッチを4個食べ、息子は1日にサンドイッチを2個食べます。この家族は1週間でサンドイッチを何個食べますか？"
+answer = """1日に食べるサンドイッチの数は 5 + 4 + 2 = <<5+4+2=11>>11 個です。
+1週間に食べるサンドイッチの数は 11 * 7 = <<11*7=77>>77 個です。
+#### 77
+"""
+id_orig = 1023
+id_shuffled = 26
+question_annotated = """{name1,ある男性}は1{time_unit,日}に{food,サンドイッチ}を{n1,5}個食べ、{name2,妻}は1{time_unit,日}に{food,サンドイッチ}を{n2,4}個食べ、{relation,息子}は1{time_unit,日}に{food,サンドイッチ}を{n3,2}個食べます。この家族は1{time_period,週間}で{food,サンドイッチ}を何個食べますか？
+
+#init:
+- name1 = sample([\"ある父親\", \"あるおじいさん\"])
+- name2 = sample([\"妻\", \"彼のパートナー\", \"パートナー\"])
+- relation = sample([\"子供\", \"娘\", \"息子\", \"孫\"])
+- food = sample([\"おにぎり\", \"おむすび\", \"あんぱん\", \"ハンバーガー\"])
+- time_unit = sample([\"日\"])
+- time_period = sample([\"週間\"])
+- $n1 = range(2, 9)
+- $n2 = range(2, 9)
+- $n3 = range(2, 9)
+
+#answer: (n1 + n2 + n3) * (7 if time_period == \"week\" else 30)
+"""
+answer_annotated = """1{time_unit}に食べる{food}の数は {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} 個です。
+1{time_period}に食べる{food}の数は {n1+n2+n3} * {7 if time_period == \"週間\" else 30} = <<{n1+n2+n3}*{7 if time_period == \"週間\" else 30}={(n1+n2+n3)*(7 if time_period == \"週間\" else 30)}>>{(n1+n2+n3)*(7 if time_period == \"週間\" else 30)} 個です。
+#### {(n1+n2+n3)*(7 if time_period == \"週間\" else 30)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

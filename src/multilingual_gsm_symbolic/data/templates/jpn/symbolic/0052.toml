@@ -1,0 +1,38 @@
+question = "ひろゆきは￥1000札を3枚持っています。￥200の水鉄砲を6個買います。さらに、トミカを3パック、￥300ずつで買います。お金はいくら残りますか？"
+answer = """ひろゆきは最初に 3 × ￥1000 = ￥<<3*1000=3000>>3000 持っています。
+水鉄砲に 6×￥200 = ￥<<6*200=1200>>1200 使います。
+トミカに 3パック×￥300 = ￥<<3*300=900>>900 使います。
+ひろゆきが使った合計は ￥1200 + ￥900 = ￥<<1200+900=2100>>2100 です。
+残りのお金は ￥3000 - ￥2100 = ￥<<3000-2100=900>>900 です。
+#### 900
+"""
+id_orig = 843
+id_shuffled = 52
+question_annotated = """{name,ひろゆき}は{cur,￥}{bill,1000}札を{n,3}枚持っています。{cur,￥}{p1,200}の{item1,水鉄砲}を{m_txt,6}個買います。さらに、{item2,トミカ}を{k,3}パック、{cur,￥}{p2,300}ずつで買います。お金はいくら残りますか？
+
+#init:
+- name = sample(names)
+- $bill = sample([1000, 5000, 10000])
+- item1 = sample([\"トミカ\", \"人形\", \"ぬりえ\", \"パズル\", \"ゲーム\"])
+- item2 = sample([\"シール\", \"キャンディーバー\", \"トレーディングカード\", \"鉛筆\", \"消しゴム\"])
+- cur = sample(currencies_sym)
+- $n = range(1, 10)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(100, 1000, 100)
+- $p2 = range(100, 1000, 100)
+
+#conditions:
+- n * int(bill) > m_val * p1 + k * p2
+
+#answer: n * int(bill) - (m_val * p1 + k * p2)
+"""
+answer_annotated = """{name}は最初に {n} × {cur}{bill} = {cur}<<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)} 持っています。
+{item1}に {m_val}×{cur}{p1} = {cur}<<{m_val}*{p1}={m_val*p1}>>{m_val*p1} 使います。
+{item2}に {k}パック×{cur}{p2} = {cur}<<{k}*{p2}={k*p2}>>{k*p2} 使います。
+{name}が使った合計は {cur}{m_val*p1} + {cur}{k*p2} = {cur}<<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} です。
+残りのお金は {cur}{n*int(bill)} - {cur}{m_val*p1+k*p2} = {cur}<<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} です。
+#### {n*int(bill)-(m_val*p1+k*p2)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

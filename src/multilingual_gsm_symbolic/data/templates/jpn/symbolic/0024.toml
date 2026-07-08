@@ -1,0 +1,36 @@
+question = "栄養成分表示によると、ポテトチップス1食分には250カロリーあります。300グラム入りの袋には5食分入っています。1日のカロリー目標が2000で、すでに1800カロリー摂取しているとすると、あと何グラム食べられますか？"
+answer = """カロリーの合計目標が2000で、すでに1800カロリー摂取しているので、食べられる残りは 2000-1800 = <<2000-1800=200>>200 カロリーです。
+ポテトチップス1食分が250カロリーで、残り200カロリーしか食べられないなら、食べられるのは1食分の200/250 = 4/5です。
+また、300グラム入りのポテトチップスの袋には5食分入っているので、1食分は300グラム/5 = <<300/5=60>>60グラムです。
+4/5食分しか食べられないなら、食べられるのは60グラム * 4/5 = 48グラムです。
+#### 48
+"""
+id_orig = 43
+id_shuffled = 24
+question_annotated = """栄養成分表示によると、{food,ポテトチップス}1食分には{cal,250}カロリーあります。{size,300}{unit,グラム}入りの袋には{n,5}食分入っています。1日のカロリー目標が{total,2000}で、すでに{spent,1800}カロリー摂取しているとすると、あと何{unit,グラム}食べられますか？
+
+#init:
+- food = sample([\"ポップコーン\", \"パン\",  \"クッキー\"])
+- unit = sample([\"グラム\", \"g\"])
+- $cal = range(150, 500, 25)
+- $size = range(100, 400, 25)
+- $n = range(4, 8)
+- $total = range(1900, 2500, 5)
+- $spent = range(600, 1900, 25)
+
+#conditions:
+- spent < total
+- is_int( 5 * (total - spent) / cal)
+- divides(size, n)
+- divides(size//n, (total-spent)/cal)
+
+#answer: size//n * Fraction((total-spent)/cal)
+"""
+answer_annotated = """カロリーの合計目標が{total}で、すでに{spent}カロリー摂取しているので、食べられる残りは {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} カロリーです。
+{food}1食分が{cal}カロリーで、残り{total-spent}カロリーしか食べられないなら、食べられるのは1食分の{total-spent}/{cal} = {Fraction((total-spent)/cal)}です。
+また、{size}{unit}入りの{food}の袋には{n}食分入っているので、1食分は{size}{unit}/{n} = <<{size}/{n}={size//n}>>{size//n}{unit}です。
+{Fraction((total-spent)/cal)}食分しか食べられないなら、食べられるのは{size//n}{unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal}{unit}です。
+#### {size//n * (total-spent)/cal}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

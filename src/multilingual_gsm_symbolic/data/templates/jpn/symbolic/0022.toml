@@ -1,0 +1,29 @@
+question = "はるこは自宅でのディナーパーティーの準備をしていて、シチューを出すつもりでした。使い捨てのスプーンがなくなっていることに気づいたので、新しいスプーンのパックを買いました。その後、夫も新しいスプーン5本入りのパックを買って、はるこに渡しました。はるこがシチューを作っている間、味見をするためにスプーンを3本使いました。その後、食卓の準備をしようとしたとき、スプーンは全部で12本ありました。はるこが買ったパックにはスプーンが何本入っていましたか？"
+answer = """はるこのスプーンの合計は 12+3=<<12+3=15>>15 本でした。
+夫が買ったのは5本入りのパックなので、はるこのパックには 15-5=<<15-5=10>>10 本入っていました。
+#### 10
+"""
+id_orig = 125
+id_shuffled = 22
+question_annotated = """{name,はるこ}は自宅での{event,ディナーパーティー}の準備をしていて、{food,シチュー}を出すつもりでした。使い捨ての{obj,スプーン}がなくなっていることに気づいたので、新しい{obj,スプーン}のパックを買いました。その後、夫も新しい{obj,スプーン}{n1,5}本入りのパックを買って、{name,はるこ}に渡しました。{name,はるこ}が{food,シチュー}を作っている間、味見をするために{obj,スプーン}を{n2_txt,3}本使いました。その後、食卓の準備をしようとしたとき、{obj,スプーン}は全部で{total,12}本ありました。{name,はるこ}が買ったパックには{obj,スプーン}が何本入っていましたか？
+
+#init:
+- name = sample(names)
+- event = sample([\"ランチパーティー\", \"誕生日パーティー\", \"持ち寄りパーティー\", \"ベビーシャワー\"])
+- food = sample([\"お味噌汁\", \"ハヤシライス\", \"シチュー\", \"カレー\", \"コーンスープ\", \"鍋\", \"たこ焼き\", \"そうめん\"])
+- obj = sample([\"スプーン\", \"フォーク\", \"レンゲ\", \"お箸\"])
+- $n1 = range(5, 20)
+- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- $total = range(12, 40)
+
+#conditions:
+- total+n2_val-n1 > 0
+
+#answer: total+n2_val-n1
+"""
+answer_annotated = """{name}の{obj}の合計は {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} 本でした。
+夫が買ったのは{n1}本入りのパックなので、{name}のパックには {total+n2_val}-{n1}=<<{total+n2_val}-{n1}={total+n2_val-n1}>>{total+n2_val-n1} 本入っていました。
+#### {total+n2_val-n1}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

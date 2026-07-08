@@ -1,0 +1,34 @@
+question = "だいちの車が故障しました。その車の重さは1200キログラムで、中には250キログラムの荷物が載っています。さらに、75キログラムずつある幼い子どもが2人乗っています。車を動かすのに必要な力が重さの1%だとすると、車を押すのにどれだけの力が必要ですか？"
+answer = """2人の子どもの重さは 75*2=<<75*2=150>>150 キログラムです
+したがって、車とその中のすべてを合わせた重さは 1200+250+150=<<1200+250+150=1600>>1600 キログラムです
+したがって、必要な力は 1600*0.01=<<1600*0.01=16>>16 キログラムです
+#### 16
+"""
+id_orig = 1275
+id_shuffled = 67
+question_annotated = """{name,だいち}の{vehicle,車}が故障しました。その{vehicle,車}の重さは{weight_vehicle,1200}{unit,キログラム}で、中には{weight_item,250}{unit,キログラム}の{item,荷物}が載っています。さらに、{weight_passenger,75}{unit,キログラム}ずつある幼い{passenger_type,子ども}が{num_passengers_txt,2}人乗っています。{vehicle,車}を動かすのに必要な力が重さの{force_percent,1}%だとすると、{vehicle,車}を押すのにどれだけの力が必要ですか？
+
+#init:
+- name = sample(names)
+- vehicle = sample(['車', '軽車', 'トラック'])
+- item = sample(['荷物', '食料品', '機材', '家具'])
+- passenger_type = sample(['子ども', '友人', '同僚'])
+- unit = sample(['キログラム', 'kg'])
+- $weight_vehicle = range(1000, 3000, 50)
+- $weight_item = range(100, 500, 25)
+- $weight_passenger = range(50, 100, 5)
+- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- $force_percent = range(1, 6)
+
+#conditions:
+- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+
+#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+"""
+answer_annotated = """{num_passengers_txt}人の{passenger_type}の重さは {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}です
+したがって、{vehicle}とその中のすべてを合わせた重さは {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}です
+したがって、必要な力は {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}です
+#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

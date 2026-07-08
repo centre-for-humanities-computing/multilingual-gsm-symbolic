@@ -1,0 +1,36 @@
+question = "おおせき先生が担当しているクラスでは、合計30人の生徒のうち20%がラグビー部に入ってます。残りの生徒のうち、25%がサッカーまたは柔道部の部員です。これら3つの部員である生徒は、今日、試合に参加するために早退する必要があります。早退する生徒は何人ですか？"
+answer = """30人のクラスの20%がラグビー部の部員なので、0.2*30 = <<0.2*30=6>>6人です
+生徒は30人いて、そのうち6人がラグビー部の部員なので、残りは30-6 = <<30-6=24>>24人です
+残り24人の生徒の25%がサッカーまたは柔道部の部員なので、0.25*24 = <<0.25*24=6>>6人です
+6人がラグビー部の部員で、6人がサッカー・柔道部なので、6+6 = <<6+6=12>>12人が早退します
+#### 12
+"""
+id_orig = 982
+id_shuffled = 25
+question_annotated = """{teacher,おおせき先生}が担当しているクラスでは、合計{total,30}人の生徒のうち{p1,20}%が{group1,ラグビー}部に入ってます。残りの生徒のうち、{p2,25}%が{group2,サッカー}または{group3,柔道}部の部員です。これら3つの部員である生徒は、今日、{event,試合}に参加するために早退する必要があります。早退する生徒は何人ですか？
+
+#init:
+- teacher = sample(['おおせき先生', 'やまだ先生', 'まえだ先生', 'いいじま先生'])
+- group1 = sample(['サッカー', 'バスケ', 'バレー', '水泳'])
+- group2, group3 = sample(['ダンス', '合唱', 'ロボット', '柔道'],  2)
+- event = sample(['試合', '大会', '全国大会'])
+- $total = range(20, 150)
+- $p1 = range(10, 50)
+- $p2 = range(15, 45)
+
+#conditions:
+- p1 < 100
+- p2 < 100
+- is_int(total * p1 / 100)
+- is_int((total - total * p1 / 100) * p2 / 100)
+
+#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)
+"""
+answer_annotated = """{total}人のクラスの{p1}%が{group1}部の部員なので、{p1/100}*{total} = <<{p1/100}*{total}={int(total*p1/100)}>>{int(total*p1/100)}人です
+生徒は{total}人いて、そのうち{int(total*p1/100)}人が{group1}部の部員なので、残りは{total}-{int(total*p1/100)} = <<{total}-{int(total*p1/100)}={total-int(total*p1/100)}>>{total-int(total*p1/100)}人です
+残り{total-int(total*p1/100)}人の生徒の{p2}%が{group2}または{group3}部の部員なので、{p2/100}*{total-int(total*p1/100)} = <<{p2/100}*{total-int(total*p1/100)}={int((total-int(total*p1/100))*p2/100)}>>{int((total-int(total*p1/100))*p2/100)}人です
+{int(total*p1/100)}人が{group1}部の部員で、{int((total-int(total*p1/100))*p2/100)}人が{group2}・{group3}部なので、{int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)} = <<{int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)}={int(total*p1/100 + (total-int(total*p1/100))*p2/100)}>>{int(total*p1/100 + (total-int(total*p1/100))*p2/100)}人が早退します
+#### {int(total*p1/100 + (total-int(total*p1/100))*p2/100)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"
