@@ -286,17 +286,17 @@ def relationship_plot(
     x_column: str,
     xlabel: str,
     out: Path,
-) -> bool:
+) -> list[Path]:
     """Plot a descriptive feature relationship separately for each split."""
     plot_data = data.dropna(subset=[x_column, "transfer_gap"])
     if plot_data.empty:
-        return False
+        return []
 
     splits = [split for split in ("original", "synthetic") if split in set(plot_data["split"])]
-    fig, axes = plt.subplots(1, len(splits), figsize=(6.5 * len(splits), 5), squeeze=False)
-    axes = axes[0]
+    saved: list[Path] = []
 
-    for ax, split in zip(axes, splits, strict=True):
+    for split in splits:
+        fig, ax = plt.subplots(figsize=(6.5, 5))
         panel = plot_data[plot_data["split"] == split]
         for family in ordered_families(panel["family"]):
             family_rows = panel[panel["family"] == family]
@@ -348,23 +348,16 @@ def relationship_plot(
         ax.set_ylabel("Accuracy gap: English - target language")
         ax.yaxis.set_major_formatter(PercentFormatter(1))
 
-    legend_entries: dict[str, Any] = {}
-    for ax in axes:
         handles, labels = ax.get_legend_handles_labels()
-        legend_entries.update(dict(zip(labels, handles, strict=True)))
-    if legend_entries:
-        fig.legend(
-            list(legend_entries.values()),
-            list(legend_entries.keys()),
-            loc="lower center",
-            ncol=len(legend_entries),
-            frameon=False,
-        )
-    fig.supxlabel(xlabel, y=0.08)
-    fig.tight_layout(rect=(0, 0.13, 1, 1))
-    fig.savefig(out, bbox_inches="tight")
-    plt.close(fig)
-    return True
+        if handles:
+            fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False)
+        split_out = out.with_name(f"{out.stem}_{split}{out.suffix}")
+        fig.supxlabel(xlabel, y=0.08)
+        fig.tight_layout(rect=(0, 0.13, 1, 1))
+        fig.savefig(split_out, bbox_inches="tight")
+        plt.close(fig)
+        saved.append(split_out)
+    return saved
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -436,8 +429,9 @@ def main() -> None:
         ),
     ]
     for column, xlabel, path in plots:
-        if relationship_plot(transfer, column, xlabel, path):
-            print(f"Saved {path}")
+        if saved_plots := relationship_plot(transfer, column, xlabel, path):
+            for saved_plot in saved_plots:
+                print(f"Saved {saved_plot}")
         else:
             print(f"Skipped {path.name}: no paired transfer observations with this feature.")
 
