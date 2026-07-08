@@ -1,0 +1,30 @@
+question = "だいすけとひろしは一緒に学校まで歩いて行くのに30分あります。図書館のある角まで歩くのに6分かかります。そこからさらに消防署まで13分かかります。遅れずに学校に到着するのには、あとどれくらい時間が残っていますか？"
+answer = """だいすけとひろしが図書館に着いた時点での残り時間は 30 - 6 = <<30-6=24>>24 分です。
+次に消防署に着くと、遅れずに学校に着くまでの残り時間は 24 - 13 = <<24-13=11>>11 分です。
+#### 11
+"""
+id_orig = 684
+id_shuffled = 14
+question_annotated = """{n1,だいすけ}と{n2,ひろし}は一緒に{loc1,学校}まで歩いて行くのに{t,30}分あります。{loc2,図書館}のある角まで歩くのに{t1,6}分かかります。そこからさらに{loc3,消防署}まで{t2,13}分かかります。遅れずに{loc1,学校}に到着するのには、あとどれくらい時間が残っていますか？
+
+#init:
+- n1, n2 = sample(names, 2)
+- loc1, loc2, loc3 = sample(['学校', '映画館', '商店街', '図書館', '公園', '体育館', '銀行'], 3)
+- $t1 = range(6, 30)
+- $t2 = range(10, 70)
+- $t = range(30, 140)
+
+#conditions:
+- not divides(t1, 5)
+- not divides(t2, 5)
+- not divides(t, 5)
+- t > t1 + t2
+
+#answer: t - t1 - t2
+"""
+answer_annotated = """{n1}と{n2}が{loc2}に着いた時点での残り時間は {t} - {t1} = <<{t}-{t1}={t-t1}>>{t-t1} 分です。
+次に{loc3}に着くと、遅れずに{loc1}に着くまでの残り時間は {t-t1} - {t2} = <<{t-t1}-{t2}={t-t1-t2}>>{t-t1-t2} 分です。
+#### {t-t1-t2}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

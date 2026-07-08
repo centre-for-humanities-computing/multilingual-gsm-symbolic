@@ -1,0 +1,42 @@
+question = "つよしは宝探しのために、庭に36個のお菓子を隠しました。ななは5個のお菓子を見つけます。あきこはななの2倍の数を見つけます。ひろきはあきこより2個少なく見つけ、まりこはひろきの半分の数を見つけます。庭にはまだ何個のお菓子が隠されていますか？"
+answer = """つよしは 36 個のお菓子を隠します。
+ななは 5 個のお菓子を見つけます。
+あきこは 5*2 = <<5*2=10>>10 個のお菓子を見つけます。
+ひろきは 10 - 2 = <<10-2=8>>8 個のお菓子を見つけます。
+まりこは 8*1/2=<<8*1/2=4>>4 個のお菓子を見つけます。
+子どもたちは全部で 5 + 10 + 8 + 4 = <<5+10+8+4=27>>27 個のお菓子を見つけます。
+庭にまだ隠されているお菓子の合計は 36 - 27 = <<36-27=9>>9 個のお菓子です。
+#### 9
+"""
+id_orig = 1164
+id_shuffled = 47
+question_annotated = """{name1,つよし}は宝探しのために、庭に{n,36}個のお菓子を隠しました。{name2,なな}は{x,5}個のお菓子を見つけます。{name3,あきこ}は{name2,なな}の{mult1_txt,2倍}の数を見つけます。{name4,ひろき}は{name3,あきこ}より{y,2}個少なく見つけ、{name5,まりこ}は{name4,ひろき}の{frac_txt,半分}の数を見つけます。庭にはまだ何個のお菓子が隠されていますか？
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(20, 40)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+answer_annotated = """{name1}は {n} 個のお菓子を隠します。
+{name2}は {x} 個のお菓子を見つけます。
+{name3}は {x}*{mult1_val} = <<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} 個のお菓子を見つけます。
+{name4}は {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} 個のお菓子を見つけます。
+{name5}は {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} 個のお菓子を見つけます。
+子どもたちは全部で {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} 個のお菓子を見つけます。
+庭にまだ隠されているお菓子の合計は {n} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} 個のお菓子です。
+#### {n - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

@@ -1,0 +1,34 @@
+question = "あおとは家畜に干し草を与えています。ヤギは1頭につき5キログラム必要で、ラマはその2倍より3キログラム少ない量が必要です。ヤギが15頭、ラマが12頭いるとすると、あおとは干し草を全部で何キログラム必要ですか？"
+answer = """まず、ラマ1頭に必要な干し草の量を求めます: 5キログラム * 2 - 3 = <<5*2-3=7>>7キログラム/ラマ
+次に、ラマ全体に必要な干し草の量を求めます: 7キログラム/ラマ * 12頭のラマ = <<7*12=84>>84キログラム
+次に、ヤギ全体に必要な干し草の量を求めます: 5キログラム/ヤギ * 15頭のヤギ = <<5*15=75>>75キログラム
+最後に、2つの干し草の量を足して合計を求めます: 84キログラム + 75キログラム = <<84+75=159>>159キログラム
+#### 159
+"""
+id_orig = 937
+id_shuffled = 71
+question_annotated = """{name,あおと}は家畜に{food,干し草}を与えています。{animal1,ヤギ}は1頭につき{n1,5}{unit,キログラム}必要で、{animal2,ラマ}はその2倍より{n2,3}{unit,キログラム}少ない量が必要です。{animal1,ヤギ}が{k1,15}頭、{animal2,ラマ}が{k2,12}頭いるとすると、{name,あおと}は{food,干し草}を全部で何{unit,キログラム}必要ですか？
+
+#init:
+- name = sample(names)
+- food = sample([\"干し草\", \"穀物\", \"飼料\", \"餌\"])
+- animal1, animal2 = sample([\"ヤギ\", \"牛\", \"馬\", \"ロバ\", \"ラマ\", \"アルパカ\", \"豚\"], 2)
+- unit = sample([\"キログラム\", \"kg\"])
+- $n1 = range(3, 15)
+- $n2 = range(1, 10)
+- $k1 = range(10, 50)
+- $k2 = range(10, 50)
+
+#conditions:
+- 2*n1 - n2 > 0
+
+#answer: k1*n1 + k2*(2*n1 - n2)
+"""
+answer_annotated = """まず、{animal2}1頭に必要な{food}の量を求めます: {n1}{unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2}{unit}/{animal2}
+次に、{animal2}全体に必要な{food}の量を求めます: {2*n1-n2}{unit}/{animal2} * {k2}頭の{animal2} = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)}{unit}
+次に、{animal1}全体に必要な{food}の量を求めます: {n1}{unit}/{animal1} * {k1}頭の{animal1} = <<{n1}*{k1}={k1*n1}>>{k1*n1}{unit}
+最後に、2つの{food}の量を足して合計を求めます: {k2*(2*n1-n2)}{unit} + {k1*n1}{unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)}{unit}
+#### {k1*n1 + k2*(2*n1 - n2)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

@@ -1,0 +1,31 @@
+question = "けんたは6面のサイコロを振っています。3より大きい数が出る確率は、偶数が2回連続で出る確率より何パーセントポイント高いですか？"
+answer = """サイコロで3より大きい数は3つあるので、そのうちの1つが出る確率は3/6=50%です。
+偶数が1回出る確率は50%なので、2回連続で出る確率は50% * 50% = 25%です。
+この2つの確率の差は50% - 25% = 25%です。
+#### 25
+"""
+id_orig = 184
+id_shuffled = 2
+question_annotated = """{name,けんた}は{s,6}面のサイコロを振っています。{target,3}より大きい数が出る確率は、{z,偶数}が2回連続で出る確率より何パーセントポイント高いですか？
+
+#init:
+- name=sample(names)
+- $s = range(4, 102, 2)
+- $target = range(1, 100)
+- z = sample([\"偶数\", \"奇数\"])
+
+#conditions: 
+- target < s
+- divides(s-target, target)
+- is_int((s-target)/s * 100)
+-  int((s-target)/s * 100) > 25
+
+#answer: int((s-target)/s * 100) - 25
+"""
+answer_annotated = """サイコロで{target}より大きい数は{s-target}つあるので、そのうちの1つが出る確率は{s-target}/{s}={int((s-target)/s * 100)}%です。
+{z}が1回出る確率は50%なので、2回連続で出る確率は50% * 50% = 25%です。
+この2つの確率の差は{int((s-target)/s * 100)}% - 25% = { int((s-target)/s * 100) - 25}%です。
+#### { int((s-target)/s * 100) - 25}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

@@ -1,0 +1,29 @@
+question = "あきらは農場にりんごを摘みに行き、アリを発見しました。さらに、庭でアリの半分の数の毛虫を見つけました。アリが50匹いたとすると、虫の合計数は何匹ですか。"
+answer = """アリが50匹いたとすると、庭にいる毛虫の総数は 1/2*50匹 = 25匹です。
+したがって、虫の合計数は 25匹 + 50匹 = <<25+50=75>>75匹です。
+#### 75
+"""
+id_orig = 232
+id_shuffled = 43
+question_annotated = """{name,あきら}は{place,農場}に{fruit,りんご}を摘みに行き、{insect2,アリ}を発見しました。さらに、{location,庭}で{insect2,アリ}の{frac_txt,半分}の数の{insect1,毛虫}を見つけました。{insect2,アリ}が{n,50}匹いたとすると、虫の合計数は何匹ですか。
+
+#init:
+- name = sample(names)
+- place = sample([\"果樹園\", \"裏庭\", \"温室\", \"市民農園\"])
+- fruit = sample([\"いちご\", \"さくらんぼ\", \"ブルーベリー\", \"ラズベリー\"])
+- location = sample([\"庭\", \"畑\", \"区画\", \"植え込み\"])
+- insect1, insect2 = sample([\"アリ\", \"てんとう虫\", \"バッタ\", \"毛虫\", \"ハチ\", \"スズメバチ\"], 2)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(20, 201)
+
+#conditions:
+- is_int(n * frac_val)
+
+#answer: n + int(n * frac_val)
+"""
+answer_annotated = """{insect2}が{n}匹いたとすると、{location}にいる{insect1}の総数は {frac_val}*{n}匹 = {int(n * frac_val)}匹です。
+したがって、虫の合計数は {int(n * frac_val)}匹 + {n}匹 = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)}匹です。
+#### {n + int(n * frac_val)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"
