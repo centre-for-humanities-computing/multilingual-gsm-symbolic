@@ -352,8 +352,8 @@ def relationship_plot(
         if handles:
             fig.legend(handles, labels, loc="lower center", ncol=math.ceil(len(labels) / 2), frameon=False)
         split_out = out.with_name(f"{out.stem}_{split}{out.suffix}") if split == "original" else out
-        fig.supxlabel(xlabel, y=0.08)
-        fig.tight_layout(rect=(0, 0.13, 1, 1))
+        fig.supxlabel(xlabel, y=0.09)
+        fig.tight_layout(rect=(0, 0.14, 1, 1))
         fig.savefig(split_out, bbox_inches="tight")
         plt.close(fig)
         saved.append(split_out)
