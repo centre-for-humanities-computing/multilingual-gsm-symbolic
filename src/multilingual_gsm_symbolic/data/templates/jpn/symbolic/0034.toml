@@ -1,0 +1,36 @@
+question = "まえださんは家を￥40000000で売却しました。売却価格の3%にあたる名義変更手数料を支払い、さらに売却価格の5%にあたる仲介手数料も支払いました。さらに、その家の残っていたローン残高として￥25000000を支払ったとすると、まえださんの家の売却による手取り額はいくらですか？"
+answer = """まえださんは名義変更手数料として ￥40,000,000*3/100 = <<40000000*3/100=1200000>>￥1,200,000 を支払いました。
+仲介手数料として ￥40,000,000*5/100 = <<40000000*5/100=2000000>>￥2,000,000 を支払いました。
+したがって、まえださんが名義変更手数料、仲介手数料、ローン返済として支払った合計は ￥1,200,000 + ￥2,000,000 + ￥25,000,000 = <<1200000+2000000+25000000=28200000>>￥28,200,000 です。
+よって、まえださんの手取り額は ￥40,000,000 - ￥28,200,000 = <<40000000-28200000=11800000>>￥11,800,000 です。
+#### 11800000
+"""
+id_orig = 266
+id_shuffled = 34
+question_annotated = """{name,まえだ}さんは{property,家}を{cur,￥}{price, 40000000}で売却しました。売却価格の{fee1_percent,3}%にあたる{fee1_name,名義変更}手数料を支払い、さらに売却価格の{fee2_percent,5}%にあたる{fee2_name,仲介}手数料も支払いました。さらに、その{property,家}の残っていたローン残高として{cur,￥}{loan, 25000000}を支払ったとすると、{name,まえだ}さんの{property,家}の売却による手取り額はいくらですか？
+
+#init:
+- name = sample(family_names)
+- property = sample(['家', 'アパート', 'マンション', '物件', '不動産'])
+- fee1_name = sample(['名義変更', '登記', '法的'])
+- fee2_name = sample(['仲介'])
+- cur = sample(currencies_sym)
+- $price = range(20000000, 100000000, 1000000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(10000000, 70000000, 1000000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+answer_annotated = """{name}さんは{fee1_name}手数料として {cur}{price}*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{cur}{price * fee1_percent // 100} を支払いました。
+{fee2_name}手数料として {cur}{price}*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{cur}{price * fee2_percent // 100} を支払いました。
+したがって、{name}さんが{fee1_name}手数料、{fee2_name}手数料、ローン返済として支払った合計は {cur}{price * fee1_percent // 100} + {cur}{price * fee2_percent // 100} + {cur}{loan} = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{cur}{price * (fee1_percent + fee2_percent) // 100 + loan} です。
+よって、{name}さんの手取り額は {cur}{price} - {cur}{price * (fee1_percent + fee2_percent) // 100 + loan} = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{cur}{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} です。
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

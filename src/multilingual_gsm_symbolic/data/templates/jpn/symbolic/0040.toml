@@ -1,0 +1,43 @@
+question = "ゆうなは休暇で海辺に行きました。両親は、好きなものを買えるように￥3000くれました。このお土産屋では、飴を500グラムあたり￥300で買うと、次の500グラムが1/2の値段になるので、2000グラム買いました。さらに、貝殻の詰め合わせ1袋を￥150と、￥250ずつの磁石を4個買いました。ゆうなの手元にはいくら残っていますか？"
+answer = """飴は500グラムあたりで￥300で、さらに500グラムを半額で買えます。したがって、500グラム分の値段の1/2は 1/2*￥300 = ￥150 です。
+合わせると、￥150 + ￥300 = ￥450 です。
+残りの1000グラムには割引がなく、￥600かかるので、合計金額は ￥300 + ￥150 + ￥600 = ￥<<300 + 150 + 600 = 1050>>1050
+1個￥250の磁石4個は 4*￥250=￥<<4*250=1000>>1000
+買ったもの全部を足すと、￥1050 + ￥150 + ￥1000 = ￥<<1050+150+1000=2200>>2200
+￥3000持っていて￥2200使ったので、残りは ￥3000 - ￥2200 = ￥<<3000-2200=800>>800 です
+#### 800
+"""
+id_orig = 410
+id_shuffled = 40
+question_annotated = """{name,ゆうな}は休暇で海辺に行きました。両親は、好きなものを買えるように{cur,￥}{total,3000}くれました。このお土産屋では、飴を{n1,500}グラムあたり{cur,￥}{p1,300}で買うと、次の{n2,500}グラムが{discount,1/2}の値段になるので、{n12,2000}グラム買いました。さらに、貝殻の詰め合わせ1袋を{cur,￥}{p2,150}と、{cur,￥}{p3,250}ずつの磁石を{n3,4}個買いました。{name,ゆうな}の手元にはいくら残っていますか？
+
+#init:
+- name = sample(names_female)
+- $total = range(2000, 6000, 500)
+- $n1 = range(500, 3000, 500)
+- $n2 = range(500, 3000, 500)
+- $n12 = range(1000, 6000, 500)
+- $n3 = range(4, 12, 4)
+- $p1 = range(100, 1000, 200)
+- $p2 = arange(100, 250, 50)
+- $p3 = arange(250, 1500, 250)
+- $discount = sample(fractions)
+
+#conditions:
+- n2 <= n1
+- n12 - n1 - n2 > 0
+- is_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)
+- p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3 < total
+
+#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)
+"""
+answer_annotated = """飴は{n1}グラムあたりで￥{p1}で、さらに{n2}グラムを半額で買えます。したがって、{n2}グラム分の値段の{discount}は {discount}*￥{p1} = ￥{discount*p1} です。
+合わせると、￥{discount*p1} + ￥{p1} = ￥{discount*p1 + p1} です。
+残りの{n12 - n1 - n2}グラムには割引がなく、￥{(n12 - n1 - n2)/n1*p1}かかるので、合計金額は ￥{p1} + ￥{discount*p1} + ￥{(n12 - n1 - n2)/n1*p1} = ￥<<{p1} + {discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + discount*p1 + (n12 - n1 - n2)/n1*p1}
+1個￥{p3}の磁石{n3}個は {n3}*￥{p3}=￥<<{n3}*{p3}={n3*p3}>>{n3*p3}
+買ったもの全部を足すと、￥{p1 + discount*p1 + (n12 - n1 - n2)/n1*p1} + ￥{p2} + ￥{n3*p3} = ￥<<{p1 + discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={p1 + discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3}>>{p1 + discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3}
+￥{total}持っていて￥{p1 + discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3}使ったので、残りは ￥{total} - ￥{p1 + discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3} = ￥<<{total}-{p1 + discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3}={total - (p1 + discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)}>>{total - (p1 + discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)} です
+#### {total - (p1 + discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

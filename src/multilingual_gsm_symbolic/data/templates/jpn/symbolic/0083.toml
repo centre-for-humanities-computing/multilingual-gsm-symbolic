@@ -1,0 +1,28 @@
+question = "さとう家はクッキー作りに忙しいです。これまで7995枚のクッキーを作りました。抹茶クッキーが2595枚、いちごクッキーが3075枚、そしてチョコクッキーが何枚かあります。チョコクッキーは何枚作りましたか？"
+answer = """抹茶クッキーといちごクッキーの合計枚数は 2595 + 3075 = <<2595+3075=5670>>5670 です。
+したがって、チョコクッキーは 7995 - 5670 = <<7995-5670=2325>>2325 枚作りました。
+#### 2325
+"""
+id_orig = 1305
+id_shuffled = 83
+question_annotated = """{family,さとう}家は{item,クッキー}作りに忙しいです。これまで{total,7995}枚の{item,クッキー}を作りました。{flavor1,抹茶}{item,クッキー}が{n1,2595}枚、{flavor2,いちご}{item,クッキー}が{n2,3075}枚、そして{flavor3,チョコ}{item,クッキー}が何枚かあります。{flavor3,チョコ}{item,クッキー}は何枚作りましたか？
+
+#init:
+- family = sample(family_names)
+- item = sample([\"クッキー\", \"サブレ\", \"ビスケット\"])
+- flavor1, flavor2, flavor3 = sample([\"いちご\", \"ブルーベリー\", \"抹茶\", \"チョコ\", \"きな粉\"], 3)
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3200, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+answer_annotated = """{flavor1}{item}と{flavor2}{item}の合計枚数は {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} です。
+したがって、{flavor3}{item}は {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} 枚作りました。
+#### {total-(n1+n2)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

@@ -1,0 +1,33 @@
+question = "あいは学用品を買いに行きました。1本￥150のペンを4本、1冊￥400のノートを2冊、そして￥2000の用紙を1パック買いました。あいは全部でいくら使いましたか？"
+answer = """あいはペンに 4*￥150 = ￥<<4*150=600>>600 使いました。
+また、ノートに 2*￥400 = ￥<<2*400=800>>800 使いました。
+したがって、あいが学用品に使った合計金額は ￥600 + ￥800 + ￥2000 = ￥<<600+800+2000=3400>>3400 です。
+#### 3400
+"""
+id_orig = 158
+id_shuffled = 18
+question_annotated = """{name,あい}は学用品を買いに行きました。1本{cur,￥}{c1,150}の{obj1,ペン}を{n1,4}本、1冊{cur,￥}{c2,400}の{obj2,ノート}を{n2,2}冊、そして{cur,￥}{c3,2000}の用紙を1パック買いました。{name,あい}は全部でいくら使いましたか？
+
+#init:
+- name = sample(names_male)
+- obj1 = sample([\"鉛筆\", \"クレヨン\", \"色鉛筆\", \"マーカー\", \"ペン\", \"シャープペン\"])
+- obj2 = sample([\"ノート\", \"教科書\", \"フォルダー\", \"バインダー\"])
+- cur = sample(currencies_sym)
+- $n1 = range(4, 25, 2)
+- $c1 = arange(150, 1000, 50)
+- $n2 = range(2, 15, 2)
+- $c2 = arange(400, 2000, 100)
+- $c3 = range(1000, 2500, 100)
+
+#conditions:
+- is_int(n1 * c1)
+- is_int(n2 * c2)
+#answer: int(n1*c1 + n2*c2 + c3)
+"""
+answer_annotated = """{name}は{obj1}に {n1}*{cur}{c1} = {cur}<<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} 使いました。
+また、{obj2}に {n2}*{cur}{c2} = {cur}<<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} 使いました。
+したがって、{name}が学用品に使った合計金額は {cur}{int(n1*c1)} + {cur}{int(n2*c2)} + {cur}{c3} = {cur}<<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} です。
+#### {int(n1*c1+n2*c2+c3)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

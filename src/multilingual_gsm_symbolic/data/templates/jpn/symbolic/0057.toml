@@ -1,0 +1,31 @@
+question = "のりおは青い絵の具を4本と黄色い絵の具を3本持っています。わたるは、のりおの青い絵の具の本数の半分を持っていて、黄色い絵の具はのりおの3倍の本数を持っています。わたるは絵の具を全部で何本持っていますか？"
+answer = """わたるは青い絵の具を4*1/2= <<4*1/2=2>>2本持っています
+わたるは黄色い絵の具を3*3=<<3*3=9>>9本持っています
+わたるは絵の具を全部で2+9 =<<2+9=11>>11本持っています
+#### 11
+"""
+id_orig = 480
+id_shuffled = 57
+question_annotated = """{name1,のりお}は{color1,青}い絵の具を{n1,4}本と{color2,黄色}い絵の具を{n2,3}本持っています。{name2,わたる}は、{name1,のりお}の{color1,青}い絵の具の本数の{frac1_txt,半分}を持っていて、{color2,黄色}い絵の具は{name1,のりお}の{mult1_txt,3倍}の本数を持っています。{name2,わたる}は絵の具を全部で何本持っていますか？
+
+#init:
+- name1, name2 = sample(names, 2)
+- color1, color2 = sample(colors, 2)
+- $n1 = range(2, 20)
+- $n2 = range(2, 20)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n2 * mult1_val)
+
+#answer: int(n1 * frac1_val + n2 * mult1_val)
+"""
+answer_annotated = """{name2}は{color1}い絵の具を{n1}*{frac1_val}= <<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)}本持っています
+{name2}は{color2}い絵の具を{n2}*{mult1_val}=<<{n2}*{mult1_val}={n2*mult1_val}>>{n2*mult1_val}本持っています
+{name2}は絵の具を全部で{int(n1*frac1_val)}+{n2*mult1_val} =<<{int(n1*frac1_val)}+{n2*mult1_val}={int(n1*frac1_val)+n2*mult1_val}>>{int(n1*frac1_val)+n2*mult1_val}本持っています
+#### {int(n1*frac1_val)+n2*mult1_val}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

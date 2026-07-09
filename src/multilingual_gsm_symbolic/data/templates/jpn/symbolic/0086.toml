@@ -1,0 +1,41 @@
+question = "すみれはランニングチームのメンバーに選ばれたので、運動用品を買いに行きました。タンクトップを￥1000で、あとランニング用ショーツをタンクトップより￥500高い値段で買いました。元値￥4800のテニスシューズがセールで半分の値段になっていたので、それも買いました。さらに、￥800のスポーツソックスも￥200引きのクーポンを使って購入しました。すみれは運動用品に全部でいくら使いましたか？"
+answer = """ショーツはタンクトップより￥500高いので、値段は￥500 + ￥1000 = <<500+1000=1500>>￥1500です。
+テニスシューズは元の￥4800の半分なので、4800*1/2=<<4800*1/2=2400>>￥2400です。
+クーポンを使うと、ソックスは￥800 - ￥200 = <<800-200=600>>￥600です。
+タンクトップ、ショーツ、テニスシューズ、ソックスを合わせると、￥1000 + ￥1500 + ￥2400 + ￥600 = <<1000+1500+2400+600=5500>>￥5500です。
+#### 5500
+"""
+id_orig = 1053
+id_shuffled = 86
+question_annotated = """{name,すみれ}は{sport,ランニング}チームのメンバーに選ばれたので、運動用品を買いに行きました。{item1,タンクトップ}を{cur,￥}{p1,1000}で、あと{sport,ランニング}用{item2,ショーツ}を{item1,タンクトップ}より{cur,￥}{p2,500}高い値段で買いました。元値{cur,￥}{p3,4800}の{item3,テニスシューズ}がセールで{frac_txt,半分}の値段になっていたので、それも買いました。さらに、{cur,￥}{p4,800}のスポーツ{item4,ソックス}も{cur,￥}{d,200}引きのクーポンを使って購入しました。{name,すみれ}は運動用品に全部でいくら使いましたか？
+
+#init:
+- name = sample(names)
+- sport = sample([\"サイクリング\", \"野球\", \"サッカー\", \"バレーボール\"])
+- item1 = sample([\"Tシャツ\", \"ジャージ\"])
+- item2 = sample([\"ショーツ\", \"ズボン\"])
+- item3 = sample([\"スニーカー\", \"靴\", \"運動靴\"])
+- item4 = sample([\"ソックス\", \"ヘッドバンド\", \"靴下\"])
+- cur = sample(currencies_sym)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(800, 2500, 100)
+- $p2 = range(300, 1500, 100)
+- $p3 = range(300, 8000, 100)
+- $p4 = range(500, 1500, 100)
+- $d = range(100, 600, 100)
+
+#conditions:
+- is_int(p3*frac_val)
+- p3 % 2 == 0
+- p4 > d
+
+#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)
+"""
+answer_annotated = """{item2}は{item1}より{cur}{p2}高いので、値段は{cur}{p2} + {cur}{p1} = <<{p2}+{p1}={p1+p2}>>{cur}{p1+p2}です。
+{item3}は元の{cur}{p3}の{frac_txt}なので、{p3}*{frac_val}=<<{p3}*{frac_val}={p3*frac_val}>>{cur}{p3*frac_val}です。
+クーポンを使うと、{item4}は{cur}{p4} - {cur}{d} = <<{p4}-{d}={p4-d}>>{cur}{p4-d}です。
+{item1}、{item2}、{item3}、{item4}を合わせると、{cur}{p1} + {cur}{p1+p2} + {cur}{p3*frac_val} + {cur}{p4-d} = <<{p1}+{p1+p2}+{p3*frac_val}+{p4-d}={p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}>>{cur}{p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}です。
+#### {p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

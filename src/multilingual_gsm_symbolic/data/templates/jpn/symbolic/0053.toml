@@ -1,0 +1,31 @@
+question = "のぶおはボーリングので278点取りました。みつこはのぶおの半分の点数より11点多く取りました。のぶおとみつこの合計点は何点ですか？"
+answer = """のぶお = <<278=278>>278点
+みつこ = 1/2*278 + 11 = 150点
+278 + 150 = <<278+150=428>>428点
+のぶおとみつこは合わせて428点取りました。
+#### 428
+"""
+id_orig = 800
+id_shuffled = 53
+question_annotated = """{name1,のぶお}は{game,ボーリング}ので{n1,278}点取りました。{name2,みつこ}は{name1,のぶお}の{frac_txt,半分}の点数より{n2,11}点多く取りました。{name1,のぶお}と{name2,みつこ}の合計点は何点ですか？
+
+#init:
+- name1, name2 = sample(names, 2)
+- game = sample([\"ボーリング\", \"ダーツ\", \"バスケットボール\", \"テニス\", \"太鼓の達人\"])
+- $n1 = range(200, 500)
+- $n2 = range(5, 50)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(frac_val * n1)
+
+#answer: n1 + int(frac_val * n1 + n2)
+"""
+answer_annotated = """{name1} = <<{n1}={n1}>>{n1}点
+{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)}点
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)}点
+{name1}と{name2}は合わせて{n1 + int(frac_val * n1 + n2)}点取りました。
+#### {n1 + int(frac_val * n1 + n2)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

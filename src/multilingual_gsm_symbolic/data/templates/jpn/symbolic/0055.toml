@@ -1,0 +1,30 @@
+question = "まさこはひらがなを書く練習をしていて、覚えるまで何度も文字を書き直すことにしました。まずは全文字を2回書き、次にその半分を1回書き、そのあと同じ数をもう一度練習しました。まさこは全部で何文字書きましたか？"
+answer = """まさこはひらがな全文字を2回書いたので、合計は 48*2=<<48*2=96>>96 文字です。
+次に、その半分の文字を書いたので、48*1/2=<<48*1/2=24>>24 文字です。
+ここまでで、合計は 96 + 24 = <<96+24=120>>120 文字です。
+これをもう一度書くということは、書いた文字数が2倍になることなので、合計で 120 * 2 = <<120*2=240>>240 文字書いたことになります。
+#### 240
+"""
+id_orig = 546
+id_shuffled = 55
+question_annotated = """{name,まさこ}は{alphabets_txt,ひらがな}を書く練習をしていて、覚えるまで何度も文字を書き直すことにしました。まずは全文字を{n1_txt,2回}書き、次にその{frac_txt,半分}を1回書き、そのあと同じ数をもう一度練習しました。{name,まさこ}は全部で何文字書きましたか？
+
+#init:
+- name = sample(names)
+- alphabets_txt, alphabets_val = sample([(\"英語のアルファベット\", 26), (\"ひらがな\", 48), (\"カタカナ\", 48)])
+- n1_txt, n1_val = sample([(\"2回\", 2), (\"3回\", 3), (\"4回\", 4), (\"5回\", 5), (\"6回\", 6), (\"7回\", 7), (\"8回\", 8), (\"9回\", 9), (\"10回\", 10), (\"11回\", 11), (\"12回\", 12), (\"13回\", 13), (\"14回\", 14), (\"15回\", 15), (\"16回\", 16), (\"17回\", 17), (\"18回\", 18), (\"19回\", 19), (\"20回\", 20)])
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)
+"""
+answer_annotated = """{name}は{alphabets_txt}全文字を{n1_txt}書いたので、合計は {alphabets_val}*{n1_val}=<<{alphabets_val}*{n1_val}={alphabets_val*n1_val}>>{alphabets_val*n1_val} 文字です。
+次に、その{frac_txt}の文字を書いたので、{alphabets_val}*{frac_val}=<<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} 文字です。
+ここまでで、合計は {alphabets_val*n1_val} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1_val}+{int(alphabets_val*frac_val)}={alphabets_val*n1_val + int(alphabets_val*frac_val)}>>{alphabets_val*n1_val + int(alphabets_val*frac_val)} 文字です。
+これをもう一度書くということは、書いた文字数が2倍になることなので、合計で {alphabets_val*n1_val + int(alphabets_val*frac_val)} * 2 = <<{alphabets_val*n1_val + int(alphabets_val*frac_val)}*2={2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1_val + int(alphabets_val*frac_val))} 文字書いたことになります。
+#### {2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

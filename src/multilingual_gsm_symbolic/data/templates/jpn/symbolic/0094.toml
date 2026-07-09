@@ -1,0 +1,31 @@
+question = "100人がグーグルに応募します。応募した人のうち、面接を受けられるのはわずか30%です。面接を受けた人のうち、20%が内定をもらいます。内定をもらった人のうち、3分の1がその内定を承諾します。何人が内定を承諾しますか？"
+answer = """面接を受けられる人の数は 100 * 0.3 = <<100*0.3=30>>30人です
+内定を受ける人の数は 30 * 0.2 = <<30*0.2=6>>6人です
+その職を受け入れる人の数は 6*1/3 = <<6*1/3=2>>2人です
+#### 2
+"""
+id_orig = 718
+id_shuffled = 94
+question_annotated = """{n,100}人が{company,グーグル}に応募します。応募した人のうち、面接を受けられるのはわずか{p1,30}%です。面接を受けた人のうち、{p2,20}%が内定をもらいます。内定をもらった人のうち、{frac_txt,3分の1}がその内定を承諾します。何人が内定を承諾しますか？
+
+#init:
+- company = sample([\"グーグル\", \"アップル\", \"NEC\", \"パナソニック\", \"ソニー\", \"ソフトバンク\", \"NTT\"])
+- $n = range(100, 1001, 10)
+- $p1 = range(10, 51)
+- $p2 = range(10, 51)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (p2/100))
+- is_int(n * (p1/100) * (p2/100) * frac_val)
+
+#answer: int(n * (p1/100) * (p2/100) * frac_val)
+"""
+answer_annotated = """面接を受けられる人の数は {n} * {p1/100} = <<{n}*{p1/100}={int(n*(p1/100))}>>{int(n*(p1/100))}人です
+内定を受ける人の数は {int(n*(p1/100))} * {p2/100} = <<{int(n*(p1/100))}*{p2/100}={int(n*(p1/100)*(p2/100))}>>{int(n*(p1/100)*(p2/100))}人です
+その職を受け入れる人の数は {int(n*(p1/100)*(p2/100))}*{frac_val} = <<{int(n*(p1/100)*(p2/100))}*{frac_val}={int(n*(p1/100)*(p2/100)*frac_val)}>>{int(n*(p1/100)*(p2/100)*frac_val)}人です
+#### {int(n*(p1/100)*(p2/100)*frac_val)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

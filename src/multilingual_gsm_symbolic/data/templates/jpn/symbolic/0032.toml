@@ -1,0 +1,37 @@
+question = "やまだ夫人は、予算の￥40000000を超えない家を探しています。彼女は、販売価格が￥35000000の物件を見つけました。さらに、買い手は販売価格の5%の仲介手数料と、販売価格の12%の名義変更手数料も支払わなければなりません。家の合計金額は、やまだ夫人の予算よりいくら高いですか？"
+answer = """仲介手数料は ￥35,000,000*5/100 = ￥<<35000000*5/100=1750000>>1,750,000 です。
+名義変更手数料は ￥35,000,000*12/100 = ￥<<35000000*12/100=4200000>>4,200,000 です。
+家の合計金額は ￥35,000,000 + ￥1,750,000 + ￥4,200,000 = ￥40,950,000 です。
+したがって、￥40,950,000 - ￥40,000,000 = ￥<<40950000-40000000=950000>>950,000 なので、やまだ夫人の予算より 950,000 高いです。
+#### 950000
+"""
+id_orig = 265
+id_shuffled = 32
+question_annotated = """{name, やまだ夫人}は、予算の￥{budget, 40000000}を超えない{property_type, 家}を探しています。彼女は、販売価格が￥{price, 35000000}の物件を見つけました。さらに、買い手は販売価格の{brokerage_fee, 5}%の仲介手数料と、販売価格の{transfer_fee, 12}%の名義変更手数料も支払わなければなりません。{property_type, 家}の合計金額は、{name, やまだ夫人}の予算よりいくら高いですか？
+
+#init:
+- name = sample(family_names)
+- property_type = sample(['家', 'アパート', 'マンション', '物件', '不動産'])
+- $budget = range(30000000, 50000000, 1000000)
+- $price = range(25000000, 45000000, 1000000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)
+"""
+answer_annotated = """仲介手数料は ￥{price}*{brokerage_fee}/100 = ￥<<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} です。
+名義変更手数料は ￥{price}*{transfer_fee}/100 = ￥<<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} です。
+{property_type}の合計金額は ￥{price} + ￥{int(price*brokerage_fee/100)} + ￥{int(price*transfer_fee/100)} = ￥{int(price + price*brokerage_fee/100 + price*transfer_fee/100)} です。
+したがって、￥{int(price + price*brokerage_fee/100 + price*transfer_fee/100)} - ￥{budget} = ￥<<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} なので、{name}の予算より {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} 高いです。
+#### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"
