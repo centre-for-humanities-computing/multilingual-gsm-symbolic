@@ -246,6 +246,52 @@ def pareto_frontier(table: pd.DataFrame) -> pd.DataFrame:
     return frontier[frontier["best_gap_so_far"].diff().fillna(-1) < 0]
 
 
+def reasoning_budget_summary_sentence(table: pd.DataFrame) -> str | None:
+    if table.empty:
+        return None
+
+    paired = table.pivot_table(
+        index="model_raw",
+        columns="reasoning",
+        values=["relative_transfer_gap", "avg_generation_seconds"],
+        aggfunc="mean",
+    )
+    if not {"on", "off"}.issubset(paired["relative_transfer_gap"].columns) or not {
+        "on",
+        "off",
+    }.issubset(paired["avg_generation_seconds"].columns):
+        return None
+
+    gap_off = paired["relative_transfer_gap"]["off"]
+    time_off = paired["avg_generation_seconds"]["off"]
+    changes = pd.DataFrame(
+        {
+            "gap_reduction": (gap_off - paired["relative_transfer_gap"]["on"]) / gap_off,
+            "time_increase": (paired["avg_generation_seconds"]["on"] - time_off) / time_off,
+        }
+    ).replace([np.inf, -np.inf], np.nan)
+    changes = changes.dropna()
+    if changes.empty:
+        return None
+
+    return (
+        "Enabling reasoning reduces transfer gaps by "
+        f"{changes['gap_reduction'].mean() * 100:.1f}% on average while increasing generation time per question by "
+        f"{changes['time_increase'].mean() * 100:.1f}%."
+    )
+
+
+def save_reasoning_budget_summary(table: pd.DataFrame, out_dir: Path) -> Path | None:
+    sentence = reasoning_budget_summary_sentence(table)
+    if not sentence:
+        return None
+
+    out = out_dir / "qwen_compute_budget_transfer" / "reasoning_budget_summary.txt"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(f"{sentence}\n", encoding="utf-8")
+    return out
+
+
 def _plot_compute_budget_table(table: pd.DataFrame, out: Path) -> bool:
     fig, ax = plt.subplots(figsize=(9.5, 5.8))
     families = sorted(table["family"].unique())
@@ -387,6 +433,12 @@ def main() -> None:
 
     for png_out in png_outputs:
         print(f"Saved {png_out}")
+
+    table = qwen_compute_budget_table(summary)
+    summary_out = save_reasoning_budget_summary(table, args.out_dir)
+    if summary_out:
+        print(f"Saved {summary_out}")
+        print(summary_out.read_text(encoding="utf-8").strip())
 
 
 if __name__ == "__main__":
