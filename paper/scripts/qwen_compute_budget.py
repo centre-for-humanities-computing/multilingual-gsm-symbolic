@@ -24,6 +24,7 @@ from eval_log_utils import discover_logs, infer_model_info, model_name, parse_ta
 from inspect_ai.log import read_eval_log
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
+from plot_config import path_slug, reasoning_variant_name
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -42,19 +43,8 @@ plt.rcParams.update(
 )
 
 
-def reasoning_variant_name(model: str) -> tuple[str, str | None]:
-    suffixes = {
-        " (reasoning on)": "on",
-        " (reasoning off)": "off",
-    }
-    for suffix, mode in suffixes.items():
-        if model.endswith(suffix):
-            return model[: -len(suffix)], mode
-    return model, None
 
 
-def family_slug(family: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", family.lower()).strip("-")
 
 
 def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | None, str | None]:
@@ -378,6 +368,31 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path) -> bool:
     return True
 
 
+def plot_qwen_compute_budget_transfer(summary: pd.DataFrame, out: Path) -> bool:
+    table = qwen_compute_budget_table(summary)
+    if table.empty:
+        return False
+
+    return _plot_compute_budget_table(table, out)
+
+
+def plot_qwen_compute_budget_family_transfers(summary: pd.DataFrame, out_dir: Path) -> list[Path]:
+    table = qwen_compute_budget_table(summary)
+    if table.empty:
+        return []
+
+    outputs: list[Path] = []
+    root = out_dir / "qwen_compute_budget_transfer"
+    for family, family_table in table.groupby("family", sort=True):
+        family_dir = root / path_slug(family)
+        family_out = family_dir / "qwen_compute_budget_transfer.png"
+        family_dir.mkdir(parents=True, exist_ok=True)
+        _plot_compute_budget_table(family_table, family_out)
+        outputs.append(family_out)
+
+    return outputs
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -402,26 +417,19 @@ def main() -> None:
         raise SystemExit("No scored synthetic samples with generation timings found.")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    table = qwen_compute_budget_table(summary)
-    png_outputs = []
-    if not table.empty:
-        root = args.out_dir / "qwen_compute_budget_transfer"
-        for family, family_table in table.groupby("family", sort=True):
-            family_dir = root / family_slug(family)
-            family_out = family_dir / "qwen_compute_budget_transfer.png"
-            family_dir.mkdir(parents=True, exist_ok=True)
-            _plot_compute_budget_table(family_table, family_out)
-            png_outputs.append(family_out)
+    png_outputs = plot_qwen_compute_budget_family_transfers(summary, args.out_dir)
     if not png_outputs:
         raise SystemExit("No model transfer rows found.")
 
     for png_out in png_outputs:
         print(f"Saved {png_out}")
 
+    table = qwen_compute_budget_table(summary)
     summary_out = save_reasoning_budget_summary(table, args.out_dir)
     if summary_out:
         print(f"Saved {summary_out}")
         print(summary_out.read_text(encoding="utf-8").strip())
+
 
 
 if __name__ == "__main__":

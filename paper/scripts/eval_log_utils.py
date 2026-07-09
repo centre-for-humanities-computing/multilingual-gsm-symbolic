@@ -10,6 +10,10 @@ from typing import Any
 from inspect_ai.log import read_eval_log
 from plot_config import model_family, model_name, model_size_b, reasoning_mode
 
+import numpy as np
+import pandas as pd
+from scipy.stats import norm
+
 
 @dataclass(frozen=True)
 class ModelInfo:
@@ -112,11 +116,15 @@ def sample_score(sample: Any, scorer: str | None) -> float | None:
     return None
 
 
-def discover_logs(log_dirs: list[Path]) -> list[Path]:
-    paths: set[Path] = set()
-    for log_dir in log_dirs:
-        paths.update(path for path in log_dir.rglob("*.eval") if path.stat().st_size >= 1_000)
-    return sorted(paths)
+def discover_logs(inputs: list[Path]) -> list[Path]:
+    logs: set[Path] = set()
+    for path in inputs:
+        if path.is_dir():
+            logs.update(candidate for candidate in path.rglob("*.eval") if candidate.stat().st_size >= 1_000)
+        elif path.suffix == ".eval" and path.stat().st_size >= 1_000:
+            logs.add(path)
+    return sorted(logs)
+
 
 
 def _read_log_header(path: Path) -> tuple[Path, Any | None, str | None]:
@@ -165,3 +173,33 @@ def select_logs(paths: list[Path], include_incomplete: bool, workers: int) -> li
             selected[key] = (path, log)
 
     return sorted(selected.values(), key=lambda item: item[0].name)
+
+
+def sample_synthetic_sets(
+    synthetic: pd.DataFrame,
+    n_sets: int,
+    rng: np.random.Generator,
+) -> tuple[np.ndarray, int]:
+    """Sample one variant per source template and return set-level accuracies."""
+    variants = [
+        group["correct"].to_numpy(dtype=float)
+        for _source_id, group in synthetic.groupby("source_id", sort=True, dropna=False)
+    ]
+    if not variants:
+        raise ValueError("Synthetic data contains no source templates.")
+
+    set_totals = np.zeros(n_sets, dtype=float)
+    for values in variants:
+        set_totals += rng.choice(values, size=n_sets, replace=True)
+    return set_totals / len(variants), len(variants)
+
+
+def normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float, float]:
+    """Fit and return a normal probability density for sampled accuracies."""
+    mean = float(values.mean())
+    std = max(float(values.std(ddof=1)), 0.005)
+    lower = max(0.0, mean - 4 * std)
+    upper = min(1.0, mean + 4 * std)
+    x = np.linspace(lower, upper, 500)
+    return x, norm.pdf(x, loc=mean, scale=std), mean, std
+

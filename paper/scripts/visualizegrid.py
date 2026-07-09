@@ -39,8 +39,10 @@ from eval_log_utils import (
     discover_logs,
     infer_model_info,
     model_name,
+    normal_curve,
     parse_task,
     sample_score,
+    sample_synthetic_sets,
     select_logs,
 )
 from inspect_ai.log import read_eval_log
@@ -61,6 +63,7 @@ from plot_config import (
     ordered_families,
     path_slug,
     reasoning_sort_bucket,
+    reasoning_variant_name,
 )
 from scipy.stats import norm
 
@@ -295,31 +298,8 @@ def paired_correction_languages(
     return language_order(old & new, requested)
 
 
-def _sample_synthetic_sets(
-    synthetic: pd.DataFrame,
-    n_sets: int,
-    rng: np.random.Generator,
-) -> np.ndarray:
-    variants = [
-        group["correct"].to_numpy(dtype=float)
-        for _source_id, group in synthetic.groupby("source_id", sort=True, dropna=False)
-    ]
-    if not variants:
-        raise ValueError("Synthetic data contains no source templates.")
-
-    set_totals = np.zeros(n_sets, dtype=float)
-    for values in variants:
-        set_totals += rng.choice(values, size=n_sets, replace=True)
-    return set_totals / len(variants)
 
 
-def _normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
-    mean = float(values.mean())
-    std = max(float(values.std(ddof=1)), 0.005)
-    lower = max(0.0, mean - 4 * std)
-    upper = min(1.0, mean + 4 * std)
-    x = np.linspace(lower, upper, 500)
-    return x, norm.pdf(x, loc=mean, scale=std), mean
 
 
 def _original_accuracy(corrected: pd.DataFrame, uncorrected: pd.DataFrame) -> float:
@@ -350,16 +330,16 @@ def collect_correction_comparison_rows(
             CorrectionComparisonRow(
                 model=model,
                 original_accuracy=_original_accuracy(new_rows, old_rows),
-                uncorrected_sets=_sample_synthetic_sets(
+                uncorrected_sets=sample_synthetic_sets(
                     old_rows[old_rows["split"] == "synthetic"],
                     n_sets,
                     np.random.default_rng(seed + index),
-                ),
-                corrected_sets=_sample_synthetic_sets(
+                )[0],
+                corrected_sets=sample_synthetic_sets(
                     new_rows[new_rows["split"] == "synthetic"],
                     n_sets,
                     np.random.default_rng(seed + index),
-                ),
+                )[0],
             )
         )
 
@@ -1016,8 +996,8 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
             alpha=0.38,
             zorder=1,
         )
-        old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
-        new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
+        old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
+        new_x, new_density, new_mean, _ = normal_curve(row.corrected_sets)
         peak = max(
             float(old_counts.max()),
             float(new_counts.max()),
@@ -1247,42 +1227,22 @@ def main() -> None:
     print(f"Saved {summary_path}")
     print(f"Saved {args.out_dir / 'accuracy_heatmaps.png'}")
 
-    if made_pairs:
-        print(f"Saved {args.out_dir / 'original_vs_synthetic.png'}")
-    else:
-        print("Skipped original_vs_synthetic.png: no model/language has both splits.")
-
-    if made_scaling:
-        print(f"Saved {args.out_dir / 'family_scaling.png'}")
-    else:
-        print("Skipped family_scaling.png: no recognized model parameter counts.")
-
-    if made_transfer:
-        print(f"Saved {args.out_dir / 'english_normalized_transfer.png'}")
-    else:
-        print("Skipped english_normalized_transfer.png: paired English/non-English results are required.")
-
-    if made_metric:
-        print(f"Saved {args.out_dir / 'eng_vs_eng_metric.png'}")
-    else:
-        print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
-
-    if made_robustness:
-        print(f"Saved {args.out_dir / 'transfer_robustness.png'}")
-    else:
-        print("Skipped transfer_robustness.png: paired transfer results with model sizes are required.")
-
-    if made_degradation:
-        print(f"Saved {args.out_dir / 'split_degradation_heatmaps.png'}")
-    else:
-        print("Skipped split_degradation_heatmaps.png: paired original/synthetic results are required.")
-
-    if made_reasoning:
-        print(f"Saved {args.out_dir / 'reasoning_delta_heatmap.png'}")
-    else:
-        print(
-            "Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results with model sizes are required."
-        )
+    optional_outputs = [
+        (made_pairs, "original_vs_synthetic.png", "no model/language has both splits"),
+        (made_scaling, "family_scaling.png", "no recognized model parameter counts"),
+        (made_transfer, "english_normalized_transfer.png", "paired English/non-English results are required"),
+        (made_metric, "eng_vs_eng_metric.png", "paired English and English-metric results are required"),
+        (made_robustness, "transfer_robustness.png", "paired transfer results with model sizes are required"),
+        (made_degradation, "split_degradation_heatmaps.png", "paired original/synthetic results are required"),
+        (
+            made_reasoning,
+            "reasoning_delta_heatmap.png",
+            "paired synthetic English/non-English reasoning results with model sizes are required",
+        ),
+    ]
+    for made, filename, skip_reason in optional_outputs:
+        path = args.out_dir / filename
+        print(f"Saved {path}" if made else f"Skipped {filename}: {skip_reason}.")
 
     for out in correction_outputs:
         print(f"Saved {out}")

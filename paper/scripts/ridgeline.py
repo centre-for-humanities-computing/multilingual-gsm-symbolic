@@ -20,7 +20,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from eval_log_utils import discover_logs, parse_task, sample_score, select_logs
+from eval_log_utils import discover_logs, normal_curve, parse_task, sample_score, sample_synthetic_sets, select_logs
 from inspect_ai.log import read_eval_log
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
@@ -195,33 +195,8 @@ def load_problem_scores(
     return problems.drop(columns=["correct_sum", "correct_count"])
 
 
-def sample_synthetic_sets(
-    synthetic: pd.DataFrame,
-    n_sets: int,
-    rng: np.random.Generator,
-) -> tuple[np.ndarray, int]:
-    """Sample one variant per source template and return set-level accuracies."""
-    variants = [
-        group["correct"].to_numpy(dtype=float)
-        for _source_id, group in synthetic.groupby("source_id", sort=True, dropna=False)
-    ]
-    if not variants:
-        raise ValueError("Synthetic data contains no source templates.")
-
-    set_totals = np.zeros(n_sets, dtype=float)
-    for values in variants:
-        set_totals += rng.choice(values, size=n_sets, replace=True)
-    return set_totals / len(variants), len(variants)
 
 
-def normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float, float]:
-    """Fit and return a normal probability density for sampled accuracies."""
-    mean = float(values.mean())
-    std = max(float(values.std(ddof=1)), 0.005)
-    lower = max(0.0, mean - 4 * std)
-    upper = min(1.0, mean + 4 * std)
-    x = np.linspace(lower, upper, 500)
-    return x, norm.pdf(x, loc=mean, scale=std), mean, std
 
 
 def collect_plot_data(

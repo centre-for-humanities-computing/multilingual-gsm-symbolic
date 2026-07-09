@@ -253,3 +253,15 @@ def heatmap_language_label(language: str) -> str:
     name = LANGUAGE_LABELS.get(language, language)
     speakers = LANGUAGE_SPEAKERS.get(language)
     return f"{name}\n({format_speaker_count(speakers)} speakers)" if speakers is not None else name
+
+
+def reasoning_variant_name(model: str) -> tuple[str, str | None]:
+    suffixes = {
+        " (reasoning on)": "on",
+        " (reasoning off)": "off",
+    }
+    for suffix, mode in suffixes.items():
+        if model.endswith(suffix):
+            return model[: -len(suffix)], mode
+    return model, None
+

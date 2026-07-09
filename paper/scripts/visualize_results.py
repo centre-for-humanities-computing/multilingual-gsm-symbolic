@@ -13,13 +13,14 @@ Usage:
 
 import argparse
 import re
+from collections import defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from inspect_ai.log import read_eval_log
-from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, language_order
+from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, LANGUAGE_SPEAKERS, language_order
 from scipy.stats import gaussian_kde
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -78,8 +79,6 @@ def per_problem(df: pd.DataFrame) -> pd.DataFrame:
 
 def build_tables(splits: dict[str, pd.DataFrame]) -> dict[str, dict]:
     """Return {lang: {synthetic: df, original: df}} keyed by language."""
-    from collections import defaultdict
-
     tables: dict = defaultdict(dict)
     for split, df in splits.items():
         lang = df["language"].iloc[0]
@@ -307,23 +306,14 @@ def plot_language_gap(tables: dict, out: Path) -> None:
 # ── Figure 4: speakers (log) vs synthetic accuracy ───────────────────────────
 
 # Approximate L1 speaker counts (Wikipedia, rounded)
-_SPEAKERS = {
-    "eng": 380_000_000,
-    "deu": 100_000_000,
-    "dan": 6_000_000,
-    "nob": 5_000_000,
-    "isl": 370_000,
-}
-
-
 def plot_speakers(tables: dict, out: Path) -> None:
     rng = np.random.default_rng(0)
-    langs = [l for l in tables if "synthetic" in tables[l] and l in _SPEAKERS]
+    langs = [l for l in tables if "synthetic" in tables[l] and l in LANGUAGE_SPEAKERS]
 
     fig, ax = plt.subplots(figsize=(6, 4.5))
     for l in langs:
         color = LANGUAGE_COLORS.get(l, "steelblue")
-        x = _SPEAKERS[l]
+        x = LANGUAGE_SPEAKERS[l]
         vals = tables[l]["synthetic"]["correct"].values
         y = vals.mean()
         boot = np.array([rng.choice(vals, size=len(vals), replace=True).mean() for _ in range(1000)])

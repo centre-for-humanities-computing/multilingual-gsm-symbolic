@@ -38,7 +38,7 @@ from plot_config import (
     model_name,
     model_sort_key,
 )
-from eval_log_utils import select_logs
+from eval_log_utils import select_logs, discover_logs, sample_score
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -79,23 +79,8 @@ def display_number(value: Decimal) -> str:
 
 
 def score_to_bool(sample: Any) -> bool | None:
-    """Read the preferred final-answer score from an Inspect sample."""
-    scores = sample.scores or {}
-    for preferred in ("math", "pattern"):
-        if preferred not in scores:
-            continue
-        value = getattr(scores[preferred], "value", scores[preferred])
-        if isinstance(value, bool):
-            return value
-        if isinstance(value, (int, float)):
-            return bool(value)
-        if isinstance(value, str):
-            normalized = value.strip().upper()
-            if normalized in {"C", "CORRECT", "TRUE", "1"}:
-                return True
-            if normalized in {"I", "INCORRECT", "FALSE", "0"}:
-                return False
-    return None
+    value = sample_score(sample, None)
+    return value >= 0.5 if value is not None else None
 
 
 def safe_rate(numerator: int, denominator: int) -> float | None:
@@ -182,21 +167,8 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
     return summary, sample_rows
 
 
-def discover_logs(inputs: list[Path]) -> list[Path]:
-    logs: set[Path] = set()
-    for path in inputs:
-        if path.is_dir():
-            logs.update(candidate for candidate in path.rglob("*.eval") if candidate.stat().st_size >= 1_000)
-        elif path.suffix == ".eval" and path.stat().st_size >= 1_000:
-            logs.add(path)
-    return sorted(logs)
 
 
-def resolve_worker_count(requested: int | None, log_count: int) -> int:
-    if requested is not None and requested < 1:
-        raise ValueError("--workers must be at least 1.")
-    default = 128
-    return min(requested or default, log_count)
 
 
 def analyze_logs(
@@ -463,10 +435,9 @@ def main() -> None:
     if not logs:
         raise SystemExit("No non-empty .eval logs found.")
 
-    try:
-        workers = resolve_worker_count(args.workers, len(logs))
-    except ValueError as error:
-        parser.error(str(error))
+    if args.workers is not None and args.workers < 1:
+        parser.error("--workers must be at least 1.")
+    workers = min(args.workers or 128, len(logs))
     selected = select_logs(logs, include_incomplete=False, workers=workers)
     logs = [path for path, _header in selected]
     print(f"Analyzing {len(logs)} successful deduplicated log(s) with {workers} worker(s).")
