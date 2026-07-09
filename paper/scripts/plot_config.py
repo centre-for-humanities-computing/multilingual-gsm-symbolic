@@ -60,17 +60,14 @@ FAMILY_ORDER = {
     "Qwen3": 1,
     "Qwen3.5": 2,
     "Qwen": 3,
-    "DeepSeek-R1-Distill-Qwen": 4,
-    "Llama 3": 5,
-    "DeepSeek-R1-Distill-Llama": 6,
-    "Gemma 3": 7,
-    "OLMo 2": 8,
-    "OLMo 3": 9,
-    "Granite": 10,
-    "EuroLLM": 11,
-    "Apertus": 12,
-    "Phi 4": 13,
-    "OpenAI": 14,
+    "Gemma 3": 4,
+    "OLMo 2": 5,
+    "OLMo 3": 6,
+    "Granite": 7,
+    "EuroLLM": 8,
+    "Apertus": 9,
+    "Phi 4": 10,
+    "OpenAI": 11,
 }
 
 FAMILY_COLORS = {
@@ -78,9 +75,6 @@ FAMILY_COLORS = {
     "Qwen3": "#5A189A",
     "Qwen3.5": "#7B2CBF",
     "Qwen": "#9D4EDD",
-    "DeepSeek-R1-Distill-Qwen": "#9D4EDD",
-    "Llama 3": "#E76F51",
-    "DeepSeek-R1-Distill-Llama": "#F4A261",
     "OLMo 2": "#D62828",
     "OLMo 3": "#8A1C7C",
     "Granite": "#5E6472",
@@ -146,10 +140,6 @@ def model_family(raw_model: str) -> str:
     name = model_name(raw_model)
     lower = name.lower()
     raw_lower = raw_model.lower()
-    if "deepseek-r1-distill-qwen" in lower:
-        return "DeepSeek-R1-Distill-Qwen"
-    if "deepseek-r1-distill-llama" in lower:
-        return "DeepSeek-R1-Distill-Llama"
     if "qwen2.5" in lower:
         return "Qwen2.5"
     if "qwen3.5" in lower:
@@ -168,8 +158,6 @@ def model_family(raw_model: str) -> str:
         return "EuroLLM"
     if "gemma-3" in lower:
         return "Gemma 3"
-    if re.search(r"llama[-_. ]?3", lower):
-        return "Llama 3"
     if "apertus" in lower:
         return "Apertus"
     if "phi-4" in lower:

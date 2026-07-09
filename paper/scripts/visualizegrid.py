@@ -78,9 +78,6 @@ FAMILY_MARKERS = {
     "Qwen2.5": "o",
     "Qwen3": "v",
     "Qwen": ">",
-    "DeepSeek-R1-Distill-Qwen": "h",
-    "Llama 3": "s",
-    "DeepSeek-R1-Distill-Llama": "p",
     "Gemma 3": "^",
     "OLMo 2": "D",
     "OLMo 3": "d",
@@ -92,7 +89,6 @@ FAMILY_MARKERS = {
 EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
 SPLIT_PAIR_LABELS = {
     ("Qwen2.5-1.5B-Instruct", "nob"): "Qwen2.5 1.5B (Norwegian)",
-    ("Llama-3.2-3B-Instruct", "dan"): "Llama 3.2 3B (Danish)",
 }
 
 PROBLEM_KEYS = [
