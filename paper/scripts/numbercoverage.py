@@ -32,10 +32,13 @@ from plot_config import (
     LANGUAGE_LABELS,
     LANGUAGE_ORDER,
     LANGUAGE_SPEAKERS,
+    format_speaker_count,
+    heatmap_language_label,
     language_order,
+    model_name,
     model_sort_key,
 )
-from visualizegrid import select_logs
+from eval_log_utils import select_logs
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -226,25 +229,6 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
-
-
-def model_name(raw_model: str) -> str:
-    """Drop provider and organization prefixes while preserving the model id."""
-    return raw_model.rstrip("/").split("/")[-1]
-
-
-def format_speaker_count(count: int) -> str:
-    if count >= 1_000_000:
-        return f"{count / 1_000_000:g}M"
-    if count >= 1_000:
-        return f"{count / 1_000:g}K"
-    return str(count)
-
-
-def heatmap_language_label(language: str) -> str:
-    name = LANGUAGE_LABELS.get(language, language)
-    speakers = LANGUAGE_SPEAKERS.get(language)
-    return f"{name}\n({format_speaker_count(speakers)} speakers)" if speakers is not None else name
 
 
 def number_coverage_grid(

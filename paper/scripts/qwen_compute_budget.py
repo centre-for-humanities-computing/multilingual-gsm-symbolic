@@ -378,31 +378,6 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path) -> bool:
     return True
 
 
-def plot_qwen_compute_budget_transfer(summary: pd.DataFrame, out: Path) -> bool:
-    table = qwen_compute_budget_table(summary)
-    if table.empty:
-        return False
-
-    return _plot_compute_budget_table(table, out)
-
-
-def plot_qwen_compute_budget_family_transfers(summary: pd.DataFrame, out_dir: Path) -> list[Path]:
-    table = qwen_compute_budget_table(summary)
-    if table.empty:
-        return []
-
-    outputs: list[Path] = []
-    root = out_dir / "qwen_compute_budget_transfer"
-    for family, family_table in table.groupby("family", sort=True):
-        family_dir = root / family_slug(family)
-        family_out = family_dir / "qwen_compute_budget_transfer.png"
-        family_dir.mkdir(parents=True, exist_ok=True)
-        _plot_compute_budget_table(family_table, family_out)
-        outputs.append(family_out)
-
-    return outputs
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -427,14 +402,22 @@ def main() -> None:
         raise SystemExit("No scored synthetic samples with generation timings found.")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    png_outputs = plot_qwen_compute_budget_family_transfers(summary, args.out_dir)
+    table = qwen_compute_budget_table(summary)
+    png_outputs = []
+    if not table.empty:
+        root = args.out_dir / "qwen_compute_budget_transfer"
+        for family, family_table in table.groupby("family", sort=True):
+            family_dir = root / family_slug(family)
+            family_out = family_dir / "qwen_compute_budget_transfer.png"
+            family_dir.mkdir(parents=True, exist_ok=True)
+            _plot_compute_budget_table(family_table, family_out)
+            png_outputs.append(family_out)
     if not png_outputs:
         raise SystemExit("No model transfer rows found.")
 
     for png_out in png_outputs:
         print(f"Saved {png_out}")
 
-    table = qwen_compute_budget_table(summary)
     summary_out = save_reasoning_budget_summary(table, args.out_dir)
     if summary_out:
         print(f"Saved {summary_out}")

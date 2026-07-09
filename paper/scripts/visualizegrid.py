@@ -54,9 +54,12 @@ from plot_config import (
     LANGUAGE_LABELS,
     LANGUAGE_SPEAKERS,
     SPLIT_LABELS,
+    format_speaker_count,
+    heatmap_language_label,
     language_order,
     model_sort_key,
     ordered_families,
+    path_slug,
     reasoning_sort_bucket,
 )
 from scipy.stats import norm
@@ -268,10 +271,6 @@ def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def path_slug(value: str) -> str:
-    return "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
-
-
 def _synthetic_models(samples: pd.DataFrame, language: str) -> set[str]:
     rows = samples[(samples["language"] == language) & (samples["split"] == "synthetic")]
     return set(rows["model"].unique())
@@ -392,20 +391,6 @@ def english_metric_pairs(summary: pd.DataFrame, split: str = "synthetic") -> pd.
         ]
     )
     return pd.concat([average, result], ignore_index=True)
-
-
-def format_speaker_count(count: int) -> str:
-    if count >= 1_000_000:
-        return f"{count / 1_000_000:g}M"
-    if count >= 1_000:
-        return f"{count / 1_000:g}K"
-    return str(count)
-
-
-def heatmap_language_label(language: str) -> str:
-    name = LANGUAGE_LABELS.get(language, language)
-    speakers = LANGUAGE_SPEAKERS.get(language)
-    return f"{name}\n({format_speaker_count(speakers)} speakers)" if speakers is not None else name
 
 
 def annotated_heatmap(

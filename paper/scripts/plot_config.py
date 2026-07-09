@@ -231,3 +231,25 @@ def language_order(
         return known, LANGUAGE_ORDER.get(language, 999), language
 
     return sorted(set(languages), key=key)
+
+
+def path_slug(value: str) -> str:
+    """Convert an arbitrary string into a filesystem-safe slug."""
+    slug = re.sub(r"[^a-z0-9.]+", "-", value.lower()).strip("-")
+    return slug or "unknown"
+
+
+def format_speaker_count(count: int) -> str:
+    """Format a native-speaker count as a compact human-readable string."""
+    if count >= 1_000_000:
+        return f"{count / 1_000_000:g}M"
+    if count >= 1_000:
+        return f"{count / 1_000:g}K"
+    return str(count)
+
+
+def heatmap_language_label(language: str) -> str:
+    """Return a two-line axis label with language name and speaker count."""
+    name = LANGUAGE_LABELS.get(language, language)
+    speakers = LANGUAGE_SPEAKERS.get(language)
+    return f"{name}\n({format_speaker_count(speakers)} speakers)" if speakers is not None else name

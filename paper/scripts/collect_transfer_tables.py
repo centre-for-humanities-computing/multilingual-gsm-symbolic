@@ -132,73 +132,17 @@ def build_analysis_tables(
     language_features: pd.DataFrame,
     fertility: pd.DataFrame,
 ) -> pd.DataFrame:
-    working = observations.drop(
-        columns=[
-            "observation_id",
-            "started_at",
-            "completed_at",
-            "training_language",
-            "pretrain_tokens_t",
-            "question_type",
-            "correct_label",
-            "epoch",
-            "log_file",
-        ],
-        errors="ignore",
-    ).copy()
-    main = working.drop(columns=["model_raw"], errors="ignore")
-
-    languages = language_features.copy()
-    if not languages.empty:
-        language_counts = main.groupby("language", as_index=False).agg(
-            n_observations=("correct", "size"), mean_accuracy=("correct", "mean")
-        )
-        languages = languages.merge(language_counts, on="language", how="outer")
-
-    analysis_languages = languages.drop(
-        columns=[
-            "language_name",
-            "typological_feature_set",
-            "common_crawl_language",
-            "common_crawl_crawl",
-            "resource_source_path",
-            "n_observations",
-            "mean_accuracy",
-        ],
-        errors="ignore",
-    ).rename(
-        columns={
-            "typological_distance_from_english": "typological_distance",
-            "common_crawl_pages": "commoncrawl_page_count",
-        }
-    )
-    analysis_fertility = fertility.drop(
-        columns=[
-            "family",
-            "family_model_language",
-            "n_matched_questions",
-            "token_count",
-            "non_whitespace_character_count",
-            "english_token_count",
-            "english_non_whitespace_character_count",
-            "tokenizer_repo",
-            "normalized_fertility",
-        ],
-        errors="ignore",
-    ).rename(columns={"fertility_tokens_per_character": "tokenizer_fertility"})
-
-    analysis = working.copy()
-    if not analysis_languages.empty:
-        analysis = analysis.merge(analysis_languages, on="language", how="left", suffixes=("", "_language"))
+    analysis = observations.copy()
+    if not language_features.empty:
+        analysis = analysis.merge(language_features, on="language", how="left", suffixes=("", "_language"))
     if not fertility.empty:
         analysis = analysis.merge(
-            analysis_fertility,
+            fertility,
             on=["model", "model_raw", "language"],
             how="left",
             suffixes=("", "_model_language"),
         )
     analysis = analysis.drop(columns=["model_raw"], errors="ignore")
-
     return analysis
 
 
@@ -207,16 +151,12 @@ def write_tables(
     language_features: pd.DataFrame,
     fertility: pd.DataFrame,
     out_dir: Path,
-) -> dict[str, Path]:
+) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
-    analysis = build_analysis_tables(
-        observations,
-        language_features,
-        fertility,
-    )
-    outputs = {"analysis": out_dir / "analysis.csv"}
-    analysis.to_csv(outputs["analysis"], index=False)
-    return outputs
+    analysis = build_analysis_tables(observations, language_features, fertility)
+    out_path = out_dir / "analysis.csv"
+    analysis.to_csv(out_path, index=False)
+    return out_path
 
 
 def main() -> None:
@@ -238,14 +178,13 @@ def main() -> None:
     if observations.empty:
         raise SystemExit("No scored samples found in selected logs.")
 
-    outputs = write_tables(
+    out_path = write_tables(
         observations,
         load_csv(args.language_features),
         load_csv(args.fertility),
         args.out_dir,
     )
-    for name, path in outputs.items():
-        print(f"Saved {name}: {path}")
+    print(f"Saved analysis: {out_path}")
 
 
 if __name__ == "__main__":

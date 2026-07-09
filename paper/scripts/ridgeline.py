@@ -12,8 +12,7 @@ from __future__ import annotations
 
 import argparse
 import os
-import re
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -21,6 +20,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from eval_log_utils import discover_logs, parse_task, sample_score, select_logs
 from inspect_ai.log import read_eval_log
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
@@ -28,10 +28,12 @@ from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_LABELS,
     LANGUAGE_SPEAKERS,
+    format_speaker_count,
     language_order,
     model_family,
     model_name,
     model_sort_key,
+    path_slug,
 )
 from scipy.stats import norm
 
@@ -70,17 +72,6 @@ class PlotStats:
     n_models: int
     n_templates: int
     n_sampled_sets: int
-def path_slug(value: str) -> str:
-    slug = re.sub(r"[^a-z0-9.]+", "-", value.lower()).strip("-")
-    return slug or "unknown"
-
-
-def format_speaker_count(count: int) -> str:
-    if count >= 1_000_000:
-        return f"{count / 1_000_000:g}M"
-    if count >= 1_000:
-        return f"{count / 1_000:g}K"
-    return str(count)
 
 
 def language_title(language: str) -> str:
@@ -91,87 +82,27 @@ def language_title(language: str) -> str:
     return f"{label}{speaker_label}{verified}"
 
 
-def parse_task(task: str) -> tuple[str, str] | None:
-    matches = re.findall(r"(original|synthetic)[_-]([a-z]{3})", task.lower())
-    return matches[-1] if matches else None
-
-
-def score_to_float(score: Any) -> float | None:
-    value = getattr(score, "value", score)
-    if isinstance(value, bool):
-        return float(value)
-    if isinstance(value, (int, float)):
-        return float(value)
-    if isinstance(value, str):
-        normalized = value.strip().upper()
-        if normalized in {"C", "CORRECT", "TRUE"}:
-            return 1.0
-        if normalized in {"I", "INCORRECT", "FALSE"}:
-            return 0.0
-        try:
-            return float(normalized)
-        except ValueError:
-            return None
-    return None
-
-
-def sample_score(sample: Any, scorer: str | None) -> float | None:
-    scores = sample.scores or {}
-    if scorer:
-        return score_to_float(scores.get(scorer)) if scorer in scores else None
-
-    for preferred in ("math", "pattern"):
-        if preferred in scores:
-            return score_to_float(scores[preferred])
-
-    for score in scores.values():
-        value = score_to_float(score)
-        if value is not None:
-            return value
-    return None
-
-
-def _read_log_header(path: Path) -> tuple[Path, Any | None, str | None]:
-    try:
-        return path, read_eval_log(str(path), header_only=True), None
-    except Exception as exc:
-        return path, None, str(exc)
-
-
 def discover_selected_logs(
     log_dir: Path,
     requested_models: list[str] | None,
     workers: int,
 ) -> list[Path]:
-    """Select all successful logs and deduplicate snapshots in parallel."""
-    paths = sorted(path for path in log_dir.rglob("*.eval") if path.stat().st_size >= 1_000)
+    """Select all successful logs with a recognized task and deduplicate snapshots."""
+    paths = discover_logs([log_dir])
     if not paths:
         return []
 
     requested = {model.lower() for model in requested_models} if requested_models else None
-    selected: dict[tuple[str, str], tuple[Path, Any]] = {}
+    selected_pairs = select_logs(paths, include_incomplete=False, workers=workers)
 
-    if workers <= 1:
-        results = [_read_log_header(path) for path in paths]
-    else:
-        with ThreadPoolExecutor(max_workers=min(workers, len(paths))) as pool:
-            results = list(pool.map(_read_log_header, paths))
-
-    for path, header, error in results:
-        if error:
-            print(f"Skipping unreadable log {path.name}: {error}")
-            continue
-        if str(header.status) != "success" or parse_task(header.eval.task) is None:
+    result: list[Path] = []
+    for path, header in selected_pairs:
+        if parse_task(header.eval.task) is None:
             continue
         if requested and model_name(header.eval.model).lower() not in requested:
             continue
-
-        key = (header.eval.eval_id, header.eval.task)
-        previous = selected.get(key)
-        if previous is None or path.stat().st_mtime_ns > previous[0].stat().st_mtime_ns:
-            selected[key] = (path, header)
-
-    return sorted(path for path, _header in selected.values())
+        result.append(path)
+    return sorted(result)
 
 
 def _load_one_log(
