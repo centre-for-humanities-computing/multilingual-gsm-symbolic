@@ -104,7 +104,6 @@ PROBLEM_KEYS = [
 EXCLUDED_SUMMARY_MODELS = {
     "Qwen3-0.6B (reasoning on)",
 }
-
 UNCORRECTED_COLOR = "#D95F50"
 UNCORRECTED_FILL = "#F0A095"
 CORRECTED_COLOR = "#5CA950"
@@ -910,8 +909,9 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     rows["canonical_base_model"] = rows["model_raw"].map(off_name_by_raw).fillna(rows["base_model_candidate"])
 
     rows.loc[rows["reasoning"].isin(["on", "off"]), "base_model"] = rows["canonical_base_model"]
+    has_off_variant = rows["model_raw"].isin(set(off_name_by_raw.index))
     rows.loc[
-        rows["reasoning"].isna() & (rows["model"] == rows["canonical_base_model"]),
+        rows["reasoning"].isna() & has_off_variant & (rows["model"] == rows["canonical_base_model"]),
         "reasoning",
     ] = "on"
     rows.loc[rows["base_model"].isna(), "base_model"] = rows["canonical_base_model"]
@@ -994,6 +994,7 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     first_legend = ax.legend(handles=family_handles, title="Model family", frameon=False, loc="upper left")
     ax.add_artist(first_legend)
     ax.legend(handles=mode_handles, title="Variant", frameon=False, loc="upper right")
+    fig.suptitle("Relative transfer gap by model size and reasoning mode")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
