@@ -69,7 +69,8 @@ FAMILY_ORDER = {
     "Granite": 10,
     "EuroLLM": 11,
     "Apertus": 12,
-    "OpenAI": 13,
+    "Phi 4": 13,
+    "OpenAI": 14,
 }
 
 FAMILY_COLORS = {
@@ -86,6 +87,7 @@ FAMILY_COLORS = {
     "Gemma 3": "#2A9D8F",
     "EuroLLM": "#118AB2",
     "Apertus": "#6A994E",
+    "Phi 4": "#F43F5E",
     "OpenAI": "#457B9D",
 }
 
@@ -170,6 +172,8 @@ def model_family(raw_model: str) -> str:
         return "Llama 3"
     if "apertus" in lower:
         return "Apertus"
+    if "phi-4" in lower:
+        return "Phi 4"
     if raw_lower.startswith("openai/") or lower.startswith(("gpt-", "o1", "o3", "o4")):
         return "OpenAI"
     return name.split("-", 1)[0].split("_", 1)[0].split(".", 1)[0]

@@ -60,6 +60,8 @@ MODEL_CATALOG = {
     "eurollm-1.7b-instruct": ModelInfo("EuroLLM", 1.7),
     "eurollm-9b-instruct-2512": ModelInfo("EuroLLM", 9),
     "eurollm-22b-instruct-2512": ModelInfo("EuroLLM", 22),
+    "phi-4": ModelInfo("Phi 4", 14),
+    "phi-4-mini-reasoning": ModelInfo("Phi 4", 3.8),
 }
 
 
