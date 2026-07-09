@@ -1,22 +1,18 @@
 # /// script
 # dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas"]
 # ///
-"""Plot Qwen reasoning trade-offs under a per-sample generation budget.
+"""Plot model transfer trade-offs under a per-sample generation budget.
 
 The script reads Inspect ``.eval`` logs directly and writes:
 
-* ``qwen_compute_budget_transfer.csv``: paired Qwen reasoning variants with
-  transfer gaps and mean generation seconds per sample.
-* ``qwen_compute_budget_transfer.png``: relative transfer gap vs generation
-  seconds per sample.
-
-Only Qwen-family models with both reasoning-on and reasoning-off variants for
-the same raw model are included.
+* one ``qwen_compute_budget_transfer.png`` per model family with paired
+  reasoning-on/off variants.
 """
 
 from __future__ import annotations
 
 import argparse
+import re
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
@@ -32,9 +28,9 @@ from matplotlib.ticker import PercentFormatter
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
-QWEN_FAMILIES = {"Qwen2.5", "Qwen3", "Qwen3.5", "Qwen"}
 REASONING_COLORS = {"off": "#2563EB", "on": "#DC2626"}
 REASONING_LABELS = {"off": "reasoning off", "on": "reasoning on"}
+MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*", "<", ">"]
 
 plt.rcParams.update(
     {
@@ -57,6 +53,10 @@ def reasoning_variant_name(model: str) -> tuple[str, str | None]:
     return model, None
 
 
+def family_slug(family: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", family.lower()).strip("-")
+
+
 def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | None, str | None]:
     try:
         log = read_eval_log(str(path))
@@ -73,7 +73,7 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
         return label, pd.DataFrame(), None
 
     info = infer_model_info(log.eval.model)
-    if info.family not in QWEN_FAMILIES or info.params_b is None:
+    if info.params_b is None:
         return label, pd.DataFrame(), None
 
     rows: list[dict[str, Any]] = []
@@ -171,10 +171,7 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
 
     rows = summary[
-        (summary["split"] == "synthetic")
-        & (summary["family"].isin(QWEN_FAMILIES))
-        & summary["params_b"].notna()
-        & summary["avg_generation_seconds"].notna()
+        (summary["split"] == "synthetic") & summary["params_b"].notna() & summary["avg_generation_seconds"].notna()
     ].copy()
     if rows.empty:
         return pd.DataFrame()
@@ -191,9 +188,9 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
         "reasoning",
     ] = "on"
 
+    rows = rows[rows["reasoning"].isin(["on", "off"])]
     paired_raws = rows.groupby("model_raw")["reasoning"].agg(lambda values: {"on", "off"}.issubset(set(values)))
     rows = rows[rows["model_raw"].isin(set(paired_raws[paired_raws].index))]
-    rows = rows[rows["reasoning"].isin(["on", "off"])]
     if rows.empty:
         return pd.DataFrame()
 
@@ -243,16 +240,16 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def plot_qwen_compute_budget_transfer(summary: pd.DataFrame, out: Path, csv_out: Path) -> bool:
-    table = qwen_compute_budget_table(summary)
-    if table.empty:
-        return False
+def pareto_frontier(table: pd.DataFrame) -> pd.DataFrame:
+    frontier = table.sort_values(["avg_generation_seconds", "relative_transfer_gap"]).copy()
+    frontier["best_gap_so_far"] = frontier["relative_transfer_gap"].cummin()
+    return frontier[frontier["best_gap_so_far"].diff().fillna(-1) < 0]
 
-    csv_out.parent.mkdir(parents=True, exist_ok=True)
-    table.to_csv(csv_out, index=False)
 
+def _plot_compute_budget_table(table: pd.DataFrame, out: Path) -> bool:
     fig, ax = plt.subplots(figsize=(9.5, 5.8))
-    marker_by_family = {"Qwen3": "o", "Qwen3.5": "s", "Qwen": "^", "Qwen2.5": "D"}
+    families = sorted(table["family"].unique())
+    marker_by_family = {family: MARKERS[index % len(MARKERS)] for index, family in enumerate(families)}
 
     for (reasoning, family), group in table.groupby(["reasoning", "family"], sort=False):
         group = group.sort_values("avg_generation_seconds")
@@ -280,22 +277,19 @@ def plot_qwen_compute_budget_transfer(summary: pd.DataFrame, out: Path, csv_out:
             color="#374151",
         )
 
-    for (reasoning, family), group in table.groupby(["reasoning", "family"], sort=False):
-        frontier = group.sort_values("avg_generation_seconds").copy()
-        frontier["best_gap_so_far"] = frontier["relative_transfer_gap"].cummin()
-        frontier = frontier[frontier["best_gap_so_far"].diff().fillna(-1) < 0]
-        if len(frontier) > 1:
-            ax.step(
-                frontier["avg_generation_seconds"],
-                frontier["best_gap_so_far"],
-                where="post",
-                color=REASONING_COLORS[reasoning],
-                linewidth=1.5,
-                linestyle="--",
-                alpha=0.75,
-                label=f"best {REASONING_LABELS[reasoning]} gap within seconds/sample budget",
-                zorder=2,
-            )
+    frontier = pareto_frontier(table)
+    if len(frontier) > 1:
+        ax.step(
+            frontier["avg_generation_seconds"],
+            frontier["best_gap_so_far"],
+            where="post",
+            color="#111827",
+            linewidth=1.8,
+            linestyle="--",
+            alpha=0.8,
+            label="Pareto frontier",
+            zorder=2,
+        )
 
     ax.set_xscale("log")
     ax.set_xlabel("Mean generation seconds per sample (log scale)")
@@ -303,7 +297,7 @@ def plot_qwen_compute_budget_transfer(summary: pd.DataFrame, out: Path, csv_out:
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     ax.grid(axis="both", color="#E5E7EB", linewidth=0.7)
     ax.set_axisbelow(True)
-    ax.set_title("Qwen reasoning trade-off under a per-sample generation budget")
+    ax.set_title("Model transfer trade-off under a per-sample generation budget")
     ax.text(
         0.01,
         0.02,
@@ -312,10 +306,12 @@ def plot_qwen_compute_budget_transfer(summary: pd.DataFrame, out: Path, csv_out:
         fontsize=8,
         color="#4B5563",
     )
+    reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
         Line2D([0], [0], marker="o", linestyle="none", color=color, label=REASONING_LABELS[reasoning])
-        for reasoning, color in REASONING_COLORS.items()
+        for reasoning, color in ((key, REASONING_COLORS[key]) for key in reasoning_order)
     ]
+    handles.append(Line2D([0], [0], color="#111827", linestyle="--", linewidth=1.8, label="Pareto frontier"))
     handles.extend(
         Line2D(
             [0],
@@ -327,13 +323,38 @@ def plot_qwen_compute_budget_transfer(summary: pd.DataFrame, out: Path, csv_out:
             color="none",
             label=family,
         )
-        for family in sorted(table["family"].unique())
+        for family in families
     )
     ax.legend(handles=handles, frameon=False, fontsize=7, loc="upper right")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
+
+
+def plot_qwen_compute_budget_transfer(summary: pd.DataFrame, out: Path) -> bool:
+    table = qwen_compute_budget_table(summary)
+    if table.empty:
+        return False
+
+    return _plot_compute_budget_table(table, out)
+
+
+def plot_qwen_compute_budget_family_transfers(summary: pd.DataFrame, out_dir: Path) -> list[Path]:
+    table = qwen_compute_budget_table(summary)
+    if table.empty:
+        return []
+
+    outputs: list[Path] = []
+    root = out_dir / "qwen_compute_budget_transfer"
+    for family, family_table in table.groupby("family", sort=True):
+        family_dir = root / family_slug(family)
+        family_out = family_dir / "qwen_compute_budget_transfer.png"
+        family_dir.mkdir(parents=True, exist_ok=True)
+        _plot_compute_budget_table(family_table, family_out)
+        outputs.append(family_out)
+
+    return outputs
 
 
 def main() -> None:
@@ -357,16 +378,15 @@ def main() -> None:
 
     summary = load_qwen_summary(selected, args.scorer, args.workers)
     if summary.empty:
-        raise SystemExit("No scored Qwen synthetic samples with generation timings found.")
+        raise SystemExit("No scored synthetic samples with generation timings found.")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    png_out = args.out_dir / "qwen_compute_budget_transfer.png"
-    csv_out = args.out_dir / "qwen_compute_budget_transfer.csv"
-    if not plot_qwen_compute_budget_transfer(summary, png_out, csv_out):
-        raise SystemExit("No paired Qwen reasoning-on/off models found.")
+    png_outputs = plot_qwen_compute_budget_family_transfers(summary, args.out_dir)
+    if not png_outputs:
+        raise SystemExit("No model transfer rows found.")
 
-    print(f"Saved {png_out}")
-    print(f"Saved {csv_out}")
+    for png_out in png_outputs:
+        print(f"Saved {png_out}")
 
 
 if __name__ == "__main__":
