@@ -481,7 +481,10 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
         index=["model", "family", "params_b", "language"],
         columns="split",
         values="accuracy",
-    ).dropna(subset=["original", "synthetic"])
+    )
+    if not {"original", "synthetic"}.issubset(paired.columns):
+        return False
+    paired = paired.dropna(subset=["original", "synthetic"])
 
     if paired.empty:
         return False
@@ -635,7 +638,38 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
-def plot_eng_metric_comparison(summary: pd.DataFrame, out: Path, split: str = "synthetic") -> bool:
+def plot_eng_metric_comparison(
+    summary: pd.DataFrame,
+    out: Path,
+    split: str = "synthetic",
+    samples: pd.DataFrame | None = None,
+) -> bool:
+    if samples is not None:
+        metric_template_ids = {
+            "0000",
+            "0001",
+            "0006",
+            "0007",
+            "0011",
+            "0017",
+            "0024",
+            "0040",
+            "0042",
+            "0045",
+            "0050",
+            "0056",
+            "0058",
+            "0067",
+            "0071",
+            "0076",
+            "0085",
+            "0087",
+            "0088",
+            "0093",
+        }
+        metric_samples = samples[samples["source_id"].isin(metric_template_ids)]
+        summary = filter_summary_models(summarize(metric_samples))
+
     paired = english_metric_pairs(summary, split)
     if paired.empty:
         return False
@@ -713,9 +747,10 @@ def transfer_robustness_summary(summary: pd.DataFrame) -> pd.DataFrame:
 
 
 def plot_transfer_robustness(summary: pd.DataFrame, out: Path) -> bool:
-    robust = transfer_robustness_summary(summary).dropna(subset=["params_b"])
-    if robust.empty:
+    robust = transfer_robustness_summary(summary)
+    if robust.empty or "params_b" not in robust.columns:
         return False
+    robust = robust.dropna(subset=["params_b"])
 
     splits = [split for split in ("original", "synthetic") if split in set(robust["split"])]
     metrics = [
@@ -1179,6 +1214,7 @@ def main() -> None:
     made_metric = plot_eng_metric_comparison(
         summary,
         args.out_dir / "eng_vs_eng_metric.png",
+        samples=samples,
     )
     made_robustness = plot_transfer_robustness(
         summary,
