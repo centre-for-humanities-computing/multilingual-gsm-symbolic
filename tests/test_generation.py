@@ -325,9 +325,7 @@ def test_example_40_never_produces_negative_answer():
 
 
 def test_example_40_limits_leftovers_in_every_language():
-    template_root = (
-        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
-    )
+    template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
     template_paths = sorted(template_root.glob("*/symbolic/0040.toml"))
     assert template_paths
 
