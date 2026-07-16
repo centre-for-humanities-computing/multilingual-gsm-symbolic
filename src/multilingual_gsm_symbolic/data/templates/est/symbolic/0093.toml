@@ -14,10 +14,11 @@ id_orig = 554
 id_shuffled = 93
 
 question_annotated = """
-Kui vesi on külm, {name,Margus} ujub ühe kilomeetri {t1,16} minutiga. Kui vesi on soe, ujub {name,Margus} ühe kilomeetri {n,2} minutit rohkem kui {mult_txt,kaks} korda nii kaua. Kui palju kauem võtab {name_gen,Marguse}l {d,3} kilomeetri ujumine kuumal päeval kui külmal päeval?
+Kui vesi on külm, {name,Margus} ujub ühe {unit_gen_sg,kilomeetri} {t1,16} minutiga. Kui vesi on soe, ujub {name,Margus} ühe {unit_gen_sg,kilomeetri} {n,2} minutit rohkem kui {mult_txt,kaks} korda nii kaua. Kui palju kauem võtab {name_gen,Marguse}l {d,3} {unit_gen_sg,kilomeetri} ujumine kuumal päeval kui külmal päeval?
 
 #init:
 - name, name_gen = sample(names_male_cases)
+- unit_nom_sg, unit_gen_sg, unit_par_pl = sample([("kilomeeter", "kilomeetri", "kilomeetrit"), ("miil", "miili", "miili")])
 - $t1 = range(10, 50)
 - $n = range(1, 10)
 - mult_txt, mult_val = sample([("kaks", 2), ("kolm", 3), ("neli", 4)])
@@ -32,10 +33,10 @@ Kui vesi on külm, {name,Margus} ujub ühe kilomeetri {t1,16} minutiga. Kui vesi
 """
 
 answer_annotated = """
-Külma vee kilomeeter = <<{t1}={t1}>>{t1} minutit.
-Sooja vee kilomeeter = {n}+{mult_val}*{t1}={n + mult_val * t1} minutit.
-{d} kilomeetrit külmas vees: {d}({t1})=<<{d}*{t1}={d*t1}>>{d*t1} minutit.
-{d} kilomeetrit soojas vees: {d}({n + mult_val * t1})=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minutit.
+Külma vee {unit_nom_sg} = <<{t1}={t1}>>{t1} minutit.
+Sooja vee {unit_nom_sg} = {n}+{mult_val}*{t1}={n + mult_val * t1} minutit.
+{d} {unit_par_pl} külmas vees: {d}({t1})=<<{d}*{t1}={d*t1}>>{d*t1} minutit.
+{d} {unit_par_pl} soojas vees: {d}({n + mult_val * t1})=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minutit.
 {name_gen}l võtab see {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} minutit kauem.
 #### {d * (n + mult_val * t1) - d * t1}
 """

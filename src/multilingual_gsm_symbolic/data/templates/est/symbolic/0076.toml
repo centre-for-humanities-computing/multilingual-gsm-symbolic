@@ -1,10 +1,10 @@
-question = "Deandre püüdis 3 tuunikala eelmisel esmaspäeval, esimene tuunikala, mille ta püüdis, kaalus 56 kilogramm, teine tuunikala, mille ta püüdis, kaalus 46 kilogramm ja ülejäänud tuunikala, mille ta püüdis, kaalus 26 kilogramm. Kui kilogramm tuunikala maksab 0.5 EUR, siis kui palju ta teenib pärast kõigi tuunikala turule müümist?"
+question = "Deandre püüdis 3 tuunikala eelmisel esmaspäeval, esimene tuunikala, mille ta püüdis, kaalus 56 kilogrammi, teine tuunikala, mille ta püüdis, kaalus 46 kilogrammi ja ülejäänud tuunikala, mille ta püüdis, kaalus 26 kilogrammi. Kui kilogramm tuunikala maksab 0.5 EUR, siis kui palju ta teenib pärast kõigi tuunikalade turule müümist?"
 
 answer = """
 Deandre teenib esimesest tuunikalast 56*0.5 EUR = <<56*0.5=28>>28 EUR.
 Teisest tuunikalast teenib ta 46*0.5 EUR = <<46*0.5=23>>23 EUR.
-Ülejäänud tuunikalaad on 3-2 = <<3-2=1>>1. Igaühe eest teenib ta 26*0.5 EUR = <<26*0.5=13>>13 EUR. Seega teenib ta 1 * 13 = <<1*13>>=13
-Seega on kõigi tuunikalaade müügist saadav kogusumma 28 EUR + 23 EUR + 13 EUR = <<28+23+13=64>>64 EUR.
+Ülejäänud tuunikalad on 3-2 = <<3-2=1>>1. Igaühe eest teenib ta 26*0.5 EUR = <<26*0.5=13>>13 EUR. Seega teenib ta 1 * 13 = <<1*13=13>>13 EUR.
+Seega on kõigi tuunikalade müügist saadav kogusumma 28 EUR + 23 EUR + 13 EUR = <<28+23+13=64>>64 EUR.
 #### 64
 """
 
@@ -13,13 +13,13 @@ id_orig = 1207
 id_shuffled = 76
 
 question_annotated = """
-{name,Deandre} püüdis {n,3} {fish,tuunikala} eelmisel {day_day,esmaspäeval}, esimene {fish,tuunikala}, mille ta püüdis, kaalus {w1,56} {unit,kilogrammi}, teine {fish,tuunikala}, mille ta püüdis, kaalus {w2,46} {unit,kilogrammi} ja ülejäänud {fish,tuunikala}, mille ta püüdis, kaalus {w3,26} {unit,kilogrammi}. Kui {unit,kilogramm} {fish,tuunikala} maksab {price,0.5} {cur,EUR}, siis kui palju ta teenib pärast kõigi {fish,tuunikala} turule müümist?
+{name,Deandre} püüdis {n,3} {fish_par_sg,tuunikala} eelmisel {day_day,esmaspäeval}, esimene {fish_nom_sg,tuunikala}, mille ta püüdis, kaalus {w1,56} {unit_par_sg,kilogrammi}, teine {fish_nom_sg,tuunikala}, mille ta püüdis, kaalus {w2,46} {unit_par_sg,kilogrammi} ja ülejäänud {fish_nom_sg,tuunikala}, mille ta püüdis, kaalus {w3,26} {unit_par_sg,kilogrammi}. Kui {unit_nom_sg,kilogramm} {fish_par_sg,tuunikala} maksab {price,0.5} {cur,EUR}, siis kui palju ta teenib pärast kõigi {fish_gen_pl,tuunikalade} turule müümist?
 
 #init:
 - name, _ = sample(names_male_cases)
-- fish = sample(["tuunikala","lõhe", "tursk", "forell", "teraskala"])
+- fish_nom_sg, fish_par_sg, fish_el_sg, fish_nom_pl, fish_gen_pl = sample([("tuunikala", "tuunikala", "tuunikalast", "tuunikalad", "tuunikalade"), ("lõhe", "lõhet", "lõhest", "lõhed", "lõhede"), ("tursk", "turska", "tursast", "tursad", "turskade"), ("forell", "forelli", "forellist", "forellid", "forellide"), ("teraskala", "teraskala", "teraskalast", "teraskalad", "teraskalade")])
 - day, day_day = sample(weekday_cases)
-- unit = sample(["kilogramm", "kg"])
+- unit_nom_sg, unit_par_sg = sample([("kilogramm", "kilogrammi"), ("kg", "kg")])
 - cur = sample(currencies_sym)
 - $n = range(3, 8)
 - $w1 = range(40, 80)
@@ -35,10 +35,10 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name} teenib esimesest {fish}st {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur}.
-Teisest {fish}st teenib ta {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur}.
-Ülejäänud {fish}ad on {n}-2 = <<{n}-2={n-2}>>{n-2}. Igaühe eest teenib ta {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur}. Seega teenib ta {n-2} * {w3*price} = <<{n-2}*{w3*price}>>={((n-2)*w3*price)}
-Seega on kõigi {fish}ade müügist saadav kogusumma {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+{name} teenib esimesest {fish_el_sg} {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur}.
+Teisest {fish_el_sg} teenib ta {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur}.
+Ülejäänud {fish_nom_pl} on {n}-2 = <<{n}-2={n-2}>>{n-2}. Igaühe eest teenib ta {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur}. Seega teenib ta {n-2} * {w3*price} = <<{n-2}*{w3*price}={((n-2)*w3*price)}>>{((n-2)*w3*price)} {cur}.
+Seega on kõigi {fish_gen_pl} müügist saadav kogusumma {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
 #### {int((w1 + w2 + (n-2)*w3) * price)}
 """
 
