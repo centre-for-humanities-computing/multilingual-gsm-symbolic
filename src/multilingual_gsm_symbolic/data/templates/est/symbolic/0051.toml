@@ -1,8 +1,52 @@
-question = "Artiel on lillede müügilett Turuplatsil. Ta müüb kolme liiki lilli: saialilli, petuuniaid ja begooniaid. Tavaliselt müüb ta saialilli hinnaga 2,74 dollarit poti kohta, petuuniaid hinnaga 1,87 dollarit poti kohta ja begooniaid hinnaga 2,12 dollarit poti kohta. Artiel pole täna vahetusraha, nii et ta otsustas kõik oma hinnad ümardada lähima dollarini. Kui Artie müüb 12 potti saialilli, 9 potti petuuniaid ja 17 potti begooniaid, siis kui palju ta teenib?"
-answer = "Artie ümardab oma saialilled 2,74 dollarilt 3 dollarini üles, sest 2-le järgneva numbri väärtus on 5 või suurem.\nArtie ümardab oma petuuniad 1,87 dollarilt 2 dollarini üles, sest 1-le järgneva numbri väärtus on 5 või suurem.\nArtie ümardab oma begooniad 2,12 dollarilt 2 dollarini alla, sest 2-le järgneva numbri väärtus on väiksem kui 5.\nArtie müüb 12 saialilli*$3 = $<<12*3=36>>36\nArtie müüb 9 petuuniaid*$2 = $<<9*2=18>>18\nArtie müüb 17 begooniaid*$2 = $<<17*2=34>>34\nKokku teenib Artie $36 + $18 + $34 = $<<36+18+34=88>>88\n#### 88\n"
+question = "Artie on lilli müügilett Turuplatsil. Ta müüb kolme liiki lilli: saialilli, petuuniaid ja begooniaid. Tavaliselt müüb Artie saialilli hinnaga 2.74 EUR potti kohta, petuuniaid hinnaga 1.87 EUR potti kohta ja begooniaid hinnaga 2.12 EUR potti kohta. Artie ei oma täna vahetusraha, nii et ta otsustas kõik oma hinnad ümardada lähima euroni. Kui Artie müüb 12 potti saialilli, 9 potti petuuniaid ja 17 potti begooniaid, siis kui palju ta teenib?"
+
+answer = """
+Artie ümardab oma saialilli 2.74 EUR hinnalt 3 EUR üles, sest 2-le järgneva numbri väärtus on 5 või suurem.
+Artie ümardab oma petuuniaid 1.87 EUR hinnalt 2 EUR üles, sest 1-le järgneva numbri väärtus on 5 või suurem.
+Artie ümardab oma begooniaid 2.12 EUR hinnalt 2 EUR alla, sest 2-le järgneva numbri väärtus on väiksem kui 5.
+Artie müüb 12 saialilli*3 EUR = <<12*3=36>>36 EUR
+Artie müüb 9 petuuniaid*2 EUR = <<9*2=18>>18 EUR
+Artie müüb 17 begooniaid*2 EUR = <<17*2=34>>34 EUR
+Kokku teenib Artie 36 EUR + 18 EUR + 34 EUR = <<36+18+34=88>>88 EUR
+#### 88
+"""
+
 id_orig = 74
+
 id_shuffled = 51
-question_annotated = "{name,Artie} on {product,lille} müügilett {location,Turuplatsil}. Ta müüb kolme liiki {product,lilli}: {item1,saialilli}, {item2,petuuniaid} ja {item3,begooniaid}. Tavaliselt müüb {name,Artie} {item1,saialilli} hinnaga {cur,$}{p1,2.74} {unit,poti} kohta, {item2,petuuniaid} hinnaga {cur,$}{p2,1.87} {unit,poti} kohta ja {item3,begooniaid} hinnaga {cur,$}{p3,2.12} {unit,poti} kohta. {name,Artie} ei oma täna vahetusraha, nii et ta otsustas kõik oma hinnad ümardada lähima dollarini. Kui {name,Artie} müüb {n1,12} {unit,potti} {item1,saialilli}, {n2,9} {unit,potti} {item2,petuuniaid} ja {n3,17} {unit,potti} {item3,begooniaid}, siis kui palju ta teenib?\n\n#init:\n- name = sample(names_male)\n- product = sample([\"vegetable\", \"flower\", \"herb\", \"plant\"])\n- location = sample([\"local fair\", \"community market\", \"street bazaar\", \"town square\"])\n- item1, item2, item3 = sample([\"roses\", \"daisies\", \"tulips\", \"lilies\", \"sunflowers\", \"orchids\"], 3)\n- unit = sample([\"bunch\", \"basket\", \"bouquet\", \"bundle\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)\n"
-answer_annotated = "{name} ümardab oma {item1} {cur}{p1} hinnalt {cur}{round(p1)} {'up' if round(p1) > p1 else 'down'}, sest {int(p1)}-le järgneva numbri väärtus on {'5 või suurem' if round(p1) > p1 else 'väiksem kui 5'}.\n{name} ümardab oma {item2} {'up' if round(p2) > p2 else 'down'} {cur}{p2} hinnalt {cur}{round(p2)} {'up' if round(p2) > p2 else 'down'}, sest {int(p2)}-le järgneva numbri väärtus on {'5 või suurem' if round(p2) > p2 else 'väiksem kui 5'}.\n{name} ümardab oma {item3} {'up' if round(p3) > p3 else 'down'} {cur}{p3} hinnalt {cur}{round(p3)} {'up' if round(p3) > p3 else 'down'}, sest {int(p3)}-le järgneva numbri väärtus on {'5 või suurem' if round(p3) > p3 else 'väiksem kui 5'}.\n{name} müüb {n1} {item1}*{cur}{round(p1)} = {cur}<<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)}\n{name} müüb {n2} {item2}*{cur}{round(p2)} = {cur}<<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)}\n{name} müüb {n3} {item3}*{cur}{round(p3)} = {cur}<<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)}\nKokku teenib {name} {cur}{n1*round(p1)} + {cur}{n2*round(p2)} + {cur}{n3*round(p3)} = {cur}<<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)}\n#### {n1*round(p1) + n2*round(p2) + n3*round(p3)}\n"
-creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated"
+
+question_annotated = """
+{name,Artie} on {product,lille} müügilett {location,Turuplatsil}. Ta müüb kolme liiki {product,lilli}: {item1,saialilli}, {item2,petuuniaid} ja {item3,begooniaid}. Tavaliselt müüb {name,Artie} {item1,saialilli} hinnaga {p1,2.74} {cur,EUR} {unit,poti} kohta, {item2,petuuniaid} hinnaga {p2,1.87} {cur,EUR} {unit,poti} kohta ja {item3,begooniaid} hinnaga {p3,2.12} {cur,EUR} {unit,poti} kohta. {name,Artie} ei oma täna vahetusraha, nii et ta otsustas kõik oma hinnad ümardada lähima euroni. Kui {name,Artie} müüb {n1,12} {unit,potti} {item1,saialilli}, {n2,9} {unit,potti} {item2,petuuniaid} ja {n3,17} {unit,potti} {item3,begooniaid}, siis kui palju ta teenib?
+
+#init:
+- name = sample(names_male)
+- product = sample(["vegetable", "flower", "herb", "plant"])
+- location = sample(["local fair", "community market", "street bazaar", "town square"])
+- item1, item2, item3 = sample(["roses", "daisies", "tulips", "lilies", "sunflowers", "orchids"], 3)
+- unit = sample(["bunch", "basket", "bouquet", "bundle"])
+- cur = sample(currencies_sym)
+- $p1 = arange(1.26, 3.53, 0.33)
+- $p2 = arange(2.27, 5.53, 0.26)
+- $p3 = arange(4.85, 6.53, 0.31)
+- $n1 = range(5, 21)
+- $n2 = range(15, 31)
+- $n3 = range(35, 41)
+
+
+#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)
+"""
+
+answer_annotated = """
+{name} ümardab oma {item1} {p1} {cur} hinnalt {round(p1)} {cur} {'üles' if round(p1) > p1 else 'alla'}, sest {int(p1)}-le järgneva numbri väärtus on {'5 või suurem' if round(p1) > p1 else 'väiksem kui 5'}.
+{name} ümardab oma {item2} {p2} {cur} hinnalt {round(p2)} {cur} {'üles' if round(p2) > p2 else 'alla'}, sest {int(p2)}-le järgneva numbri väärtus on {'5 või suurem' if round(p2) > p2 else 'väiksem kui 5'}.
+{name} ümardab oma {item3} {p3} {cur} hinnalt {round(p3)} {cur} {'üles' if round(p3) > p3 else 'alla'}, sest {int(p3)}-le järgneva numbri väärtus on {'5 või suurem' if round(p3) > p3 else 'väiksem kui 5'}.
+{name} müüb {n1} {item1}*{round(p1)} {cur} = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}
+{name} müüb {n2} {item2}*{round(p2)} {cur} = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}
+{name} müüb {n3} {item3}*{round(p3)} {cur} = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}
+Kokku teenib {name} {n1*round(p1)} {cur} + {n2*round(p2)} {cur} + {n3*round(p3)} {cur} = <<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)} {cur}
+#### {n1*round(p1) + n2*round(p2) + n3*round(p3)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a fluent speaker."
+
 language = "est"

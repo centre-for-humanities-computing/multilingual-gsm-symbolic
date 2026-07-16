@@ -1,8 +1,47 @@
-question = "Deandre püüdis eelmisel esmaspäeval 3 tuunikala, esimene tuunikala, mille ta püüdis, kaalus 56 kilogrammi, teine tuunikala, mille ta püüdis, kaalus 46 kilogrammi ja ülejäänud tuunikala, mille ta püüdis, kaalus 26 kilogrammi. Kui 1 kilogramm tuunikala maksab 0,5 dollarit, siis kui palju ta teenib pärast kõigi tuunikalade turule müümist?"
-answer = "Deandre teenib esimesest tuunikalast 56*$0.5 = $<<56*0.5=28>>28.\nTeisest tuunikalast teenib ta 46*$0.5 = $<<46*0.5=23>>23.\nÜlejäänud tuunikalad on 3-2 = <<3-2=1>>1. Igaühe eest teenib ta 26*$0.5 = $<<26*0.5=13>>13. Seega teenib ta 1 * 13 = <<1*13>>=13.\nSeega on kõigi tuunikalade müügist saadav kogusumma $28 + $23 + $13= $<<28+23+13=64>>64.\n#### 64\n"
+question = "Deandre püüdis 3 tuunikala eelmisel esmaspäeval, esimene tuunikala, mille ta püüdis, kaalus 56 kilogramm, teine tuunikala, mille ta püüdis, kaalus 46 kilogramm ja ülejäänud tuunikala, mille ta püüdis, kaalus 26 kilogramm. Kui kilogramm tuunikala maksab 0.5 EUR, siis kui palju ta teenib pärast kõigi tuunikala turule müümist?"
+
+answer = """
+Deandre teenib esimesest tuunikalast 56*0.5 EUR = <<56*0.5=28>>28 EUR.
+Teisest tuunikalast teenib ta 46*0.5 EUR = <<46*0.5=23>>23 EUR.
+Ülejäänud tuunikalaad on 3-2 = <<3-2=1>>1. Igaühe eest teenib ta 26*0.5 EUR = <<26*0.5=13>>13 EUR. Seega teenib ta 1 * 13 = <<1*13>>=13
+Seega on kõigi tuunikalaade müügist saadav kogusumma 28 EUR + 23 EUR + 13 EUR = <<28+23+13=64>>64 EUR.
+#### 64
+"""
+
 id_orig = 1207
+
 id_shuffled = 76
-question_annotated = "{name,Deandre} püüdis {n,3} {fish,tuunikala} eelmisel {day,esmaspäeval}, esimene {fish,tuunikala}, mille ta püüdis, kaalus {w1,56} {unit,kilogrammi}, teine {fish,tuunikala}, mille ta püüdis, kaalus {w2,46} {unit,kilogrammi} ja ülejäänud {fish,tuunikala}, mille ta püüdis, kaalus {w3,26} {unit,kilogrammi}. Kui {unit,kilogrammi} {fish,tuunikala} maksab {cur,$}{price,0.5}, siis kui palju ta teenib pärast kõigi {fish,tuunikala} turule müümist?\n\n#init:\n- name = sample(names_male)\n- fish = sample([\"tuunikala\",\"lõhe\", \"tursk\", \"forell\", \"teraskala\"])\n- day = sample(weekdays)\n- unit = sample([\"kilogramm\", \"kg\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)\n"
-answer_annotated = "{name} teenib esimesest {fish}st {w1}*{cur}{price} = {cur}<<{w1}*{price}={w1*price}>>{w1*price}.\nTeisest {fish}st teenib ta {w2}*{cur}{price} = {cur}<<{w2}*{price}={w2*price}>>{w2*price}.\nÜlejäänud {fish}ad on {n}-2 = <<{n}-2={n-2}>>{n-2}. Igaühe eest teenib ta {w3}*{cur}{price} = {cur}<<{w3}*{price}={w3*price}>>{w3*price}. Seega teenib ta {n-2} * {w3*price} = <<{n-2}*{w3*price}>>={((n-2)*w3*price)}\nSeega on kõigi {fish}ade müügist saadav kogusumma {cur}{w1*price} + {cur}{w2*price} + {cur}{((n-2)*w3*price)}= {cur}<<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)}.\n#### {int((w1 + w2 + (n-2)*w3) * price)}\n"
-creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated"
+
+question_annotated = """
+{name,Deandre} püüdis {n,3} {fish,tuunikala} eelmisel {day_day,esmaspäeval}, esimene {fish,tuunikala}, mille ta püüdis, kaalus {w1,56} {unit,kilogrammi}, teine {fish,tuunikala}, mille ta püüdis, kaalus {w2,46} {unit,kilogrammi} ja ülejäänud {fish,tuunikala}, mille ta püüdis, kaalus {w3,26} {unit,kilogrammi}. Kui {unit,kilogramm} {fish,tuunikala} maksab {price,0.5} {cur,EUR}, siis kui palju ta teenib pärast kõigi {fish,tuunikala} turule müümist?
+
+#init:
+- name = sample(names_male)
+- fish = sample(["tuunikala","lõhe", "tursk", "forell", "teraskala"])
+- day, day_day = sample(weekday_cases)
+- unit = sample(["kilogramm", "kg"])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(0.25, 2.5, 0.25)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+
+answer_annotated = """
+{name} teenib esimesest {fish}st {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur}.
+Teisest {fish}st teenib ta {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur}.
+Ülejäänud {fish}ad on {n}-2 = <<{n}-2={n-2}>>{n-2}. Igaühe eest teenib ta {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur}. Seega teenib ta {n-2} * {w3*price} = <<{n-2}*{w3*price}>>={((n-2)*w3*price)}
+Seega on kõigi {fish}ade müügist saadav kogusumma {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a fluent speaker."
+
 language = "est"

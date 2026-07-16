@@ -1,8 +1,48 @@
-question = "Pr. Cruz otsib maja, mis ei ületaks tema 400 000 dollari suurust eelarvet. Ta nägi kinnisvara, mille müügihind on 350 000 dollarit. Lisaks peab ostja maksma maakleritasu, mis on 5% müügihinnast, ning ka ülekandetasu, mis on 12% müügihinnast. Kui palju on maja koguhind suurem kui Pr. Cruzi eelarve?"
-answer = "Maakleritasu on 350 000*5/100 = $<<350000*5/100=17500>>17 500.\nÜlekandetasu on 350 000*12/100 = $<<350000*12/100=42000>>42 000.\nMaja koguhind on 350 000 + 17 500 + 42 000 = 409 500.\nSeega on see 409 500 - 400 000 = $<<409500-400000=9500>>9500 rohkem kui Pr. Cruzi eelarve.\n#### 9500\n"
+question = "Pr. Cruz otsib maja , mis ei ületaks tema 400,000 EUR suurust eelarvet. Ta nägi kinnisvara, mille müügihind on 350,000 EUR. Lisaks peab ostja maksma maakleritasu, mis on 5% müügihinnast, ning ka ülekandetasu, mis on 12% müügihinnast. Kui palju on maja koguhind suurem kui Pr. Cruz eelarve?"
+
+answer = """
+Maakleritasu on 350,000 EUR*5/100 = <<350000*5/100=17500>>17,500 EUR.
+Ülekandetasu on 350,000 EUR*12/100 = <<350000*12/100=42000>>42,000 EUR.
+Maja koguhind on 350,000 EUR + 17,500 EUR + 42,000 EUR = 409,500 EUR.
+Seega on see 409,500 EUR - 400,000 EUR = <<409500-400000=9500>>9500 EUR rohkem kui Pr. Cruz eelarve.
+#### 9500
+"""
+
 id_orig = 265
+
 id_shuffled = 32
-question_annotated = "{name, Pr. Cruz} otsib {property_type, maja} , mis ei ületaks tema ${budget, 400000} suurust eelarvet. Ta nägi kinnisvara, mille müügihind on ${price, 350000}. Lisaks peab ostja maksma maakleritasu, mis on {brokerage_fee, 5}% müügihinnast, ning ka ülekandetasu, mis on {transfer_fee, 12}% müügihinnast. Kui palju on {property_type, maja} koguhind suurem kui {name, Pr. Cruz} eelarve?\n\n#init:\n- name = sample(['Pr. Smith', 'Pr. Johnson', 'Dr. Patel', 'Pr. Lee'])\n- property_type = sample(['maja', 'korter', 'korterelamu', 'ridaelamu'])\n- $budget = range(300000, 500000, 10000)\n- $price = range(250000, 450000, 10000)\n- $brokerage_fee = range(3, 8)\n- $transfer_fee = range(10, 15)\n\n#conditions:\n- brokerage_fee < 100\n- transfer_fee < 100\n- price < budget\n- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1\n- is_int(price * brokerage_fee / 100)\n- is_int(price * transfer_fee / 100)\n\n#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)\n"
-answer_annotated = "Maakleritasu on ${price}*{brokerage_fee}/100 = $<<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)}.\nÜlekandetasu on ${price}*{transfer_fee}/100 = $<<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)}.\n{property_type} koguhind on ${price} + ${int(price*brokerage_fee/100)} + ${int(price*transfer_fee/100)} = ${int(price + price*brokerage_fee/100 + price*transfer_fee/100)}.\nSeega on see ${int(price + price*brokerage_fee/100 + price*transfer_fee/100)} - ${budget} = $<<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} rohkem kui {name} eelarve.\n#### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}\n"
-creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated"
+
+question_annotated = """
+{name, Pr. Cruz} otsib {property_type, maja} , mis ei ületaks tema {budget, 400000} {cur,EUR} suurust eelarvet. Ta nägi kinnisvara, mille müügihind on {price, 350000} {cur,EUR}. Lisaks peab ostja maksma maakleritasu, mis on {brokerage_fee, 5}% müügihinnast, ning ka ülekandetasu, mis on {transfer_fee, 12}% müügihinnast. Kui palju on {property_type, maja} koguhind suurem kui {name, Pr. Cruz} eelarve?
+
+#init:
+- name = sample(['Pr. Smith', 'Pr. Johnson', 'Dr. Patel', 'Pr. Lee'])
+- property_type = sample(['maja', 'korter', 'korterelamu', 'ridaelamu'])
+- cur = sample(currencies_sym)
+- $budget = range(300000, 500000, 10000)
+- $price = range(250000, 450000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)
+"""
+
+answer_annotated = """
+Maakleritasu on {price} {cur}*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} {cur}.
+Ülekandetasu on {price} {cur}*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} {cur}.
+{property_type} koguhind on {price} {cur} + {int(price*brokerage_fee/100)} {cur} + {int(price*transfer_fee/100)} {cur} = {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} {cur}.
+Seega on see {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} {cur} - {budget} {cur} = <<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} {cur} rohkem kui {name} eelarve.
+#### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a fluent speaker."
+
 language = "est"

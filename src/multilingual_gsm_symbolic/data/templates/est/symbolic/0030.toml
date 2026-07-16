@@ -1,8 +1,40 @@
-question = "Davidil on 12.48 $ ja ta tahab osta 16 polti riistvarapoe kastist. Iga polt maksab 0.03 $. Kui palju raha on Davidil pärast poltide eest tasumist alles?"
-answer = "David tasus 16 * $0.03 = $<<16*0.03=0.48>>0.48 poltide eest.\nDavidil on 12.48 $ - 0.48 $ = 12 $ alles.\n#### 12\n"
+question = "Davidil on 12.48 EUR ja ta tahab osta 16 polti riistvarapoest. Iga polt maksab 0.03 EUR. Kui palju raha on Davidil pärast poltide eest tasumist alles?"
+
+answer = """
+David tasus 16 * 0.03 EUR = <<16*0.03=0.48>>0.48 EUR poltide eest.
+Davidil on 12.48 EUR - 0.48 EUR = <<12.48-0.48=12>>12 EUR alles.
+#### 12
+"""
+
 id_orig = 873
+
 id_shuffled = 30
-question_annotated = "{name,David} on {cur,$}{initial_amount,12.48} ja tahab osta {quantity,16} {item,polt} i riistvarapoe {store_type,riistvara} poest. Iga {item,polt} maksab {cur,$}{unit_price,0.03}. Kui palju raha on {name,David} pärast {item,polt} ide eest tasumist alles?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item = sample([\"kruvi\", \"nael\", \"seib\", \"polt\", \"ankur\"])\n- store_type = sample([\"riistvara\", \"koduparandus\", \"ehitustarvete\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(12.48, 105, 0.48)\n- $unit_price = arange(0.01, 1, 0.01)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: round(initial_amount - quantity * unit_price)\n"
-answer_annotated = "{name} tasus {quantity} * {cur}{round(unit_price} = {cur}<<{quantity}*{round(unit_price}={round(quantity*unit_price}>>{round(quantity*unit_price} {item} ide eest.\n{name} on {cur}{initial_amount} - {cur}{round(quantity*unit_price} = {cur}{round(initial_amount - quantity * unit_price)} $ alles.\n#### {round(initial_amount - quantity * unit_price)}\n"
-creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated"
+
+question_annotated = """
+{name,David}il on {initial_amount,12.48} {cur,EUR} ja ta tahab osta {quantity,16} polti riistvarapoest. Iga polt maksab {unit_price,0.03} {cur,EUR}. Kui palju raha on {name,David}il pärast poltide eest tasumist alles?
+
+#init:
+- name = sample(names_male)
+- cur = sample(currencies_sym)
+- $quantity = range(15, 60)
+- $initial_amount = arange(12.48, 105, 0.48)
+- $unit_price = arange(0.01, 1, 0.01)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int(initial_amount - quantity * unit_price)
+
+#answer: int(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name} tasus {quantity} * {unit_price} {cur} = <<{quantity}*{unit_price}={round(quantity*unit_price, 2)}>>{round(quantity*unit_price, 2)} {cur} poltide eest.
+{name}il on {initial_amount} {cur} - {round(quantity*unit_price, 2)} {cur} = <<{initial_amount}-{round(quantity*unit_price, 2)}={int(initial_amount - quantity * unit_price)}>>{int(initial_amount - quantity * unit_price)} {cur} alles.
+#### {int(initial_amount - quantity * unit_price)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a fluent speaker."
+
 language = "est"

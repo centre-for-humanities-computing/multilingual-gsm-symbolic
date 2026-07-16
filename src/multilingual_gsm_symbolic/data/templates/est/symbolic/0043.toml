@@ -1,8 +1,35 @@
-question = "Dax läks oma talule õunu korjama ja leidis aiast poole vähem putukaid kui sipelgaid. Kui aias oli 50 sipelgat, arvuta aias olevate kõigi putukate koguarv."
-answer = "Kui aias oli 50 sipelgat, siis on kõigi putukate koguarv 1/2*50 sipelgat = 25 putukat\nAias olevate kõigi putukate koguarv on 25 putukat + 50 sipelgat = <<25+50=75>>75 putukat\n#### 75\n"
+question = "Dax läks oma tallu õunu korjama ja leidis aiast pool nii palju putukaid kui sipelgaid. Kui aias oli 50 sipelgat, arvuta aias olevate kõigi putukate koguarv."
+
+answer = """
+Kui aias oli 50 sipelgat, siis oli teisi putukaid 0.5*50 = 25.
+Aias olevate kõigi putukate koguarv on 25 + 50 = <<25+50=75>>75 putukat.
+#### 75
+"""
+
 id_orig = 232
+
 id_shuffled = 43
-question_annotated = "{name,Dax} läks oma {place,talu} {fruit,õunu} korjama ja leidis {frac_txt,pool} nii palju {insect1,putukaid} kui {insect2,sipelgaid} aiast {location,aed}. Kui aias oli {n,50} {insect2,sipelgat}, arvuta aias olevate kõigi putukate koguarv.\n\n#init:\n- name = sample(names)\n- place = sample([\"orchard\", \"backyard\", \"greenhouse\", \"allotment\"])\n- fruit = sample([\"strawberries\", \"cherries\", \"blueberries\", \"raspberries\"])\n- location = sample([\"garden\", \"field\", \"plot\", \"patch\"])\n- insect1, insect2 = sample([\"beetles\", \"ladybugs\", \"grasshoppers\", \"caterpillars\", \"bees\", \"wasps\"], 2)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)\n"
-answer_annotated = "Kui aias oli {n} {insect2}, siis on kõigi putukate koguarv {location} {frac_val}*{n} {insect2} = {int(n * frac_val)} {insect1}\nAias olevate kõigi putukate koguarv on {int(n * frac_val)} {insect1} + {n} {insect2} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} putukat\n#### {n + int(n * frac_val)}\n"
-creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated"
+
+question_annotated = """
+{name,Dax} läks oma tallu õunu korjama ja leidis aiast {frac_txt,pool} nii palju putukaid kui sipelgaid. Kui aias oli {n,50} sipelgat, arvuta aias olevate kõigi putukate koguarv.
+
+#init:
+- name = sample(names)
+- frac_txt, frac_val = sample([("pool", 1/2), ("kolmandik", 1/3), ("veerand", 1/4)])
+- $n = range(20, 201)
+
+#conditions:
+- is_int(n * frac_val)
+
+#answer: n + int(n * frac_val)
+"""
+
+answer_annotated = """
+Kui aias oli {n} sipelgat, siis oli teisi putukaid {frac_val}*{n} = {int(n * frac_val)}.
+Aias olevate kõigi putukate koguarv on {int(n * frac_val)} + {n} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} putukat.
+#### {n + int(n * frac_val)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a fluent speaker."
+
 language = "est"

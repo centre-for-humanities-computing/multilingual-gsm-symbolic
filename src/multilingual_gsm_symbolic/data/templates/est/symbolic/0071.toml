@@ -1,8 +1,41 @@
-question = "Nate söödab oma kariloomi heina. Iga kits vajab 5 kilogrammi ja iga lammas vajab 3 kilogrammi vähem kui kaks korda nii palju, kui vajab iga kits. Kui on 15 kitse ja 12 lammast, siis kui palju kilogrammi heina Nate vajab?"
-answer = "Kõigepealt selgita, kui palju heina vajab iga lammas: 5 kilogrammi * 2 - 3 = <<5*2-3=7>>7 kilogrammi/lammas\nNüüd selgita, kui palju heina vajavad kokku lambad: 7 kilogrammi/lammas * 12 lammast = <<7*12=84>>84 kilogrammi\nNüüd selgita, kui palju heina vajavad kokku kitsed: 5 kilogrammi/kits * 15 kitse = <<5*15=75>>75 kilogrammi\nNüüd liida kaks heina kogust kokku, et leida kogu kogus: 84 kilogrammi + 75 kilogrammi = <<84+75=159>>159 kilogrammi\n#### 159\n"
+question = "Nate söödab oma kariloomi heinaga. Iga kits vajab 5 kilogrammi ja iga lammas vajab 3 kilogrammi vähem kui kaks korda nii palju, kui vajab iga kits. Kui on 15 kitse ja 12 lammast, siis kui palju kilogrammi heina vajab Nate?"
+
+answer = """
+Kõigepealt selgita, kui palju heina vajab iga lammas: 5 kilogrammi * 2 - 3 = <<5*2-3=7>>7 kilogrammi/lammas
+Nüüd selgita, kui palju heina vajavad kokku lambad: 7 kilogrammi/lammas * 12 lammast = <<7*12=84>>84 kilogrammi
+Nüüd selgita, kui palju heina vajavad kokku kitsed: 5 kilogrammi/kits * 15 kitse = <<5*15=75>>75 kilogrammi
+Nüüd liida kaks heina kogust kokku, et leida kogu kogus: 84 kilogrammi + 75 kilogrammi = <<84+75=159>>159 kilogrammi
+#### 159
+"""
+
 id_orig = 937
+
 id_shuffled = 71
-question_annotated = "{name,Nate} söödab oma kariloomi {food,heinaga}. Iga {animal1,kits} vajab {n1,5} {unit,kilogrammi} ja iga {animal2,lammas} vajab {n2,3} {unit,kilogrammi} vähem kui kaks korda nii palju, kui vajab iga {animal1,kits}. Kui on {k1,15} {animal1,kits}e ja {k2,12} {animal2,lammas}t, siis kui palju {unit,kilogrammi} {food,heina} vajab {name,Nate}?\n\n#init:\n- name = sample(names_male)\n- food = sample([\"hay\", \"grain\", \"feed\", \"silage\"])\n- animal1, animal2 = sample([\"goat\", \"cow\", \"horse\", \"donkey\", \"llama\", \"alpaca\", \"pig\", \"turkey\", \"duck\"], 2)\n- unit = sample([\"kilograms\", \"kg\"])\n- $n1 = range(3, 15)\n- $n2 = range(1, 10)\n- $k1 = range(10, 50)\n- $k2 = range(10, 50)\n\n#conditions:\n- 2*n1 - n2 > 0\n\n#answer: k1*n1 + k2*(2*n1 - n2)\n"
-answer_annotated = "Kõigepealt selgita, kui palju {food} vajab iga {animal2}: {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2}\nNüüd selgita, kui palju {food} vajavad kokku {animal2}d: {2*n1-n2} {unit}/{animal2} * {k2} {animal2}t = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}\nNüüd selgita, kui palju {food} vajavad kokku {animal1}d: {n1} {unit}/{animal1} * {k1} {animal1}t = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}\nNüüd liida kaks {food} kogust kokku, et leida kogu kogus: {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}\n#### {k1*n1 + k2*(2*n1 - n2)}\n"
-creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated"
+
+question_annotated = """
+{name,Nate} söödab oma kariloomi heinaga. Iga kits vajab {n1,5} kilogrammi ja iga lammas vajab {n2,3} kilogrammi vähem kui kaks korda nii palju, kui vajab iga kits. Kui on {k1,15} kitse ja {k2,12} lammast, siis kui palju kilogrammi heina vajab {name,Nate}?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(3, 15)
+- $n2 = range(1, 10)
+- $k1 = range(10, 50)
+- $k2 = range(10, 50)
+
+#conditions:
+- 2*n1 - n2 > 0
+
+#answer: k1*n1 + k2*(2*n1 - n2)
+"""
+
+answer_annotated = """
+Kõigepealt selgita, kui palju heina vajab iga lammas: {n1} kilogrammi * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} kilogrammi/lammas
+Nüüd selgita, kui palju heina vajavad kokku lambad: {2*n1-n2} kilogrammi/lammas * {k2} lammast = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} kilogrammi
+Nüüd selgita, kui palju heina vajavad kokku kitsed: {n1} kilogrammi/kits * {k1} kitse = <<{n1}*{k1}={k1*n1}>>{k1*n1} kilogrammi
+Nüüd liida kaks heina kogust kokku, et leida kogu kogus: {k2*(2*n1-n2)} kilogrammi + {k1*n1} kilogrammi = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} kilogrammi
+#### {k1*n1 + k2*(2*n1 - n2)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a fluent speaker."
+
 language = "est"

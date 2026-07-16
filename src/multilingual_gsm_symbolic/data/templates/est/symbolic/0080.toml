@@ -1,8 +1,49 @@
-question = "Automaatides müüakse krõpse 40 sendi ja kommi 75 sendi eest. George kulutas 5 dollarit ja sai 3 kotti krõpse ning tal jäi 1% rahast vahetusrahana alles. Mitu kommi ta ostis?"
-answer = "George sai 0.05 dollarit vahetusrahaks, sest 5*1/100 = <<5*1/100=0.05>>0.05\nGeorge kulutas 4.95 dollarit, sest 5 - 0.05 = <<5-0.05=4.95>>4.95\nGeorge kulutas 1.2 dollarit krõpsudele, sest 3*0.4 = <<3*0.4=1.2>>1.2\nGeorge kulutas 3.75 dollarit kommi peale, sest 4.95 - 1.2 = <<4.95-1.2=3.75>>3.75\nGeorge ostis 5 kommi, sest 3.75 / 0.75 = <<5=5>>5\n#### 5\n"
+question = "Automaatides müüakse chips  40 sendi eest ja candy bars  75 sendi eest. George kulutas 5 EUR ja sai 3 kotti chips ning tal jäi 1% rahast vahetusrahana alles. Mitu candy bars ta ostis?"
+
+answer = """
+George sai 0.05 EUR vahetusrahaks, sest 5 EUR*1/100 = <<5*1/100=0.05>>0.05
+George kulutas 4.95 EUR, sest 5 - 0.05 = <<5-0.05=4.95>>4.95
+George kulutas 1.2 EUR chips peale, sest 3*0.4 = <<3*0.4=1.2>>1.2
+George kulutas 3.75 candy bars peale, sest 4.95 - 1.2 = <<4.95-1.2=3.75>>3.75
+George ostis 5 candy bars, sest 3.75 / 0.75 = <<5=5>>5
+#### 5
+"""
+
 id_orig = 434
+
 id_shuffled = 80
-question_annotated = "Automaatides müüakse {item1,chips}  {price1,40} sendi eest ja {item2,candy bars}  {price2,75} sendi eest. {name,George} kulutas {cur,$}{total,5} ja sai {n1,3} kotti {item1,chips} ning tal jäi {p,1}% rahast vahetusrahana alles. Mitu {item2,candy bars} ta ostis?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['pretzels', 'popcorn', 'gum', 'cookies', 'crackers'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: int((total * (100 - p) - n1 * price1) / price2)\n"
-answer_annotated = "{name} sai {cur}{total * p / 100} vahetusrahaks, sest {cur}{total}*{p}/100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}\n{name} kulutas {cur}{total * (100 - p) / 100} , sest {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}\n{name} kulutas {cur}{n1 * price1 / 100} {item1} peale, sest {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}\n{name} kulutas {(total * (100 - p) / 100 - n1 * price1 / 100)} {item2} peale, sest {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}\n{name} ostis {int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} {item2}, sest {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}={int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}>>{int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}\n#### {int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}\n"
-creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated"
+
+question_annotated = """
+Automaatides müüakse {item1,chips}  {price1,40} sendi eest ja {item2,candy bars}  {price2,75} sendi eest. {name,George} kulutas {total,5} {cur,EUR} ja sai {n1,3} kotti {item1,chips} ning tal jäi {p,1}% rahast vahetusrahana alles. Mitu {item2,candy bars} ta ostis?
+
+#init:
+- name = sample(names_male)
+- item1, item2 = sample(['pretzels', 'popcorn', 'gum', 'cookies', 'crackers'], 2)
+- cur = sample(currencies_sym)
+- $price1 = range(25, 100, 5)
+- $price2 = range(50, 150, 5)
+- $total = range(5, 21)
+- $n1 = range(1, 10)
+- $p = range(1, 10)
+
+#conditions:
+- price2 > price1
+- is_int(total * p / 100)
+- total * (100 - p) > n1 * price1
+- (total * (100 - p) - n1 * price1) % price2 == 0
+
+#answer: int((total * (100 - p) - n1 * price1) / price2)
+"""
+
+answer_annotated = """
+{name} sai {total * p / 100} {cur} vahetusrahaks, sest {total} {cur}*{p}/100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}
+{name} kulutas {total * (100 - p) / 100} {cur}, sest {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}
+{name} kulutas {n1 * price1 / 100} {cur} {item1} peale, sest {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}
+{name} kulutas {(total * (100 - p) / 100 - n1 * price1 / 100)} {item2} peale, sest {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}
+{name} ostis {int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} {item2}, sest {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}={int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}>>{int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+#### {int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a fluent speaker."
+
 language = "est"

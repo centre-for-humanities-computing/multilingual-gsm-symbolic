@@ -1,8 +1,43 @@
-question = "Allani majas on kaks korda rohkem maisi kui cannoli’t. Tal on kokku 40 cannoli’t. Allan ostis poest 60 cannoli’t juurde ja tal on cannoli’te arvust 40 võrra vähem maisi. Leia maisi ja cannoli’de koguarv, mis Allanil majas on?"
-answer = "Enne, kui Allan ostis ühtegi maisi ja cannoli’t, oli tal kaks korda rohkem maisi kui cannoli’t, mis on 40 cannoli’t*2 mais/cannoli = <<40*2=80>>80 maisi\nMaisi ja cannoli’de koguarv, mis Allanil enne oli, on 80 maisi + 40 cannoli’t = <<80+40=120>>120 eset\nKui ta ostis cannoli’te arvust 40 võrra vähem maisi, siis ta ostis 60 maisi - 40 maisi = <<60-40=20>>20 maisi\nKokku ostis ta 20 maisi + 60 cannoli’t = <<20+60=80>>80 eset\nPärast oste on Allanil 120 eset + 80 eset = <<120+80=200>>200 maisi ja cannoli’de kokku.\n#### 200\n"
+question = "Martini majas on kaks korda rohkem maisi kui cannoli’t. Tal on kokku 40 cannoli’t. Martin ostis poest 60 cannoli’t juurde ja tal on cannoli’te arvust 40 võrra vähem maisi. Leia maisi ja cannoli’de koguarv, mis Martinil majas on?"
+
+answer = """
+Enne, kui Martin ostis ühtegi maisi ja cannoli’t, oli tal kaks korda rohkem maisi kui cannoli’t, mis on 40 cannoli’t*2 mais/cannoli = <<40*2=80>>80 maisi
+Maisi ja cannoli’de koguarv, mis Martinil enne oli, on 80 maisi + 40 cannoli’t = <<80+40=120>>120 eset
+Kui ta ostis cannoli’te arvust 40 võrra vähem maisi, siis ta ostis 60 maisi - 40 maisi = <<60-40=20>>20 maisi
+Kokku ostis ta 20 maisi + 60 cannoli’t = <<20+60=80>>80 eset
+Pärast oste on Martinil 120 eset + 80 eset = <<120+80=200>>200 maisi ja cannoli’de kokku.
+#### 200
+"""
+
 id_orig = 406
+
 id_shuffled = 91
-question_annotated = "Allani {name}'s majas on {mult_txt,twice} as many {food1,corn}s kui {food2,cannoli}s. Tal on kokku {n,40} {food2,cannoli}s majas. {name,Allan} ostis poest {m,60} rohkem {food2,cannoli}s ja {k,40} võrra vähem {food1,corn}s kui {food2,cannoli}’te arv. Leia {name,Allan}’il majas olevate {food1,corn}’ide ja {food2,cannoli}’de koguarv?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"cannoli\",\"corn\", \"apple\", \"banana\", \"orange\", \"pear\", \"grape\", \"fig\", \"persimmon\", \"plum\", \"kiwi\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)\n"
-answer_annotated = "Enne, kui {name} ostis {food1} ja {food2}, oli {name}’il {mult_txt} as many {food1}s kui {food2}s, mis on {n} {food2}s*{mult_val} {food1}/{food2} = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} {food1}s\n{food1}’ide ja {food2}’ide koguarv, mis {name}’il enne oli, on {n*mult_val} {food1}s + {n} {food2}s = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} eset\nKui ta ostis {k} võrra vähem {food1}’e kui {food2}’e, siis ta ostis {m} {food1}s - {k} {food1}s = <<{m}-{k}={m-k}>>{m-k} {food1}s\nKokku ostis ta {m-k} {food1}s + {m} {food2}s = <<{m-k}+{m}={2*m-k}>>{2*m-k} eset\nPärast oste on {name}’il {n*mult_val+n} eset + {2*m-k} eset = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} kokku {food1}’e ja {food2}’e.\n#### {n*mult_val+n+2*m-k}\n"
-creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated"
+
+question_annotated = """
+{name_gen,Martini} majas on {mult_txt,kaks korda} rohkem maisi kui cannoli’t. Tal on kokku {n,40} cannoli’t. {name,Martin} ostis poest {m,60} cannoli’t juurde ja tal on cannoli’te arvust {k,40} võrra vähem maisi. Leia maisi ja cannoli’de koguarv, mis {name_gen,Martini}l majas on?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- mult_txt, mult_val = sample([("kaks korda", 2), ("kolm korda", 3), ("neli korda", 4), ("viis korda", 5)])
+- $n = range(20, 100)
+- $m = range(30, 100)
+- $k = range(10, 50)
+
+#conditions:
+- m > k
+
+#answer: mult_val*n + n + m + (m-k)
+"""
+
+answer_annotated = """
+Enne, kui {name} ostis ühtegi maisi ja cannoli’t, oli tal {mult_txt} rohkem maisi kui cannoli’t, mis on {n} cannoli’t*{mult_val} mais/cannoli = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} maisi
+Maisi ja cannoli’de koguarv, mis {name_gen}l enne oli, on {n*mult_val} maisi + {n} cannoli’t = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} eset
+Kui ta ostis cannoli’te arvust {k} võrra vähem maisi, siis ta ostis {m} maisi - {k} maisi = <<{m}-{k}={m-k}>>{m-k} maisi
+Kokku ostis ta {m-k} maisi + {m} cannoli’t = <<{m-k}+{m}={2*m-k}>>{2*m-k} eset
+Pärast oste on {name_gen}l {n*mult_val+n} eset + {2*m-k} eset = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} maisi ja cannoli’de kokku.
+#### {n*mult_val+n+2*m-k}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a fluent speaker."
+
 language = "est"
