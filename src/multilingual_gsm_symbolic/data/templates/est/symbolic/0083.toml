@@ -1,7 +1,7 @@
-question = "Adamsi perekond teeb agaralt küpsiseid. Seni on nad valmistanud 7995 küpsist. Neil on 2595 värvilist küpsist, 3075 kaerahelbeküpsist ja mõned šokolaaditükkidega küpsised. Mitu šokolaaditükkidega küpsist on nad valmistanud?"
+question = "Adamsi perekond teeb agaralt küpsiseid. Seni on nad valmistanud 7995 küpsist. Neil on 2595 värvilist küpsist, 3075 kaerahelbe küpsist ja mõned šokolaaditükkidega küpsiseid. Mitu šokolaaditükkidega küpsist on nad valmistanud?"
 
 answer = """
-Värviliste ja kaerahelbeküpsiste koguarv on 2595 + 3075 = <<2595+3075=5670>>5670. Seega valmistasid nad 7995 - 5670 = <<7995-5670=2325>>2325 šokolaaditükkidega küpsist.
+Värviliste küpsiste ning kaerahelbe küpsiste koguarv on 2595 + 3075 = <<2595+3075=5670>>5670. Seega valmistasid nad 7995 - 5670 = <<7995-5670=2325>>2325 šokolaaditükkidega küpsist.
 #### 2325
 """
 
@@ -10,9 +10,14 @@ id_orig = 1305
 id_shuffled = 83
 
 question_annotated = """
-Adamsi perekond teeb agaralt küpsiseid. Seni on nad valmistanud {total,7995} küpsist. Neil on {n1,2595} värvilist küpsist, {n2,3075} kaerahelbeküpsist ja mõned šokolaaditükkidega küpsised. Mitu šokolaaditükkidega küpsist on nad valmistanud?
+{family_gen,Adamsi} perekond teeb agaralt {item_par_pl,küpsiseid}. Seni on nad valmistanud {total,7995} {item_num,küpsist}. Neil on {n1,2595} {flavor1_num,värvilist} {item_num,küpsist}, {n2,3075} {flavor2_num,kaerahelbe} {item_num,küpsist} ja mõned {flavor3_par_pl,šokolaaditükkidega} {item_par_pl,küpsiseid}. Mitu {flavor3_num,šokolaaditükkidega} {item_num,küpsist} on nad valmistanud?
 
 #init:
+- family_gen = sample(["Adamsi", "Sepa", "Tamme", "Kase", "Saare"])
+- item_par_pl, item_num, item_gen_pl = sample([("küpsiseid", "küpsist", "küpsiste"), ("muffineid", "muffinit", "muffinite"), ("koogikesi", "koogikest", "koogikeste"), ("pirukaid", "pirukat", "pirukate")])
+- flavor1_num, flavor1_gen_pl_cap = sample([("värvilist", "Värviliste"), ("vanilli", "Vanilli"), ("maasika", "Maasika"), ("sidruni", "Sidruni"), ("mustika", "Mustika")])
+- flavor2_num, flavor2_gen_pl = sample([("kaerahelbe", "kaerahelbe"), ("šokolaadi", "šokolaadi"), ("õuna", "õuna"), ("kaneeli", "kaneeli"), ("pähkli", "pähkli")])
+- flavor3_num, flavor3_par_pl = sample([("šokolaaditükkidega", "šokolaaditükkidega"), ("mustikatega", "mustikatega"), ("rosinatega", "rosinatega"), ("pähklitega", "pähklitega"), ("õunatükkidega", "õunatükkidega")])
 - $total = range(4995, 10000, 25)
 - $n1 = range(995, 3000, 50)
 - $n2 = range(1075, 3200, 50)
@@ -24,7 +29,7 @@ Adamsi perekond teeb agaralt küpsiseid. Seni on nad valmistanud {total,7995} k�
 """
 
 answer_annotated = """
-Värviliste ja kaerahelbeküpsiste koguarv on {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}. Seega valmistasid nad {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} šokolaaditükkidega küpsist.
+{flavor1_gen_pl_cap} {item_gen_pl} ning {flavor2_gen_pl} {item_gen_pl} koguarv on {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}. Seega valmistasid nad {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {flavor3_num} {item_num}.
 #### {total-(n1+n2)}
 """
 

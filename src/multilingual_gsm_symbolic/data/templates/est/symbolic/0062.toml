@@ -1,4 +1,4 @@
-question = "Ühes võlurikaartide komplektis on 15 punast kaarti ja 60% rohkem rohelisi kaarte. Kollaseid kaarte on sama palju kui punaste ja roheliste kaartide summa. Mitu kaarti on kokku kõiki nimetatud värve?"
+question = "Ühes võluri kaardikomplektis on 15 punaseid kaarte ja 60% rohkem rohelisi kaarte. Kollaseid kaarte on sama palju kui punaste ja roheliste kaartide summa. Mitu kaarti on kokku kõiki nimetatud värve?"
 
 answer = """
 On 60/100 * 15 = <<60/100*15=9>>9 võrra rohkem rohelisi kaarte kui punaseid kaarte.
@@ -13,9 +13,11 @@ id_orig = 456
 id_shuffled = 62
 
 question_annotated = """
-Ühes võlurikaartide komplektis on {n1,15} punast kaarti ja {p,60}% rohkem rohelisi kaarte. Kollaseid kaarte on sama palju kui punaste ja roheliste kaartide summa. Mitu kaarti on kokku kõiki nimetatud värve?
+Ühes {item_gen,võluri} kaardikomplektis on {n1,15} {c1_par_pl,punaseid} kaarte ja {p,60}% rohkem {c2_par_pl,rohelisi} kaarte. {c3_par_pl_cap,Kollaseid} kaarte on sama palju kui {c1_gen_pl,punaste} ja {c2_gen_pl,roheliste} kaartide summa. Mitu kaarti on kokku kõiki nimetatud värve?
 
 #init:
+- item_gen = sample(["võluri", "kunstniku", "koka", "teadlase", "sportlase"])
+- (c1_par_pl, c1_gen_pl, c1_par_pl_cap), (c2_par_pl, c2_gen_pl, c2_par_pl_cap), (c3_par_pl, c3_gen_pl, c3_par_pl_cap) = sample([("punaseid", "punaste", "Punaseid"), ("rohelisi", "roheliste", "Rohelisi"), ("kollaseid", "kollaste", "Kollaseid"), ("siniseid", "siniste", "Siniseid"), ("valgeid", "valgete", "Valgeid"), ("musti", "mustade", "Musti")], 3)
 - $n1 = range(15, 81)
 - $p = range(20, 90)
 
@@ -27,9 +29,9 @@ question_annotated = """
 """
 
 answer_annotated = """
-On {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} võrra rohkem rohelisi kaarte kui punaseid kaarte.
-See tähendab, et rohelisi kaarte on {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)}.
-Kollaseid kaarte on {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))}.
+On {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} võrra rohkem {c2_par_pl} kaarte kui {c1_par_pl} kaarte.
+See tähendab, et {c2_par_pl} kaarte on {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)}.
+{c3_par_pl_cap} kaarte on {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))}.
 Seega kokku on {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{2*(n1+(n1+int(p/100*n1)))} kaarti.
 #### {2*(n1+(n1+int(p/100*n1)))}
 """
