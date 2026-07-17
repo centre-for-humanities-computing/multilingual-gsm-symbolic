@@ -1,7 +1,7 @@
-question = "John auto läheb katki. Auto kaalub 1200 kilogrammi ja tal on seal pagasit, mis kaalub 250 kilogrammi. Tal on seal ka kaks laps väikest kes kaaluvad kumbki 75 kilogrammi. Kui jõud auto liigutamiseks on 1% kogu kaalust, siis kui palju jõudu ta peab auto lükkamiseks rakendama?"
+question = "Jaani auto läheb katki. Auto kaalub 1200 kilogrammi ja tal on seal pagasit, mis kaalub 250 kilogrammi. Tal on seal ka kaks väikest last, kes kaaluvad kumbki 75 kilogrammi. Kui jõud auto liigutamiseks on 1% kogu kaalust, siis kui palju jõudu ta peab auto lükkamiseks rakendama?"
 
 answer = """
-Tema kaks laps kaaluvad 75*2=<<75*2=150>>150 kilogrammi
+Tema kaks väikest last kaaluvad 75*2=<<75*2=150>>150 kilogrammi
 Seega on auto ja kogu muu kokku kaal 1200+250+150=<<1200+250+150=1600>>1600 kilogrammi
 Seega peab ta tekitama 1600*0.01=<<1600*0.01=16>>16 kilogrammi
 #### 16
@@ -12,14 +12,13 @@ id_orig = 1275
 id_shuffled = 67
 
 question_annotated = """
-{name,John} {vehicle,auto} läheb katki. {vehicle,auto} kaalub {weight_vehicle,1200} {unit,kilogrammi} ja tal on seal {item,pagasit}, mis kaalub {weight_item,250} {unit,kilogrammi}. Tal on seal ka {num_passengers_txt,kaks} {passenger_type,laps} {passenger_adj,väikest} kes kaaluvad kumbki {weight_passenger,75} {unit,kilogrammi}. Kui jõud {vehicle,auto} liigutamiseks on {force_percent,1}% kogu kaalust, siis kui palju jõudu ta peab {vehicle,auto} lükkamiseks rakendama?
+{name_gen,Jaani} {vehicle_nom,auto} läheb katki. {vehicle_nom_cap,Auto} kaalub {weight_vehicle,1200} {unit,kilogrammi} ja tal on seal {item,pagasit}, mis kaalub {weight_item,250} {unit,kilogrammi}. Tal on seal ka {num_passengers_txt,kaks} {passenger_count_phrase,väikest last}, kes kaaluvad kumbki {weight_passenger,75} {unit,kilogrammi}. Kui jõud {vehicle_gen,auto} liigutamiseks on {force_percent,1}% kogu kaalust, siis kui palju jõudu ta peab {vehicle_gen,auto} lükkamiseks rakendama?
 
 #init:
-- name, _ = sample(names_male_cases)
-- vehicle = sample(['auto', 'buss', 'veok', 'maastur'])
-- item = sample(['pagasit', 'toidukaubad', 'varustus', 'mööbel'])
-- passenger_type = sample(['lapsed', 'sõbrad', 'kolleegid', 'meeskonnakaaslased'])
-- passenger_adj = sample(['väikest', 'noort', 'noori', 'noor'])
+- name, name_gen = sample(names_male_cases)
+- vehicle_nom, vehicle_nom_cap, vehicle_gen = sample([('auto', 'Auto', 'auto'), ('buss', 'Buss', 'bussi'), ('veok', 'Veok', 'veoki'), ('maastur', 'Maastur', 'maasturi')])
+- item = sample(['pagasit', 'varustust', 'mööblit', 'kraami'])
+- passenger_count_phrase = sample(['väikest last', 'noort sõpra', 'noort kolleegi', 'noort meeskonnakaaslast'])
 - unit = sample(['kilogrammi', 'kg'])
 - $weight_vehicle = range(1000, 3000, 50)
 - $weight_item = range(100, 500, 25)
@@ -34,8 +33,8 @@ question_annotated = """
 """
 
 answer_annotated = """
-Tema {num_passengers_txt} {passenger_type} kaaluvad {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
-Seega on {vehicle} ja kogu muu kokku kaal {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
+Tema {num_passengers_txt} {passenger_count_phrase} kaaluvad {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
+Seega on {vehicle_nom} ja kogu muu kokku kaal {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
 Seega peab ta tekitama {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}
 #### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
 """

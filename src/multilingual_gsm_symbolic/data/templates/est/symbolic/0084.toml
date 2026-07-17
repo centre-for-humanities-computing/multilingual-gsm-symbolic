@@ -14,10 +14,10 @@ id_orig = 336
 id_shuffled = 84
 
 question_annotated = """
-{name,Maria} ostab {n,8} aktsiat hinnaga {p,8} {cur,EUR} tükk. Aktsia hind tõuseb esimesel aastal, mil {name,Maria} seda hoiab, {r1,50}%, seejärel langeb teisel aastal {r2,25}%. Mis on kõigi {name,Maria} aktsiate lõppväärtus?
+{name,Maria} ostab {n,8} aktsiat hinnaga {p,8} {cur,EUR} tükk. Aktsia hind tõuseb esimesel aastal, mil {name,Maria} seda hoiab, {r1,50}%, seejärel langeb teisel aastal {r2,25}%. Mis on kõigi {name_gen,Maria} aktsiate lõppväärtus?
 
 #init:
-- name, _ = sample(names_female_cases)
+- name, name_gen = sample(names_female_cases)
 - cur = sample(currencies_sym)
 - $n = range(5, 20)
 - $p = range(5, 100)
@@ -32,7 +32,7 @@ question_annotated = """
 """
 
 answer_annotated = """
-Kõigepealt leia {name} ostu algne koguväärtus: {n} aktsiat * {p} {cur}/aktsia = <<{n}*{p}={n*p}>>{n*p} {cur}
+Kõigepealt leia {name_gen} ostu algne koguväärtus: {n} aktsiat * {p} {cur}/aktsia = <<{n}*{p}={n*p}>>{n*p} {cur}
 Seejärel leia esimese hinnatõusu suurus: {n*p} {cur} * {r1/100} = <<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)} {cur}
 Lisa see summa algväärtusele, et saada väärtus pärast esimest aastat: {n*p} {cur} + {n*p*r1/100} {cur} = <<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))} {cur}
 Seejärel korruta see summa {r2}%ga, et leida teisel aastal toimunud languse suurus: {n*p*(1+r1/100)} {cur} * {r2}% = <<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)} {cur}
