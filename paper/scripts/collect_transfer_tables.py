@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "pandas", "pyarrow"]
+# dependencies = ["inspect-ai", "pandas", "pyarrow", "scipy"]
 # ///
 """Build transfer-analysis tables from Inspect eval logs.
 
@@ -24,7 +24,7 @@ from eval_log_utils import (
     select_logs,
 )
 from inspect_ai.log import read_eval_log
-from plot_config import language_order, ordered_models
+from plot_config import language_order, ordered_models, reasoning_mode
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -58,6 +58,7 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
     split, task_language = parsed_task
     info = infer_model_info(log.eval.model)
     model = model_name(log.eval.model, log.eval.model_args)
+    reasoning = reasoning_mode(log.eval.model_args) or "unspecified"
     rows: list[dict[str, Any]] = []
 
     for sample in log.samples or []:
@@ -75,6 +76,7 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
                 "language": language,
                 "correct": bool(correct),
                 "model": model,
+                "reasoning_mode": reasoning,
                 "model_raw": log.eval.model,
                 "family": info.family,
                 "params_b": info.params_b,
