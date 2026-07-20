@@ -119,6 +119,14 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     observations = pd.concat(frames, ignore_index=True)
+    reasoning_off_models = {
+        model.removesuffix(" (reasoning off)")
+        for model in observations.loc[observations["reasoning_mode"] == "off", "model"].dropna()
+    }
+    implicit_reasoning_on = observations["reasoning_mode"].eq("unspecified") & observations["model"].isin(
+        reasoning_off_models
+    )
+    observations.loc[implicit_reasoning_on, "reasoning_mode"] = "on"
     model_categories = ordered_models(observations["model"].dropna().unique())
     language_categories = language_order(observations["language"].dropna().unique())
     observations["model"] = pd.Categorical(observations["model"], categories=model_categories, ordered=True)
