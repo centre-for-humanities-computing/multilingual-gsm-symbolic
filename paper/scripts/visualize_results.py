@@ -14,11 +14,13 @@ Usage:
 import argparse
 import re
 from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from eval_log_utils import sample_score
 from inspect_ai.log import read_eval_log
 from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, LANGUAGE_SPEAKERS, language_order
 from scipy.stats import gaussian_kde
@@ -40,35 +42,48 @@ plt.rcParams.update(
 # ── data loading ──────────────────────────────────────────────────────────────
 
 
-def _score(s) -> float:
-    return 1.0 if s.scores["pattern"].value == "C" else 0.0
-
-
 def _steps(answer: str) -> int:
     return len(re.findall(r"<<", answer))
 
 
-def load_logs(log_dir: Path) -> dict[str, pd.DataFrame]:
-    dfs = {}
-    for path in sorted(log_dir.glob("*.eval")):
-        if path.stat().st_size < 10_000:  # skip Git LFS pointer stubs (~133 B)
-            continue
+def _load_log(path: Path) -> tuple[str, list[dict] | None, str | None]:
+    try:
         log = read_eval_log(str(path))
-        if not log.samples:
+    except Exception as exc:
+        return path.name, None, str(exc)
+    if not log.samples:
+        return path.name, None, None
+    rows = []
+    for s in log.samples:
+        score = sample_score(s, None)
+        if score is None:
             continue
-        rows = [
+        rows.append(
             {
                 "sample_id": s.id,
                 "epoch": s.epoch,
                 "source_id": s.metadata.get("source_id"),
                 "language": s.metadata.get("language", "?"),
-                "correct": _score(s),
+                "correct": score,
                 "steps": _steps(s.metadata.get("answer", "")),
             }
-            for s in log.samples
-        ]
-        split = log.eval.task.split("/")[-1]
-        dfs[split] = pd.DataFrame(rows)
+        )
+    return log.eval.task.split("/")[-1], rows or None, None
+
+
+def load_logs(log_dir: Path, workers: int) -> dict[str, pd.DataFrame]:
+    paths = [path for path in sorted(log_dir.glob("*.eval")) if path.stat().st_size >= 10_000]
+    if not paths:
+        return {}
+    dfs = {}
+    with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
+        for split, rows, error in pool.map(_load_log, paths):
+            if error:
+                print(f"Skipping unreadable log {split}: {error}")
+                continue
+            if rows is None:
+                continue
+            dfs[split] = pd.DataFrame(rows)
     return dfs
 
 
@@ -346,10 +361,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--log-dir", default=DEFAULT_LOG_DIR, type=Path)
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR, type=Path)
+    parser.add_argument("--workers", default=32, type=int)
     args = parser.parse_args()
 
     args.out_dir.mkdir(exist_ok=True)
-    splits = load_logs(args.log_dir)
+    splits = load_logs(args.log_dir, args.workers)
     if not splits:
         raise SystemExit("No completed eval logs found.")
 

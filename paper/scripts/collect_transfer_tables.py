@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "pandas"]
+# dependencies = ["inspect-ai", "pandas", "pyarrow"]
 # ///
 """Build transfer-analysis tables from Inspect eval logs.
 
@@ -57,7 +57,7 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
 
     split, task_language = parsed_task
     info = infer_model_info(log.eval.model)
-    model = model_name(log.eval.model)
+    model = model_name(log.eval.model, log.eval.model_args)
     rows: list[dict[str, Any]] = []
 
     for sample in log.samples or []:
@@ -154,8 +154,8 @@ def write_tables(
 ) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     analysis = build_analysis_tables(observations, language_features, fertility)
-    out_path = out_dir / "analysis.csv"
-    analysis.to_csv(out_path, index=False)
+    out_path = out_dir / "analysis.parquet"
+    analysis.to_parquet(out_path, index=False)
     return out_path
 
 
