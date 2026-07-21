@@ -39,10 +39,8 @@ from eval_log_utils import (
     discover_logs,
     infer_model_info,
     model_name,
-    normal_curve,
     parse_task,
     sample_score,
-    sample_synthetic_sets,
     select_logs,
 )
 from inspect_ai.log import read_eval_log
@@ -56,14 +54,10 @@ from plot_config import (
     LANGUAGE_LABELS,
     LANGUAGE_SPEAKERS,
     SPLIT_LABELS,
-    format_speaker_count,
-    heatmap_language_label,
     language_order,
     model_sort_key,
     ordered_families,
-    path_slug,
     reasoning_sort_bucket,
-    reasoning_variant_name,
 )
 from scipy.stats import norm
 
@@ -78,6 +72,9 @@ FAMILY_MARKERS = {
     "Qwen2.5": "o",
     "Qwen3": "v",
     "Qwen": ">",
+    "DeepSeek-R1-Distill-Qwen": "h",
+    "Llama 3": "s",
+    "DeepSeek-R1-Distill-Llama": "p",
     "Gemma 3": "^",
     "OLMo 2": "D",
     "OLMo 3": "d",
@@ -89,6 +86,7 @@ FAMILY_MARKERS = {
 EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
 SPLIT_PAIR_LABELS = {
     ("Qwen2.5-1.5B-Instruct", "nob"): "Qwen2.5 1.5B (Norwegian)",
+    ("Llama-3.2-3B-Instruct", "dan"): "Llama 3.2 3B (Danish)",
 }
 
 PROBLEM_KEYS = [
@@ -270,6 +268,10 @@ def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def path_slug(value: str) -> str:
+    return "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
+
+
 def _synthetic_models(samples: pd.DataFrame, language: str) -> set[str]:
     rows = samples[(samples["language"] == language) & (samples["split"] == "synthetic")]
     return set(rows["model"].unique())
@@ -294,8 +296,35 @@ def paired_correction_languages(
     return language_order(old & new, requested)
 
 
+def _sample_synthetic_sets(
+    synthetic: pd.DataFrame,
+    n_sets: int,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    variants = [
+        group["correct"].to_numpy(dtype=float)
+        for _source_id, group in synthetic.groupby("source_id", sort=True, dropna=False)
+    ]
+    if not variants:
+        raise ValueError("Synthetic data contains no source templates.")
+
+    set_totals = np.zeros(n_sets, dtype=float)
+    for values in variants:
+        set_totals += rng.choice(values, size=n_sets, replace=True)
+    return set_totals / len(variants)
 
 
+def _normal_curve(values: np.ndarray, is_diff: bool = False) -> tuple[np.ndarray, np.ndarray, float]:
+    mean = float(values.mean())
+    std = max(float(values.std(ddof=1)), 0.005)
+    if is_diff:
+        lower = max(-1.0, mean - 4 * std)
+        upper = min(1.0, mean + 4 * std)
+    else:
+        lower = max(0.0, mean - 4 * std)
+        upper = min(1.0, mean + 4 * std)
+    x = np.linspace(lower, upper, 500)
+    return x, norm.pdf(x, loc=mean, scale=std), mean
 
 
 def _original_accuracy(corrected: pd.DataFrame, uncorrected: pd.DataFrame) -> float:
@@ -326,16 +355,16 @@ def collect_correction_comparison_rows(
             CorrectionComparisonRow(
                 model=model,
                 original_accuracy=_original_accuracy(new_rows, old_rows),
-                uncorrected_sets=sample_synthetic_sets(
+                uncorrected_sets=_sample_synthetic_sets(
                     old_rows[old_rows["split"] == "synthetic"],
                     n_sets,
                     np.random.default_rng(seed + index),
-                )[0],
-                corrected_sets=sample_synthetic_sets(
+                ),
+                corrected_sets=_sample_synthetic_sets(
                     new_rows[new_rows["split"] == "synthetic"],
                     n_sets,
                     np.random.default_rng(seed + index),
-                )[0],
+                ),
             )
         )
 
@@ -369,9 +398,24 @@ def english_metric_pairs(summary: pd.DataFrame, split: str = "synthetic") -> pd.
     return pd.concat([average, result], ignore_index=True)
 
 
+def format_speaker_count(count: int) -> str:
+    if count >= 1_000_000:
+        return f"{count / 1_000_000:g}M"
+    if count >= 1_000:
+        return f"{count / 1_000:g}K"
+    return str(count)
+
+
+def heatmap_language_label(language: str) -> str:
+    name = LANGUAGE_LABELS.get(language, language)
+    speakers = LANGUAGE_SPEAKERS.get(language)
+    return f"{name}\n({format_speaker_count(speakers)} speakers)" if speakers is not None else name
+
+
 def annotated_heatmap(
     ax: plt.Axes,
     matrix: pd.DataFrame,
+    title: str,
     cmap: str,
     vmin: float,
     vmax: float,
@@ -415,6 +459,7 @@ def annotated_heatmap(
         )
 
     ax.set_yticks(range(len(matrix.index)), matrix.index)
+    ax.set_title(title)
 
     for row in range(values.shape[0]):
         for col in range(values.shape[1]):
@@ -442,7 +487,7 @@ def plot_heatmaps(summary: pd.DataFrame, out: Path) -> None:
             values="accuracy",
         ).reindex(index=order, columns=languages)
 
-    panels = [matrices[split] for split in available_splits]
+    panels = [(SPLIT_LABELS[split], matrices[split]) for split in available_splits]
 
     height = max(4.0, 0.42 * len(order) + 1.5)
     fig, axes = plt.subplots(
@@ -454,12 +499,16 @@ def plot_heatmaps(summary: pd.DataFrame, out: Path) -> None:
     )
     axes = axes[0]
 
-    images = [annotated_heatmap(ax, matrix, "viridis", 0, 1, False) for ax, matrix in zip(axes, panels, strict=True)]
+    images = [
+        annotated_heatmap(ax, matrix, title, "viridis", 0, 1, False)
+        for ax, (title, matrix) in zip(axes, panels, strict=True)
+    ]
 
     axes[0].set_ylabel("Evaluated instruction-tuned model")
+    fig.suptitle("Exact-answer accuracy by model, problem language, and benchmark split")
     fig.text(0.465, 0.02, "*", color="#FFC107", fontweight="bold", ha="right", fontsize=8)
     fig.text(0.467, 0.02, "Human verified", ha="left", fontsize=8)
-    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.28, top=0.92, wspace=0.18)
+    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.28, top=0.84, wspace=0.18)
 
     colorbar = fig.colorbar(
         images[0],
@@ -481,10 +530,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
         index=["model", "family", "params_b", "language"],
         columns="split",
         values="accuracy",
-    )
-    if not {"original", "synthetic"}.issubset(paired.columns):
-        return False
-    paired = paired.dropna(subset=["original", "synthetic"])
+    ).dropna(subset=["original", "synthetic"])
 
     if paired.empty:
         return False
@@ -616,16 +662,18 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
         annotated_heatmap(
             ax,
             matrix,
+            title,
             "RdBu",
             -max_gap,
             max_gap,
             signed=True,
         )
-        for ax, (_title, matrix) in zip(axes, panels, strict=True)
+        for ax, (title, matrix) in zip(axes, panels, strict=True)
     ]
 
     axes[0].set_ylabel("Evaluated instruction-tuned model")
-    fig.subplots_adjust(left=0.2, right=0.89, bottom=0.27, top=0.92, wspace=0.18)
+    fig.suptitle("Target-language accuracy minus English accuracy for the same model")
+    fig.subplots_adjust(left=0.2, right=0.89, bottom=0.27, top=0.84, wspace=0.18)
     colorbar_axis = fig.add_axes([0.91, 0.25, 0.012, 0.55])
     colorbar = fig.colorbar(
         images[0],
@@ -638,38 +686,7 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
-def plot_eng_metric_comparison(
-    summary: pd.DataFrame,
-    out: Path,
-    split: str = "synthetic",
-    samples: pd.DataFrame | None = None,
-) -> bool:
-    if samples is not None:
-        metric_template_ids = {
-            "0000",
-            "0001",
-            "0006",
-            "0007",
-            "0011",
-            "0017",
-            "0024",
-            "0040",
-            "0042",
-            "0045",
-            "0050",
-            "0056",
-            "0058",
-            "0067",
-            "0071",
-            "0076",
-            "0085",
-            "0087",
-            "0088",
-            "0093",
-        }
-        metric_samples = samples[samples["source_id"].isin(metric_template_ids)]
-        summary = filter_summary_models(summarize(metric_samples))
-
+def plot_eng_metric_comparison(summary: pd.DataFrame, out: Path, split: str = "synthetic") -> bool:
     paired = english_metric_pairs(summary, split)
     if paired.empty:
         return False
@@ -711,6 +728,7 @@ def plot_eng_metric_comparison(
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.grid(axis="x", color="#E5E7EB", linewidth=0.8)
     ax.set_axisbelow(True)
+    ax.set_title(f"English metric vs English accuracy ({SPLIT_LABELS.get(split, split)})")
     ax.legend(
         handles=[
             Line2D(
@@ -747,10 +765,9 @@ def transfer_robustness_summary(summary: pd.DataFrame) -> pd.DataFrame:
 
 
 def plot_transfer_robustness(summary: pd.DataFrame, out: Path) -> bool:
-    robust = transfer_robustness_summary(summary)
-    if robust.empty or "params_b" not in robust.columns:
+    robust = transfer_robustness_summary(summary).dropna(subset=["params_b"])
+    if robust.empty:
         return False
-    robust = robust.dropna(subset=["params_b"])
 
     splits = [split for split in ("original", "synthetic") if split in set(robust["split"])]
     metrics = [
@@ -800,11 +817,13 @@ def plot_transfer_robustness(summary: pd.DataFrame, out: Path) -> bool:
             ax.set_xlabel("Model parameters (billions; logarithmic scale)")
             ax.set_ylabel(label)
             ax.yaxis.set_major_formatter(PercentFormatter(1))
+            ax.set_title(SPLIT_LABELS[split])
 
     handles, labels = axes[0, 0].get_legend_handles_labels()
     if handles:
         fig.legend(handles, labels, loc="lower center", ncol=len(labels), frameon=False)
-    fig.tight_layout(rect=(0, 0.05, 1, 1))
+    fig.suptitle("English-to-non-English accuracy gaps and variability by model parameter count")
+    fig.tight_layout(rect=(0, 0.05, 1, 0.96))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -843,6 +862,7 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
     absolute_image = annotated_heatmap(
         axes[0],
         absolute,
+        "Absolute accuracy drop: original - synthetic",
         "RdBu_r",
         -absolute_limit,
         absolute_limit,
@@ -851,12 +871,14 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
     relative_image = annotated_heatmap(
         axes[1],
         relative,
+        "Relative accuracy drop: (original - synthetic) / original",
         "RdBu_r",
         -relative_limit,
         relative_limit,
         signed=True,
     )
     axes[0].set_ylabel("Evaluated instruction-tuned model")
+    fig.suptitle("Accuracy decrease from original benchmark questions to synthetic numerical variants")
     absolute_colorbar = fig.colorbar(
         absolute_image,
         ax=axes[0],
@@ -878,7 +900,7 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
         ha="center",
         fontsize=8,
     )
-    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.3, top=0.92, wspace=0.18)
+    fig.subplots_adjust(left=0.2, right=0.92, bottom=0.3, top=0.84, wspace=0.18)
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -1006,59 +1028,63 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
         squeeze=False,
     )
 
+    all_diff_x_min: list[float] = []
+    all_diff_x_max: list[float] = []
+
     for ax, row in zip(axes[:, 0], rows, strict=True):
-        old_counts, _, _ = ax.hist(
-            row.uncorrected_sets,
+        # Difference = Corrected accuracy minus Uncorrected accuracy
+        diffs = row.uncorrected_sets - row.corrected_sets
+        diff_counts, _, _ = ax.hist(
+            diffs,
             bins=18,
             density=True,
-            color=UNCORRECTED_FILL,
+            color="#4361EE",
             edgecolor="white",
             linewidth=0.35,
             alpha=0.38,
             zorder=1,
         )
-        new_counts, _, _ = ax.hist(
-            row.corrected_sets,
-            bins=18,
-            density=True,
-            color=CORRECTED_FILL,
-            edgecolor="white",
-            linewidth=0.35,
-            alpha=0.38,
-            zorder=1,
-        )
-        old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
-        new_x, new_density, new_mean, _ = normal_curve(row.corrected_sets)
+        diff_x, diff_density, diff_mean = _normal_curve(diffs, is_diff=True)
+        all_diff_x_min.append(float(diff_x.min()))
+        all_diff_x_max.append(float(diff_x.max()))
+
         peak = max(
-            float(old_counts.max()),
-            float(new_counts.max()),
-            float(old_density.max()),
-            float(new_density.max()),
+            float(diff_counts.max()) if len(diff_counts) > 0 else 0.0,
+            float(diff_density.max()),
         )
 
-        ax.fill_between(old_x, 0, old_density, color=UNCORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
-        ax.plot(old_x, old_density, color=UNCORRECTED_COLOR, linewidth=1.8, zorder=3)
-        ax.axvline(old_mean, color=UNCORRECTED_COLOR, linewidth=1.2, zorder=4)
-
-        ax.fill_between(new_x, 0, new_density, color=CORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
-        ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8, zorder=3)
-        ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2, zorder=4)
+        ax.fill_between(diff_x, 0, diff_density, color="#4361EE", alpha=0.18, linewidth=0, zorder=2)
+        ax.plot(diff_x, diff_density, color="#1D3557", linewidth=1.8, zorder=3)
+        ax.axvline(diff_mean, color="#1D3557", linewidth=1.2, linestyle="-", zorder=4)
+        ax.axvline(0, color="#666666", linewidth=0.8, linestyle=":", zorder=2)
 
         ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=11)
         ax.set_yticks([])
-        ax.set_ylim(0, peak * 1.2)
+        ax.set_ylim(0, peak * 1.2 if peak > 0 else 1.0)
         ax.grid(axis="x", color="#D8DEE8", linewidth=0.7, alpha=0.6)
 
-    axes[-1, 0].set_xlim(0, 1)
+    min_x = min(all_diff_x_min) if all_diff_x_min else -0.05
+    max_x = max(all_diff_x_max) if all_diff_x_max else 0.05
+    margin = max((max_x - min_x) * 0.1, 0.02)
+
+    axes[-1, 0].set_xlim(min_x - margin, max_x + margin)
     axes[-1, 0].xaxis.set_major_formatter(PercentFormatter(1))
-    axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
+    axes[-1, 0].set_xlabel("Accuracy difference (Corrected − Uncorrected)", fontsize=12, labelpad=8)
 
     legend = [
-        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label="Uncorrected"),
-        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label="Corrected"),
+        Line2D([0], [0], color="#1D3557", lw=2, label="Difference distribution (Corrected − Uncorrected)"),
+        Line2D([0], [0], color="#1D3557", lw=1.2, linestyle="-", label="Mean difference"),
+        Line2D([0], [0], color="#666666", lw=0.8, linestyle=":", label="Zero change"),
     ]
     axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
-    fig.tight_layout(rect=(0.06, 0.02, 1, 1))
+    fig.suptitle(
+        f"{LANGUAGE_LABELS.get(language, language)} correction accuracy difference",
+        x=0.08,
+        ha="left",
+        fontsize=17,
+        fontweight="bold",
+    )
+    fig.tight_layout(rect=(0.06, 0.02, 1, 0.94))
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -1109,6 +1135,7 @@ def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
             ax.set_xscale("log")
             ax.set_ylim(0, 1)
             ax.grid(alpha=0.2)
+            ax.set_title(f"{family} on {SPLIT_LABELS[split].lower()}")
             ax.set_xlabel("Model parameters (billions; logarithmic scale)")
 
             if col_index == 0:
@@ -1130,7 +1157,8 @@ def plot_family_scaling(summary: pd.DataFrame, out: Path) -> bool:
             frameon=False,
         )
 
-    fig.tight_layout(rect=(0, 0.06, 1, 1))
+    fig.suptitle("Exact-answer accuracy by model size within each model family and problem language")
+    fig.tight_layout(rect=(0, 0.06, 1, 0.96))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
 
@@ -1214,7 +1242,6 @@ def main() -> None:
     made_metric = plot_eng_metric_comparison(
         summary,
         args.out_dir / "eng_vs_eng_metric.png",
-        samples=samples,
     )
     made_robustness = plot_transfer_robustness(
         summary,
@@ -1259,22 +1286,42 @@ def main() -> None:
     print(f"Saved {summary_path}")
     print(f"Saved {args.out_dir / 'accuracy_heatmaps.png'}")
 
-    optional_outputs = [
-        (made_pairs, "original_vs_synthetic.png", "no model/language has both splits"),
-        (made_scaling, "family_scaling.png", "no recognized model parameter counts"),
-        (made_transfer, "english_normalized_transfer.png", "paired English/non-English results are required"),
-        (made_metric, "eng_vs_eng_metric.png", "paired English and English-metric results are required"),
-        (made_robustness, "transfer_robustness.png", "paired transfer results with model sizes are required"),
-        (made_degradation, "split_degradation_heatmaps.png", "paired original/synthetic results are required"),
-        (
-            made_reasoning,
-            "reasoning_delta_heatmap.png",
-            "paired synthetic English/non-English reasoning results with model sizes are required",
-        ),
-    ]
-    for made, filename, skip_reason in optional_outputs:
-        path = args.out_dir / filename
-        print(f"Saved {path}" if made else f"Skipped {filename}: {skip_reason}.")
+    if made_pairs:
+        print(f"Saved {args.out_dir / 'original_vs_synthetic.png'}")
+    else:
+        print("Skipped original_vs_synthetic.png: no model/language has both splits.")
+
+    if made_scaling:
+        print(f"Saved {args.out_dir / 'family_scaling.png'}")
+    else:
+        print("Skipped family_scaling.png: no recognized model parameter counts.")
+
+    if made_transfer:
+        print(f"Saved {args.out_dir / 'english_normalized_transfer.png'}")
+    else:
+        print("Skipped english_normalized_transfer.png: paired English/non-English results are required.")
+
+    if made_metric:
+        print(f"Saved {args.out_dir / 'eng_vs_eng_metric.png'}")
+    else:
+        print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
+
+    if made_robustness:
+        print(f"Saved {args.out_dir / 'transfer_robustness.png'}")
+    else:
+        print("Skipped transfer_robustness.png: paired transfer results with model sizes are required.")
+
+    if made_degradation:
+        print(f"Saved {args.out_dir / 'split_degradation_heatmaps.png'}")
+    else:
+        print("Skipped split_degradation_heatmaps.png: paired original/synthetic results are required.")
+
+    if made_reasoning:
+        print(f"Saved {args.out_dir / 'reasoning_delta_heatmap.png'}")
+    else:
+        print(
+            "Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results with model sizes are required."
+        )
 
     for out in correction_outputs:
         print(f"Saved {out}")
