@@ -1111,6 +1111,7 @@ def plot_correction_comparison_selected(
     if not target_models:
         target_models = [
             "gemma-3-27b-it",
+            "gemma-3-12b-it",
             "OLMo-2-0325-32B-Instruct",
             "granite-3.2-8b-instruct (reasoning on)",
         ]
@@ -1120,34 +1121,39 @@ def plot_correction_comparison_selected(
         step = max(1, len(rows) // 3)
         selected_rows = [rows[0], rows[min(step, len(rows) - 1)], rows[min(2 * step, len(rows) - 1)]]
 
-    fig, ax = plt.subplots(figsize=(8.5, 4.2))
+    fig, ax = plt.subplots(figsize=(9.5, 4.2))
 
-    DARK_BLUE = "#1B365D"
-    LIGHT_BLUE = "#4EA8DE"
-    DARK_BAR = "#1B365D"
-    LIGHT_BAR = "#4EA8DE"
+    # Distinct colour per model; unvalidated = solid, validated = dashed
+    MODEL_COLORS = [
+        "#1B365D",  # deep navy
+        "#C0392B",  # crimson
+        "#1A6B3C",  # forest green
+        "#7B3FA0",  # purple
+        "#D4680F",  # burnt orange (spare)
+    ]
 
     all_peaks = []
 
-    for row in selected_rows:
+    for i, row in enumerate(selected_rows):
+        color = MODEL_COLORS[i % len(MODEL_COLORS)]
         old_counts, _, _ = ax.hist(
             row.uncorrected_sets,
             bins=18,
             density=True,
-            color=DARK_BAR,
+            color=color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.25,
+            alpha=0.18,
             zorder=1,
         )
         new_counts, _, _ = ax.hist(
             row.corrected_sets,
             bins=18,
             density=True,
-            color=LIGHT_BAR,
+            color=color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.35,
+            alpha=0.30,
             zorder=1,
         )
 
@@ -1162,11 +1168,11 @@ def plot_correction_comparison_selected(
         )
         all_peaks.append(peak)
 
-        # Uncorrected (Dark Blue)
+        # Unvalidated — solid line
         ax.plot(
             old_x,
             old_density,
-            color=DARK_BLUE,
+            color=color,
             linestyle="-",
             linewidth=1.8,
             zorder=3,
@@ -1175,19 +1181,19 @@ def plot_correction_comparison_selected(
             x=old_mean,
             ymin=0,
             ymax=float(old_density.max()),
-            color=DARK_BLUE,
+            color=color,
             linestyle="-",
             linewidth=1.2,
             alpha=0.85,
             zorder=4,
         )
 
-        # Corrected (Light Blue)
+        # Validated — dashed line
         ax.plot(
             new_x,
             new_density,
-            color=LIGHT_BLUE,
-            linestyle="-",
+            color=color,
+            linestyle="--",
             linewidth=1.8,
             zorder=3,
         )
@@ -1195,8 +1201,8 @@ def plot_correction_comparison_selected(
             x=new_mean,
             ymin=0,
             ymax=float(new_density.max()),
-            color=LIGHT_BLUE,
-            linestyle="-",
+            color=color,
+            linestyle="--",
             linewidth=1.2,
             alpha=0.85,
             zorder=4,
@@ -1213,7 +1219,7 @@ def plot_correction_comparison_selected(
             va="bottom",
             fontsize=9.5,
             fontweight="bold",
-            color="#222222",
+            color=color,
             zorder=5,
         )
 
@@ -1223,12 +1229,13 @@ def plot_correction_comparison_selected(
 
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.set_xlabel("Exact-answer accuracy", fontsize=11.5, labelpad=8)
+    ax.set_ylabel("Density", fontsize=11.5, labelpad=8)
     ax.set_yticks([])
     ax.grid(False)
 
     legend_elements = [
-        Line2D([0], [0], color=DARK_BLUE, lw=2, label="Uncorrected"),
-        Line2D([0], [0], color=LIGHT_BLUE, lw=2, label="Corrected"),
+        Line2D([0], [0], color="#555555", lw=2, linestyle="-", label="Unvalidated"),
+        Line2D([0], [0], color="#555555", lw=2, linestyle="--", label="Validated"),
     ]
     ax.legend(
         handles=legend_elements,
@@ -1236,14 +1243,6 @@ def plot_correction_comparison_selected(
         frameon=False,
         fontsize=10,
         ncol=2,
-    )
-
-    fig.suptitle(
-        f"{LANGUAGE_LABELS.get(language, language)} correction comparison (Selected models)",
-        x=0.12,
-        ha="left",
-        fontsize=14,
-        fontweight="bold",
     )
     fig.tight_layout()
     out.parent.mkdir(parents=True, exist_ok=True)
