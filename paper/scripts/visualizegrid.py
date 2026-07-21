@@ -1019,6 +1019,15 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
+def _normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
+    mean = float(values.mean())
+    std = max(float(values.std(ddof=1)), 0.005)
+    lower = max(0.0, mean - 4 * std)
+    upper = min(1.0, mean + 4 * std)
+    x = np.linspace(lower, upper, 500)
+    return x, norm.pdf(x, loc=mean, scale=std), mean
+
+
 def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: str, out: Path) -> None:
     fig, axes = plt.subplots(
         len(rows),
@@ -1028,63 +1037,133 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
         squeeze=False,
     )
 
-    all_diff_x_min: list[float] = []
-    all_diff_x_max: list[float] = []
-
     for ax, row in zip(axes[:, 0], rows, strict=True):
-        # Difference = Corrected accuracy minus Uncorrected accuracy
-        diffs = row.uncorrected_sets - row.corrected_sets
-        diff_counts, _, _ = ax.hist(
-            diffs,
+        old_counts, _, _ = ax.hist(
+            row.uncorrected_sets,
             bins=18,
             density=True,
-            color="#4361EE",
+            color=UNCORRECTED_FILL,
             edgecolor="white",
             linewidth=0.35,
             alpha=0.38,
             zorder=1,
         )
-        diff_x, diff_density, diff_mean = _normal_curve(diffs, is_diff=True)
-        all_diff_x_min.append(float(diff_x.min()))
-        all_diff_x_max.append(float(diff_x.max()))
-
+        new_counts, _, _ = ax.hist(
+            row.corrected_sets,
+            bins=18,
+            density=True,
+            color=CORRECTED_FILL,
+            edgecolor="white",
+            linewidth=0.35,
+            alpha=0.38,
+            zorder=1,
+        )
+        old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
+        new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
         peak = max(
-            float(diff_counts.max()) if len(diff_counts) > 0 else 0.0,
-            float(diff_density.max()),
+            float(old_counts.max()),
+            float(new_counts.max()),
+            float(old_density.max()),
+            float(new_density.max()),
         )
 
-        ax.fill_between(diff_x, 0, diff_density, color="#4361EE", alpha=0.18, linewidth=0, zorder=2)
-        ax.plot(diff_x, diff_density, color="#1D3557", linewidth=1.8, zorder=3)
-        ax.axvline(diff_mean, color="#1D3557", linewidth=1.2, linestyle="-", zorder=4)
-        ax.axvline(0, color="#666666", linewidth=0.8, linestyle=":", zorder=2)
+        ax.fill_between(old_x, 0, old_density, color=UNCORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
+        ax.plot(old_x, old_density, color=UNCORRECTED_COLOR, linewidth=1.8, zorder=3)
+        ax.axvline(old_mean, color=UNCORRECTED_COLOR, linewidth=1.2, zorder=4)
+
+        ax.fill_between(new_x, 0, new_density, color=CORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
+        ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8, zorder=3)
+        ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2, zorder=4)
 
         ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=11)
         ax.set_yticks([])
-        ax.set_ylim(0, peak * 1.2 if peak > 0 else 1.0)
+        ax.set_ylim(0, peak * 1.2)
         ax.grid(axis="x", color="#D8DEE8", linewidth=0.7, alpha=0.6)
 
-    min_x = min(all_diff_x_min) if all_diff_x_min else -0.05
-    max_x = max(all_diff_x_max) if all_diff_x_max else 0.05
-    margin = max((max_x - min_x) * 0.1, 0.02)
-
-    axes[-1, 0].set_xlim(min_x - margin, max_x + margin)
+    axes[-1, 0].set_xlim(0, 1)
     axes[-1, 0].xaxis.set_major_formatter(PercentFormatter(1))
-    axes[-1, 0].set_xlabel("Accuracy difference (Corrected − Uncorrected)", fontsize=12, labelpad=8)
+    axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
 
     legend = [
-        Line2D([0], [0], color="#1D3557", lw=2, label="Difference distribution (Corrected − Uncorrected)"),
-        Line2D([0], [0], color="#1D3557", lw=1.2, linestyle="-", label="Mean difference"),
-        Line2D([0], [0], color="#666666", lw=0.8, linestyle=":", label="Zero change"),
+        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label="Uncorrected"),
+        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label="Corrected"),
     ]
     axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
     fig.suptitle(
-        f"{LANGUAGE_LABELS.get(language, language)} correction accuracy difference",
+        f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
         x=0.08,
         ha="left",
         fontsize=17,
         fontweight="bold",
     )
     fig.tight_layout(rect=(0.06, 0.02, 1, 0.94))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
+def plot_correction_comparison_selected(
+    rows: list[CorrectionComparisonRow],
+    language: str,
+    out: Path,
+    target_models: list[str] | None = None,
+) -> None:
+    if not target_models:
+        target_models = [
+            "gemma-3-27b-it",
+            "OLMo-2-0325-32B-Instruct",
+            "granite-3.2-8b-instruct (reasoning on)",
+        ]
+
+    selected_rows = [r for r in rows if r.model in target_models]
+    if len(selected_rows) < 3:
+        step = max(1, len(rows) // 3)
+        selected_rows = [rows[0], rows[min(step, len(rows) - 1)], rows[min(2 * step, len(rows) - 1)]]
+
+    fig, ax = plt.subplots(figsize=(8.5, 4.5))
+    colors = ["#4361EE", "#7B2CBF", "#2A9D8F"]
+
+    for color, row in zip(colors, selected_rows, strict=False):
+        old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
+        new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
+
+        ax.plot(
+            old_x,
+            old_density,
+            color=color,
+            linestyle="--",
+            linewidth=1.8,
+            alpha=0.75,
+            label=f"{row.model} (Uncorrected)",
+        )
+        ax.plot(
+            new_x,
+            new_density,
+            color=color,
+            linestyle="-",
+            linewidth=2.0,
+            label=f"{row.model} (Corrected)",
+        )
+        ax.fill_between(new_x, 0, new_density, color=color, alpha=0.08)
+        ax.axvline(new_mean, color=color, linestyle="-", linewidth=1.0, alpha=0.5)
+        ax.axvline(old_mean, color=color, linestyle="--", linewidth=1.0, alpha=0.5)
+
+    ax.set_xlim(0, 1)
+    ax.xaxis.set_major_formatter(PercentFormatter(1))
+    ax.set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
+    ax.set_ylabel("Density", fontsize=12)
+    ax.set_yticks([])
+    ax.grid(axis="x", color="#D8DEE8", linewidth=0.7, alpha=0.6)
+
+    ax.legend(loc="upper right", frameon=False, fontsize=8.5, ncol=1)
+    fig.suptitle(
+        f"{LANGUAGE_LABELS.get(language, language)} correction comparison (Selected models)",
+        x=0.12,
+        ha="left",
+        fontsize=14,
+        fontweight="bold",
+    )
+    fig.tight_layout()
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -1282,6 +1361,10 @@ def main() -> None:
                 out = args.out_dir / "correction_comparison" / f"{path_slug(language)}.png"
                 plot_correction_comparison(rows, language, out)
                 correction_outputs.append(out)
+
+                out_selected = args.out_dir / "correction_comparison" / f"{path_slug(language)}_selected.png"
+                plot_correction_comparison_selected(rows, language, out_selected)
+                correction_outputs.append(out_selected)
 
     print(f"Saved {summary_path}")
     print(f"Saved {args.out_dir / 'accuracy_heatmaps.png'}")
