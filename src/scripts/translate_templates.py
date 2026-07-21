@@ -3,7 +3,7 @@
 # [tool.uv.sources]
 # multilingual-gsm-symbolic = { path = "../..", editable = true }
 # ///
-"""Translate symbolic templates and replacements between languages using GPT.
+"""Translate symbolic templates and replacements using a local vLLM server.
 
 Translates all natural-language fields in a single call (ensuring consistent
 terminology across fields) and validates each template using the same checks
@@ -11,13 +11,19 @@ as the test suite. Templates that fail validation are retried up to 3 times.
 
 Usage:
     uv run src/scripts/translate_templates.py --to nob
-    uv run src/scripts/translate_templates.py --to fra --model gpt-5.4
+    uv run src/scripts/translate_templates.py --to fra --model Qwen/Qwen3-8B
+    uv run src/scripts/translate_templates.py --to nob --base-url http://127.0.0.1:8000/v1
     uv run src/scripts/translate_templates.py --from dan --subfolder symbolic --to nob
+
+The model is auto-detected when the vLLM server exposes exactly one model.
+Set VLLM_BASE_URL, VLLM_API_KEY, and VLLM_MODEL to avoid repeating flags.
 """
 
 import argparse
+import concurrent.futures
 import json
 import logging
+import os
 import re
 import time
 import tomllib
@@ -148,9 +154,8 @@ _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotat
 _SYSTEM_PROMPT = """\
 You are a precise translator of mathematical word problems from {src_name} to {tgt_name}.
 
-You will receive a JSON object with fields to translate. Return a JSON object with the same keys
-and translated values. All four fields share the same problem — use consistent terminology
-throughout (e.g. the same word for every object, same names in every field).
+You will receive a JSON object representing a template. Your task is to translate ONLY the `question_annotated` and `answer_annotated` fields. 
+Return a JSON object containing ONLY those two translated keys. Do not include `question` or `answer` in your JSON output.
 
 Rules:
 1. Translate all natural-language prose, including default values inside placeholders.
@@ -185,6 +190,33 @@ def lang_name(code: str) -> str:
     return _LANGUAGE_NAMES.get(code, code)
 
 
+def resolve_model(client: OpenAI, requested_model: str | None) -> str:
+    """Return the requested model or auto-detect the single model served by vLLM."""
+    if requested_model:
+        return requested_model
+
+    try:
+        model_ids = [model.id for model in client.models.list().data]
+    except Exception as exc:
+        raise SystemExit(
+            "Could not query the vLLM /v1/models endpoint. "
+            "Pass --model explicitly or check --base-url. "
+            f"Original error: {exc}"
+        ) from exc
+
+    if len(model_ids) == 1:
+        logger.info("Auto-detected vLLM model: %s", model_ids[0])
+        return model_ids[0]
+    if not model_ids:
+        raise SystemExit("The vLLM server returned no models. Pass --model after checking the server.")
+
+    available = ", ".join(model_ids)
+    raise SystemExit(
+        "The vLLM server exposes multiple models; choose one with --model. "
+        f"Available models: {available}"
+    )
+
+
 _RENDERED_NOTE = (
     "Note: `question` and `answer` are the rendered forms of `question_annotated` and "
     "`answer_annotated` respectively — all {var,default} placeholders are replaced by their "
@@ -210,7 +242,13 @@ def translate_template_fields(
     response = client.chat.completions.create(
         model=model,
         messages=messages,
-        temperature=0.2,
+
+        extra_body={
+            "chat_template_kwargs": {
+                "enable_thinking": True,
+                "reasoning_effort": "high"
+            }
+        },
     )
     raw = response.choices[0].message.content.strip()
     messages = messages + [{"role": "assistant", "content": raw}]
@@ -225,7 +263,13 @@ def fix_template_fields(client: OpenAI, model: str, feedback: str, messages: lis
     response = client.chat.completions.create(
         model=model,
         messages=messages,
-        temperature=0.4,
+
+        extra_body={
+            "chat_template_kwargs": {
+                "enable_thinking": True,
+                "reasoning_effort": "high"
+            }
+        },
     )
     raw = response.choices[0].message.content.strip()
     messages = messages + [{"role": "assistant", "content": raw}]
@@ -235,7 +279,7 @@ def fix_template_fields(client: OpenAI, model: str, feedback: str, messages: lis
 def _reconstruct_messages(src_data: dict, tgt_data: dict, src: str, tgt: str) -> list[dict]:
     """Build a synthetic conversation for an existing translation so retries use the same path."""
     messages = _build_initial_messages(src_data, src, tgt)
-    tgt_payload = {f: tgt_data[f] for f in _TRANSLATE_FIELDS if f in tgt_data}
+    tgt_payload = {f: tgt_data[f] for f in ("question_annotated", "answer_annotated") if f in tgt_data}
     return messages + [{"role": "assistant", "content": json.dumps(tgt_payload, ensure_ascii=False, indent=2)}]
 
 
@@ -259,11 +303,37 @@ def _strip_answer_annotated_defaults(tgt_data: dict) -> dict:
     return tgt_data
 
 
-def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model: str) -> tuple[dict, list[dict]]:
+def _render_deterministic_fields(tgt_data: dict, replacements: dict) -> dict:
+    try:
+        template = AnnotatedQuestion(
+            **{
+                k: tgt_data[k]
+                for k in (
+                    "question",
+                    "answer",
+                    "question_annotated",
+                    "answer_annotated",
+                    "id_orig",
+                    "id_shuffled",
+                    "language",
+                )
+                if k in tgt_data
+            }
+        )
+        defaults = template._get_full_default_assignments(replacements)
+        tgt_data["question"] = template.format_question(defaults)
+        tgt_data["answer"] = template.format_answer(defaults)
+    except Exception:
+        pass
+    return tgt_data
+
+
+def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model: str, tgt_replacements: dict) -> tuple[dict, list[dict]]:
     tgt_data = dict(src_data)
     translated_fields, messages = translate_template_fields(client, src_data, src, tgt, model)
     tgt_data.update(translated_fields)
     tgt_data = _strip_answer_annotated_defaults(tgt_data)
+    tgt_data = _render_deterministic_fields(tgt_data, tgt_replacements)
     tgt_data["language"] = tgt
     tgt_data["creation"] = (
         f"machine-translated from {lang_name(src)} using {model}, "
@@ -280,7 +350,13 @@ def translate_replacements(client: OpenAI, src_data: dict, src: str, tgt: str, m
             {"role": "system", "content": system},
             {"role": "user", "content": json.dumps(src_data, ensure_ascii=False, indent=2)},
         ],
-        temperature=0.1,
+
+        extra_body={
+            "chat_template_kwargs": {
+                "enable_thinking": True,
+                "reasoning_effort": "high"
+            }
+        },
     )
     raw = response.choices[0].message.content.strip()
     return json.loads(raw)
@@ -357,106 +433,172 @@ def verify_renders(tgt_data: dict, replacements: dict) -> list[str]:
     return issues
 
 
+def process_template(
+    i: int,
+    src_file: Path,
+    client: OpenAI,
+    args: argparse.Namespace,
+    tgt: str,
+    tgt_symbolic: Path,
+    tgt_replacements: dict,
+    total_files: int
+) -> tuple[str, list[str]] | None:
+    tgt_file = tgt_symbolic / src_file.name
+
+    with src_file.open("rb") as f:
+        src_data = tomllib.load(f)
+
+    # If translation already exists, validate it first; only redo if broken.
+    if tgt_file.exists() and not args.overwrite:
+        with tgt_file.open("rb") as f:
+            tgt_data = tomllib.load(f)
+        issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
+        if not issues:
+            logger.info("[%d/%d] %s OK (skipping)", i + 1, total_files, src_file.name)
+            return None
+        logger.warning(
+            "[%d/%d] %s has issues, fixing: %s", i + 1, total_files, src_file.name, "; ".join(issues)
+        )
+        messages = _reconstruct_messages(src_data, tgt_data, args.src, tgt)
+        feedback = "\n".join(issues)
+    else:
+        logger.info("[%d/%d] Translating %s", i + 1, total_files, src_file.name)
+        tgt_data, messages = translate_template(client, src_data, args.src, tgt, args.model, tgt_replacements)
+        issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
+        feedback = "\n".join(issues)
+
+    for attempt in range(1, args.retries + 1):
+        if not issues:
+            break
+        logger.warning("[%d/%d] %s Attempt %d/%d failed, retrying with feedback", i + 1, total_files, src_file.name, attempt, args.retries)
+        time.sleep(1)
+        try:
+            translated_fields, messages = fix_template_fields(client, args.model, feedback, messages)
+            tgt_data.update(translated_fields)
+            tgt_data = _strip_answer_annotated_defaults(tgt_data)
+            tgt_data = _render_deterministic_fields(tgt_data, tgt_replacements)
+            issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
+            feedback = "\n".join(issues)
+        except Exception as e:
+            issues = [f"retry error: {e}"]
+            break
+
+    if issues:
+        logger.warning("[%d/%d] Unresolved issues in %s: %s", i + 1, total_files, src_file.name, "; ".join(issues))
+        tgt_data["ignore"] = True
+        error_result = (src_file.name, issues)
+    else:
+        logger.info("[%d/%d] %s OK", i + 1, total_files, src_file.name)
+        error_result = None
+
+    with tgt_file.open("wb") as f:
+        f.write(tomli_w.dumps(tgt_data).encode("utf-8"))
+    logger.info("[%d/%d] Written %s", i + 1, total_files, tgt_file.name)
+    return error_result
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Translate symbolic math templates between languages.")
     parser.add_argument("--from", dest="src", default="eng", help="Source language code (default: eng)")
-    parser.add_argument("--to", dest="tgt", required=True, help="Target language code (e.g. nob)")
+    parser.add_argument("--to", dest="tgt", required=True, help="Target language code (e.g. nob, or 'all')")
     parser.add_argument(
         "--subfolder",
         default="test_metric",
         help="Template subfolder within the language directory (default: test_metric)",
     )
-    parser.add_argument("--model", default="gpt-5.4-nano", help="OpenAI model to use")
+    parser.add_argument(
+        "--base-url",
+        default=os.getenv("VLLM_BASE_URL", "http://127.0.0.1:8000/v1"),
+        help="vLLM OpenAI-compatible base URL (default: %(default)s; env: VLLM_BASE_URL)",
+    )
+    parser.add_argument(
+        "--api-key",
+        default=os.getenv("VLLM_API_KEY", "EMPTY"),
+        help="API key configured on the vLLM server (default: EMPTY; env: VLLM_API_KEY)",
+    )
+    parser.add_argument(
+        "--model",
+        default=os.getenv("VLLM_MODEL"),
+        help="Served vLLM model name. Auto-detected when exactly one model is served (env: VLLM_MODEL)",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=float(os.getenv("VLLM_TIMEOUT", "300")),
+        help="Per-request timeout in seconds (default: %(default)s; env: VLLM_TIMEOUT)",
+    )
     parser.add_argument("--overwrite", action="store_true", help="Re-translate already existing files")
     parser.add_argument("--retries", type=int, default=2, help="Max retries for templates failing validation")
     args = parser.parse_args()
 
     src_dir = _DATA_ROOT / args.src
-    tgt_dir = _DATA_ROOT / args.tgt
-    tgt_symbolic = tgt_dir / args.subfolder
 
     if not src_dir.exists():
         raise SystemExit(f"Source language directory not found: {src_dir}")
 
-    tgt_symbolic.mkdir(parents=True, exist_ok=True)
-    client = OpenAI()
+    client = OpenAI(
+        base_url=args.base_url.rstrip("/"),
+        api_key=args.api_key,
+        timeout=args.timeout,
+    )
+    args.model = resolve_model(client, args.model)
+    logger.info("Using vLLM endpoint %s with model %s", args.base_url, args.model)
 
-    # Load target replacements (needed for render validation)
-    rep_src = src_dir / "replacements.json"
-    rep_tgt = tgt_dir / "replacements.json"
-    if rep_src.exists() and (args.overwrite or not rep_tgt.exists()):
-        logger.info("Translating replacements.json (%s → %s)", args.src, args.tgt)
-        with rep_src.open(encoding="utf-8") as f:
-            src_replacements = json.load(f)
-        tgt_replacements = translate_replacements(client, src_replacements, args.src, args.tgt, args.model)
-        with rep_tgt.open("w", encoding="utf-8") as f:
-            json.dump(tgt_replacements, f, ensure_ascii=False, indent=4)
-        logger.info("Written %s", rep_tgt)
-    else:
-        logger.info("Skipping replacements.json (already exists)")
+    targets = [lang for lang in _LANGUAGE_NAMES if lang != args.src] if args.tgt == "all" else [args.tgt]
+    overall_errors = []
 
-    tgt_replacements = json.loads(rep_tgt.read_text(encoding="utf-8")) if rep_tgt.exists() else {}
+    for tgt in targets:
+        logger.info("--- Processing target language: %s ---", tgt)
+        tgt_dir = _DATA_ROOT / tgt
+        tgt_symbolic = tgt_dir / args.subfolder
 
-    # Translate / fix templates
-    template_files = sorted((src_dir / args.subfolder).glob("*.toml"))
-    errors: list[tuple[str, list[str]]] = []
+        tgt_symbolic.mkdir(parents=True, exist_ok=True)
 
-    for i, src_file in enumerate(template_files):
-        tgt_file = tgt_symbolic / src_file.name
-
-        with src_file.open("rb") as f:
-            src_data = tomllib.load(f)
-
-        # If translation already exists, validate it first; only redo if broken.
-        if tgt_file.exists() and not args.overwrite:
-            with tgt_file.open("rb") as f:
-                tgt_data = tomllib.load(f)
-            issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
-            if not issues:
-                logger.info("[%d/%d] %s OK (skipping)", i + 1, len(template_files), src_file.name)
-                continue
-            logger.warning(
-                "[%d/%d] %s has issues, fixing: %s", i + 1, len(template_files), src_file.name, "; ".join(issues)
-            )
-            messages = _reconstruct_messages(src_data, tgt_data, args.src, args.tgt)
-            feedback = "\n".join(issues)
+        # Load target replacements (needed for render validation)
+        rep_src = src_dir / "replacements.json"
+        rep_tgt = tgt_dir / "replacements.json"
+        if rep_src.exists() and (args.overwrite or not rep_tgt.exists()):
+            logger.info("Translating replacements.json (%s → %s)", args.src, tgt)
+            with rep_src.open(encoding="utf-8") as f:
+                src_replacements = json.load(f)
+            tgt_replacements = translate_replacements(client, src_replacements, args.src, tgt, args.model)
+            with rep_tgt.open("w", encoding="utf-8") as f:
+                json.dump(tgt_replacements, f, ensure_ascii=False, indent=4)
+            logger.info("Written %s", rep_tgt)
         else:
-            logger.info("[%d/%d] Translating %s", i + 1, len(template_files), src_file.name)
-            tgt_data, messages = translate_template(client, src_data, args.src, args.tgt, args.model)
-            issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
-            feedback = "\n".join(issues)
+            logger.info("Skipping replacements.json (already exists or no source)")
 
-        for attempt in range(1, args.retries + 1):
-            if not issues:
-                break
-            logger.warning("  Attempt %d/%d failed, retrying with feedback", attempt, args.retries)
-            time.sleep(1)
-            try:
-                translated_fields, messages = fix_template_fields(client, args.model, feedback, messages)
-                tgt_data.update(translated_fields)
-                tgt_data = _strip_answer_annotated_defaults(tgt_data)
-                issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
-                feedback = "\n".join(issues)
-            except Exception as e:
-                issues = [f"retry error: {e}"]
-                break
+        tgt_replacements = json.loads(rep_tgt.read_text(encoding="utf-8")) if rep_tgt.exists() else {}
 
-        if issues:
-            logger.warning("  Unresolved issues in %s: %s", src_file.name, "; ".join(issues))
-            errors.append((src_file.name, issues))
+        # Translate / fix templates
+        template_files = sorted((src_dir / args.subfolder).glob("*.toml"))
+        errors: list[tuple[str, list[str]]] = []
+        total_files = len(template_files)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
+            futures = [
+                executor.submit(
+                    process_template, i, src_file, client, args, tgt, tgt_symbolic, tgt_replacements, total_files
+                )
+                for i, src_file in enumerate(template_files)
+            ]
+            for future in concurrent.futures.as_completed(futures):
+                res = future.result()
+                if res:
+                    errors.append(res)
+
+        if errors:
+            logger.warning("\n%d templates had unresolved issues in %s:", len(errors), tgt)
+            for name, issues in errors:
+                logger.warning("  %s: %s", name, "; ".join(issues))
+            overall_errors.extend([(tgt, name, issues) for name, issues in errors])
         else:
-            logger.info("  OK")
+            logger.info("All %d templates translated and verified successfully for %s.", len(template_files), tgt)
 
-        with tgt_file.open("wb") as f:
-            f.write(tomli_w.dumps(tgt_data).encode("utf-8"))
-        logger.info("Written %s", tgt_file)
-
-    if errors:
-        logger.warning("\n%d templates had unresolved issues:", len(errors))
-        for name, issues in errors:
-            logger.warning("  %s: %s", name, "; ".join(issues))
-    else:
-        logger.info("All %d templates translated and verified successfully.", len(template_files))
+    if overall_errors:
+        logger.warning("\n--- OVERALL ERRORS ---")
+        for tgt, name, issues in overall_errors:
+            logger.warning("[%s] %s: %s", tgt, name, "; ".join(issues))
 
 
 if __name__ == "__main__":
