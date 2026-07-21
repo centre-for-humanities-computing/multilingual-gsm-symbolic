@@ -1120,42 +1120,124 @@ def plot_correction_comparison_selected(
         step = max(1, len(rows) // 3)
         selected_rows = [rows[0], rows[min(step, len(rows) - 1)], rows[min(2 * step, len(rows) - 1)]]
 
-    fig, ax = plt.subplots(figsize=(8.5, 4.5))
-    colors = ["#4361EE", "#7B2CBF", "#2A9D8F"]
+    fig, ax = plt.subplots(figsize=(8.5, 4.2))
 
-    for color, row in zip(colors, selected_rows, strict=False):
+    DARK_BLUE = "#1B365D"
+    LIGHT_BLUE = "#4EA8DE"
+    DARK_BAR = "#1B365D"
+    LIGHT_BAR = "#4EA8DE"
+
+    all_peaks = []
+
+    for row in selected_rows:
+        old_counts, _, _ = ax.hist(
+            row.uncorrected_sets,
+            bins=18,
+            density=True,
+            color=DARK_BAR,
+            edgecolor="white",
+            linewidth=0.35,
+            alpha=0.25,
+            zorder=1,
+        )
+        new_counts, _, _ = ax.hist(
+            row.corrected_sets,
+            bins=18,
+            density=True,
+            color=LIGHT_BAR,
+            edgecolor="white",
+            linewidth=0.35,
+            alpha=0.35,
+            zorder=1,
+        )
+
         old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
         new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
 
+        peak = max(
+            float(old_counts.max()) if len(old_counts) > 0 else 0.0,
+            float(new_counts.max()) if len(new_counts) > 0 else 0.0,
+            float(old_density.max()),
+            float(new_density.max()),
+        )
+        all_peaks.append(peak)
+
+        # Uncorrected (Dark Blue)
         ax.plot(
             old_x,
             old_density,
-            color=color,
-            linestyle="--",
+            color=DARK_BLUE,
+            linestyle="-",
             linewidth=1.8,
-            alpha=0.75,
-            label=f"{row.model} (Uncorrected)",
+            zorder=3,
         )
+        ax.vlines(
+            x=old_mean,
+            ymin=0,
+            ymax=float(old_density.max()),
+            color=DARK_BLUE,
+            linestyle="-",
+            linewidth=1.2,
+            alpha=0.85,
+            zorder=4,
+        )
+
+        # Corrected (Light Blue)
         ax.plot(
             new_x,
             new_density,
-            color=color,
+            color=LIGHT_BLUE,
             linestyle="-",
-            linewidth=2.0,
-            label=f"{row.model} (Corrected)",
+            linewidth=1.8,
+            zorder=3,
         )
-        ax.fill_between(new_x, 0, new_density, color=color, alpha=0.08)
-        ax.axvline(new_mean, color=color, linestyle="-", linewidth=1.0, alpha=0.5)
-        ax.axvline(old_mean, color=color, linestyle="--", linewidth=1.0, alpha=0.5)
+        ax.vlines(
+            x=new_mean,
+            ymin=0,
+            ymax=float(new_density.max()),
+            color=LIGHT_BLUE,
+            linestyle="-",
+            linewidth=1.2,
+            alpha=0.85,
+            zorder=4,
+        )
+
+        # Label model above its peak
+        peak_x = (old_mean + new_mean) / 2
+        peak_y = max(float(old_density.max()), float(new_density.max()))
+        ax.text(
+            peak_x,
+            peak_y + 0.6,
+            row.model,
+            ha="center",
+            va="bottom",
+            fontsize=9.5,
+            fontweight="bold",
+            color="#222222",
+            zorder=5,
+        )
 
     ax.set_xlim(0, 1)
-    ax.xaxis.set_major_formatter(PercentFormatter(1))
-    ax.set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
-    ax.set_ylabel("Density", fontsize=12)
-    ax.set_yticks([])
-    ax.grid(axis="x", color="#D8DEE8", linewidth=0.7, alpha=0.6)
+    max_peak = max(all_peaks) if all_peaks else 15.0
+    ax.set_ylim(bottom=0, top=max_peak * 1.35)
 
-    ax.legend(loc="upper right", frameon=False, fontsize=8.5, ncol=1)
+    ax.xaxis.set_major_formatter(PercentFormatter(1))
+    ax.set_xlabel("Exact-answer accuracy", fontsize=11.5, labelpad=8)
+    ax.set_yticks([])
+    ax.grid(False)
+
+    legend_elements = [
+        Line2D([0], [0], color=DARK_BLUE, lw=2, label="Uncorrected"),
+        Line2D([0], [0], color=LIGHT_BLUE, lw=2, label="Corrected"),
+    ]
+    ax.legend(
+        handles=legend_elements,
+        loc="upper right",
+        frameon=False,
+        fontsize=10,
+        ncol=2,
+    )
+
     fig.suptitle(
         f"{LANGUAGE_LABELS.get(language, language)} correction comparison (Selected models)",
         x=0.12,
