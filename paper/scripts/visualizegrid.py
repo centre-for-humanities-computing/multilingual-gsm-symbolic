@@ -627,7 +627,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
 def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
     """Plot each language's accuracy difference from the same model's English score."""
     order = model_order(summary)
-    splits = [split for split in ("original", "synthetic") if split in set(summary["split"])]
+    splits = [split for split in ["synthetic"] if split in set(summary["split"])]
     languages = language_order(language for language in summary["language"].unique() if language != "eng")
 
     panels: list[tuple[str, pd.DataFrame]] = []

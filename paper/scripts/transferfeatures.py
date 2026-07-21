@@ -39,8 +39,177 @@ import lang2vec.lang2vec as l2v
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
 from plot_config import FAMILY_COLORS, FAMILY_ORDER, LANGUAGE_LABELS, language_order, ordered_families
+
+SCRIPT_MARKERS = {
+    "Latin": "o",
+    "Cyrillic": "s",
+    "CJK": "^",
+    "Devanagari": "D",
+    "Arabic": "v",
+    "Thai": "p",
+    "Hangul": "h",
+}
+
+LANGUAGE_SCRIPTS = {
+    "eng": "Latin",
+    "dan": "Latin",
+    "deu": "Latin",
+    "isl": "Latin",
+    "uncorrected_isl": "Latin",
+    "nob": "Latin",
+    "rus": "Cyrillic",
+    "zho": "CJK",
+    "jpn": "CJK",
+    "kor": "Hangul",
+    "mar": "Devanagari",
+    "hin": "Devanagari",
+    "ara": "Arabic",
+    "tha": "Thai",
+}
+
+
+def relationship_plot(
+    data: pd.DataFrame,
+    x_column: str,
+    xlabel: str,
+    out: Path,
+    use_script_shapes: bool = False,
+) -> list[Path]:
+    """Plot a descriptive feature relationship for the synthetic split only."""
+    plot_data = data.dropna(subset=[x_column, "transfer_gap"])
+    if plot_data.empty:
+        return []
+
+    # Synthetic split only as requested
+    panel = plot_data[plot_data["split"] == "synthetic"]
+    if panel.empty:
+        return []
+
+    fig, ax = plt.subplots(figsize=(6.5, 5))
+
+    for family in ordered_families(panel["family"]):
+        family_rows = panel[panel["family"] == family]
+        if use_script_shapes:
+            for row in family_rows.itertuples():
+                script = LANGUAGE_SCRIPTS.get(row.language, "Latin")
+                marker = SCRIPT_MARKERS.get(script, "o")
+                ax.errorbar(
+                    getattr(row, x_column),
+                    row.transfer_gap,
+                    yerr=row.transfer_gap_stderr,
+                    fmt=marker,
+                    markersize=6.5,
+                    capsize=2,
+                    alpha=0.85,
+                    color=FAMILY_COLORS.get(family, "#666666"),
+                    zorder=3,
+                )
+        else:
+            ax.errorbar(
+                family_rows[x_column],
+                family_rows["transfer_gap"],
+                yerr=family_rows["transfer_gap_stderr"],
+                fmt="o",
+                markersize=6.5,
+                capsize=2,
+                alpha=0.85,
+                color=FAMILY_COLORS.get(family, "#666666"),
+                label=family,
+                zorder=3,
+            )
+
+    label_positions = panel.groupby(["family", "language"], as_index=False).agg(
+        x=(x_column, "mean"), y=("transfer_gap", "mean")
+    )
+    label_positions["family_order"] = label_positions["family"].map(FAMILY_ORDER).fillna(99)
+    label_positions = label_positions.sort_values(["family_order", "language"])
+    for row in label_positions.itertuples(index=False):
+        ax.annotate(
+            row.language,
+            (row.x, row.y),
+            xytext=(4, 3),
+            textcoords="offset points",
+            fontsize=7.5,
+            color=FAMILY_COLORS.get(row.family, "#666666"),
+        )
+
+    # Make trendline pop out prominently in vibrant crimson red
+    unique_x = panel[x_column].nunique()
+    if len(panel) >= 3 and unique_x >= 2:
+        slope, intercept = np.polyfit(panel[x_column], panel["transfer_gap"], 1)
+        x_line = np.linspace(panel[x_column].min(), panel[x_column].max(), 100)
+        ax.plot(
+            x_line,
+            slope * x_line + intercept,
+            color="#D90429",
+            linestyle="-",
+            linewidth=2.5,
+            zorder=5,
+            label="Trendline",
+        )
+
+    ax.axhline(0, color="black", linewidth=0.8, alpha=0.4, zorder=2)
+    ax.grid(alpha=0.2)
+    ax.set_ylabel("Accuracy gap: English - target language")
+    ax.yaxis.set_major_formatter(PercentFormatter(1))
+
+    if use_script_shapes:
+        family_handles = [
+            Line2D(
+                [0],
+                [0],
+                color=FAMILY_COLORS.get(f, "#666666"),
+                marker="o",
+                linestyle="None",
+                markersize=6,
+                label=f,
+            )
+            for f in ordered_families(panel["family"])
+        ]
+        present_scripts = sorted(set(LANGUAGE_SCRIPTS.get(l, "Latin") for l in panel["language"].unique()))
+        script_handles = [
+            Line2D(
+                [0],
+                [0],
+                color="#333333",
+                marker=SCRIPT_MARKERS.get(s, "o"),
+                linestyle="None",
+                markersize=6,
+                label=f"Script: {s}",
+            )
+            for s in present_scripts
+        ]
+        trend_handle = [Line2D([0], [0], color="#D90429", lw=2.5, label="Trendline")]
+        all_handles = family_handles + script_handles + trend_handle
+        fig.legend(
+            all_handles,
+            [h.get_label() for h in all_handles],
+            loc="lower center",
+            ncol=math.ceil(len(all_handles) / 2),
+            frameon=False,
+            fontsize=8,
+        )
+    else:
+        handles, labels = ax.get_legend_handles_labels()
+        if handles:
+            fig.legend(
+                handles,
+                labels,
+                loc="lower center",
+                ncol=math.ceil(len(labels) / 2),
+                frameon=False,
+                fontsize=8,
+            )
+
+    fig.supxlabel(xlabel, y=0.09)
+    fig.tight_layout(rect=(0, 0.14, 1, 1))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, bbox_inches="tight")
+    plt.close(fig)
+    return [out]
 from scipy.spatial import distance
 from transformers import AutoTokenizer
 
@@ -280,85 +449,6 @@ def build_transfer_table(
         )
     return transfer
 
-
-def relationship_plot(
-    data: pd.DataFrame,
-    x_column: str,
-    xlabel: str,
-    out: Path,
-) -> list[Path]:
-    """Plot a descriptive feature relationship separately for each split."""
-    plot_data = data.dropna(subset=[x_column, "transfer_gap"])
-    if plot_data.empty:
-        return []
-
-    splits = [split for split in ("original", "synthetic") if split in set(plot_data["split"])]
-    saved: list[Path] = []
-
-    for split in splits:
-        fig, ax = plt.subplots(figsize=(6.5, 5))
-        panel = plot_data[plot_data["split"] == split]
-        for family in ordered_families(panel["family"]):
-            family_rows = panel[panel["family"] == family]
-            ax.errorbar(
-                family_rows[x_column],
-                family_rows["transfer_gap"],
-                yerr=family_rows["transfer_gap_stderr"],
-                fmt="o",
-                markersize=6,
-                capsize=2,
-                alpha=0.8,
-                color=FAMILY_COLORS.get(family, "#666666"),
-                label=family,
-            )
-
-        label_positions = panel.groupby(["family", "language"], as_index=False).agg(
-            x=(x_column, "mean"), y=("transfer_gap", "mean")
-        )
-        label_positions["family_order"] = label_positions["family"].map(FAMILY_ORDER).fillna(99)
-        label_positions = label_positions.sort_values(["family_order", "language"])
-        for row in label_positions.itertuples(index=False):
-            ax.annotate(
-                row.language,
-                (row.x, row.y),
-                xytext=(4, 3),
-                textcoords="offset points",
-                fontsize=7,
-                color=FAMILY_COLORS.get(row.family, "#666666"),
-            )
-
-        unique_x = panel[x_column].nunique()
-        if len(panel) >= 3 and unique_x >= 2:
-            slope, intercept = np.polyfit(panel[x_column], panel["transfer_gap"], 1)
-            x_line = np.linspace(panel[x_column].min(), panel[x_column].max(), 100)
-            ax.plot(x_line, slope * x_line + intercept, color="black", linestyle="--", linewidth=1)
-            correlation = panel[[x_column, "transfer_gap"]].corr().iloc[0, 1]
-            ax.text(
-                0.02,
-                0.98,
-                f"Descriptive Pearson r = {correlation:.2f}",
-                transform=ax.transAxes,
-                ha="left",
-                va="top",
-                fontsize=8,
-            )
-
-        ax.axhline(0, color="black", linewidth=0.8, alpha=0.4)
-        ax.grid(alpha=0.2)
-        ax.set_ylabel("Accuracy gap: English - target language")
-        ax.yaxis.set_major_formatter(PercentFormatter(1))
-
-        handles, labels = ax.get_legend_handles_labels()
-        if handles:
-            fig.legend(handles, labels, loc="lower center", ncol=math.ceil(len(labels) / 2), frameon=False)
-        split_out = out.with_name(f"{out.stem}_{split}{out.suffix}") if split == "original" else out
-        fig.supxlabel(xlabel, y=0.09)
-        fig.tight_layout(rect=(0, 0.14, 1, 1))
-        fig.savefig(split_out, bbox_inches="tight")
-        plt.close(fig)
-        saved.append(split_out)
-    return saved
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -416,20 +506,23 @@ def main() -> None:
             "normalized_fertility",
             "TFR: target-language tokens/character divided by English tokens/character. Computed on GSM8K templates.",
             args.out_dir / "tokenizer_fertility_vs_transfer.png",
+            True,
         ),
         (
             "typological_distance_from_english",
             "URIEL cosine distance from English (syntax features)",
             args.out_dir / "typological_distance_vs_transfer.png",
+            False,
         ),
         (
             "log10_common_crawl_pages",
             "Language-resource proxy: log10 Common Crawl page count",
             args.out_dir / "resource_quantity_vs_transfer.png",
+            False,
         ),
     ]
-    for column, xlabel, path in plots:
-        if saved_plots := relationship_plot(transfer, column, xlabel, path):
+    for column, xlabel, path, use_script_shapes in plots:
+        if saved_plots := relationship_plot(transfer, column, xlabel, path, use_script_shapes=use_script_shapes):
             for saved_plot in saved_plots:
                 print(f"Saved {saved_plot}")
         else:
