@@ -34,26 +34,113 @@ logger = logging.getLogger(__name__)
 _DATA_ROOT = Path("src/multilingual_gsm_symbolic/data/templates")
 
 _LANGUAGE_NAMES = {
-    "eng": "English",
-    "dan": "Danish",
-    "nob": "Norwegian Bokmål",
-    "nno": "Norwegian Nynorsk",
-    "swe": "Swedish",
-    "deu": "German",
-    "fra": "French",
-    "nld": "Dutch",
-    "fin": "Finnish",
-    "isl": "Icelandic",
-    "fao": "Faroese",
-    "spa": "Spanish",
-    "ita": "Italian",
-    "pol": "Polish",
-    "por": "Portuguese",
-    "rus": "Russian",
-    "ukr": "Ukrainian",
-    "hin": "Hindi",
-    "mar": "Marathi",
-    "jpn": "Japanese",
+    # Exactly 100 translation targets: all 24 official EU languages, all
+    # human-validated template languages, then the highest-ranked languages
+    # from the 2026 Ethnologue 200 table until the list reaches 100.
+    # Closely related ranked varieties are deduplicated, while Hindi and Urdu
+    # remain separate targets and Cantonese is retained alongside Chinese.
+    # The validated `ara` and `zho` targets intentionally replace ranked `arb`
+    # and `cmn`.
+    "afr": "Afrikaans",  # Ethnologue 2026 rank 79
+    "amh": "Amharic",  # Ethnologue 2026 rank 29
+    "ara": "Arabic",  # human-validated override for `arb` (Ethnologue 2026 rank 5)
+    "asm": "Assamese",  # Ethnologue 2026 rank 67
+    "azb": "South Azerbaijani",  # Ethnologue 2026 rank 98
+    "bam": "Bamanankan",  # Ethnologue 2026 rank 88
+    "bar": "Bavarian",  # Ethnologue 2026 rank 94
+    "ben": "Bengali",  # Ethnologue 2026 rank 7
+    "bho": "Bhojpuri",  # Ethnologue 2026 rank 38
+    "bul": "Bulgarian",  # EU official; Ethnologue 2026 rank 149
+    "ceb": "Cebuano",  # Ethnologue 2026 rank 71
+    "ces": "Czech",  # EU official; Ethnologue 2026 rank 110
+    "ctg": "Chittagonian",  # Ethnologue 2026 rank 100
+    "dan": "Danish",  # EU official; human-validated; Ethnologue 2026 rank 171
+    "deu": "German",  # EU official; Ethnologue 2026 rank 12
+    "dyu": "Jula",  # Ethnologue 2026 rank 102
+    "ell": "Greek",  # EU official; Ethnologue 2026 rank 99
+    "eng": "English",  # EU official; Ethnologue 2026 rank 1
+    "est": "Estonian",  # EU official
+    "fin": "Finnish",  # EU official; Ethnologue 2026 rank 176
+    "fra": "French",  # EU official; human-validated; Ethnologue 2026 rank 6
+    "fuv": "Nigerian Fulfulde",  # Ethnologue 2026 rank 80
+    "gaz": "West Central Oromo",  # Ethnologue 2026 rank 64
+    "gle": "Irish",  # EU official
+    "guj": "Gujarati",  # Ethnologue 2026 rank 33
+    "hat": "Haitian Creole",  # Ethnologue 2026 rank 92
+    "hau": "Hausa",  # Ethnologue 2026 rank 20
+    "hin": "Hindi",  # human-validated; Ethnologue 2026 rank 3
+    "hrv": "Croatian",  # EU official; Ethnologue 2026 rank 169
+    "hun": "Hungarian",  # EU official; Ethnologue 2026 rank 103
+    "ibo": "Igbo",  # Ethnologue 2026 rank 53
+    "ind": "Indonesian",  # Ethnologue 2026 rank 9
+    "isl": "Icelandic",  # human-validated
+    "ita": "Italian",  # EU official; Ethnologue 2026 rank 32
+    "jav": "Javanese",  # Ethnologue 2026 rank 31
+    "jpn": "Japanese",  # human-validated; Ethnologue 2026 rank 13
+    "kan": "Kannada",  # Ethnologue 2026 rank 34
+    "kaz": "Kazakh",  # Ethnologue 2026 rank 76
+    "khm": "Khmer",  # Ethnologue 2026 rank 75
+    "kmr": "Northern Kurdish",  # Ethnologue 2026 rank 82
+    "kor": "Korean",  # Ethnologue 2026 rank 28
+    "lav": "Latvian",  # EU official
+    "lin": "Lingala",  # Ethnologue 2026 rank 45
+    "lit": "Lithuanian",  # EU official
+    "lug": "Ganda",  # Ethnologue 2026 rank 106
+    "mal": "Malayalam",  # Ethnologue 2026 rank 48
+    "mar": "Marathi",  # human-validated; Ethnologue 2026 rank 16
+    "mai": "Maithili",  # Ethnologue 2026 rank 81
+    "mag": "Magahi",  # Ethnologue 2026 rank 73
+    "mlt": "Maltese",  # EU official
+    "mos": "Moore",  # Ethnologue 2026 rank 112
+    "mya": "Burmese",  # Ethnologue 2026 rank 42
+    "nld": "Dutch",  # EU official; human-validated; Ethnologue 2026 rank 65
+    "npi": "Nepali",  # Ethnologue 2026 rank 55
+    "nso": "Northern Sotho",  # Ethnologue 2026 rank 93
+    "nya": "Chichewa",  # Ethnologue 2026 rank 87
+    "ory": "Odia",  # Ethnologue 2026 rank 47
+    "pbu": "Northern Pashto",  # Ethnologue 2026 rank 63
+    "pcm": "Nigerian Pidgin",  # Ethnologue 2026 rank 14
+    "pes": "Western Persian",  # Ethnologue 2026 rank 27
+    "pnb": "Western Punjabi",  # Ethnologue 2026 rank 22
+    "pol": "Polish",  # EU official; Ethnologue 2026 rank 41
+    "por": "Portuguese",  # EU official; Ethnologue 2026 rank 8
+    "ron": "Romanian",  # EU official; Ethnologue 2026 rank 68
+    "run": "Rundi",  # Ethnologue 2026 rank 101
+    "rus": "Russian",  # human-validated; Ethnologue 2026 rank 11
+    "sck": "Sadri",  # Ethnologue 2026 rank 111
+    "sin": "Sinhala",  # Ethnologue 2026 rank 74
+    "skr": "Saraiki",  # Ethnologue 2026 rank 60
+    "slk": "Slovak",  # EU official; Ethnologue 2026 rank 157
+    "slv": "Slovenian",  # EU official
+    "snd": "Sindhi",  # Ethnologue 2026 rank 50
+    "sna": "Shona",  # Ethnologue 2026 rank 90
+    "som": "Somali",  # Ethnologue 2026 rank 66
+    "spa": "Spanish",  # EU official; Ethnologue 2026 rank 4
+    "sun": "Sundanese",  # Ethnologue 2026 rank 52
+    "swh": "Swahili",  # Ethnologue 2026 rank 19
+    "swe": "Swedish",  # EU official; Ethnologue 2026 rank 117
+    "tam": "Tamil",  # Ethnologue 2026 rank 24
+    "tel": "Telugu",  # Ethnologue 2026 rank 18
+    "tha": "Thai",  # Ethnologue 2026 rank 30
+    "tgl": "Tagalog",  # Ethnologue 2026 rank 23
+    "tsn": "Setswana",  # Ethnologue 2026 rank 95
+    "tur": "Turkish",  # Ethnologue 2026 rank 21
+    "ukr": "Ukrainian",  # human-validated; Ethnologue 2026 rank 58
+    "urd": "Urdu",  # Ethnologue 2026 rank 10
+    "uig": "Uyghur",  # Ethnologue 2026 rank 96
+    "uzn": "Northern Uzbek",  # Ethnologue 2026 rank 57
+    "vie": "Vietnamese",  # Ethnologue 2026 rank 17
+    "vjk": "Bajjika",  # Ethnologue 2026 rank 105
+    "wol": "Wolof",  # Ethnologue 2026 rank 83
+    "xho": "Xhosa",  # Ethnologue 2026 rank 78
+    "yor": "Yoruba",  # Ethnologue 2026 rank 37
+    "yue": "Cantonese",  # Ethnologue 2026 rank 25
+    "zho": "Chinese",  # human-validated override for `cmn` (Ethnologue 2026 rank 2)
+    "zlm": "Central Malay",  # Ethnologue 2026 rank 59
+    "zul": "Zulu",  # Ethnologue 2026 rank 61
+    "hne": "Chhattisgarhi",  # Ethnologue 2026 rank 84
+    "kin": "Kinyarwanda",  # Ethnologue 2026 rank 85
+    "ktu": "Kituba",  # Ethnologue 2026 rank 108
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")
