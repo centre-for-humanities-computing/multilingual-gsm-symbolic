@@ -173,6 +173,7 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
             }
         )
 
+    del log  # free the large decompressed log before returning
     if not rows:
         return label, pd.DataFrame(), None
 
@@ -197,6 +198,8 @@ def load_samples(
     if not paths:
         return pd.DataFrame()
 
+    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
+
     if workers <= 1:
         for index, path in enumerate(paths, start=1):
             label, frame, warning = _load_one_log(path, scorer)
@@ -206,6 +209,8 @@ def load_samples(
                 print(f"[{index}/{len(paths)}] {label}")
             if frame is not None and not frame.empty:
                 frames.append(frame)
+            if len(frames) >= _CONCAT_CHUNK:
+                frames = [pd.concat(frames, ignore_index=True)]
     else:
         max_workers = min(workers, len(paths))
         with ProcessPoolExecutor(max_workers=max_workers) as pool:
@@ -219,6 +224,8 @@ def load_samples(
                     print(f"[{index}/{len(paths)}] {label}")
                 if frame is not None and not frame.empty:
                     frames.append(frame)
+                if len(frames) >= _CONCAT_CHUNK:
+                    frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
@@ -1365,7 +1372,7 @@ def main() -> None:
     parser.add_argument(
         "--workers",
         type=int,
-        default=32,
+        default=8,
         help="Workers used for log selection and full log loading. Use 1 to disable parallelism.",
     )
 
