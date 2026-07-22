@@ -1253,21 +1253,21 @@ def plot_correction_comparison_selected(
         )
 
     ax.xaxis.set_major_formatter(PercentFormatter(1))
-    ax.tick_params(axis="x", labelsize=19)
-    ax.set_xlabel("Exact-answer accuracy", fontsize=23, labelpad=6)
-    ax.set_ylabel("Density", fontsize=23, labelpad=6)
+    ax.tick_params(axis="x", labelsize=21)
+    ax.set_xlabel("Exact-answer accuracy", fontsize=25, labelpad=6)
+    ax.set_ylabel("Density", fontsize=25, labelpad=6)
     ax.set_yticks([])
     ax.grid(False)
 
     legend_elements = [
-        Line2D([0], [0], color="#555555", lw=2, linestyle="-", label="Unvalidated"),
-        Line2D([0], [0], color="#555555", lw=2, linestyle="--", label="Validated"),
+        Line2D([0], [0], color="#555555", lw=2.8, linestyle="-", label="Unvalidated"),
+        Line2D([0], [0], color="#555555", lw=2.8, linestyle="--", label="Validated"),
     ]
     ax.legend(
         handles=legend_elements,
         loc="upper right",
         frameon=False,
-        fontsize=16,
+        fontsize=18,
         ncol=2,
     )
     fig.tight_layout(pad=0.35)
