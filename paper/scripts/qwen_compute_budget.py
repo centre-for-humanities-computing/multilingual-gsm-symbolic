@@ -339,15 +339,22 @@ def save_reasoning_budget_summary(table: pd.DataFrame, out_dir: Path) -> Path | 
     return out
 
 
-def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool = False) -> bool:
+def _plot_compute_budget_table(
+    table: pd.DataFrame,
+    out: Path,
+    *,
+    relative: bool = False,
+    faceted: bool = True,
+) -> bool:
     gap_column = "relative_transfer_gap" if relative else "absolute_transfer_gap"
     ci_column = "relative_transfer_gap_ci95" if relative else "transfer_gap_ci95"
     families = sorted(table["family"].unique())
     combined = len(families) > 1
+    panel_families: list[str | None] = families if combined and faceted else [None]
     fig, axes = plt.subplots(
         1,
-        len(families),
-        figsize=(5.1 * len(families), 5.8) if combined else (9.5, 5.8),
+        len(panel_families),
+        figsize=(5.1 * len(panel_families), 5.8) if len(panel_families) > 1 else (9.5, 5.8),
         sharey=True,
         squeeze=False,
     )
@@ -361,9 +368,9 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
         rgb = np.asarray(to_rgb(color))
         return to_hex(rgb + (1 - rgb) * 0.5)
 
-    for ax, family in zip(axes[0], families, strict=True):
-        family_table = table[table["family"] == family]
-        for reasoning, group in family_table.groupby("reasoning", sort=False):
+    for ax, panel_family in zip(axes[0], panel_families, strict=True):
+        panel_table = table if panel_family is None else table[table["family"] == panel_family]
+        for (family, reasoning), group in panel_table.groupby(["family", "reasoning"], sort=False):
             group = group.sort_values("inference_flops")
             color = mode_color(family, reasoning)
             linestyle = ":" if reasoning == "off" else "-"
@@ -379,7 +386,7 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
                 linewidth=0.7, alpha=0.9, label="_nolegend_", zorder=3,
             )
 
-        for row in family_table.itertuples(index=False):
+        for row in panel_table.itertuples(index=False):
             ax.annotate(
                 f"{row.params_b:g}B", (row.inference_flops, getattr(row, gap_column)),
                 xytext=(4, 4), textcoords="offset points", fontsize=7, color="#374151",
@@ -390,7 +397,7 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
         ax.yaxis.set_major_formatter(PercentFormatter(1))
         ax.grid(axis="both", color="#E5E7EB", linewidth=0.7)
         ax.set_axisbelow(True)
-        ax.set_title(family if combined else "Reasoning on vs. off under a fixed compute budget")
+        ax.set_title(panel_family if panel_family is not None else "Reasoning on vs. off under a fixed compute budget")
 
     axes[0, 0].set_ylabel(
         "Relative gap: (English − non-English mean) / English"
@@ -403,7 +410,16 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
                label=REASONING_LABELS[reasoning])
         for reasoning in reasoning_order
     ]
-    if combined:
+    if combined and not faceted:
+        handles.extend(
+            Line2D(
+                [0], [0], marker=marker_by_family[family], linestyle="-",
+                markerfacecolor=color_by_family[family], markeredgecolor="white",
+                color=color_by_family[family], label=family,
+            )
+            for family in families
+        )
+    if combined and faceted:
         fig.suptitle("Reasoning on vs. off under a fixed compute budget")
         fig.legend(handles=handles, frameon=False, fontsize=8, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 0.94))
         fig.text(0.5, 0.015, "Lower-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
@@ -434,6 +450,14 @@ def plot_qwen_compute_budget_relative_transfer(summary: pd.DataFrame, out: Path)
         return False
 
     return _plot_compute_budget_table(table, out, relative=True)
+
+
+def plot_qwen_compute_budget_overlay(summary: pd.DataFrame, out: Path, *, relative: bool = False) -> bool:
+    table = qwen_compute_budget_table(summary)
+    if table.empty:
+        return False
+
+    return _plot_compute_budget_table(table, out, relative=relative, faceted=False)
 
 
 def plot_qwen_compute_budget_family_transfers(summary: pd.DataFrame, out_dir: Path) -> list[Path]:
@@ -500,6 +524,11 @@ def main() -> None:
         raise SystemExit("No combined model transfer rows found.")
     print(f"Saved {combined_out}")
 
+    overlay_out = args.out_dir / "qwen_compute_budget_transfer" / "qwen_compute_budget_transfer_overlay.png"
+    if not plot_qwen_compute_budget_overlay(summary, overlay_out):
+        raise SystemExit("No combined overlay model transfer rows found.")
+    print(f"Saved {overlay_out}")
+
     png_outputs = plot_qwen_compute_budget_family_transfers(summary, args.out_dir)
     if not png_outputs:
         raise SystemExit("No model transfer rows found.")
@@ -514,6 +543,15 @@ def main() -> None:
     if not plot_qwen_compute_budget_relative_transfer(summary, relative_combined_out):
         raise SystemExit("No combined relative model transfer rows found.")
     print(f"Saved {relative_combined_out}")
+
+    relative_overlay_out = (
+        args.out_dir
+        / "qwen_compute_budget_transfer_relative"
+        / "qwen_compute_budget_transfer_relative_overlay.png"
+    )
+    if not plot_qwen_compute_budget_overlay(summary, relative_overlay_out, relative=True):
+        raise SystemExit("No combined relative overlay model transfer rows found.")
+    print(f"Saved {relative_overlay_out}")
 
     relative_outputs = plot_qwen_compute_budget_relative_family_transfers(summary, args.out_dir)
     for png_out in relative_outputs:
