@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # /// script
-# dependencies = ["datasets", "inspect-ai", "pyyaml"]
+# dependencies = ["datasets", "huggingface-hub", "inspect-ai", "pyyaml"]
 # ///
 """Run multilingual GSM-Symbolic Inspect tasks against local vLLM servers."""
 
@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from huggingface_hub import hf_hub_download
 
 MODELS = (
      #  Qwen2.5 Instruct
@@ -90,7 +91,6 @@ HISTORICAL_SYNTHETIC_REVISIONS = {
 HISTORICAL_SPLITS = ("test_original", "test_synthetic")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-EVAL_YAML = REPO_ROOT / "paper" / "eval.yaml"
 CACHE_POLICY = Path(__file__).with_name("cache.yaml")
 CACHE_DIR = REPO_ROOT / "cache"
 LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -141,11 +141,21 @@ def unique(values: Sequence[str]) -> list[str]:
     return list(dict.fromkeys(values))
 
 
-def load_tasks(path: Path = EVAL_YAML) -> list[Task]:
+def load_tasks(revision: str = REVISION) -> list[Task]:
     try:
+        path = Path(
+            hf_hub_download(
+                repo_id=DATASET,
+                filename="eval.yaml",
+                repo_type="dataset",
+                revision=revision,
+            )
+        )
         raw_tasks = yaml.safe_load(path.read_text(encoding="utf-8"))["tasks"]
-    except (OSError, yaml.YAMLError) as error:
-        raise RunnerError(f"Could not read {path}: {error}") from error
+    except Exception as error:
+        raise RunnerError(
+            f"Could not load remote eval.yaml for {DATASET}@{revision}: {error}"
+        ) from error
 
     return [Task(item["id"], item["config"], item["split"]) for item in raw_tasks]
 
@@ -503,8 +513,11 @@ def run_inspect(
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    revision_parser = argparse.ArgumentParser(add_help=False)
+    revision_parser.add_argument("--revision", default=REVISION)
+    revision_args, _ = revision_parser.parse_known_args(argv)
     try:
-        tasks = load_tasks()
+        tasks = load_tasks(revision_args.revision)
     except RunnerError as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
