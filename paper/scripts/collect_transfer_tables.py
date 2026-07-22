@@ -10,7 +10,6 @@ Example:
 from __future__ import annotations
 
 import argparse
-from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +17,7 @@ import pandas as pd
 from eval_log_utils import (
     discover_logs,
     infer_model_info,
+    map_log_loader,
     model_name,
     parse_task,
     sample_score,
@@ -109,8 +109,7 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
 
     frames: list[pd.DataFrame] = []
     _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
-
-    def _consume(label: str, frame: pd.DataFrame, warning: str | None) -> None:
+    for label, frame, warning in map_log_loader(load_log_rows, paths, scorer, workers):
         if warning:
             print(warning)
         else:
@@ -118,18 +117,7 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         if not frame.empty:
             frames.append(frame)
         if len(frames) >= _CONCAT_CHUNK:
-            frames[:] = [pd.concat(frames, ignore_index=True)]
-
-    if workers <= 1:
-        for path in paths:
-            label, frame, warning = load_log_rows(path, scorer)
-            _consume(label, frame, warning)
-    else:
-        with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
-            futures = [pool.submit(load_log_rows, path, scorer) for path in paths]
-            for future in as_completed(futures):
-                label, frame, warning = future.result()
-                _consume(label, frame, warning)
+            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
@@ -230,23 +218,6 @@ def build_analysis_tables(
     return analysis
 
 
-def write_tables(
-    observations: pd.DataFrame,
-    language_features: pd.DataFrame,
-    fertility: pd.DataFrame,
-    out_dir: Path,
-) -> dict[str, Path]:
-    out_dir.mkdir(parents=True, exist_ok=True)
-    analysis = build_analysis_tables(
-        observations,
-        language_features,
-        fertility,
-    )
-    outputs = {"analysis": out_dir / "analysis.parquet"}
-    analysis.to_parquet(outputs["analysis"], index=False)
-    return outputs
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--log-dir", nargs="+", type=Path, default=DEFAULT_LOG_DIRS)
@@ -266,14 +237,15 @@ def main() -> None:
     if observations.empty:
         raise SystemExit("No scored samples found in selected logs.")
 
-    outputs = write_tables(
+    analysis = build_analysis_tables(
         observations,
         load_csv(args.language_features),
         load_csv(args.fertility),
-        args.out_dir,
     )
-    for name, path in outputs.items():
-        print(f"Saved {name}: {path}")
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    output = args.out_dir / "analysis.parquet"
+    analysis.to_parquet(output, index=False)
+    print(f"Saved analysis: {output}")
 
 
 if __name__ == "__main__":
