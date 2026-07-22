@@ -61,7 +61,7 @@
   },
   {
     "id": 12,
-    "question_annotated": "{name, Jaime} paneb mune {container_into,munarestidele}. Iga {container_nom,munarest} mahutab {x,24} muna. Kui tal on {n,64} muna ja {k,2} {container_par_sg,munaresti}, siis mitu muna ta ei saa {container_into,munarestidele} panna?\n\n#init:\n- name, _ = sample(names_male_cases)\n- container_nom, containter_into, container_par_sg = sample([('munarest', 'munarestidele', 'munaresti'), ('munakarp', 'munakarpidesse', 'munakarpi'), ('korv', 'korvidesse', 'korvi'), ('kauss', 'kaussidesse', 'kaussi'), ('taldrik', 'taldrikutele', 'taldrikut')])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x",
+    "question_annotated": "{name, Jaime} paneb mune {container_into,munarestidele}. Iga {container_nom,munarest} mahutab {x,24} muna. Kui tal on {n,64} muna ja {k,2} {container_par_sg,munaresti}, siis mitu muna ta ei saa {container_into,munarestidele} panna?\n\n#init:\n- name, _ = sample(names_male_cases)\n- container_nom, container_into, container_par_sg = sample([('munarest', 'munarestidele', 'munaresti'), ('munakarp', 'munakarpidesse', 'munakarpi'), ('korv', 'korvidesse', 'korvi'), ('kauss', 'kaussidesse', 'kaussi'), ('taldrik', 'taldrikutele', 'taldrikut')])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x",
     "count": 100
   },
   {
@@ -156,7 +156,7 @@
   },
   {
     "id": 31,
-    "question_annotated": "{name1_gen,Rasmuse} ja {name2_gen,Katrini} vanuse vahel on {age_diff,16} aastat. Kui {name1,Rasmus}, kes on noorem kui {name2,Katrin}, on {age1,40}-aastane, siis mis on nende keskmine vanus?\n\n#init:\n- (name1_nom, name1_gen), (name2_nom, name2_gen) = sample(names_cases, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
+    "question_annotated": "{name1_gen,Rasmuse} ja {name2_gen,Katrini} vanuse vahel on {age_diff,16} aastat. Kui {name1,Rasmus}, kes on noorem kui {name2,Katrin}, on {age1,40}-aastane, siis mis on nende keskmine vanus?\n\n#init:\n- (name1, name1_gen), (name2, name2_gen) = sample(names_cases, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
     "count": 100
   },
   {
@@ -356,7 +356,7 @@
   },
   {
     "id": 71,
-    "question_annotated": "{name,Toomas} söödab oma kariloomi {food_com,heinaga}. Iga {animal1_nom,kits} vajab {n1,5} {unit_par,kilogrammi} ja iga {animal2_nom,lammas} vajab {n2,3} {unit_par,kilogrammi} vähem kui kaks korda nii palju, kui vajab iga {animal1_nom,kits}. {name_gen,Toomase}l on {k1,15} {animal1_par,kitse} ja {k2,12} {animal2_par,lammast}. Mitu kilogrammi heina on {name_gen,Toomase}l vaja?\n\n#init:\n- name, _ = sample(names_male_cases)\n- food_nom, food_com, food_par = sample([(\"hein\", \"heinaga\", \"heina\"), (\"vili\", \"viljaga\", \"vilja\"), (\"sööt\", \"söödaga\", \"sööta\"), (\"silo\", \"siloga\", \"silo\")])\n- (animal1_nom, animal1_par, animal1_nom_pl), (animal2_nom, animal2_par, animal2_nom_pl) = sample([(\"kits\", \"kitse\", \"kitsed\"), (\"lammas\", \"lammast\", \"lambad\"), (\"lehm\", \"lehma\", \"lehmad\"), (\"hobune\", \"hobust\", \"hobused\"), (\"eesel\", \"eeslit\", \"eeslid\"), (\"laama\", \"laamat\", \"laamad\"), (\"alpaka\", \"alpakat\", \"alpakad\"), (\"siga\", \"siga\", \"sead\"), (\"kalkun\", \"kalkunit\", \"kalkunid\"), (\"part\", \"parti\", \"pardid\")], 2)\n- unit_nom, unit_par = sample([(\"kilogramm\", \"kilogrammi\"), (\"kg\", \"kg\")])\n- $n1 = range(3, 15)\n- $n2 = range(2, 10)\n- $k1 = range(10, 50)\n- $k2 = range(10, 50)\n\n#conditions:\n- 2*n1 - n2 > 0\n\n#answer: k1*n1 + k2*(2*n1 - n2)",
+    "question_annotated": "{name,Toomas} söödab oma kariloomi {food_com,heinaga}. Iga {animal1_nom,kits} vajab {n1,5} {unit_par,kilogrammi} ja iga {animal2_nom,lammas} vajab {n2,3} {unit_par,kilogrammi} vähem kui kaks korda nii palju, kui vajab iga {animal1_nom,kits}. {name_gen,Toomase}l on {k1,15} {animal1_par,kitse} ja {k2,12} {animal2_par,lammast}. Mitu kilogrammi heina on {name_gen,Toomase}l vaja?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- food_nom, food_com, food_par = sample([(\"hein\", \"heinaga\", \"heina\"), (\"vili\", \"viljaga\", \"vilja\"), (\"sööt\", \"söödaga\", \"sööta\"), (\"silo\", \"siloga\", \"silo\")])\n- (animal1_nom, animal1_par, animal1_nom_pl), (animal2_nom, animal2_par, animal2_nom_pl) = sample([(\"kits\", \"kitse\", \"kitsed\"), (\"lammas\", \"lammast\", \"lambad\"), (\"lehm\", \"lehma\", \"lehmad\"), (\"hobune\", \"hobust\", \"hobused\"), (\"eesel\", \"eeslit\", \"eeslid\"), (\"laama\", \"laamat\", \"laamad\"), (\"alpaka\", \"alpakat\", \"alpakad\"), (\"siga\", \"siga\", \"sead\"), (\"kalkun\", \"kalkunit\", \"kalkunid\"), (\"part\", \"parti\", \"pardid\")], 2)\n- unit_nom, unit_par = sample([(\"kilogramm\", \"kilogrammi\"), (\"kg\", \"kg\")])\n- $n1 = range(3, 15)\n- $n2 = range(2, 10)\n- $k1 = range(10, 50)\n- $k2 = range(10, 50)\n\n#conditions:\n- 2*n1 - n2 > 0\n\n#answer: k1*n1 + k2*(2*n1 - n2)",
     "count": 100
   },
   {
