@@ -19,7 +19,6 @@ import json
 import re
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +27,7 @@ import numpy as np
 from eval_log_utils import discover_logs, sample_score, select_logs
 from inspect_ai.log import read_eval_log
 from matplotlib.ticker import PercentFormatter
+from number_coverage_utils import display_number, extract_numbers
 from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_ORDER,
@@ -41,32 +41,7 @@ from plot_config import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "prompt_number_coverage"
-NUMBER_RE = re.compile(r"(?<![\w.])[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?!\w|\.\d)")
 plt.rcParams.update(PLOT_STYLE)
-
-
-def normalize_number(token: str) -> Decimal | None:
-    """Return a canonical numeric value for a matched token."""
-    try:
-        value = Decimal(token.replace(",", ""))
-    except InvalidOperation:
-        return None
-    return value.normalize() if value else Decimal(0)
-
-
-def extract_numbers(text: str) -> set[Decimal]:
-    """Extract distinct, normalized numeric tokens from text."""
-    numbers = {normalize_number(match.group(0)) for match in NUMBER_RE.finditer(text)}
-    numbers.discard(None)
-    return numbers
-
-
-def display_number(value: Decimal) -> str:
-    """Format a normalized Decimal without scientific notation."""
-    rendered = format(value, "f")
-    if "." in rendered:
-        rendered = rendered.rstrip("0").rstrip(".")
-    return rendered or "0"
 
 
 def score_to_bool(sample: Any) -> bool | None:

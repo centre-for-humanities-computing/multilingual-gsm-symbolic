@@ -8,6 +8,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from eval_log_utils import map_log_loader  # noqa: E402
+from number_coverage_utils import number_coverage_counts  # noqa: E402
 from numbercoverage import number_coverage_grid  # noqa: E402
 from plot_config import language_order, model_sort_key, ordered_models  # noqa: E402
 from qwen_compute_budget import (  # noqa: E402
@@ -96,6 +97,14 @@ def test_number_coverage_grid_retains_supported_metric_language() -> None:
     assert languages == ["eng", "eng_metric"]
     assert rates.tolist() == [[1.0, 0.0]]
     assert samples.tolist() == [[1, 1]]
+
+
+def test_number_coverage_counts() -> None:
+    assert number_coverage_counts("Use 10, 20, and 30.", "10 + 20 = 40") == {
+        "all_prompt_numbers_present": False,
+        "prompt_number_count": 3,
+        "retrieved_prompt_number_count": 2,
+    }
 
 
 def test_model_order_only_uses_models_present_in_summary() -> None:

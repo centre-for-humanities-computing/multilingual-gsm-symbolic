@@ -24,6 +24,7 @@ from eval_log_utils import (
     select_logs,
 )
 from inspect_ai.log import read_eval_log
+from number_coverage_utils import number_coverage_counts
 from plot_config import language_order, ordered_models
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -75,6 +76,10 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
         correct = score >= 0.5
         language = "uncorrected_isl" if is_uncorrected_isl else metadata.get("language", task_language)
         sample_id = scalar(sample.id)
+        number_coverage = number_coverage_counts(
+            getattr(sample, "input", ""),
+            getattr(sample.output, "completion", ""),
+        )
         rows.append(
             {
                 "id": sample_id,
@@ -90,6 +95,7 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
                 "target": scalar(getattr(sample, "target", None)),
                 "prompt_chars": len(str(getattr(sample, "input", "") or "")),
                 "completion_chars": len(str(getattr(sample, "output", "") or "")),
+                **number_coverage,
                 "total_time": scalar(getattr(sample, "total_time", None)),
                 "scorer": scorer or "auto",
                 "eval_id": log.eval.eval_id,
