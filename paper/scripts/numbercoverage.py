@@ -25,33 +25,24 @@ from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+from eval_log_utils import discover_logs, sample_score, select_logs
 from inspect_ai.log import read_eval_log
 from matplotlib.ticker import PercentFormatter
 from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
-    LANGUAGE_LABELS,
     LANGUAGE_ORDER,
-    LANGUAGE_SPEAKERS,
-    format_speaker_count,
+    PLOT_STYLE,
     heatmap_language_label,
     language_order,
     model_name,
     model_sort_key,
 )
-from eval_log_utils import select_logs, discover_logs, sample_score
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "prompt_number_coverage"
 NUMBER_RE = re.compile(r"(?<![\w.])[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?!\w|\.\d)")
-plt.rcParams.update(
-    {
-        "axes.spines.right": False,
-        "axes.spines.top": False,
-        "figure.dpi": 160,
-        "font.family": "sans-serif",
-    }
-)
+plt.rcParams.update(PLOT_STYLE)
 
 
 def normalize_number(token: str) -> Decimal | None:

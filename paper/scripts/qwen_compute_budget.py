@@ -12,19 +12,26 @@ The script reads Inspect ``.eval`` logs directly and writes:
 from __future__ import annotations
 
 import argparse
-import re
-from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from eval_log_utils import discover_logs, infer_model_info, model_name, parse_task, sample_score, select_logs
+from eval_log_utils import (
+    classify_reasoning_variants,
+    discover_logs,
+    infer_model_info,
+    map_log_loader,
+    model_name,
+    parse_task,
+    sample_score,
+    select_logs,
+)
 from inspect_ai.log import read_eval_log
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
-from plot_config import path_slug, reasoning_variant_name
+from plot_config import PLOT_STYLE, path_slug
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -33,14 +40,7 @@ REASONING_COLORS = {"off": "#2563EB", "on": "#DC2626"}
 REASONING_LABELS = {"off": "reasoning off", "on": "reasoning on"}
 MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*", "<", ">"]
 
-plt.rcParams.update(
-    {
-        "axes.spines.right": False,
-        "axes.spines.top": False,
-        "figure.dpi": 160,
-        "font.family": "sans-serif",
-    }
-)
+plt.rcParams.update(PLOT_STYLE)
 
 
 
@@ -109,27 +109,13 @@ def load_qwen_summary(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     frames: list[pd.DataFrame] = []
-    if workers <= 1:
-        for index, path in enumerate(paths, start=1):
-            label, frame, warning = _load_one_log(path, scorer)
-            if warning:
-                print(warning)
-            elif frame is not None and not frame.empty:
-                print(f"[{index}/{len(paths)}] {label}")
-            if frame is not None and not frame.empty:
-                frames.append(frame)
-    else:
-        max_workers = min(workers, len(paths))
-        with ProcessPoolExecutor(max_workers=max_workers) as pool:
-            futures = [pool.submit(_load_one_log, path, scorer) for path in paths]
-            for index, future in enumerate(as_completed(futures), start=1):
-                label, frame, warning = future.result()
-                if warning:
-                    print(warning)
-                elif frame is not None and not frame.empty:
-                    print(f"[{index}/{len(paths)}] {label}")
-                if frame is not None and not frame.empty:
-                    frames.append(frame)
+    for index, (label, frame, warning) in enumerate(map_log_loader(_load_one_log, paths, scorer, workers), start=1):
+        if warning:
+            print(warning)
+        elif frame is not None and not frame.empty:
+            print(f"[{index}/{len(paths)}] {label}")
+        if frame is not None and not frame.empty:
+            frames.append(frame)
 
     if not frames:
         return pd.DataFrame()
@@ -166,19 +152,7 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
     if rows.empty:
         return pd.DataFrame()
 
-    parsed = rows["model"].map(reasoning_variant_name)
-    rows["base_model_candidate"] = [item[0] for item in parsed]
-    rows["reasoning"] = [item[1] for item in parsed]
-
-    off_name_by_raw = rows[rows["reasoning"] == "off"].groupby("model_raw")["base_model_candidate"].first()
-    has_off_variant = rows["model_raw"].isin(set(off_name_by_raw.index))
-    rows["canonical_base_model"] = rows["model_raw"].map(off_name_by_raw).fillna(rows["base_model_candidate"])
-    rows.loc[
-        rows["reasoning"].isna() & has_off_variant & (rows["model"] == rows["canonical_base_model"]),
-        "reasoning",
-    ] = "on"
-
-    rows = rows[rows["reasoning"].isin(["on", "off"])]
+    rows = classify_reasoning_variants(rows)
     paired_raws = rows.groupby("model_raw")["reasoning"].agg(lambda values: {"on", "off"}.issubset(set(values)))
     rows = rows[rows["model_raw"].isin(set(paired_raws[paired_raws].index))]
     if rows.empty:

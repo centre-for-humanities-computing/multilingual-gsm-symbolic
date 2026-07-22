@@ -29,7 +29,6 @@ from __future__ import annotations
 
 import argparse
 import math
-from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -38,11 +37,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from eval_log_utils import (
+    classify_reasoning_variants,
     discover_logs,
     infer_model_info,
+    map_log_loader,
     model_name,
+    normal_curve,
     parse_task,
     sample_score,
+    sample_synthetic_sets,
     select_logs,
 )
 from inspect_ai.log import read_eval_log
@@ -54,11 +57,13 @@ from plot_config import (
     FAMILY_ORDER,
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_LABELS,
-    LANGUAGE_SPEAKERS,
+    PLOT_STYLE,
     SPLIT_LABELS,
+    heatmap_language_label,
     language_order,
     model_sort_key,
     ordered_families,
+    path_slug,
     reasoning_sort_bucket,
 )
 from scipy.stats import norm
@@ -122,14 +127,7 @@ SELECTED_MODEL_LABELS = {
     "granite-3.2-8b-instruct (reasoning on)": "Granite 3.2 8B\n(reasoning)",
 }
 
-plt.rcParams.update(
-    {
-        "axes.spines.right": False,
-        "axes.spines.top": False,
-        "figure.dpi": 160,
-        "font.family": "sans-serif",
-    }
-)
+plt.rcParams.update(PLOT_STYLE)
 
 
 @dataclass(frozen=True)
@@ -212,32 +210,15 @@ def load_samples(
 
     _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
 
-    if workers <= 1:
-        for index, path in enumerate(paths, start=1):
-            label, frame, warning = _load_one_log(path, scorer)
-            if warning:
-                print(warning)
-            else:
-                print(f"[{index}/{len(paths)}] {label}")
-            if frame is not None and not frame.empty:
-                frames.append(frame)
-            if len(frames) >= _CONCAT_CHUNK:
-                frames = [pd.concat(frames, ignore_index=True)]
-    else:
-        max_workers = min(workers, len(paths))
-        with ProcessPoolExecutor(max_workers=max_workers) as pool:
-            futures = [pool.submit(_load_one_log, path, scorer) for path in paths]
-
-            for index, future in enumerate(as_completed(futures), start=1):
-                label, frame, warning = future.result()
-                if warning:
-                    print(warning)
-                else:
-                    print(f"[{index}/{len(paths)}] {label}")
-                if frame is not None and not frame.empty:
-                    frames.append(frame)
-                if len(frames) >= _CONCAT_CHUNK:
-                    frames = [pd.concat(frames, ignore_index=True)]
+    for index, (label, frame, warning) in enumerate(map_log_loader(_load_one_log, paths, scorer, workers), start=1):
+        if warning:
+            print(warning)
+        else:
+            print(f"[{index}/{len(paths)}] {label}")
+        if frame is not None and not frame.empty:
+            frames.append(frame)
+        if len(frames) >= _CONCAT_CHUNK:
+            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
@@ -287,10 +268,6 @@ def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def path_slug(value: str) -> str:
-    return "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
-
-
 def _synthetic_models(samples: pd.DataFrame, language: str) -> set[str]:
     rows = samples[(samples["language"] == language) & (samples["split"] == "synthetic")]
     return set(rows["model"].unique())
@@ -313,37 +290,6 @@ def paired_correction_languages(
     old = set(uncorrected.loc[uncorrected["split"] == "synthetic", "language"].unique())
     new = set(corrected.loc[corrected["split"] == "synthetic", "language"].unique())
     return language_order(old & new, requested)
-
-
-def _sample_synthetic_sets(
-    synthetic: pd.DataFrame,
-    n_sets: int,
-    rng: np.random.Generator,
-) -> np.ndarray:
-    variants = [
-        group["correct"].to_numpy(dtype=float)
-        for _source_id, group in synthetic.groupby("source_id", sort=True, dropna=False)
-    ]
-    if not variants:
-        raise ValueError("Synthetic data contains no source templates.")
-
-    set_totals = np.zeros(n_sets, dtype=float)
-    for values in variants:
-        set_totals += rng.choice(values, size=n_sets, replace=True)
-    return set_totals / len(variants)
-
-
-def _normal_curve(values: np.ndarray, is_diff: bool = False) -> tuple[np.ndarray, np.ndarray, float]:
-    mean = float(values.mean())
-    std = max(float(values.std(ddof=1)), 0.005)
-    if is_diff:
-        lower = max(-1.0, mean - 4 * std)
-        upper = min(1.0, mean + 4 * std)
-    else:
-        lower = max(0.0, mean - 4 * std)
-        upper = min(1.0, mean + 4 * std)
-    x = np.linspace(lower, upper, 500)
-    return x, norm.pdf(x, loc=mean, scale=std), mean
 
 
 def _original_accuracy(corrected: pd.DataFrame, uncorrected: pd.DataFrame) -> float:
@@ -374,16 +320,16 @@ def collect_correction_comparison_rows(
             CorrectionComparisonRow(
                 model=model,
                 original_accuracy=_original_accuracy(new_rows, old_rows),
-                uncorrected_sets=_sample_synthetic_sets(
+                uncorrected_sets=sample_synthetic_sets(
                     old_rows[old_rows["split"] == "synthetic"],
                     n_sets,
                     np.random.default_rng(seed + index),
-                ),
-                corrected_sets=_sample_synthetic_sets(
+                )[0],
+                corrected_sets=sample_synthetic_sets(
                     new_rows[new_rows["split"] == "synthetic"],
                     n_sets,
                     np.random.default_rng(seed + index),
-                ),
+                )[0],
             )
         )
 
@@ -415,20 +361,6 @@ def english_metric_pairs(summary: pd.DataFrame, split: str = "synthetic") -> pd.
         ]
     )
     return pd.concat([average, result], ignore_index=True)
-
-
-def format_speaker_count(count: int) -> str:
-    if count >= 1_000_000:
-        return f"{count / 1_000_000:g}M"
-    if count >= 1_000:
-        return f"{count / 1_000:g}K"
-    return str(count)
-
-
-def heatmap_language_label(language: str) -> str:
-    name = LANGUAGE_LABELS.get(language, language)
-    speakers = LANGUAGE_SPEAKERS.get(language)
-    return f"{name}\n({format_speaker_count(speakers)} speakers)" if speakers is not None else name
 
 
 def annotated_heatmap(
@@ -925,35 +857,11 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
-def reasoning_variant_name(model: str) -> tuple[str, str | None]:
-    suffixes = {
-        " (reasoning on)": "on",
-        " (reasoning off)": "off",
-    }
-    for suffix, mode in suffixes.items():
-        if model.endswith(suffix):
-            return model[: -len(suffix)], mode
-    return model, None
-
-
 def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     rows = summary[summary["split"] == "synthetic"].copy()
-    parsed = rows["model"].map(reasoning_variant_name)
-    rows["base_model_candidate"] = [item[0] for item in parsed]
-    rows["reasoning"] = [item[1] for item in parsed]
-
-    off_name_by_raw = rows[rows["reasoning"] == "off"].groupby("model_raw")["base_model_candidate"].first()
-    rows["canonical_base_model"] = rows["model_raw"].map(off_name_by_raw).fillna(rows["base_model_candidate"])
-
+    rows = classify_reasoning_variants(rows)
     rows.loc[rows["reasoning"].isin(["on", "off"]), "base_model"] = rows["canonical_base_model"]
-    has_off_variant = rows["model_raw"].isin(set(off_name_by_raw.index))
-    rows.loc[
-        rows["reasoning"].isna() & has_off_variant & (rows["model"] == rows["canonical_base_model"]),
-        "reasoning",
-    ] = "on"
     rows.loc[rows["base_model"].isna(), "base_model"] = rows["canonical_base_model"]
-
-    rows = rows[rows["reasoning"].isin(["on", "off"])]
     if rows.empty:
         return False
 
@@ -1038,15 +946,6 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
-def _normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
-    mean = float(values.mean())
-    std = max(float(values.std(ddof=1)), 0.005)
-    lower = max(0.0, mean - 4 * std)
-    upper = min(1.0, mean + 4 * std)
-    x = np.linspace(lower, upper, 500)
-    return x, norm.pdf(x, loc=mean, scale=std), mean
-
-
 def plot_correction_comparison(
     rows: list[CorrectionComparisonRow],
     language: str,
@@ -1083,8 +982,8 @@ def plot_correction_comparison(
             alpha=0.38,
             zorder=1,
         )
-        old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
-        new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
+        old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
+        new_x, new_density, new_mean, _ = normal_curve(row.corrected_sets)
         peak = max(
             float(old_counts.max()),
             float(new_counts.max()),
@@ -1185,8 +1084,8 @@ def plot_correction_comparison_selected(
             zorder=1,
         )
 
-        old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
-        new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
+        old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
+        new_x, new_density, new_mean, _ = normal_curve(row.corrected_sets)
 
         peak = max(
             float(old_counts.max()) if len(old_counts) > 0 else 0.0,

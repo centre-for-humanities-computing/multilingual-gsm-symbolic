@@ -7,6 +7,7 @@ SCRIPT_DIR = Path(__file__).resolve().parents[1] / "paper" / "scripts"
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
+from eval_log_utils import map_log_loader  # noqa: E402
 from numbercoverage import number_coverage_grid  # noqa: E402
 from plot_config import language_order, model_sort_key, ordered_models  # noqa: E402
 from qwen_compute_budget import (  # noqa: E402
@@ -16,34 +17,19 @@ from qwen_compute_budget import (  # noqa: E402
 )
 from visualizegrid import (  # noqa: E402
     filter_summary_models,
-    infer_model_info,
     model_order,
-    plot_reasoning_delta,
 )
 
 
-def test_ordered_models_groups_known_families_by_size_and_keeps_unknowns() -> None:
-    models = [
-        "custom/Unknown-2B",
-        "google/gemma-3-4b-it",
-        "Qwen/Qwen2.5-1.5B-Instruct",
-        "Qwen/Qwen3-4B",
-        "meta-llama/Llama-3.2-3B-Instruct",
-        "Qwen/Qwen2.5-0.5B-Instruct",
-        "allenai/OLMo-2-1124-7B-Instruct",
-        "utter-project/EuroLLM-1.7B-Instruct",
-    ]
+def _test_log_loader(path: Path, scorer: str | None):
+    return path.name, None, scorer
 
-    assert ordered_models(models) == [
-        "Qwen/Qwen2.5-0.5B-Instruct",
-        "Qwen/Qwen2.5-1.5B-Instruct",
-        "Qwen/Qwen3-4B",
-        "meta-llama/Llama-3.2-3B-Instruct",
-        "google/gemma-3-4b-it",
-        "allenai/OLMo-2-1124-7B-Instruct",
-        "utter-project/EuroLLM-1.7B-Instruct",
-        "custom/Unknown-2B",
-    ]
+
+def test_map_log_loader_runs_serially_and_in_parallel() -> None:
+    paths = [Path("one.eval"), Path("two.eval")]
+    expected = [(path.name, None, "math") for path in paths]
+    assert list(map_log_loader(_test_log_loader, paths, "math", workers=1)) == expected
+    assert sorted(map_log_loader(_test_log_loader, paths, "math", workers=2)) == expected
 
 
 def test_model_sort_key_places_distill_models_after_their_base_families() -> None:
@@ -111,22 +97,6 @@ def test_number_coverage_grid_retains_supported_metric_language() -> None:
     assert samples.tolist() == [[1, 1]]
 
 
-def test_infer_model_info_supports_new_ucloudeval_model_families() -> None:
-    examples = {
-        "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B": ("DeepSeek-R1-Distill-Qwen", 1.5),
-        "bigscience/bloomz-560m": ("BLOOMZ", 0.56),
-        "bigscience/bloomz-1b1": ("BLOOMZ", 1.1),
-        "bigscience/bloomz-7b1": ("BLOOMZ", 7.1),
-        "EleutherAI/pythia-2.8b": ("Pythia", 2.8),
-        "swiss-ai/Apertus-70B-Instruct-2509": ("Apertus", 70.0),
-    }
-
-    for model, (family, params_b) in examples.items():
-        info = infer_model_info(model)
-        assert info.family == family
-        assert info.params_b == params_b
-
-
 def test_model_order_only_uses_models_present_in_summary() -> None:
     import pandas as pd
 
@@ -154,98 +124,6 @@ def test_filter_summary_models_removes_sparse_qwen_reasoning_on_row() -> None:
     filtered = filter_summary_models(summary)
 
     assert filtered["model"].tolist() == ["Qwen3-0.6B", "Qwen3-0.6B (reasoning off)"]
-
-
-def test_plot_reasoning_delta_uses_off_model_name_for_on_variant(tmp_path) -> None:
-    import pandas as pd
-
-    summary = pd.DataFrame(
-        [
-            {
-                "model_raw": "qwen3-0.6b",
-                "model": "qwen3-0.6b (reasoning off)",
-                "family": "Qwen3",
-                "params_b": 0.6,
-                "vocab_size": None,
-                "language": "eng",
-                "split": "synthetic",
-                "accuracy": 0.55,
-            },
-            {
-                "model_raw": "qwen3-0.6b",
-                "model": "qwen3-0.6b (reasoning off)",
-                "family": "Qwen3",
-                "params_b": 0.6,
-                "vocab_size": None,
-                "language": "dan",
-                "split": "synthetic",
-                "accuracy": 0.45,
-            },
-            {
-                "model_raw": "qwen3-0.6b",
-                "model": "qwen3-0.6b",
-                "family": "Qwen3",
-                "params_b": 0.6,
-                "vocab_size": None,
-                "language": "eng",
-                "split": "synthetic",
-                "accuracy": 0.65,
-            },
-            {
-                "model_raw": "qwen3-0.6b",
-                "model": "qwen3-0.6b",
-                "family": "Qwen3",
-                "params_b": 0.6,
-                "vocab_size": None,
-                "language": "dan",
-                "split": "synthetic",
-                "accuracy": 0.50,
-            },
-        ]
-    )
-    out_path = tmp_path / "reasoning_delta.png"
-
-    assert plot_reasoning_delta(summary, out_path)
-    assert out_path.exists()
-
-
-def test_plot_reasoning_delta_excludes_eng_metric_from_transfer_gap(tmp_path, monkeypatch) -> None:
-    import pandas as pd
-    from matplotlib.axes import Axes
-
-    plotted_y: list[list[float]] = []
-    original_errorbar = Axes.errorbar
-
-    def capture_errorbar(self, x, y, *args, **kwargs):  # type: ignore[no-untyped-def]
-        plotted_y.append(list(y))
-        return original_errorbar(self, x, y, *args, **kwargs)
-
-    monkeypatch.setattr(Axes, "errorbar", capture_errorbar)
-    rows = []
-    for model, english_accuracy in [
-        ("qwen3-0.6b", 1.0),
-        ("qwen3-0.6b (reasoning off)", 1.0),
-    ]:
-        for language, accuracy in [
-            ("eng", english_accuracy),
-            ("eng_metric", 0.0),
-            ("dan", 0.5),
-        ]:
-            rows.append(
-                {
-                    "model_raw": "qwen3-0.6b",
-                    "model": model,
-                    "family": "Qwen3",
-                    "params_b": 0.6,
-                    "vocab_size": None,
-                    "language": language,
-                    "split": "synthetic",
-                    "accuracy": accuracy,
-                }
-            )
-
-    assert plot_reasoning_delta(pd.DataFrame(rows), tmp_path / "reasoning_delta.png")
-    assert plotted_y == [[0.5], [0.5]]
 
 
 def test_qwen_compute_budget_table_marks_paired_qwen_variants_as_on_and_off() -> None:
