@@ -110,6 +110,13 @@ UNCORRECTED_FILL = "#F0A095"
 CORRECTED_COLOR = "#5CA950"
 CORRECTED_FILL = "#BCE6A8"
 ORIGINAL_COLOR = "#111827"
+SELECTED_MODEL_LABELS = {
+    "Apertus-8B-Instruct-2509": "Apertus 8B",
+    "EuroLLM-9B-Instruct-2512": "EuroLLM 9B",
+    "OLMo-2-0325-32B-Instruct": "OLMo 2 32B",
+    "gemma-3-27b-it": "Gemma 3 27B",
+    "granite-3.2-8b-instruct (reasoning on)": "Granite 3.2 8B\n(reasoning)",
+}
 
 plt.rcParams.update(
     {
@@ -1120,8 +1127,8 @@ def plot_correction_comparison_selected(
     if not target_models:
         target_models = [
             "gemma-3-27b-it",
-            "gemma-3-1b-it",
             "OLMo-2-0325-32B-Instruct",
+            "granite-3.2-8b-instruct (reasoning on)",
         ]
 
     selected_rows = [r for r in rows if r.model in target_models]
@@ -1221,18 +1228,20 @@ def plot_correction_comparison_selected(
 
         peak_x = (old_mean + new_mean) / 2
         peak_y = max(float(old_density.max()), float(new_density.max()))
-        model_labels.append((peak_x, peak_y, row.model, color))
+        model_labels.append((peak_x, peak_y, SELECTED_MODEL_LABELS.get(row.model, row.model), color))
 
     ax.set_xlim(0, 1)
     max_peak = max(all_peaks) if all_peaks else 15.0
     ax.set_ylim(bottom=0, top=max_peak * 1.06)
 
-    # Alternate nearby labels between two levels and keep edge labels inside
+    # Alternate labels between two modest levels and keep edge labels inside
     # the axes.  This avoids collisions after the figure is narrowed.
     for tier, (peak_x, peak_y, model, color) in enumerate(sorted(model_labels)):
-        label_y = max(peak_y + max_peak * 0.02, max_peak * (0.22 + 0.14 * (tier % 2)))
+        label_y = peak_y + max_peak * (0.02 + 0.06 * (tier % 2))
         label_x = peak_x
-        if len(model) > 30:
+        if "\n" in model:
+            horizontal_alignment = "center"
+        elif len(model) > 30 or peak_x < 0.35:
             label_x = max(0.02, peak_x - 0.22)
             horizontal_alignment = "left"
         elif peak_x < 0.12:
@@ -1449,9 +1458,9 @@ def main() -> None:
                 "eng",
                 metric_out,
                 target_models=[
-                    "gemma-3-12b-it",
-                    "gemma-3-1b-it",
-                    "OLMo-2-0325-32B-Instruct",
+                    "Apertus-8B-Instruct-2509",
+                    "EuroLLM-9B-Instruct-2512",
+                    "granite-3.2-8b-instruct (reasoning on)",
                 ],
                 legend_labels=("English", "English metric"),
             )
