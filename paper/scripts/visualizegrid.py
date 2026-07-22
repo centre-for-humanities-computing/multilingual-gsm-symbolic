@@ -114,8 +114,11 @@ ORIGINAL_COLOR = "#111827"
 SELECTED_MODEL_LABELS = {
     "Apertus-8B-Instruct-2509": "Apertus 8B",
     "EuroLLM-9B-Instruct-2512": "EuroLLM 9B",
+    "OLMo-2-0425-1B-Instruct": "OLMo 2 1B",
     "OLMo-2-0325-32B-Instruct": "OLMo 2 32B",
+    "gemma-3-12b-it": "Gemma 3 12B",
     "gemma-3-27b-it": "Gemma 3 27B",
+    "granite-3.2-2b-instruct (reasoning off)": "Granite 3.2 2B\n(reasoning off)",
     "granite-3.2-8b-instruct (reasoning on)": "Granite 3.2 8B\n(reasoning)",
 }
 
@@ -1133,9 +1136,9 @@ def plot_correction_comparison_selected(
 ) -> None:
     if not target_models:
         target_models = [
-            "gemma-3-27b-it",
+            "gemma-3-12b-it",
             "OLMo-2-0325-32B-Instruct",
-            "granite-3.2-8b-instruct (reasoning on)",
+            "granite-3.2-2b-instruct (reasoning off)",
         ]
 
     selected_rows = [r for r in rows if r.model in target_models]
@@ -1247,7 +1250,11 @@ def plot_correction_comparison_selected(
         label_y = peak_y + max_peak * (0.02 + 0.06 * (tier % 2))
         label_x = peak_x
         if "\n" in model:
-            horizontal_alignment = "center"
+            if peak_x < 0.2:
+                label_x = 0.02
+                horizontal_alignment = "left"
+            else:
+                horizontal_alignment = "center"
         elif len(model) > 30 or peak_x < 0.35:
             label_x = max(0.02, peak_x - 0.22)
             horizontal_alignment = "left"
@@ -1475,9 +1482,9 @@ def main() -> None:
                 "eng",
                 metric_out,
                 target_models=[
-                    "Apertus-8B-Instruct-2509",
-                    "EuroLLM-9B-Instruct-2512",
-                    "granite-3.2-8b-instruct (reasoning on)",
+                    "gemma-3-12b-it",
+                    "OLMo-2-0325-32B-Instruct",
+                    "granite-3.2-2b-instruct (reasoning off)",
                 ],
                 legend_labels=("English", "English metric"),
             )
