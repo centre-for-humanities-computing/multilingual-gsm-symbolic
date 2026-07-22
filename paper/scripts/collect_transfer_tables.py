@@ -10,7 +10,7 @@ Example:
 from __future__ import annotations
 
 import argparse
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -97,6 +97,7 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
             }
         )
 
+    del log  # free the large decompressed log before returning
     log_label_lang = "uncorrected_isl" if is_uncorrected_isl else task_language
     return f"{model} / {log_label_lang} / {split}", pd.DataFrame(rows), None
 
@@ -107,19 +108,28 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     frames: list[pd.DataFrame] = []
-    if workers <= 1:
-        results = [load_log_rows(path, scorer) for path in paths]
-    else:
-        with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
-            results = list(pool.map(load_log_rows, paths, [scorer] * len(paths)))
+    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
 
-    for label, frame, warning in results:
+    def _consume(label: str, frame: pd.DataFrame, warning: str | None) -> None:
         if warning:
             print(warning)
         else:
             print(f"Loaded {label}: {len(frame)} scored samples")
         if not frame.empty:
             frames.append(frame)
+        if len(frames) >= _CONCAT_CHUNK:
+            frames[:] = [pd.concat(frames, ignore_index=True)]
+
+    if workers <= 1:
+        for path in paths:
+            label, frame, warning = load_log_rows(path, scorer)
+            _consume(label, frame, warning)
+    else:
+        with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
+            futures = [pool.submit(load_log_rows, path, scorer) for path in paths]
+            for future in as_completed(futures):
+                label, frame, warning = future.result()
+                _consume(label, frame, warning)
 
     if not frames:
         return pd.DataFrame()
@@ -244,7 +254,7 @@ def main() -> None:
     parser.add_argument("--language-features", type=Path, default=DEFAULT_LANGUAGE_FEATURES)
     parser.add_argument("--fertility", type=Path, default=DEFAULT_FERTILITY)
     parser.add_argument("--scorer", default=None)
-    parser.add_argument("--workers", type=int, default=32)
+    parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--include-incomplete", action="store_true")
     args = parser.parse_args()
 

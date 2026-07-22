@@ -11,7 +11,6 @@ every source template, then averages correctness across the selected problems.
 from __future__ import annotations
 
 import argparse
-import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
@@ -142,6 +141,7 @@ def _load_one_log(
             }
         )
 
+    del log  # free the large decompressed log before returning
     if not rows:
         return label, pd.DataFrame(), None
 
@@ -161,16 +161,19 @@ def load_problem_scores(
 ) -> pd.DataFrame:
     """Load logs in parallel and combine repeated runs by model/problem."""
     frames: list[pd.DataFrame] = []
+    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
 
     if workers <= 1:
-        results = [_load_one_log(path, scorer) for path in paths]
-        for index, (label, frame, warning) in enumerate(results, start=1):
+        for index, path in enumerate(paths, start=1):
+            label, frame, warning = _load_one_log(path, scorer)
             if warning:
                 print(warning)
             else:
                 print(f"[{index}/{len(paths)}] {label}")
             if frame is not None and not frame.empty:
                 frames.append(frame)
+            if len(frames) >= _CONCAT_CHUNK:
+                frames = [pd.concat(frames, ignore_index=True)]
     else:
         with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
             futures = [pool.submit(_load_one_log, path, scorer) for path in paths]
@@ -182,6 +185,8 @@ def load_problem_scores(
                     print(f"[{index}/{len(paths)}] {label}")
                 if frame is not None and not frame.empty:
                     frames.append(frame)
+                if len(frames) >= _CONCAT_CHUNK:
+                    frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
@@ -440,7 +445,6 @@ def write_summary(stats: list[PlotStats], out_csv: Path) -> None:
 
 
 def main() -> None:
-    cpu_count = os.cpu_count() or 1
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--log-dir",
@@ -476,7 +480,7 @@ def main() -> None:
     parser.add_argument(
         "--workers",
         type=int,
-        default=max(12, cpu_count),
+        default=8,
         help="Workers used for header scans and full log loading; use 1 to disable parallelism.",
     )
     args = parser.parse_args()
