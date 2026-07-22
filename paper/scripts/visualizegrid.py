@@ -1120,7 +1120,6 @@ def plot_correction_comparison_selected(
             "gemma-3-27b-it",
             "gemma-3-1b-it",
             "OLMo-2-0325-32B-Instruct",
-            "granite-3.2-8b-instruct (reasoning on)",
         ]
 
     selected_rows = [r for r in rows if r.model in target_models]
@@ -1130,7 +1129,7 @@ def plot_correction_comparison_selected(
 
     # Sized for a single-column paper figure.  The larger type remains legible
     # after LaTeX scales the image to the column width.
-    fig, ax = plt.subplots(figsize=(8.2, 3.85))
+    fig, ax = plt.subplots(figsize=(7.6, 3.2))
 
     # Distinct colour per model; unvalidated = solid, validated = dashed
     MODEL_COLORS = [
@@ -1224,12 +1223,12 @@ def plot_correction_comparison_selected(
 
     ax.set_xlim(0, 1)
     max_peak = max(all_peaks) if all_peaks else 15.0
-    ax.set_ylim(bottom=0, top=max_peak * 1.13)
+    ax.set_ylim(bottom=0, top=max_peak * 1.06)
 
-    # Alternate nearby labels between three levels and keep edge labels inside
+    # Alternate nearby labels between two levels and keep edge labels inside
     # the axes.  This avoids collisions after the figure is narrowed.
     for tier, (peak_x, peak_y, model, color) in enumerate(sorted(model_labels)):
-        label_y = max(peak_y + max_peak * 0.025, max_peak * (0.22 + 0.09 * (tier % 3)))
+        label_y = max(peak_y + max_peak * 0.02, max_peak * (0.22 + 0.14 * (tier % 2)))
         label_x = peak_x
         if len(model) > 30:
             label_x = max(0.02, peak_x - 0.22)
@@ -1270,7 +1269,7 @@ def plot_correction_comparison_selected(
         fontsize=18,
         ncol=2,
     )
-    fig.tight_layout(pad=0.35)
+    fig.tight_layout(pad=0.18)
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=220, bbox_inches="tight", pad_inches=0.03, facecolor="white")
     plt.close(fig)
