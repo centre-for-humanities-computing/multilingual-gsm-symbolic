@@ -1,0 +1,394 @@
+---
+title: "Cross-lingual transfer analysis"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+Which language-level features govern how well mathematical reasoning transfers
+out of English? This implements the GLMM from `analysis.md`, from the raw
+instance table through to the fitted model, with inspection at each stage.
+
+```{r setup}
+knitr::opts_chunk$set(warning = FALSE, message = TRUE)
+
+library(nanoparquet)
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(ggplot2)
+
+transfer_dir <- "../../artifacts/transfer_tables"
+out_dir <- "../../artifacts/analysis"
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+```
+
+# Configuration
+
+```{r config}
+SPLIT <- "synthetic" # "original" for the robustness check
+
+# Excluded by base name (before the reasoning suffix), so each entry catches all
+# of a model's reasoning variants. Drop an entry to bring a model back in.
+#   gpt-5.4-nano     - proprietary: no parameter count, closed tokenizer (so no
+#                      fertility). Cannot enter a model with size or fertility terms.
+#   granite / Olmo-3 - excluded on request; fertility is available, so removing
+#                      them here is sufficient to include them later.
+EXCLUDED_MODELS <- c(
+  "gpt-5.4-nano",
+  "granite-3.2-2b-instruct",
+  "granite-3.2-8b-instruct",
+  "Olmo-3-7B-Think"
+)
+
+# eng_metric is English with metric units, not a language, and has no typological
+# or resource features. uncorrected_isl is machine-translated Icelandic before
+# human correction, kept in the dataset for the validation figure but not used in
+# the analysis. English itself is kept -- it anchors the intercept at fertility 1,
+# typological distance 0, maximum resource.
+EXCLUDED_LANGUAGES <- c("eng_metric", "uncorrected_isl")
+```
+
+# Load the instance table
+
+`collect_transfer_tables.py` writes one Parquet row per evaluated instance:
+`correct` as a logical, the reasoning mode in the `model` name, and every feature
+we need -- `typological_distance`, `log10_common_crawl_pages`, and the tokenizer
+fertilities. Normalised fertility is the model's fertility relative to its own
+English fertility, so there are no separate feature tables to join.
+
+```{r load}
+observations <- read_parquet(file.path(transfer_dir, "analysis.parquet")) %>%
+  select(
+    source_id, language, correct, model, family, params_b, split, eval_id,
+    typological_distance, log10_common_crawl_pages,
+    tokenizer_fertility, english_fertility_tokens_per_character
+  ) %>%
+  mutate(normalized_fertility = tokenizer_fertility / english_fertility_tokens_per_character)
+
+dim(observations)
+```
+
+# Reasoning mode
+
+Reasoning mode is explicit in the model name. Qwen3 / Qwen3.5 label the
+reasoning-on default with a bare name and only suffix `(reasoning off)`; granite
+and Olmo-3 label both sides. We give every reasoning-split model a consistent
+`(reasoning on)` / `(reasoning off)` label and derive `base_model` (the tokenizer
+identity, shared across modes) by stripping it.
+
+```{r reasoning}
+# Bases that appear with a "(reasoning off)" variant: their bare form is the
+# reasoning-on run and should be labelled as such.
+off_bases <- observations %>%
+  filter(str_detect(model, "\\(reasoning off\\)$")) %>%
+  mutate(base = str_remove(model, "\\s*\\(reasoning off\\)$")) %>%
+  distinct(base) %>%
+  pull(base)
+
+observations <- observations %>%
+  mutate(
+    model = if_else(model %in% off_bases, paste0(model, " (reasoning on)"), model),
+    base_model = str_remove(model, "\\s*\\(reasoning (on|off)\\)$")
+  )
+
+observations %>%
+  filter(base_model %in% off_bases) %>%
+  distinct(base_model, model) %>%
+  arrange(base_model)
+```
+
+# Filter to the analysis set
+
+`EXCLUDED_MODELS` is matched on `base_model`, so it catches every reasoning
+variant of a listed model.
+
+```{r filter}
+observations <- observations %>%
+  filter(
+    split == SPLIT,
+    !language %in% EXCLUDED_LANGUAGES,
+    !base_model %in% EXCLUDED_MODELS
+  )
+
+count(observations, language)
+count(observations, family, model)
+```
+
+# Feature coverage
+
+Every feature is present for every included cell; the only rows the parquet leaves
+without features are the ones we already drop (`gpt-5.4-nano` has no tokenizer
+fertility, `eng_metric` no language features).
+
+```{r feature-coverage}
+observations %>%
+  summarise(across(
+    c(typological_distance, log10_common_crawl_pages, normalized_fertility),
+    ~ sum(is.na(.)), .names = "na_{.col}"
+  ))
+```
+
+# Aggregate to cells
+
+One row per (model, language, template). Every predictor is constant within such
+a cell, so `Binomial(n_total, pi)` has the same likelihood as the individual
+Bernoulli draws at roughly 1/28th the rows -- carried through with `first()`.
+
+```{r aggregate}
+cells <- observations %>%
+  group_by(model, family, language, template = source_id) %>%
+  summarise(
+    n_correct = sum(correct),
+    n_total = n(),
+    params_b = first(params_b),
+    typological_distance_from_english = first(typological_distance),
+    log10_common_crawl_pages = first(log10_common_crawl_pages),
+    normalized_fertility = first(normalized_fertility),
+    .groups = "drop"
+  )
+
+dim(cells)
+```
+
+```{r inspect-missing}
+summary(cells$n_total)
+```
+
+`n_total` is 20 per cell except for `OLMo-2-0425-1B-Instruct` in `dan`, `eng` and
+`nob`, where a duplicate evaluation run doubles it to 40. Those two runs are one
+configuration sampled twice (near-identical accuracy, same instance ids), so
+pooling them slightly overstates precision for three cells of one model; refitting
+without them moved no coefficient materially. Left pooled here pending an upstream
+dedup in `collect_transfer_tables.py`.
+
+The design is otherwise balanced -- every model seen in every language, 100
+templates each:
+
+```{r inspect-balance}
+table(cells$model, cells$language)
+```
+
+# Predictors
+
+Standardise the continuous predictors so the interaction terms are interpretable
+at the mean and the weakly-informative priors are on a sensible scale.
+
+```{r standardise}
+standardise <- function(x) as.numeric((x - mean(x)) / sd(x))
+
+cells <- cells %>%
+  mutate(
+    log2_params = log2(params_b),
+    fertility_z = standardise(normalized_fertility),
+    typological_distance_z = standardise(typological_distance_from_english),
+    log_resource_z = standardise(log10_common_crawl_pages),
+    log_params_z = standardise(log2_params)
+  ) %>%
+  arrange(family, model, language, template)
+
+cells %>%
+  select(fertility_z, typological_distance_z, log_resource_z, log_params_z) %>%
+  summary()
+```
+
+Two of these are language-level, so their main effects rest on 7 points
+regardless of the 566k instances behind them. Worth seeing the collinearity
+before reading any coefficient:
+
+```{r inspect-collinearity}
+cells %>%
+  select(fertility_z, typological_distance_z, log_resource_z, log_params_z) %>%
+  cor() %>%
+  round(2)
+```
+
+Fertility and typological distance are strongly related, so their individual
+coefficients should not be read independently.
+
+```{r inspect-features-plot, fig.height=4}
+cells %>%
+  distinct(model, language, normalized_fertility, typological_distance_from_english, log10_common_crawl_pages) %>%
+  pivot_longer(c(normalized_fertility, typological_distance_from_english, log10_common_crawl_pages)) %>%
+  ggplot(aes(value, language)) +
+  geom_point(alpha = 0.3) +
+  facet_wrap(~name, scales = "free_x") +
+  labs(x = NULL, y = NULL, title = "Feature spread across languages") +
+  theme_minimal()
+```
+
+Raw accuracy by language and size, as a sanity check on what the model should
+recover.
+
+Languages are ordered by resource level and coloured on a sequential ramp rather
+than with categorical hues: resource is a magnitude, so the colour should carry
+the ordering. `mako` runs dark to light through a single blue-green hue, is
+monotonic in lightness (so the order survives greyscale and colour-vision
+deficiency), and avoids the pale yellow end of `viridis` that disappears against
+a white panel. Highest-resource language is darkest.
+
+```{r language-order}
+language_levels <- cells %>%
+  distinct(language, log10_common_crawl_pages) %>%
+  arrange(desc(log10_common_crawl_pages))
+
+# Label with the resource value so the legend states the ordering explicitly.
+language_labels <- sprintf("%s (%.1f)", language_levels$language, language_levels$log10_common_crawl_pages)
+names(language_labels) <- language_levels$language
+
+language_levels
+```
+
+```{r inspect-accuracy, fig.height=4.5}
+cells %>%
+  group_by(model, language, log2_params) %>%
+  summarise(accuracy = sum(n_correct) / sum(n_total), .groups = "drop") %>%
+  mutate(language = factor(language, levels = language_levels$language)) %>%
+  ggplot(aes(log2_params, accuracy, colour = language)) +
+  geom_point(alpha = 0.85, size = 1.8) +
+  geom_smooth(se = FALSE, method = "loess", formula = y ~ x, linewidth = 0.9) +
+  scale_colour_viridis_d(
+    option = "mako", begin = 0.08, end = 0.82, direction = 1,
+    labels = language_labels
+  ) +
+  # loess is unconstrained and overshoots 1.0 at the top end; clip the view
+  # rather than the data so the smoother still sees every point.
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(
+    x = "log2 parameters (B)", y = "accuracy",
+    colour = expression(Language ~ (log[10] ~ CC ~ pages)),
+    title = "Transfer gap narrows with scale",
+    subtitle = "Languages ordered by resource level, darkest = highest resource"
+  ) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank())
+```
+
+# Model
+
+Language features are model-by-language (fertility) or language-only
+(typological distance, resource). Interacting them with size tests the claim that
+scale governs how much of the transfer gap survives.
+
+The baseline drops the language features and keeps size; the quantity of
+interest is how far `sd(model:language)` shrinks between the two, i.e. how much
+of the cross-lingual transfer variation the language features explain.
+
+Both fixed effects and both essential random terms are shared between the lme4 and
+Bayesian fits; they differ only in how the nuisance groupings `template` and
+`family` are handled. lme4 keeps them random (the model as written in
+`analysis.md`); the Bayesian fit makes them fixed, because as random effects they
+create a NUTS-hostile geometry -- the strongly-identified template SD funnels, and
+the single-model family (Apertus) makes `family`/`family:model` a flat ridge that
+saturates the treedepth. Fixed, they leave `sd(model:language)` unchanged. See
+`transfer_spec.R` for both formulas and `transfer_brms.R` for the geometry detail.
+
+The shared formula pieces, priors, and factor coding live in `transfer_spec.R`,
+sourced here and by `transfer_brms.R`. This chunk applies the coding (sum-to-zero
+contrasts, which the Bayesian fixed-effect fit uses and the lme4 random fit
+ignores) and saves the prepared cells so the Bayesian job need not re-run the
+786k-row prep.
+
+```{r formulas}
+source("transfer_spec.R")
+
+cells <- code_cells_factors(cells)
+saveRDS(cells, file.path(out_dir, "model_cells.rds"))
+```
+
+`script` (shared vs. not) from `analysis.md` is deliberately absent. With only
+`zho` and `rus` non-Latin out of 7 languages it is nearly collinear with
+typological distance and not separately identifiable -- report it descriptively
+instead.
+
+## lme4
+
+Fast enough to iterate on, so this file keeps the frequentist fit inline; the
+Bayesian version, which samples for hours, is split out into `transfer_brms.R`.
+The lme4 fit keeps `template` and `family` as random effects (`LME4_RHS`) -- glmer
+handles them quickly, whereas ~100 fixed template dummies make it crawl; the
+Bayesian fit uses the fixed form for sampling geometry. `sd(model:language)` is
+the same either way. `glmer` wants `cbind(successes, failures)` rather than brms'
+`trials()` syntax.
+
+```{r fit-lme4}
+library(lme4)
+
+fit_baseline <- glmer(as.formula(paste("cbind(n_correct, n_total - n_correct) ~", LME4_RHS_BASELINE)),
+                      data = cells, family = binomial())
+fit_full <- glmer(as.formula(paste("cbind(n_correct, n_total - n_correct) ~", LME4_RHS)),
+                  data = cells, family = binomial())
+
+summary(fit_full)
+```
+
+```{r inspect-lme4-variance}
+VarCorr(fit_full)
+
+sd_baseline <- attr(VarCorr(fit_baseline)$`model:language`, "stddev")[[1]]
+sd_full <- attr(VarCorr(fit_full)$`model:language`, "stddev")[[1]]
+
+tibble(
+  model = c("baseline (size only)", "full (language features)"),
+  sd_model_language = c(sd_baseline, sd_full),
+  variance_explained = c(NA, 1 - sd_full^2 / sd_baseline^2)
+)
+```
+
+## Analysis of results
+
+KCE: the following is a work in progress
+
+We see that size have the largest effect of parameters, with larger models performing (1.94, p<0.05) 
+secondly see that higher resource languages leads to a higher performance (.699, p<0.05), but 
+that the effect is less pronounced for larger models (-.210, p<0.05). 
+Language with a higher typological distance from English, generally leads to worse performance (-.299, p<0.05)
+and higher tokenizer fertility improved the likelihood of obtaining the correct answer (.193, p<0.05).
+
+The interactions between tokenizer fertility and the model size (-.0576, p=.423), and
+between typological distance and model size (.0332, p=.634) where not found to be significant,
+indicating that effect of fertility and language distance remains a problem regardless of the size
+(or at least we couldn't detect if it was influenced by it).
+
+Beyond the individual coefficients we can ask how much of the cross-lingual transfer these
+language features account for. The model-by-language random effect captures how much a model's
+accuracy in a given language departs from its overall skill and the template difficulty -- the
+transfer variation the fixed effects leave unexplained. Adding the three language features
+shrinks this variance component from $\sigma^2 = 1.10$ (SD 1.05) in the size-only baseline to
+$\sigma^2 = 0.39$ (SD 0.63) in the full model, a 64% reduction in variance (40% on the SD scale).
+Roughly two-thirds of the transfer variation that remains after accounting for model skill and
+template difficulty is thus captured by tokenizer fertility, typological distance and resource
+level together.
+
+Questions:
+- what about resourcity and typological distance
+- what about reasoning
+- Is it a difference in parsing or "reasoning"
+- is there more of the variance that could be explained?
+- there is high correlation between fertility and language distance (estionian might fix it). 
+  - One potential solution it to decompose into fertility across model (fertility between), this should be colinear 
+    to typoligical distance, while the model devisation from the langauge mean fertility (fertility within) would 
+    be orthogonal
+- add bootstrap on proportion of variance explained (for later)
+
+Todo:
+- [ ] remove transfer spec and just add the formula in here, for the BRMS the formulas can just be incorporated into the script.
+- [ ] redo the bayesian script to an Rmd. There is not need to define a function it is fine to repeat the blocks (it is two models and it reduces complexity)
+- [ ] 
+
+
+## Bayesian fit
+
+The Bayesian version -- which gives posterior intervals on the variance
+components, the honest form of "variance explained" given only 7 languages -- is
+fit by `transfer_brms.R`, run separately because its sampling takes hours:
+
+```
+Rscript paper/scripts/analysis/transfer_brms.R
+```
+
+It reads `model_cells.rds` saved above, uses the same formula and priors from
+`transfer_spec.R`, and caches its fits to `paper/artifacts/analysis/`. See that
+script for the cmdstanr / dense-metric choice and the diagnostics.
