@@ -1,0 +1,175 @@
+---
+title: "Cross-lingual transfer -- Bayesian fit"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+The Bayesian counterpart to `transfer_analysis.Rmd`. It reads the cells that the
+lme4 document prepares and saves (`model_cells.rds`) and fits the same model with
+brms, which gives posterior intervals on the variance components -- the honest
+form of "variance explained" given only seven languages.
+
+Sampling takes hours, so the fits are cached to disk via brms' `file` argument: the
+first knit fits and saves; later knits load. Delete the `.rds` files to refit.
+
+```{r setup}
+knitr::opts_chunk$set(warning = FALSE, message = TRUE)
+
+library(dplyr)
+library(brms)
+library(cmdstanr)
+library(posterior)
+
+out_dir <- "../../artifacts/analysis"
+cells <- readRDS(file.path(out_dir, "model_cells.rds"))
+```
+
+# Model form
+
+`template` and `family` enter as fixed effects here, not as the random terms the
+lme4 document uses. As random effects they give NUTS a hostile geometry -- the
+strongly-identified template SD funnels, and the single-model family (Apertus)
+makes `family` / `family:model` a flat ridge -- so the sampler saturates its
+treedepth. Fixed, they leave `sd(model:language)` unchanged. Sum-to-zero contrasts
+keep their coefficients decorrelated from the intercept.
+
+`model` and `model:language` stay random: `model` identifies the size effect
+(fixed model dummies would absorb `log_params`), and `model:language` is the
+transfer variance component we are measuring.
+
+```{r contrasts}
+contrasts(cells$template) <- contr.sum(nlevels(cells$template))
+contrasts(cells$family) <- contr.sum(nlevels(cells$family))
+```
+
+The backend is cmdstanr with the default diagonal metric. This posterior is
+expensive for HMC -- each cell has ~2000 draws, so the likelihood pins its total
+logit tightly and the additive terms that sum to it are strongly correlated, and
+NUTS saturates its treedepth (a few hours per fit). It converges regardless (Rhat
+~ 1, no divergences); a dense metric was tried and, at ~400 parameters, came out
+worse.
+
+Predictors are standardised, so a coefficient of 1 is a full SD of the feature
+moving the log-odds by 1 -- already large. The features get a mild `normal(0, 1)`
+regulariser (which stabilises the typological-distance and resource terms, resting
+on 7 languages); the wide `normal(0, 5)` default covers the fixed template/family
+contrasts, whose difficulty spans the logit range.
+
+# Baseline: size only
+
+```{r fit-baseline}
+prior_baseline <-
+  prior(normal(0, 2), class = "Intercept") +
+  prior(normal(0, 5), class = "b") +
+  prior(normal(0, 1), class = "b", coef = "log_params_z") +
+  prior(student_t(3, 0, 2.5), class = "sd")
+
+bfit_baseline <- brm(
+  n_correct | trials(n_total) ~ log_params_z + template + family +
+    (1 | model) + (1 | model:language),
+  data = cells,
+  family = binomial(),
+  prior = prior_baseline,
+  backend = "cmdstanr",
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  cores = 2,
+  seed = 42,
+  file = file.path(out_dir, "transfer_baseline")
+)
+```
+
+# Full: language features x size
+
+```{r fit-full}
+prior_full <-
+  prior(normal(0, 2), class = "Intercept") +
+  prior(normal(0, 5), class = "b") +
+  prior(normal(0, 1), class = "b", coef = "fertility_z") +
+  prior(normal(0, 1), class = "b", coef = "typological_distance_z") +
+  prior(normal(0, 1), class = "b", coef = "log_resource_z") +
+  prior(normal(0, 1), class = "b", coef = "log_params_z") +
+  prior(normal(0, 1), class = "b", coef = "fertility_z:log_params_z") +
+  prior(normal(0, 1), class = "b", coef = "typological_distance_z:log_params_z") +
+  prior(normal(0, 1), class = "b", coef = "log_resource_z:log_params_z") +
+  prior(student_t(3, 0, 2.5), class = "sd")
+
+bfit_full <- brm(
+  n_correct | trials(n_total) ~
+    (fertility_z + typological_distance_z + log_resource_z) * log_params_z +
+    template + family + (1 | model) + (1 | model:language),
+  data = cells,
+  family = binomial(),
+  prior = prior_full,
+  backend = "cmdstanr",
+  chains = 4,
+  iter = 2000,
+  warmup = 1000,
+  cores = 2,
+  seed = 42,
+  file = file.path(out_dir, "transfer_full")
+)
+
+summary(bfit_full)
+```
+
+# Sampler diagnostics
+
+Nothing below should be read until these pass: divergences zero, `Rhat` < 1.01,
+and both effective sample sizes comfortably above ~400.
+
+```{r diagnostics}
+diagnostics <- function(fit) {
+  np <- nuts_params(fit)
+  draws <- summarise_draws(fit)
+  c(
+    divergent = sum(subset(np, Parameter == "divergent__")$Value),
+    max_treedepth_hit = sum(subset(np, Parameter == "treedepth__")$Value >= 10),
+    max_rhat = max(draws$rhat, na.rm = TRUE),
+    min_bulk_ess = min(draws$ess_bulk, na.rm = TRUE),
+    min_tail_ess = min(draws$ess_tail, na.rm = TRUE)
+  )
+}
+
+rbind(baseline = diagnostics(bfit_baseline), full = diagnostics(bfit_full))
+```
+
+```{r trace, fig.height=7}
+# Only the effects of interest; the fixed template/family contrasts would swamp it.
+plot(bfit_full, variable = "^b_(Intercept|fertility|typological|log_resource|log_params)", regex = TRUE)
+```
+
+Posterior predictive check -- does the fitted model reproduce the observed counts?
+
+```{r ppcheck, fig.height=4}
+pp_check(bfit_full, ndraws = 50)
+```
+
+# Transfer variance component
+
+The quantity of interest, as a posterior interval rather than a point estimate.
+With only seven languages this interval is the honest version of "variance
+explained"; the lme4 point estimate is not.
+
+```{r variance-explained}
+sd_ml_baseline <- as_draws_df(bfit_baseline)[["sd_model:language__Intercept"]]
+sd_ml_full <- as_draws_df(bfit_full)[["sd_model:language__Intercept"]]
+
+# Propagate the full posterior rather than dividing two point estimates.
+reduction <- 1 - (sd_ml_full^2) / (sd_ml_baseline^2)
+
+tibble(
+  quantity = "transfer variance explained by language features",
+  median = median(reduction),
+  q2.5 = quantile(reduction, 0.025),
+  q97.5 = quantile(reduction, 0.975)
+)
+```
+
+```{r fixef}
+fixef(bfit_full)
+```

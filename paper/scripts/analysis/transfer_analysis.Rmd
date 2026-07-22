@@ -31,16 +31,14 @@ dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 SPLIT <- "synthetic" # "original" for the robustness check
 
 # Excluded by base name (before the reasoning suffix), so each entry catches all
-# of a model's reasoning variants. Drop an entry to bring a model back in.
-#   gpt-5.4-nano     - proprietary: no parameter count, closed tokenizer (so no
-#                      fertility). Cannot enter a model with size or fertility terms.
-#   granite / Olmo-3 - excluded on request; fertility is available, so removing
-#                      them here is sufficient to include them later.
+# of a model's reasoning variants.
+#   gpt-5.4-nano - proprietary: no parameter count, closed tokenizer (so no
+#                  fertility). Cannot enter a model with size or fertility terms.
+# Granite and Olmo-3 (excluded earlier) are back in: they are reasoning-capable,
+# which the reasoning section below needs. Granite adds a non-Qwen on/off pair;
+# Olmo-3-7B-Think is reasoning-on only in the synthetic split.
 EXCLUDED_MODELS <- c(
-  "gpt-5.4-nano",
-  "granite-3.2-2b-instruct",
-  "granite-3.2-8b-instruct",
-  "Olmo-3-7B-Think"
+  "gpt-5.4-nano"
 )
 
 # eng_metric is English with metric units, not a language, and has no typological
@@ -185,7 +183,11 @@ cells <- cells %>%
     fertility_z = standardise(normalized_fertility),
     typological_distance_z = standardise(typological_distance_from_english),
     log_resource_z = standardise(log10_common_crawl_pages),
-    log_params_z = standardise(log2_params)
+    log_params_z = standardise(log2_params),
+    # base_model is the tokenizer/weights identity shared across reasoning modes;
+    # reasoning is the on/off knob (non-reasoning models are "off"). Used below.
+    base_model = str_remove(model, "\\s*\\(reasoning (on|off)\\)$"),
+    reasoning = factor(if_else(str_detect(model, "\\(reasoning on\\)$"), "on", "off"), levels = c("off", "on"))
   ) %>%
   arrange(family, model, language, template)
 
@@ -276,25 +278,18 @@ The baseline drops the language features and keeps size; the quantity of
 interest is how far `sd(model:language)` shrinks between the two, i.e. how much
 of the cross-lingual transfer variation the language features explain.
 
-Both fixed effects and both essential random terms are shared between the lme4 and
-Bayesian fits; they differ only in how the nuisance groupings `template` and
-`family` are handled. lme4 keeps them random (the model as written in
-`analysis.md`); the Bayesian fit makes them fixed, because as random effects they
-create a NUTS-hostile geometry -- the strongly-identified template SD funnels, and
-the single-model family (Apertus) makes `family`/`family:model` a flat ridge that
-saturates the treedepth. Fixed, they leave `sd(model:language)` unchanged. See
-`transfer_spec.R` for both formulas and `transfer_brms.R` for the geometry detail.
+This document fits the model with lme4, keeping `template` and `family` as random
+effects (the model as written in `analysis.md`) -- glmer handles them quickly. The
+Bayesian counterpart in `transfer_brms.Rmd` makes those two fixed instead, purely
+for sampling geometry (as random effects the template SD funnels and the
+single-model family, Apertus, makes a flat ridge that saturates the NUTS
+treedepth); `sd(model:language)`, the quantity of interest, is the same either way.
 
-The shared formula pieces, priors, and factor coding live in `transfer_spec.R`,
-sourced here and by `transfer_brms.R`. This chunk applies the coding (sum-to-zero
-contrasts, which the Bayesian fixed-effect fit uses and the lme4 random fit
-ignores) and saves the prepared cells so the Bayesian job need not re-run the
-786k-row prep.
+We save the prepared cells so the Bayesian document reads them directly rather than
+re-running the 786k-row prep.
 
-```{r formulas}
-source("transfer_spec.R")
-
-cells <- code_cells_factors(cells)
+```{r save-cells}
+cells <- cells %>% mutate(across(c(model, base_model, family, language, template), as.factor))
 saveRDS(cells, file.path(out_dir, "model_cells.rds"))
 ```
 
@@ -305,21 +300,26 @@ instead.
 
 ## lme4
 
-Fast enough to iterate on, so this file keeps the frequentist fit inline; the
-Bayesian version, which samples for hours, is split out into `transfer_brms.R`.
-The lme4 fit keeps `template` and `family` as random effects (`LME4_RHS`) -- glmer
-handles them quickly, whereas ~100 fixed template dummies make it crawl; the
-Bayesian fit uses the fixed form for sampling geometry. `sd(model:language)` is
-the same either way. `glmer` wants `cbind(successes, failures)` rather than brms'
-`trials()` syntax.
+`glmer` wants `cbind(successes, failures)` rather than brms' `trials()` syntax.
+The baseline drops the language features; comparing its `sd(model:language)` to the
+full model's is how we read off the transfer variance the features explain.
 
 ```{r fit-lme4}
 library(lme4)
 
-fit_baseline <- glmer(as.formula(paste("cbind(n_correct, n_total - n_correct) ~", LME4_RHS_BASELINE)),
-                      data = cells, family = binomial())
-fit_full <- glmer(as.formula(paste("cbind(n_correct, n_total - n_correct) ~", LME4_RHS)),
-                  data = cells, family = binomial())
+random_effects <- "(1 | family / model) + (1 | template) + (1 | model:language)"
+
+fit_baseline <- glmer(
+  as.formula(paste("cbind(n_correct, n_total - n_correct) ~ log_params_z +", random_effects)),
+  data = cells, family = binomial()
+)
+fit_full <- glmer(
+  as.formula(paste(
+    "cbind(n_correct, n_total - n_correct) ~",
+    "(fertility_z + typological_distance_z + log_resource_z) * log_params_z +", random_effects
+  )),
+  data = cells, family = binomial()
+)
 
 summary(fit_full)
 ```
@@ -363,8 +363,9 @@ template difficulty is thus captured by tokenizer fertility, typological distanc
 level together.
 
 Questions:
-- what about resourcity and typological distance
-- what about reasoning
+
+- [x] what about resourcity and typological distance
+- [ ] what about reasoning
 - Is it a difference in parsing or "reasoning"
 - is there more of the variance that could be explained?
 - there is high correlation between fertility and language distance (estionian might fix it). 
@@ -372,23 +373,87 @@ Questions:
     to typoligical distance, while the model devisation from the langauge mean fertility (fertility within) would 
     be orthogonal
 - add bootstrap on proportion of variance explained (for later)
+- [x] compute the what languages we currently predict the transfer poorly on and see if there is any language features we need to add (what is the unexplained variance) 
+  - potentially some systematicity, but hard to say with only 7 languages
+    - non-linearity in resource: It seems to overreport on low-resource languages and underreport on high-resource (we could apply non-linearity to resourcity)
+    - Chinese is likely an outlier (estimates of resourcity is likely incorrect for some of the models, e.g. Qwen)
+    - 
 
-Todo:
-- [ ] remove transfer spec and just add the formula in here, for the BRMS the formulas can just be incorporated into the script.
-- [ ] redo the bayesian script to an Rmd. There is not need to define a function it is fine to repeat the blocks (it is two models and it reduces complexity)
-- [ ] 
+
+Note when writing:
+there are three actionable parameters, fertility, model size and reasoning, but depending these might have varying effects on downstream languages (hence the interactions). 
+As such what we seek to answer which actionable levers can resource which low-resource axis [find a better term here]. For instance we show that while increase model size reduce the
+effect diminish the effect languages prevalance in the training data, increasing the size does not counteract the effect of low tokenizer fertility or typological distance.
+
+Note in limitations:
+Our "resourcity / prevalence in the training data" is a proxy made from common crawl based on page count. While it is likely close to real world distributions, 
+it likely has systematic bias (e.g. underrepresenting Chinese) and does not vary across model. Ideally this analysis would be caried out with models where the
+training dataset distribution is well-known. 
 
 
-## Bayesian fit
+## Exploratory: does more structure help?
 
-The Bayesian version -- which gives posterior intervals on the variance
-components, the honest form of "variance explained" given only 7 languages -- is
-fit by `transfer_brms.R`, run separately because its sampling takes hours:
+Two additions the questions above point to, each refitting the full model with one
+extra term.
 
+A **resource x typological-distance** interaction. It is significant but a minor
+lever -- variance explained moves 64.4% to 65.9%. The coefficient is positive, so a
+high resource level *buffers* the typological-distance penalty: distance hurts less
+when there is more data for the language.
+
+```{r explore-resource-typo}
+fit_rxt <- update(fit_full, . ~ . + typological_distance_z:log_resource_z)
+
+anova(fit_full, fit_rxt)
+summary(fit_rxt)$coefficients["typological_distance_z:log_resource_z", , drop = FALSE]
 ```
-Rscript paper/scripts/analysis/transfer_brms.R
+
+A **per-language residual** `(1 | language)`. Strongly significant, with
+`sd(language)` ~ 0.42: roughly half of the transfer variation the three features
+leave unexplained is systematic *per-language* structure, not model-by-language
+idiosyncrasy -- i.e. there are language features still to add. The random-effect
+estimates show which languages the features over- or under-predict, a starting
+point for "which languages do we transfer to poorly".
+
+```{r explore-language-residual}
+fit_lang <- update(fit_full, . ~ . + (1 | language))
+
+anova(fit_full, fit_lang)
+VarCorr(fit_lang)
+ranef(fit_lang)$language
 ```
 
-It reads `model_cells.rds` saved above, uses the same formula and priors from
-`transfer_spec.R`, and caches its fits to `paper/artifacts/analysis/`. See that
-script for the cmdstanr / dense-metric choice and the diagnostics.
+
+## Reasoning
+
+Reasoning is a model-level knob you can actually turn, so it gets its own model. The
+reasoning-capable models are run both ways -- `Qwen3-8B (reasoning on)` vs
+`(reasoning off)` -- a within-base paired design, so the effect is identified
+*within* `base_model` (12 paired base models across Granite, Qwen3 and Qwen3.5;
+Olmo-3-7B-Think is reasoning-on only, so it contributes no pair). We add `reasoning`
+as a fixed effect and interact it with the language features and size, to ask not
+just whether reasoning helps but whether it narrows the transfer gap.
+
+```{r fit-reasoning}
+fit_reasoning <- glmer(
+  cbind(n_correct, n_total - n_correct) ~
+    (fertility_z + typological_distance_z + log_resource_z) * log_params_z +
+    reasoning * (fertility_z + typological_distance_z + log_resource_z + log_params_z) +
+    (1 | family / base_model) + (1 | template) + (1 | model:language),
+  data = cells, family = binomial()
+)
+
+round(summary(fit_reasoning)$coefficients, 4)
+```
+
+Reasoning raises accuracy (`reasoningon` ~ +0.30 logit, p ~ .01). More useful for
+transfer, the resource advantage *shrinks* under reasoning
+(`log_resource_z:reasoningon` ~ -0.19, p ~ .05): reasoning helps lower-resource
+languages relatively more, so it is a lever that narrows the resource-driven gap.
+Reasoning also interacts with size (`log_params_z:reasoningon` ~ +0.28, p ~ .02) --
+larger models gain more on the logit scale, though small models can gain more in raw
+accuracy because large models sit near the ceiling. The fertility and
+typological-distance interactions with reasoning are entangled by their mutual
+collinearity, as for the main effects, and are not separately identifiable here.
+
+
