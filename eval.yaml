@@ -281,3 +281,49 @@ tasks:
       - name: pattern
         args:
           pattern: '####\s*(.+)'
+
+  - id: original_est
+    config: est
+    split: original
+
+    field_spec:
+      input: question
+      target: target
+      metadata:
+        - answer
+        - language
+        - source_id
+
+    solvers:
+      - name: prompt_template
+        args:
+          template: "Lahenda järgmine matemaatikaülesanne samm-sammult. Pane oma lõplik arvuline vastus (ilma ühikute, valuutasümbolite või protsendimärkideta) kujule \\boxed{{}}, näiteks: \\boxed{{42}}.\n\n{prompt}"
+      - name: generate
+
+    scorers:
+      - name: pattern
+        args:
+          pattern: '\\boxed\{\s*([^}]*)\s*\}'
+
+  - id: synthetic_est
+    config: est
+    split: synthetic
+
+    field_spec:
+      input: question
+      target: target
+      metadata:
+        - answer
+        - language
+        - source_id
+
+    solvers:
+      - name: prompt_template
+        args:
+          template: "Lahenda järgmine matemaatikaülesanne samm-sammult. Pane oma lõplik arvuline vastus (ilma ühikute, valuutasümbolite või protsendimärkideta) kujule \\boxed{{}}, näiteks: \\boxed{{42}}.\n\n{prompt}"
+      - name: generate
+
+    scorers:
+      - name: pattern
+        args:
+          pattern: '\\boxed\{\s*([^}]*)\s*\}'
