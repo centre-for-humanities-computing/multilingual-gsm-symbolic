@@ -1,0 +1,43 @@
+question = "Helena suudab koorida 6 krevetti minutis ja praadida 30 krevetti 10 minutiga. Kui kaua kulub tal 90 kreveti koorimiseks ja praadimiseks? Helena ei saa koorida ja praadida korraga."
+
+answer = """
+Esmalt leia, kui kaua kulub Helenal krevettide koorimiseks: 90 krevetti / 6 krevetti/min = <<90/6=15>>15 minutit
+Seejärel leia, mitu portsjonit krevette tal on vaja küpsetada: 90 krevetti / 30 krevetti/portsjon = <<90/30=3>>3 portsjonit
+Seejärel korruta portsjonite arv ajaga ühe portsjoni kohta, et leida kogu küpsetusaeg: 3 portsjonit * 10 minutit/portsjon = <<3*10=30>>30 minutit
+Seejärel liida koorimisele kuluv aeg, et leida kogu aeg, mille Helena kulutab: 30 minutit + 15 minutit = <<30+15=45>>45 minutit
+#### 45
+"""
+
+id_orig = 989
+
+id_shuffled = 48
+
+question_annotated = """
+{name,Helena} suudab koorida {n1,6} {food_part_sg,krevetti} minutis ja praadida {n2,30} {food_part_sg,krevetti} {t,10} minutiga. Kui kaua kulub tal {total,90} {food_gen_sg,kreveti} koorimiseks ja praadimiseks? {name,Helena} ei saa koorida ja praadida korraga.
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- food_nom, food_part_sg, food_gen_sg, food_part_pl, food_gen_pl = sample([("krevett", "krevetti", "kreveti", "krevette", "krevettide"), ("sibul", "sibulat", "sibula", "sibulaid", "sibulate"), ("porgand", "porgandit", "porgandi", "porgandeid", "porgandite"), ("kaalikas", "kaalikat", "kaalika", "kaalikaid", "kaalikate")])
+- $n1 = range(4, 15)
+- $n2 = range(20, 50, 5)
+- $t = range(5, 20)
+- $total = range(60, 200, 10)
+
+#conditions:
+- divides(total, n1)
+- divides(total, n2)
+
+#answer: total // n1 + (total // n2) * t
+"""
+
+answer_annotated = """
+Esmalt leia, kui kaua kulub {name_gen}l {food_gen_pl} koorimiseks: {total} {food_part_sg} / {n1} {food_part_sg}/min = <<{total}/{n1}={total//n1}>>{total//n1} minutit
+Seejärel leia, mitu portsjonit {food_part_pl} tal on vaja küpsetada: {total} {food_part_sg} / {n2} {food_part_sg}/portsjon = <<{total}/{n2}={total//n2}>>{total//n2} portsjonit
+Seejärel korruta portsjonite arv ajaga ühe portsjoni kohta, et leida kogu küpsetusaeg: {total//n2} portsjonit * {t} minutit/portsjon = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t} minutit
+Seejärel liida koorimisele kuluv aeg, et leida kogu aeg, mille {name} kulutab: {(total//n2)*t} minutit + {total//n1} minutit = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1} minutit
+#### {(total//n2)*t + total//n1}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

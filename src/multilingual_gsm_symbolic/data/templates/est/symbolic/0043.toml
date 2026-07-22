@@ -1,0 +1,38 @@
+question = "Indrek läks oma tallu maasikaid korjama ja leidis aiast pool nii palju putukaid kui sipelgaid. Aias oli 50 sipelgat. Arvuta aias olevate kõigi putukate koguarv."
+
+answer = """
+Kui aias oli 50 sipelgat, siis oli teisi putukaid 0.5*50 = 25.
+Aias olevate kõigi putukate koguarv on 25 + 50 = <<25+50=75>>75 putukat.
+#### 75
+"""
+
+id_orig = 232
+
+id_shuffled = 43
+
+question_annotated = """
+{name,Indrek} läks oma tallu {fruit_par_pl,maasikaid} korjama ja leidis {location_el,aiast} {frac_txt,pool} nii palju {insect1_par_pl,putukaid} kui {insect2_par_pl,sipelgaid}. {location_ine,aias} oli {n,50} {insect2_count_sg,sipelgat}. Arvuta {location_ine,aias} olevate kõigi {insect1_gen_pl,putukate} koguarv.
+
+#init:
+- name, _ = sample(names_cases)
+- fruit_par_pl = sample(["maasikaid", "kirsse", "mustikaid", "vaarikaid"])
+- location_el, location_ine, location_ine_cap = sample([("aiast", "aias", "Aias"), ("põllult", "põllul", "Põllul"), ("peenralt", "peenral", "Peenral")])
+- (insect1_count_sg, insect1_par_pl, insect1_gen_pl), (insect2_count_sg, insect2_par_pl, insect2_gen_pl) = sample([("putukat", "putukaid", "putukate"), ("sipelgat", "sipelgaid", "sipelgate"), ("mesilast", "mesilasi", "mesilaste"), ("mardikat", "mardikaid", "mardikate"), ("liblikat", "liblikaid", "liblikate")], 2)
+- frac_txt, frac_val = sample([("pool", 1/2), ("kolmandik", 1/3), ("veerand", 1/4)])
+- $n = range(20, 201)
+
+#conditions:
+- is_int(n * frac_val)
+
+#answer: n + int(n * frac_val)
+"""
+
+answer_annotated = """
+Kui {location_ine} oli {n} {insect2_count_sg}, siis oli teisi {insect1_par_pl} {frac_val}*{n} = {int(n * frac_val)}.
+{location_ine_cap} olevate kõigi {insect1_gen_pl} koguarv on {int(n * frac_val)} + {n} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} {insect1_count_sg}.
+#### {n + int(n * frac_val)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

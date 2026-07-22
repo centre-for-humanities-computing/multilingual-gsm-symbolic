@@ -1,0 +1,44 @@
+question = "Jaan kogub raha koolireisiks. Ta on palunud abi koolilt, mis on otsustanud katta poole koolireisi maksumusest. Kui Jaanil on 50 EUR ja koolireisi hind on 300 EUR, siis kui palju raha tal puudu jääb?"
+
+answer = """
+Jaani kool on otsustanud maksta 300*1/2 = <<300*1/2=150>>150 EUR tema koolireisi eest.
+Kokku on Jaan katnud 150 EUR + 50 EUR = <<150+50=200>>200 EUR oma koolireisi jaoks.
+Seega on Jaanil vaja 300 EUR - 200 EUR = <<300-200=100>>100 EUR veel koolireisi jaoks.
+#### 100
+"""
+
+id_orig = 788
+
+id_shuffled = 35
+
+question_annotated = """
+{name,Jaan} kogub raha {event_all,koolireisiks}. Ta on palunud abi {organization,koolilt}, mis on otsustanud katta {fraction_txt,poole} {event,koolireisi} maksumusest. Kui {name_gen,Jaani}l on {current,50} {cur,EUR} ja {event,koolireisi} hind on {total,300} {cur,EUR}, siis kui palju raha tal puudu jääb?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- organization_nom, organization = sample([("kool", "koolilt"), ("kogukonnakeskus", "kogukonnakeskuselt"), ("noorteklubi", "noorteklubilt"), ("spordiklubi", "spordiklubilt"), ("muuseum", "muuseumilt")])
+- event_nom, event, event_all = sample([("koolireis", "koolireisi", "koolireisiks"), ("matk", "matka", "matkaks"), ("spordivõistlus", "spordivõistluse", "spordivõistluseks"), ("konverents", "konverentsi", "konverentsiks")])
+- cur = sample(currencies_sym)
+- fraction_txt, fraction_disp, fraction_val = sample([("poole", "1/2", 1/2), ("kolmandiku", "1/3", 1/3), ("veerandi", "1/4", 1/4), ("viiendiku", "1/5", 1/5)])
+- $current = range(10, 200, 5)
+- $total = range(200, 1000, 10)
+
+#conditions:
+- total > current
+- total - (total * fraction_val + current) > 0
+- is_int(total * fraction_val)
+- is_int(total - (total * fraction_val + current))
+
+#answer: total - (total * fraction_val + current)
+"""
+
+answer_annotated = """
+{name_gen} {organization_nom} on otsustanud maksta {total}*{fraction_disp} = <<{total}*{fraction_disp}={total*fraction_val}>>{total*fraction_val} {cur} tema {event} eest.
+Kokku on {name} katnud {total*fraction_val} {cur} + {current} {cur} = <<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} {cur} oma {event} jaoks.
+Seega on {name_gen}l vaja {total} {cur} - {total*fraction_val+current} {cur} = <<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} {cur} veel {event} jaoks.
+#### {total-(total*fraction_val+current)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

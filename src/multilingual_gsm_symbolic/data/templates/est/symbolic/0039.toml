@@ -1,0 +1,49 @@
+question = "Koristajal tuleb koristada 80 klassiruumiga kooli. Tal on töö lõpetamiseks 5 päeva. Ühe klassiruumi koristamine võtab 15 minutit. Kui ta töötab iga päev 8 tundi, siis mitu protsenti tema päevast kulub keskmiselt klassiruumide koristamisele?"
+
+answer = """
+Koristajal tuleb koristada 16 klassiruumi päevas, sest 80 / 5 = <<80/5=16>>16
+Ta kulutab koristamisele päevas 240 minutit, sest 16*15 = <<16*15=240>>240
+Ta kulutab koristamisele päevas 4 tundi, sest 240 / 60 = <<240/60=4>>4
+Ta kulutab poole oma päevast klassiruumide koristamisele, sest 4 / 8 = <<4/8=0.5>>0.5
+Ta kulutab 50% oma päevast klassiruumide koristamisele, sest 0.5*100 = <<0.5*100=50>>50
+#### 50
+"""
+
+id_orig = 1239
+
+id_shuffled = 39
+
+question_annotated = """
+{job,koristajal} tuleb koristada {n,80} {room_with,klassiruumiga} {building,kooli}. Tal on töö lõpetamiseks {d,5} päeva. Ühe {room_gen_sg,klassiruumi} koristamine võtab {t,15} minutit. Kui ta töötab iga päev {h,8} tundi, siis mitu protsenti tema päevast kulub keskmiselt {room_gen_pl,klassiruumide} koristamisele?
+
+#init:
+- job = sample(["koristajal", "puhastajal", "hooldustöötajal"])
+- building = sample(["kooli", "kontorihoonet", "haiglat", "ülikooli"])
+- room_nom, room_with, room_gen_sg, room_count, room_gen_pl = sample([("klassiruum", "klassiruumiga", "klassiruumi", "klassiruumi", "klassiruumide"), ("ruum", "ruumiga", "ruumi", "ruumi", "ruumide"), ("korrus", "korrusega", "korruse", "korrust", "korruste"),("tuba", "toaga", "toa", "tuba", "tubade")])
+- $n = range(50, 221, 5)
+- $d = range(3, 12)
+- $t = range(10, 46, 5)
+- $h = range(6, 17)
+
+#conditions:
+- divides(n, d)
+- divides(60, t)
+- (n/d) * t < h * 60
+- is_int( 10 * (n/d) * t / (h * 60))
+- is_int(100 * (n/d) * t / (h * 60))
+
+#answer: int(100 * (n/d) * t / (h * 60))
+"""
+
+answer_annotated = """
+{job} tuleb koristada {n//d} {room_count} päevas, sest {n} / {d} = <<{n}/{d}={n//d}>>{n//d}
+Ta kulutab koristamisele päevas {(n//d)*t} minutit, sest {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
+Ta kulutab koristamisele päevas {(n//d)*t/60} tundi, sest {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
+Ta kulutab {"poole" if Fraction((n//d)*t/(h*60)) == "1/2" else Fraction((n//d)*t/(h*60))} oma päevast {room_gen_pl} koristamisele, sest {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
+Ta kulutab {int(100 * (n/d) * t / (h * 60))}% oma päevast {room_gen_pl} koristamisele, sest {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
+#### {int(100 * (n/d) * t / (h * 60))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

@@ -1,0 +1,38 @@
+question = "Žonglöör suudab visata 16 palli. Pooled pallidest on golfipallid ja pooled golfipallidest on sinised. Mitu sinist golfipalli on?"
+
+answer = """
+Golfipallid:16*1/2=<<16*1/2=8>>8.
+Sinised golfipallid:8*1/2=<<8*1/2=4>>4 palli
+#### 4
+"""
+
+id_orig = 269
+
+id_shuffled = 8
+
+question_annotated = """
+Žonglöör suudab visata {n, 16} palli. {frac_1_txt, pooled} pallidest on {ball_type_nom_pl, golfipallid} ja {frac_2_txt, pooled} {ball_type_el_pl,golfipallidest} on {color_pl, sinised}. Mitu {color, sinist} {ball_type,golfipalli} on?
+
+#init:
+- ball_type_nom_pl, ball_type_el_pl, ball_type = sample([("golfipallid", "golfipallidest", "golfipalli"), ("tennisepallid", "tennisepallidest", "tennisepalli")])
+- color_pl, color = sample([("sinised", "sinist"), ("rohelised", "rohelist"), ("kollased", "kollast"), ("mustad", "musta"), ("valged", "valget")])
+- frac_1_txt, frac_1_disp, frac_1_val = sample([("pooled", "1/2", 1/2), ("kolmandik", "1/3", 1/3), ("veerand", "1/4", 1/4)]) #pooled
+- frac_2_txt, frac_2_disp, frac_2_val = sample([("pooled", "1/2", 1/2), ("kolmandik", "1/3", 1/3), ("veerand", "1/4", 1/4)])
+- $n = range(16, 120, 2)
+
+#conditions:
+- is_int(n * frac_1_val)
+- is_int(n * frac_1_val * frac_2_val)
+
+#answer:  int(n * frac_1_val * frac_2_val)
+"""
+
+answer_annotated = """
+{ball_type_nom_pl}:{n}*{frac_1_disp}=<<{n}*{frac_1_disp}={n*frac_1_val}>>{int(n*frac_1_val)}.
+{color_pl} {ball_type_nom_pl}:{int(n*frac_1_val)}*{frac_2_disp}=<<{int(n*frac_1_val)}*{frac_2_disp}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} palli
+#### {int(n*frac_1_val*frac_2_val)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

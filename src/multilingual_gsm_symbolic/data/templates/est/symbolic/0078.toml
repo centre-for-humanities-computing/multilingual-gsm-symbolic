@@ -1,0 +1,47 @@
+question = "Tavalisel õpilasel on päevas 6 tundi, aga Toomas peab võtma 2 lisatundi. Iga tund kestab 40 minutit. Ta käib tunnis 5 päeva nädalas. Seejärel kulutab ta igal laupäeval ja pühapäeval 1/16 oma nädala minutitest lisaks õppimiseks. Mitu tundi nädalas ta õpib?"
+
+answer = """
+Ta võtab 6+2=<<6+2=8>>8 tundi päevas
+See tähendab, et ta veedab tunnis 40*8=<<40*8=320>>320 minutit päevas
+Seega kulutab ta 320*5=<<320*5=1600>>1600 minutit nädalas
+See tähendab, et ta kulutab laupäeval ja pühapäeval kumbki 1600*1/16=<<1600*1/16=100>>100 minutit.
+Seega kulutab ta nädalas 1600+100+100=<<1600+100+100=1800>>1800 minutit
+Seega kulutab ta 1800/60=<<1800/60=30>>30 tundi nädalas
+#### 30
+"""
+
+id_orig = 1088
+
+id_shuffled = 78
+
+question_annotated = """
+Tavalisel õpilasel on päevas {n1,6} tundi, aga {name,Toomas} peab võtma {n2,2} lisatundi. Iga tund kestab {t,40} minutit. Ta käib tunnis {d,5} päeva nädalas. Seejärel kulutab ta igal laupäeval ja pühapäeval {frac,1/16} oma nädala minutitest lisaks õppimiseks. Mitu tundi nädalas ta õpib?
+
+#init:
+- name, _ = sample(names_male_cases)
+- $n1 = range(5, 10)
+- $n2 = range(2, 5)
+- $t = range(30, 61, 5)
+- $d = range(4, 7)
+- $frac = sample(fractions)
+
+#conditions:
+- is_int((n1 + n2) * t * d * frac)
+- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)
+
+#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60
+"""
+
+answer_annotated = """
+Ta võtab {n1}+{n2}=<<{n1}+{n2}={n1+n2}>>{n1+n2} tundi päevas
+See tähendab, et ta veedab tunnis {t}*{n1+n2}=<<{t}*{n1+n2}={t*(n1+n2)}>>{t*(n1+n2)} minutit päevas
+Seega kulutab ta {t*(n1+n2)}*{d}=<<{t*(n1+n2)}*{d}={t*(n1+n2)*d}>>{t*(n1+n2)*d} minutit nädalas
+See tähendab, et ta kulutab laupäeval ja pühapäeval kumbki {t*(n1+n2)*d}*{frac}=<<{t*(n1+n2)*d}*{frac}={int((n1 + n2) * t * d * frac)}>>{int((n1 + n2) * t * d * frac)} minutit.
+Seega kulutab ta nädalas {t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}=<<{t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}={t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}>>{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)} minutit
+Seega kulutab ta {t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60=<<{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60={((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}>>{((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60} tundi nädalas
+#### {((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

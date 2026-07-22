@@ -1,0 +1,46 @@
+question = "Mul on 10 liitrit apelsinijooki, mis on kaks kolmandikku vett, ja ma soovin selle lisada 15 liitrile ananassimahlale, mis on kolm viiendikku vett. Aga kui ma seda valan, siis loksutan ära neli liitrit apelsinijooki. Kui palju vett on järelejäänud 21 liitris?"
+
+answer = """
+Vett on ananassimahlas 15*0.6 = <<15*0.6=9>>9 liitrit.
+Pärast seda, kui apelsinijoogist loksutati ära neli liitrit, oli apelsinijooki järele jäänud 10-4 = <<10-4=6>>6 liitrit.
+Neist 6 liitrist on vesi 6*0.6666666666666666 = <<6*0.6666666666666666=4>>4 liitrit.
+Seega on kokku 9 + 4 = <<9+4=13>>13 liitrit vett.
+#### 13
+"""
+
+id_orig = 20
+
+id_shuffled = 59
+
+question_annotated = """
+Mul on {n1,10} liitrit apelsinijooki, mis on {frac1_txt,kaks kolmandikku} vett, ja ma soovin selle lisada {n2,15} liitrile ananassimahlale, mis on {frac2_txt,kolm viiendikku} vett. Aga kui ma seda valan, siis loksutan ära {spill_txt,neli} liitrit apelsinijooki. Kui palju vett on järelejäänud {total,21} liitris?
+
+#init:
+- $n1 = range(9, 21)
+- $n2 = range(12, 31)
+- frac1_txt, frac1_val = sample([("pool", 1/2), ("kaks kolmandikku", 2/3), ("kolm neljandikku", 3/4)])
+- frac2_txt, frac2_val = sample([("pool", 1/2), ("kolm viiendikku", 3/5), ("kaks kolmandikku", 2/3)])
+- spill_txt, spill_val = range_str(2, 7, 1, numbers)
+- $total = range(20, 51)
+
+#conditions:
+- spill_val < n1
+- n1 + n2 - spill_val == total
+- is_int(n2 * frac2_val)
+- is_int((n1 - spill_val) * frac1_val)
+- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+
+#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+"""
+
+answer_annotated = """
+Vett on ananassimahlas {n2}*{frac2_val} = <<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val} liitrit.
+Pärast seda, kui apelsinijoogist loksutati ära {spill_txt} liitrit, oli apelsinijooki järele jäänud {n1}-{spill_val} = <<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} liitrit.
+Neist {n1-spill_val} liitrist on vesi {n1-spill_val}*{frac1_val} = <<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} liitrit.
+Seega on kokku {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} liitrit vett.
+#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

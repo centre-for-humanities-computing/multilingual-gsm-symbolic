@@ -1,0 +1,38 @@
+question = "Tamme perekond teeb agaralt küpsiseid. Seni on nad valmistanud 7995 küpsist. Neil on 2595 värvilist küpsist, 3075 kaerahelbe küpsist ja mõned šokolaaditükkidega küpsised. Mitu šokolaaditükkidega küpsist on nad valmistanud?"
+
+answer = """
+Värviliste küpsiste ning kaerahelbe küpsiste koguarv on 2595 + 3075 = <<2595+3075=5670>>5670. Seega valmistasid nad 7995 - 5670 = <<7995-5670=2325>>2325 šokolaaditükkidega küpsist.
+#### 2325
+"""
+
+id_orig = 1305
+
+id_shuffled = 83
+
+question_annotated = """
+{family_gen,Tamme} perekond teeb agaralt {item_par_pl,küpsiseid}. Seni on nad valmistanud {total,7995} {item_num,küpsist}. Neil on {n1,2595} {flavor1_num,värvilist} {item_num,küpsist}, {n2,3075} {flavor2_num,kaerahelbe} {item_num,küpsist} ja mõned {flavor3_par_pl,šokolaaditükkidega} {item_nom_pl,küpsised}. Mitu {flavor3_num,šokolaaditükkidega} {item_num,küpsist} on nad valmistanud?
+
+#init:
+- family_gen = sample(["Tamme", "Kase", "Saare", "Kuuse", "Sepa"])
+- item_par_pl, item_num, item_gen_pl, item_nom_pl = sample([("küpsiseid", "küpsist", "küpsiste", "küpsised"), ("muffineid", "muffinit", "muffinite", "muffinid"), ("koogikesi", "koogikest", "koogikeste", "koogikesed"), ("pirukaid", "pirukat", "pirukate", "pirukad")])
+- flavor1_num, flavor1_gen_pl_cap = sample([("värvilist", "Värviliste"), ("vanilli", "Vanilli"), ("maasika", "Maasika"), ("sidruni", "Sidruni"), ("mustika", "Mustika")])
+- flavor2_num, flavor2_gen_pl = sample([("kaerahelbe", "kaerahelbe"), ("šokolaadi", "šokolaadi"), ("õuna", "õuna"), ("kaneeli", "kaneeli"), ("pähkli", "pähkli")])
+- flavor3_num, flavor3_par_pl = sample([("šokolaaditükkidega", "šokolaaditükkidega"), ("mustikatega", "mustikatega"), ("rosinatega", "rosinatega"), ("pähklitega", "pähklitega"), ("õunatükkidega", "õunatükkidega")])
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3200, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+
+answer_annotated = """
+{flavor1_gen_pl_cap} {item_gen_pl} ning {flavor2_gen_pl} {item_gen_pl} koguarv on {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}. Seega valmistasid nad {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {flavor3_num} {item_num}.
+#### {total-(n1+n2)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

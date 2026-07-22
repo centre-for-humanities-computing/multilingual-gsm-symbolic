@@ -1,0 +1,42 @@
+question = "Aivar läks ostma koolitarbeid. Ta ostis 4 pastakat, mis maksid 1.5 EUR tükk, 2 vihikut, mis maksid 4 EUR tükk, ja ühe rulli köögipaberit, mis maksis 20 EUR. Kui palju Aivar kulutas kõige peale?"
+
+answer = """
+Aivar kulutas pastakatele 4*1.5 EUR = <<4*1.5=6>>6 EUR.
+Vihikutele kulutas ta 2*4 EUR = <<2*4=8>>8 EUR.
+Seega kulutas Aivar koolitarvete peale kokku 6 EUR + 8 EUR + 20 EUR = <<6+8+20=34>>34 EUR.
+#### 34
+"""
+
+id_orig = 158
+
+id_shuffled = 18
+
+question_annotated = """
+{name,Aivar} läks ostma koolitarbeid. Ta ostis {n1,4} {obj1_par,pastakat}, mis maksid {c1,1.5} {cur,EUR} tükk, {n2,2} {obj2_par,vihikut}, mis maksid {c2,4} {cur,EUR} tükk, ja ühe rulli köögipaberit, mis maksis {c3,20} {cur,EUR}. Kui palju {name,Aivar} kulutas kõige peale?
+
+#init:
+- name, name_obj = sample(names_male_cases)
+- (obj1_par, obj1_gen), (obj2_par, obj2_gen) = sample([("pastakat", "pastakate"), ("vihikut", "vihikute"), ("pliiatsit", "pliiatsite"), ("kustutuskummi", "kustutuskummide"), ("kriiti", "kriitide"), ("markerit", "markerite"), ("joonlauda", "joonlaudade"), ("kaustikut", "kaustikute")], 2)
+- cur = sample(currencies_sym)
+- $n1 = range(4, 25, 2)
+- $c1 = arange(1.5, 11.5, 0.25)
+- $n2 = range(2, 15, 2)
+- $c2 = arange(4, 19.5, 0.25)
+- $c3 = range(10, 25)
+
+#conditions:
+- is_int(n1 * c1)
+- is_int(n2 * c2)
+#answer: int(n1*c1 + n2*c2 + c3)
+"""
+
+answer_annotated = """
+{name} kulutas {obj1_gen}le {n1}*{c1} {cur} = <<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} {cur}.
+{obj2_gen}le kulutas ta {n2}*{c2} {cur} = <<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} {cur}.
+Seega kulutas {name} koolitarvete peale kokku {int(n1*c1)} {cur} + {int(n2*c2)} {cur} + {c3} {cur} = <<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} {cur}.
+#### {int(n1*c1+n2*c2+c3)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

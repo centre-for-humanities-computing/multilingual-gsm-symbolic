@@ -1,0 +1,46 @@
+question = "Kui vesi on külm, ujub Margus ühe kilomeetri 16 minutiga. Kui vesi on soe, ujub Margus ühe kilomeetri 2 minutit rohkem kui kaks korda nii kaua. Kui palju kauem võtab Margusel 3 kilomeetri ujumine kuumal päeval võrreldes külma päevaga?"
+
+answer = """
+Külmas vees ujumine võtab 16 minutit.
+Soojas vees ujumine võtab 2+2*16=<<2+2*16=34>>34 minutit.
+3 kilomeetrit külmas vees: 3*16=<<3*16=48>>48 minutit.
+3 kilomeetrit soojas vees: 3*34=<<3*34=102>>102 minutit.
+Margusel võtab see 102-48=<<102-48=54>>54 minutit kauem.
+#### 54
+"""
+
+id_orig = 554
+
+id_shuffled = 93
+
+question_annotated = """
+Kui vesi on külm, ujub {name,Margus} ühe {unit_gen_sg,kilomeetri} {t1,16} minutiga. Kui vesi on soe, ujub {name,Margus} ühe {unit_gen_sg,kilomeetri} {n,2} minutit rohkem kui {mult_txt,kaks} korda nii kaua. Kui palju kauem võtab {name_gen,Marguse}l {d,3} {unit_gen_sg,kilomeetri} ujumine kuumal päeval võrreldes külma päevaga?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- unit_nom_sg, unit_gen_sg, unit_par_pl = sample([("kilomeeter", "kilomeetri", "kilomeetrit"), ("miil", "miili", "miili")])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- mult_txt, mult_val = sample([("kaks", 2), ("kolm", 3), ("neli", 4)])
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+
+answer_annotated = """
+Külmas vees ujumine võtab {t1} minutit.
+Soojas vees ujumine võtab {n}+{mult_val}*{t1}=<<{n}+{mult_val}*{t1}={n + mult_val * t1}>>{n + mult_val * t1} minutit.
+{d} {unit_par_pl} külmas vees: {d}*{t1}=<<{d}*{t1}={d*t1}>>{d*t1} minutit.
+{d} {unit_par_pl} soojas vees: {d}*{n + mult_val * t1}=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minutit.
+{name_gen}l võtab see {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} minutit kauem.
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

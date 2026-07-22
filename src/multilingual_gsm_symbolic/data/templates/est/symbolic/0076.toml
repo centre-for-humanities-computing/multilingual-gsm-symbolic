@@ -1,0 +1,47 @@
+question = "Toomas püüdis 3 tuunikala eelmisel esmaspäeval, esimene tuunikala, mille ta püüdis, kaalus 56 kilogrammi, teine tuunikala, mille ta püüdis, kaalus 46 kilogrammi ja ülejäänud tuunikalad, mille ta püüdis, kaalus 26 kilogrammi. Kui kilogramm tuunikala maksab 0.5 EUR, siis kui palju ta teenib pärast kõigi tuunikalade turule müümist?"
+
+answer = """
+Toomas teenib esimesest tuunikalast 56*0.5 EUR = <<56*0.5=28>>28 EUR.
+Teisest tuunikalast teenib ta 46*0.5 EUR = <<46*0.5=23>>23 EUR.
+Ülejäänud tuunikalu on 3-2 = <<3-2=1>>1. Igaühe eest teenib ta 26*0.5 EUR = <<26*0.5=13>>13 EUR. Seega teenib ta 1 * 13 = <<1*13=13>>13 EUR.
+Seega on kõigi tuunikalade müügist saadav kogusumma 28 EUR + 23 EUR + 13 EUR = <<28+23+13=64>>64 EUR.
+#### 64
+"""
+
+id_orig = 1207
+
+id_shuffled = 76
+
+question_annotated = """
+{name,Toomas} püüdis {n,3} {fish_par_sg,tuunikala} eelmisel {day_gen,esmaspäeva}l, esimene {fish_nom_sg,tuunikala}, mille ta püüdis, kaalus {w1,56} {unit_par_sg,kilogrammi}, teine {fish_nom_sg,tuunikala}, mille ta püüdis, kaalus {w2,46} {unit_par_sg,kilogrammi} ja ülejäänud {fish_nom_pl,tuunikalad}, mille ta püüdis, kaalus {w3,26} {unit_par_sg,kilogrammi}. Kui {unit_nom_sg,kilogramm} {fish_par_sg,tuunikala} maksab {price,0.5} {cur,EUR}, siis kui palju ta teenib pärast kõigi {fish_gen_pl,tuunikalade} turule müümist?
+
+#init:
+- name, _ = sample(names_male_cases)
+- fish_nom_sg, fish_par_sg, fish_el_sg, fish_nom_pl, fish_par_pl, fish_gen_pl = sample([("tuunikala", "tuunikala", "tuunikalast", "tuunikalad", "tuunikalu", "tuunikalade"), ("lõhe", "lõhet", "lõhest", "lõhed", "lõhesid", "lõhede"), ("tursk", "turska", "tursast", "tursad", "turskasid", "turskade"), ("forell", "forelli", "forellist", "forellid", "forelle", "forellide")])
+- (day_nom, day_gen) = sample(weekday_cases)
+- unit_nom_sg, unit_par_sg = sample([("kilogramm", "kilogrammi"), ("kg", "kg")])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(0.25, 2.5, 0.25)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+
+answer_annotated = """
+{name} teenib esimesest {fish_el_sg} {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur}.
+Teisest {fish_el_sg} teenib ta {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur}.
+Ülejäänud {fish_par_pl} on {n}-2 = <<{n}-2={n-2}>>{n-2}. Igaühe eest teenib ta {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur}. Seega teenib ta {n-2} * {w3*price} = <<{n-2}*{w3*price}={((n-2)*w3*price)}>>{((n-2)*w3*price)} {cur}.
+Seega on kõigi {fish_gen_pl} müügist saadav kogusumma {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2 + (n-2)*w3) * price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

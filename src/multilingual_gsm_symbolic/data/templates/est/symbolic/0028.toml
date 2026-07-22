@@ -1,0 +1,46 @@
+question = "Haiglal on 1000 voodikohta, millest 1/5 on hõivatud. Pandeemia tõttu võetakse haiglasse iga päev 50 patsienti. Arvuta haigla vabade voodikohtade arv pärast 2 nädalat."
+
+answer = """
+Kui 1/5 haigla voodikohtade kogumahutavusest on hõivatud, siis tähendab see, et 1/5 * 1000 = <<1000*1/5=200>>200 voodikohta on patsientide kasutuses.
+Haiglal ilma uute vastuvõttudeta on voodikohti kokku 1000 voodikohta - 200 voodikohta = <<1000-200=800>>800 voodikohta.
+Kui iga päev võetakse haiglasse 50 inimest, siis on patsientide koguarv pärast ühte nädalat 50 patsienti/päevas * 7 päeva/nädal = 350 patsienti.
+Pärast 2 nädalat on haiglasse vastuvõetud patsientide koguarv 350 patsienti/nädal * 2 nädalat = <<350*2=700>>700 patsienti, kellest igaüks kasutab ühte voodikohta.
+Kui enne uute vastuvõttude tegemist oli haiglal 800 hõivamata voodikohta, siis väheneb see kokku 800 voodikohta - 700 voodikohta = <<800-700=100>>100 hõivamata voodikohta.
+#### 100
+"""
+
+id_orig = 955
+
+id_shuffled = 28
+
+question_annotated = """
+{facility_ade_cap,Haiglal} on {total,1000} {item_par_sg,voodikohta}, millest {frac,1/5} on hõivatud. {event,pandeemia} tõttu võetakse {facility_ill,haiglasse} iga päev {daily,50} patsienti. Arvuta {facility_gen,haigla} vabade {item_gen_pl,voodikohtade} arv pärast {period,2} nädalat.
+
+#init:
+- facility_nom, facility_gen, facility_ade, facility_ade_cap, facility_ill = sample([("haigla", "haigla", "haiglal", "Haiglal", "haiglasse"), ("kliinik", "kliiniku", "kliinikul", "Kliinikul", "kliinikusse"), ("meditsiinikeskus", "meditsiinikeskuse", "meditsiinikeskusel", "Meditsiinikeskusel", "meditsiinikeskusesse"), ("hooldusasutus", "hooldusasutuse", "hooldusasutusel", "Hooldusasutusel", "hooldusasutusse")])
+- item_par_pl, item_gen_pl, item_par_sg = sample([("voodikohti", "voodikohtade", "voodikohta"), ("tube", "tubade", "tuba"), ("palateid", "palatite", "palatit")])
+- event = sample(["gripihooaja", "loodusõnnetuse", "suurõnnetuse", "pandeemia"])
+- $total = range(500, 2000, 100)
+- $frac = sample(fractions)
+- $daily = range(20, 100, 5)
+- $period = range(2, 5)
+
+#conditions:
+- is_int(total * frac)
+- total * frac + daily * period * 7 < total
+
+#answer: total - (total * frac + daily * period * 7)
+"""
+
+answer_annotated = """
+Kui {frac} {facility_gen} {item_gen_pl} kogumahutavusest on hõivatud, siis tähendab see, et {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_par_sg} on patsientide kasutuses.
+{facility_ade} ilma uute vastuvõttudeta on {item_par_pl} kokku {total} {item_par_sg} - {int(total*frac)} {item_par_sg} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_par_sg}.
+Kui iga päev võetakse {facility_ill} {daily} inimest, siis on patsientide koguarv pärast ühte nädalat {daily} patsienti/päevas * 7 päeva/nädal = {daily*7} patsienti.
+Pärast {period} nädalat on {facility_ill} vastuvõetud patsientide koguarv {daily*7} patsienti/nädal * {period} nädalat = <<{daily*7}*{period}={daily*period*7}>>{daily*period*7} patsienti, kellest igaüks kasutab ühte {item_par_sg}.
+Kui enne uute vastuvõttude tegemist oli {facility_ade} {total-int(total*frac)} hõivamata {item_par_sg}, siis väheneb see kokku {total-int(total*frac)} {item_par_sg} - {daily*period*7} {item_par_sg} = <<{total-int(total*frac)}-{daily*period*7}={total - (total * frac + daily * period * 7)}>>{total - (total * frac + daily * period * 7)} hõivamata {item_par_sg}.
+#### {total - (total * frac + daily * period * 7)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

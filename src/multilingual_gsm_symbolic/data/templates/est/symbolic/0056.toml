@@ -1,0 +1,36 @@
+question = "Üks klaas sisaldab 250 milliliitrit piima. Margus joob 2 klaasi piima. Kui piimas on 3 kalorit milliliitri kohta, kui palju kaloreid Margus tarbis?"
+
+answer = """
+Margus jõi 250*2=<<250*2=500>>500 milliliitrit piima.
+Seega tarbis ta 500*3=<<500*3=1500>>1500 kalorit.
+#### 1500
+"""
+
+id_orig = 400
+
+id_shuffled = 56
+
+question_annotated = """
+Üks {container_nom_sg,klaas} sisaldab {vol,250} milliliitrit {liquid_par_sg,piima}. {name,Margus} joob {num,2} {container_num_sg,klaasi} {liquid_par_sg,piima}. Kui {liquid_ine,piimas} on {cal,3} kalorit milliliitri kohta, kui palju kaloreid {name,Margus} tarbis?
+
+#init:
+- name, _ = sample(names_male_cases)
+- container_nom_sg, container_num_sg = sample([("klaas", "klaasi"), ("tass", "tassi"), ("pudel", "pudelit"), ("pakk", "pakki")])
+- liquid_par_sg, liquid_ine = sample([("piima", "piimas"), ("mahla", "mahlas"), ("limonaadi", "limonaadis"), ("teed", "tees"), ("kakaod", "kakaos")])
+- $vol = range(150, 501, 50)
+- $num = range(2, 6)
+- $cal = range(2, 10)
+
+
+#answer: vol * num * cal
+"""
+
+answer_annotated = """
+{name} jõi {vol}*{num}=<<{vol}*{num}={vol*num}>>{vol*num} milliliitrit {liquid_par_sg}.
+Seega tarbis ta {vol*num}*{cal}=<<{vol*num}*{cal}={vol*num*cal}>>{vol*num*cal} kalorit.
+#### {vol*num*cal}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

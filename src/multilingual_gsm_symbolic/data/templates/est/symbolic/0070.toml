@@ -1,0 +1,37 @@
+question = "Ehitaja töötab igal kuul 4 nädalat ja igal nädalal 6 päeva. Kui talle makstakse 50 EUR iga tööpäeva eest, siis kui palju ta teenib aasta jooksul?"
+
+answer = """
+Ehitaja töötab igal nädalal 6 päeva ja igal kuul 4 nädalat, seega töötab ta 6 päeva/nädal * 4 nädalat/kuu = <<6*4=24>>24 päeva kuus
+Kui talle makstakse 50 EUR iga päeva eest, siis teenib ta 50 EUR/päev * 24 päeva kuus = <<50*24=1200>>1200 EUR/kuu
+Aasta on võrdne 12 kuuga, seega teenib ta aastas 1200 EUR/kuu * 12 kuud/aasta = <<1200*12=14400>>14,400 EUR
+#### 14400
+"""
+
+id_orig = 401
+
+id_shuffled = 70
+
+question_annotated = """
+{occupation,Ehitaja} töötab igal kuul {w,4} nädalat ja igal nädalal {d,6} päeva. Kui talle makstakse {p,50} {cur,EUR} iga tööpäeva eest, siis kui palju ta teenib aasta jooksul?
+
+#init:
+- occupation = sample(["Ehitaja", "Torumees", "Elektrik", "Maaler", "Puusepp", "Aednik"])
+- cur = sample(currencies_sym)
+- $w = range(2, 5)
+- $d = range(4, 7)
+- $p = range(40, 200, 5)
+
+
+#answer: w * d * p * 12
+"""
+
+answer_annotated = """
+{occupation} töötab igal nädalal {d} päeva ja igal kuul {w} nädalat, seega töötab ta {d} päeva/nädal * {w} nädalat/kuu = <<{d}*{w}={d*w}>>{d*w} päeva kuus
+Kui talle makstakse {p} {cur} iga päeva eest, siis teenib ta {p} {cur}/päev * {d*w} päeva kuus = <<{p}*{d*w}={p*d*w}>>{p*d*w} {cur}/kuu
+Aasta on võrdne 12 kuuga, seega teenib ta aastas {p*d*w} {cur}/kuu * 12 kuud/aasta = <<{p*d*w}*12={p*d*w*12}>>{p*d*w*12} {cur}
+#### {p*d*w*12}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

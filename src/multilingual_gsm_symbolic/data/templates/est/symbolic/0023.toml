@@ -1,0 +1,34 @@
+question = "Tiina koob talveriideid oma 3 lapselapsele. Nad on kolmikud, nii et nad on kõik ühesuurused. Ta tahab teha neile igaühele mütsi, salli, kampsuni, kindad ja sokid. Mütsi valmistamiseks kulub 2 lõngakera, 4 salli jaoks, 12 kampsuni jaoks, 1 kinnaste jaoks ja 2 sokkide jaoks. Kui mitu lõngakera peab ta ostma?"
+
+answer = """
+Ühe lapse täielik komplekt vajab 2 tokki mütsi + 4 tokki salli + 12 tokki kampsuni + 1 tokki kinnaste paari + 2 tokki sokkide paari = <<2+4+12+1+2=21>>21 tokki villa.
+Et kududa komplektid kõigile oma lapselastele, peab ta vajama 3*21 = <<3*21=63>>63 tokki villa.
+#### 63
+"""
+
+id_orig = 520
+
+id_shuffled = 23
+
+question_annotated = """
+{name,Tiina} koob talveriideid oma {count,3} lapselapsele. Nad on {children,kolmikud}, nii et nad on kõik ühesuurused. Ta tahab teha neile igaühele {c1_par_sg,mütsi}, {c2_par_sg,salli}, {c3_par_sg,kampsuni}, {c4_nom_pl,kindad} ja {c5_nom_pl,sokid}. {c1_gen_sg,mütsi} valmistamiseks kulub {n1,2} lõngakera, {n2,4} {c2_gen_sg,salli} jaoks, {n3,12} {c3_gen_sg,kampsuni} jaoks, {n4,1} {c4_gen_pl,kinnaste} jaoks ja {n5,2} {c5_gen_pl,sokkide} jaoks. Kui mitu lõngakera peab ta ostma?
+
+#init:
+- name, _ = sample(names_female_cases)
+- (c1_par_sg, c1_gen_sg), (c2_par_sg, c2_gen_sg), (c3_par_sg, c3_gen_sg) = sample([("mütsi", "mütsi"), ("salli", "salli"), ("kampsuni", "kampsuni"), ("kardigani", "kardigani"), ("pontšot", "pontšo"), ("vesti", "vesti")], 3)
+- (c4_nom_pl, c4_gen_pl), (c5_nom_pl, c5_gen_pl) = sample([("kindad", "kinnaste"), ("sokid", "sokkide"), ("põlvikud", "põlvikute"), ("käpikud", "käpikute"), ("säärised", "sääriste")], 2)
+- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)
+- children, count = sample([("kaksikud", 2), ("kolmikud", 3), ("nelikud", 4), ("viisikud", 5)])
+
+#answer: count*(n1+n2+n3+n4+n5)
+"""
+
+answer_annotated = """
+Ühe lapse täielik komplekt vajab {n1} tokki {c1_par_sg} + {n2} tokki {c2_par_sg} + {n3} tokki {c3_par_sg} + {n4} tokki {c4_gen_pl} paari + {n5} tokki {c5_gen_pl} paari = <<{n1}+{n2}+{n3}+{n4}+{n5}={n1+n2+n3+n4+n5}>>{n1+n2+n3+n4+n5} tokki villa.
+Et kududa komplektid kõigile oma lapselastele, peab ta vajama {count}*{n1+n2+n3+n4+n5} = <<{count}*{n1+n2+n3+n4+n5}={count*(n1+n2+n3+n4+n5)}>>{count*(n1+n2+n3+n4+n5)} tokki villa.
+#### {count*(n1+n2+n3+n4+n5)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

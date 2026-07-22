@@ -1,0 +1,45 @@
+question = "Martini majas on kaks korda rohkem maisi kui cannoli’t. Tal on kokku 40 cannoli’t. Martin ostis poest 60 cannoli’t juurde ja tal on cannoli’de arvust 40 võrra vähem maisi. Leia, kui palju maisi ja cannoli’t Martinil majas kokku on."
+
+answer = """
+Enne, kui Martin ostis ühtegi maisi ja cannoli’t, oli tal kaks korda rohkem maisi kui cannoli’t, mis on 40 cannoli’t*2 = <<40*2=80>>80 maisi
+Enne oste oli Martinil kokku 80 maisi + 40 cannoli’t = <<80+40=120>>120 eset
+Kui ta ostis cannoli’de arvust 40 võrra vähem maisi, siis ta ostis 60 maisi - 40 maisi = <<60-40=20>>20 maisi
+Kokku ostis ta 20 maisi + 60 cannoli’t = <<20+60=80>>80 eset
+Pärast oste on Martinil 120 eset + 80 eset = <<120+80=200>>200 maisi ja cannoli’t kokku.
+#### 200
+"""
+
+id_orig = 406
+
+id_shuffled = 91
+
+question_annotated = """
+{name_gen,Martini} majas on {mult_txt,kaks korda} rohkem {food1_num,maisi} kui {food2_num,cannoli’t}. Tal on kokku {n,40} {food2_num,cannoli’t}. {name,Martin} ostis poest {m,60} {food2_num,cannoli’t} juurde ja tal on {food2_gen_pl,cannoli’de} arvust {k,40} võrra vähem {food1_num,maisi}. Leia, kui palju {food1_num,maisi} ja {food2_num,cannoli’t} {name_gen,Martini}l majas kokku on.
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- food1_num, food1_gen_pl = sample([("maisi", "maiside"), ("õunu", "õunte"), ("pirne", "pirnide"), ("banaane", "banaanide")])
+- food2_num, food2_gen_pl = sample([("cannoli’t", "cannoli’de"), ("küpsist", "küpsiste"), ("muffinit", "muffinite"), ("sarvesaia", "sarvesaiade")])
+- mult_txt, mult_val = sample([("kaks korda", 2), ("kolm korda", 3), ("neli korda", 4), ("viis korda", 5)])
+- $n = range(20, 100)
+- $m = range(30, 100)
+- $k = range(10, 50)
+
+#conditions:
+- m > k
+
+#answer: mult_val*n + n + m + (m-k)
+"""
+
+answer_annotated = """
+Enne, kui {name} ostis ühtegi {food1_num} ja {food2_num}, oli tal {mult_txt} rohkem {food1_num} kui {food2_num}, mis on {n} {food2_num}*{mult_val} = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} {food1_num}
+Enne oste oli {name_gen}l kokku {n*mult_val} {food1_num} + {n} {food2_num} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} eset
+Kui ta ostis {food2_gen_pl} arvust {k} võrra vähem {food1_num}, siis ta ostis {m} {food1_num} - {k} {food1_num} = <<{m}-{k}={m-k}>>{m-k} {food1_num}
+Kokku ostis ta {m-k} {food1_num} + {m} {food2_num} = <<{m-k}+{m}={2*m-k}>>{2*m-k} eset
+Pärast oste on {name_gen}l {n*mult_val+n} eset + {2*m-k} eset = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} {food1_num} ja {food2_num} kokku.
+#### {n*mult_val+n+2*m-k}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

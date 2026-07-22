@@ -1,0 +1,38 @@
+question = "Maria töötab kassaregistriga täpselt kaks korda kiiremini kui tema vähem kogenud kolleeg Anu. Iga päev Anu teenindab 50 klienti. Mis on nende kahe kogutoodang nädalas, kui nad töötavad kõik nädalapäevad?"
+
+answer = """
+Kui Anu töötleb ühel päeval 50 klienti, siis Maria töötleb 50 klienti/päevas*2=<<50*2=100>>100 klienti/päevas.
+Ühel päeval töötlevad nad kokku 100 klienti/päevas + 50 klienti/päevas = <<100+50=150>>150 klienti koos.
+Kahe peale kokku töötlevad nad nädalas 150 klienti/päevas * 7 päeva/nädal = <<150*7=1050>>1050 klienti
+#### 1050
+"""
+
+id_orig = 636
+
+id_shuffled = 97
+
+question_annotated = """
+{name1,Maria} töötab kassaregistriga täpselt {mult_txt,kaks korda} kiiremini kui tema vähem kogenud kolleeg {name2,Anu}. Iga päev {name2,Anu} teenindab {n,50} klienti. Mis on nende kahe kogutoodang nädalas, kui nad töötavad kõik nädalapäevad?
+
+#init:
+- (name1, _), (name2, _) = sample(names_female_cases, 2)
+- mult_txt, mult_var = sample(multi_times)
+- $n = range(30, 100)
+
+#conditions:
+- is_int(n * mult_var)
+- is_int((n + n * mult_var) * 7)
+
+#answer: (n + n * mult_var) * 7
+"""
+
+answer_annotated = """
+Kui {name2} töötleb ühel päeval {n} klienti, siis {name1} töötleb {n} klienti/päevas*{mult_var}=<<{n}*{mult_var}={n*mult_var}>>{n*mult_var} klienti/päevas.
+Ühel päeval töötlevad nad kokku {n*mult_var} klienti/päevas + {n} klienti/päevas = <<{n*mult_var}+{n}={n+n*mult_var}>>{n+n*mult_var} klienti koos.
+Kahe peale kokku töötlevad nad nädalas {n+n*mult_var} klienti/päevas * 7 päeva/nädal = <<{n+n*mult_var}*7={(n+n*mult_var)*7}>>{(n+n*mult_var)*7} klienti
+#### {(n+n*mult_var)*7}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

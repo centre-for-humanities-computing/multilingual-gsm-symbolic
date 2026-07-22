@@ -1,0 +1,48 @@
+question = "Sirje otsib maja, mis ei ületaks tema 400,000 EUR suurust eelarvet. Ta nägi kinnisvara, mille müügihind on 350,000 EUR. Lisaks peab ostja maksma maakleritasu, mis on 5% müügihinnast, ning ka ülekandetasu, mis on 12% müügihinnast. Kui palju on selle kinnisvara koguhind suurem kui Sirje eelarve?"
+
+answer = """
+Maakleritasu on 350,000 EUR*5/100 = <<350000*5/100=17500>>17,500 EUR.
+Ülekandetasu on 350,000 EUR*12/100 = <<350000*12/100=42000>>42,000 EUR.
+Kinnisvara koguhind on 350,000 EUR + 17,500 EUR + 42,000 EUR = 409,500 EUR.
+Seega on see 409,500 EUR - 400,000 EUR = <<409500-400000=9500>>9500 EUR rohkem kui Sirje eelarve.
+#### 9500
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name1_nom, Sirje} otsib {property_type, maja}, mis ei ületaks tema {budget, 400000} {cur,EUR} suurust eelarvet. Ta nägi kinnisvara, mille müügihind on {price, 350000} {cur,EUR}. Lisaks peab ostja maksma maakleritasu, mis on {brokerage_fee,5}% müügihinnast, ning ka ülekandetasu, mis on {transfer_fee,12}% müügihinnast. Kui palju on selle kinnisvara koguhind suurem kui {name1_gen,Sirje} eelarve?
+
+#init:
+- name1_nom, name1_gen = sample(names_cases)
+- property_type = sample(['maja', 'korter', 'korterelamu', 'ridaelamu'])
+- cur = sample(currencies_sym)
+- $budget = range(300000, 500000, 10000)
+- $price = range(250000, 450000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)
+"""
+
+answer_annotated = """
+Maakleritasu on {price} {cur}*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} {cur}.
+Ülekandetasu on {price} {cur}*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} {cur}.
+Kinnisvara koguhind on {price} {cur} + {int(price*brokerage_fee/100)} {cur} + {int(price*transfer_fee/100)} {cur} = {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} {cur}.
+Seega on see {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} {cur} - {budget} {cur} = <<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} {cur} rohkem kui {name1_gen} eelarve.
+#### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

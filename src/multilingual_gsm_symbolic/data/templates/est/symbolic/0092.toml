@@ -1,0 +1,47 @@
+question = "Prints Martin tappis oma vägeva mõõgaga 100 draakonit, samal ajal kui prints Andres, kasutades oda, tappis prints Martini tapetud draakonite arvust pool veel. Roostes rauakirvega tappis prints Toomas kaks korda rohkem draakoneid kui prints Andres. Aga prints Margus, olles unustanud oma mõõga koju, tappis küüneviiliga pool nii palju draakoneid kui prints Toomas. Kui palju draakoneid on prints Margus tapnud?"
+
+answer = """
+Prints Andres tappis pool nii palju draakoneid kui prints Martin, ehk 100*1/2=<<100*1/2=50>>50 draakoneid.
+Prints Toomas tappis kaks korda rohkem draakoneid kui prints Andres, ehk 2*50=<<2*50=100>>100 draakoneid.
+Prints Margus tappis pool nii palju draakoneid kui prints Toomas, ehk 100*1/2=<<100*1/2=50>>50 draakoneid.
+#### 50
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+Prints {name1,Martin} tappis oma vägeva {weapon1,mõõgaga} {n1,100} {creature_par_sg,draakonit}, samal ajal kui prints {name2,Andres}, kasutades {weapon2,oda}, tappis prints {name1_gen,Martini} tapetud {creature_gen_pl,draakonite} arvust {frac1_txt,pool} veel. Roostes {weapon3,rauakirvega} tappis prints {name3,Toomas} {mult1_txt,kaks korda} rohkem {creature_par_pl,draakoneid} kui prints {name2,Andres}. Aga prints {name4,Margus}, olles unustanud oma {weapon4,mõõga} koju, tappis {weapon5,küüneviiliga} {frac2_txt,pool} nii palju {creature_par_pl,draakoneid} kui prints {name3,Toomas}. Kui palju {creature_par_pl,draakoneid} on prints {name4,Margus} tapnud?
+
+#init:
+- (name1, name1_gen), (name2, _), (name3, _), (name4, _) = sample(names_male_cases, 4)
+- creature_par_sg, creature_par_pl, creature_gen_pl = sample([("draakonit", "draakoneid", "draakonite"), ("trolli", "trolle", "trollide"), ("goblinit", "goblineid", "goblinite"), ("orki", "orke", "orkide"), ("hiiglast", "hiiglasi", "hiiglaste")])
+- weapon1 = sample(["mõõgaga", "nuiaga", "sõjakirvega", "sõjahaamriga"])
+- weapon2 = sample(["oda", "piiki", "viskeoda", "hellebardi"])
+- weapon3 = sample(["rauakirvega", "puunuiaga", "kivihaamriga", "luupistodaga"])
+- weapon4 = sample(["mõõga", "kirve", "nuia", "haamri"])
+- weapon5 = sample(["küüneviiliga", "võinoaga", "puulusikaga", "sulega"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+Prints {name2} tappis {frac1_txt} nii palju {creature_par_pl} kui prints {name1}, ehk {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature_par_pl}.
+Prints {name3} tappis {mult1_txt} rohkem {creature_par_pl} kui prints {name2}, ehk {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature_par_pl}.
+Prints {name4} tappis {frac2_txt} nii palju {creature_par_pl} kui prints {name3}, ehk {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature_par_pl}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

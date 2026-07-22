@@ -1,0 +1,45 @@
+question = "Härra Tamme klassis on 30 õpilast, kellest 20% on jalgpallurid. Ülejäänud klassist on 25% õpilastest tantsijad või bändiliikmed. Need 3 rühma õpilasi peavad täna varem lahkuma, et sõita võistlusele. Mitu õpilast lahkub täna varem?"
+
+answer = """
+20% 30 õpilase klassist on jalgpallurid, st 0.2*30 = <<0.2*30=6>>6 õpilast.
+Kokku on 30 õpilast ja neist 6 on jalgpallurid, seega jääb 30-6 = <<30-6=24>>24 õpilast.
+25% ülejäänud 24 õpilasest on bändiliikmed või tantsijad, seega on 0.25*24 = <<0.25*24=6>>6 õpilast.
+6 õpilast on jalgpallurid ja 6 on bändiliikmed või tantsijad, seega lahkub varem 6+6 = <<6+6=12>>12 õpilast.
+#### 12
+"""
+
+id_orig = 982
+
+id_shuffled = 25
+
+question_annotated = """
+{teacher_gen,Härra Tamme} klassis on {total,30} õpilast, kellest {p1,20}% on {group1,jalgpallurid}. Ülejäänud klassist on {p2,25}% õpilastest {group2,tantsijad} või {group3,bändiliikmed}. Need 3 rühma õpilasi peavad täna varem lahkuma, et sõita võistlusele. Mitu õpilast lahkub täna varem?
+
+#init:
+- teacher_gen = sample(['Härra Tamme', 'Proua Kase', 'Professor Pajusalu', 'Preili Mere'])
+- group1 = sample(['jalgpallurid', 'korvpallurid', 'võrkpallurid', 'ujujad', 'tennisistid'])
+- group2, group3 = sample(['tantsijad', 'koorilauljad', 'debatimeeskonna liikmed', 'robotite klubi liikmed', 'bändiliikmed'],  2)
+- $total = range(20, 150)
+- $p1 = range(10, 50)
+- $p2 = range(15, 45)
+
+#conditions:
+- p1 < 100
+- p2 < 100
+- is_int(total * p1 / 100)
+- is_int((total - total * p1 / 100) * p2 / 100)
+
+#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)
+"""
+
+answer_annotated = """
+{p1}% {total} õpilase klassist on {group1}, st {p1/100}*{total} = <<{p1/100}*{total}={int(total*p1/100)}>>{int(total*p1/100)} õpilast.
+Kokku on {total} õpilast ja neist {int(total*p1/100)} on {group1}, seega jääb {total}-{int(total*p1/100)} = <<{total}-{int(total*p1/100)}={total-int(total*p1/100)}>>{total-int(total*p1/100)} õpilast.
+{p2}% ülejäänud {total-int(total*p1/100)} õpilasest on {group3} või {group2}, seega on {p2/100}*{total-int(total*p1/100)} = <<{p2/100}*{total-int(total*p1/100)}={int((total-int(total*p1/100))*p2/100)}>>{int((total-int(total*p1/100))*p2/100)} õpilast.
+{int(total*p1/100)} õpilast on {group1} ja {int((total-int(total*p1/100))*p2/100)} on {group3} või {group2}, seega lahkub varem {int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)} = <<{int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)}={int(total*p1/100 + (total-int(total*p1/100))*p2/100)}>>{int(total*p1/100 + (total-int(total*p1/100))*p2/100)} õpilast.
+#### {int(total*p1/100 + (total-int(total*p1/100))*p2/100)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

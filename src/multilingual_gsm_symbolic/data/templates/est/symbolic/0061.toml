@@ -1,0 +1,45 @@
+question = "Reinul on kotis 10 pallikest. Ta komistas kivi otsa, kui kandis kotti, ja pool pallikestest kukkus välja. Ta hakkas neid otsima, kuid leidis ainult 3. Kui ta läks tagasi koju, vaatas ta pallikesi veelgi lähemalt. Kaks neist, mille ta üles korjas, ei olnudki pallikesed, vaid tegelikult helmed. Mitu pallikest jäi Reinul lõpuks alles?"
+
+answer = """
+Rein kaotas oma pallikesed ja tal jäi alles 10*1/2=<<10*1/2=5>>5 pallikest.
+Ta otsis ja sai tagasi juurde 5+3=<<5+3=8>>8 pallikest.
+Ta läks koju ja eemaldas kaks helmest, nii jäi talle 8-2=<<8-2=6>>6 pallikest.
+#### 6
+"""
+
+id_orig = 1247
+
+id_shuffled = 61
+
+question_annotated = """
+{name_gen,Reinu}l on kotis {n,10} {objects_count_sg,pallikest}. Ta komistas {obstacle_gen,kivi} otsa, kui kandis kotti, ja {frac_txt,pool} {objects_el_pl,pallikestest} kukkus välja. Ta hakkas neid otsima, kuid leidis ainult {k,3}. Kui ta läks tagasi koju, vaatas ta {objects_par_pl,pallikesi} veelgi lähemalt. {fake_num_txt,kaks} neist, mille ta üles korjas, ei olnudki {objects_nom_pl,pallikesed}, vaid tegelikult {fake_object_nom_pl,helmed}. Mitu {objects_count_sg,pallikest} jäi {name_gen,Reinu}l lõpuks alles?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- objects_count_sg, objects_el_pl, objects_par_pl, objects_nom_pl = sample([('pallikest', 'pallikestest', 'pallikesi', 'pallikesed'), ('münti', 'müntidest', 'münte', 'mündid'), ('nööpi', 'nööpidest', 'nööpe', 'nööbid'), ('helmest', 'helmestest', 'helmeid', 'helmed'), ('kivikest', 'kivikestest', 'kivikesi', 'kivikesed')])
+- obstacle_gen = sample(['kivi', 'kepi', 'mänguasja', 'puujuure'])
+- fake_object_count_sg, fake_object_nom_pl = sample([('nööpi', 'nööbid'), ('münti', 'mündid'), ('kivikest', 'kivikesed'), ('helmest', 'helmed')])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+- fake_object_nom_pl != objects_nom_pl
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+
+answer_annotated = """
+{name} kaotas oma {objects_nom_pl} ja tal jäi alles {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects_count_sg}.
+Ta otsis ja sai tagasi juurde {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects_count_sg}.
+Ta läks koju ja eemaldas {fake_num_txt} {fake_object_count_sg}, nii jäi talle {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects_count_sg}.
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

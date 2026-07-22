@@ -1,0 +1,502 @@
+[
+  {
+    "id": 0,
+    "question_annotated": "{n, Jaan} nägi {x,3}-meetrist {big_fish_part,haid}, mille küljes oli {k,2} {y,15}-sentimeetrist remorat. Mitu protsenti on remorade kombineeritud pikkus {big_fish_gen,hai} kehapikkusest?\n\n#init:\n- n, _ = sample(names_cases)\n- big_fish_nom, big_fish_part, big_fish_gen = sample([(\"delfiin\", \"delfiini\", \"delfiini\"), (\"vaal\", \"vaala\", \"vaala\"), (\"hai\", \"haid\", \"hai\")])\n- $x = range(2, 21, 1)\n- $k = range(2, 21)\n- $y = range(2, 100)\n\n#conditions:\n- k * y < x * 100\n- divides(100 * x, k*y)\n- divides(100, x * 100 / (k*y))\n\n#answer: int((k * y)/ (x * 100) * 100)",
+    "count": 100
+  },
+  {
+    "id": 1,
+    "question_annotated": "Udupilv liigub ookeani kohalt linna kohale. Selleks, et katta {d,3} kilomeetrit linnast, kulub {t,10} minutit. Kui linn on {y,42} kilomeetrit lai ookeaniäärsest rannikust kuni vastaspoole sisemaa servani, siis mitu minutit kulub udupilvel, et katta kogu linn?\n\n#init:\n- $t = range(2, 500)\n- $d = range(2, 100)\n- $y=range(2, 100)\n\n#conditions:\n- is_int(y/d)\n\n#answer: y//d*t",
+    "count": 100
+  },
+  {
+    "id": 2,
+    "question_annotated": "{name,Andres} veeretab {sides_txt,6-tahulist} täringut. Kui palju tõenäolisem on (protsendipunktides), et ta veeretab arvu, mis on suurem kui {target,3}, võrreldes sellega, et ta veeretab kaks {z_plural,paarisarvu} järjest?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- sides_val = sample([4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100])\n- sides_txt = str(sides_val) + \"-tahulist\"\n- $target = range(1, 100)\n- z_singular, z_plural = sample([(\"paarisarv\", \"paarisarvu\"), (\"paaritu arv\", \"paaritut arvu\")])\n\n#conditions:\n- target < sides_val\n- divides(sides_val-target, target)\n- is_int((sides_val-target)/sides_val * 100)\n- int((sides_val-target)/sides_val * 100) > 25\n\n#answer: int((sides_val-target)/sides_val * 100) - 25",
+    "count": 100
+  },
+  {
+    "id": 3,
+    "question_annotated": "{n,50} õpilasest koosneval {g_ade,klassil} on mitmesugused hobid. {n_1,10}-le meeldib {h_1,küpsetada}, {n_2,5}-le meeldib {h_2,korvpalli mängida} ja ülejäänutele meeldib kas {h_3,videomänge mängida} või {h_4,muusikat mängida}. Mitmele õpilasele meeldib {h_3,videomänge mängida}, kui {h_4,muusikat mängida} meeldivate õpilaste arv on kaks korda suurem kui {h_2,korvpalli mängida} eelistavate õpilaste arv?\n\n#init:\n- g_nom, g_ade = sample([(\"grupp\", \"grupil\"), (\"klass\", \"klassil\")])\n- h_2 = sample([\"jalgpalli mängida\", \"käsipalli mängida\", \"korvpalli mängida\", \"tennist mängida\", \"sulgpalli mängida\", \"ujuda\", \"uisutada\", \"jalgrattaga sõita\", \"joosta\", \"golfi mängida\"])\n- h_1, h_3, h_4 = sample([\"lugeda\", \"maalida\", \"matkata\", \"tantsida\", \"küpsetada\", \"videomänge mängida\", \"muusikat mängida\"], 3)\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
+    "count": 100
+  },
+  {
+    "id": 4,
+    "question_annotated": "{name,Maria} teeb suupisteks popkorni. Kui {p_gen,panni} maisiterad kuumenevad, hakkavad terad kiiremini plaksuma. Esimese {s,30} küpsetussekundi jooksul plaksub {n,20} tuuma, seejärel järgmise {s,30} sekundi jooksul {k_2_txt,kolm} korda rohkem. Järgmise {s,30} sekundi jooksul suureneb plaksumise kiirus algse kiirusega võrreldes {k_3_txt,neli} korda, kuid viimase {s,30} sekundi jooksul aeglustub plaksumine eelmise {s,30} sekundi kiirusest poole aeglasemaks. Pärast seda, kui {name,Maria} võtab {p_gen,panni} tulelt, plaksub jääksoojuse tõttu veel veerand viimase {s,30} sekundi jooksul plaksunud terade arvust. Mitu popkorni tükki saab {name,Maria} ära süüa?\n\n#init:\n- name, name_gen = sample(names_cases)\n- p_nom, p_gen = sample([(\"pann\", \"panni\"), (\"pott\", \"poti\"), (\"praepann\", \"praepanni\")])\n- $n = range(10, 101, 10)\n- $s = range(10, 31, 2)\n- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)\n- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)\n\n#conditions:\n- k_3_val > k_2_val\n- divides(k_3_val * n, 8)\n\n#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)",
+    "count": 100
+  },
+  {
+    "id": 5,
+    "question_annotated": "{name,Katy} kasutab {drink,kohvi} valmistades teelusikatäisi suhkrut ja tasse vett vahekorras {m,7}:{n,13}. Kui ta kasutas kokku {x,120} teelusikatäit suhkrut ja tasse vett, arvuta, mitu teelusikatäit suhkrut ta kasutas.\n\n#init:\n- name, _ = sample(names_female_cases)\n- drink = sample([\"kohvi\", \"teed\"])\n- $m = range(7, 101, 3)\n- $n = range(4, 61, 3)\n- $x = range(5, 500, 5)\n\n#conditions:\n- divides(x, m+n)\n\n#answer: ((m*x)//(m+n))",
+    "count": 100
+  },
+  {
+    "id": 6,
+    "question_annotated": "{name_gen,Jaani}l on {x,10} {area,hektar}it ananassivälja. Ühel {area,hektar}il kasvab {k,100} {fruit_par_sg,ananassi}. {name,Jaan} saab {fruit_pl,ananasse} koristada iga {n,3} kuu tagant. Mitu {fruit_par_sg,ananassi} saab {name,Jaan} ühe aasta jooksul koristada?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- fruit_nom_sg, fruit_nom_pl, fruit_gen_sg, fruit_par_sg, fruit_par_pl, fruit_gen_pl = sample(fruits_cases)\n- area = sample(['hektar', 'ruutmeetr'])\n- $x = range(5, 100, 5)\n- $k = range(2, 101)\n- $n = sample([1, 2, 3, 4, 6, 12])\n\n#answer: x * k * (12//n)",
+    "count": 100
+  },
+  {
+    "id": 7,
+    "question_annotated": "Talunik ostab sööta oma {animals_dat,hobustele}. Ta ostab {o1_part,heina}, {o2_part,kaera}, {o3_part,porgandeid} ja {o4_part,suhkrukuubikuid}. Kuna {o4_nom,suhkrukuubikud} on haruldane maiuspala, ostab ta kogu talli jaoks ainult {n4_txt,kaks} {w4,1}-kilogrammist kasti. Ta tahab osta {o3_part,porgandeid} ainult niipalju, et {animals_nom,hobused} saaksid neid süüa, kuni köögiviljad on värsked, seega ostab ta {n3_txt,neli} {w3,12}-kilogrammist kotti. {o1_nom,hein} on {animals_gen_pl,hobuste} põhisööt, nii et ta ostab {n1_txt,nelikümmend kaks} {w1,75}-kilogrammist pakki. {o2_nom_cap,Kaer} on põhitoit, millega {o1_part,heina} täiendada, nii et ta ostab {n2_txt,kakskümmend} {w2,65}-kilogrammist kotti. Kui tema farmiveoauto suudab korraga kanda {total,2250} kilogrammi, siis mitu reisi peab talunik tegema, et transportida kogu sööta?\n\n#init:\n- animals_nom, animals_dat, animals_gen_pl = sample([(\"hobused\", \"hobustele\", \"hobuste\"), (\"lehmad\", \"lehmadele\", \"lehmade\"), (\"lambad\", \"lammastele\", \"lammaste\"), (\"sead\", \"sigadele\", \"sigade\"), (\"alpakad\", \"alpakadele\", \"alpakade\")])\n- (o1_part, o1_nom), (o2_part, o2_nom) = sample([(\"heina\", \"hein\"), (\"kaera\", \"kaer\"), (\"maisi\", \"mais\"), (\"nisu\", \"nisu\")], 2)\n- o3_part, o3_nom = sample([(\"porgandeid\", \"porgandid\"), (\"peete\", \"peedid\"), (\"kurke\", \"kurgid\")])\n- o4_part, o4_nom = sample([(\"suhkrukuubikuid\", \"suhkrukuubikud\"), (\"õunu\", \"õunad\"), (\"maiusegraanuleid\", \"maiusegraanulid\")])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
+    "count": 100
+  },
+  {
+    "id": 8,
+    "question_annotated": "Žonglöör suudab visata {n, 16} palli. {frac_1_txt, pooled} pallidest on {ball_type_nom_pl, golfipallid} ja {frac_2_txt, pooled} {ball_type_el_pl,golfipallidest} on {color_pl, sinised}. Mitu {color, sinist} {ball_type,golfipalli} on?\n\n#init:\n- ball_type_nom_pl, ball_type_el_pl, ball_type = sample([(\"golfipallid\", \"golfipallidest\", \"golfipalli\"), (\"tennisepallid\", \"tennisepallidest\", \"tennisepalli\")])\n- color_pl, color = sample([(\"sinised\", \"sinist\"), (\"rohelised\", \"rohelist\"), (\"kollased\", \"kollast\"), (\"mustad\", \"musta\"), (\"valged\", \"valget\")])\n- frac_1_txt, frac_1_disp, frac_1_val = sample([(\"pooled\", \"1/2\", 1/2), (\"kolmandik\", \"1/3\", 1/3), (\"veerand\", \"1/4\", 1/4)]) #pooled\n- frac_2_txt, frac_2_disp, frac_2_val = sample([(\"pooled\", \"1/2\", 1/2), (\"kolmandik\", \"1/3\", 1/3), (\"veerand\", \"1/4\", 1/4)])\n- $n = range(16, 120, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer:  int(n * frac_1_val * frac_2_val)",
+    "count": 100
+  },
+  {
+    "id": 9,
+    "question_annotated": "Kui {name, Sofia} hoiab oma {family_part,vennapoega}, otsib ta välja mitmesuguseid mänguasju. Ehitusklotside kotis on {x,31} klotsi. Kaisukarude karbis on {y,8} kaisulooma. Virnastatavate rõngaste tornil on {z,9} mitmevärvilist rõngast. {name, Sofia} ostis hiljuti põrkepallide toru, nii et kokkuvõttes on {family_gen,vennapoja} jaoks mõeldud mänguasju {total,62}. Mitu põrkepalli oli torus?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- family_part, family_gen = sample([(\"vennapoega\", \"vennapoja\"), (\"õepoega\", \"õepoja\"), (\"õetütart\", \"õetütre\"), (\"vennatütart\", \"vennatütre\"), (\"venda\", \"venna\"), (\"õde\", \"õe\")])\n- $x = range(31, 75)\n- $y = range(8, 50)\n- $z = range(9, 35)\n- $total = range(60, 250)\n\n#conditions:\n- total - (x + y + z) >= 20\n- total - (x + y + z) < 100\n\n#answer: total - (x + y + z)",
+    "count": 100
+  },
+  {
+    "id": 10,
+    "question_annotated": "Selleks, et helistada {dev,telefoniautomaadist}, tuleb maksta {frac1,0.25} {currency,EUR} iga kõneminuti eest. Pärast {t,16} minutit langeb hind {frac2,0.2} {currency,EUR} minutis. Kui palju maksaks {total,36}-minutiline kõne?\n\n#init:\n- dev = sample(['telefoniautomaadist', 'hotelli telefonist'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "count": 100
+  },
+  {
+    "id": 11,
+    "question_annotated": "{name,Peeter} tahab teha erineva suurusega jääkuubikuid {n,32} {unit,grammi} veega. Ta saab teha hiigelkuubikuid, mis kasutavad {w1,4} {unit,grammi} kuubiku kohta, keskmisi kuubikuid, mis kasutavad {w2,2} {unit,grammi}, ja väikseid kuubikuid, mis kasutavad {w3,1/2} {unit,grammi}. Kui ta teeb {n1,3} hiigelkuubikut, {n2,7} keskmist kuubikut ja {n3,8} väikest kuubikut, siis kui palju {unit,grammi} vett tal jääb üle?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- unit = sample([\"gramm\", \"g\"])\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
+    "count": 100
+  },
+  {
+    "id": 12,
+    "question_annotated": "{name, Jaime} paneb mune {container_into,munarestidele}. Iga {container_nom,munarest} mahutab {x,24} muna. Kui tal on {n,64} muna ja {k,2} {container_par_sg,munaresti}, siis mitu muna ta ei saa {container_into,munarestidele} panna?\n\n#init:\n- name, _ = sample(names_male_cases)\n- container_nom, container_into, container_par_sg = sample([('munarest', 'munarestidele', 'munaresti'), ('munakarp', 'munakarpidesse', 'munakarpi'), ('korv', 'korvidesse', 'korvi'), ('kauss', 'kaussidesse', 'kaussi'), ('taldrik', 'taldrikutele', 'taldrikut')])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x",
+    "count": 100
+  },
+  {
+    "id": 13,
+    "question_annotated": "{name,Maria} on innukas aednik. {time,eile} sai ta oma lemmik aiataimede kasvandusest {x,18} uut potti potitaimi. Tal on juba {r,2} potti potitaimi igal {w,40} aknalaual oma suure maakodu akendel. Tundes end heldena, on ta otsustanud, et annab homme igalt aknalaualt {n,1} potti potitaimi sõpradele ja perele. Mitu potti potitaimi jääb {name_gen,Maria}l alles?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- time = sample([\"Eelmisel nädalal\", \"Kahe päeva eest\", \"Eelmisel ööl\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
+    "count": 100
+  },
+  {
+    "id": 14,
+    "question_annotated": "{n1,John} ja {n2,Jack} peavad koos {loc1_to,kooli} kõndima. Neil on selleks {t,30} minutit aega. Nurgani, kus asub {loc2_base,raamatukogu}, kulub neil {t1,6} minutit. Sealt jõuavad nad {loc3_to,tuletõrjejaama} veel {t2,13} minutiga. Kui palju aega jääb neil üle, et õigeks ajaks {loc1_to,kooli} jõuda?\n\n#init:\n- (n1, _), (n2, _) = sample(names_male_cases, 2)\n- (loc1_to, _, _), (loc2_to, loc2_base, loc2_until), (loc3_to, _, _) = sample([(\"kooli\", \"kool\", \"koolini\"), (\"kinno\", \"kino\", \"kinoni\"), (\"kaubanduskeskusesse\", \"kaubanduskeskus\", \"kaubanduskeskuseni\"), (\"raamatukokku\", \"raamatukogu\", \"raamatukoguni\"), (\"parki\", \"park\", \"pargini\"), (\"jõusaali\", \"jõusaal\", \"jõusaalini\"), (\"panka\", \"pank\", \"pangani\")], 3)\n- $t1 = range(6, 30)\n- $t2 = range(10, 70)\n- $t = range(30, 140)\n\n#conditions:\n- not divides(t1, 5)\n- not divides(t2, 5)\n- not divides(t, 5)\n- t > t1 + t2\n\n#answer: t - t1 - t2",
+    "count": 100
+  },
+  {
+    "id": 15,
+    "question_annotated": "{name1_gen,Maria} koeral on {n1, 8} kutsikat, kellest {k1,3} on täpilised. {name2_gen,Martini} koeral on {n2,12} kutsikat, kellest {k2,4} on täpilised. Mitu protsenti kõigist kutsikatest on täpilised?\n\n#init:\n- name1, name1_gen = sample(names_female_cases)\n- name2, name2_gen = sample(names_male_cases)\n- $n1 = range(4, 16)\n- $n2 = range(4, 20)\n- $k1 = range(2, 12)\n- $k2 = range(2, 12)\n\n#conditions:\n- k1 < n1\n- k2 < n2\n- divides(n1 + n2, k1 + k2)\n- is_int(100 * (k1+k2) / (n1+n2))\n\n#answer: int(100 * (k1+k2) / (n1+n2))",
+    "count": 100
+  },
+  {
+    "id": 16,
+    "question_annotated": "{name, Kristjan} müüb heategevusürituse jaoks {food_par_pl,piparkooke} ja {fruit,õunapirukaid}. {d1_day,laupäeva}l müüs ta {n1,10} kasti {food_par_pl,piparkooke} ja {m1,4} kasti võrra vähem {fruit,õunapirukaid} kui {d2_day,pühapäeva}l. {d2_day,pühapäeva}l müüs ta {n2,5} kasti {food_par_pl,piparkooke} rohkem kui {d1_day,laupäeva}l ja {m2,15} kasti {fruit,õunapirukaid}. Kui {food_nom_sg,piparkook} maksis {cn,6} {cur,EUR} ja {fruit_nom_sg,õunapirukas} maksis {cm,15} {cur,EUR}, siis kui palju teenis {name,Kristjan} kahe päeva jooksul?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- fruit_nom_sg, fruit_nom_pl, fruit_gen_sg, fruit_part_sg, fruit, fruit_gen_pl = sample([(\"õunapirukas\", \"õunapirukad\", \"õunapiruka\", \"õunapirukat\", \"õunapirukaid\", \"õunapirukate\"), (\"banaanipirukas\", \"banaanipirukad\", \"banaanipiruka\", \"banaanipirukat\", \"banaanipirukaid\", \"banaanipirukate\"), (\"apelsinipirukas\", \"apelsinipirukad\", \"apelsinipiruka\", \"apelsinipirukat\", \"apelsinipirukaid\", \"apelsinipirukate\")])\n- cur = sample(currencies_sym)\n- food_nom_sg, food_par_pl = sample([(\"piparkook\", \"piparkooke\"),(\"vahvel\", \"vahvleid\"), (\"rabarberikook\", \"rabarberikooke\"), (\"küpsis\", \"küpsiseid\"), (\"õunapirukas\", \"õunapirukaid\"), (\"muffin\", \"muffineid\"), (\"tassikook\", \"tassikooke\")])\n- (d1, d1_day), (d2, d2_day) = sample_sequential(weekday_cases, 2)\n- $n1 = range(21, 30)\n- $n2 = range(11, 15)\n- $m1 = range(4, 20)\n- $m2 = range(15, 30)\n- $cn = range(7, 13)\n- $cm = range(20, 33)\n\n#conditions:\n- m1 < m2\n\n#answer: (2*n1+n2)*cn + (2*m2-m1)*cm",
+    "count": 100
+  },
+  {
+    "id": 17,
+    "question_annotated": "{name,Merike} käib iga päev {n,4} {unit_length,kilomeetrit} oma lemmikul matkarajal, mis sisaldab {m,2} {unit_length,kilomeetrit} randa kõndimist ja {k,2} {unit_length,kilomeetrit} kõnniteel kõndimist. Kõnniteel kõnnib {name,Merike} {mult_txt,kaks korda} kiiremini, kui ta kõnnib rannas. Kui {t,40} minutit tema jalutuskäigust kulub rannas kõndimisele, siis kui kaua kulub tal kogu {n,4}-{unit_gen,kilomeetri} pikkuse jalutuskäigu läbimiseks minutites?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- unit_nom, unit_length, unit_gen = sample([(\"kilomeeter\", \"kilomeetrit\", \"kilomeetri\"), (\"km\", \"km\", \"km\")])\n- k_unit = plural(k, unit_nom, unit_length)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 40)\n- $m = range(2, 20)\n- $k = range(2, 20)\n- $t = range(40, 70)\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: t+(k/(mult_val*m/t))",
+    "count": 100
+  },
+  {
+    "id": 18,
+    "question_annotated": "{name,Aivar} läks ostma koolitarbeid. Ta ostis {n1,4} {obj1_par,pastakat}, mis maksid {c1,1.5} {cur,EUR} tükk, {n2,2} {obj2_par,vihikut}, mis maksid {c2,4} {cur,EUR} tükk, ja ühe rulli köögipaberit, mis maksis {c3,20} {cur,EUR}. Kui palju {name,Aivar} kulutas kõige peale?\n\n#init:\n- name, name_obj = sample(names_male_cases)\n- (obj1_par, obj1_gen), (obj2_par, obj2_gen) = sample([(\"pastakat\", \"pastakate\"), (\"vihikut\", \"vihikute\"), (\"pliiatsit\", \"pliiatsite\"), (\"kustutuskummi\", \"kustutuskummide\"), (\"kriiti\", \"kriitide\"), (\"markerit\", \"markerite\"), (\"joonlauda\", \"joonlaudade\"), (\"kaustikut\", \"kaustikute\")], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
+    "count": 100
+  },
+  {
+    "id": 19,
+    "question_annotated": "{n,60}-ülesande viktoriinis on {p1,40}% küsimustest lihtsad ja ülejäänud jagunevad võrdselt keskmisteks ja rasketeks küsimusteks. Kui {name,Diana} on kindel, et saab {r1,75}% lihtsatest küsimustest õigesti, ja {frac_txt,pool} keskmistest ning rasketest küsimustest õigesti, siis mitu punkti on tal kindel saada?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)",
+    "count": 100
+  },
+  {
+    "id": 20,
+    "question_annotated": "{name,Jaan} korjab {n1,4} {fruit,banaani} {d1_day,kolmapäeva}l. Seejärel korjab ta {n2,6} {fruit,banaani} {d2_day,neljapäeva}l. {d3_day,reede}l korjab ta {mult_txt,kolm} korda nii palju {fruit_pl,banaane}, kui ta korjas {d1_day,kolmapäeva}l. Mitu {fruit,banaani} {name_gen,Jaani}l on?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- (d1, d1_day), (d2, d2_day), (d3, d3_day) = sample_sequential(weekday_cases, 3)\n- fruit_nom_sg, fruit_nom_pl, fruit_gen_sg, fruit, fruit_pl, fruit_gen_pl = sample(fruits_cases)\n- $n1 = range(30, 400)\n- $n2 = range(50, 400)\n- mult_txt, mult_val = range_str(2,6,1,numbers)\n\n#answer: n1 + n2 + mult_val * n1",
+    "count": 100
+  },
+  {
+    "id": 21,
+    "question_annotated": "{name,Rein} vaatab pärast kodutöö lõpetamist igal õhtul televiisorit. {d1_day,esmaspäeva}l ja {d2_day,teisipäeva}l vaatas ta igal õhtul {h1,1}-tunnise osa oma lemmiksarjast. {d3_day,kolmapäeva}l vaatas ta mõne osa {m1,30}-minutilisest saatest. {d4_day,neljapäeva}l lõpetas ta kodutöö varakult ja vaatas {h2,1}-tunnise osa ning {m2,30}-minutilise saate. {d5_day,reede}l sai ta hiljem üleval olla, nii et ta vaatas {n2_txt,kaks} {h3,1}-tunnist osa. Kui ta vaatas kokku {total,7} tundi televiisorit, siis mitu {m1,30}-minutilist osa ta vaatas {d3_day,kolmapäeva}l?\n\n#init:\n- name, _ = sample(names_male_cases)\n- (d1, d1_day), (d2, d2_day), (d3, d3_day), (d4, d4_day), (d5, d5_day) = sample_sequential(weekday_cases, 5)\n- $total = range(7, 33)\n- $h1 = range(1, 7)\n- $h3 = range(1, 6)\n- $m1 = range(5, 61, 5)\n- $m2 = range(5, 61, 5)\n- $h2 = range(1, 7)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n\n#conditions: \n- divides(m1, 15)\n- divides(m2, 15)\n- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 \n\n#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)",
+    "count": 100
+  },
+  {
+    "id": 22,
+    "question_annotated": "{name,Julia} valmistus {event,õhtusöögipeoks} oma kodus, kus ta kavatses serveerida {food,hautist}. Ta märkas, et tal pole enam plastmassist {obj1_par_pl,lusikaid}, nii et ta ostis uue komplekti. Hiljem ostis ka tema abikaasa {n1,5} uut {obj1_par_sg,lusikat} ja andis need {name_gen,Julia}le. {food,hautist} valmistades kasutas {name,Julia} ära {n2_txt,kolm} {obj1_par_sg,lusikat}. Hiljem, kui ta läks lauda katma, oli tal kokku {total,12} {obj1_par_sg,lusikat}. Mitu {obj1_par_sg,lusikat} oli selles pakis, mille {name,Julia} ostis?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- event = sample([\"lõunapeoks\", \"sünnipäevapeoks\", \"beebipeoks\", \"lauamänguõhtuks\", \"õhtusöögipeoks\"])\n- food = sample([\"hautist\", \"röstitud kana\", \"grillitud lõhet\", \"köögiviljalasanjat\", \"täidetud paprikaid\"])\n- obj1_par_pl, obj1_par_sg, obj1_gen_pl= sample([(\"lusikaid\", \"lusikat\", \"lusikate\"), (\"kahvleid\", \"kahvlit\", \"kahvlite\"), (\"taldrikuid\", \"taldrikut\", \"taldrikute\"), (\"nugasid\", \"nuga\", \"nugade\")])\n- $n1 = range(5, 20)\n- n2_txt, n2_val = range_str(3, 10, 1, numbers)\n- $total = range(12, 40)\n\n#conditions:\n- total + n2_val - n1 > 0\n\n#answer: total + n2_val - n1",
+    "count": 100
+  },
+  {
+    "id": 23,
+    "question_annotated": "{name,Tiina} koob talveriideid oma {count,3} lapselapsele. Nad on {children,kolmikud}, nii et nad on kõik ühesuurused. Ta tahab teha neile igaühele {c1_par_sg,mütsi}, {c2_par_sg,salli}, {c3_par_sg,kampsuni}, {c4_nom_pl,kindad} ja {c5_nom_pl,sokid}. {c1_gen_sg,mütsi} valmistamiseks kulub {n1,2} lõngakera, {n2,4} {c2_gen_sg,salli} jaoks, {n3,12} {c3_gen_sg,kampsuni} jaoks, {n4,1} {c4_gen_pl,kinnaste} jaoks ja {n5,2} {c5_gen_pl,sokkide} jaoks. Kui mitu lõngakera peab ta ostma?\n\n#init:\n- name, _ = sample(names_female_cases)\n- (c1_par_sg, c1_gen_sg), (c2_par_sg, c2_gen_sg), (c3_par_sg, c3_gen_sg) = sample([(\"mütsi\", \"mütsi\"), (\"salli\", \"salli\"), (\"kampsuni\", \"kampsuni\"), (\"kardigani\", \"kardigani\"), (\"pontšot\", \"pontšo\"), (\"vesti\", \"vesti\")], 3)\n- (c4_nom_pl, c4_gen_pl), (c5_nom_pl, c5_gen_pl) = sample([(\"kindad\", \"kinnaste\"), (\"sokid\", \"sokkide\"), (\"põlvikud\", \"põlvikute\"), (\"käpikud\", \"käpikute\"), (\"säärised\", \"sääriste\")], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"kaksikud\", 2), (\"kolmikud\", 3), (\"nelikud\", 4), (\"viisikud\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
+    "count": 100
+  },
+  {
+    "id": 24,
+    "question_annotated": "Toitumisalase info järgi on krõpsukotis {cal,250} kalorit ühes portsjonis. Kui {size,300}-grammine kott sisaldab {n,5} portsjonit, siis mitu grammi võid sa ära süüa, kui sinu päevane kalorite eesmärk on {total,2000} ja sa oled juba ära söönud {spent,1800} kalorit?\n\n#init:\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int(5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
+    "count": 100
+  },
+  {
+    "id": 25,
+    "question_annotated": "{teacher_gen,Härra Tamme} klassis on {total,30} õpilast, kellest {p1,20}% on {group1,jalgpallurid}. Ülejäänud klassist on {p2,25}% õpilastest {group2,tantsijad} või {group3,bändiliikmed}. Need 3 rühma õpilasi peavad täna varem lahkuma, et sõita võistlusele. Mitu õpilast lahkub täna varem?\n\n#init:\n- teacher_gen = sample(['Härra Tamme', 'Proua Kase', 'Professor Pajusalu', 'Preili Mere'])\n- group1 = sample(['jalgpallurid', 'korvpallurid', 'võrkpallurid', 'ujujad', 'tennisistid'])\n- group2, group3 = sample(['tantsijad', 'koorilauljad', 'debatimeeskonna liikmed', 'robotite klubi liikmed', 'bändiliikmed'],  2)\n- $total = range(20, 150)\n- $p1 = range(10, 50)\n- $p2 = range(15, 45)\n\n#conditions:\n- p1 < 100\n- p2 < 100\n- is_int(total * p1 / 100)\n- is_int((total - total * p1 / 100) * p2 / 100)\n\n#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)",
+    "count": 100
+  },
+  {
+    "id": 26,
+    "question_annotated": "{name1,mees} sööb {n1,5} {food_par_pl,võileiba} päevas, {name2,tema naine} sööb {n2,4} {food_par_pl,võileiba} päevas ja nende {relation,poeg} sööb {n3,2} {food_par_pl,võileiba} päevas. Kui palju {food_par_pl,võileiba} see perekond sööb ühe {time_period,nädala} jooksul?\n\n#init:\n- name1 = sample([\"isa\", \"vanaisa\", \"onu\"])\n- name2 = sample([\"tema naine\", \"tema elukaaslane\", \"tema abikaasa\"])\n- relation = sample([\"tütar\", \"poeg\", \"lapselaps\"])\n- food_par_pl, food_gen_pl = sample([(\"võileiba\", \"võileibade\"), (\"pitsat\", \"pitsade\"), (\"burritot\", \"burritode\"), (\"tacot\", \"tacode\"), (\"sushirulli\", \"sushirullide\"), (\"hamburgerit\", \"hamburgerite\")])\n- time_period = sample([\"nädala\", \"kuu\"])\n- $n1 = range(2, 9)\n- $n2 = range(2, 9)\n- $n3 = range(2, 9)\n\n#answer: (n1 + n2 + n3) * (7 if time_period == \"nädala\" else 30)",
+    "count": 100
+  },
+  {
+    "id": 27,
+    "question_annotated": "{name,Marko} saab {n,80} e-kirja päevas. {p,20}% neist e-kirjadest ei vaja vastust. Ta vastab ülejäänutele. Mitmele e-kirjale vastab {name,Marko} {d,5} päeva kestva töö­nädala jooksul?\n\n#init:\n- name, _ = sample(names_cases)\n- $n = range(50, 200)\n- $p = range(5, 40)\n- $d = range(3, 7)\n\n#conditions:\n- is_int(n * p / 100)\n- is_int(n * (100 - p) / 100)\n\n#answer: d * (n * (100 - p) / 100)",
+    "count": 100
+  },
+  {
+    "id": 28,
+    "question_annotated": "{facility_ade_cap,Haiglal} on {total,1000} {item_par_sg,voodikohta}, millest {frac,1/5} on hõivatud. {event,pandeemia} tõttu võetakse {facility_ill,haiglasse} iga päev {daily,50} patsienti. Arvuta {facility_gen,haigla} vabade {item_gen_pl,voodikohtade} arv pärast {period,2} nädalat.\n\n#init:\n- facility_nom, facility_gen, facility_ade, facility_ade_cap, facility_ill = sample([(\"haigla\", \"haigla\", \"haiglal\", \"Haiglal\", \"haiglasse\"), (\"kliinik\", \"kliiniku\", \"kliinikul\", \"Kliinikul\", \"kliinikusse\"), (\"meditsiinikeskus\", \"meditsiinikeskuse\", \"meditsiinikeskusel\", \"Meditsiinikeskusel\", \"meditsiinikeskusesse\"), (\"hooldusasutus\", \"hooldusasutuse\", \"hooldusasutusel\", \"Hooldusasutusel\", \"hooldusasutusse\")])\n- item_par_pl, item_gen_pl, item_par_sg = sample([(\"voodikohti\", \"voodikohtade\", \"voodikohta\"), (\"tube\", \"tubade\", \"tuba\"), (\"palateid\", \"palatite\", \"palatit\")])\n- event = sample([\"gripihooaja\", \"loodusõnnetuse\", \"suurõnnetuse\", \"pandeemia\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
+    "count": 100
+  },
+  {
+    "id": 29,
+    "question_annotated": "{name1,Martin} on {age1,14} aastat vana. {years_txt,nelja} aasta pärast on tema {relation_type,õde} {name2,Maria} {mult_txt,kolm korda} vanem kui {name1,Martin} on praegu. Kui vana on {name2,Maria} praegu?\n\n#init:\n- name1, _ = sample(names_male_cases)\n- name2, _ = sample(names_female_cases)\n- relation_type = sample(['õde', 'nõbu', 'tuttav', 'sõber', 'naaber'])\n- $age1 = range(8, 25)\n- years_txt, years_val = range_str(2, 10, 1, numbers)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- age1 * mult_val - years_val > 0\n\n#answer: age1 * mult_val - years_val",
+    "count": 100
+  },
+  {
+    "id": 30,
+    "question_annotated": "{name_gen,Toomase}l on {initial_amount,12.48} {cur,EUR} ja ta tahab osta {quantity,16} {item_par_pl,polti} {store_type,tööriistapoest}. Iga {item_nom_sg,polt} maksab {unit_price,0.03} {cur,EUR}. Kui palju raha on {name_gen,Toomase}l pärast {item_gen_pl,poltide} eest tasumist alles?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- cur = sample(currencies_sym)\n- item_par_pl, item_nom_sg, item_gen_pl = sample([(\"polte\", \"polt\", \"poltide\"), (\"naelu\", \"nael\", \"naelte\"), (\"seibe\", \"seib\", \"seibide\"), (\"mutreid\", \"mutter\", \"mutrite\"), (\"tüübleid\", \"tüübel\", \"tüüblite\")])\n- store_type = sample([\"tööriistapoest\", \"ehituspoest\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(12.48, 105, 0.48)\n- $unit_price = arange(0.01, 1, 0.01)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int(initial_amount - quantity * unit_price)\n\n#answer: int(initial_amount - quantity * unit_price)",
+    "count": 100
+  },
+  {
+    "id": 31,
+    "question_annotated": "{name1_gen,Rasmuse} ja {name2_gen,Katrini} vanuse vahel on {age_diff,16} aastat. Kui {name1,Rasmus}, kes on noorem kui {name2,Katrin}, on {age1,40}-aastane, siis mis on nende keskmine vanus?\n\n#init:\n- (name1, name1_gen), (name2, name2_gen) = sample(names_cases, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
+    "count": 100
+  },
+  {
+    "id": 32,
+    "question_annotated": "{name1_nom, Sirje} otsib {property_type, maja}, mis ei ületaks tema {budget, 400000} {cur,EUR} suurust eelarvet. Ta nägi kinnisvara, mille müügihind on {price, 350000} {cur,EUR}. Lisaks peab ostja maksma maakleritasu, mis on {brokerage_fee,5}% müügihinnast, ning ka ülekandetasu, mis on {transfer_fee,12}% müügihinnast. Kui palju on selle kinnisvara koguhind suurem kui {name1_gen,Sirje} eelarve?\n\n#init:\n- name1_nom, name1_gen = sample(names_cases)\n- property_type = sample(['maja', 'korter', 'korterelamu', 'ridaelamu'])\n- cur = sample(currencies_sym)\n- $budget = range(300000, 500000, 10000)\n- $price = range(250000, 450000, 10000)\n- $brokerage_fee = range(3, 8)\n- $transfer_fee = range(10, 15)\n\n#conditions:\n- brokerage_fee < 100\n- transfer_fee < 100\n- price < budget\n- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1\n- is_int(price * brokerage_fee / 100)\n- is_int(price * transfer_fee / 100)\n\n#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)",
+    "count": 100
+  },
+  {
+    "id": 33,
+    "question_annotated": "{name1,Ene} ja {name2,Jennifer} on õed Los Angelesest, kes armastavad koguda kuulsustelt autogramme. Kooli suvepuhkuse ajal veedavad õed iga pärastlõuna autogramme kogudes. Pärast {n1_txt,viit} nädalat võrdlevad {name1,Ene} ja {name2,Jennifer} oma autogrammiraamatuid, loendades, kui palju autogramme kumbki õde on kogunud. {name1_gen,Ene}l on oma raamatus {s1,20} autogrammi ja {name2_gen,Jenniferi}l on {s2,44}. Õdedel on veel {n2_txt,kolm} nädalat suvepuhkust ning nad otsustavad, et tahavad puhke lõpuks jõuda {goal,100} autogrammini. Mitu autogrammi peavad õed veel koguma, et oma eesmärgini jõuda?\n\n#init:\n- (name1, name1_gen), (name2, name2_gen) = sample(names_female_cases, 2)\n- n1_txt, n1_val = range_str(3, 8, 1, numbers)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n- $s1 = range(15, 40)\n- $s2 = range(30, 60)\n- $goal = range(90, 150, 5)\n\n#conditions:\n- s1 + s2 < goal\n\n#answer: goal - (s1 + s2)",
+    "count": 100
+  },
+  {
+    "id": 34,
+    "question_annotated": "{name,Toomas} müüs oma {property,maja} {price,400000} {cur,EUR} eest. Ta tasus üleandmistasud, mis moodustavad {fee1_percent,3}% müügihinnast, ning tasus ka maakleritasu, mis on {fee2_percent,5}% müügihinnast. Lisaks maksis ta {loan,250000} {cur,EUR} ülejäänud laenusumma eest. Kui suur on {name_gen,Toomase} netotulu kinnisvara müügist?\n\n#init:\n- name, name_gen = sample(names_cases)\n- property = sample(['maja', 'korteri', 'suvila', 'villa', 'suvekodu'])\n- cur = sample(currencies_sym)\n- $price = range(200000, 1000000, 10000)\n- $fee1_percent = range(1, 5)\n- $fee2_percent = range(2, 7)\n- $loan = range(100000, 700000, 10000)\n\n#conditions:\n- price > loan\n- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1\n\n#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)",
+    "count": 100
+  },
+  {
+    "id": 35,
+    "question_annotated": "{name,Jaan} kogub raha {event_all,koolireisiks}. Ta on palunud abi {organization,koolilt}, mis on otsustanud katta {fraction_txt,poole} {event,koolireisi} maksumusest. Kui {name_gen,Jaani}l on {current,50} {cur,EUR} ja {event,koolireisi} hind on {total,300} {cur,EUR}, siis kui palju raha tal puudu jääb?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- organization_nom, organization = sample([(\"kool\", \"koolilt\"), (\"kogukonnakeskus\", \"kogukonnakeskuselt\"), (\"noorteklubi\", \"noorteklubilt\"), (\"spordiklubi\", \"spordiklubilt\"), (\"muuseum\", \"muuseumilt\")])\n- event_nom, event, event_all = sample([(\"koolireis\", \"koolireisi\", \"koolireisiks\"), (\"matk\", \"matka\", \"matkaks\"), (\"spordivõistlus\", \"spordivõistluse\", \"spordivõistluseks\"), (\"konverents\", \"konverentsi\", \"konverentsiks\")])\n- cur = sample(currencies_sym)\n- fraction_txt, fraction_disp, fraction_val = sample([(\"poole\", \"1/2\", 1/2), (\"kolmandiku\", \"1/3\", 1/3), (\"veerandi\", \"1/4\", 1/4), (\"viiendiku\", \"1/5\", 1/5)])\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)",
+    "count": 100
+  },
+  {
+    "id": 36,
+    "question_annotated": "{name,Anneli} läks {shop,pagaripoodi} ja ostis erinevat tüüpi {item,küpsetisi}. Ta ostis {n1,3} tosinat {item1_par_pl,sõõrikuid}, mis maksid {p1,68} {cur,EUR} tosin, {n2,2} tosinat {item2_par_pl,minikooke}, mis maksid {p2,80} {cur,EUR} tosin, ja {n3,6} tosinat {item3_par_pl,mini-juustukooke} hinnaga {p3,55} {cur,EUR} tosin. Kui suur oli arve?\n#init:\n- name, _ = sample(names_female_cases)\n- cur = sample(currencies_sym)\n- shop = sample([\"pagaripoodi\", \"saiaputkasse\", \"kommipoodi\", \"kohvikusse\"])\n- item = sample([\"küpsetisi\", \"ahjus küpsetatud tooteid\", \"magustoite\", \"maiuseid\"])\n- item1_par_pl, item1_gen_pl, item1_gen_pl_cap = sample([(\"sõõrikuid\", \"sõõrikute\", \"Sõõrikute\"), (\"sarvesaiu\", \"sarvesaiade\", \"Sarvesaiade\"), (\"ekleere\", \"ekleeride\", \"Ekleeride\"), (\"Taani saiu\", \"Taani saiade\", \"Taani saiade\")])\n- item2_par_pl, item2_gen_pl, item2_gen_pl_cap = sample([(\"minikooke\", \"minikookide\", \"Minikookide\"), (\"makroone\", \"makroonide\", \"Makroonide\"), (\"küpsiseid\", \"küpsiste\", \"Küpsiste\"), (\"pirukaid\", \"pirukate\", \"Pirukate\")])\n- item3_par_pl, item3_gen_pl, item3_gen_pl_cap = sample([(\"mini-juustukooke\", \"mini-juustukookide\", \"Mini-juustukookide\"), (\"brownie'sid\", \"brownie'de\", \"Brownie'de\"), (\"muffineid\", \"muffinite\", \"Muffinite\")])\n- $n1 = range(2, 10)\n- $n2 = range(4, 10)\n- $n3 = range(2, 10)\n- $p1 = range(11, 21)\n- $p2 = range(73, 90)\n- $p3 = range(112, 120)\n\n#answer: n1 * p1 + n2 * p2 + n3 * p3",
+    "count": 100
+  },
+  {
+    "id": 37,
+    "question_annotated": "{item_gen,leivapätsi}l on {n,24} {unit,viilu}. Kui {name1,Helena} sööb {x,2} {unit,viilu} päevas ja {name2,Urmas} sööb {mult_txt,kaks korda} rohkem, siis mitu päeva {item_nom,leivapäts} kestab?\n\n#init:\n- item_nom, item_gen = sample([(\"leivapäts\", \"leivapätsi\"), (\"pitsa\", \"pitsa\"), (\"kook\", \"koogi\"), (\"lasanje\", \"lasanje\")])\n- unit = sample([\"viilu\", \"tükki\", \"portsjonit\"])\n- (name1, _), (name2, _) = sample(names_cases, 2)\n- $n = range(12, 76, 3)\n- $x = range(2, 13)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- divides(n, x + x*mult_val)\n\n#answer: n // (x + x*mult_val)",
+    "count": 100
+  },
+  {
+    "id": 38,
+    "question_annotated": "{shop_ine,Pagarikojas} maksab {item1_nom,leivapäts} {price1,2} {currency,EUR}. {item2_nom_pl,muffinid} maksavad {price2,1} {currency,EUR} tükk. Kui palju kallim on {n1,3} {item1_num,leivapätsi} võrreldes {n2,2} {item2_gen,muffini}ga?\n\n#init:\n- item1_nom, item1_num = sample([(\"leivapäts\", \"leivapätsi\"), (\"leib\", \"leiba\"), (\"pirukas\", \"pirukat\"), (\"kook\", \"kooki\"), (\"saiapäts\", \"saiapätsi\"), (\"sai\", \"saia\")])\n- item2_nom_pl, item2_num, item2_gen = sample([(\"muffinid\", \"muffinit\", \"muffini\"), (\"sarvesaiad\", \"sarvesaia\", \"sarvesaia\"), (\"küpsised\", \"küpsist\", \"küpsise\")])\n- shop_ine = sample([\"Pagarikojas\", \"Kohvikus\", \"Poes\", \"Turul\"])\n- currency = sample(currencies_sym)\n- $price1 = range(2, 10)\n- $price2 = range(1, 5)\n- $n1 = range(2, 10)\n- $n2 = range(2, 10)\n\n#conditions:\n- n1 * price1 > n2 * price2\n\n#answer: n1 * price1 - n2 * price2",
+    "count": 100
+  },
+  {
+    "id": 39,
+    "question_annotated": "{job,koristajal} tuleb koristada {n,80} {room_with,klassiruumiga} {building,kooli}. Tal on töö lõpetamiseks {d,5} päeva. Ühe {room_gen_sg,klassiruumi} koristamine võtab {t,15} minutit. Kui ta töötab iga päev {h,8} tundi, siis mitu protsenti tema päevast kulub keskmiselt {room_gen_pl,klassiruumide} koristamisele?\n\n#init:\n- job = sample([\"koristajal\", \"puhastajal\", \"hooldustöötajal\"])\n- building = sample([\"kooli\", \"kontorihoonet\", \"haiglat\", \"ülikooli\"])\n- room_nom, room_with, room_gen_sg, room_count, room_gen_pl = sample([(\"klassiruum\", \"klassiruumiga\", \"klassiruumi\", \"klassiruumi\", \"klassiruumide\"), (\"ruum\", \"ruumiga\", \"ruumi\", \"ruumi\", \"ruumide\"), (\"korrus\", \"korrusega\", \"korruse\", \"korrust\", \"korruste\"),(\"tuba\", \"toaga\", \"toa\", \"tuba\", \"tubade\")])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))",
+    "count": 100
+  },
+  {
+    "id": 40,
+    "question_annotated": "{name,Maria} läks puhkuseks mere äärde. Tema vanemad andsid talle {total,15} {cur,EUR}, et ta saaks osta, mida iganes tahab. Suveniiripoes oli iiriskommide sooduspakkumine: \"Osta {n1,500} grammi {p1,3} {cur,EUR} eest, ja saad {n2,500} grammi {discount,1/2} hinnaga.\" Ta võttis {n12,2000} grammi. Ta ostis ka merekarpide paki {p2,1.5} {cur,EUR} eest ja {n3,4} magnetit, mis maksid {p3,0.25} {cur,EUR} tükk. Kui palju raha on {name_gen,Maria}l pärast ostude tegemist alles?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- cur = sample(currencies_sym)\n- $total = range(10, 40, 5)\n- $n1 = range(500, 3000, 500)\n- $n2 = range(500, 3000, 500)\n- $n12 = range(1000, 6000, 500)\n- $n3 = range(4, 12, 4)\n- $p1 = range(2, 10)\n- $p2 = arange(1.5, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)\n- p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3 < total\n\n#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)",
+    "count": 100
+  },
+  {
+    "id": 41,
+    "question_annotated": "{structure_ine_cap,Tornis} on {n1,4} {color1_par_sg, sinist} {obj_par_sg, plokki}, {mult_txt,kaks korda} rohkem {color2_par_sg,kollast} {obj_par_sg,plokki} ja teadmata arv {color3_par_pl,punaseid} {obj_par_pl,plokke}. Kui {structure_ine,tornis} on kokku {total,32} {obj_par_sg,plokki}, siis mitu neist on {color3_nom_pl,punased}?\n\n#init:\n- structure_ine_cap, structure_ine = sample([(\"Tornis\", \"tornis\"), (\"Püramiidis\", \"püramiidis\"), (\"Kuhjas\", \"kuhjas\")])\n- obj_par_sg, obj_par_pl = sample([(\"plokki\", \"plokke\"), (\"tellist\", \"telliseid\"), (\"plaati\", \"plaate\")])\n- (color1_par_sg, color1_par_pl,_), (color2_par_sg, color2_par_pl,_), (color3_par_sg, color3_par_pl, color3_nom_pl) = sample([(\"sinist\", \"siniseid\", \"sinised\"), (\"kollast\", \"kollaseid\", \"kollased\"), (\"punast\", \"punaseid\", \"punased\"), (\"rohelist\", \"rohelisi\", \"rohelised\"), (\"lillat\", \"lillasid\", \"lillad\"), (\"valget\", \"valgeid\", \"valged\"), (\"musta\", \"musti\", \"mustad\"), (\"roosat\", \"roosasid\", \"roosad\"), (\"oranži\", \"oranže\", \"oranžid\")], 3)\n- $n1 = range(2, 10)\n- mult_txt, mult_val = sample([(\"kaks korda\", 2), (\"kolm korda\", 3), (\"neli korda\", 4)])\n- $total = range(20, 50)\n\n#conditions:\n- total > n1 + mult_val * n1\n\n#answer: total - n1 - mult_val * n1",
+    "count": 100
+  },
+  {
+    "id": 42,
+    "question_annotated": "{name,Meelis} läheb poodi, et osta {item_par_sg,teed}. {item_gen_cap,Tee} tavaline mark, mida ta ostab, maksab {price,5} {cur,EUR} {unit_num,kilogrammi} kohta. Tal tuli osta kallim mark, mis maksab {percent,20}% rohkem, sest tema lemmikmark oli välja müüdud. Ta otsustab osta nädala jagu {item_par_sg,teed} ja kasutab {usage,1} {unit_num,kilogrammi} {item_par_sg,teed} päevas. Ta otsustab osta endale ka {extra_item_par_sg,küpsist} hinnaga {extra_price,2} {cur,EUR}. Kui palju maksis kõik kokku?\n\n#init:\n- name, _ = sample(names_male_cases)\n- item_gen_cap, item_gen_sg, item_par_sg = sample([('Kohv', 'kohv', 'kohvi'), ('Tee', 'tee', 'teed'), ('Suhkur', 'suhkur', 'suhkrut'), ('Jahu', 'jahu', 'jahu'), ('Riis', 'riis', 'riisi')])\n- cur = sample(currencies_sym)\n- unit_num = sample(['kilogrammi', 'kg'])\n- extra_item_par_sg = sample(['küpsist', 'muffinit', 'saiakest', 'šokolaadi', 'pirukat'])\n- $price = range(3, 25)\n- $percent = range(10, 50, 5)\n- $usage = range(1, 3)\n- $extra_price = range(1, 5)\n\n#conditions:\n- is_int(price * percent / 100)\n\n#answer: (price + price * percent / 100) * 7 * usage + extra_price",
+    "count": 100
+  },
+  {
+    "id": 43,
+    "question_annotated": "{name,Indrek} läks oma tallu {fruit_par_pl,maasikaid} korjama ja leidis {location_el,aiast} {frac_txt,pool} nii palju {insect1_par_pl,putukaid} kui {insect2_par_pl,sipelgaid}. {location_ine,aias} oli {n,50} {insect2_count_sg,sipelgat}. Arvuta {location_ine,aias} olevate kõigi {insect1_gen_pl,putukate} koguarv.\n\n#init:\n- name, _ = sample(names_cases)\n- fruit_par_pl = sample([\"maasikaid\", \"kirsse\", \"mustikaid\", \"vaarikaid\"])\n- location_el, location_ine, location_ine_cap = sample([(\"aiast\", \"aias\", \"Aias\"), (\"põllult\", \"põllul\", \"Põllul\"), (\"peenralt\", \"peenral\", \"Peenral\")])\n- (insect1_count_sg, insect1_par_pl, insect1_gen_pl), (insect2_count_sg, insect2_par_pl, insect2_gen_pl) = sample([(\"putukat\", \"putukaid\", \"putukate\"), (\"sipelgat\", \"sipelgaid\", \"sipelgate\"), (\"mesilast\", \"mesilasi\", \"mesilaste\"), (\"mardikat\", \"mardikaid\", \"mardikate\"), (\"liblikat\", \"liblikaid\", \"liblikate\")], 2)\n- frac_txt, frac_val = sample([(\"pool\", 1/2), (\"kolmandik\", 1/3), (\"veerand\", 1/4)])\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 44,
+    "question_annotated": "{place_ine_cap,Pargis} on {n,6} tüdrukut. Kui poiste arv on {mult_txt,kaks korda} suurem kui tüdrukute arv, siis mitu last on {place_ine,pargis}?\n\n#init:\n- place_ine_cap, place_ine = sample([(\"Pargis\", \"pargis\"), (\"Hoovis\", \"hoovis\"), (\"Väljakul\", \"väljakul\"), (\"Aias\", \"aias\"), (\"Mänguväljakul\", \"mänguväljakul\")])\n- $n = range(5, 51)\n- mult_txt, mult_val = sample([(\"kaks korda\", 2), (\"kolm korda\", 3), (\"neli korda\", 4), (\"viis korda\", 5)])\n\n#conditions:\n- n * (mult_val + 1) <= 200\n\n#answer: n * (mult_val + 1)",
+    "count": 100
+  },
+  {
+    "id": 45,
+    "question_annotated": "{name_gen,Laura}l on lillepeenar, mis on {length,111} {unit_length,meetrit} pikk. {name,Laura} tahab täita oma lillepeenra taimedega. {name_gen,Laura} lilled kasvavad {plant_width,12} sentimeetrit laiaks ning aiandusjuhised ütlevad, et peenrale tuleb istutada üks lill iga {space,1.5} {unit_gen,meetri} järel. {name_gen,Laura}l on juba {owned,17} lille. Iga õitsev taim maksab poes {cost,6} {cur,EUR}. Kui palju raha kulutab {name,Laura} poes, et lillepeenar täis saada?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- unit_nom, unit_length, unit_gen = sample([(\"meeter\", \"meetrit\", \"meetri\")])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "count": 100
+  },
+  {
+    "id": 46,
+    "question_annotated": "{school,Kaskede Gümnaasium} korraldab sel aastal lõpuaktuse {venue_ine,aulas}, kuhu mahub {total,6000} inimest. Kui arvestada, et {graduates,950} istekohta on lõpetajatele ja {faculty,300} istekohta õppejõududele, siis mitu piletit saab iga lõpetaja anda oma sõpradele ja perele, kui piletid jaotatakse võrdselt?\n\n#init:\n- school = sample([\"Kaskede Gümnaasium\", \"Ranniku Akadeemia\", \"Tamme Kool\", \"Pargi Gümnaasium\"])\n- venue_ine = sample([\"aulas\", \"spordihallis\", \"aktusesaalis\", \"konverentsisaalis\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
+    "count": 100
+  },
+  {
+    "id": 47,
+    "question_annotated": "{name1,Rasmus} peitis {n,3} tosinat muna õue lihavõttejänese munajahti jaoks. {name2,Meelis} leiab {x,5} muna. {name3,Kadri} leiab {mult1_txt,kaks korda} rohkem kui {name2,Meelis}. {name4,Kristiina} leiab {y,2} muna vähem kui {name3,Kadri} ja {name5,Anu} leiab {frac_txt,pool} sellest, kui palju {name4,Kristiina} leiab. Mitu muna on õues veel peidus?\n\n#init:\n- (name1, _), (name2, _), (name3, _), (name4, _), (name5, _) = sample(names_cases, 5)\n- $n = range(2, 10)\n- $x = range(3, 15)\n- $y = range(2, 5)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))\n- is_int(x * mult1_val)\n- x * mult1_val - y > 0\n- is_int((x * mult1_val - y) * frac_val)\n- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)\n\n#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))",
+    "count": 100
+  },
+  {
+    "id": 48,
+    "question_annotated": "{name,Helena} suudab koorida {n1,6} {food_part_sg,krevetti} minutis ja praadida {n2,30} {food_part_sg,krevetti} {t,10} minutiga. Kui kaua kulub tal {total,90} {food_gen_sg,kreveti} koorimiseks ja praadimiseks? {name,Helena} ei saa koorida ja praadida korraga.\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- food_nom, food_part_sg, food_gen_sg, food_part_pl, food_gen_pl = sample([(\"krevett\", \"krevetti\", \"kreveti\", \"krevette\", \"krevettide\"), (\"sibul\", \"sibulat\", \"sibula\", \"sibulaid\", \"sibulate\"), (\"porgand\", \"porgandit\", \"porgandi\", \"porgandeid\", \"porgandite\"), (\"kaalikas\", \"kaalikat\", \"kaalika\", \"kaalikaid\", \"kaalikate\")])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
+    "count": 100
+  },
+  {
+    "id": 49,
+    "question_annotated": "{name,Jüri} kogub prügi {n,3} erinevast korterikompleksist. Esimesed {n_first_txt,kaks} on {a,200} korteriga kumbki ja viimane on {p,60}% suurem kui need {n_first_txt,kaks} kokku. Ta kogub prügi {f,3} korda nädalas igast kohast ja talle makstakse {r,0.4} {cur,EUR} iga kogumise eest iga korteri kohta. Kui palju raha ta teenib nädalas?\n\n#init:\n- name, _ = sample(names_cases)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "count": 100
+  },
+  {
+    "id": 50,
+    "question_annotated": "{name_gen,Reinu} ristkülikukujulise {room_type,magamistoa} pindala on {area,33} ruutmeetrit. Kui ruumi pikkus on {length,300} cm, siis milline on ruumi ümbermõõt meetrites?\n\n#init:\n- name, name_gen = sample(names_cases)\n- room_type = sample([\"magamistoa\", \"elutoa\", \"õppeklassi\", \"kontori\", \"köögi\"])\n- $area = range(18, 121)\n- $length = range(300, 1300, 100)\n\n#conditions:\n- is_int(area / (length * (1/100)))\n- (area / (length * (1/100))) > (length * (1/100))\n\n#answer: 2 * (area // (length * (1/100)) + length * (1/100))",
+    "count": 100
+  },
+  {
+    "id": 51,
+    "question_annotated": "{name_gen,Arturi}l on {location_ade,turuplatsil} müügilett. Ta müüb kolme liiki {product_par_pl,lilli}: {item1_par_pl,saialilli}, {item2_par_pl,petuuniaid} ja {item3_par_pl,begooniaid}. Tavaliselt müüb {name,Artur} {item1_par_pl,saialilli} hinnaga {p1,2.74} {cur,EUR} {unit_gen_sg,poti} kohta, {item2_par_pl,petuuniaid} hinnaga {p2,1.87} {cur,EUR} {unit_gen_sg,poti} kohta ja {item3_par_pl,begooniaid} hinnaga {p3,2.12} {cur,EUR} {unit_gen_sg,poti} kohta. {name_gen,Arturi}l ei ole täna vahetusraha, nii et ta otsustas kõik oma hinnad ümardada lähima euroni. Kui {name,Artur} müüb {n1,12} {unit_par_sg,potti} {item1_par_pl,saialilli}, {n2,9} {unit_par_sg,potti} {item2_par_pl,petuuniaid} ja {n3,17} {unit_par_sg,potti} {item3_par_pl,begooniaid}, siis kui palju ta teenib?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- product_gen_sg, product_par_pl = sample([(\"lille\", \"lilli\"), (\"ürdi\", \"ürte\"), (\"taime\", \"taimi\")])\n- location_ade = sample([\"laadal\", \"turul\", \"tänavabasaaril\", \"turuplatsil\"])\n- (item1_par_pl, item1_gen_pl), (item2_par_pl, item2_gen_pl), (item3_par_pl, item3_gen_pl) = sample([(\"saialilli\", \"saialillede\"), (\"petuuniaid\", \"petuuniate\"), (\"begooniaid\", \"begooniate\"), (\"roose\", \"rooside\"), (\"karikakraid\", \"karikakarde\"), (\"tulpe\", \"tulpide\"), (\"liiliaid\", \"liiliate\"), (\"päevalilli\", \"päevalillede\"), (\"orhideesid\", \"orhideede\")], 3)\n- unit_gen_sg, unit_par_sg = sample([(\"kimbu\", \"kimpu\"), (\"korvi\", \"korvi\"), (\"buketi\", \"buketti\"), (\"poti\", \"potti\")])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
+    "count": 100
+  },
+  {
+    "id": 52,
+    "question_annotated": "{name_gen,Ivani}l on {n,2} paberraha väärtuses {bill,20} {cur,EUR}. Ta ostab {m_txt,kuus} {item1_par_pl,pritsipüstolit} hinnaga {p1,2} {cur,EUR} tükk. Ta ostab ka {k,3} pakki {item2_par_pl,veepalle} hinnaga {p2,3} {cur,EUR} pakk. Kui palju raha jääb tal alles?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- item1_par_pl, item1_all_pl = sample([(\"pritsipüstolit\", \"pritsipüstolitele\"), (\"mänguautot\", \"mänguautodele\"), (\"tegelaskuju\", \"tegelaskujudele\"), (\"värvimisraamatut\", \"värvimisraamatutele\"), (\"puslet\", \"pusledele\")])\n- item2_par_pl, item2_all_pl = sample([(\"veepalle\", \"veepallidele\"), (\"kleebiseid\", \"kleebistele\"), (\"pliiatseid\", \"pliiatsitele\"), (\"kustutuskumme\", \"kustutuskummidele\")])\n- $bill = sample([5, 10, 20, 50, 100])\n- cur = sample(currencies_sym)\n- $n = range(1, 10)\n- m_txt, m_val = range_str(2, 15, 1, numbers)\n- $k = range(2, 10)\n- $p1 = range(1, 10)\n- $p2 = range(1, 10)\n\n#conditions:\n- n * int(bill) > m_val * p1 + k * p2\n\n#answer: n * int(bill) - (m_val * p1 + k * p2)",
+    "count": 100
+  },
+  {
+    "id": 53,
+    "question_annotated": "{name1,Peeter} sai {n1,278} punkti ühes {game,bowlingu} mängus. {name2,Margus} sai {n2,11} punkti rohkem kui {frac_txt,pool} {name1_gen,Peetri} punktidest. Mitu punkti oli kokku nii {name1_gen,Peetri}l kui {name2_gen,Marguse}l?\n\n#init:\n- (name1, name1_gen), (name2, name2_gen) = sample(names_cases, 2)\n- game = sample([\"bowlingu\", \"noolemängu\", \"vibulaskmise\", \"korvpalli\", \"tennise\"])\n- $n1 = range(200, 500)\n- $n2 = range(5, 50)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(frac_val * n1)\n\n#answer: n1 + int(frac_val * n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 54,
+    "question_annotated": "{name,Anu} viilutas terve õuna {total,18} tükiks. Ta sõi {n1,3} viilu, tema õde sõi {n2,2} viilu rohkem kui tema ja tema vend sõi {n3,3} viilu rohkem kui tema õde. Mitu viilu õuna nad kõik kokku ära sõid?\n\n#init:\n- name, _ = sample(names_female_cases)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
+    "count": 100
+  },
+  {
+    "id": 55,
+    "question_annotated": "{name,Mare} õpib {alphabets_txt,araabia abjadi (28 tähte)} kirjutama ja otsustab seda ümber kirjutada, kuni ta selle selgeks saab. Ta kirjutab tähestiku täies pikkuses {n1_txt,kaks} korda, kirjutab seejärel sellest {frac_txt,poole} ja seejärel kirjutab uuesti kõik, mida ta on juba kirjutanud. Mitu tähte on {name,Mare} kokku kirjutanud?\n\n#init:\n- name, _ = sample(names_female_cases)\n- alphabets_txt, alphabets_val = sample([(\"tähestikku\", 26), (\"hiraganat (48 tähte)\", 48), (\"pärsia tähestikku (32 tähte)\", 32), (\"araabia abjadi (28 tähte)\", 28)])\n- n1_txt, n1_val = range_str(2, 15, 1, numbers)\n- frac_txt, frac_val = sample([(\"poole\", 1/2), (\"kolmandiku\", 1/3), (\"veerandi\", 1/4)])\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 56,
+    "question_annotated": "Üks {container_nom_sg,klaas} sisaldab {vol,250} milliliitrit {liquid_par_sg,piima}. {name,Margus} joob {num,2} {container_num_sg,klaasi} {liquid_par_sg,piima}. Kui {liquid_ine,piimas} on {cal,3} kalorit milliliitri kohta, kui palju kaloreid {name,Margus} tarbis?\n\n#init:\n- name, _ = sample(names_male_cases)\n- container_nom_sg, container_num_sg = sample([(\"klaas\", \"klaasi\"), (\"tass\", \"tassi\"), (\"pudel\", \"pudelit\"), (\"pakk\", \"pakki\")])\n- liquid_par_sg, liquid_ine = sample([(\"piima\", \"piimas\"), (\"mahla\", \"mahlas\"), (\"limonaadi\", \"limonaadis\"), (\"teed\", \"tees\"), (\"kakaod\", \"kakaos\")])\n- $vol = range(150, 501, 50)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
+    "count": 100
+  },
+  {
+    "id": 57,
+    "question_annotated": "{name1_gen,Tarmo}l on {n1,4} {color1_par_sg,sinist} värvituubi ja {n2,3} {color2_par_sg,kollast} värvituubi. {name2_gen,Urmase}l on {frac1_txt,pool} nii palju {color1_par_pl,siniseid} värvituube kui {name1_gen,Tarmo}l, ja {mult1_txt,kolm} korda rohkem {color2_par_pl,kollaseid} värvituube kui {name1_gen,Tarmo}l. Mitu värvituubi on {name2_gen,Urmase}l?\n\n#init:\n- (name1, name1_gen), (name2, name2_gen) = sample(names_male_cases, 2)\n- (color1_par_sg, color1_par_pl), (color2_par_sg, color2_par_pl) = sample([(\"sinist\", \"siniseid\"), (\"kollast\", \"kollaseid\"), (\"punast\", \"punaseid\"), (\"rohelist\", \"rohelisi\")], 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
+    "count": 100
+  },
+  {
+    "id": 58,
+    "question_annotated": "Üks {worker_nom_sg,päkapikk} suudab {tool1_com,paljaste kätega} kaevandada {base,12} {unit_par_sg,kilogrammi} maaki päevas. Ta suudab {tool2_com,pronksist kirvega} kaevandada {mult1_txt,kaks korda} rohkem ja {tool3_com_sg,terasest kirvega} {mult2,50}% rohkem kui {tool2_com,pronksist kirvega}. Mitu {unit_par_sg,kilogrammi} maaki suudavad {n,40} {worker_count_sg,päkapikku} {tool3_com_pl,terasest kirvestega} kaevandada {days,30} päeva jooksul?\n\n#init:\n- worker_nom_sg, worker_count_sg, worker_gen_pl = sample([(\"päkapikk\", \"päkapikku\", \"päkapikkude\"), (\"kaevur\", \"kaevurit\", \"kaevurite\"), (\"goblin\", \"goblinit\", \"goblinide\"), (\"troll\", \"trolli\", \"trollide\")])\n- tool1_com = sample([\"paljaste kätega\", \"tavalise labidaga\", \"puust kirkaga\"])\n- tool2_com = sample([\"pronksist kirvega\", \"niklist kirkaga\", \"hõbedase kirkaga\"])\n- tool3_com_sg, tool3_com_pl = sample([(\"terasest kirvega\", \"terasest kirvestega\"), (\"teraskirkaga\", \"teraskirkadega\"), (\"teemantkirkaga\", \"teemantkirkadega\")])\n- unit_par_sg = sample([\"kilogrammi\", \"kg\"])\n- $base = range(5, 20)\n- mult1_txt, mult1_val = sample([(\"kaks korda\", 2), (\"kolm korda\", 3), (\"neli korda\", 4)])\n- $mult2 = range(30, 80, 5)\n- $n = range(20, 50)\n- $days = range(28, 32)\n\n#conditions:\n- is_int(mult2/100*base*mult1_val)\n- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000\n\n#answer: int(base * mult1_val * (1 + mult2/100) * n * days)",
+    "count": 100
+  },
+  {
+    "id": 59,
+    "question_annotated": "Mul on {n1,10} liitrit apelsinijooki, mis on {frac1_txt,kaks kolmandikku} vett, ja ma soovin selle lisada {n2,15} liitrile ananassimahlale, mis on {frac2_txt,kolm viiendikku} vett. Aga kui ma seda valan, siis loksutan ära {spill_txt,neli} liitrit apelsinijooki. Kui palju vett on järelejäänud {total,21} liitris?\n\n#init:\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample([(\"pool\", 1/2), (\"kaks kolmandikku\", 2/3), (\"kolm neljandikku\", 3/4)])\n- frac2_txt, frac2_val = sample([(\"pool\", 1/2), (\"kolm viiendikku\", 3/5), (\"kaks kolmandikku\", 2/3)])\n- spill_txt, spill_val = range_str(2, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)",
+    "count": 100
+  },
+  {
+    "id": 60,
+    "question_annotated": "{name,Sander} teeb iga päev {h,10}-tunnise vahetuse, {d_txt,viis} päeva nädalas. Ta teenib {r,10} {cur,EUR} tunnis ja saab igal nädalal {b,300} {cur,EUR} suuruse lisatasu, kui ettevõttel läheb hästi. Kui palju raha teenis {name,Sander} {month,aprilli}kuus, kui ettevõttel läks kogu kuu väga hästi?\n\n#init:\n- name, _ = sample(names_male_cases)\n- month = sample([\"jaanuari\", \"veebruari\", \"märtsi\", \"aprilli\", \"mai\", \"juuni\", \"juuli\", \"augusti\", \"septembri\", \"oktoobri\", \"novembri\", \"detsembri\"])\n- cur = sample(currencies_sym)\n- $h = range(6, 13)\n- d_txt, d_val = range_str(3, 7, 1, numbers)\n- $r = range(8, 31)\n- $b = range(100, 601)\n\n#conditions:\n- is_int(h * r)\n\n#answer: h * r * d_val * 4 + b * 4",
+    "count": 100
+  },
+  {
+    "id": 61,
+    "question_annotated": "{name_gen,Reinu}l on kotis {n,10} {objects_count_sg,pallikest}. Ta komistas {obstacle_gen,kivi} otsa, kui kandis kotti, ja {frac_txt,pool} {objects_el_pl,pallikestest} kukkus välja. Ta hakkas neid otsima, kuid leidis ainult {k,3}. Kui ta läks tagasi koju, vaatas ta {objects_par_pl,pallikesi} veelgi lähemalt. {fake_num_txt,kaks} neist, mille ta üles korjas, ei olnudki {objects_nom_pl,pallikesed}, vaid tegelikult {fake_object_nom_pl,helmed}. Mitu {objects_count_sg,pallikest} jäi {name_gen,Reinu}l lõpuks alles?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- objects_count_sg, objects_el_pl, objects_par_pl, objects_nom_pl = sample([('pallikest', 'pallikestest', 'pallikesi', 'pallikesed'), ('münti', 'müntidest', 'münte', 'mündid'), ('nööpi', 'nööpidest', 'nööpe', 'nööbid'), ('helmest', 'helmestest', 'helmeid', 'helmed'), ('kivikest', 'kivikestest', 'kivikesi', 'kivikesed')])\n- obstacle_gen = sample(['kivi', 'kepi', 'mänguasja', 'puujuure'])\n- fake_object_count_sg, fake_object_nom_pl = sample([('nööpi', 'nööbid'), ('münti', 'mündid'), ('kivikest', 'kivikesed'), ('helmest', 'helmed')])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n- fake_object_nom_pl != objects_nom_pl\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val",
+    "count": 100
+  },
+  {
+    "id": 62,
+    "question_annotated": "Ühes {item_gen,võluri} kaardikomplektis on {n1,15} {c1_par_pl,punaseid} kaarte ja {p,60}% rohkem {c2_par_pl,rohelisi} kaarte. {c3_par_pl_cap,Kollaseid} kaarte on sama palju kui {c1_gen_pl,punaste} ja {c2_gen_pl,roheliste} kaartide summa. Mitu kaarti on kokku kõiki nimetatud värve?\n\n#init:\n- item_gen = sample([\"võluri\", \"kunstniku\", \"koka\", \"teadlase\", \"sportlase\"])\n- (c1_par_pl, c1_gen_pl, c1_par_pl_cap), (c2_par_pl, c2_gen_pl, c2_par_pl_cap), (c3_par_pl, c3_gen_pl, c3_par_pl_cap) = sample([(\"punaseid\", \"punaste\", \"Punaseid\"), (\"rohelisi\", \"roheliste\", \"Rohelisi\"), (\"kollaseid\", \"kollaste\", \"Kollaseid\"), (\"siniseid\", \"siniste\", \"Siniseid\"), (\"valgeid\", \"valgete\", \"Valgeid\"), (\"musti\", \"mustade\", \"Musti\")], 3)\n- $n1 = range(15, 81)\n- $p = range(20, 90)\n\n#conditions:\n- p < 100\n- is_int(p/100 * n1)\n\n#answer: 2 * (n1 + (p/100 * n1))",
+    "count": 100
+  },
+  {
+    "id": 63,
+    "question_annotated": "{person1_ade,Poisil} on {n,5} {item_par_sg,kaarti}. Tema {relation_ade,vennal} on {k,3} {item_par_sg,kaarti} vähem kui tal. Mitu {item_par_sg,kaarti} on neil kokku?\n\n#init:\n- person1_ade = sample([\"Poisil\", \"Õpilasel\", \"Lapsel\", \"Noorel\"])\n- item_par_sg = sample([\"kaarti\", \"kuuli\", \"kleebist\", \"mänguasja\", \"pliiatsit\"])\n- relation_ade = sample([\"vennal\", \"õel\", \"sõbral\", \"nõbul\"])\n- $n = range(5, 21)\n- $k = range(2, 10)\n\n#conditions:\n- n > k\n\n#answer: n + (n-k)",
+    "count": 100
+  },
+  {
+    "id": 64,
+    "question_annotated": "{name_gen,Anu}l on {location_ine,sahvris} {n,6} purki {item_par_pl,värvilisi nonparelle}. Iga {item_gen_pl,värviliste nonparellide} purk suudab kaunistada {m,8} {food_par_sg,muffinit}. {name,Anu} tahab küpsetada piisavalt {food_par_pl,muffineid}, et kasutada ära kõik oma {item_nom_pl,värvilised nonparellid}. Kui iga {container_nom_sg,küpsetusplaat} mahutab {k,12} {food_par_sg,muffinit}, siis mitu {container_gen_sg,plaaditäit} {food_par_pl,muffineid} peaks ta küpsetama?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- item_par_pl, item_gen_pl, item_nom_pl = sample([(\"värvilisi nonparelle\", \"värviliste nonparellide\", \"värvilised nonparellid\"), (\"glasuurihelbeid\", \"glasuurihelveste\", \"glasuurihelbed\"), (\"šokolaaditükke\", \"šokolaaditükkide\", \"šokolaaditükid\"), (\"kommipärleid\", \"kommipärlite\", \"kommipärlid\")])\n- food_par_sg, food_gen_sg, food_par_pl, food_nom_pl = sample([(\"muffinit\", \"muffini\", \"muffineid\", \"muffinid\"), (\"koogikest\", \"koogikese\", \"koogikesi\", \"koogikesed\"), (\"küpsist\", \"küpsise\", \"küpsiseid\", \"küpsised\"), (\"browniet\", \"brownie\", \"brownie'sid\", \"brownie'sid\")])\n- location_ine = sample([\"sahvris\", \"kapis\", \"köögikapis\", \"panipaigas\"])\n- container_nom_sg, container_gen_sg, container_par_pl = sample([(\"küpsetusplaat\", \"plaaditäit\", \"küpsetusplaate\"), (\"ahjuplaat\", \"ahjuplaaditäit\", \"ahjuplaate\"), (\"vorm\", \"vormitäit\", \"vorme\"), (\"rest\", \"restitäit\", \"reste\")])\n- $n = range(3, 15)\n- $m = range(6, 20)\n- $k = range(6, 24)\n\n#conditions:\n- divides(n*m, k)\n\n#answer: (n*m)//k",
+    "count": 100
+  },
+  {
+    "id": 65,
+    "question_annotated": "{name,Merike} püüab otsustada, kas teha {task,oma maksud} ise või palgata üks {profession,raamatupidaja}. Kui ta teeb need ise, saab ta teha {n,3} tundi vähem {work_type,vabakutselist} tööd, kaotades saamata jäänud tulu {rate,35} {cur,EUR}/tunnis. {profession,raamatupidaja} küsib {fee,90} {cur,EUR}. Kui palju rohkem raha ta saab, kui ta palkab {profession,raamatupidaja}?\n\n#init:\n- name, _ = sample(names_female_cases)\n- task = sample([\"oma maksud\", \"oma finantsplaneerimise\", \"oma äri raamatupidamise\"])\n- profession = sample([\"raamatupidaja\", \"finantsnõustaja\", \"maksunõustaja\", \"raamatupidaja-abiline\"])\n- work_type = sample([\"vabakutselist\", \"nõustamist\", \"osalist tööaega\", \"lepingulist\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 14)\n- $rate = range(20, 100)\n- $fee = range(50, 200)\n\n#conditions:\n- n * rate > fee\n\n#answer: n * rate - fee",
+    "count": 100
+  },
+  {
+    "id": 66,
+    "question_annotated": "{name_gen,Kadri}l on {n1,15} hele{c1_par_sg,sinist} niidipooli, {n2,45} tume{c1_par_sg,sinist} niidipooli, {n3,40} hele{c2_par_sg,rohelist} niidipooli ja {n4,50} tume{c2_par_sg,rohelist} niidipooli. Mitu protsenti tema niidipoolidest on {c1_nom_pl,sinised}?\n\n#init:\n- name, name_gen = sample(names_cases)\n- (c1_par_sg, c1_gen_pl, c1_nom_pl), (c2_par_sg, c2_gen_pl, c2_nom_pl) = sample([(\"sinist\", \"siniste\", \"sinised\"), (\"rohelist\", \"roheliste\", \"rohelised\"), (\"punast\", \"punaste\", \"punased\"), (\"kollast\", \"kollaste\", \"kollased\"), (\"pruuni\", \"pruunide\", \"pruunid\")], 2)\n- $n1 = range(15, 100, 5)\n- $n2 = range(45, 150, 5)\n- $n3 = range(20, 80, 5)\n- $n4 = range(50, 100, 5)\n\n#conditions:\n- is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))\n\n#answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))",
+    "count": 100
+  },
+  {
+    "id": 67,
+    "question_annotated": "{name_gen,Jaani} {vehicle_nom,auto} läheb katki. {vehicle_nom_cap,Auto} kaalub {weight_vehicle,1200} {unit,kilogrammi} ja tal on seal {item,pagasit}, mis kaalub {weight_item,250} {unit,kilogrammi}. Tal on seal ka {num_passengers_txt,kaks} {passenger_count_phrase,last}, kes kaaluvad kumbki {weight_passenger,75} {unit,kilogrammi}. Kui jõud {vehicle_gen,auto} liigutamiseks on {force_percent,1}% kogu kaalust, siis kui palju jõudu peab ta {vehicle_gen,auto} lükkamiseks rakendama?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- vehicle_nom, vehicle_nom_cap, vehicle_gen = sample([('auto', 'Auto', 'auto'), ('buss', 'Buss', 'bussi'), ('veok', 'Veok', 'veoki'), ('maastur', 'Maastur', 'maasturi')])\n- item = sample(['pagasit', 'varustust', 'mööblit', 'kraami'])\n- passenger_count_phrase = sample(['last', 'noort sõpra', 'noort kolleegi', 'noort meeskonnakaaslast'])\n- unit = sample(['kilogrammi', 'kg'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)",
+    "count": 100
+  },
+  {
+    "id": 68,
+    "question_annotated": "{name_gen,Helena}l kulub {game1_gen_sg,ristsõna} lõpetamiseks {t1,10} minutit ja {game2_gen_sg,sudoku} lõpetamiseks {t2,5} minutit. {period,Nädalavahetusel} lahendas ta {n1,3} {game1_num,ristsõna} ja {n2,8} {game2_num,sudokut}. Kui palju aega ta nende mängude peale veetis?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- (game1_gen_sg, game1_num, game1_gen_sg_cap, game1_all_pl), (game2_gen_sg, game2_num, game2_gen_sg_cap, game2_all_pl) = sample([(\"ristsõna\", \"ristsõna\", \"Ristsõna\", \"ristsõnadele\"), (\"sudoku\", \"sudokut\", \"Sudoku\", \"sudokudele\"), (\"sõnamängu\", \"sõnamängu\", \"Sõnamängu\", \"sõnamängudele\"), (\"pusle\", \"puslet\", \"Pusle\", \"pusledele\")], 2)\n- period = sample([\"Nädalavahetusel\", \"Puhkuse ajal\", \"Pühade ajal\", \"Vabal päeval\", \"Vabal ajal\"])\n- $t1 = range(5, 30)\n- $t2 = range(3, 20)\n- $n1 = range(2, 10)\n- $n2 = range(4, 15)\n\n#conditions:\n- t1 > t2\n\n#answer: t1*n1 + t2*n2",
+    "count": 100
+  },
+  {
+    "id": 69,
+    "question_annotated": "{day3_gen,teisipäeva}l tahab {name,Peeter} treenida {mult_txt,kaks korda} nii kaua, kui ta tegi {day2_gen,esmaspäeva}l ja {day1_gen,pühapäeva}l kokku. {day1_gen,pühapäeva}l treenis ta {t1,23} minutit. {day2_gen,esmaspäeva}l treenis ta {t2,16} minutit. Mitu minutit peab ta {day3_gen,teisipäeva}l treenima, et jõuda oma eesmärgini?\n\n#init:\n- name, _ = sample(names_cases)\n- (day1_nom, day1_gen), (day2_nom, day2_gen), (day3_nom, day3_gen) = sample_sequential(weekday_cases, 3)\n- $t1 = range(10, 60)\n- $t2 = range(10, 60)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- t1 + t2 > 0\n- (t1 + t2) * mult_val / 60 < 14\n#answer: (t1 + t2) * mult_val",
+    "count": 100
+  },
+  {
+    "id": 70,
+    "question_annotated": "{occupation,Ehitaja} töötab igal kuul {w,4} nädalat ja igal nädalal {d,6} päeva. Kui talle makstakse {p,50} {cur,EUR} iga tööpäeva eest, siis kui palju ta teenib aasta jooksul?\n\n#init:\n- occupation = sample([\"Ehitaja\", \"Torumees\", \"Elektrik\", \"Maaler\", \"Puusepp\", \"Aednik\"])\n- cur = sample(currencies_sym)\n- $w = range(2, 5)\n- $d = range(4, 7)\n- $p = range(40, 200, 5)\n\n\n#answer: w * d * p * 12",
+    "count": 100
+  },
+  {
+    "id": 71,
+    "question_annotated": "{name,Toomas} söödab oma kariloomi {food_com,heinaga}. Iga {animal1_nom,kits} vajab {n1,5} {unit_par,kilogrammi} ja iga {animal2_nom,lammas} vajab {n2,3} {unit_par,kilogrammi} vähem kui kaks korda nii palju, kui vajab iga {animal1_nom,kits}. {name_gen,Toomase}l on {k1,15} {animal1_par,kitse} ja {k2,12} {animal2_par,lammast}. Mitu kilogrammi heina on {name_gen,Toomase}l vaja?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- food_nom, food_com, food_par = sample([(\"hein\", \"heinaga\", \"heina\"), (\"vili\", \"viljaga\", \"vilja\"), (\"sööt\", \"söödaga\", \"sööta\"), (\"silo\", \"siloga\", \"silo\")])\n- (animal1_nom, animal1_par, animal1_nom_pl), (animal2_nom, animal2_par, animal2_nom_pl) = sample([(\"kits\", \"kitse\", \"kitsed\"), (\"lammas\", \"lammast\", \"lambad\"), (\"lehm\", \"lehma\", \"lehmad\"), (\"hobune\", \"hobust\", \"hobused\"), (\"eesel\", \"eeslit\", \"eeslid\"), (\"laama\", \"laamat\", \"laamad\"), (\"alpaka\", \"alpakat\", \"alpakad\"), (\"siga\", \"siga\", \"sead\"), (\"kalkun\", \"kalkunit\", \"kalkunid\"), (\"part\", \"parti\", \"pardid\")], 2)\n- unit_nom, unit_par = sample([(\"kilogramm\", \"kilogrammi\"), (\"kg\", \"kg\")])\n- $n1 = range(3, 15)\n- $n2 = range(2, 10)\n- $k1 = range(10, 50)\n- $k2 = range(10, 50)\n\n#conditions:\n- 2*n1 - n2 > 0\n\n#answer: k1*n1 + k2*(2*n1 - n2)",
+    "count": 100
+  },
+  {
+    "id": 72,
+    "question_annotated": "{name_gen,Toomase}l on {n1,5} kirjasõpra. Ta lõpetas kirjavahetuse {n2,2} kirjasõbraga. Iga ülejäänu saadab talle {l,2} kirja nädalas, mis on {p,5} lehekülge pikad. Ta vastab samaga. Ta suudab kirjutada ühe lehekülje {t,6} minutiga. Mitu tundi veedab ta kirjutades ühes nädalas?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- $n1 = range(5, 15)\n- $n2 = range(1, 5)\n- $l = range(2, 5)\n- $p = range(5, 12)\n- $t = range(4, 15)\n\n#conditions:\n- n2 < n1\n- is_int(((n1 - n2) * l * p * t) / 60)\n\n#answer: ((n1 - n2) * l * p * t) // 60",
+    "count": 100
+  },
+  {
+    "id": 73,
+    "question_annotated": "Komeet {comet_name,Halley} tiirleb ümber Päikese iga {orbit_period,75} aasta järel. {name_gen,Jüri} {relative,isa} nägi komeeti, kui ta oli {relative_age,30}-aastane. {name,Jüri} nägi komeeti teist korda, kui ta oli {multiple_txt,kolm} korda vanem, kui tema {relative,isa} oli komeeti nähes. Kui vana oli {name,Jüri}, kui ta nägi komeeti esimest korda?\n\n#init:\n- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])\n- name, name_gen = sample(names_male_cases)\n- relative = sample(['isa', 'onu', 'vanaisa'])\n- $orbit_period = range(50, 101, 5)\n- $relative_age = range(20, 51)\n- multiple_txt, multiple_val = sample([('kaks', 2), ('kolm', 3), ('neli', 4), ('viis', 5), ('kuus', 6)])\n\n#conditions:\n- multiple_val * relative_age < 100\n- multiple_val * relative_age > orbit_period\n- is_int(multiple_val * relative_age - orbit_period)\n\n#answer: multiple_val * relative_age - orbit_period",
+    "count": 100
+  },
+  {
+    "id": 74,
+    "question_annotated": "{school_name,Väikepuu} koolis on {total,96} {grade_gen,esimese} klassi õpilast. Neist {num_girls,43} on tüdrukud. {day_gen,esmaspäeva}l puudus {absent_girls,5} {grade_gen,esimese} klassi tüdrukut ja {absent_boys,4} {grade_gen,esimese} klassi poissi. Mitu {grade_gen,esimese} klassi poissi oli {school_name,Väikepuu} koolis {day_gen,esmaspäeva}l?\n\n#init:\n- school_name = sample([\"Väikepuu\", \"Vahtramäe\", \"Tammiku\", \"Männiku\", \"Kase\"])\n- grade_gen = sample([\"esimese\", \"teise\", \"kolmanda\", \"neljanda\", \"viienda\"])\n- (day_nom, day_gen) = sample(weekday_cases)\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys",
+    "count": 100
+  },
+  {
+    "id": 75,
+    "question_annotated": "{place_ine_cap,Poes} on praegu {n1,3} {c1_part_sg,punast} palli, {n2,11} {c2_part_sg,sinist} palli ja {n3,25} {c3_part_sg,rohelist} palli. {c1_nom_pl_cap,Punased} pallid maksavad {p1,9} {cur,EUR}, {c2_nom_pl,sinised} pallid maksavad {p2,5} {cur,EUR} ja {c3_nom_pl,rohelised} pallid maksavad {p3,3} {cur,EUR}. Kui palju teenib pood, kui kõik pallid on müüdud?\n\n#init:\n- cur = sample(currencies_sym)\n- place_ine_cap = sample([\"Poes\", \"Turul\", \"Laos\", \"Kioskis\"])\n- (c1_part_sg, c1_nom_pl, c1_nom_pl_cap, c1_gen_pl_cap), (c2_part_sg, c2_nom_pl, c2_nom_pl_cap, c2_gen_pl_cap), (c3_part_sg, c3_nom_pl, c3_nom_pl_cap, c3_gen_pl_cap) = sample([(\"punast\", \"punased\", \"Punased\", \"Punaste\"), (\"sinist\", \"sinised\", \"Sinised\", \"Siniste\"), (\"rohelist\", \"rohelised\", \"Rohelised\", \"Roheliste\"), (\"kollast\", \"kollased\", \"Kollased\", \"Kollaste\"), (\"musta\", \"mustad\", \"Mustad\", \"Mustade\"), (\"valget\", \"valged\", \"Valged\", \"Valgete\")], 3)\n- $n1 = range(3, 20)\n- $n2 = range(5, 30)\n- $n3 = range(15, 50)\n- $p1 = range(5, 15)\n- $p2 = range(3, 10)\n- $p3 = range(2, 8)\n\n#answer: n1*p1 + n2*p2 + n3*p3",
+    "count": 100
+  },
+  {
+    "id": 76,
+    "question_annotated": "{name,Toomas} püüdis {n,3} {fish_par_sg,tuunikala} eelmisel {day_gen,esmaspäeva}l, esimene {fish_nom_sg,tuunikala}, mille ta püüdis, kaalus {w1,56} {unit_par_sg,kilogrammi}, teine {fish_nom_sg,tuunikala}, mille ta püüdis, kaalus {w2,46} {unit_par_sg,kilogrammi} ja ülejäänud {fish_nom_pl,tuunikalad}, mille ta püüdis, kaalus {w3,26} {unit_par_sg,kilogrammi}. Kui {unit_nom_sg,kilogramm} {fish_par_sg,tuunikala} maksab {price,0.5} {cur,EUR}, siis kui palju ta teenib pärast kõigi {fish_gen_pl,tuunikalade} turule müümist?\n\n#init:\n- name, _ = sample(names_male_cases)\n- fish_nom_sg, fish_par_sg, fish_el_sg, fish_nom_pl, fish_par_pl, fish_gen_pl = sample([(\"tuunikala\", \"tuunikala\", \"tuunikalast\", \"tuunikalad\", \"tuunikalu\", \"tuunikalade\"), (\"lõhe\", \"lõhet\", \"lõhest\", \"lõhed\", \"lõhesid\", \"lõhede\"), (\"tursk\", \"turska\", \"tursast\", \"tursad\", \"turskasid\", \"turskade\"), (\"forell\", \"forelli\", \"forellist\", \"forellid\", \"forelle\", \"forellide\")])\n- (day_nom, day_gen) = sample(weekday_cases)\n- unit_nom_sg, unit_par_sg = sample([(\"kilogramm\", \"kilogrammi\"), (\"kg\", \"kg\")])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)",
+    "count": 100
+  },
+  {
+    "id": 77,
+    "question_annotated": "{name,Sofia} peab esitama {n,15}-leheküljelist {document_par,uurimistööd}. Ta on juba valmis kirjutanud {frac,1/3} {document_el,uurimistööst}. Mitu lehekülge tal on veel vaja kirjutada?\n\n#init:\n- name, _ = sample(names_female_cases)\n- document_par, document_el = sample([(\"uurimistööd\", \"uurimistööst\"), (\"esseed\", \"esseest\"), (\"aruannet\", \"aruandest\"), (\"lõputööd\", \"lõputööst\"), (\"dissertatsiooni\", \"dissertatsioonist\")])\n- $n = range(10, 325)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int(n * frac)\n- n * frac < n\n\n#answer: n - int(n * frac)",
+    "count": 100
+  },
+  {
+    "id": 78,
+    "question_annotated": "Tavalisel õpilasel on päevas {n1,6} tundi, aga {name,Toomas} peab võtma {n2,2} lisatundi. Iga tund kestab {t,40} minutit. Ta käib tunnis {d,5} päeva nädalas. Seejärel kulutab ta igal laupäeval ja pühapäeval {frac,1/16} oma nädala minutitest lisaks õppimiseks. Mitu tundi nädalas ta õpib?\n\n#init:\n- name, _ = sample(names_male_cases)\n- $n1 = range(5, 10)\n- $n2 = range(2, 5)\n- $t = range(30, 61, 5)\n- $d = range(4, 7)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int((n1 + n2) * t * d * frac)\n- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)\n\n#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60",
+    "count": 100
+  },
+  {
+    "id": 79,
+    "question_annotated": "{name,Toomas} lõpetas {frac_txt,poole} {n1,500}-tükilisest puslest ja seejärel alustas ning lõpetas ühe teise {n2,500}-tükilise pusle tunni aja jooksul. Mitu pusletükki {name,Toomas} selle tunni jooksul puslesse asetas?\n\n#init:\n- name, _ = sample(names_cases)\n- frac_txt, frac_val = sample([(\"poole\", \"1/2\"), (\"kolmandiku\", \"1/3\"), (\"veerandi\", \"1/4\"), (\"viiendiku\", \"1/5\"), (\"kahe kolmandiku\", \"2/3\"), (\"kolme neljandiku\", \"3/4\")])\n- $n1 = range(100, 501)\n- $n2 = range(300, 1001)\n\n#conditions:\n- is_int(n1 * frac_val)\n\n#answer: int(n1 * frac_val) + n2",
+    "count": 100
+  },
+  {
+    "id": 80,
+    "question_annotated": "Automaatides müüakse {item1_par_pl,kartulikrõpse} {price1,40} sendi eest ja {item2_par_pl,šokolaadibatoone} {price2,75} sendi eest. {name,Toomas} kulutas {total,5} {cur,EUR} ja sai {n1,3} kotti {item1_par_pl,kartulikrõpse} ning tal jäi {p,1}% rahast vahetusrahana alles. Mitu {item2_par_sg,šokolaadibatooni} ta ostis?\n\n#init:\n- name, _ = sample(names_male_cases)\n- item1_par_pl, item1_gen_pl = sample([(\"kartulikrõpse\", \"kartulikrõpsude\"), (\"kreekereid\", \"kreekerite\"), (\"küpsiseid\", \"küpsiste\"), (\"pulgakomme\", \"pulgakommide\")])\n- item2_par_sg, item2_par_pl, item2_gen_pl = sample([(\"šokolaadibatooni\", \"šokolaadibatoone\", \"šokolaadibatoonide\"), (\"kompvekki\", \"kompvekke\", \"kompvekkide\"), (\"karamelli\", \"karamelle\", \"karamellide\"), (\"muffinit\", \"muffineid\", \"muffinite\")])\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(2, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: int((total * (100 - p) - n1 * price1) / price2)",
+    "count": 100
+  },
+  {
+    "id": 81,
+    "question_annotated": "Munajahi meeskond peitis {total,100} muna. {family,Tamme} kaksikud leidsid kumbki {n,30} muna. Kõik ülejäänud munad peale {m,10} leidsid nende sõbrad. Mitu muna leidsid sõbrad?\n\n#init:\n- family = sample([\"Tamme\", \"Kase\", \"Saare\", \"Kuuse\", \"Sepa\"])\n- $total = range(50, 201, 10)\n- $n = range(10, 51)\n- $m = range(5, 21)\n\n#conditions:\n- 2*n + m < total\n\n#answer: total - 2*n - m",
+    "count": 100
+  },
+  {
+    "id": 82,
+    "question_annotated": "Peo alguses oli {m,25} meest ja {w,15} naist. Pärast {t,ühe tunni} möödumist lahkus kogu inimeste arvust {frac,1/4}. Kui {m_left,22} meest jäi peole, siis kui palju naisi jäi peole?\n\n#init:\n- t = sample(['ühe tunni', 'kahe tunni', 'poolteise tunni', '45 minuti'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left",
+    "count": 100
+  },
+  {
+    "id": 83,
+    "question_annotated": "{family_gen,Tamme} perekond teeb agaralt {item_par_pl,küpsiseid}. Seni on nad valmistanud {total,7995} {item_num,küpsist}. Neil on {n1,2595} {flavor1_num,värvilist} {item_num,küpsist}, {n2,3075} {flavor2_num,kaerahelbe} {item_num,küpsist} ja mõned {flavor3_par_pl,šokolaaditükkidega} {item_nom_pl,küpsised}. Mitu {flavor3_num,šokolaaditükkidega} {item_num,küpsist} on nad valmistanud?\n\n#init:\n- family_gen = sample([\"Tamme\", \"Kase\", \"Saare\", \"Kuuse\", \"Sepa\"])\n- item_par_pl, item_num, item_gen_pl, item_nom_pl = sample([(\"küpsiseid\", \"küpsist\", \"küpsiste\", \"küpsised\"), (\"muffineid\", \"muffinit\", \"muffinite\", \"muffinid\"), (\"koogikesi\", \"koogikest\", \"koogikeste\", \"koogikesed\"), (\"pirukaid\", \"pirukat\", \"pirukate\", \"pirukad\")])\n- flavor1_num, flavor1_gen_pl_cap = sample([(\"värvilist\", \"Värviliste\"), (\"vanilli\", \"Vanilli\"), (\"maasika\", \"Maasika\"), (\"sidruni\", \"Sidruni\"), (\"mustika\", \"Mustika\")])\n- flavor2_num, flavor2_gen_pl = sample([(\"kaerahelbe\", \"kaerahelbe\"), (\"šokolaadi\", \"šokolaadi\"), (\"õuna\", \"õuna\"), (\"kaneeli\", \"kaneeli\"), (\"pähkli\", \"pähkli\")])\n- flavor3_num, flavor3_par_pl = sample([(\"šokolaaditükkidega\", \"šokolaaditükkidega\"), (\"mustikatega\", \"mustikatega\"), (\"rosinatega\", \"rosinatega\"), (\"pähklitega\", \"pähklitega\"), (\"õunatükkidega\", \"õunatükkidega\")])\n- $total = range(4995, 10000, 25)\n- $n1 = range(995, 3000, 50)\n- $n2 = range(1075, 3200, 50)\n\n#conditions:\n- n1 + n2 < total\n\n#answer: total - (n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 84,
+    "question_annotated": "{name,Maria} ostab {n,8} aktsiat hinnaga {p,8} {cur,EUR} tükk. Aktsia hind tõuseb esimesel aastal, mil {name,Maria} seda hoiab, {r1,50}%, seejärel langeb teisel aastal {r2,25}%. Mis on kõigi {name_gen,Maria} aktsiate lõppväärtus?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: int(n * p * (1 + r1/100) * (1 - r2/100))",
+    "count": 100
+  },
+  {
+    "id": 85,
+    "question_annotated": "Kui {name1_gen,Jaani}l ja {name2_gen,Martini}l on {total,100} {unit,sentimeetrit} aeda ning nad lepivad, et {name2,Martin} saab {name1_gen,Jaani}st {diff,60} {unit,sentimeetrit} rohkem, siis kui palju jääb {name1_gen,Jaani}le?\n\n#init:\n- name1, name1_gen = sample(names_male_cases)\n- name2, name2_gen = sample(names_male_cases)\n- unit = sample([\"sentimeetrit\", \"meetrit\"])\n- $total = range(100, 1000, 20)\n- $diff = range(20, 200, 10)\n\n#conditions:\n- name1 != name2\n- total - diff > 10\n- is_int((total - diff) / 2)\n\n#answer: (total - diff) // 2",
+    "count": 100
+  },
+  {
+    "id": 86,
+    "question_annotated": "{name,Anu} sai koha {sport_prefix,jooksu}meeskonnas, nii et ta läks ostma spordivarustust. Ta ostis {item1_par_sg,topi} hinnaga {p1,10} {cur,EUR}, {sport_prefix,jooksu}{item2_nom_pl,püksid} hinnaga {p2,5} {cur,EUR} rohkem kui {item1_gen_sg,topi} hind ning {item3_nom_pl,tennisekingad}, mille algne hind oli {p3,48} {cur,EUR}, kuid mis olid müügil {frac_txt,poole} hinnaga. Tal oli kupong, millega sai {d,2} {cur,EUR} vähem {p4,8} {cur,EUR} maksnud spordi{item4_gen_pl,sokkide} paki pealt, mida ta samuti ostis. Kui palju ta kulutas spordivarustusele?\n\n#init:\n- name, _ = sample(names_female_cases)\n- sport_prefix = sample([\"jooksu\", \"ujumis\", \"jalgratta\", \"korvpalli\", \"jalgpalli\", \"võrkpalli\"])\n- item1_nom_sg, item1_gen_sg, item1_par_sg, item1_ela_sg = sample([(\"top\", \"topi\", \"topi\", \"topist\"), (\"t-särk\", \"t-särgi\", \"t-särki\", \"t-särgist\"), (\"spordisärk\", \"spordisärgi\", \"spordisärki\", \"spordisärgist\"), (\"spordirinnahoidja\", \"spordirinnahoidja\", \"spordirinnahoidjat\", \"spordirinnahoidjast\")])\n- item2_nom_pl, item2_gen_pl = sample([(\"püksid\", \"pükste\"), (\"retuusid\", \"retuuside\"), (\"dressipüksid\", \"dressipükste\")])\n- item3_nom_pl, item3_gen_pl = sample([(\"tennisekingad\", \"tenniskingade\"), (\"tossud\", \"tosside\"), (\"naelikud\", \"naelikute\"), (\"spordijalatsid\", \"spordijalatsite\")])\n- item4_nom_pl, item4_gen_pl = sample([(\"sokid\", \"sokkide\"), (\"peapaelad\", \"peapaelte\"), (\"randmepaelad\", \"randmepaelte\")])\n- cur = sample(currencies_sym)\n- frac_txt, frac_val = sample([(\"poole\", 1/2), (\"kolmandiku\", 1/3), (\"veerandi\", 1/4)])\n- $p1 = range(8, 25)\n- $p2 = range(3, 15)\n- $p3 = range(30, 80, 2)\n- $p4 = range(5, 15)\n- $d = range(1, 5)\n\n#conditions:\n- is_int(p3*frac_val)\n- p3 % 2 == 0\n- p4 > d\n\n#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)",
+    "count": 100
+  },
+  {
+    "id": 87,
+    "question_annotated": "Suurim veeliug veepargis {park_name,Aquavere} on {l1,300} {unit,meetrit} pikk ja inimesed libisevad alla kiirusega {s1,60} {unit,meetrit} minutis. Teine suurim veeliug on {l2,240} {unit,meetrit} pikk, kuid on järsem, nii et inimesed libisevad alla kiirusega {s2,80} {unit,meetrit} minutis. Kui palju kauem kulub suurima veeliu läbimiseks võrreldes teise suurima veeliuga?\n\n#init:\n- park_name = sample([\"Aquavere\", \"Veemaailm\", \"Vetevall\", \"Neptuni park\"])\n- unit = sample(['meetrit'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
+    "count": 100
+  },
+  {
+    "id": 88,
+    "question_annotated": "{name,Anu} suudab joosta {mult_run_txt,neli korda} kiiremini kui ta kõnnib, kuid ta suudab hüpates liikuda kiirusega, mis on {frac_skip_txt,pool} tema jooksukiirusest. Kui ta suudab hüpata kiirusega {skip_speed,3} kilomeetrit tunnis, siis mitu kilomeetrit saab ta läbida {total_time_val,6} tunniga, kui ta veedab {frac_run_txt,kolmandik} ajast joostes ja {frac_walk_txt,kaks kolmandikku} ajast kõndides?\n\n#init:\n- name, _ = sample(names_female_cases)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
+    "count": 100
+  },
+  {
+    "id": 89,
+    "question_annotated": "{name,Toomas} rendib {vehicle_par,hobuveokit} ajavahemikul kella {start_time,5}st kuni kella {end_time,9}ni. Ta saab {free_hours,1} tundi tasuta. Esimene tasuline tund maksab {first_hour_cost,15} {cur,EUR} ja iga järgmine tasuline tund maksab {multiplier_txt,kaks korda} rohkem kui esimene tasuline tund. Kui palju ta maksis?\n\n#init:\n- name, _ = sample(names_male_cases)\n- vehicle_par = sample([\"hobuveokit\", \"limusiini\", \"peobussi\", \"paati\", \"luksusautot\"])\n- $start_time = range(1, 8)\n- $end_time = range(3, 12)\n- $free_hours = range(1, 3)\n- cur = sample(currencies_sym)\n- $first_hour_cost = range(10, 51)\n- multiplier_txt, multiplier_val = sample([(\"kaks korda\", 2), (\"kolm korda\", 3), (\"neli korda\", 4)])\n\n#conditions:\n- end_time - start_time > free_hours + 1\n\n#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val",
+    "count": 100
+  },
+  {
+    "id": 90,
+    "question_annotated": "{name1_gen,Martini}l on {mult1_txt,kolm} korda rohkem {platform_many,Facebooki-sõpru} kui {name2_gen,Laura}l. {name3_gen,Jaani}l on {mult2_txt,neli} korda rohkem {platform_many,Facebooki-sõpru} kui {name2_gen,Laura}l. Kui {name1_gen,Martini}l on {n,12} {platform_one,Facebooki-sõpra}, siis mitu {platform_one,Facebooki-sõpra} on {name3_gen,Jaani}l?\n\n#init:\n- name1, name1_gen = sample(names_male_cases)\n- name2, name2_gen = sample(names_female_cases)\n- name3, name3_gen = sample(names_male_cases)\n- platform_many, platform_one = sample([(\"Facebooki-sõpru\", \"Facebooki-sõpra\"), (\"Instagrami-jälgijaid\", \"Instagrami-jälgijat\"), (\"TikToki-jälgijaid\", \"TikToki-jälgijat\"), (\"Snapchati-sõpru\", \"Snapchati-sõpra\")])\n- mult1_txt, mult1_val = sample([(\"kaks\", 2), (\"kolm\", 3), (\"neli\", 4), (\"viis\", 5), (\"kuus\", 6)])\n- mult2_txt, mult2_val = sample([(\"kaks\", 2), (\"kolm\", 3), (\"neli\", 4), (\"viis\", 5), (\"kuus\", 6)])\n- $n = range(10, 201)\n\n#conditions:\n- name1 != name3\n- mult2_val != mult1_val\n- is_int(n / mult1_val)\n\n#answer: int((n / mult1_val) * mult2_val)",
+    "count": 100
+  },
+  {
+    "id": 91,
+    "question_annotated": "{name_gen,Martini} majas on {mult_txt,kaks korda} rohkem {food1_num,maisi} kui {food2_num,cannoli’t}. Tal on kokku {n,40} {food2_num,cannoli’t}. {name,Martin} ostis poest {m,60} {food2_num,cannoli’t} juurde ja tal on {food2_gen_pl,cannoli’de} arvust {k,40} võrra vähem {food1_num,maisi}. Leia, kui palju {food1_num,maisi} ja {food2_num,cannoli’t} {name_gen,Martini}l majas kokku on.\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- food1_num, food1_gen_pl = sample([(\"maisi\", \"maiside\"), (\"õunu\", \"õunte\"), (\"pirne\", \"pirnide\"), (\"banaane\", \"banaanide\")])\n- food2_num, food2_gen_pl = sample([(\"cannoli’t\", \"cannoli’de\"), (\"küpsist\", \"küpsiste\"), (\"muffinit\", \"muffinite\"), (\"sarvesaia\", \"sarvesaiade\")])\n- mult_txt, mult_val = sample([(\"kaks korda\", 2), (\"kolm korda\", 3), (\"neli korda\", 4), (\"viis korda\", 5)])\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)",
+    "count": 100
+  },
+  {
+    "id": 92,
+    "question_annotated": "Prints {name1,Martin} tappis oma vägeva {weapon1,mõõgaga} {n1,100} {creature_par_sg,draakonit}, samal ajal kui prints {name2,Andres}, kasutades {weapon2,oda}, tappis prints {name1_gen,Martini} tapetud {creature_gen_pl,draakonite} arvust {frac1_txt,pool} veel. Roostes {weapon3,rauakirvega} tappis prints {name3,Toomas} {mult1_txt,kaks korda} rohkem {creature_par_pl,draakoneid} kui prints {name2,Andres}. Aga prints {name4,Margus}, olles unustanud oma {weapon4,mõõga} koju, tappis {weapon5,küüneviiliga} {frac2_txt,pool} nii palju {creature_par_pl,draakoneid} kui prints {name3,Toomas}. Kui palju {creature_par_pl,draakoneid} on prints {name4,Margus} tapnud?\n\n#init:\n- (name1, name1_gen), (name2, _), (name3, _), (name4, _) = sample(names_male_cases, 4)\n- creature_par_sg, creature_par_pl, creature_gen_pl = sample([(\"draakonit\", \"draakoneid\", \"draakonite\"), (\"trolli\", \"trolle\", \"trollide\"), (\"goblinit\", \"goblineid\", \"goblinite\"), (\"orki\", \"orke\", \"orkide\"), (\"hiiglast\", \"hiiglasi\", \"hiiglaste\")])\n- weapon1 = sample([\"mõõgaga\", \"nuiaga\", \"sõjakirvega\", \"sõjahaamriga\"])\n- weapon2 = sample([\"oda\", \"piiki\", \"viskeoda\", \"hellebardi\"])\n- weapon3 = sample([\"rauakirvega\", \"puunuiaga\", \"kivihaamriga\", \"luupistodaga\"])\n- weapon4 = sample([\"mõõga\", \"kirve\", \"nuia\", \"haamri\"])\n- weapon5 = sample([\"küüneviiliga\", \"võinoaga\", \"puulusikaga\", \"sulega\"])\n- $n1 = range(50, 501, 50)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n1 * frac1_val * mult1_val)\n- is_int(n1 * frac1_val * mult1_val * frac2_val)\n\n#answer: int(n1 * frac1_val * mult1_val * frac2_val)",
+    "count": 100
+  },
+  {
+    "id": 93,
+    "question_annotated": "Kui vesi on külm, ujub {name,Margus} ühe {unit_gen_sg,kilomeetri} {t1,16} minutiga. Kui vesi on soe, ujub {name,Margus} ühe {unit_gen_sg,kilomeetri} {n,2} minutit rohkem kui {mult_txt,kaks} korda nii kaua. Kui palju kauem võtab {name_gen,Marguse}l {d,3} {unit_gen_sg,kilomeetri} ujumine kuumal päeval võrreldes külma päevaga?\n\n#init:\n- name, name_gen = sample(names_male_cases)\n- unit_nom_sg, unit_gen_sg, unit_par_pl = sample([(\"kilomeeter\", \"kilomeetri\", \"kilomeetrit\"), (\"miil\", \"miili\", \"miili\")])\n- $t1 = range(10, 50)\n- $n = range(1, 10)\n- mult_txt, mult_val = sample([(\"kaks\", 2), (\"kolm\", 3), (\"neli\", 4)])\n- $d = range(2, 10)\n\n#conditions:\n- t1 < 60\n- n + mult_val * t1 < 60\n- d * (n + mult_val * t1) - d * t1 > 0\n\n#answer: d * (n + mult_val * t1) - d * t1",
+    "count": 100
+  },
+  {
+    "id": 94,
+    "question_annotated": "{n,100} inimest kandideerib tööle ettevõttes {company,Google}. Nendest, kes kandideerivad, saavad ainult {p1,30}% tööintervjuule. Nendest, kes saavad tööintervjuule, saavad {p2,20}% tööpakkumise. Nendest, kes saavad tööpakkumise, võtab ametikoha vastu {frac_txt,üks kolmandik}. Mitu inimest võtab ametikoha vastu?\n\n#init:\n- company = sample([\"Google\", \"Microsoft\", \"Apple\", \"Amazon\", \"Netflix\", \"Tesla\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample([(\"pool\", \"1/2\"), (\"üks kolmandik\", \"1/3\"), (\"veerand\", \"1/4\")])\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: int(n * (p1/100) * (p2/100) * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 95,
+    "question_annotated": "On {n1,6} õpilast, kes mängivad {sport1,tennist}, ja {mult_txt,kaks korda} rohkem õpilasi mängib {sport2,võrkpalli}. On {n2,16} poissi ja {n3,22} tüdrukut, kes mängivad {sport3,jalgpalli}. Kui iga õpilane osaleb ainult ühes rühmas, siis kui palju õpilasi on kokku?\n\n#init:\n- sport1, sport2, sport3 = sample(['korvpalli', 'sulgpalli', 'lauatennist', 'jalgpalli', 'võrkpalli'], 3)\n- mult_txt, mult_var = sample(multi_times)\n- $n1 = range(4, 21)\n- $n2 = range(10, 31)\n- $n3 = range(10, 31)\n\n#conditions:\n- n1 * mult_var + n2 + n3 <= 250\n\n#answer: n1 + n1 * mult_var + n2 + n3",
+    "count": 100
+  },
+  {
+    "id": 96,
+    "question_annotated": "{name_gen,Anu} {parent,isa} ütles, et tal on sünnipäevapeoks eelarves {budget,90} {cur,EUR}. Ta tahab kindlustada, et tema ja ta sõbrad saavad kõik mängida ühe ringi {activity1,minigolfi}, saada {tokens,5} {cur,EUR} väärtuses {activity2,mänguautomaatide} žetoone ja sõita {activity3_ade,kardirajal} {times_txt,kaks korda}. Üks ring {activity1,minigolfi} maksab {cost1,5} {cur,EUR}. Üks sõit {activity3_ade,kardirajal} maksab {cost2,10} {cur,EUR}. Mitu sõpra ta saab kutsuda?\n\n#init:\n- name, name_gen = sample(names_female_cases)\n- parent = sample([\"ema\", \"isa\", \"tädi\", \"onu\"])\n- activity1 = sample([\"minigolfi\", \"keeglit\", \"biljardit\"])\n- activity2 = sample([\"mänguautomaatide\", \"mängutoa\"])\n- activity3_ade = sample([\"kardirajal\", \"põrkeautodel\", \"ameerika mägedel\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1",
+    "count": 100
+  },
+  {
+    "id": 97,
+    "question_annotated": "{name1,Maria} töötab kassaregistriga täpselt {mult_txt,kaks korda} kiiremini kui tema vähem kogenud kolleeg {name2,Anu}. Iga päev {name2,Anu} teenindab {n,50} klienti. Mis on nende kahe kogutoodang nädalas, kui nad töötavad kõik nädalapäevad?\n\n#init:\n- (name1, _), (name2, _) = sample(names_female_cases, 2)\n- mult_txt, mult_var = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_var)\n- is_int((n + n * mult_var) * 7)\n\n#answer: (n + n * mult_var) * 7",
+    "count": 100
+  },
+  {
+    "id": 98,
+    "question_annotated": "{disease,Katk} nakatab {n0_val,10} inimest. Iga päev nakatab iga nakatunud inimene {r_val,6} teist inimest. Kui palju inimesi on nakatunud {d_val,3} päeva pärast?\n\n#init:\n- disease = sample(['Katk', 'Viirus', 'Bakter', 'Nakkus', 'Koroonaviirus'])\n- $n0_val = range(5, 21)\n- $r_val = range(2, 9)\n- $d_val = range(3, 4)\n\n#conditions:\n- n0_val * (r_val + 1)**d_val < 20000\n\n#answer: n0_val * (r_val + 1)**d_val",
+    "count": 100
+  },
+  {
+    "id": 99,
+    "question_annotated": "Kui {name,Toomas} sööb {n1,3} muna päevas {d1,30} päeva jooksul ja seejärel suurendab kogust {n2,5} munani päevas {d2,30} päeva jooksul, siis kui mitu tosinat mune peab {name,Toomas} sööma {d3,60} päeva jooksul?\n\n#init:\n- name, _ = sample(names_cases)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
+    "count": 100
+  }
+]

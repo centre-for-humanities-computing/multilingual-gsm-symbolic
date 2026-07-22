@@ -1,0 +1,37 @@
+question = "Teisipäeval tahab Peeter treenida kaks korda nii kaua, kui ta tegi esmaspäeval ja pühapäeval kokku. Pühapäeval treenis ta 23 minutit. Esmaspäeval treenis ta 16 minutit. Mitu minutit peab ta teisipäeval treenima, et jõuda oma eesmärgini?"
+
+answer = """
+Pühapäeval ja esmaspäeval treenis ta kokku 39 minutit, sest 23 + 16 = <<23+16=39>>39.
+Teisipäeval peab ta treenima 78 minutit, sest 39*2 = <<39*2=78>>78.
+#### 78
+"""
+
+id_orig = 300
+
+id_shuffled = 69
+
+question_annotated = """
+{day3_gen,teisipäeva}l tahab {name,Peeter} treenida {mult_txt,kaks korda} nii kaua, kui ta tegi {day2_gen,esmaspäeva}l ja {day1_gen,pühapäeva}l kokku. {day1_gen,pühapäeva}l treenis ta {t1,23} minutit. {day2_gen,esmaspäeva}l treenis ta {t2,16} minutit. Mitu minutit peab ta {day3_gen,teisipäeva}l treenima, et jõuda oma eesmärgini?
+
+#init:
+- name, _ = sample(names_cases)
+- (day1_nom, day1_gen), (day2_nom, day2_gen), (day3_nom, day3_gen) = sample_sequential(weekday_cases, 3)
+- $t1 = range(10, 60)
+- $t2 = range(10, 60)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- t1 + t2 > 0
+- (t1 + t2) * mult_val / 60 < 14
+#answer: (t1 + t2) * mult_val
+"""
+
+answer_annotated = """
+{day1_gen}l ja {day2_gen}l treenis ta kokku {t1+t2} minutit, sest {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}.
+{day3_gen}l peab ta treenima {(t1+t2)*mult_val} minutit, sest {t1+t2}*{mult_val} = <<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val}.
+#### {(t1+t2)*mult_val}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"
