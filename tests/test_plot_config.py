@@ -12,6 +12,7 @@ from numbercoverage import number_coverage_grid  # noqa: E402
 from plot_config import language_order, model_sort_key, ordered_models  # noqa: E402
 from qwen_compute_budget import (  # noqa: E402
     plot_qwen_compute_budget_family_transfers,
+    plot_qwen_compute_budget_relative_transfer,
     plot_qwen_compute_budget_transfer,
     qwen_compute_budget_table,
 )
@@ -147,7 +148,7 @@ def test_qwen_compute_budget_table_marks_paired_qwen_variants_as_on_and_off() ->
                     "language": language,
                     "split": "synthetic",
                     "accuracy": accuracy,
-                    "avg_generation_seconds": 5.0,
+                    "avg_total_tokens": 100.0,
                 }
             )
 
@@ -157,6 +158,8 @@ def test_qwen_compute_budget_table_marks_paired_qwen_variants_as_on_and_off() ->
 
     assert set(qwen3["model"]) == {"qwen3-4b", "qwen3-4b (reasoning off)"}
     assert set(qwen3["reasoning"]) == {"on", "off"}
+    assert set(qwen3["inference_flops"]) == {8e11}
+    assert set(qwen3["absolute_transfer_gap"].round(3)) == {0.2}
     assert set(table["model_raw"]) == {"qwen3-4b"}
 
 
@@ -182,7 +185,7 @@ def test_qwen_compute_budget_table_includes_other_families_only_when_reasoning_i
                     "language": language,
                     "split": "synthetic",
                     "accuracy": accuracy,
-                    "avg_generation_seconds": 5.0,
+                    "avg_total_tokens": 100.0,
                 }
             )
 
@@ -218,7 +221,7 @@ def test_qwen_compute_budget_exports_one_png_per_family_folder(tmp_path) -> None
                         "language": language,
                         "split": "synthetic",
                         "accuracy": accuracy,
-                        "avg_generation_seconds": seconds,
+                        "avg_total_tokens": seconds * 100,
                     }
                 )
 
@@ -268,7 +271,7 @@ def test_qwen_compute_budget_plot_colors_reasoning_modes_and_draws_one_frontier(
                         "language": language,
                         "split": "synthetic",
                         "accuracy": accuracy,
-                        "avg_generation_seconds": seconds,
+                        "avg_total_tokens": seconds * 100,
                     }
                 )
 
@@ -313,9 +316,9 @@ def test_qwen_compute_budget_plot_draws_one_global_pareto_frontier(tmp_path, mon
                             "language": language,
                             "split": "synthetic",
                             "accuracy": accuracy,
-                            "avg_generation_seconds": params_b
+                            "avg_total_tokens": (params_b
                             + seconds_offset
-                            + (0.2 if reasoning == "on" else 0.0),
+                            + (0.2 if reasoning == "on" else 0.0)) * 100,
                         }
                     )
 
@@ -329,3 +332,29 @@ def test_qwen_compute_budget_plot_draws_one_global_pareto_frontier(tmp_path, mon
     assert label == "Pareto frontier"
     assert len(x) == len(y)
     assert y == sorted(y, reverse=True)
+
+
+def test_qwen_compute_budget_relative_plot_writes_separate_png(tmp_path) -> None:
+    import pandas as pd
+
+    rows = []
+    for reasoning, tokens, gap in [("off", 100.0, 0.2), ("on", 300.0, 0.1)]:
+        model = "qwen3-4b" + ("" if reasoning == "on" else " (reasoning off)")
+        for language, accuracy in [("eng", 0.8), ("dan", 0.8 * (1 - gap))]:
+            rows.append(
+                {
+                    "model_raw": "qwen3-4b",
+                    "model": model,
+                    "family": "Qwen3",
+                    "params_b": 4.0,
+                    "language": language,
+                    "split": "synthetic",
+                    "accuracy": accuracy,
+                    "sample_correct": {str(i): float(i < round(accuracy * 100)) for i in range(100)},
+                    "avg_total_tokens": tokens,
+                }
+            )
+
+    out = tmp_path / "relative.png"
+    assert plot_qwen_compute_budget_relative_transfer(pd.DataFrame(rows), out)
+    assert out.exists()
