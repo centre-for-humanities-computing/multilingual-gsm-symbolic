@@ -1253,9 +1253,9 @@ def plot_correction_comparison_selected(
         )
 
     ax.xaxis.set_major_formatter(PercentFormatter(1))
-    ax.tick_params(axis="x", labelsize=16)
-    ax.set_xlabel("Exact-answer accuracy", fontsize=18, labelpad=5)
-    ax.set_ylabel("Density", fontsize=18, labelpad=5)
+    ax.tick_params(axis="x", labelsize=19)
+    ax.set_xlabel("Exact-answer accuracy", fontsize=23, labelpad=6)
+    ax.set_ylabel("Density", fontsize=23, labelpad=6)
     ax.set_yticks([])
     ax.grid(False)
 
