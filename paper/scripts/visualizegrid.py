@@ -1036,7 +1036,7 @@ def plot_correction_comparison_selected(
     if not target_models:
         target_models = [
             "gemma-3-12b-it",
-            "OLMo-2-0325-32B-Instruct",
+            "Apertus-8B-Instruct-2509",
             "granite-3.2-2b-instruct (reasoning off)",
         ]
 
@@ -1382,7 +1382,7 @@ def main() -> None:
                 metric_out,
                 target_models=[
                     "gemma-3-12b-it",
-                    "OLMo-2-0325-32B-Instruct",
+                    "Apertus-8B-Instruct-2509",
                     "granite-3.2-2b-instruct (reasoning off)",
                 ],
                 legend_labels=("English", "English metric"),
