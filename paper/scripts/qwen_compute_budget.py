@@ -340,10 +340,17 @@ def save_reasoning_budget_summary(table: pd.DataFrame, out_dir: Path) -> Path | 
 
 
 def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool = False) -> bool:
-    fig, ax = plt.subplots(figsize=(9.5, 5.8))
     gap_column = "relative_transfer_gap" if relative else "absolute_transfer_gap"
     ci_column = "relative_transfer_gap_ci95" if relative else "transfer_gap_ci95"
     families = sorted(table["family"].unique())
+    combined = len(families) > 1
+    fig, axes = plt.subplots(
+        1,
+        len(families),
+        figsize=(5.1 * len(families), 5.8) if combined else (9.5, 5.8),
+        sharey=True,
+        squeeze=False,
+    )
     marker_by_family = {family: MARKERS[index % len(MARKERS)] for index, family in enumerate(families)}
     color_by_family = {family: FAMILY_COLORS[index % len(FAMILY_COLORS)] for index, family in enumerate(families)}
 
@@ -354,70 +361,41 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
         rgb = np.asarray(to_rgb(color))
         return to_hex(rgb + (1 - rgb) * 0.5)
 
-    for (reasoning, family), group in table.groupby(["reasoning", "family"], sort=False):
-        group = group.sort_values("inference_flops")
-        color = mode_color(family, reasoning)
-        linestyle = ":" if reasoning == "off" else "-"
-        ax.plot(
-            group["inference_flops"],
-            group[gap_column],
-            color=color,
-            linestyle=linestyle,
-            linewidth=1.8,
-            zorder=1,
-        )
-        ax.errorbar(
-            group["inference_flops"],
-            group[gap_column],
-            yerr=group[ci_column],
-            fmt="none",
-            ecolor=color,
-            elinewidth=1,
-            capsize=2,
-            alpha=0.55,
-            zorder=2,
-        )
-        ax.scatter(
-            group["inference_flops"],
-            group[gap_column],
-            s=38 + group["params_b"].clip(upper=72) * 1.6,
-            marker=marker_by_family.get(family, "o"),
-            color=color,
-            edgecolor="white",
-            linewidth=0.7,
-            alpha=0.9,
-            label="_nolegend_",
-            zorder=3,
-        )
+    for ax, family in zip(axes[0], families, strict=True):
+        family_table = table[table["family"] == family]
+        for reasoning, group in family_table.groupby("reasoning", sort=False):
+            group = group.sort_values("inference_flops")
+            color = mode_color(family, reasoning)
+            linestyle = ":" if reasoning == "off" else "-"
+            ax.plot(group["inference_flops"], group[gap_column], color=color, linestyle=linestyle, linewidth=1.8, zorder=1)
+            ax.errorbar(
+                group["inference_flops"], group[gap_column], yerr=group[ci_column], fmt="none",
+                ecolor=color, elinewidth=1, capsize=2, alpha=0.55, zorder=2,
+            )
+            ax.scatter(
+                group["inference_flops"], group[gap_column],
+                s=38 + group["params_b"].clip(upper=72) * 1.6,
+                marker=marker_by_family.get(family, "o"), color=color, edgecolor="white",
+                linewidth=0.7, alpha=0.9, label="_nolegend_", zorder=3,
+            )
 
-    for row in table.itertuples(index=False):
-        label = f"{row.params_b:g}B"
-        ax.annotate(
-            label,
-            (row.inference_flops, getattr(row, gap_column)),
-            xytext=(4, 4),
-            textcoords="offset points",
-            fontsize=7,
-            color="#374151",
-        )
+        for row in family_table.itertuples(index=False):
+            ax.annotate(
+                f"{row.params_b:g}B", (row.inference_flops, getattr(row, gap_column)),
+                xytext=(4, 4), textcoords="offset points", fontsize=7, color="#374151",
+            )
 
-    ax.set_xscale("log")
-    ax.set_xlabel("Estimated inference FLOPs per sample (log scale)")
-    if relative:
-        ax.set_ylabel("Relative gap: (English − non-English mean) / English")
-    else:
-        ax.set_ylabel("English accuracy − non-English mean accuracy")
-    ax.yaxis.set_major_formatter(PercentFormatter(1))
-    ax.grid(axis="both", color="#E5E7EB", linewidth=0.7)
-    ax.set_axisbelow(True)
-    ax.set_title("Reasoning on vs. off under a fixed compute budget")
-    ax.text(
-        0.01,
-        0.02,
-        "Lower-left is better. Bars are 95% bootstrap CIs over questions.",
-        transform=ax.transAxes,
-        fontsize=8,
-        color="#4B5563",
+        ax.set_xscale("log")
+        ax.set_xlabel("Estimated inference FLOPs per sample (log scale)")
+        ax.yaxis.set_major_formatter(PercentFormatter(1))
+        ax.grid(axis="both", color="#E5E7EB", linewidth=0.7)
+        ax.set_axisbelow(True)
+        ax.set_title(family if combined else "Reasoning on vs. off under a fixed compute budget")
+
+    axes[0, 0].set_ylabel(
+        "Relative gap: (English − non-English mean) / English"
+        if relative
+        else "English accuracy − non-English mean accuracy"
     )
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
@@ -425,21 +403,18 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
                label=REASONING_LABELS[reasoning])
         for reasoning in reasoning_order
     ]
-    handles.extend(
-        Line2D(
-            [0],
-            [0],
-            marker=marker_by_family.get(family, "o"),
-            linestyle="-",
-            markerfacecolor=color_by_family[family],
-            markeredgecolor="white",
-            color=color_by_family[family],
-            label=family,
+    if combined:
+        fig.suptitle("Reasoning on vs. off under a fixed compute budget")
+        fig.legend(handles=handles, frameon=False, fontsize=8, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 0.94))
+        fig.text(0.5, 0.015, "Lower-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
+        fig.tight_layout(rect=(0, 0.035, 1, 0.9))
+    else:
+        axes[0, 0].legend(handles=handles, frameon=False, fontsize=7, loc="upper right")
+        axes[0, 0].text(
+            0.01, 0.02, "Lower-left is better. Bars are 95% bootstrap CIs over questions.",
+            transform=axes[0, 0].transAxes, fontsize=8, color="#4B5563",
         )
-        for family in families
-    )
-    ax.legend(handles=handles, frameon=False, fontsize=7, loc="upper right")
-    fig.tight_layout()
+        fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
