@@ -237,24 +237,24 @@ def test_qwen_compute_budget_exports_one_png_per_family_folder(tmp_path) -> None
     assert all(path.exists() for path in outputs)
 
 
-def test_qwen_compute_budget_plot_colors_reasoning_modes_and_draws_one_frontier(tmp_path, monkeypatch) -> None:
+def test_qwen_compute_budget_plot_connects_families_and_styles_reasoning_modes(tmp_path, monkeypatch) -> None:
     import pandas as pd
     from matplotlib.axes import Axes
 
-    scatter_colors: dict[str, str] = {}
-    step_labels: list[str] = []
-    original_scatter = Axes.scatter
+    line_calls: list[tuple[str, str]] = []
+    step_calls: list[str] = []
+    original_plot = Axes.plot
     original_step = Axes.step
 
-    def capture_scatter(self, x, y, *args, **kwargs):  # type: ignore[no-untyped-def]
-        scatter_colors[kwargs["label"]] = kwargs["color"]
-        return original_scatter(self, x, y, *args, **kwargs)
+    def capture_plot(self, x, y, *args, **kwargs):  # type: ignore[no-untyped-def]
+        line_calls.append((kwargs["color"], kwargs["linestyle"]))
+        return original_plot(self, x, y, *args, **kwargs)
 
     def capture_step(self, x, y, *args, **kwargs):  # type: ignore[no-untyped-def]
-        step_labels.append(kwargs["label"])
+        step_calls.append(kwargs.get("label", ""))
         return original_step(self, x, y, *args, **kwargs)
 
-    monkeypatch.setattr(Axes, "scatter", capture_scatter)
+    monkeypatch.setattr(Axes, "plot", capture_plot)
     monkeypatch.setattr(Axes, "step", capture_step)
     rows = []
     for params_b, base_accuracy, off_gap, on_gap in [(4.0, 0.8, 0.25, 0.1), (8.0, 0.9, 0.2, 0.08)]:
@@ -280,22 +280,24 @@ def test_qwen_compute_budget_plot_colors_reasoning_modes_and_draws_one_frontier(
         tmp_path / "qwen_budget.png",
     )
 
-    assert scatter_colors["reasoning off"] != scatter_colors["reasoning on"]
-    assert step_labels == ["Pareto frontier"]
+    assert len(line_calls) == 2
+    assert {linestyle for _, linestyle in line_calls} == {":", "-"}
+    assert len({color for color, _ in line_calls}) == 2
+    assert step_calls == []
 
 
-def test_qwen_compute_budget_plot_draws_one_global_pareto_frontier(tmp_path, monkeypatch) -> None:
+def test_qwen_compute_budget_plot_assigns_each_family_its_own_color(tmp_path, monkeypatch) -> None:
     import pandas as pd
     from matplotlib.axes import Axes
 
-    step_calls: list[tuple[list[float], list[float], str]] = []
-    original_step = Axes.step
+    line_calls: list[tuple[str, str]] = []
+    original_plot = Axes.plot
 
-    def capture_step(self, x, y, *args, **kwargs):  # type: ignore[no-untyped-def]
-        step_calls.append((list(x), list(y), kwargs["label"]))
-        return original_step(self, x, y, *args, **kwargs)
+    def capture_plot(self, x, y, *args, **kwargs):  # type: ignore[no-untyped-def]
+        line_calls.append((kwargs["color"], kwargs["linestyle"]))
+        return original_plot(self, x, y, *args, **kwargs)
 
-    monkeypatch.setattr(Axes, "step", capture_step)
+    monkeypatch.setattr(Axes, "plot", capture_plot)
     rows = []
     for family, sizes, seconds_offset, gaps_by_reasoning in [
         ("Qwen3", [4.0, 8.0], 0.0, {"off": [0.32, 0.21], "on": [0.14, 0.08]}),
@@ -327,11 +329,11 @@ def test_qwen_compute_budget_plot_draws_one_global_pareto_frontier(tmp_path, mon
         tmp_path / "qwen_budget.png",
     )
 
-    assert len(step_calls) == 1
-    x, y, label = step_calls[0]
-    assert label == "Pareto frontier"
-    assert len(x) == len(y)
-    assert y == sorted(y, reverse=True)
+    solid_colors = {color for color, linestyle in line_calls if linestyle == "-"}
+    dotted_colors = {color for color, linestyle in line_calls if linestyle == ":"}
+    assert len(solid_colors) == 2
+    assert len(dotted_colors) == 2
+    assert solid_colors.isdisjoint(dotted_colors)
 
 
 def test_qwen_compute_budget_relative_plot_writes_separate_png(tmp_path) -> None:

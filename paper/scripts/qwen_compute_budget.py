@@ -29,6 +29,7 @@ from eval_log_utils import (
     select_logs,
 )
 from inspect_ai.log import read_eval_log
+from matplotlib.colors import to_hex, to_rgb
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
 from plot_config import PLOT_STYLE, path_slug
@@ -37,8 +38,8 @@ from scipy.stats import bootstrap
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
-REASONING_COLORS = {"off": "#2563EB", "on": "#DC2626"}
 REASONING_LABELS = {"off": "reasoning off", "on": "reasoning on"}
+FAMILY_COLORS = ["#2563EB", "#DC2626", "#059669", "#7C3AED", "#D97706", "#0891B2"]
 MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*", "<", ">"]
 BOOTSTRAP_REPLICATES = 10_000
 BOOTSTRAP_SEED = 20260722
@@ -344,15 +345,33 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
     ci_column = "relative_transfer_gap_ci95" if relative else "transfer_gap_ci95"
     families = sorted(table["family"].unique())
     marker_by_family = {family: MARKERS[index % len(MARKERS)] for index, family in enumerate(families)}
+    color_by_family = {family: FAMILY_COLORS[index % len(FAMILY_COLORS)] for index, family in enumerate(families)}
+
+    def mode_color(family: str, reasoning: str) -> str:
+        color = color_by_family[family]
+        if reasoning != "off":
+            return color
+        rgb = np.asarray(to_rgb(color))
+        return to_hex(rgb + (1 - rgb) * 0.5)
 
     for (reasoning, family), group in table.groupby(["reasoning", "family"], sort=False):
         group = group.sort_values("inference_flops")
+        color = mode_color(family, reasoning)
+        linestyle = ":" if reasoning == "off" else "-"
+        ax.plot(
+            group["inference_flops"],
+            group[gap_column],
+            color=color,
+            linestyle=linestyle,
+            linewidth=1.8,
+            zorder=1,
+        )
         ax.errorbar(
             group["inference_flops"],
             group[gap_column],
             yerr=group[ci_column],
             fmt="none",
-            ecolor=REASONING_COLORS[reasoning],
+            ecolor=color,
             elinewidth=1,
             capsize=2,
             alpha=0.55,
@@ -363,11 +382,11 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
             group[gap_column],
             s=38 + group["params_b"].clip(upper=72) * 1.6,
             marker=marker_by_family.get(family, "o"),
-            color=REASONING_COLORS[reasoning],
+            color=color,
             edgecolor="white",
             linewidth=0.7,
             alpha=0.9,
-            label=REASONING_LABELS[reasoning],
+            label="_nolegend_",
             zorder=3,
         )
 
@@ -380,33 +399,6 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
             textcoords="offset points",
             fontsize=7,
             color="#374151",
-        )
-
-    frontier = pareto_frontier(table, gap_column)
-    if len(frontier) > 1:
-        ax.step(
-            frontier["inference_flops"],
-            frontier["best_gap_so_far"],
-            where="post",
-            color="#334155",
-            linewidth=2.4,
-            linestyle="-",
-            solid_capstyle="round",
-            solid_joinstyle="round",
-            alpha=0.9,
-            label="Pareto frontier",
-            zorder=2.5,
-        )
-        ax.scatter(
-            frontier["inference_flops"],
-            frontier[gap_column],
-            s=30,
-            marker="D",
-            color="#334155",
-            edgecolor="white",
-            linewidth=0.8,
-            label="_nolegend_",
-            zorder=4,
         )
 
     ax.set_xscale("log")
@@ -429,31 +421,19 @@ def _plot_compute_budget_table(table: pd.DataFrame, out: Path, *, relative: bool
     )
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
-        Line2D([0], [0], marker="o", linestyle="none", color=color, label=REASONING_LABELS[reasoning])
-        for reasoning, color in ((key, REASONING_COLORS[key]) for key in reasoning_order)
+        Line2D([0], [0], color="#374151", linestyle=":" if reasoning == "off" else "-", linewidth=1.8,
+               label=REASONING_LABELS[reasoning])
+        for reasoning in reasoning_order
     ]
-    handles.append(
-        Line2D(
-            [0],
-            [0],
-            color="#334155",
-            marker="D",
-            markerfacecolor="#334155",
-            markeredgecolor="white",
-            markersize=4.5,
-            linewidth=2.4,
-            label="Pareto frontier",
-        )
-    )
     handles.extend(
         Line2D(
             [0],
             [0],
             marker=marker_by_family.get(family, "o"),
-            linestyle="none",
-            markerfacecolor="#6B7280",
+            linestyle="-",
+            markerfacecolor=color_by_family[family],
             markeredgecolor="white",
-            color="none",
+            color=color_by_family[family],
             label=family,
         )
         for family in families
