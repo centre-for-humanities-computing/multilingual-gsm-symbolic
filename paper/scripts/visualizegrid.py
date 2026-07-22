@@ -1118,7 +1118,7 @@ def plot_correction_comparison_selected(
     if not target_models:
         target_models = [
             "gemma-3-27b-it",
-            "gemma-3-12b-it",
+            "gemma-3-1b-it",
             "OLMo-2-0325-32B-Instruct",
             "granite-3.2-8b-instruct (reasoning on)",
         ]
@@ -1128,7 +1128,9 @@ def plot_correction_comparison_selected(
         step = max(1, len(rows) // 3)
         selected_rows = [rows[0], rows[min(step, len(rows) - 1)], rows[min(2 * step, len(rows) - 1)]]
 
-    fig, ax = plt.subplots(figsize=(9.5, 4.2))
+    # Sized for a single-column paper figure.  The larger type remains legible
+    # after LaTeX scales the image to the column width.
+    fig, ax = plt.subplots(figsize=(8.2, 3.65))
 
     # Distinct colour per model; unvalidated = solid, validated = dashed
     MODEL_COLORS = [
@@ -1140,6 +1142,7 @@ def plot_correction_comparison_selected(
     ]
 
     all_peaks = []
+    model_labels: list[tuple[float, float, str, str]] = []
 
     for i, row in enumerate(selected_rows):
         color = MODEL_COLORS[i % len(MODEL_COLORS)]
@@ -1215,28 +1218,40 @@ def plot_correction_comparison_selected(
             zorder=4,
         )
 
-        # Label model above its peak
         peak_x = (old_mean + new_mean) / 2
         peak_y = max(float(old_density.max()), float(new_density.max()))
+        model_labels.append((peak_x, peak_y, row.model, color))
+
+    ax.set_xlim(0, 1)
+    max_peak = max(all_peaks) if all_peaks else 15.0
+    ax.set_ylim(bottom=0, top=max_peak * 1.13)
+
+    # Alternate nearby labels between two levels and keep edge labels inside
+    # the axes.  This avoids collisions after the figure is narrowed.
+    for tier, (peak_x, peak_y, model, color) in enumerate(sorted(model_labels)):
+        label_y = max(peak_y + max_peak * 0.025, max_peak * (0.22 + 0.09 * (tier % 2)))
+        if peak_x < 0.12:
+            horizontal_alignment = "left"
+        elif peak_x > 0.88:
+            horizontal_alignment = "right"
+        else:
+            horizontal_alignment = "center"
         ax.text(
             peak_x,
-            peak_y + 0.6,
-            row.model,
-            ha="center",
+            label_y,
+            model,
+            ha=horizontal_alignment,
             va="bottom",
-            fontsize=9.5,
+            fontsize=11.5,
             fontweight="bold",
             color=color,
             zorder=5,
         )
 
-    ax.set_xlim(0, 1)
-    max_peak = max(all_peaks) if all_peaks else 15.0
-    ax.set_ylim(bottom=0, top=max_peak * 1.35)
-
     ax.xaxis.set_major_formatter(PercentFormatter(1))
-    ax.set_xlabel("Exact-answer accuracy", fontsize=11.5, labelpad=8)
-    ax.set_ylabel("Density", fontsize=11.5, labelpad=8)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.set_xlabel("Exact-answer accuracy", fontsize=13.5, labelpad=5)
+    ax.set_ylabel("Density", fontsize=13.5, labelpad=5)
     ax.set_yticks([])
     ax.grid(False)
 
@@ -1248,12 +1263,12 @@ def plot_correction_comparison_selected(
         handles=legend_elements,
         loc="upper right",
         frameon=False,
-        fontsize=10,
+        fontsize=12,
         ncol=2,
     )
-    fig.tight_layout()
+    fig.tight_layout(pad=0.35)
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
+    fig.savefig(out, dpi=220, bbox_inches="tight", pad_inches=0.03, facecolor="white")
     plt.close(fig)
 
 
