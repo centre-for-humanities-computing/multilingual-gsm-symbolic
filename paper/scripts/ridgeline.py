@@ -11,7 +11,6 @@ every source template, then averages correctness across the selected problems.
 from __future__ import annotations
 
 import argparse
-from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -19,7 +18,15 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from eval_log_utils import discover_logs, normal_curve, parse_task, sample_score, sample_synthetic_sets, select_logs
+from eval_log_utils import (
+    discover_logs,
+    map_log_loader,
+    normal_curve,
+    parse_task,
+    sample_score,
+    sample_synthetic_sets,
+    select_logs,
+)
 from inspect_ai.log import read_eval_log
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
@@ -34,7 +41,6 @@ from plot_config import (
     model_sort_key,
     path_slug,
 )
-from scipy.stats import norm
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
@@ -163,30 +169,15 @@ def load_problem_scores(
     frames: list[pd.DataFrame] = []
     _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
 
-    if workers <= 1:
-        for index, path in enumerate(paths, start=1):
-            label, frame, warning = _load_one_log(path, scorer)
-            if warning:
-                print(warning)
-            else:
-                print(f"[{index}/{len(paths)}] {label}")
-            if frame is not None and not frame.empty:
-                frames.append(frame)
-            if len(frames) >= _CONCAT_CHUNK:
-                frames = [pd.concat(frames, ignore_index=True)]
-    else:
-        with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
-            futures = [pool.submit(_load_one_log, path, scorer) for path in paths]
-            for index, future in enumerate(as_completed(futures), start=1):
-                label, frame, warning = future.result()
-                if warning:
-                    print(warning)
-                else:
-                    print(f"[{index}/{len(paths)}] {label}")
-                if frame is not None and not frame.empty:
-                    frames.append(frame)
-                if len(frames) >= _CONCAT_CHUNK:
-                    frames = [pd.concat(frames, ignore_index=True)]
+    for index, (label, frame, warning) in enumerate(map_log_loader(_load_one_log, paths, scorer, workers), start=1):
+        if warning:
+            print(warning)
+        else:
+            print(f"[{index}/{len(paths)}] {label}")
+        if frame is not None and not frame.empty:
+            frames.append(frame)
+        if len(frames) >= _CONCAT_CHUNK:
+            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()

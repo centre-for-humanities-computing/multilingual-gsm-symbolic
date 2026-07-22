@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import math
 import re
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections.abc import Callable, Iterator
+from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, as_completed, wait
 from dataclasses import dataclass
+from itertools import islice
 from pathlib import Path
 from typing import Any
 
-from inspect_ai.log import read_eval_log
-from plot_config import model_family, model_name, model_size_b, reasoning_mode
-
 import numpy as np
 import pandas as pd
+from inspect_ai.log import read_eval_log
+from plot_config import model_family, model_name, model_size_b, reasoning_mode, reasoning_variant_name
 from scipy.stats import norm
 
 
@@ -171,6 +172,45 @@ def select_logs(paths: list[Path], include_incomplete: bool, workers: int) -> li
             selected[key] = (path, log)
 
     return sorted(selected.values(), key=lambda item: item[0].name)
+
+
+def map_log_loader(
+    loader: Callable[[Path, str | None], tuple[str, pd.DataFrame | None, str | None]],
+    paths: list[Path],
+    scorer: str | None,
+    workers: int,
+) -> Iterator[tuple[str, pd.DataFrame | None, str | None]]:
+    if workers <= 1:
+        yield from (loader(path, scorer) for path in paths)
+        return
+
+    max_workers = min(workers, len(paths))
+    paths_iter = iter(paths)
+    with ProcessPoolExecutor(max_workers=max_workers) as pool:
+        pending = {pool.submit(loader, path, scorer) for path in islice(paths_iter, max_workers)}
+        while pending:
+            done, pending = wait(pending, return_when=FIRST_COMPLETED)
+            for future in done:
+                yield future.result()
+                try:
+                    path = next(paths_iter)
+                except StopIteration:
+                    continue
+                pending.add(pool.submit(loader, path, scorer))
+
+
+def classify_reasoning_variants(rows: pd.DataFrame) -> pd.DataFrame:
+    parsed = rows["model"].map(reasoning_variant_name)
+    rows["base_model_candidate"] = [item[0] for item in parsed]
+    rows["reasoning"] = [item[1] for item in parsed]
+    off_name_by_raw = rows[rows["reasoning"] == "off"].groupby("model_raw")["base_model_candidate"].first()
+    rows["canonical_base_model"] = rows["model_raw"].map(off_name_by_raw).fillna(rows["base_model_candidate"])
+    has_off_variant = rows["model_raw"].isin(off_name_by_raw.index)
+    rows.loc[
+        rows["reasoning"].isna() & has_off_variant & (rows["model"] == rows["canonical_base_model"]),
+        "reasoning",
+    ] = "on"
+    return rows[rows["reasoning"].isin(["on", "off"])]
 
 
 def sample_synthetic_sets(
