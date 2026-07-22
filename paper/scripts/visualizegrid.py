@@ -12,6 +12,7 @@ The script reads Inspect ``.eval`` logs and writes:
 * ``english_normalized_transfer.png``: language accuracy relative to English.
 * ``eng_vs_eng_metric.png``: paired English and English-metric accuracy by model.
 * ``eng_vs_eng_metric_selected.png``: selected-model English/English-metric distributions.
+* ``eng_vs_eng_metric_full.png``: all paired-model English/English-metric distributions.
 * ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
 * ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
 * ``reasoning_delta_heatmap.png``: English-vs-non-English synthetic gap by reasoning mode.
@@ -1043,7 +1044,13 @@ def _normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
     return x, norm.pdf(x, loc=mean, scale=std), mean
 
 
-def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: str, out: Path) -> None:
+def plot_correction_comparison(
+    rows: list[CorrectionComparisonRow],
+    language: str,
+    out: Path,
+    legend_labels: tuple[str, str] = ("Uncorrected", "Corrected"),
+    title: str | None = None,
+) -> None:
     fig, axes = plt.subplots(
         len(rows),
         1,
@@ -1100,12 +1107,12 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
     axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
 
     legend = [
-        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label="Uncorrected"),
-        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label="Corrected"),
+        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label=legend_labels[0]),
+        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label=legend_labels[1]),
     ]
     axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
     fig.suptitle(
-        f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
+        title or f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
         x=0.08,
         ha="left",
         fontsize=17,
@@ -1440,6 +1447,7 @@ def main() -> None:
         args.out_dir / "eng_vs_eng_metric.png",
     )
     eng_metric_selected = False
+    eng_metric_full = False
     english = samples[samples["language"] == "eng"].copy()
     english_metric = samples[samples["language"] == "eng_metric"].copy()
     if not english.empty and not english_metric.empty:
@@ -1452,6 +1460,15 @@ def main() -> None:
             args.correction_seed,
         )
         if metric_rows:
+            metric_full_out = args.out_dir / "eng_vs_eng_metric_full.png"
+            plot_correction_comparison(
+                metric_rows,
+                "eng",
+                metric_full_out,
+                legend_labels=("English", "English metric"),
+                title="English vs English metric comparison",
+            )
+            eng_metric_full = True
             metric_out = args.out_dir / "eng_vs_eng_metric_selected.png"
             plot_correction_comparison_selected(
                 metric_rows,
@@ -1533,6 +1550,8 @@ def main() -> None:
         print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
     if eng_metric_selected:
         print(f"Saved {args.out_dir / 'eng_vs_eng_metric_selected.png'}")
+    if eng_metric_full:
+        print(f"Saved {args.out_dir / 'eng_vs_eng_metric_full.png'}")
 
     if made_robustness:
         print(f"Saved {args.out_dir / 'transfer_robustness.png'}")
