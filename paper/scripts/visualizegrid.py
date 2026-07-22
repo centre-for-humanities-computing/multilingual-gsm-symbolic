@@ -11,6 +11,7 @@ The script reads Inspect ``.eval`` logs and writes:
 * ``family_scaling.png``: within-family accuracy as a function of parameter count.
 * ``english_normalized_transfer.png``: language accuracy relative to English.
 * ``eng_vs_eng_metric.png``: paired English and English-metric accuracy by model.
+* ``eng_vs_eng_metric_selected.png``: selected-model English/English-metric distributions.
 * ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
 * ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
 * ``reasoning_delta_heatmap.png``: English-vs-non-English synthetic gap by reasoning mode.
@@ -1114,6 +1115,7 @@ def plot_correction_comparison_selected(
     language: str,
     out: Path,
     target_models: list[str] | None = None,
+    legend_labels: tuple[str, str] = ("Unvalidated", "Validated"),
 ) -> None:
     if not target_models:
         target_models = [
@@ -1259,8 +1261,8 @@ def plot_correction_comparison_selected(
     ax.grid(False)
 
     legend_elements = [
-        Line2D([0], [0], color="#555555", lw=2.8, linestyle="-", label="Unvalidated"),
-        Line2D([0], [0], color="#555555", lw=2.8, linestyle="--", label="Validated"),
+        Line2D([0], [0], color="#555555", lw=2.8, linestyle="-", label=legend_labels[0]),
+        Line2D([0], [0], color="#555555", lw=2.8, linestyle="--", label=legend_labels[1]),
     ]
     ax.legend(
         handles=legend_elements,
@@ -1428,6 +1430,32 @@ def main() -> None:
         summary,
         args.out_dir / "eng_vs_eng_metric.png",
     )
+    eng_metric_selected = False
+    english = samples[samples["language"] == "eng"].copy()
+    english_metric = samples[samples["language"] == "eng_metric"].copy()
+    if not english.empty and not english_metric.empty:
+        english_metric["language"] = "eng"
+        metric_rows = collect_correction_comparison_rows(
+            english,
+            english_metric,
+            "eng",
+            args.correction_samples,
+            args.correction_seed,
+        )
+        if metric_rows:
+            metric_out = args.out_dir / "eng_vs_eng_metric_selected.png"
+            plot_correction_comparison_selected(
+                metric_rows,
+                "eng",
+                metric_out,
+                target_models=[
+                    "gemma-3-12b-it",
+                    "gemma-3-1b-it",
+                    "OLMo-2-0325-32B-Instruct",
+                ],
+                legend_labels=("English", "English metric"),
+            )
+            eng_metric_selected = True
     made_robustness = plot_transfer_robustness(
         summary,
         args.out_dir / "transfer_robustness.png",
@@ -1494,6 +1522,8 @@ def main() -> None:
         print(f"Saved {args.out_dir / 'eng_vs_eng_metric.png'}")
     else:
         print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
+    if eng_metric_selected:
+        print(f"Saved {args.out_dir / 'eng_vs_eng_metric_selected.png'}")
 
     if made_robustness:
         print(f"Saved {args.out_dir / 'transfer_robustness.png'}")
