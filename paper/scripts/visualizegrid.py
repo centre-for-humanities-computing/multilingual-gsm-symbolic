@@ -1130,7 +1130,7 @@ def plot_correction_comparison_selected(
 
     # Sized for a single-column paper figure.  The larger type remains legible
     # after LaTeX scales the image to the column width.
-    fig, ax = plt.subplots(figsize=(8.2, 3.65))
+    fig, ax = plt.subplots(figsize=(8.2, 3.85))
 
     # Distinct colour per model; unvalidated = solid, validated = dashed
     MODEL_COLORS = [
@@ -1226,32 +1226,36 @@ def plot_correction_comparison_selected(
     max_peak = max(all_peaks) if all_peaks else 15.0
     ax.set_ylim(bottom=0, top=max_peak * 1.13)
 
-    # Alternate nearby labels between two levels and keep edge labels inside
+    # Alternate nearby labels between three levels and keep edge labels inside
     # the axes.  This avoids collisions after the figure is narrowed.
     for tier, (peak_x, peak_y, model, color) in enumerate(sorted(model_labels)):
-        label_y = max(peak_y + max_peak * 0.025, max_peak * (0.22 + 0.09 * (tier % 2)))
-        if peak_x < 0.12:
+        label_y = max(peak_y + max_peak * 0.025, max_peak * (0.22 + 0.09 * (tier % 3)))
+        label_x = peak_x
+        if len(model) > 30:
+            label_x = max(0.02, peak_x - 0.22)
+            horizontal_alignment = "left"
+        elif peak_x < 0.12:
             horizontal_alignment = "left"
         elif peak_x > 0.88:
             horizontal_alignment = "right"
         else:
             horizontal_alignment = "center"
         ax.text(
-            peak_x,
+            label_x,
             label_y,
             model,
             ha=horizontal_alignment,
             va="bottom",
-            fontsize=11.5,
+            fontsize=15.5,
             fontweight="bold",
             color=color,
             zorder=5,
         )
 
     ax.xaxis.set_major_formatter(PercentFormatter(1))
-    ax.tick_params(axis="x", labelsize=12)
-    ax.set_xlabel("Exact-answer accuracy", fontsize=13.5, labelpad=5)
-    ax.set_ylabel("Density", fontsize=13.5, labelpad=5)
+    ax.tick_params(axis="x", labelsize=16)
+    ax.set_xlabel("Exact-answer accuracy", fontsize=18, labelpad=5)
+    ax.set_ylabel("Density", fontsize=18, labelpad=5)
     ax.set_yticks([])
     ax.grid(False)
 
@@ -1263,7 +1267,7 @@ def plot_correction_comparison_selected(
         handles=legend_elements,
         loc="upper right",
         frameon=False,
-        fontsize=12,
+        fontsize=16,
         ncol=2,
     )
     fig.tight_layout(pad=0.35)
