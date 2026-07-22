@@ -173,6 +173,7 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
             }
         )
 
+    del log  # free the large decompressed log before returning
     if not rows:
         return label, pd.DataFrame(), None
 
@@ -197,6 +198,8 @@ def load_samples(
     if not paths:
         return pd.DataFrame()
 
+    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
+
     if workers <= 1:
         for index, path in enumerate(paths, start=1):
             label, frame, warning = _load_one_log(path, scorer)
@@ -206,6 +209,8 @@ def load_samples(
                 print(f"[{index}/{len(paths)}] {label}")
             if frame is not None and not frame.empty:
                 frames.append(frame)
+            if len(frames) >= _CONCAT_CHUNK:
+                frames = [pd.concat(frames, ignore_index=True)]
     else:
         max_workers = min(workers, len(paths))
         with ProcessPoolExecutor(max_workers=max_workers) as pool:
@@ -219,6 +224,8 @@ def load_samples(
                     print(f"[{index}/{len(paths)}] {label}")
                 if frame is not None and not frame.empty:
                     frames.append(frame)
+                if len(frames) >= _CONCAT_CHUNK:
+                    frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
@@ -1111,6 +1118,7 @@ def plot_correction_comparison_selected(
     if not target_models:
         target_models = [
             "gemma-3-27b-it",
+            "gemma-3-1b-it",
             "OLMo-2-0325-32B-Instruct",
             "granite-3.2-8b-instruct (reasoning on)",
         ]
@@ -1120,34 +1128,42 @@ def plot_correction_comparison_selected(
         step = max(1, len(rows) // 3)
         selected_rows = [rows[0], rows[min(step, len(rows) - 1)], rows[min(2 * step, len(rows) - 1)]]
 
-    fig, ax = plt.subplots(figsize=(8.5, 4.2))
+    # Sized for a single-column paper figure.  The larger type remains legible
+    # after LaTeX scales the image to the column width.
+    fig, ax = plt.subplots(figsize=(8.2, 3.65))
 
-    DARK_BLUE = "#1B365D"
-    LIGHT_BLUE = "#4EA8DE"
-    DARK_BAR = "#1B365D"
-    LIGHT_BAR = "#4EA8DE"
+    # Distinct colour per model; unvalidated = solid, validated = dashed
+    MODEL_COLORS = [
+        "#1B365D",  # deep navy
+        "#C0392B",  # crimson
+        "#1A6B3C",  # forest green
+        "#7B3FA0",  # purple
+        "#D4680F",  # burnt orange (spare)
+    ]
 
     all_peaks = []
+    model_labels: list[tuple[float, float, str, str]] = []
 
-    for row in selected_rows:
+    for i, row in enumerate(selected_rows):
+        color = MODEL_COLORS[i % len(MODEL_COLORS)]
         old_counts, _, _ = ax.hist(
             row.uncorrected_sets,
             bins=18,
             density=True,
-            color=DARK_BAR,
+            color=color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.25,
+            alpha=0.18,
             zorder=1,
         )
         new_counts, _, _ = ax.hist(
             row.corrected_sets,
             bins=18,
             density=True,
-            color=LIGHT_BAR,
+            color=color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.35,
+            alpha=0.30,
             zorder=1,
         )
 
@@ -1162,11 +1178,11 @@ def plot_correction_comparison_selected(
         )
         all_peaks.append(peak)
 
-        # Uncorrected (Dark Blue)
+        # Unvalidated — solid line
         ax.plot(
             old_x,
             old_density,
-            color=DARK_BLUE,
+            color=color,
             linestyle="-",
             linewidth=1.8,
             zorder=3,
@@ -1175,19 +1191,19 @@ def plot_correction_comparison_selected(
             x=old_mean,
             ymin=0,
             ymax=float(old_density.max()),
-            color=DARK_BLUE,
+            color=color,
             linestyle="-",
             linewidth=1.2,
             alpha=0.85,
             zorder=4,
         )
 
-        # Corrected (Light Blue)
+        # Validated — dashed line
         ax.plot(
             new_x,
             new_density,
-            color=LIGHT_BLUE,
-            linestyle="-",
+            color=color,
+            linestyle="--",
             linewidth=1.8,
             zorder=3,
         )
@@ -1195,59 +1211,64 @@ def plot_correction_comparison_selected(
             x=new_mean,
             ymin=0,
             ymax=float(new_density.max()),
-            color=LIGHT_BLUE,
-            linestyle="-",
+            color=color,
+            linestyle="--",
             linewidth=1.2,
             alpha=0.85,
             zorder=4,
         )
 
-        # Label model above its peak
         peak_x = (old_mean + new_mean) / 2
         peak_y = max(float(old_density.max()), float(new_density.max()))
-        ax.text(
-            peak_x,
-            peak_y + 0.6,
-            row.model,
-            ha="center",
-            va="bottom",
-            fontsize=9.5,
-            fontweight="bold",
-            color="#222222",
-            zorder=5,
-        )
+        model_labels.append((peak_x, peak_y, row.model, color))
 
     ax.set_xlim(0, 1)
     max_peak = max(all_peaks) if all_peaks else 15.0
-    ax.set_ylim(bottom=0, top=max_peak * 1.35)
+    ax.set_ylim(bottom=0, top=max_peak * 1.13)
+
+    # Alternate nearby labels between two levels and keep edge labels inside
+    # the axes.  This avoids collisions after the figure is narrowed.
+    for tier, (peak_x, peak_y, model, color) in enumerate(sorted(model_labels)):
+        label_y = max(peak_y + max_peak * 0.025, max_peak * (0.22 + 0.09 * (tier % 2)))
+        if peak_x < 0.12:
+            horizontal_alignment = "left"
+        elif peak_x > 0.88:
+            horizontal_alignment = "right"
+        else:
+            horizontal_alignment = "center"
+        ax.text(
+            peak_x,
+            label_y,
+            model,
+            ha=horizontal_alignment,
+            va="bottom",
+            fontsize=11.5,
+            fontweight="bold",
+            color=color,
+            zorder=5,
+        )
 
     ax.xaxis.set_major_formatter(PercentFormatter(1))
-    ax.set_xlabel("Exact-answer accuracy", fontsize=11.5, labelpad=8)
+    ax.tick_params(axis="x", labelsize=12)
+    ax.set_xlabel("Exact-answer accuracy", fontsize=13.5, labelpad=5)
+    ax.set_ylabel("Density", fontsize=13.5, labelpad=5)
     ax.set_yticks([])
     ax.grid(False)
 
     legend_elements = [
-        Line2D([0], [0], color=DARK_BLUE, lw=2, label="Uncorrected"),
-        Line2D([0], [0], color=LIGHT_BLUE, lw=2, label="Corrected"),
+        Line2D([0], [0], color="#555555", lw=2, linestyle="-", label="Unvalidated"),
+        Line2D([0], [0], color="#555555", lw=2, linestyle="--", label="Validated"),
     ]
     ax.legend(
         handles=legend_elements,
         loc="upper right",
         frameon=False,
-        fontsize=10,
+        fontsize=12,
         ncol=2,
     )
-
-    fig.suptitle(
-        f"{LANGUAGE_LABELS.get(language, language)} correction comparison (Selected models)",
-        x=0.12,
-        ha="left",
-        fontsize=14,
-        fontweight="bold",
-    )
-    fig.tight_layout()
+    fig.tight_layout(pad=0.35)
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
+    fig.savefig(out, dpi=220, bbox_inches="tight", pad_inches=0.03, facecolor="white")
     plt.close(fig)
 
 
@@ -1366,7 +1387,7 @@ def main() -> None:
     parser.add_argument(
         "--workers",
         type=int,
-        default=32,
+        default=8,
         help="Workers used for log selection and full log loading. Use 1 to disable parallelism.",
     )
 
