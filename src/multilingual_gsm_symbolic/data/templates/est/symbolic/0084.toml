@@ -1,0 +1,45 @@
+question = "Maria ostab 8 aktsiat hinnaga 8 EUR tükk. Aktsia hind tõuseb esimesel aastal, mil Maria seda hoiab, 50%, seejärel langeb teisel aastal 25%. Mis on kõigi Maria aktsiate lõppväärtus?"
+
+answer = """
+Kõigepealt leia Maria ostu algne koguväärtus: 8 aktsiat * 8 EUR/aktsia = <<8*8=64>>64 EUR
+Seejärel leia esimese hinnatõusu suurus: 64 EUR * 0.5 = <<64*0.5=32>>32 EUR
+Lisa see summa algväärtusele, et saada väärtus pärast esimest aastat: 64 EUR + 32 EUR = <<64+32=96>>96 EUR
+Seejärel korruta see summa 25%ga, et leida teisel aastal toimunud languse suurus: 96 EUR * 25% = <<96*25*.01=24>>24 EUR
+Lõpuks lahuta see summa esimesel aastal saadud väärtusest, et leida lõppväärtus: 96 EUR - 24 EUR = <<96-24=72>>72 EUR
+#### 72
+"""
+
+id_orig = 336
+
+id_shuffled = 84
+
+question_annotated = """
+{name,Maria} ostab {n,8} aktsiat hinnaga {p,8} {cur,EUR} tükk. Aktsia hind tõuseb esimesel aastal, mil {name,Maria} seda hoiab, {r1,50}%, seejärel langeb teisel aastal {r2,25}%. Mis on kõigi {name_gen,Maria} aktsiate lõppväärtus?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- cur = sample(currencies_sym)
+- $n = range(5, 20)
+- $p = range(5, 100)
+- $r1 = range(10, 100, 5)
+- $r2 = range(5, 50, 5)
+
+#conditions:
+- is_int(n * p * r1/100)
+- is_int(n * p * (1 + r1/100) * (1 - r2/100))
+
+#answer: int(n * p * (1 + r1/100) * (1 - r2/100))
+"""
+
+answer_annotated = """
+Kõigepealt leia {name_gen} ostu algne koguväärtus: {n} aktsiat * {p} {cur}/aktsia = <<{n}*{p}={n*p}>>{n*p} {cur}
+Seejärel leia esimese hinnatõusu suurus: {n*p} {cur} * {r1/100} = <<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)} {cur}
+Lisa see summa algväärtusele, et saada väärtus pärast esimest aastat: {n*p} {cur} + {n*p*r1/100} {cur} = <<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))} {cur}
+Seejärel korruta see summa {r2}%ga, et leida teisel aastal toimunud languse suurus: {n*p*(1+r1/100)} {cur} * {r2}% = <<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)} {cur}
+Lõpuks lahuta see summa esimesel aastal saadud väärtusest, et leida lõppväärtus: {int(n*p*(1+r1/100))} {cur} - {int(n*p*(1+r1/100)*r2/100)} {cur} = <<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={int(n*p*(1+r1/100)*(1-r2/100))}>>{int(n*p*(1+r1/100)*(1-r2/100))} {cur}
+#### {int(n*p*(1+r1/100)*(1-r2/100))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

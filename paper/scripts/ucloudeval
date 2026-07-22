@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # /// script
-# dependencies = ["datasets", "inspect-ai", "pyyaml"]
+# dependencies = ["datasets", "huggingface-hub", "inspect-ai", "pyyaml"]
 # ///
 """Run multilingual GSM-Symbolic Inspect tasks against local vLLM servers."""
 
@@ -19,65 +19,66 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from huggingface_hub import hf_hub_download
 
 MODELS = (
-    # Qwen2.5 Instruct
-   #"Qwen/Qwen2.5-0.5B-Instruct",
-    #"Qwen/Qwen2.5-1.5B-Instruct",
-   # "Qwen/Qwen2.5-3B-Instruct",
-   # "Qwen/Qwen2.5-7B-Instruct",
-    #"Qwen/Qwen2.5-14B-Instruct",
-    #"Qwen/Qwen2.5-32B-Instruct",
-  #  "Qwen/Qwen2.5-72B-Instruct",
+     #  Qwen2.5 Instruct
+    "Qwen/Qwen2.5-0.5B-Instruct",
+     "Qwen/Qwen2.5-1.5B-Instruct",
+     "Qwen/Qwen2.5-3B-Instruct",
+     "Qwen/Qwen2.5-7B-Instruct",
+     "Qwen/Qwen2.5-14B-Instruct",
+     "Qwen/Qwen2.5-32B-Instruct",
+     "Qwen/Qwen2.5-72B-Instruct",
 
-    # Qwen3 dense reasoning-capable models
-  #  "Qwen/Qwen3-0.6B",
-   # "Qwen/Qwen3-1.7B",
-    #"Qwen/Qwen3-4B",
-    #"Qwen/Qwen3-8B",
-    #"Qwen/Qwen3-14B",
-   # "Qwen/Qwen3-32B",
+     #  Qwen3 dense reasoning-capable models
+     "Qwen/Qwen3-0.6B",
+     "Qwen/Qwen3-1.7B",
+     "Qwen/Qwen3-4B",
+     "Qwen/Qwen3-8B",
+     "Qwen/Qwen3-14B",
+     "Qwen/Qwen3-32B",
 
-    # Qwen3.5 reasoning models up to 27B
-  #  "Qwen/Qwen3.5-0.8B",
-  #  "Qwen/Qwen3.5-4B",
-  #  "Qwen/Qwen3.5-9B",
-  #  "Qwen/Qwen3.5-27B",
+    #   Qwen3.5 reasoning models up to 27B
+     "Qwen/Qwen3.5-0.8B",
+     "Qwen/Qwen3.5-4B",
+     "Qwen/Qwen3.5-9B",
+     "Qwen/Qwen3.5-27B",
 
-    # OLMo 2 Instruct
-   # "allenai/OLMo-2-0425-1B-Instruct",
-   # "allenai/OLMo-2-1124-7B-Instruct",
-   # "allenai/OLMo-2-1124-13B-Instruct",
-   # "allenai/OLMo-2-0325-32B-Instruct",
+    #   OLMo 2 Instruct
+     "allenai/OLMo-2-0425-1B-Instruct",
+     "allenai/OLMo-2-1124-7B-Instruct",
+     "allenai/OLMo-2-1124-13B-Instruct",
+     "allenai/OLMo-2-0325-32B-Instruct",
 
-    # OLMo 3
-  #  "allenai/Olmo-3-7B-Think",
-  #  "allenai/Olmo-3-32B-Think",
+    #   OLMo 3
+     "allenai/Olmo-3-7B-Think",
+     "allenai/Olmo-3-32B-Think",
 
-    # Granite 3.2
-   # "ibm-granite/granite-3.2-2b-instruct",
-   # "ibm-granite/granite-3.2-8b-instruct",
+   #    Granite 3.2
+     "ibm-granite/granite-3.2-2b-instruct",
+     "ibm-granite/granite-3.2-8b-instruct",
 
-    # Gemma 3 IT
-   # "google/gemma-3-1b-it",
-   # "google/gemma-3-4b-it",
-   # "google/gemma-3-12b-it",
-   # "google/gemma-3-27b-it",
+   #    Gemma 3 IT
+     "google/gemma-3-1b-it",
+     "google/gemma-3-4b-it",
+     "google/gemma-3-12b-it",
+     "google/gemma-3-27b-it",
 
-    # Gemma 4 dense IT
+    #   Gemma 4 dense IT
     "google/gemma-4-12B-it",
     "google/gemma-4-31B-it",
 
-    # Apertus
- #   "swiss-ai/Apertus-8B-Instruct-2509",
-  #  "swiss-ai/Apertus-70B-Instruct-2509",
+   #    Apertus
+     "swiss-ai/Apertus-8B-Instruct-2509",
+     "swiss-ai/Apertus-70B-Instruct-2509",
 
-    # OpenEuroLLM
+    #   OpenEuroLLM
     "utter-project/EuroLLM-1.7B-Instruct",
     "utter-project/EuroLLM-9B-Instruct-2512",
     "utter-project/EuroLLM-22B-Instruct-2512",
 
-    # Phi-4
+      # Phi-4
     "microsoft/Phi-4-mini-reasoning",
     "microsoft/phi-4",
 )
@@ -90,8 +91,8 @@ HISTORICAL_SYNTHETIC_REVISIONS = {
 HISTORICAL_SPLITS = ("test_original", "test_synthetic")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-EVAL_YAML = REPO_ROOT / "paper" / "eval.yaml"
 CACHE_POLICY = Path(__file__).with_name("cache.yaml")
+CACHE_DIR = REPO_ROOT / "cache"
 LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 HISTORICAL_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 OPTIONAL_LANGUAGES = {"eng_metric"}
@@ -102,8 +103,6 @@ DEFAULT_VLLM_SERVER_ARGS: dict[str, Any] = {
     "gpu_memory_utilization": 0.95,
     "enable_prefix_caching": True,
     "disable_log_stats": False,
-    "kv_offloading_backend": "native",
-    "kv_offloading_size": 16,
 }
 RESUME_IGNORED_MODEL_ARG_KEYS = frozenset(
     {
@@ -142,11 +141,21 @@ def unique(values: Sequence[str]) -> list[str]:
     return list(dict.fromkeys(values))
 
 
-def load_tasks(path: Path = EVAL_YAML) -> list[Task]:
+def load_tasks(revision: str = REVISION) -> list[Task]:
     try:
+        path = Path(
+            hf_hub_download(
+                repo_id=DATASET,
+                filename="eval.yaml",
+                repo_type="dataset",
+                revision=revision,
+            )
+        )
         raw_tasks = yaml.safe_load(path.read_text(encoding="utf-8"))["tasks"]
-    except (OSError, yaml.YAMLError) as error:
-        raise RunnerError(f"Could not read {path}: {error}") from error
+    except Exception as error:
+        raise RunnerError(
+            f"Could not load remote eval.yaml for {DATASET}@{revision}: {error}"
+        ) from error
 
     return [Task(item["id"], item["config"], item["split"]) for item in raw_tasks]
 
@@ -447,6 +456,7 @@ def merged_vllm_server_args(env: dict[str, str], overrides: dict[str, Any]) -> d
 
 def vllm_environment(server_args: dict[str, Any] | None = None) -> dict[str, str]:
     env = os.environ.copy()
+    env["INSPECT_CACHE_DIR"] = str(CACHE_DIR)
     # The CUDA 13 packages in this environment have mismatched nvcc/headers.
     # Avoid vLLM paths that require FlashInfer or DeepGEMM runtime compilation.
     env["VLLM_USE_FLASHINFER_SAMPLER"] = "0"
@@ -461,6 +471,15 @@ def vllm_environment(server_args: dict[str, Any] | None = None) -> dict[str, str
 
 def show_command(message: str, command: Sequence[str]) -> None:
     print(f"{message}\n  {' '.join(command)}")
+
+
+def cleanup_vllm_processes() -> None:
+    import time
+    try:
+        subprocess.run(["pkill", "-9", "-f", "vllm serve"], stderr=subprocess.DEVNULL, check=False)
+        time.sleep(2)
+    except Exception:
+        pass
 
 
 def run_inspect(
@@ -489,11 +508,16 @@ def run_inspect(
             raise RunnerError(f"Inspect failed for {run.model}{suffix} with status {error.returncode}") from error
         except OSError as error:
             raise RunnerError(f"Could not start Inspect for {run.model}{suffix}: {error}") from error
+        finally:
+            cleanup_vllm_processes()
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    revision_parser = argparse.ArgumentParser(add_help=False)
+    revision_parser.add_argument("--revision", default=REVISION)
+    revision_args, _ = revision_parser.parse_known_args(argv)
     try:
-        tasks = load_tasks()
+        tasks = load_tasks(revision_args.revision)
     except RunnerError as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
@@ -559,7 +583,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.reasoning_effort,
                     server_args,
                 )
-            except RunnerError as error:
+            except Exception as error:
                 failures.append((run.model, str(error)))
                 print(f"Model failed: {error}", file=sys.stderr)
     except KeyboardInterrupt:

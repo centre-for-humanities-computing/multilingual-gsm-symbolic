@@ -1,0 +1,43 @@
+question = "Maria koeral on 8 kutsikat, kellest 3 on täpilised. Martini koeral on 12 kutsikat, kellest 4 on täpilised. Mitu protsenti kõigist kutsikatest on täpilised?"
+
+answer = """
+Kõigepealt leia kutsikate koguarv: 8 kutsikat + 12 kutsikat = <<8+12=20>>20 kutsikat
+Seejärel leia täpilistega kutsikate koguarv: 3 kutsikat + 4 kutsikat = <<3+4=7>>7 kutsikat
+Seejärel jaga täpiliste kutsikate arv kõigi kutsikate arvuga ja korruta 100%-ga, et leida täpiliste kutsikate protsent: 7 kutsikat / 20 kutsikat * 100% = 35%
+#### 35
+"""
+
+id_orig = 458
+
+id_shuffled = 15
+
+question_annotated = """
+{name1_gen,Maria} koeral on {n1, 8} kutsikat, kellest {k1,3} on täpilised. {name2_gen,Martini} koeral on {n2,12} kutsikat, kellest {k2,4} on täpilised. Mitu protsenti kõigist kutsikatest on täpilised?
+
+#init:
+- name1, name1_gen = sample(names_female_cases)
+- name2, name2_gen = sample(names_male_cases)
+- $n1 = range(4, 16)
+- $n2 = range(4, 20)
+- $k1 = range(2, 12)
+- $k2 = range(2, 12)
+
+#conditions:
+- k1 < n1
+- k2 < n2
+- divides(n1 + n2, k1 + k2)
+- is_int(100 * (k1+k2) / (n1+n2))
+
+#answer: int(100 * (k1+k2) / (n1+n2))
+"""
+
+answer_annotated = """
+Kõigepealt leia kutsikate koguarv: {n1} kutsikat + {n2} kutsikat = <<{n1}+{n2}={n1+n2}>>{n1+n2} kutsikat
+Seejärel leia täpilistega kutsikate koguarv: {k1} kutsikat + {k2} kutsikat = <<{k1}+{k2}={k1+k2}>>{k1+k2} kutsikat
+Seejärel jaga täpiliste kutsikate arv kõigi kutsikate arvuga ja korruta 100%-ga, et leida täpiliste kutsikate protsent: {k1+k2} kutsikat / {n1+n2} kutsikat * 100% = {int(100 * (k1+k2) / (n1+n2))}%
+#### {int(100 * (k1+k2) / (n1+n2))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

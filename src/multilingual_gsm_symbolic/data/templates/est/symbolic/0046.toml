@@ -1,0 +1,40 @@
+question = "Kaskede Gümnaasium korraldab sel aastal lõpuaktuse aulas, kuhu mahub 6000 inimest. Kui arvestada, et 950 istekohta on lõpetajatele ja 300 istekohta õppejõududele, siis mitu piletit saab iga lõpetaja anda oma sõpradele ja perele, kui piletid jaotatakse võrdselt?"
+
+answer = """
+Liida lõpetajate ja õppejõudude istekohad kokku. 950 + 300 = <<950+300=1250>>1250 istekohta lõpetajatele ja õppejõududele
+Lahuta lõpetajate ja õppejõudude istekohad lubatud kogusummast. 6000 - 1250 = <<6000-1250=4750>>4750 allesjäänud istekohta.
+Jaga allesjäänud istekohad lõpetajate arvuga. 4750/950 = <<4750/950=5>>5 piletit
+#### 5
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Kaskede Gümnaasium} korraldab sel aastal lõpuaktuse {venue_ine,aulas}, kuhu mahub {total,6000} inimest. Kui arvestada, et {graduates,950} istekohta on lõpetajatele ja {faculty,300} istekohta õppejõududele, siis mitu piletit saab iga lõpetaja anda oma sõpradele ja perele, kui piletid jaotatakse võrdselt?
+
+#init:
+- school = sample(["Kaskede Gümnaasium", "Ranniku Akadeemia", "Tamme Kool", "Pargi Gümnaasium"])
+- venue_ine = sample(["aulas", "spordihallis", "aktusesaalis", "konverentsisaalis"])
+- $total = range(3000, 10000, 100)
+- $graduates = range(100, 1500, 50)
+- $faculty = range(100, 500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Liida lõpetajate ja õppejõudude istekohad kokku. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} istekohta lõpetajatele ja õppejõududele
+Lahuta lõpetajate ja õppejõudude istekohad lubatud kogusummast. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} allesjäänud istekohta.
+Jaga allesjäänud istekohad lõpetajate arvuga. {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} piletit
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

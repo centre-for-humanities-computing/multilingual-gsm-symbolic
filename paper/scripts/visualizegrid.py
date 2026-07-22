@@ -11,6 +11,8 @@ The script reads Inspect ``.eval`` logs and writes:
 * ``family_scaling.png``: within-family accuracy as a function of parameter count.
 * ``english_normalized_transfer.png``: language accuracy relative to English.
 * ``eng_vs_eng_metric.png``: paired English and English-metric accuracy by model.
+* ``eng_vs_eng_metric_selected.png``: selected-model English/English-metric distributions.
+* ``eng_vs_eng_metric_full.png``: all paired-model English/English-metric distributions.
 * ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
 * ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
 * ``reasoning_delta_heatmap.png``: English-vs-non-English synthetic gap by reasoning mode.
@@ -27,7 +29,6 @@ from __future__ import annotations
 
 import argparse
 import math
-from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -36,11 +37,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from eval_log_utils import (
+    classify_reasoning_variants,
     discover_logs,
     infer_model_info,
+    map_log_loader,
     model_name,
+    normal_curve,
     parse_task,
     sample_score,
+    sample_synthetic_sets,
     select_logs,
 )
 from inspect_ai.log import read_eval_log
@@ -52,11 +57,13 @@ from plot_config import (
     FAMILY_ORDER,
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_LABELS,
-    LANGUAGE_SPEAKERS,
+    PLOT_STYLE,
     SPLIT_LABELS,
+    heatmap_language_label,
     language_order,
     model_sort_key,
     ordered_families,
+    path_slug,
     reasoning_sort_bucket,
 )
 from scipy.stats import norm
@@ -109,15 +116,18 @@ UNCORRECTED_FILL = "#F0A095"
 CORRECTED_COLOR = "#5CA950"
 CORRECTED_FILL = "#BCE6A8"
 ORIGINAL_COLOR = "#111827"
+SELECTED_MODEL_LABELS = {
+    "Apertus-8B-Instruct-2509": "Apertus 8B",
+    "EuroLLM-9B-Instruct-2512": "EuroLLM 9B",
+    "OLMo-2-0425-1B-Instruct": "OLMo 2 1B",
+    "OLMo-2-0325-32B-Instruct": "OLMo 2 32B",
+    "gemma-3-12b-it": "Gemma 3 12B",
+    "gemma-3-27b-it": "Gemma 3 27B",
+    "granite-3.2-2b-instruct (reasoning off)": "Granite 3.2 2B\n(reasoning off)",
+    "granite-3.2-8b-instruct (reasoning on)": "Granite 3.2 8B\n(reasoning)",
+}
 
-plt.rcParams.update(
-    {
-        "axes.spines.right": False,
-        "axes.spines.top": False,
-        "figure.dpi": 160,
-        "font.family": "sans-serif",
-    }
-)
+plt.rcParams.update(PLOT_STYLE)
 
 
 @dataclass(frozen=True)
@@ -200,32 +210,15 @@ def load_samples(
 
     _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
 
-    if workers <= 1:
-        for index, path in enumerate(paths, start=1):
-            label, frame, warning = _load_one_log(path, scorer)
-            if warning:
-                print(warning)
-            else:
-                print(f"[{index}/{len(paths)}] {label}")
-            if frame is not None and not frame.empty:
-                frames.append(frame)
-            if len(frames) >= _CONCAT_CHUNK:
-                frames = [pd.concat(frames, ignore_index=True)]
-    else:
-        max_workers = min(workers, len(paths))
-        with ProcessPoolExecutor(max_workers=max_workers) as pool:
-            futures = [pool.submit(_load_one_log, path, scorer) for path in paths]
-
-            for index, future in enumerate(as_completed(futures), start=1):
-                label, frame, warning = future.result()
-                if warning:
-                    print(warning)
-                else:
-                    print(f"[{index}/{len(paths)}] {label}")
-                if frame is not None and not frame.empty:
-                    frames.append(frame)
-                if len(frames) >= _CONCAT_CHUNK:
-                    frames = [pd.concat(frames, ignore_index=True)]
+    for index, (label, frame, warning) in enumerate(map_log_loader(_load_one_log, paths, scorer, workers), start=1):
+        if warning:
+            print(warning)
+        else:
+            print(f"[{index}/{len(paths)}] {label}")
+        if frame is not None and not frame.empty:
+            frames.append(frame)
+        if len(frames) >= _CONCAT_CHUNK:
+            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
@@ -275,10 +268,6 @@ def sort_summary(summary: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def path_slug(value: str) -> str:
-    return "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
-
-
 def _synthetic_models(samples: pd.DataFrame, language: str) -> set[str]:
     rows = samples[(samples["language"] == language) & (samples["split"] == "synthetic")]
     return set(rows["model"].unique())
@@ -301,37 +290,6 @@ def paired_correction_languages(
     old = set(uncorrected.loc[uncorrected["split"] == "synthetic", "language"].unique())
     new = set(corrected.loc[corrected["split"] == "synthetic", "language"].unique())
     return language_order(old & new, requested)
-
-
-def _sample_synthetic_sets(
-    synthetic: pd.DataFrame,
-    n_sets: int,
-    rng: np.random.Generator,
-) -> np.ndarray:
-    variants = [
-        group["correct"].to_numpy(dtype=float)
-        for _source_id, group in synthetic.groupby("source_id", sort=True, dropna=False)
-    ]
-    if not variants:
-        raise ValueError("Synthetic data contains no source templates.")
-
-    set_totals = np.zeros(n_sets, dtype=float)
-    for values in variants:
-        set_totals += rng.choice(values, size=n_sets, replace=True)
-    return set_totals / len(variants)
-
-
-def _normal_curve(values: np.ndarray, is_diff: bool = False) -> tuple[np.ndarray, np.ndarray, float]:
-    mean = float(values.mean())
-    std = max(float(values.std(ddof=1)), 0.005)
-    if is_diff:
-        lower = max(-1.0, mean - 4 * std)
-        upper = min(1.0, mean + 4 * std)
-    else:
-        lower = max(0.0, mean - 4 * std)
-        upper = min(1.0, mean + 4 * std)
-    x = np.linspace(lower, upper, 500)
-    return x, norm.pdf(x, loc=mean, scale=std), mean
 
 
 def _original_accuracy(corrected: pd.DataFrame, uncorrected: pd.DataFrame) -> float:
@@ -362,16 +320,16 @@ def collect_correction_comparison_rows(
             CorrectionComparisonRow(
                 model=model,
                 original_accuracy=_original_accuracy(new_rows, old_rows),
-                uncorrected_sets=_sample_synthetic_sets(
+                uncorrected_sets=sample_synthetic_sets(
                     old_rows[old_rows["split"] == "synthetic"],
                     n_sets,
                     np.random.default_rng(seed + index),
-                ),
-                corrected_sets=_sample_synthetic_sets(
+                )[0],
+                corrected_sets=sample_synthetic_sets(
                     new_rows[new_rows["split"] == "synthetic"],
                     n_sets,
                     np.random.default_rng(seed + index),
-                ),
+                )[0],
             )
         )
 
@@ -403,20 +361,6 @@ def english_metric_pairs(summary: pd.DataFrame, split: str = "synthetic") -> pd.
         ]
     )
     return pd.concat([average, result], ignore_index=True)
-
-
-def format_speaker_count(count: int) -> str:
-    if count >= 1_000_000:
-        return f"{count / 1_000_000:g}M"
-    if count >= 1_000:
-        return f"{count / 1_000:g}K"
-    return str(count)
-
-
-def heatmap_language_label(language: str) -> str:
-    name = LANGUAGE_LABELS.get(language, language)
-    speakers = LANGUAGE_SPEAKERS.get(language)
-    return f"{name}\n({format_speaker_count(speakers)} speakers)" if speakers is not None else name
 
 
 def annotated_heatmap(
@@ -913,35 +857,11 @@ def plot_split_degradation(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
-def reasoning_variant_name(model: str) -> tuple[str, str | None]:
-    suffixes = {
-        " (reasoning on)": "on",
-        " (reasoning off)": "off",
-    }
-    for suffix, mode in suffixes.items():
-        if model.endswith(suffix):
-            return model[: -len(suffix)], mode
-    return model, None
-
-
 def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     rows = summary[summary["split"] == "synthetic"].copy()
-    parsed = rows["model"].map(reasoning_variant_name)
-    rows["base_model_candidate"] = [item[0] for item in parsed]
-    rows["reasoning"] = [item[1] for item in parsed]
-
-    off_name_by_raw = rows[rows["reasoning"] == "off"].groupby("model_raw")["base_model_candidate"].first()
-    rows["canonical_base_model"] = rows["model_raw"].map(off_name_by_raw).fillna(rows["base_model_candidate"])
-
+    rows = classify_reasoning_variants(rows)
     rows.loc[rows["reasoning"].isin(["on", "off"]), "base_model"] = rows["canonical_base_model"]
-    has_off_variant = rows["model_raw"].isin(set(off_name_by_raw.index))
-    rows.loc[
-        rows["reasoning"].isna() & has_off_variant & (rows["model"] == rows["canonical_base_model"]),
-        "reasoning",
-    ] = "on"
     rows.loc[rows["base_model"].isna(), "base_model"] = rows["canonical_base_model"]
-
-    rows = rows[rows["reasoning"].isin(["on", "off"])]
     if rows.empty:
         return False
 
@@ -1026,16 +946,13 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     return True
 
 
-def _normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
-    mean = float(values.mean())
-    std = max(float(values.std(ddof=1)), 0.005)
-    lower = max(0.0, mean - 4 * std)
-    upper = min(1.0, mean + 4 * std)
-    x = np.linspace(lower, upper, 500)
-    return x, norm.pdf(x, loc=mean, scale=std), mean
-
-
-def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: str, out: Path) -> None:
+def plot_correction_comparison(
+    rows: list[CorrectionComparisonRow],
+    language: str,
+    out: Path,
+    legend_labels: tuple[str, str] = ("Uncorrected", "Corrected"),
+    title: str | None = None,
+) -> None:
     fig, axes = plt.subplots(
         len(rows),
         1,
@@ -1065,8 +982,8 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
             alpha=0.38,
             zorder=1,
         )
-        old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
-        new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
+        old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
+        new_x, new_density, new_mean, _ = normal_curve(row.corrected_sets)
         peak = max(
             float(old_counts.max()),
             float(new_counts.max()),
@@ -1092,12 +1009,12 @@ def plot_correction_comparison(rows: list[CorrectionComparisonRow], language: st
     axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
 
     legend = [
-        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label="Uncorrected"),
-        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label="Corrected"),
+        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label=legend_labels[0]),
+        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label=legend_labels[1]),
     ]
     axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
     fig.suptitle(
-        f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
+        title or f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
         x=0.08,
         ha="left",
         fontsize=17,
@@ -1114,13 +1031,13 @@ def plot_correction_comparison_selected(
     language: str,
     out: Path,
     target_models: list[str] | None = None,
+    legend_labels: tuple[str, str] = ("Unvalidated", "Validated"),
 ) -> None:
     if not target_models:
         target_models = [
-            "gemma-3-27b-it",
             "gemma-3-12b-it",
-            "OLMo-2-0325-32B-Instruct",
-            "granite-3.2-8b-instruct (reasoning on)",
+            "Apertus-8B-Instruct-2509",
+            "granite-3.2-2b-instruct (reasoning off)",
         ]
 
     selected_rows = [r for r in rows if r.model in target_models]
@@ -1128,7 +1045,9 @@ def plot_correction_comparison_selected(
         step = max(1, len(rows) // 3)
         selected_rows = [rows[0], rows[min(step, len(rows) - 1)], rows[min(2 * step, len(rows) - 1)]]
 
-    fig, ax = plt.subplots(figsize=(9.5, 4.2))
+    # Sized for a single-column paper figure.  The larger type remains legible
+    # after LaTeX scales the image to the column width.
+    fig, ax = plt.subplots(figsize=(7.6, 3.2))
 
     # Distinct colour per model; unvalidated = solid, validated = dashed
     MODEL_COLORS = [
@@ -1140,6 +1059,7 @@ def plot_correction_comparison_selected(
     ]
 
     all_peaks = []
+    model_labels: list[tuple[float, float, str, str]] = []
 
     for i, row in enumerate(selected_rows):
         color = MODEL_COLORS[i % len(MODEL_COLORS)]
@@ -1164,8 +1084,8 @@ def plot_correction_comparison_selected(
             zorder=1,
         )
 
-        old_x, old_density, old_mean = _normal_curve(row.uncorrected_sets)
-        new_x, new_density, new_mean = _normal_curve(row.corrected_sets)
+        old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
+        new_x, new_density, new_mean, _ = normal_curve(row.corrected_sets)
 
         peak = max(
             float(old_counts.max()) if len(old_counts) > 0 else 0.0,
@@ -1215,45 +1135,67 @@ def plot_correction_comparison_selected(
             zorder=4,
         )
 
-        # Label model above its peak
         peak_x = (old_mean + new_mean) / 2
         peak_y = max(float(old_density.max()), float(new_density.max()))
+        model_labels.append((peak_x, peak_y, SELECTED_MODEL_LABELS.get(row.model, row.model), color))
+
+    ax.set_xlim(0, 1)
+    max_peak = max(all_peaks) if all_peaks else 15.0
+    ax.set_ylim(bottom=0, top=max_peak * 1.06)
+
+    # Alternate labels between two modest levels and keep edge labels inside
+    # the axes.  This avoids collisions after the figure is narrowed.
+    for tier, (peak_x, peak_y, model, color) in enumerate(sorted(model_labels)):
+        label_y = peak_y + max_peak * (0.02 + 0.06 * (tier % 2))
+        label_x = peak_x
+        if "\n" in model:
+            if peak_x < 0.2:
+                label_x = 0.02
+                horizontal_alignment = "left"
+            else:
+                horizontal_alignment = "center"
+        elif len(model) > 30 or peak_x < 0.35:
+            label_x = max(0.02, peak_x - 0.22)
+            horizontal_alignment = "left"
+        elif peak_x < 0.12:
+            horizontal_alignment = "left"
+        elif peak_x > 0.88:
+            horizontal_alignment = "right"
+        else:
+            horizontal_alignment = "center"
         ax.text(
-            peak_x,
-            peak_y + 0.6,
-            row.model,
-            ha="center",
+            label_x,
+            label_y,
+            model,
+            ha=horizontal_alignment,
             va="bottom",
-            fontsize=9.5,
+            fontsize=15.5,
             fontweight="bold",
             color=color,
             zorder=5,
         )
 
-    ax.set_xlim(0, 1)
-    max_peak = max(all_peaks) if all_peaks else 15.0
-    ax.set_ylim(bottom=0, top=max_peak * 1.35)
-
     ax.xaxis.set_major_formatter(PercentFormatter(1))
-    ax.set_xlabel("Exact-answer accuracy", fontsize=11.5, labelpad=8)
-    ax.set_ylabel("Density", fontsize=11.5, labelpad=8)
+    ax.tick_params(axis="x", labelsize=21)
+    ax.set_xlabel("Exact-answer accuracy", fontsize=25, labelpad=6)
+    ax.set_ylabel("Density", fontsize=25, labelpad=6)
     ax.set_yticks([])
     ax.grid(False)
 
     legend_elements = [
-        Line2D([0], [0], color="#555555", lw=2, linestyle="-", label="Unvalidated"),
-        Line2D([0], [0], color="#555555", lw=2, linestyle="--", label="Validated"),
+        Line2D([0], [0], color="#555555", lw=2.8, linestyle="-", label=legend_labels[0]),
+        Line2D([0], [0], color="#555555", lw=2.8, linestyle="--", label=legend_labels[1]),
     ]
     ax.legend(
         handles=legend_elements,
         loc="upper right",
         frameon=False,
-        fontsize=10,
+        fontsize=18,
         ncol=2,
     )
-    fig.tight_layout()
+    fig.tight_layout(pad=0.18)
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
+    fig.savefig(out, dpi=220, bbox_inches="tight", pad_inches=0.03, facecolor="white")
     plt.close(fig)
 
 
@@ -1410,6 +1352,42 @@ def main() -> None:
         summary,
         args.out_dir / "eng_vs_eng_metric.png",
     )
+    eng_metric_selected = False
+    eng_metric_full = False
+    english = samples[samples["language"] == "eng"].copy()
+    english_metric = samples[samples["language"] == "eng_metric"].copy()
+    if not english.empty and not english_metric.empty:
+        english_metric["language"] = "eng"
+        metric_rows = collect_correction_comparison_rows(
+            english,
+            english_metric,
+            "eng",
+            args.correction_samples,
+            args.correction_seed,
+        )
+        if metric_rows:
+            metric_full_out = args.out_dir / "eng_vs_eng_metric_full.png"
+            plot_correction_comparison(
+                metric_rows,
+                "eng",
+                metric_full_out,
+                legend_labels=("English", "English metric"),
+                title="English vs English metric comparison",
+            )
+            eng_metric_full = True
+            metric_out = args.out_dir / "eng_vs_eng_metric_selected.png"
+            plot_correction_comparison_selected(
+                metric_rows,
+                "eng",
+                metric_out,
+                target_models=[
+                    "gemma-3-12b-it",
+                    "Apertus-8B-Instruct-2509",
+                    "granite-3.2-2b-instruct (reasoning off)",
+                ],
+                legend_labels=("English", "English metric"),
+            )
+            eng_metric_selected = True
     made_robustness = plot_transfer_robustness(
         summary,
         args.out_dir / "transfer_robustness.png",
@@ -1476,6 +1454,10 @@ def main() -> None:
         print(f"Saved {args.out_dir / 'eng_vs_eng_metric.png'}")
     else:
         print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
+    if eng_metric_selected:
+        print(f"Saved {args.out_dir / 'eng_vs_eng_metric_selected.png'}")
+    if eng_metric_full:
+        print(f"Saved {args.out_dir / 'eng_vs_eng_metric_full.png'}")
 
     if made_robustness:
         print(f"Saved {args.out_dir / 'transfer_robustness.png'}")

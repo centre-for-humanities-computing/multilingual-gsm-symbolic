@@ -1,0 +1,40 @@
+question = "Kadril on 15 helesinist niidipooli, 45 tumesinist niidipooli, 40 helerohelist niidipooli ja 50 tumerohelist niidipooli. Mitu protsenti tema niidipoolidest on sinised?"
+
+answer = """
+Kõigepealt leia siniste niidipoolide arv: 15 pooli + 45 pooli = <<15+45=60>>60 pooli
+Seejärel leia poolide koguarv: 40 pooli + 50 pooli + 60 pooli = <<40+50+60=150>>150 pooli
+Seejärel jaga siniste poolide arv poolide koguarvuga ja korruta 100%-ga, et tulemus väljendada protsendina: 60 pooli / 150 pooli * 100% = 40%
+#### 40
+"""
+
+id_orig = 728
+
+id_shuffled = 66
+
+question_annotated = """
+{name_gen,Kadri}l on {n1,15} hele{c1_par_sg,sinist} niidipooli, {n2,45} tume{c1_par_sg,sinist} niidipooli, {n3,40} hele{c2_par_sg,rohelist} niidipooli ja {n4,50} tume{c2_par_sg,rohelist} niidipooli. Mitu protsenti tema niidipoolidest on {c1_nom_pl,sinised}?
+
+#init:
+- name, name_gen = sample(names_cases)
+- (c1_par_sg, c1_gen_pl, c1_nom_pl), (c2_par_sg, c2_gen_pl, c2_nom_pl) = sample([("sinist", "siniste", "sinised"), ("rohelist", "roheliste", "rohelised"), ("punast", "punaste", "punased"), ("kollast", "kollaste", "kollased"), ("pruuni", "pruunide", "pruunid")], 2)
+- $n1 = range(15, 100, 5)
+- $n2 = range(45, 150, 5)
+- $n3 = range(20, 80, 5)
+- $n4 = range(50, 100, 5)
+
+#conditions:
+- is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))
+
+#answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))
+"""
+
+answer_annotated = """
+Kõigepealt leia {c1_gen_pl} niidipoolide arv: {n1} pooli + {n2} pooli = <<{n1}+{n2}={n1+n2}>>{n1+n2} pooli
+Seejärel leia poolide koguarv: {n3} pooli + {n4} pooli + {n1+n2} pooli = <<{n3}+{n4}+{n1+n2}={n1+n2+n3+n4}>>{n1+n2+n3+n4} pooli
+Seejärel jaga {c1_gen_pl} poolide arv poolide koguarvuga ja korruta 100%-ga, et tulemus väljendada protsendina: {n1+n2} pooli / {n1+n2+n3+n4} pooli * 100% = {int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))}%
+#### {int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

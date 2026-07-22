@@ -1,0 +1,48 @@
+question = "Anu isa ütles, et tal on sünnipäevapeoks eelarves 90 EUR. Ta tahab kindlustada, et tema ja ta sõbrad saavad kõik mängida ühe ringi minigolfi, saada 5 EUR väärtuses mänguautomaatide žetoone ja sõita kardirajal kaks korda. Üks ring minigolfi maksab 5 EUR. Üks sõit kardirajal maksab 10 EUR. Mitu sõpra ta saab kutsuda?"
+
+answer = """
+Sõit kardirajal maksab kokku 20 EUR inimese kohta, sest 10*2 = <<10*2=20>>20
+Iga inimene maksab 30 EUR, sest 5 + 5 + 20 = <<5+5+20=30>>30
+Kokku saab osaleda 3 inimest, sest 90 / 30 = <<90/30=3>>3
+Ta võib kutsuda 2 sõpra, sest 3 - 1 =<<3-1=2>>2
+#### 2
+"""
+
+id_orig = 357
+
+id_shuffled = 96
+
+question_annotated = """
+{name_gen,Anu} {parent,isa} ütles, et tal on sünnipäevapeoks eelarves {budget,90} {cur,EUR}. Ta tahab kindlustada, et tema ja ta sõbrad saavad kõik mängida ühe ringi {activity1,minigolfi}, saada {tokens,5} {cur,EUR} väärtuses {activity2,mänguautomaatide} žetoone ja sõita {activity3_ade,kardirajal} {times_txt,kaks korda}. Üks ring {activity1,minigolfi} maksab {cost1,5} {cur,EUR}. Üks sõit {activity3_ade,kardirajal} maksab {cost2,10} {cur,EUR}. Mitu sõpra ta saab kutsuda?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- parent = sample(["ema", "isa", "tädi", "onu"])
+- activity1 = sample(["minigolfi", "keeglit", "biljardit"])
+- activity2 = sample(["mänguautomaatide", "mängutoa"])
+- activity3_ade = sample(["kardirajal", "põrkeautodel", "ameerika mägedel"])
+- cur = sample(currencies_sym)
+- times_txt, times_val = sample(multi_times)
+- $budget = range(50, 301, 10)
+- $tokens = range(3, 11)
+- $cost1 = range(3, 11)
+- $cost2 = range(5, 21)
+
+#conditions:
+- budget % (tokens + cost1 + cost2 * times_val) == 0
+- budget // (tokens + cost1 + cost2 * times_val) > 1
+
+#answer: budget // (tokens + cost1 + cost2 * times_val) - 1
+"""
+
+answer_annotated = """
+Sõit {activity3_ade} maksab kokku {cost2 * times_val} {cur} inimese kohta, sest {cost2}*{times_val} = <<{cost2}*{times_val}={cost2*times_val}>>{cost2*times_val}
+Iga inimene maksab {tokens + cost1 + cost2*times_val} {cur}, sest {tokens} + {cost1} + {cost2*times_val} = <<{tokens}+{cost1}+{cost2*times_val}={tokens + cost1 + cost2*times_val}>>{tokens + cost1 + cost2*times_val}
+Kokku saab osaleda {budget // (tokens + cost1 + cost2 * times_val)} inimest, sest {budget} / {tokens + cost1 + cost2*times_val} = <<{budget}/{tokens + cost1 + cost2*times_val}={budget // (tokens + cost1 + cost2 * times_val)}>>{budget // (tokens + cost1 + cost2 * times_val)}
+Ta võib kutsuda {budget // (tokens + cost1 + cost2 * times_val) - 1} sõpra, sest {budget // (tokens + cost1 + cost2 * times_val)} - 1 =<<{budget // (tokens + cost1 + cost2 * times_val)}-1={budget // (tokens + cost1 + cost2 * times_val) - 1}>>{budget // (tokens + cost1 + cost2 * times_val) - 1}
+#### {budget // (tokens + cost1 + cost2 * times_val) - 1}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

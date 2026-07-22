@@ -1,0 +1,38 @@
+question = "Tornis on 4 sinist plokki, kaks korda rohkem kollast plokki ja teadmata arv punaseid plokke. Kui tornis on kokku 32 plokki, siis mitu neist on punased?"
+
+answer = """
+Tornis on 4*2 = <<4*2=8>>8 kollast plokki.
+Tornis on 32-4-8 = <<32-4-8=20>>20 punast plokki.
+#### 20
+"""
+
+id_orig = 1268
+
+id_shuffled = 41
+
+question_annotated = """
+{structure_ine_cap,Tornis} on {n1,4} {color1_par_sg, sinist} {obj_par_sg, plokki}, {mult_txt,kaks korda} rohkem {color2_par_sg,kollast} {obj_par_sg,plokki} ja teadmata arv {color3_par_pl,punaseid} {obj_par_pl,plokke}. Kui {structure_ine,tornis} on kokku {total,32} {obj_par_sg,plokki}, siis mitu neist on {color3_nom_pl,punased}?
+
+#init:
+- structure_ine_cap, structure_ine = sample([("Tornis", "tornis"), ("Püramiidis", "püramiidis"), ("Kuhjas", "kuhjas")])
+- obj_par_sg, obj_par_pl = sample([("plokki", "plokke"), ("tellist", "telliseid"), ("plaati", "plaate")])
+- (color1_par_sg, color1_par_pl,_), (color2_par_sg, color2_par_pl,_), (color3_par_sg, color3_par_pl, color3_nom_pl) = sample([("sinist", "siniseid", "sinised"), ("kollast", "kollaseid", "kollased"), ("punast", "punaseid", "punased"), ("rohelist", "rohelisi", "rohelised"), ("lillat", "lillasid", "lillad"), ("valget", "valgeid", "valged"), ("musta", "musti", "mustad"), ("roosat", "roosasid", "roosad"), ("oranži", "oranže", "oranžid")], 3)
+- $n1 = range(2, 10)
+- mult_txt, mult_val = sample([("kaks korda", 2), ("kolm korda", 3), ("neli korda", 4)])
+- $total = range(20, 50)
+
+#conditions:
+- total > n1 + mult_val * n1
+
+#answer: total - n1 - mult_val * n1
+"""
+
+answer_annotated = """
+{structure_ine_cap} on {n1}*{mult_val} = <<{n1}*{mult_val}={n1*mult_val}>>{n1*mult_val} {color2_par_sg} {obj_par_sg}.
+{structure_ine_cap} on {total}-{n1}-{n1*mult_val} = <<{total}-{n1}-{n1*mult_val}={total-n1-n1*mult_val}>>{total-n1-n1*mult_val} {color3_par_sg} {obj_par_sg}.
+#### {total-n1-n1*mult_val}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

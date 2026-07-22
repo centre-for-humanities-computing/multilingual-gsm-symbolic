@@ -1,0 +1,38 @@
+question = "Martin on 14 aastat vana. Nelja aasta pärast on tema õde Maria kolm korda vanem kui Martin on praegu. Kui vana on Maria praegu?"
+
+answer = """
+Nelja aasta pärast on Maria 14*3=<<14*3=42>>42.
+Praegu on Maria 42-8=<<42-8=34>>34 aastat vana.
+#### 34
+"""
+
+id_orig = 496
+
+id_shuffled = 29
+
+question_annotated = """
+{name1,Martin} on {age1,14} aastat vana. {years_txt,nelja} aasta pärast on tema {relation_type,õde} {name2,Maria} {mult_txt,kolm korda} vanem kui {name1,Martin} on praegu. Kui vana on {name2,Maria} praegu?
+
+#init:
+- name1, _ = sample(names_male_cases)
+- name2, _ = sample(names_female_cases)
+- relation_type = sample(['õde', 'nõbu', 'tuttav', 'sõber', 'naaber'])
+- $age1 = range(8, 25)
+- years_txt, years_val = range_str(2, 10, 1, numbers)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- age1 * mult_val - years_val > 0
+
+#answer: age1 * mult_val - years_val
+"""
+
+answer_annotated = """
+{years_txt} aasta pärast on {name2} {age1}*{mult_val}=<<{age1}*{mult_val}={age1*mult_val}>>{age1*mult_val}.
+Praegu on {name2} {age1*mult_val}-{years_val}=<<{age1*mult_val}-{years_val}={age1*mult_val-years_val}>>{age1*mult_val-years_val} aastat vana.
+#### {age1*mult_val-years_val}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

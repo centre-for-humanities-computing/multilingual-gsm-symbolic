@@ -106,6 +106,13 @@ LANGUAGE_ORDER = {
     "isl": 12,
 }
 
+PLOT_STYLE = {
+    "axes.spines.right": False,
+    "axes.spines.top": False,
+    "figure.dpi": 160,
+    "font.family": "sans-serif",
+}
+
 
 def reasoning_mode(model_args: dict[str, Any] | None) -> str | None:
     if not model_args:

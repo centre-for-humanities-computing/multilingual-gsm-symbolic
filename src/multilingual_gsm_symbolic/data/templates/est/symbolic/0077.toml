@@ -1,0 +1,37 @@
+question = "Sofia peab esitama 15-leheküljelist uurimistööd. Ta on juba valmis kirjutanud 1/3 uurimistööst. Mitu lehekülge tal on veel vaja kirjutada?"
+
+answer = """
+Sofia on juba kirjutanud 1/3 uurimistööst, mis teeb 15 lehekülge*1/3 = <<15*1/3=5>>5 lehekülge.
+Seega tal on veel vaja kirjutada 15 lehekülge - 5 lehekülge = <<15-5=10>>10 lehekülge.
+#### 10
+"""
+
+id_orig = 655
+
+id_shuffled = 77
+
+question_annotated = """
+{name,Sofia} peab esitama {n,15}-leheküljelist {document_par,uurimistööd}. Ta on juba valmis kirjutanud {frac,1/3} {document_el,uurimistööst}. Mitu lehekülge tal on veel vaja kirjutada?
+
+#init:
+- name, _ = sample(names_female_cases)
+- document_par, document_el = sample([("uurimistööd", "uurimistööst"), ("esseed", "esseest"), ("aruannet", "aruandest"), ("lõputööd", "lõputööst"), ("dissertatsiooni", "dissertatsioonist")])
+- $n = range(10, 325)
+- $frac = sample(fractions)
+
+#conditions:
+- is_int(n * frac)
+- n * frac < n
+
+#answer: n - int(n * frac)
+"""
+
+answer_annotated = """
+{name} on juba kirjutanud {frac} {document_el}, mis teeb {n} lehekülge*{frac} = <<{n}*{frac}={int(n*frac)}>>{int(n*frac)} lehekülge.
+Seega tal on veel vaja kirjutada {n} lehekülge - {int(n*frac)} lehekülge = <<{n}-{int(n*frac)}={n-int(n*frac)}>>{n-int(n*frac)} lehekülge.
+#### {n-int(n*frac)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

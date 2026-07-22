@@ -1,0 +1,43 @@
+question = "Jaan nägi 3-meetrist haid, mille küljes oli 2 15-sentimeetrist remorat. Mitu protsenti on remorade kombineeritud pikkus hai kehapikkusest?"
+
+answer = """
+Esiteks leia remorade kombineeritud pikkus sentimeetrites: 15 cm/remora * 2 remorat = <<15*2=30>>30 cm.
+Seejärel jaga see arv 100-ga, et teisendada meetriteks: 30 cm / 100 cm/m = <<30/100=0.3>>0.3 m.
+Seejärel jaga remorade kombineeritud pikkus meetrites hai pikkusega ja korruta 100%-ga, et väljendada vastus protsendina: 0.3/3 meetrit * 100% = 10%
+
+#### 10
+"""
+
+id_orig = 473
+
+id_shuffled = 0
+
+question_annotated = """
+{n, Jaan} nägi {x,3}-meetrist {big_fish_part,haid}, mille küljes oli {k,2} {y,15}-sentimeetrist remorat. Mitu protsenti on remorade kombineeritud pikkus {big_fish_gen,hai} kehapikkusest?
+
+#init:
+- n, _ = sample(names_cases)
+- big_fish_nom, big_fish_part, big_fish_gen = sample([("delfiin", "delfiini", "delfiini"), ("vaal", "vaala", "vaala"), ("hai", "haid", "hai")])
+- $x = range(2, 21, 1)
+- $k = range(2, 21)
+- $y = range(2, 100)
+
+#conditions:
+- k * y < x * 100
+- divides(100 * x, k*y)
+- divides(100, x * 100 / (k*y))
+
+#answer: int((k * y)/ (x * 100) * 100)
+"""
+
+answer_annotated = """
+Esiteks leia remorade kombineeritud pikkus sentimeetrites: {y} cm/remora * {k} remorat = <<{y}*{k}={k*y}>>{k*y} cm.
+Seejärel jaga see arv 100-ga, et teisendada meetriteks: {k*y} cm / 100 cm/m = <<{k*y}/100={k*y/100}>>{k*y/100} m.
+Seejärel jaga remorade kombineeritud pikkus meetrites {big_fish_gen} pikkusega ja korruta 100%-ga, et väljendada vastus protsendina: {k*y/100}/{x} meetrit * 100% = {int(k*y/(100*x)*100)}%
+
+#### {int(k*y/(100*x)*100)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

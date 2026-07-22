@@ -1,0 +1,44 @@
+question = "Toomas müüs oma maja 400,000 EUR eest. Ta tasus üleandmistasud, mis moodustavad 3% müügihinnast, ning tasus ka maakleritasu, mis on 5% müügihinnast. Lisaks maksis ta 250,000 EUR ülejäänud laenusumma eest. Kui suur on Toomase netotulu kinnisvara müügist?"
+
+answer = """
+Toomas tasus 400,000*3/100 = <<400000*3/100=12000>>12,000 EUR üleandmistasudeks.
+Ta tasus 400,000*5/100 = <<400000*5/100=20000>>20,000 EUR maakleritasuks.
+Seega tasus Toomas kokku 12,000 EUR + 20,000 EUR + 250,000 EUR = <<12000+20000+250000=282000>>282,000 EUR üleandmis-, maakleri- ja laenutasudeks.
+Järelikult on Toomase netotulu 400,000 EUR - 282,000 EUR = <<400000-282000=118000>>118,000 EUR.
+#### 118000
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{name,Toomas} müüs oma {property,maja} {price,400000} {cur,EUR} eest. Ta tasus üleandmistasud, mis moodustavad {fee1_percent,3}% müügihinnast, ning tasus ka maakleritasu, mis on {fee2_percent,5}% müügihinnast. Lisaks maksis ta {loan,250000} {cur,EUR} ülejäänud laenusumma eest. Kui suur on {name_gen,Toomase} netotulu kinnisvara müügist?
+
+#init:
+- name, name_gen = sample(names_cases)
+- property = sample(['maja', 'korteri', 'suvila', 'villa', 'suvekodu'])
+- cur = sample(currencies_sym)
+- $price = range(200000, 1000000, 10000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(100000, 700000, 10000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{name} tasus {price}*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{price * fee1_percent // 100} {cur} üleandmistasudeks.
+Ta tasus {price}*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{price * fee2_percent // 100} {cur} maakleritasuks.
+Seega tasus {name} kokku {price * fee1_percent // 100} {cur} + {price * fee2_percent // 100} {cur} + {loan} {cur} = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{price * (fee1_percent + fee2_percent) // 100 + loan} {cur} üleandmis-, maakleri- ja laenutasudeks.
+Järelikult on {name_gen} netotulu {price} {cur} - {price * (fee1_percent + fee2_percent) // 100 + loan} {cur} = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} {cur}.
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

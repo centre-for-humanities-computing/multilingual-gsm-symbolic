@@ -1,0 +1,48 @@
+question = "Ivanil on 2 paberraha väärtuses 20 EUR. Ta ostab kuus pritsipüstolit hinnaga 2 EUR tükk. Ta ostab ka 3 pakki veepalle hinnaga 3 EUR pakk. Kui palju raha jääb tal alles?"
+
+answer = """
+Ivan alustab sellega, et tal on 2 * 20 EUR = <<2*20=40>>40 EUR.
+Ivan kulutab pritsipüstolitele 6*2 EUR = <<6*2=12>>12 EUR.
+Ivan kulutab veepallidele 3 pakki * 3 EUR = <<3*3=9>>9 EUR.
+Ivan on kokku kulutanud 12 EUR + 9 EUR = <<12+9=21>>21 EUR.
+Ivanil on 40 EUR - 21 EUR = <<40-21=19>>19 EUR alles.
+#### 19
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name_gen,Ivani}l on {n,2} paberraha väärtuses {bill,20} {cur,EUR}. Ta ostab {m_txt,kuus} {item1_par_pl,pritsipüstolit} hinnaga {p1,2} {cur,EUR} tükk. Ta ostab ka {k,3} pakki {item2_par_pl,veepalle} hinnaga {p2,3} {cur,EUR} pakk. Kui palju raha jääb tal alles?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- item1_par_pl, item1_all_pl = sample([("pritsipüstolit", "pritsipüstolitele"), ("mänguautot", "mänguautodele"), ("tegelaskuju", "tegelaskujudele"), ("värvimisraamatut", "värvimisraamatutele"), ("puslet", "pusledele")])
+- item2_par_pl, item2_all_pl = sample([("veepalle", "veepallidele"), ("kleebiseid", "kleebistele"), ("pliiatseid", "pliiatsitele"), ("kustutuskumme", "kustutuskummidele")])
+- $bill = sample([5, 10, 20, 50, 100])
+- cur = sample(currencies_sym)
+- $n = range(1, 10)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+
+#conditions:
+- n * int(bill) > m_val * p1 + k * p2
+
+#answer: n * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} alustab sellega, et tal on {n} * {bill} {cur} = <<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)} {cur}.
+{name} kulutab {item1_all_pl} {m_val}*{p1} {cur} = <<{m_val}*{p1}={m_val*p1}>>{m_val*p1} {cur}.
+{name} kulutab {item2_all_pl} {k} pakki * {p2} {cur} = <<{k}*{p2}={k*p2}>>{k*p2} {cur}.
+{name} on kokku kulutanud {m_val*p1} {cur} + {k*p2} {cur} = <<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} {cur}.
+{name_gen}l on {n*int(bill)} {cur} - {m_val*p1+k*p2} {cur} = <<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} {cur} alles.
+#### {n*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

@@ -1,0 +1,40 @@
+question = "John ja Jack peavad koos kooli kõndima. Neil on selleks 30 minutit aega. Nurgani, kus asub raamatukogu, kulub neil 6 minutit. Sealt jõuavad nad tuletõrjejaama veel 13 minutiga. Kui palju aega jääb neil üle, et õigeks ajaks kooli jõuda?"
+
+answer = """
+Kui John ja Jack jõuavad raamatukoguni, on neil jäänud 30 - 6 = <<30-6=24>>24 minutit.
+Kui nad jõuavad tuletõrjejaama, on neil veel 24 - 13 = <<24-13=11>>11 minutit, et õigeks ajaks kooli jõuda.
+#### 11
+"""
+
+id_orig = 684
+
+id_shuffled = 14
+
+question_annotated = """
+{n1,John} ja {n2,Jack} peavad koos {loc1_to,kooli} kõndima. Neil on selleks {t,30} minutit aega. Nurgani, kus asub {loc2_base,raamatukogu}, kulub neil {t1,6} minutit. Sealt jõuavad nad {loc3_to,tuletõrjejaama} veel {t2,13} minutiga. Kui palju aega jääb neil üle, et õigeks ajaks {loc1_to,kooli} jõuda?
+
+#init:
+- (n1, _), (n2, _) = sample(names_male_cases, 2)
+- (loc1_to, _, _), (loc2_to, loc2_base, loc2_until), (loc3_to, _, _) = sample([("kooli", "kool", "koolini"), ("kinno", "kino", "kinoni"), ("kaubanduskeskusesse", "kaubanduskeskus", "kaubanduskeskuseni"), ("raamatukokku", "raamatukogu", "raamatukoguni"), ("parki", "park", "pargini"), ("jõusaali", "jõusaal", "jõusaalini"), ("panka", "pank", "pangani")], 3)
+- $t1 = range(6, 30)
+- $t2 = range(10, 70)
+- $t = range(30, 140)
+
+#conditions:
+- not divides(t1, 5)
+- not divides(t2, 5)
+- not divides(t, 5)
+- t > t1 + t2
+
+#answer: t - t1 - t2
+"""
+
+answer_annotated = """
+Kui {n1} ja {n2} jõuavad {loc2_until}, on neil jäänud {t} - {t1} = <<{t}-{t1}={t-t1}>>{t-t1} minutit.
+Kui nad jõuavad {loc3_to}, on neil veel {t-t1} - {t2} = <<{t-t1}-{t2}={t-t1-t2}>>{t-t1-t2} minutit, et õigeks ajaks {loc1_to} jõuda.
+#### {t-t1-t2}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

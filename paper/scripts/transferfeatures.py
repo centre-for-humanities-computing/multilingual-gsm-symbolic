@@ -41,7 +41,9 @@ import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
-from plot_config import FAMILY_COLORS, FAMILY_ORDER, LANGUAGE_LABELS, language_order, ordered_families
+from plot_config import FAMILY_COLORS, FAMILY_ORDER, LANGUAGE_LABELS, PLOT_STYLE, language_order, ordered_families
+from scipy.spatial import distance
+from transformers import AutoTokenizer
 
 SCRIPT_MARKERS = {
     "Latin": "o",
@@ -210,8 +212,6 @@ def relationship_plot(
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return [out]
-from scipy.spatial import distance
-from transformers import AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
@@ -235,14 +235,7 @@ SOURCE_METADATA = {
     },
 }
 
-plt.rcParams.update(
-    {
-        "axes.spines.right": False,
-        "axes.spines.top": False,
-        "figure.dpi": 160,
-        "font.family": "sans-serif",
-    }
-)
+plt.rcParams.update(PLOT_STYLE)
 
 
 def load_common_crawl_pages(source: str | Path, languages: list[str]) -> pd.DataFrame:
