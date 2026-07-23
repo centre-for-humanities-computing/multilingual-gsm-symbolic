@@ -93,7 +93,10 @@ FAMILY_MARKERS = {
 EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
 SPLIT_PAIR_LABELS = {
     ("Qwen2.5-1.5B-Instruct", "nob"): "Qwen2.5 1.5B (Norwegian)",
-    ("Llama-3.2-3B-Instruct", "dan"): "Llama 3.2 3B (Danish)",
+    ("Apertus-8B-Instruct-2509", "zho"): "Apertus 8B (Chinese)",
+    ("granite-3.2-2b-instruct (reasoning on)", "zho"): "Granite 2B (Chinese)",
+    ("gemma-3-4b-it", "isl"): "Gemma 3 4B (Icelandic)",
+    ("OLMo-2-0425-1B-Instruct", "eng"): "OLMo 2 1B (English)",
 }
 
 PROBLEM_KEYS = [
@@ -530,7 +533,14 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     for row in sized.itertuples():
         label = SPLIT_PAIR_LABELS.get((row.model, row.language))
         if label:
-            ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
+            ax.annotate(
+                label,
+                (row.original, row.synthetic),
+                xytext=(5, 0),
+                textcoords="offset points",
+                fontsize=7,
+                bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.72, "pad": 1},
+            )
 
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable.set_array([])

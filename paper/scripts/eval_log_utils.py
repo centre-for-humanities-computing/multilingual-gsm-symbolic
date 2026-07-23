@@ -186,7 +186,7 @@ def map_log_loader(
 
     max_workers = min(workers, len(paths))
     paths_iter = iter(paths)
-    with ProcessPoolExecutor(max_workers=max_workers) as pool:
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
         pending = {pool.submit(loader, path, scorer) for path in islice(paths_iter, max_workers)}
         while pending:
             done, pending = wait(pending, return_when=FIRST_COMPLETED)

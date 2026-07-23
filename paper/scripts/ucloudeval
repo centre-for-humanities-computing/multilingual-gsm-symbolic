@@ -23,7 +23,7 @@ from huggingface_hub import hf_hub_download
 
 MODELS = (
      #  Qwen2.5 Instruct
-    "Qwen/Qwen2.5-0.5B-Instruct",
+   # "Qwen/Qwen2.5-0.5B-Instruct",
      "Qwen/Qwen2.5-1.5B-Instruct",
      "Qwen/Qwen2.5-3B-Instruct",
      "Qwen/Qwen2.5-7B-Instruct",
@@ -102,6 +102,7 @@ DEFAULT_VLLM_SERVER_ARGS: dict[str, Any] = {
     "max_num_seqs": 512,
     "gpu_memory_utilization": 0.95,
     "enable_prefix_caching": True,
+    "async_scheduling": True,
     "disable_log_stats": False,
 }
 RESUME_IGNORED_MODEL_ARG_KEYS = frozenset(
@@ -109,6 +110,7 @@ RESUME_IGNORED_MODEL_ARG_KEYS = frozenset(
         "dtype",
         "attention_backend",
         "max_num_seqs",
+        "async_scheduling",
         "speculative_config",
         "speculative_model",
         "num_speculative_tokens",
@@ -191,6 +193,18 @@ def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.Ar
         help="Inspect log directory for normal runs.",
     )
     parser.add_argument("--reasoning-effort", help="Forwarded to Inspect for models that support it.")
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=128,
+        help="Max connections and samples for Inspect.",
+    )
+    parser.add_argument(
+        "--tasks",
+        type=int,
+        default=16,
+        help="Max tasks for Inspect.",
+    )
     parser.add_argument(
         "--vllm-server-arg",
         action="append",
@@ -368,6 +382,8 @@ def inspect_command(
     log_dir: Path = LOG_DIR,
     revision: str = REVISION,
     reasoning_effort: str | None = None,
+    concurrency: int = 128,
+    max_tasks: int = 16,
 ) -> list[str]:
     eval_set_id = eval_set_id_for_run(run, revision)
     # place the revision after the task id so the HF loader parses it correctly
@@ -381,9 +397,9 @@ def inspect_command(
         "--id", eval_set_id,
         "--model", model_ref(run.model),
         *run.args,
-        "--max-connections", "128",
-        "--max-samples", "128",
-        "--max-tasks", "8",
+        "--max-connections", str(concurrency),
+        "--max-samples", str(concurrency),
+        "--max-tasks", str(max_tasks),
         "--cache", str(CACHE_POLICY),
         "--log-dir", str(log_dir),
         "--log-dir-allow-dirty",
@@ -400,9 +416,11 @@ def inspect_commands(
     base_log_dir: Path = LOG_DIR,
     revision: str = REVISION,
     reasoning_effort: str | None = None,
+    concurrency: int = 128,
+    max_tasks: int = 16,
 ) -> list[tuple[Path, str, list[str]]]:
     if not historical:
-        return [(base_log_dir, revision, inspect_command(run, tasks, base_log_dir, revision, reasoning_effort))]
+        return [(base_log_dir, revision, inspect_command(run, tasks, base_log_dir, revision, reasoning_effort, concurrency, max_tasks))]
 
     unsupported_splits = sorted({task.split for task in tasks if task.split not in HISTORICAL_SPLITS})
     if unsupported_splits:
@@ -423,7 +441,7 @@ def inspect_commands(
                 (
                     log_dir,
                     historical_revision,
-                    inspect_command(run, language_tasks, log_dir, historical_revision, reasoning_effort),
+                    inspect_command(run, language_tasks, log_dir, historical_revision, reasoning_effort, concurrency, max_tasks),
                 )
             )
     return commands
@@ -490,6 +508,8 @@ def run_inspect(
     revision: str,
     reasoning_effort: str | None,
     server_args: dict[str, Any],
+    concurrency: int = 128,
+    max_tasks: int = 16,
 ) -> None:
     suffix = f" (reasoning {run.reasoning})" if run.reasoning else ""
     for log_dir, command_revision, command in inspect_commands(
@@ -499,6 +519,8 @@ def run_inspect(
         base_log_dir,
         revision,
         reasoning_effort,
+        concurrency,
+        max_tasks,
     ):
         prepare_eval_set_id(log_dir, eval_set_id_for_run(run, command_revision))
         show_command(f"Running {len(tasks)} Inspect task(s) for {run.model}{suffix}", command)
@@ -582,6 +604,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.revision,
                     args.reasoning_effort,
                     server_args,
+                    args.concurrency,
+                    args.tasks,
                 )
             except Exception as error:
                 failures.append((run.model, str(error)))
