@@ -1,0 +1,9 @@
+question = "David hot $12.48 und wui 16 schrauban aus a Kistn im baumarkt Gschäft kaffn. Jeda schrauba koscht $0.03. Wia vui Goid hot David no, nochdem a de schrauban zoiht hod?"
+answer = "David paid 16 * $0.03 = $<<16*0.03=0.48>>0.48 for the bolts.\nDavid has $12.48 - $0.48 = $12 left.\n#### 12\n"
+id_orig = 873
+id_shuffled = 30
+question_annotated = "{name,David} hot {cur,$}{initial_amount,12.48} und wui {quantity,16} {item,schrauba}n aus a Kistn im {store_type,baumarkt} Gschäft kaffn. Jeda {item,schrauba} koscht {cur,$}{unit_price,0.03}. Wia vui Goid hot {name,David} no, nochdem a de {item,schrauba}n zoiht hod?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item = sample([\"Schrauba\", \"Nogl\", \"Scheibn\", \"Mutter\", \"Anker\"])\n- store_type = sample([\"Baumarkt\", \"Heimwerkermarkt\", \"Baustoffhendl\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(12.48, 105, 0.48)\n- $unit_price = arange(0.01, 1, 0.01)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: round(initial_amount - quantity * unit_price)\n"
+answer_annotated = "{name} hod {quantity} * {cur}{round(unit_price} = {cur}<<{quantity}*{round(unit_price}={round(quantity*unit_price}>>{round(quantity*unit_price} fia de {item}n zoiht.\n{name} hot {cur}{initial_amount} - {cur}{round(quantity*unit_price} = {cur}{round(initial_amount - quantity * unit_price)} no.\n#### {round(initial_amount - quantity * unit_price)}\n"
+creation = "machine-translated from eng_metric using Qwen/Qwen3.5-122B-A10B-FP8, based on eng_metric templates; computationally validated"
+language = "bar"
+ignore = true

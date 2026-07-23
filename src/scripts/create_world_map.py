@@ -49,7 +49,11 @@ def get_creation_method(lang: str, templates_dir: Path) -> str:
     if not lang_dir.exists():
         return "none"
 
-    first_template = sorted(lang_dir.glob("*.toml"))[0]
+    templates = sorted(lang_dir.glob("*.toml"))
+    if not templates:
+        return "none"
+        
+    first_template = templates[0]
     with first_template.open("rb") as f:
         data = tomllib.load(f)
     creation = data.get("creation", "")
@@ -135,6 +139,8 @@ def main() -> None:
 
     for lang in langs:
         method = lang_methods[lang]
+        if method == "none":
+            continue
         color = category_colors[method]
         for country_iso in LANGUAGE_COUNTRIES.get(lang, []):
             mask = world["ISO_A3"] == country_iso

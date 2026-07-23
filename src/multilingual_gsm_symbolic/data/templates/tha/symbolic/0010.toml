@@ -1,0 +1,8 @@
+question = "ในการโทรออกจาก โทรศัพท์สาธารณะ คุณต้องจ่าย ฿0.25 ต่อแต่ละนาทีของการโทร หลังจาก 16 นาที ราคานั้นจะลดลงเหลือ ฿0.2 ต่อนาที การโทร 36 นาทีจะมีค่าใช้จ่ายเท่าไหร่?"
+answer = "16 นาทีแรกจะมีค่าใช้จ่าย 16 * 0.25 = ฿<<16*0.25=4>>4.\nหลังจากนั้น เหลือเวลาในการโทร 36 - 16 = <<36-16=20>>20 นาที\nและ 20 นาทีนี้จะมีค่าใช้จ่าย 20 * 0.2 = ฿<<20*0.2=4>>4.\nดังนั้น โดยรวมแล้ว การโทร 36 นาทีจะมีค่าใช้จ่าย 4 + 4 = ฿8.\n#### 8"
+id_orig = 1223
+id_shuffled = 10
+question_annotated = "ในการโทรออกจาก {dev,โทรศัพท์สาธารณะ} คุณต้องจ่าย {currency,฿}{frac1,0.25} ต่อแต่ละนาทีของการโทร หลังจาก {t,16} นาที ราคานั้นจะลดลงเหลือ {currency,฿}{frac2,0.2} ต่อนาที การโทร {total,36} นาทีจะมีค่าใช้จ่ายเท่าไหร่?\n\n#init:\n- dev = sample(['ตู้โทรศัพท์', 'โทรศัพท์ในห้องโรงแรม'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))"
+answer_annotated = "{t} นาทีแรกจะมีค่าใช้จ่าย {t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)}.\nหลังจากนั้น เหลือเวลาในการโทร {total} - {t} = <<{total}-{t}={total-t}>>{total-t} นาที\nและ {total-t} นาทีนี้จะมีค่าใช้จ่าย {total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)}.\nดังนั้น โดยรวมแล้ว การโทร {total} นาทีจะมีค่าใช้จ่าย {int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))}.\n#### {int((frac1 * t) + frac2*(total-t))}"
+creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+language = "tha"

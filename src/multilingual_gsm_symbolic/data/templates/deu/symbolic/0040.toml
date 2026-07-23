@@ -1,54 +1,8 @@
-question = "Sarah fuhr in den Urlaub an die Küste. Ihre Eltern gaben ihr 75 kr, damit sie kaufen konnte, was sie wollte. Im Kiosk wurden Bonbons angeboten mit „Kaufe 500 Gramm für 20 kr, erhalte 500 Gramm zum 1/2 Preis.“ Sie nahm 1100 Gramm. Sie kaufte auch eine gemischte Tüte mit Muschelschalen, die 17 kr kostete, und 4 Magnete, die 2 kr pro Stück kosteten. Wie viel Geld hat Sarah übrig?"
-
-answer = """
-Die Bonbons kosten 20 kr für 500 Gramm und 500 Gramm zum 1/2 Preis. Also sind 1/2 des Preises von 500 Gramm 500/500*1/2*20 kr = 10 kr.
-Zusammen kostet das 10 kr + 20 kr = 30 kr.
-Die restlichen 100 Gramm haben keinen Rabatt und kosten 4 kr, also ist der Gesamtpreis 20 kr + 10 kr + 4 kr = <<20 + 10 + 4 = 34>>34 kr
-4 Magnete zu je 2 kr sind 4*2 kr=<<4*2=8>>8 kr
-Wenn man alle ihre Einkäufe zusammenzählt, 34 kr + 17 kr + 8 kr = <<34+17+8=59>>59 kr
-Sie hatte 75 kr und gab 59 kr aus, also hat sie 75 kr - 59 kr = <<75-59=16>>16 kr übrig
-#### 16
-"""
-
+question = "Sally fuhr in den Urlaub an die Küste. Ihre Eltern gaben ihr $15, damit sie kaufen konnte, was sie wollte. Im Kiosk wurde Taffy angeboten mit „Kaufe 1 Pfund für $3 pro Pfund, erhalte 1 Pfund zum 1/2 Preis.“ Sie nahm 4 Pfund. Sie kaufte auch eine gemischte Tüte mit Muschelschalen für $1,5 und 4 Magnete, die $0,25 pro Stück kosteten. Wie viel Geld hat Sally übrig?"
+answer = "Sally kauft 1 Pfund für $3 und erhält 1 Pfund zum 1/2 Preis. Also sind 1/2 des Preises von 1 Pfund $3*1/2 = $1,5. Der Rest von 2 Pfund hat keinen Rabatt und kostet 2*$3 = $6, also beträgt der Gesamtpreis $3+$3/2+$6=$21/2\n4 Magnete zu je $0,25 sind 4*0,25=$<<4*0,25=1>>1\nWenn man alle ihre Einkäufe zusammenzählt, $21/2+$1,5+$1 = $<<21/2+1,5+1=13>>13\nSie hatte $15 und gab $13 aus, also hat sie $15-$13 = $<<15-13=2>>2 übrig\n#### 2\n"
 id_orig = 410
-
 id_shuffled = 40
-
-question_annotated = """
-{name,Sarah} fuhr in den Urlaub an die Küste. Ihre Eltern gaben ihr {total,75} kr, damit sie kaufen konnte, was sie wollte. Im Kiosk wurden Bonbons angeboten mit „Kaufe {n1,500} Gramm für {p1,20} kr, erhalte {n2,500} Gramm zum {discount,1/2} Preis.“ Sie nahm {n12,1100} Gramm. Sie kaufte auch eine gemischte Tüte mit Muschelschalen, die {p2,17} kr kostete, und {n3,4} Magnete, die {p3,2} kr pro Stück kosteten. Wie viel Geld hat {name,Sarah} übrig?
-
-#init:
-- $total = range(30, 100, 15)
-- $n1 = range(200, 651, 150)
-- $n2 = range(200, 651, 150)
-- $n12 = range(650, 1301, 150)
-- $n3 = range(4, 15, 2)
-- $p1 = range(20, 55, 5)
-- $p2 = range(17, 40, 4)
-- $p3 = range(2, 35, 3)
-- name = sample(names_female)
-- $discount = sample(fractions)
-
-#conditions:
-- n2 <= n1
-- n12 - n1 - n2 > 0
-- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)
-- p1 + n2/n1 * (1-discount) * p1 + (n12 - n1 - n2)/n1 * p1 + p2 + n3 * p3 < total
-- total - int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3) > 0
-
-#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)
-"""
-
-answer_annotated = """
-Die Bonbons kosten {p1} kr für {n1} Gramm und {n2} Gramm zum {discount} Preis. Also sind {discount} des Preises von {n2} Gramm {n2}/{n1}*{discount}*{p1} kr = {(n2/n1)*discount*p1} kr.
-Zusammen kostet das {(n2/n1)*discount*p1} kr + {p1} kr = {(n1/n2)*discount*p1 + p1} kr.
-Die restlichen {n12 - n1 - n2} Gramm haben keinen Rabatt und kosten {(n12 - n1 - n2)/n1*p1} kr, also ist der Gesamtpreis {p1} kr + {n2/n1*discount*p1} kr + {(n12 - n1 - n2)/n1*p1} kr = <<{p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} kr
-{n3} Magnete zu je {p3} kr sind {n3}*{p3} kr=<<{n3}*{p3}={n3*p3}>>{n3*p3} kr
-Wenn man alle ihre Einkäufe zusammenzählt, {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} kr + {p2} kr + {n3*p3} kr = <<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}>>{int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} kr
-Sie hatte {total} kr und gab {int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} kr aus, also hat sie {total} kr - {int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr = <<{total}-{int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kr übrig
-#### {total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}
-"""
-
+question_annotated = "{name,Sally} fuhr in den Urlaub an die Küste. Ihre Eltern gaben ihr ${total,15}, damit sie kaufen konnte, was sie wollte. Im Kiosk wurde Taffy angeboten mit „Kaufe {n1,1} Pfund für ${p1,3} pro Pfund, erhalte {n2,1} Pfund zum {discount,1/2} Preis.“ Sie nahm {n12,4} Pfund. Sie kaufte auch eine gemischte Tüte mit Muschelschalen für ${p2,1.5} und {n3,4} Magnete, die ${p3,0.25} pro Stück kosteten. Wie viel Geld hat {name,Sally} übrig?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)\n"
+answer_annotated = "{name} kauft {n1} Pfund für ${p1} und erhält {n2} Pfund zum {discount} Preis. Also sind {discount} des Preises von {n2} Pfund ${p1}*{discount} = ${float(n2*discount*p1)}. Der Rest von {n12-n1-n2} Pfund hat keinen Rabatt und kostet {n12-n1-n2}*${p1} = ${(n12-n1-n2)*p1}, also beträgt der Gesamtpreis ${n1*p1}+${n2*(1-discount)*p1}+${(n12-n1-n2)*p1}=${n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}\n{n3} Magnete zu je ${p3} sind {n3}*{p3}=$<<{n3}*{p3}={n3*p3}>>{n3*p3}\nWenn man alle ihre Einkäufe zusammenzählt, ${n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+${p2}+${n3*p3} = $<<{n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+{p2}+{n3*p3}={int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}\nSie hatte ${total} und gab ${int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} aus, also hat sie ${total}-${int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} = $<<{total}-{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}={total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} übrig\n#### {total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}\n"
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
-
 language = "deu"

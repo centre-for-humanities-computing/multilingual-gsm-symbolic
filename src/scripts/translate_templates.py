@@ -250,7 +250,7 @@ def translate_template_fields(
             }
         },
     )
-    raw = response.choices[0].message.content.strip()
+    raw = (response.choices[0].message.content or "").strip()
     messages = messages + [{"role": "assistant", "content": raw}]
     return json.loads(raw), messages
 
@@ -271,7 +271,7 @@ def fix_template_fields(client: OpenAI, model: str, feedback: str, messages: lis
             }
         },
     )
-    raw = response.choices[0].message.content.strip()
+    raw = (response.choices[0].message.content or "").strip()
     messages = messages + [{"role": "assistant", "content": raw}]
     return json.loads(raw), messages
 
@@ -342,24 +342,55 @@ def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model
     return tgt_data, messages
 
 
-def translate_replacements(client: OpenAI, src_data: dict, src: str, tgt: str, model: str) -> dict:
+def translate_single_replacement(client: OpenAI, k: str, v: list, src: str, tgt: str, model: str) -> tuple[str, list]:
     system = _REPLACEMENTS_SYSTEM_PROMPT.format(src_name=lang_name(src), tgt_name=lang_name(tgt))
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": json.dumps(src_data, ensure_ascii=False, indent=2)},
-        ],
+    payload = {k: v}
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": json.dumps(payload, ensure_ascii=False, indent=2)},
+    ]
+    for attempt in range(1, 4):
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                extra_body={
+                    "chat_template_kwargs": {
+                        "enable_thinking": True,
+                        "reasoning_effort": "high"
+                    }
+                },
+            )
+            raw = (response.choices[0].message.content or "").strip()
+            if not raw:
+                raise ValueError("Empty response from model")
+            parsed = json.loads(raw)
+            if k in parsed:
+                return k, parsed[k]
+            # Fallback if model changed the key
+            return k, list(parsed.values())[0]
+        except Exception as e:
+            logger.warning("Attempt %d/3 failed translating replacements key %s: %s", attempt, k, e)
+            if attempt == 3:
+                raise
+            time.sleep(1)
 
-        extra_body={
-            "chat_template_kwargs": {
-                "enable_thinking": True,
-                "reasoning_effort": "high"
-            }
-        },
-    )
-    raw = response.choices[0].message.content.strip()
-    return json.loads(raw)
+def translate_replacements(client: OpenAI, src_data: dict, src: str, tgt: str, model: str) -> dict:
+    result = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
+        futures = {
+            executor.submit(translate_single_replacement, client, k, v, src, tgt, model): k
+            for k, v in src_data.items()
+        }
+        for future in concurrent.futures.as_completed(futures):
+            k = futures[future]
+            try:
+                out_k, out_v = future.result()
+                result[out_k] = out_v
+            except Exception as e:
+                logger.error("Failed to translate replacement key %s: %s", k, e)
+                raise
+    return result
 
 
 def _var_name(placeholder: str) -> str:
@@ -452,25 +483,35 @@ def process_template(
     if tgt_file.exists() and not args.overwrite:
         with tgt_file.open("rb") as f:
             tgt_data = tomllib.load(f)
+        if tgt_data.get("ignore"):
+            logger.info("[%s %d/%d] %s has ignore=true, skipping", tgt, i + 1, total_files, src_file.name)
+            return None
         issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
         if not issues:
-            logger.info("[%d/%d] %s OK (skipping)", i + 1, total_files, src_file.name)
+            logger.info("[%s %d/%d] %s OK (skipping)", tgt, i + 1, total_files, src_file.name)
             return None
         logger.warning(
-            "[%d/%d] %s has issues, fixing: %s", i + 1, total_files, src_file.name, "; ".join(issues)
+            "[%s %d/%d] %s has issues, fixing: %s", tgt, i + 1, total_files, src_file.name, "; ".join(issues)
         )
         messages = _reconstruct_messages(src_data, tgt_data, args.src, tgt)
         feedback = "\n".join(issues)
     else:
-        logger.info("[%d/%d] Translating %s", i + 1, total_files, src_file.name)
-        tgt_data, messages = translate_template(client, src_data, args.src, tgt, args.model, tgt_replacements)
-        issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
-        feedback = "\n".join(issues)
+        logger.info("[%s %d/%d] Translating %s", tgt, i + 1, total_files, src_file.name)
+        try:
+            tgt_data, messages = translate_template(client, src_data, args.src, tgt, args.model, tgt_replacements)
+            issues = verify_syntax(src_data, tgt_data) + verify_renders(tgt_data, tgt_replacements)
+            feedback = "\n".join(issues)
+        except Exception as e:
+            logger.error("Failed processing %s", src_file.name, exc_info=True)
+            tgt_data = {}
+            messages = []
+            issues = [f"translation error: {e}"]
+            feedback = "\n".join(issues)
 
     for attempt in range(1, args.retries + 1):
         if not issues:
             break
-        logger.warning("[%d/%d] %s Attempt %d/%d failed, retrying with feedback", i + 1, total_files, src_file.name, attempt, args.retries)
+        logger.warning("[%s %d/%d] %s Attempt %d/%d failed, retrying with feedback", tgt, i + 1, total_files, src_file.name, attempt, args.retries)
         time.sleep(1)
         try:
             translated_fields, messages = fix_template_fields(client, args.model, feedback, messages)
@@ -484,16 +525,16 @@ def process_template(
             break
 
     if issues:
-        logger.warning("[%d/%d] Unresolved issues in %s: %s", i + 1, total_files, src_file.name, "; ".join(issues))
+        logger.warning("[%s %d/%d] Unresolved issues in %s: %s", tgt, i + 1, total_files, src_file.name, "; ".join(issues))
         tgt_data["ignore"] = True
         error_result = (src_file.name, issues)
     else:
-        logger.info("[%d/%d] %s OK", i + 1, total_files, src_file.name)
+        logger.info("[%s %d/%d] %s OK", tgt, i + 1, total_files, src_file.name)
         error_result = None
 
     with tgt_file.open("wb") as f:
         f.write(tomli_w.dumps(tgt_data).encode("utf-8"))
-    logger.info("[%d/%d] Written %s", i + 1, total_files, tgt_file.name)
+    logger.info("[%s %d/%d] Written %s", tgt, i + 1, total_files, tgt_file.name)
     return error_result
 
 
@@ -545,60 +586,82 @@ def main() -> None:
     logger.info("Using vLLM endpoint %s with model %s", args.base_url, args.model)
 
     targets = [lang for lang in _LANGUAGE_NAMES if lang != args.src] if args.tgt == "all" else [args.tgt]
+    
+    # Do not overwrite human-validated languages when bulk-translating
+    human_validated = {"ara", "dan", "fra", "hin", "isl", "jpn", "mar", "nld", "rus", "ukr", "zho"}
+    if args.tgt == "all":
+        targets = [lang for lang in targets if lang not in human_validated]
+
     overall_errors = []
+    
+    # Pass 1: Translate all replacements concurrently across all targets
+    replacements_by_tgt = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
+        rep_futures = {}
+        for tgt in targets:
+            tgt_dir = _DATA_ROOT / tgt
+            tgt_dir.mkdir(parents=True, exist_ok=True)
+            rep_src = src_dir / "replacements.json"
+            rep_tgt = tgt_dir / "replacements.json"
+            if rep_src.exists() and (args.overwrite or not rep_tgt.exists()):
+                with rep_src.open(encoding="utf-8") as f:
+                    src_replacements = json.load(f)
+                for k, v in src_replacements.items():
+                    future = executor.submit(translate_single_replacement, client, k, v, args.src, tgt, args.model)
+                    rep_futures[future] = (tgt, rep_tgt, k)
+        
+        pending_reps = {tgt: {} for tgt in targets}
+        for future in concurrent.futures.as_completed(rep_futures):
+            tgt, rep_tgt, k = rep_futures[future]
+            try:
+                out_k, out_v = future.result()
+                pending_reps[tgt][out_k] = out_v
+            except Exception as e:
+                logger.error("Failed to translate replacement key %s for %s: %s", k, tgt, e)
+                raise
 
-    for tgt in targets:
-        logger.info("--- Processing target language: %s ---", tgt)
-        tgt_dir = _DATA_ROOT / tgt
-        tgt_symbolic = tgt_dir / args.subfolder
+        for tgt in targets:
+            if pending_reps[tgt]:
+                rep_tgt = _DATA_ROOT / tgt / "replacements.json"
+                with rep_tgt.open("w", encoding="utf-8") as f:
+                    json.dump(pending_reps[tgt], f, ensure_ascii=False, indent=4)
+                logger.info("Written replacements.json for %s", tgt)
+                
+            rep_tgt = _DATA_ROOT / tgt / "replacements.json"
+            replacements_by_tgt[tgt] = json.loads(rep_tgt.read_text(encoding="utf-8")) if rep_tgt.exists() else {}
 
-        tgt_symbolic.mkdir(parents=True, exist_ok=True)
+    # Pass 2: Translate all templates concurrently across all targets
+    template_files = sorted((src_dir / args.subfolder).glob("*.toml"))
+    total_files = len(template_files)
 
-        # Load target replacements (needed for render validation)
-        rep_src = src_dir / "replacements.json"
-        rep_tgt = tgt_dir / "replacements.json"
-        if rep_src.exists() and (args.overwrite or not rep_tgt.exists()):
-            logger.info("Translating replacements.json (%s → %s)", args.src, tgt)
-            with rep_src.open(encoding="utf-8") as f:
-                src_replacements = json.load(f)
-            tgt_replacements = translate_replacements(client, src_replacements, args.src, tgt, args.model)
-            with rep_tgt.open("w", encoding="utf-8") as f:
-                json.dump(tgt_replacements, f, ensure_ascii=False, indent=4)
-            logger.info("Written %s", rep_tgt)
-        else:
-            logger.info("Skipping replacements.json (already exists or no source)")
-
-        tgt_replacements = json.loads(rep_tgt.read_text(encoding="utf-8")) if rep_tgt.exists() else {}
-
-        # Translate / fix templates
-        template_files = sorted((src_dir / args.subfolder).glob("*.toml"))
-        errors: list[tuple[str, list[str]]] = []
-        total_files = len(template_files)
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
-            futures = [
-                executor.submit(
-                    process_template, i, src_file, client, args, tgt, tgt_symbolic, tgt_replacements, total_files
+    with concurrent.futures.ThreadPoolExecutor(max_workers=32) as executor:
+        template_futures = {}
+        for tgt in targets:
+            tgt_dir = _DATA_ROOT / tgt
+            tgt_symbolic = tgt_dir / args.subfolder
+            tgt_symbolic.mkdir(parents=True, exist_ok=True)
+            for i, src_file in enumerate(template_files):
+                future = executor.submit(
+                    process_template, i, src_file, client, args, tgt, tgt_symbolic, replacements_by_tgt[tgt], total_files
                 )
-                for i, src_file in enumerate(template_files)
-            ]
-            for future in concurrent.futures.as_completed(futures):
-                res = future.result()
-                if res:
-                    errors.append(res)
+                template_futures[future] = (tgt, src_file.name)
 
-        if errors:
-            logger.warning("\n%d templates had unresolved issues in %s:", len(errors), tgt)
-            for name, issues in errors:
-                logger.warning("  %s: %s", name, "; ".join(issues))
-            overall_errors.extend([(tgt, name, issues) for name, issues in errors])
-        else:
-            logger.info("All %d templates translated and verified successfully for %s.", len(template_files), tgt)
+        for future in concurrent.futures.as_completed(template_futures):
+            tgt, file_name = template_futures[future]
+            try:
+                res = future.result()
+            except Exception as exc:
+                res = (file_name, [f"translation error: {exc}"])
+                logger.exception("Failed processing %s for %s", file_name, tgt)
+            if res:
+                overall_errors.append((tgt, res[0], res[1]))
 
     if overall_errors:
         logger.warning("\n--- OVERALL ERRORS ---")
         for tgt, name, issues in overall_errors:
             logger.warning("[%s] %s: %s", tgt, name, "; ".join(issues))
+    else:
+        logger.info("\nAll templates translated and verified successfully for all targets.")
 
 
 if __name__ == "__main__":
