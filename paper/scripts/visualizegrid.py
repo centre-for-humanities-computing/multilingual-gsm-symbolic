@@ -576,7 +576,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
 
 
 def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
-    """Plot each language's accuracy difference from the same model's English score."""
+    """Plot each language's accuracy as a share of the same model's English score."""
     order = model_order(summary)
     splits = [split for split in ["synthetic"] if split in set(summary["split"])]
     languages = language_order(language for language in summary["language"].unique() if language != "eng")
@@ -590,15 +590,18 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
         )
         if "eng" not in matrix or not languages:
             continue
-        transfer = matrix.reindex(columns=languages).sub(matrix["eng"], axis=0)
+        transfer = matrix.reindex(columns=languages).div(matrix["eng"].replace(0, np.nan), axis=0)
         if transfer.notna().any().any():
             panels.append((SPLIT_LABELS[split], transfer))
 
     if not panels:
         return False
 
-    max_gap = max(np.nanmax(np.abs(matrix.to_numpy())) for _title, matrix in panels if matrix.notna().any().any())
-    max_gap = max(max_gap, 0.05)
+    finite_values = np.concatenate(
+        [matrix.to_numpy()[np.isfinite(matrix.to_numpy())] for _title, matrix in panels]
+    )
+    value_min = min(0.0, float(finite_values.min()))
+    value_max = max(1.0, float(finite_values.max()))
     height = max(4.0, 0.42 * len(order) + 1.5)
     fig, axes = plt.subplots(
         1,
@@ -614,22 +617,22 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
             ax,
             matrix,
             title,
-            "RdBu",
-            -max_gap,
-            max_gap,
-            signed=True,
+            "YlGnBu",
+            value_min,
+            value_max,
+            signed=False,
         )
         for ax, (title, matrix) in zip(axes, panels, strict=True)
     ]
 
     axes[0].set_ylabel("Evaluated instruction-tuned model")
-    fig.suptitle("Target-language accuracy minus English accuracy for the same model")
+    fig.suptitle("Percentage of English performance recovered by target language")
     fig.subplots_adjust(left=0.2, right=0.89, bottom=0.27, top=0.84, wspace=0.18)
     colorbar_axis = fig.add_axes([0.91, 0.25, 0.012, 0.55])
     colorbar = fig.colorbar(
         images[0],
         cax=colorbar_axis,
-        label="Accuracy difference: target language - English",
+        label="Percentage of English performance recovered",
     )
     colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1))
     fig.savefig(out, bbox_inches="tight")
@@ -880,19 +883,20 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     if not non_english:
         return False
 
-    by_language["gap"] = by_language["eng"] - by_language[non_english].mean(axis=1)
-    by_language["relative_gap"] = by_language["gap"] / by_language["eng"].replace(0, np.nan)
     english_accuracy = by_language["eng"].replace(0, np.nan)
     non_english_accuracy = by_language[non_english].mean(axis=1)
     non_english_stderr = np.sqrt(stderr_by_language[non_english].pow(2).sum(axis=1)) / by_language[non_english].count(
         axis=1
     )
-    relative_gap_stderr = np.sqrt(
+    performance_recovered_stderr = np.sqrt(
         (non_english_accuracy / english_accuracy.pow(2)).pow(2) * stderr_by_language["eng"].pow(2)
         + (non_english_stderr / english_accuracy).pow(2)
     )
-    by_language["relative_gap_ci95"] = (relative_gap_stderr * norm.ppf(0.975)).fillna(0)
-    gaps = by_language[["gap", "relative_gap", "relative_gap_ci95"]].dropna().reset_index()
+    by_language["performance_recovered"] = non_english_accuracy / english_accuracy
+    by_language["performance_recovered_ci95"] = (
+        performance_recovered_stderr * norm.ppf(0.975)
+    ).fillna(0)
+    gaps = by_language[["performance_recovered", "performance_recovered_ci95"]].dropna().reset_index()
 
     gaps = gaps[np.isfinite(gaps["params_b"])]
     gaps = gaps[gaps.groupby("base_model")["reasoning"].transform("nunique") == 2]
@@ -911,8 +915,8 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
                 continue
             ax.errorbar(
                 line["params_b"],
-                line["relative_gap"],
-                yerr=line["relative_gap_ci95"],
+                line["performance_recovered"],
+                yerr=line["performance_recovered_ci95"],
                 color=FAMILY_COLORS.get(family, "#666666"),
                 linestyle=line_styles[mode],
                 marker=FAMILY_MARKERS.get(family, "o"),
@@ -922,8 +926,8 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
                 label=f"{family} {mode_labels[mode]}",
             )
 
-    ax.axhline(0, color="#111827", linewidth=0.8, alpha=0.7)
-    ax.set(xlabel="Model size (B parameters)", ylabel="Relative transfer gap")
+    ax.axhline(1, color="#111827", linewidth=0.8, alpha=0.7)
+    ax.set(xlabel="Model size (B parameters)", ylabel="Percentage of English performance recovered")
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     ax.grid(axis="y", color="#E5E7EB", linewidth=0.7)
     family_handles = [
@@ -939,7 +943,7 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     first_legend = ax.legend(handles=family_handles, title="Model family", frameon=False, loc="upper left")
     ax.add_artist(first_legend)
     ax.legend(handles=mode_handles, title="Variant", frameon=False, loc="upper right")
-    fig.suptitle("Relative transfer gap by model size and reasoning mode")
+    fig.suptitle("Percentage of English performance recovered by model size and reasoning mode")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)

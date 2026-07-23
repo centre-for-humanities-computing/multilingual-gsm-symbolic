@@ -81,7 +81,7 @@ def relationship_plot(
     use_script_shapes: bool = False,
 ) -> list[Path]:
     """Plot a descriptive feature relationship for the synthetic split only."""
-    plot_data = data.dropna(subset=[x_column, "transfer_gap"])
+    plot_data = data.dropna(subset=[x_column, "performance_recovered"])
     if plot_data.empty:
         return []
 
@@ -100,8 +100,8 @@ def relationship_plot(
                 marker = SCRIPT_MARKERS.get(script, "o")
                 ax.errorbar(
                     getattr(row, x_column),
-                    row.transfer_gap,
-                    yerr=row.transfer_gap_stderr,
+                    row.performance_recovered,
+                    yerr=row.performance_recovered_stderr,
                     fmt=marker,
                     markersize=6.5,
                     capsize=2,
@@ -112,8 +112,8 @@ def relationship_plot(
         else:
             ax.errorbar(
                 family_rows[x_column],
-                family_rows["transfer_gap"],
-                yerr=family_rows["transfer_gap_stderr"],
+                family_rows["performance_recovered"],
+                yerr=family_rows["performance_recovered_stderr"],
                 fmt="o",
                 markersize=6.5,
                 capsize=2,
@@ -124,7 +124,7 @@ def relationship_plot(
             )
 
     label_positions = panel.groupby(["family", "language"], as_index=False).agg(
-        x=(x_column, "mean"), y=("transfer_gap", "mean")
+        x=(x_column, "mean"), y=("performance_recovered", "mean")
     )
     label_positions["family_order"] = label_positions["family"].map(FAMILY_ORDER).fillna(99)
     label_positions = label_positions.sort_values(["family_order", "language"])
@@ -141,7 +141,7 @@ def relationship_plot(
     # Make trendline pop out prominently in vibrant crimson red
     unique_x = panel[x_column].nunique()
     if len(panel) >= 3 and unique_x >= 2:
-        slope, intercept = np.polyfit(panel[x_column], panel["transfer_gap"], 1)
+        slope, intercept = np.polyfit(panel[x_column], panel["performance_recovered"], 1)
         x_line = np.linspace(panel[x_column].min(), panel[x_column].max(), 100)
         ax.plot(
             x_line,
@@ -153,9 +153,9 @@ def relationship_plot(
             label="Trendline",
         )
 
-    ax.axhline(0, color="black", linewidth=0.8, alpha=0.4, zorder=2)
+    ax.axhline(1, color="black", linewidth=0.8, alpha=0.4, zorder=2)
     ax.grid(alpha=0.2)
-    ax.set_ylabel("Accuracy gap: English - target language")
+    ax.set_ylabel("Percentage of English performance recovered")
     ax.yaxis.set_major_formatter(PercentFormatter(1))
 
     if use_script_shapes:
@@ -222,6 +222,7 @@ DEFAULT_COMMON_CRAWL_CSV = ARTIFACTS_DIR / "transfer_features" / "languages.csv"
 SOURCE_METADATA = {
     "definitions": {
         "transfer_gap": "English accuracy minus target-language accuracy for the same model and split",
+        "performance_recovered": "Target-language accuracy divided by English accuracy for the same model and split",
         "tokenizer_fertility": "Tokenizer tokens divided by non-whitespace Unicode characters, with no special tokens",
         "normalized_fertility": "Target-language fertility divided by English fertility on matched source_id questions",
         "typological_distance": "Cosine distance from English over concatenated URIEL/lang2vec syntax_knn and inventory_knn vectors",
@@ -436,6 +437,12 @@ def build_transfer_table(
     transfer["transfer_gap_stderr"] = np.sqrt(
         transfer["stderr"].fillna(0) ** 2 + transfer["english_stderr"].fillna(0) ** 2
     )
+    english_accuracy = transfer["english_accuracy"].replace(0, np.nan)
+    transfer["performance_recovered"] = transfer["accuracy"] / english_accuracy
+    transfer["performance_recovered_stderr"] = np.sqrt(
+        (transfer["accuracy"] / english_accuracy.pow(2) * transfer["english_stderr"].fillna(0)).pow(2)
+        + (transfer["stderr"].fillna(0) / english_accuracy).pow(2)
+    )
 
     transfer = transfer.merge(
         language_features,
@@ -471,7 +478,7 @@ def main() -> None:
 
     summary = pd.read_csv(args.summary)
     if "eng" not in set(summary["language"]):
-        raise SystemExit("English results are required to calculate transfer gaps.")
+        raise SystemExit("English results are required to calculate recovered performance.")
     languages = language_order(summary["language"].unique())
 
     args.out_dir.mkdir(parents=True, exist_ok=True)

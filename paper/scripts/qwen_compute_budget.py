@@ -240,6 +240,7 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
     table["non_english_accuracy"] = table[non_english].mean(axis=1, skipna=True)
     table["absolute_transfer_gap"] = table["english_accuracy"] - table["non_english_accuracy"]
     table["relative_transfer_gap"] = table["absolute_transfer_gap"] / table["english_accuracy"].replace(0, np.nan)
+    table["performance_recovered"] = table["non_english_accuracy"] / table["english_accuracy"].replace(0, np.nan)
     rng = np.random.default_rng(BOOTSTRAP_SEED)
     absolute_ci: list[float] = []
     relative_ci: list[float] = []
@@ -259,6 +260,7 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
         relative_ci.append(relative_half_width)
     table["transfer_gap_ci95"] = absolute_ci
     table["relative_transfer_gap_ci95"] = relative_ci
+    table["performance_recovered_ci95"] = relative_ci
     # Dense-transformer inference is approximately two floating-point operations
     # per parameter per processed token. This intentionally reports an estimate.
     table["inference_flops"] = 2 * table["params_b"] * 1e9 * table["avg_total_tokens"]
@@ -278,6 +280,8 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
             "transfer_gap_ci95",
             "relative_transfer_gap",
             "relative_transfer_gap_ci95",
+            "performance_recovered",
+            "performance_recovered_ci95",
             "n_transfer_languages",
         ]
     ]
@@ -346,8 +350,8 @@ def _plot_compute_budget_table(
     relative: bool = False,
     faceted: bool = True,
 ) -> bool:
-    gap_column = "relative_transfer_gap" if relative else "absolute_transfer_gap"
-    ci_column = "relative_transfer_gap_ci95" if relative else "transfer_gap_ci95"
+    gap_column = "performance_recovered"
+    ci_column = "performance_recovered_ci95"
     families = sorted(table["family"].unique())
     combined = len(families) > 1
     panel_families: list[str | None] = families if combined and faceted else [None]
@@ -399,11 +403,7 @@ def _plot_compute_budget_table(
         ax.set_axisbelow(True)
         ax.set_title(panel_family if panel_family is not None else "Reasoning on vs. off under a fixed compute budget")
 
-    axes[0, 0].set_ylabel(
-        "Relative gap: (English − non-English mean) / English"
-        if relative
-        else "English accuracy − non-English mean accuracy"
-    )
+    axes[0, 0].set_ylabel("Percentage of English performance recovered")
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
         Line2D([0], [0], color="#374151", linestyle=":" if reasoning == "off" else "-", linewidth=1.8,
@@ -422,12 +422,12 @@ def _plot_compute_budget_table(
     if combined and faceted:
         fig.suptitle("Reasoning on vs. off under a fixed compute budget")
         fig.legend(handles=handles, frameon=False, fontsize=8, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 0.94))
-        fig.text(0.5, 0.015, "Lower-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
+        fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
         fig.tight_layout(rect=(0, 0.035, 1, 0.9))
     else:
         axes[0, 0].legend(handles=handles, frameon=False, fontsize=7, loc="upper right")
         axes[0, 0].text(
-            0.01, 0.02, "Lower-left is better. Bars are 95% bootstrap CIs over questions.",
+            0.01, 0.02, "Upper-left is better. Bars are 95% bootstrap CIs over questions.",
             transform=axes[0, 0].transAxes, fontsize=8, color="#4B5563",
         )
         fig.tight_layout()
