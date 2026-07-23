@@ -32,6 +32,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 from pathlib import Path
 from typing import Any
 
@@ -71,7 +72,6 @@ LANGUAGE_SCRIPTS = {
     "ara": "Arabic",
     "tha": "Thai",
 }
-
 
 def relationship_plot(
     data: pd.DataFrame,
@@ -345,6 +345,7 @@ def collect_tokenizer_fertility(
 
     models = summary[["model_raw", "model", "family"]].drop_duplicates()
     rows: list[dict[str, Any]] = []
+    load_errors: list[str] = []
 
     for model_row in models.itertuples(index=False):
         repo = tokenizer_repo(model_row.model_raw)
@@ -357,9 +358,10 @@ def collect_tokenizer_fertility(
             tokenizer = AutoTokenizer.from_pretrained(
                 repo,
                 trust_remote_code=False,
+                token=os.environ.get("HF_TOKEN"),
             )
         except Exception as exc:
-            print(f"Skipping tokenizer fertility for {model_row.model}: {exc}")
+            load_errors.append(f"{model_row.model} ({repo}): {exc}")
             continue
 
         for language, language_questions in questions.items():
@@ -393,6 +395,14 @@ def collect_tokenizer_fertility(
                     "english_non_whitespace_character_count": english_characters,
                 }
             )
+
+    if load_errors:
+        failures = "\n\n".join(load_errors)
+        raise RuntimeError(
+            "Failed to load required tokenizers; refusing to write incomplete fertility data. "
+            "Set HF_TOKEN to a Hugging Face token with access to gated model repositories.\n\n"
+            f"{failures}"
+        )
 
     return pd.DataFrame(rows)
 
