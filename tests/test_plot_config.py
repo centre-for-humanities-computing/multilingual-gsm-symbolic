@@ -114,13 +114,13 @@ def test_number_coverage_counts() -> None:
 
 def test_number_coverage_counts_splits_chevron_sides() -> None:
     assert number_coverage_counts(
-        "Use 2 and 4.",
+        "No numeric prompt values.",
         "The answer uses 2 and 4.",
         "Compute <<2+2=4>>, then <<4/2=2>>.",
     ) == {
         "all_prompt_numbers_present": True,
-        "prompt_number_count": 2,
-        "retrieved_prompt_number_count": 2,
+        "prompt_number_count": 0,
+        "retrieved_prompt_number_count": 0,
         "lhs_count": 1,
         "lhs_retrieved": 1,
         "rhs_count": 2,

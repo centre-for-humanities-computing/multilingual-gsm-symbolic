@@ -121,7 +121,7 @@ def number_coverage_counts(
         "prompt_number_count": len(prompt_numbers),
         "retrieved_prompt_number_count": retrieved_count,
         "lhs_count": len(lhs_numbers),
-        "lhs_retrieved": len(prompt_numbers & lhs_numbers),
+        "lhs_retrieved": len(response_numbers & lhs_numbers),
         "rhs_count": len(rhs_numbers),
-        "rhs_retrieved": len(prompt_numbers & rhs_numbers),
+        "rhs_retrieved": len(response_numbers & rhs_numbers),
     }
