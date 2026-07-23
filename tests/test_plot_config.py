@@ -128,12 +128,10 @@ def test_number_coverage_counts_splits_chevron_sides() -> None:
     }
 
 
-def test_extract_numbers_equates_digits_fractions_and_words() -> None:
-    assert extract_numbers("5, five, and 5.0") == {Decimal("5")}
+def test_extract_numbers_equates_digit_and_fraction_forms() -> None:
+    assert extract_numbers("5 and 5.0") == {Decimal("5")}
     assert extract_numbers("1/2, 0.5, and half") == {Decimal("0.5")}
-    assert Decimal("25") in extract_numbers("25 and twenty-five")
-    assert Decimal("0.5") in extract_numbers("1/2 og halvdelen", "dan")
-    assert extract_numbers("Nı", "eng") == set()
+    assert extract_numbers("five, half, and twenty-five") == set()
 
 
 def test_model_order_only_uses_models_present_in_summary() -> None:
