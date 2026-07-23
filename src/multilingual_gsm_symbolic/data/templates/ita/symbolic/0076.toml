@@ -1,8 +1,47 @@
-question = "Antonio ha pescato 3 tonno lo scorso lunedì, il primo tonno che ha pescato pesa 56 chilogrammo, il secondo tonno che ha pescato pesa 46 chilogrammo, e il rimanente tonno che ha pescato pesa 26 chilogrammo. Se un chilogrammo di tonno costa €0,5, quanto guadagnerà dopo aver venduto tutti i tonno al mercato?"
-answer = "Antonio guadagnerà 56*€0,5 = €<<56*0,5=28>>28 dal primo tonno.\nGuadagnerà 46*€0,5 = €<<46*0,5=23>>23 per il secondo tonno.\nGli altri tonno sono 3-2 = <<3-2=1>>1. Guadagnerà 26*€0,5 = €<<26*0,5=13>>13 per ciascuno di essi. Quindi guadagnerà 1 * 13 = <<1*13>>=13\nPertanto, l'importo totale che guadagnerà per tutti i tonno è €28 + €23 + €13= €<<28+23+13=64>>64.\n#### 64\n"
+question = "Antonio ha preso 3 tonni lo scorso lunedì; il primo tonno che ha preso pesa 56 chilogrammi, il secondo tonno che ha preso pesa 46 chilogrammi e l'ultimo tonno che ha preso pesa 26 chilogrammi. Se 1 chilogrammo di tonno costa €0,5, quanto guadagnerà dopo aver venduto tutti i tonni al mercato?"
+
+answer = """
+Antonio guadagnerà 56*€0,5 = €<<56*0,5=28>>28 dal primo tonno.
+Guadagnerà 46*€0,5 = €<<46*0,5=23>>23 per il secondo tonno.
+Gli altri tonni sono 3-2 = <<3-2=1>>1. Guadagnerà 26*€0,5 = €<<26*0,5=13>>13 per ciascuno di essi. Quindi guadagnerà 1 * 13 = <<1*13>>=13
+Pertanto, l'importo totale che guadagnerà per tutti i tonni è €28 + €23 + €13= €<<28+23+13=64>>64.
+#### 64
+"""
+
 id_orig = 1207
+
 id_shuffled = 76
-question_annotated = "{name,Antonio} ha pescato {n,3} {fish,tonno} lo scorso {day,lunedì}, il primo {fish,tonno} che ha pescato pesa {w1,56} {unit,chilogrammo}, il secondo {fish,tonno} che ha pescato pesa {w2,46} {unit,chilogrammo}, e il rimanente {fish,tonno} che ha pescato pesa {w3,26} {unit,chilogrammo}. Se un {unit,chilogrammo} di {fish,tonno} costa {cur,€}{price,0.5}, quanto guadagnerà dopo aver venduto tutti i {fish,tonno} al mercato?\n\n#init:\n- name = sample(names_male)\n- fish = sample([\"tonno\",\"salmone\", \"merluzzo\", \"trota\", \"pesce spada\"])\n- day = sample(weekdays)\n- unit = sample([\"chilogrammo\", \"libbra\", \"kg\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)\n"
-answer_annotated = "{name} guadagnerà {w1}*{cur}{price} = {cur}<<{w1}*{price}={w1*price}>>{w1*price} dal primo {fish}.\nGuadagnerà {w2}*{cur}{price} = {cur}<<{w2}*{price}={w2*price}>>{w2*price} per il secondo {fish}.\nGli altri {fish} sono {n}-2 = <<{n}-2={n-2}>>{n-2}. Guadagnerà {w3}*{cur}{price} = {cur}<<{w3}*{price}={w3*price}>>{w3*price} per ciascuno di essi. Quindi guadagnerà {n-2} * {w3*price} = <<{n-2}*{w3*price}>>={((n-2)*w3*price)}\nPertanto, l'importo totale che guadagnerà per tutti i {fish} è {cur}{w1*price} + {cur}{w2*price} + {cur}{((n-2)*w3*price)}= {cur}<<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)}.\n#### {int((w1 + w2 + (n-2)*w3) * price)}\n"
+
+question_annotated = """
+{name,Antonio} ha preso {n,3} {fish_plural,tonni} lo scorso {day,lunedì}; il primo {fish,tonno} che ha preso pesa {w1,56} {unit_plural,chilogrammi}, il secondo {fish,tonno} che ha preso pesa {w2,46} {unit_plural,chilogrammi} e l'ultimo {fish,tonno} che ha preso pesa {w3,26} {unit_plural,chilogrammi}. Se 1 {unit_singular,chilogrammo} di {fish,tonno} costa {cur,€}{price,0.5}, quanto guadagnerà dopo aver venduto tutti i {fish_plural,tonni} al mercato?
+
+#init:
+- name = sample(names_male)
+- fish, fish_plural = sample([("tonno","tonni"), ("salmone","salmoni"), ("merluzzo","merluzzi"), ("trota","trote")])
+- day = sample(weekdays)
+- unit_singular, unit_plural = sample([("chilogrammo", "chilogrammi"), ("grammo", "grammi"), ("kg", "kg")])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(0.25, 2.5, 0.25)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+
+answer_annotated = """
+{name} guadagnerà {w1}*{cur}{price} = {cur}<<{w1}*{price}={w1*price}>>{w1*price} dal primo {fish}.
+Guadagnerà {w2}*{cur}{price} = {cur}<<{w2}*{price}={w2*price}>>{w2*price} per il secondo {fish}.
+Gli altri {fish_plural} sono {n}-2 = <<{n}-2={n-2}>>{n-2}. Guadagnerà {w3}*{cur}{price} = {cur}<<{w3}*{price}={w3*price}>>{w3*price} per ciascuno di essi. Quindi guadagnerà {n-2} * {w3*price} = <<{n-2}*{w3*price}>>={((n-2)*w3*price)}
+Pertanto, l'importo totale che guadagnerà per tutti i {fish_plural} è {cur}{w1*price} + {cur}{w2*price} + {cur}{((n-2)*w3*price)}= {cur}<<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)}.
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+
 creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated"
+
 language = "ita"

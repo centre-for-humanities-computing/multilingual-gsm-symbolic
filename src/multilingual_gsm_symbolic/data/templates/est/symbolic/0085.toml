@@ -1,8 +1,43 @@
-question = "Kui Sam ja Harry omavad kokku 100 sentimeetrit aeda, ja nad lepivad kokku jagada nii, et Harry saab 60 sentimeetrit rohkem kui Sam, kui palju jääb Samile?"
-answer = "Olgu x aia kogus, mille Sam saab, ja y aia kogus, mille Harry saab. Me teame, et y = x + 60, ja y + x = 100.\nAsendades esimese võrrandi teise võrrandisse, saame 2x+60=100\nLahutades mõlemalt poolt 60, saame 2x=40\nJagame mõlemad pooled kahega, saades x=20. See tähendab, et Samil jääb 20 sentimeetrit aeda alles.\n#### 20\n"
+question = "Kui Jaanil ja Martinil on 100 sentimeetrit aeda ning nad lepivad, et Martin saab Jaanist 60 sentimeetrit rohkem, siis kui palju jääb Jaanile?"
+
+answer = """
+Olgu x see aia kogus, mille Jaan saab, ja y see kogus, mille Martin saab. Teame, et y = x + 60 ja y + x = 100.
+Asendades esimese võrrandi teise võrrandisse, saame 2x+60=100
+lahutades mõlemalt poolelt 60, saame 2x=40
+jagades mõlemad pooled kahega, saame x=20. See tähendab, et Jaanile jääb 20 sentimeetrit aeda.
+#### 20
+"""
+
 id_orig = 1084
+
 id_shuffled = 85
-question_annotated = "Kui {name1,Sam} ja {name2,Harry} omavad kokku {total,100} {unit,sentimeetrit} aeda, ja nad lepivad kokku jagada nii, et {name2,Harry} saab {diff,60} {unit,sentimeetrit} rohkem kui {name1,Sam}, kui palju jääb {name1,Sam}ile?\n\n#init:\n- name1, name2 = sample(names, 2)\n- unit = sample([\"sentimeetrit\", \"meetrit\"])\n- $total = range(100, 1000, 20)\n- $diff = range(20, 200, 10)\n\n#conditions:\n- total - diff > 10\n- is_int((total - diff) / 2)\n\n#answer: (total - diff) // 2\n"
-answer_annotated = "Olgu x aia kogus, mille {name1} saab, ja y aia kogus, mille {name2} saab. Me teame, et y = x + {diff}, ja y + x = {total}.\nAsendades esimese võrrandi teise võrrandisse, saame 2x+{diff}={total}\nLahutades mõlemalt poolt {diff}, saame 2x={total-diff}\nJagame mõlemad pooled kahega, saades x={(total-diff)//2}. See tähendab, et {name1}il jääb {(total-diff)//2} {unit} aeda alles.\n#### {(total-diff)//2}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+Kui {name1_gen,Jaani}l ja {name2_gen,Martini}l on {total,100} {unit,sentimeetrit} aeda ning nad lepivad, et {name2,Martin} saab {name1_gen,Jaani}st {diff,60} {unit,sentimeetrit} rohkem, siis kui palju jääb {name1_gen,Jaani}le?
+
+#init:
+- name1, name1_gen = sample(names_male_cases)
+- name2, name2_gen = sample(names_male_cases)
+- unit = sample(["sentimeetrit", "meetrit"])
+- $total = range(100, 1000, 20)
+- $diff = range(20, 200, 10)
+
+#conditions:
+- name1 != name2
+- total - diff > 10
+- is_int((total - diff) / 2)
+
+#answer: (total - diff) // 2
+"""
+
+answer_annotated = """
+Olgu x see aia kogus, mille {name1} saab, ja y see kogus, mille {name2} saab. Teame, et y = x + {diff} ja y + x = {total}.
+Asendades esimese võrrandi teise võrrandisse, saame 2x+{diff}={total}
+lahutades mõlemalt poolelt {diff}, saame 2x={total-diff}
+jagades mõlemad pooled kahega, saame x={(total-diff)//2}. See tähendab, et {name1_gen}le jääb {(total-diff)//2} {unit} aeda.
+#### {(total-diff)//2}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"

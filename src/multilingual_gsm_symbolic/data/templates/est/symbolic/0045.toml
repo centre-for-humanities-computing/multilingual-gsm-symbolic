@@ -1,9 +1,45 @@
-question = "Pat has a flower bed that is 111 meters long. Pat wants to fill her flower bed with plants. Pat's flowers grow 12 centimeters wide, and gardening guidelines say to plant one flower every 1.5 meters along the bed. Pat already owns 17 flowers. Each flowering plant costs $6 at the store. How much money will Pat spend at the store to fill up her flower bed?"
-answer = "Pat's flower bed is 111 meters / 1.5 meters per plant = <<111/1.5=74>>74 plants needed.\nPat needs to buy 74 plants - 17 plants = <<74-17=57>>57 plants needed to purchase.\nPat will spend 57 plants * $6 = $<<57*6=342>>342.\n#### 342\n"
+question = "Laural on lillepeenar, mis on 111 meetrit pikk. Laura tahab täita oma lillepeenra taimedega. Laura lilled kasvavad 12 sentimeetrit laiaks ning aiandusjuhised ütlevad, et peenrale tuleb istutada üks lill iga 1.5 meetri järel. Laural on juba 17 lille. Iga õitsev taim maksab poes 6 EUR. Kui palju raha kulutab Laura poes, et lillepeenar täis saada?"
+
+answer = """
+Laura lillepeenar on 111 meetrit / 1.5 meetri taime kohta = <<111/1.5=74>>74 taime vaja.
+Laura peab ostma 74 - 17 = <<74-17=57>>57 taime.
+Laura kulutab 57 * 6 EUR = <<57*6=342>>342 EUR.
+#### 342
+"""
+
 id_orig = 984
+
 id_shuffled = 45
-question_annotated = "{name,Pat} has a flower bed that is {length,111} {unit_length,meter}s long. {name,Pat} wants to fill her flower bed with plants. {name,Pat}'s flowers grow {plant_width,12} centimeters wide, and gardening guidelines say to plant one flower every {space,1.5} {unit_length,meter}s along the bed. {name,Pat} already owns {owned,17} flowers. Each flowering plant costs {cur,$}{cost,6} at the store. How much money will {name,Pat} spend at the store to fill up her flower bed?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)\n"
-answer_annotated = "{name}'s flower bed is {length} {unit_length}s / {space} {unit_length}s per plant = <<{length}/{space}={int(length/space)}>>{int(length/space)} plants needed.\n{name} needs to buy {int(length/space)} plants - {owned} plants = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} plants needed to purchase.\n{name} will spend {int(length/space)-owned} plants * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}.\n#### {int((length/space - owned) * cost)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+{name_gen,Laura}l on lillepeenar, mis on {length,111} {unit_length,meetrit} pikk. {name,Laura} tahab täita oma lillepeenra taimedega. {name_gen,Laura} lilled kasvavad {plant_width,12} sentimeetrit laiaks ning aiandusjuhised ütlevad, et peenrale tuleb istutada üks lill iga {space,1.5} {unit_gen,meetri} järel. {name_gen,Laura}l on juba {owned,17} lille. Iga õitsev taim maksab poes {cost,6} {cur,EUR}. Kui palju raha kulutab {name,Laura} poes, et lillepeenar täis saada?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- unit_nom, unit_length, unit_gen = sample([("meeter", "meetrit", "meetri")])
+- cur = sample(currencies_sym)
+- $length = range(110, 220)
+- $plant_width = range(2, 13)
+- $space = arange(1, 20, 0.25)
+- $owned = range(10, 30)
+- $cost = range(3, 15)
+
+#conditions:
+- plant_width * 3 < length
+- plant_width < space
+- is_int(length / space)
+- length / space > owned
+
+#answer: int((length / space - owned) * cost)
+"""
+
+answer_annotated = """
+{name_gen} lillepeenar on {length} {unit_length} / {space} {unit_gen} taime kohta = <<{length}/{space}={int(length/space)}>>{int(length/space)} taime vaja.
+{name} peab ostma {int(length/space)} - {owned} = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} taime.
+{name} kulutab {int(length/space)-owned} * {cost} {cur} = <<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)} {cur}.
+#### {int((length/space - owned) * cost)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"
-ignore = true

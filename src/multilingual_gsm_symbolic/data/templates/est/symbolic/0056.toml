@@ -1,9 +1,36 @@
-question = "Üks klaas piima on 250 milliliitrit piima. John joob 2 klaasi piima. Kui piimal on 3 kalorit milliliitri kohta, mitu kalorit ta tarbis?"
-answer = "Ta jõi 250*2=<<250*2=500>>500 milliliitrit piima. Nii et ta jõi 500*3=<<500*3=1500>>1500 kalorit piima väärtuses.\n#### 1500\n"
+question = "Üks klaas sisaldab 250 milliliitrit piima. Margus joob 2 klaasi piima. Kui piimas on 3 kalorit milliliitri kohta, kui palju kaloreid Margus tarbis?"
+
+answer = """
+Margus jõi 250*2=<<250*2=500>>500 milliliitrit piima.
+Seega tarbis ta 500*3=<<500*3=1500>>1500 kalorit.
+#### 1500
+"""
+
 id_orig = 400
+
 id_shuffled = 56
-question_annotated = "Üks {container,klaas} {liquid,piima} on {vol,250} milliliitrit {liquid,piima}. {name,John} joob {num,2} {container_plural,klaasi} {liquid,piima}. Kui {liquid,piimal} on {cal,3} kalorit milliliitri kohta, mitu kalorit ta tarbis?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"glass\",\"glasses\"), (\"cup\",\"cups\"), (\"bottle\",\"bottles\"), (\"carton\",\"cartons\")])\n- liquid = sample([\"juice\", \"soda\", \"sparkling water\", \"tea\", \"lemonade\"])\n- $vol = range(150, 501, 50)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal\n"
-answer_annotated = "Ta jõi {vol}*{num}=<<{vol}*{num}={vol*num}>>{vol*num} milliliitrit {liquid}. Nii et ta jõi {vol*num}*{cal}=<<{vol*num}*{cal}={vol*num*cal}>>{vol*num*cal} kalorit {liquid} väärtuses.\n#### {vol*num*cal}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+Üks {container_nom_sg,klaas} sisaldab {vol,250} milliliitrit {liquid_par_sg,piima}. {name,Margus} joob {num,2} {container_num_sg,klaasi} {liquid_par_sg,piima}. Kui {liquid_ine,piimas} on {cal,3} kalorit milliliitri kohta, kui palju kaloreid {name,Margus} tarbis?
+
+#init:
+- name, _ = sample(names_male_cases)
+- container_nom_sg, container_num_sg = sample([("klaas", "klaasi"), ("tass", "tassi"), ("pudel", "pudelit"), ("pakk", "pakki")])
+- liquid_par_sg, liquid_ine = sample([("piima", "piimas"), ("mahla", "mahlas"), ("limonaadi", "limonaadis"), ("teed", "tees"), ("kakaod", "kakaos")])
+- $vol = range(150, 501, 50)
+- $num = range(2, 6)
+- $cal = range(2, 10)
+
+
+#answer: vol * num * cal
+"""
+
+answer_annotated = """
+{name} jõi {vol}*{num}=<<{vol}*{num}={vol*num}>>{vol*num} milliliitrit {liquid_par_sg}.
+Seega tarbis ta {vol*num}*{cal}=<<{vol*num}*{cal}={vol*num*cal}>>{vol*num*cal} kalorit.
+#### {vol*num*cal}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"
-ignore = true

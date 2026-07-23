@@ -1,9 +1,39 @@
-question = "Julia valmistus oma kodus peetavaks õhtusöögiks, kus ta kavatseti serveerida hautist. Ta märkas, et tal polnud plastlusikaid, nii et ta ostis uue pakendi lusikaid. Hiljem ostis ka tema abikaasa 5 uut lusikat ja andis need Juliale. Kui Julia hautist valmistas, kasutas ta kolm lusikat hautise maitsmiseks. Hiljem, kui ta läks lauda katma, oli tal kokku 12 lusikat. Kui palju lusikaid oli selles pakendis, mille Julia ostis?"
-answer = "Lusikate koguarv Julia ja tema abikaasa poolt oli 12+3=<<12+3=15>>15 lusikat.\nKuna abikaasa ostis pakendi 5 lusikat, siis Julia pakend sisaldas 15-5=<<15-5=10>>10 lusikat.\n#### 10\n"
+question = "Julia valmistus õhtusöögipeoks oma kodus, kus ta kavatses serveerida hautist. Ta märkas, et tal pole enam plastmassist lusikaid, nii et ta ostis uue komplekti. Hiljem ostis ka tema abikaasa 5 uut lusikat ja andis need Juliale. Hautist valmistades kasutas Julia ära kolm lusikat. Hiljem, kui ta läks lauda katma, oli tal kokku 12 lusikat. Mitu lusikat oli selles pakis, mille Julia ostis?"
+
+answer = """
+Julia ja tema abikaasa kokku ostetud lusikate arv oli 12+3=<<12+3=15>>15 lusikat.
+Kuna abikaasa ostis 5 lusikat, siis Julia ostetud pakis oli 15-5=<<15-5=10>>10 lusikat.
+#### 10
+"""
+
 id_orig = 125
+
 id_shuffled = 22
-question_annotated = "{name,Julia} valmistus oma kodus peetavaks {event,õhtusöögiks}, kus ta kavatseti serveerida {food,hautist}. Ta märkas, et tal polnud plast{obj,lusikaid}, nii et ta ostis uue pakendi {obj,lusikaid}. Hiljem ostis ka tema abikaasa {n1,5} uut {obj,lusikat} ja andis need {name,Juliale}. Kui {name,Julia} {food,hautist} valmistas, kasutas ta {n2_txt,kolm} {obj,lusikat} {food,hautise} maitsmiseks. Hiljem, kui ta läks lauda katma, oli tal kokku {total,12} {obj,lusikat}. Kui palju {obj,lusikaid} oli selles pakendis, mille {name,Julia} ostis?\n\n#init:\n- name = sample(names_female)\n- event = sample([\"lõunasöök\", \"sünnipäevapidu\", \"ühispidu\", \"beebipidu\", \"mänguõhtu\"])\n- food = sample([\"praekana\", \"grillitud lõhe\", \"veiseliha hautis\", \"taimetoitlasagna\", \"täidetud paprikad\", \"krevettid scampi\", \"crème brûlée\"])\n- obj = sample([\"lusikad\", \"hargid\", \"taldrikud\"])\n- $n1 = range(5, 20)\n- n2_txt, n2_val = range_str(3, 10, 1, numbers)\n- $total = range(12, 40)\n\n#conditions:\n- total+n2_val-n1 > 0\n\n#answer: total+n2_val-n1\n"
-answer_annotated = "Lusikate koguarv {name} ja tema abikaasa poolt oli {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj}.\nKuna abikaasa ostis pakendi {n1} {obj}, siis {name} pakend sisaldas {total+n2_val}-{n1}=<<{total+n2_val}-{n1}={total+n2_val-n1}>>{total+n2_val-n1} {obj}.\n#### {total+n2_val-n1}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+{name,Julia} valmistus {event,õhtusöögipeoks} oma kodus, kus ta kavatses serveerida {food,hautist}. Ta märkas, et tal pole enam plastmassist {obj1_par_pl,lusikaid}, nii et ta ostis uue komplekti. Hiljem ostis ka tema abikaasa {n1,5} uut {obj1_par_sg,lusikat} ja andis need {name_gen,Julia}le. {food,hautist} valmistades kasutas {name,Julia} ära {n2_txt,kolm} {obj1_par_sg,lusikat}. Hiljem, kui ta läks lauda katma, oli tal kokku {total,12} {obj1_par_sg,lusikat}. Mitu {obj1_par_sg,lusikat} oli selles pakis, mille {name,Julia} ostis?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- event = sample(["lõunapeoks", "sünnipäevapeoks", "beebipeoks", "lauamänguõhtuks", "õhtusöögipeoks"])
+- food = sample(["hautist", "röstitud kana", "grillitud lõhet", "köögiviljalasanjat", "täidetud paprikaid"])
+- obj1_par_pl, obj1_par_sg, obj1_gen_pl= sample([("lusikaid", "lusikat", "lusikate"), ("kahvleid", "kahvlit", "kahvlite"), ("taldrikuid", "taldrikut", "taldrikute"), ("nugasid", "nuga", "nugade")])
+- $n1 = range(5, 20)
+- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- $total = range(12, 40)
+
+#conditions:
+- total + n2_val - n1 > 0
+
+#answer: total + n2_val - n1
+"""
+
+answer_annotated = """
+{name} ja tema abikaasa kokku ostetud {obj1_gen_pl} arv oli {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj1_par_sg}.
+Kuna abikaasa ostis {n1} {obj1_par_sg}, siis {name} ostetud pakis oli {total+n2_val}-{n1}=<<{total+n2_val}-{n1}={total+n2_val-n1}>>{total+n2_val-n1} {obj1_par_sg}.
+#### {total+n2_val-n1}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"
-ignore = true

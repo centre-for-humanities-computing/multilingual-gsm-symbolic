@@ -1,9 +1,44 @@
-question = "Sündmuse alguses oli 25 meest ja 15 naist. Pärast tund aega lahkus 1/4 inimeste koguarvust. Kui palju naisi jäi, kui 22 meest jäid sündmusele?"
-answer = "Sündmusel osales kokku 25 meest + 15 naist = <<25+15=40>>40 inimest.\nPärast tund aega lahkus 40 inimest * 1/4 = <<40*1/4=10>>10 inimest.\nSee tähendab, et 40 inimest - 10 inimest = <<40-10=30>>30 inimest jäi.\n30-st, kes jäid, oli 30 inimest - 22 meest = <<30-22=8>>8 naist.\n#### 8\n"
+question = "Peo alguses oli 25 meest ja 15 naist. Pärast ühe tunni möödumist lahkus kogu inimeste arvust 1/4. Kui 22 meest jäi peole, siis kui palju naisi jäi peole?"
+
+answer = """
+Peol oli kokku 25 meest + 15 naist = <<25+15=40>>40 inimest.
+Pärast ühe tunni möödumist lahkus 40 inimest * 1/4 = <<40*1/4=10>>10 inimest.
+Seega jäi peole 40 inimest - 10 inimest = <<40-10=30>>30 inimest.
+Neist jäi peole 30 inimest - 22 meest = <<30-22=8>>8 naist.
+#### 8
+"""
+
 id_orig = 320
+
 id_shuffled = 82
-question_annotated = "{event,sündmuse} alguses oli {m,25} {group1,meest} ja {w,15} {group2,naist}. Pärast {t,tund aega} lahkus {frac,1/4} inimeste koguarvust. Kui palju {group2,naisi} jäi, kui {m_left,22} {group1,meest} jäi {event,sündmusele}?\n\n#init:\n- event = sample(['sündmuse', 'kohtumise', 'konverentsi', 'kogunemise', 'pidu'])\n- group1, group2 = sample([ \"õpetajad\", \"arstid\", \"insenerid\", \"õed\", \"kunstnikud\", \"advokaadid\",], 2)\n- t = sample(['tund aega', 'kaks tundi', 'pool tundi', '45 minutit'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left\n"
-answer_annotated = "Sündmusel osales kokku {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} inimest.\nPärast {t} lahkus {m+w} inimest * {frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} inimest.\nSee tähendab, et {m+w} inimest - {int((m+w)*frac)} inimest = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} inimest jäi.\n30-st, kes jäid, oli {m+w-int((m+w)*frac)} inimest - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {group2}.\n#### {m+w-int((m+w)*frac)-m_left}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+Peo alguses oli {m,25} meest ja {w,15} naist. Pärast {t,ühe tunni} möödumist lahkus kogu inimeste arvust {frac,1/4}. Kui {m_left,22} meest jäi peole, siis kui palju naisi jäi peole?
+
+#init:
+- t = sample(['ühe tunni', 'kahe tunni', 'poolteise tunni', '45 minuti'])
+- $frac = sample(fractions)
+- $m = range(20, 75)
+- $w = range(10, 80)
+- $m_left = range(15, 35)
+
+#conditions:
+- m_left < m
+- is_int((m + w) * frac)
+- (m + w) * (1-frac) > m_left
+- m + w - (m + w) * frac > m_left
+
+#answer: m + w - int((m + w) * frac) - m_left
+"""
+
+answer_annotated = """
+Peol oli kokku {m} meest + {w} naist = <<{m}+{w}={m+w}>>{m+w} inimest.
+Pärast {t} möödumist lahkus {m+w} inimest * {frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} inimest.
+Seega jäi peole {m+w} inimest - {int((m+w)*frac)} inimest = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} inimest.
+Neist jäi peole {m+w-int((m+w)*frac)} inimest - {m_left} meest = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} naist.
+#### {m+w-int((m+w)*frac)-m_left}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"
-ignore = true

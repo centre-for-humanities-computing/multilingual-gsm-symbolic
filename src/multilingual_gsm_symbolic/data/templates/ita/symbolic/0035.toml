@@ -1,8 +1,46 @@
-question = "John sta raccogliendo soldi per una gita scolastica. Ha chiesto aiuto alla scuola, che ha deciso di coprire la metà dei costi della gita scolastica. Quanti soldi mancano a John se ha $50 e la gita scolastica costa $300?"
-answer = "La scuola di John ha deciso di pagare 300*1/2=$<<300*1/2=150>>150 per la sua gita scolastica.\nIn totale John ha coperto 150 + 50 = $<<150+50=200>>200 per la sua gita scolastica\nQuindi John ha bisogno di 300 - 200 = $<<300-200=100>>100 in più per la gita scolastica.\n#### 100\n"
+question = """
+Simone sta raccogliendo soldi per una gita scolastica. Ha chiesto aiuto alla scuola, che ha deciso di coprire la metà dei costi della gita scolastica. Quanti soldi mancano a Simone, se ha 350 euro e la gita scolastica costa 2000 euro?
+"""
+
+answer = """
+La scuola di Simone ha deciso di pagare 2000*1/2=<<2000*1/2=1000>>1000 euro per la sua gita scolastica.
+In totale Simone ha coperto 1000 + 350 = <<1000+350=1350>>1350 euro della sua gita scolastica
+Quindi a Simone servono 2000 - 1350 = <<2000-1350=650>>650 euro in più per la gita scolastica.
+#### 650
+"""
+
 id_orig = 788
+
 id_shuffled = 35
-question_annotated = "{name,John} sta raccogliendo soldi per una {event,gita scolastica}. Ha chiesto aiuto alla {organization,scuola}, che ha deciso di coprire {fraction_txt,la metà} dei costi della {event,gita scolastica}. Quanti soldi mancano a {name,John} se ha {cur,$}{current,50} e la {event,gita scolastica} costa {cur,$}{total,300}?\n\n#init:\n- name = sample(names_male)\n- event = sample([\"school trip\", \"field trip\", \"sports tournament\", \"conference\", \"music festival\", \"science fair\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"school\", \"community center\", \"local charity\", \"youth club\", \"parent association\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)\n"
-answer_annotated = "La {organization} di {name} ha deciso di pagare {total}*{fraction_val}={cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} per la sua {event}.\nIn totale {name} ha coperto {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} per la sua {event}\nQuindi {name} ha bisogno di {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} in più per la {event}.\n#### {total-(total*fraction_val+current)}\n"
+
+question_annotated = """
+{name,Simone} sta raccogliendo soldi per una {event,gita scolastica}. Ha chiesto aiuto alla {organization,scuola}, che ha deciso di coprire {fraction_txt,la metà} dei costi della {event,gita scolastica}. Quanti soldi mancano a {name,Simone}, se ha {current,350} {cur,euro} e la {event,gita scolastica} costa {total,2000} {cur,euro}?
+
+#init:
+- name = sample(names_male)
+- event = sample(["gita", "gara sportiva", "conferenza", "fiera scientifica", "gita scolastica"])
+- cur = sample(currencies_sym)
+- organization = sample(["scuola", "fondazione benefica locale", "parrocchia", "famiglia"])
+- $fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(50, 1350, 50)
+- $total = range(1350, 7000, 50)
+
+#conditions:
+- total > current
+- total - (total * fraction_val + current) > 0
+- is_int(total * (fraction_val))
+- is_int(total - (total * (fraction_val) + current))
+
+#answer: total - (total * (fraction_val) + current)
+"""
+
+answer_annotated = """
+La {organization} di {name} ha deciso di pagare {total}*{fraction_val}=<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} {cur} per la sua {event}.
+In totale {name} ha coperto {total*fraction_val} + {current} = <<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} {cur} della sua {event}
+Quindi a {name} servono {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} {cur} in più per la {event}.
+#### {total-(total*fraction_val+current)}
+"""
+
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
 language = "ita"

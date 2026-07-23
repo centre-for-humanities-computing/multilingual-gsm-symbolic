@@ -1,8 +1,37 @@
-question = "Jaime paigutab mune mõnedele alustele. Iga alus mahutab 24 muna. Kui tal on 64 muna ja 2 alust, mitu muna ei saa ta alustele paigutada?"
-answer = "Jaime saab kokku paigutada 24*2 = <<24*2=48>>48 muna.\nSeega on 64 - 48 = <<64-48=16>>16 muna, mida ta alustele paigutada ei saa.\n#### 16\n"
+question = "Jaime paneb mune munarestidele. Iga munarest mahutab 24 muna. Kui tal on 64 muna ja 2 munaresti, siis mitu muna ta ei saa munarestidele panna?"
+
+answer = """
+Jaime saab ära panna 24*2 = <<24*2=48>>48 muna.
+Seega on 64 - 48 = <<64-48=16>>16 muna, mida ta munarestidele panna ei saa.
+#### 16
+"""
+
 id_orig = 491
+
 id_shuffled = 12
-question_annotated = "{name, Jaime} paigutab {obj,mun}e mõnedele {surface,alus}tele. Iga {surface,alus} mahutab {x,24} {obj,mun}a. Kui tal on {n,64} {obj,mun}a ja {k,2} {surface,alus}t, mitu {obj,mun}a ei saa ta {surface,alus}tele paigutada?\n\n#init:\n- name = sample(names_male)\n- obj = sample([\"oliiv\", \"mandel\", \"küpsis\", \"krõps\", \"banaan\"])\n- surface = sample([\"taldrik\", \"laud\", \"karp\", \"alus\", \"korv\"])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x\n"
-answer_annotated = "{name} saab kokku paigutada {x}*{k} = <<{x}*{k}={x*k}>>{x*k} {obj}a.\nSeega on {n} - {k*x} = <<{n}-{k*x}={n-k*x}>>{n-k*x} {obj}a, mida ta {surface}tele paigutada ei saa.\n#### {n-k*x}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+
+question_annotated = """
+{name, Jaime} paneb mune {container_into,munarestidele}. Iga {container_nom,munarest} mahutab {x,24} muna. Kui tal on {n,64} muna ja {k,2} {container_par_sg,munaresti}, siis mitu muna ta ei saa {container_into,munarestidele} panna?
+
+#init:
+- name, _ = sample(names_male_cases)
+- container_nom, container_into, container_par_sg = sample([('munarest', 'munarestidele', 'munaresti'), ('munakarp', 'munakarpidesse', 'munakarpi'), ('korv', 'korvidesse', 'korvi'), ('kauss', 'kaussidesse', 'kaussi'), ('taldrik', 'taldrikutele', 'taldrikut')])
+- $x = range(20, 51)
+- $k = range(2, 30)
+- $n = range(60, 350, 2)
+
+#conditions:
+- k * x < n
+
+#answer: n - k*x
+"""
+
+answer_annotated = """
+{name} saab ära panna {x}*{k} = <<{x}*{k}={x*k}>>{x*k} muna.
+Seega on {n} - {k*x} = <<{n}-{k*x}={n-k*x}>>{n-k*x} muna, mida ta {container_into} panna ei saa.
+#### {n-k*x}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"

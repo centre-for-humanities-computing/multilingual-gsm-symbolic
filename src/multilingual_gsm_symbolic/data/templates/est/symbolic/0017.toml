@@ -1,9 +1,46 @@
-question = "Grandma walks 3 kilometers every day on her favorite walking trail, which includes 2 kilometers of walking on the beach and 1 kilometer of walking on the sidewalk. On the sidewalk, Grandma walks at twice the rate of speed that she does on the beach. If 40 minutes of her walk is spent on the beach, how long does it take for her to complete the entire 3-kilometer walk, in minutes?"
-answer = "On the beach, Grandma walks at a rate of 2 kilometers per 40 minutes, or 2/40 = 1/20 kilometers per minute.\nOn the sidewalk, she walks at twice the rate of speed as when she is on the sand, or 2*1/20 = 0.1 kilometers per minute.\nTo walk 1 kilometer on the sidewalk, it takes her 1/0.1 = <<1/0.1=10>>10 minutes.\nThus, in total, it takes Grandma 40+10 = <<40+10=50>>50 minutes to walk her favorite route.\n#### 50\n"
+question = "Merike käib iga päev 4 kilomeetrit oma lemmikul matkarajal, mis sisaldab 2 kilomeetrit randa kõndimist ja 2 kilomeetrit kõnniteel kõndimist. Kõnniteel kõnnib Merike kaks korda kiiremini, kui ta kõnnib rannas. Kui 40 minutit tema jalutuskäigust kulub rannas kõndimisele, siis kui kaua kulub tal kogu 4-kilomeetri pikkuse jalutuskäigu läbimiseks minutites?"
+
+answer = """
+Rannas kõnnib Merike kiirusega 2 kilomeetrit 40 minutiga, ehk 2/40 = 1/20 kilomeetrit minutis.
+Kõnniteel kõnnib ta kaks korda kiiremini kui liival, ehk 2*1/20 = 0.1 kilomeetrit minutis.
+Et kõndida 2 kilomeetrit kõnniteel, kulub tal 2/0.1 = <<2/0.1=20>>20 minutit.
+Seega kulub kokku Merike 40+20 = <<40+20=60>>60 minutit, et läbida oma lemmikmarsruut.
+#### 60
+"""
+
 id_orig = 1133
+
 id_shuffled = 17
-question_annotated = "{name,Grandma} walks {n,3} {unit,kilometer}s every day on her favorite walking trail, which includes {m,2} {unit,kilometer}s of walking on the beach and {k,1} {k_unit,kilometer} of walking on the sidewalk. On the sidewalk, {name,Grandma} walks at {mult_txt,twice} the rate of speed that she does on the beach. If {t,40} minutes of her walk is spent on the beach, how long does it take for her to complete the entire {n,3}-{unit,kilometer} walk, in minutes?\n\n#init:\n- name = sample(names_female)\n- unit = sample([\"kilometer\", \"km\"])\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 40)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n- k_unit = plural(k, unit, unit + \"s\")\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: t+(k/(mult_val*m/t))\n"
-answer_annotated = "On the beach, {name} walks at a rate of {m} {unit}s per {t} minutes, or {m}/{t} = {Fraction(m/t)} {unit}s per minute.\nOn the sidewalk, she walks at {mult_txt} the rate of speed as when she is on the sand, or {mult_val}*{Fraction(m/t)} = {mult_val*m/t} {unit}s per minute.\nTo walk {k} {k_unit} on the sidewalk, it takes her {k}/{mult_val*m/t} = <<{k}/{mult_val*m/t}={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minutes.\nThus, in total, it takes {name} {t}+{k/(mult_val*m/t)} = <<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minutes to walk her favorite route.\n#### {t+(k/(mult_val*m/t))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+{name,Merike} käib iga päev {n,4} {unit_length,kilomeetrit} oma lemmikul matkarajal, mis sisaldab {m,2} {unit_length,kilomeetrit} randa kõndimist ja {k,2} {unit_length,kilomeetrit} kõnniteel kõndimist. Kõnniteel kõnnib {name,Merike} {mult_txt,kaks korda} kiiremini, kui ta kõnnib rannas. Kui {t,40} minutit tema jalutuskäigust kulub rannas kõndimisele, siis kui kaua kulub tal kogu {n,4}-{unit_gen,kilomeetri} pikkuse jalutuskäigu läbimiseks minutites?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- unit_nom, unit_length, unit_gen = sample([("kilomeeter", "kilomeetrit", "kilomeetri"), ("km", "km", "km")])
+- k_unit = plural(k, unit_nom, unit_length)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(3, 40)
+- $m = range(2, 20)
+- $k = range(2, 20)
+- $t = range(40, 70)
+#conditions:
+- m + k == n
+- m < t
+- mult_val *m < t
+- divides(t, m)
+- is_int(k / (mult_val*m/t))
+#answer: t+(k/(mult_val*m/t))
+"""
+
+answer_annotated = """
+Rannas kõnnib {name} kiirusega {m} {unit_length} {t} minutiga, ehk {m}/{t} = {Fraction(m/t)} {unit_length} minutis.
+Kõnniteel kõnnib ta {mult_txt} kiiremini kui liival, ehk {mult_val}*{Fraction(m/t)} = {mult_val*m/t} {unit_length} minutis.
+Et kõndida {k} {unit_length} kõnniteel, kulub tal {k}/{mult_val*m/t} = <<{k}/{mult_val*m/t}={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minutit.
+Seega kulub kokku {name} {t}+{k/(mult_val*m/t)} = <<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minutit, et läbida oma lemmikmarsruut.
+#### {t+(k/(mult_val*m/t))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"
-ignore = true

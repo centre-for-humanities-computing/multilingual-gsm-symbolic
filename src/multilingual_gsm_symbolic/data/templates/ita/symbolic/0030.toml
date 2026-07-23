@@ -1,9 +1,44 @@
-question = "Carlo ha euro85.5 e desidera comprare 16 bullones da una scatola nel negozio di bricolage. Ogni bullone costa euro0.2. Quanti soldi restano a Carlo dopo aver pagato gli bullones?"
-answer = "Carlo ha pagato 16 * 0,2 euro = <<16*0,2=3,2>>3,2 euro per i bulloni.\nCarlo ha 85,5 euro - 3,2 euro = 82,3 euro rimasti.\n#### 82,3\n"
+question = """
+Carlo ha 85,5 euro e desidera comprare 16 bulloni da una scatola nel negozio di bricolage. Ogni bullone costa 0,2 euro. Quanti soldi restano a Carlo dopo aver pagato i bulloni?
+"""
+
+answer = """
+Carlo ha pagato 16 * 0,2 euro = <<16*0,2=3,2>>3,2 euro per i bulloni.
+Carlo ha 85,5 euro - 3,2 euro = 82,3 euro rimasti.
+#### 82,3
+"""
+
 id_orig = 873
+
 id_shuffled = 30
-question_annotated = "{name,Carlo} ha {cur,euro}{initial_amount,85.5} e desidera comprare {quantity,16} {item,bullone}s da una scatola nel {store_type,negozio di bricolage}. Ogni {item,bullone} costa {cur,euro}{unit_price,0.2}. Quanti soldi restano a {name,Carlo} dopo aver pagato gli {item,bullone}s?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item = sample([\"bullone\", \"vite\", \"rondella\", \"dado\", \"tassello\"])\n- store_type = sample([\"negozio di ferramenta\", \"ferramenta\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(85.5, 175, 5.5)\n- $unit_price = arange(0.2, 4.8, 0.1)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: round(initial_amount - quantity * unit_price)\n"
-answer_annotated = "{name} ha pagato {quantity} * {cur}{round(unit_price} = {cur}<<{quantity}*{round(unit_price}={round(quantity*unit_price}>>{round(quantity*unit_price} per gli {item}s.\n{name} ha {cur}{initial_amount} - {cur}{round(quantity*unit_price} = {cur}{round(initial_amount - quantity * unit_price)} rimasti.\n#### {round(initial_amount - quantity * unit_price)}\n"
+
+question_annotated = """
+{name,Carlo} ha {initial_amount,85.5} {cur,euro} e desidera comprare {quantity,16} {item_plural,bulloni} da una scatola nel {store_type,negozio di bricolage}. Ogni {item,bullone} costa {unit_price,0.2} {cur,euro}. Quanti soldi restano a {name,Carlo} dopo aver pagato i {item_plural,bulloni}?
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- item, item_plural = sample([("bullone", "bulloni"),("vite", "viti"),("rondella", "rondelle"),("dado", "dadi"),("tassello", "tasselli")])
+- store_type = sample(["negozio di ferramenta", "ferramenta"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(85.5, 175, 5.5)
+- $unit_price = arange(0.2, 4.8, 0.1)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: round(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name} ha pagato {quantity} * {round(unit_price,2)} {cur} = <<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} {cur} per i {item_plural}.
+{name} ha {initial_amount} {cur} - {round(quantity*unit_price,2)} {cur} = {round(initial_amount - quantity * unit_price, 2)} {cur} rimasti.
+#### {round(initial_amount - quantity * unit_price, 2)}
+"""
+
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
 language = "ita"
-ignore = true

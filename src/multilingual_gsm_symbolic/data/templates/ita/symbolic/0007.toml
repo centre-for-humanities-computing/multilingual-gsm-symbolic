@@ -1,8 +1,57 @@
-question = "Un contadino compra mangime per i suoi cavalli. Compra diversi tipi di fieno, avena, carote e zollette di zucchero. Poiché le zollette di zucchero sono una leccornia rara, ne compra solo due scatole da 1 libbre per tutta la stalla. Vuole solo abbastanza carote per nutrire i cavalli finché le verdure restano fresche, quindi compra quattro sacchi da 12 libbre. Il fieno è il piatto principale della dieta dei cavalli, quindi compra quarantadue balle da 75 libbre. L'avena è un alimento base per integrare il fieno, quindi compra venti sacchi da 65 libbre. Se il suo camion agricolo può trasportare 2250 libbre alla volta, quanti viaggi deve fare il contadino per trasportare tutto il mangime?"
-answer = "Il contadino compra 2*1 = <<2*1=2>>2 libbre di zollette di zucchero.\nCompra 4*12 = <<4*12=48>>48 libbre di carote.\nCompra 20*65 = <<20*65=1300>>1300 libbre di avena.\nCompra 42*75 = <<42*75=3150>>3150 libbre di fieno.\nIl peso di tutto il mangime è 2 + 48 + 1300 + 3150 = <<2+48+1300+3150=4500>>4500 libbre.\nQuindi il contadino deve fare 4500 / 2250 = <<4500/2250=2>>2 viaggi per trasportare tutto il mangime con il suo camion agricolo.\n#### 2\n"
+question = """
+Un contadino compra mangime per i suoi cavalli. Compra diversi tipi di fieno, avena, carote e zollette di zucchero. Poiché le zollette di zucchero sono una leccornia rara, ne compra solo due scatole da 1 kg per tutta la stalla. Vuole solo abbastanza carote per nutrire i cavalli finché le verdure restano fresche, quindi compra quattro sacchi da 12 chili. Il fieno è il piatto principale della dieta dei cavalli, quindi compra quarantadue balle da 75 chili. L'avena è un alimento base per integrare il fieno, quindi compra venti sacchi da 65 chili. Se il suo camion agricolo può trasportare 2250 chili alla volta, quanti viaggi deve fare il contadino per trasportare tutto il mangime?
+"""
+
+answer = """
+Il contadino compra 2*1=<<2*1=2>>2 kg di zollette di zucchero.
+Compra 4*12=<<4*12=48>>48 kg di carote.
+Compra 42*75=<<42*75=3150>>3150 kg di fieno.
+Compra 20*65=<<20*65=1300>>1300 kg di avena.
+Il peso di tutto il mangime è 2 + 48 + 1300 + 3150 = <<2+48+1300+3150=4500>>4500 kg.
+Quindi il contadino deve fare 4500 / 2250 = <<4500/2250=2>>2 viaggi per trasportare tutto il mangime con il suo camion agricolo.
+#### 2
+"""
+
 id_orig = 459
+
 id_shuffled = 7
-question_annotated = "Un contadino compra mangime per i suoi {animals,cavalli}. Compra diversi tipi di {treat1, fieno}, {treat2, avena}, {treat3, carote} e {rare_treat, zollette di zucchero}. Poiché le {rare_treat, zollette di zucchero} sono una leccornia rara, ne compra solo {n4_txt,due} scatole da {w4,1} {unit,libbra} per tutta la stalla. Vuole solo abbastanza {treat3, carote} per nutrire i {animals,cavalli} finché le verdure restano fresche, quindi compra {n3_txt,quattro} sacchi da {w3,12} {unit,libbra}. Il {treat1, fieno} è il piatto principale della dieta dei {animals,cavalli}, quindi compra {n1_txt,quarantadue} balle da {w1,75} {unit,libbra}. L'{treat2, avena} è un alimento base per integrare il {treat1, fieno}, quindi compra {n2_txt,venti} sacchi da {w2,65} {unit,libbra}. Se il suo camion agricolo può trasportare {total,2250} {unit,libbre} alla volta, quanti viaggi deve fare il contadino per trasportare tutto il mangime?\n\n#init:\n- animals = sample(['cavalli', 'vacche', 'pecore', 'maiali', 'alpacas'])\n- unit = sample(weights_med)\n- treat1, treat2 = sample([\"fieno\", \"mais\", \"avena\", \"mele\", \"grano\"], 2)\n- treat3 = sample([\"carote\", \"barbabietole\", \"cetrioli\"])\n- rare_treat = sample([\"zollette di zucchero\", \"scorza di anguria\", \"confetti alla menta\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total\n"
-answer_annotated = "Il contadino compra {n4_val}*{w4} = <<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit} di {rare_treat}.\nCompra {n3_val}*{w3} = <<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {unit} di {treat3}.\nCompra {n2_val}*{w2} = <<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {unit} di {treat2}.\nCompra {n1_val}*{w1} = <<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {unit} di {treat1}.\nIl peso di tutto il mangime è {n4_val*w4} + {n3_val*w3} + {n2_val*w2} + {n1_val*w1} = <<{n4_val*w4}+{n3_val*w3}+{n2_val*w2}+{n1_val*w1}={n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4}>>{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} {unit}.\nQuindi il contadino deve fare {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total} = <<{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4}/{total}={(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}>>{(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total} viaggi per trasportare tutto il mangime con il suo camion agricolo.\n#### {(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}\n"
+
+question_annotated = """
+Un contadino compra mangime per i suoi {animals,cavalli}. Compra diversi tipi di {o1,fieno}, {o2,avena}, {o3,carote} e {o4,zollette di zucchero}. Poiché le {o4,zollette di zucchero} sono una leccornia rara, ne compra solo {n4_txt,due} scatole da {w4,1} {unit,kg} per tutta la stalla. Vuole solo abbastanza {o3,carote} per nutrire i {animals_definite,cavalli} finché le verdure restano fresche, quindi compra {n3_txt,quattro} sacchi da {w3,12} chili. Il {o1,fieno} è il piatto principale della dieta dei {animals_definite,cavalli}, quindi compra {n1_txt,quarantadue} balle da {w1,75} chili. L'{o2,avena} è un alimento base per integrare il {o1,fieno}, quindi compra {n2_txt,venti} sacchi da {w2,65} chili. Se il suo camion agricolo può trasportare {total,2250} chili alla volta, quanti viaggi deve fare il contadino per trasportare tutto il mangime?
+
+#init:
+- animals, animals_definite = sample([('cavalli', 'cavalli'), ('vacche', 'vacche'), ('pecore', 'pecore'), ('maiali', 'maiali'), ('alpaca', 'alpaca')])
+- unit = sample(weights_med)
+- o1, o2 = sample(["fieno", "mais", "avena", "mele", "grano"], 2)
+- o3 = sample(["carote", "barbabietole", "cetrioli"])
+- o4 = sample(["zollette di zucchero", "scorza di anguria"])
+- n4_txt, n4_val = range_str(2, 7, 2, numbers)
+- n3_txt, n3_val = range_str(4, 11, 2, numbers)
+- n2_txt, n2_val = range_str(15, 21, 1, numbers)
+- n1_txt, n1_val = range_str(30, 43, 2, numbers)
+- $w4 = range(1, 4)
+- $w3 = range(8, 13, 2)
+- $w2 = range(45, 70, 5)
+- $w1 = range(55, 80, 5)
+- $total = range(1500, 2300, 150)
+
+#conditions:
+- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val
+- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)
+
+#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total
+"""
+
+answer_annotated = """
+Il contadino compra {n4_val}*{w4}=<<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit} di {o4}.
+Compra {n3_val}*{w3}=<<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {unit} di {o3}.
+Compra {n1_val}*{w1}=<<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {unit} di {o1}.
+Compra {n2_val}*{w2}=<<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {unit} di {o2}.
+Il peso di tutto il mangime è {n4_val*w4} + {n3_val*w3} + {n2_val*w2} + {n1_val*w1} = <<{n4_val*w4}+{n3_val*w3}+{n2_val*w2}+{n1_val*w1}={n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4}>>{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} {unit}.
+Quindi il contadino deve fare {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total} = <<{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4}/{total}={(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}>>{(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total} viaggi per trasportare tutto il mangime con il suo camion agricolo.
+#### {(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}
+"""
+
 creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
 language = "ita"

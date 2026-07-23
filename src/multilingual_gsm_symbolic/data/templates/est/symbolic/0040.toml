@@ -1,8 +1,55 @@
-question = "Sally läks puhkusele rannale. Tema vanemad andsid talle $15, et ta saaks osta mida tahes. Suveniiripoes oli taftil soodustus: \"Osta 1 nael $3 eest naela kohta, saa 1 nael 1/2 hinnaga.\" Ta võttis kokku 4 naela. Ta ostis ka segapakendi merikarpe $1.5 eest ja 4 magnetit, mis maksid $0.25 tükk. Kui palju raha on Sallyl alles?"
-answer = "Sally ostab 1 naela $3 eest ja saab 1 naela 1/2 hinnaga. Seega 1/2 1 naela hinnast on $3*1/2 = $1.5. Ülejäänud 2 naela ei ole soodustusega ja maksab 2*$3 = $6, nii et koguhind on $3+$3/2+$6=$21/2\n4 magnetit $0.25 tükk on 4*0.25=$<<4*0.25=1>>1\nKui liidad kõik tema ostud, $21/2+$1.5+$1 = $<<21/2+1.5+1=13>>13\nTal oli $15 ja ta kulutas $13, nii et tal oli $15-$13 = $<<15-13=2>>2 alles\n#### 2\n"
+question = "Maria läks puhkuseks mere äärde. Tema vanemad andsid talle 15 EUR, et ta saaks osta, mida iganes tahab. Suveniiripoes oli iiriskommide sooduspakkumine: \"Osta 500 grammi 3 EUR eest, ja saad 500 grammi 1/2 hinnaga.\" Ta võttis 2000 grammi. Ta ostis ka merekarpide paki 1.5 EUR eest ja 4 magnetit, mis maksid 0.25 EUR tükk. Kui palju raha on Marial pärast ostude tegemist alles?"
+
+answer = """
+Iiriskommid maksavad 3 EUR 500 grammi eest ja ta saab 500 grammi 1/2 hinnaga. Seega on 1/2 500 grammi hinna soodushinnast 500/500*1/2*3 EUR = 1.5 EUR.
+Kokku maksab see 1.5 EUR + 3 EUR = 4.5 EUR.
+Ülejäänud 1000 grammi ei ole soodustusega ja maksab 6 EUR, seega on koguhind 3 EUR + 1.5 EUR + 6 EUR = <<3 + 1.5 + 6 = 10.5>>10.5 EUR
+4 magnetit hinnaga 0.25 EUR tükk on 4*0.25 EUR = <<4*0.25=1>>1 EUR
+Kui liita kõik tema ostud, siis 10.5 EUR + 1.5 EUR + 1 EUR = <<10.5+1.5+1=13>>13 EUR
+Tal oli 15 EUR ja ta kulutas 13 EUR, seega on tal alles 15 EUR - 13 EUR = <<15-13=2>>2 EUR
+#### 2
+"""
+
 id_orig = 410
+
 id_shuffled = 40
-question_annotated = "{name,Sally} läks puhkusele rannale. Tema vanemad andsid talle ${total,15}, et ta saaks osta mida tahes. Suveniiripoes oli taftil soodustus: \"Osta {n1,1} nael ${p1,3} eest naela kohta, saa {n2,1} nael {discount,1/2} hinnaga.\" Ta võttis kokku {n12,4} naela. Ta ostis ka segapakendi merikarpe ${p2,1.5} eest ja {n3,4} magnetit, mis maksid ${p3,0.25} tükk. Kui palju raha on {name,Sally}l alles?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)\n"
-answer_annotated = "{name} ostab {n1} naela ${p1} eest ja saab {n2} naela {discount} hinnaga. Seega {discount} {n2} naela hinnast on ${p1}*{discount} = ${float(n2*discount*p1)}. Ülejäänud {n12-n1-n2} naela ei ole soodustusega ja maksab {n12-n1-n2}*${p1} = ${(n12-n1-n2)*p1}, nii et koguhind on ${n1*p1}+${n2*(1-discount)*p1}+${(n12-n1-n2)*p1}=${n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}\n{n3} magnetit ${p3} tükk on {n3}*{p3}=$<<{n3}*{p3}={n3*p3}>>{n3*p3}\nKui liidad kõik tema ostud, ${n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+${p2}+${n3*p3} = $<<{n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1}+{p2}+{n3*p3}={int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}\nTal oli ${total} ja ta kulutas ${int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}, nii et tal oli ${total}-${int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} = $<<{total}-{int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}={total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}>>{total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)} alles\n#### {total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+{name,Maria} läks puhkuseks mere äärde. Tema vanemad andsid talle {total,15} {cur,EUR}, et ta saaks osta, mida iganes tahab. Suveniiripoes oli iiriskommide sooduspakkumine: "Osta {n1,500} grammi {p1,3} {cur,EUR} eest, ja saad {n2,500} grammi {discount,1/2} hinnaga." Ta võttis {n12,2000} grammi. Ta ostis ka merekarpide paki {p2,1.5} {cur,EUR} eest ja {n3,4} magnetit, mis maksid {p3,0.25} {cur,EUR} tükk. Kui palju raha on {name_gen,Maria}l pärast ostude tegemist alles?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- cur = sample(currencies_sym)
+- $total = range(10, 40, 5)
+- $n1 = range(500, 3000, 500)
+- $n2 = range(500, 3000, 500)
+- $n12 = range(1000, 6000, 500)
+- $n3 = range(4, 12, 4)
+- $p1 = range(2, 10)
+- $p2 = arange(1.5, 3.5, 0.5)
+- $p3 = arange(0.25, 1.5, 0.25)
+- $discount = sample(fractions)
+
+#conditions:
+- n2 <= n1
+- n12 - n1 - n2 > 0
+- n12 - n1 - n2 < n1
+- is_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)
+- p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3 < total
+
+#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)
+"""
+
+answer_annotated = """
+Iiriskommid maksavad {p1} {cur} {n1} grammi eest ja ta saab {n2} grammi {discount} hinnaga. Seega on {discount} {n2} grammi hinna soodushinnast {n2}/{n1}*{discount}*{p1} {cur} = {(n2/n1)*discount*p1} {cur}.
+Kokku maksab see {(n2/n1)*discount*p1} {cur} + {p1} {cur} = {(n2/n1)*discount*p1 + p1} {cur}.
+Ülejäänud {n12 - n1 - n2} grammi ei ole soodustusega ja maksab {(n12 - n1 - n2)/n1*p1} {cur}, seega on koguhind {p1} {cur} + {n2/n1*discount*p1} {cur} + {(n12 - n1 - n2)/n1*p1} {cur} = <<{p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} {cur}
+{n3} magnetit hinnaga {p3} {cur} tükk on {n3}*{p3} {cur} = <<{n3}*{p3}={n3*p3}>>{n3*p3} {cur}
+Kui liita kõik tema ostud, siis {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} {cur} + {p2} {cur} + {n3*p3} {cur} = <<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}>>{int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} {cur}
+Tal oli {total} {cur} ja ta kulutas {int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)} {cur}, seega on tal alles {total} {cur} - {int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} {cur} = <<{total}-{int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} {cur}
+#### {total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"

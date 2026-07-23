@@ -1,0 +1,36 @@
+question = "ある病院には1000床の収容能力があり、そのうち1/5が使用されています。新型コロナウイルスの流行により、毎日50人の患者がその病院に入院します。2週間後、その病院の空床の総数を求めなさい。"
+answer = """病院のベッド総数の1/5が使用されているので、1/5 * 1000 = <<1000*1/5=200>>200床が患者に使われています。
+新たな入院がない場合、病院で空いているベッドの総数は1000床 - 200床 = <<1000-200=800>>800床です。
+毎日50人が入院するなら、1週間後に病院に入院する患者の総数は50人/日 * 7日/週 = 350人です。
+2週間後には、病院に入院した患者の総数は350人/週 * 2週間 = <<350*2=700>>700人となり、それぞれが1床ずつ使います。
+新たな入院前に病院で空いているベッドが800床あったなら、その総数は800床 - 700床 = <<800-700=100>>100床に減ります。
+#### 100
+"""
+id_orig = 955
+id_shuffled = 28
+question_annotated = """ある{facility,病院}には{total,1000}{item,床}の収容能力があり、そのうち{frac,1/5}が使用されています。{event,新型コロナウイルスの流行}により、毎日{daily,50}人の患者がその{facility,病院}に入院します。{period,2}週間後、その{facility,病院}の空{item,床}の総数を求めなさい。
+
+#init:
+- facility = sample([\"病院\", \"診療所\", \"医療センター\", \"介護施設\"])
+- item = sample([\"床\", \"部屋\"])
+- event = sample([\"インフルエンザの流行\", \"災害\", \"大事故\", \"新型コロナウイルスの流行\"])
+- $total = range(500, 2000, 100)
+- $frac = sample(fractions)
+- $daily = range(20, 100, 5)
+- $period = range(2, 5)
+
+#conditions:
+- is_int(total * frac)
+- total * frac + daily * period * 7 < total
+
+#answer: total - (total * frac + daily * period * 7)
+"""
+answer_annotated = """{facility}のベッド総数の{frac}が使用されているので、{frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)}{item}が患者に使われています。
+新たな入院がない場合、{facility}で空いているベッドの総数は{total}{item} - {int(total*frac)}{item} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)}{item}です。
+毎日{daily}人が入院するなら、1週間後に{facility}に入院する患者の総数は{daily}人/日 * 7日/週 = {daily*7}人です。
+{period}週間後には、{facility}に入院した患者の総数は{daily*7}人/週 * {period}週間 = <<{daily*7}*{period}={daily*period*7}>>{daily*period*7}人となり、それぞれが1{item}ずつ使います。
+新たな入院前に{facility}で空いているベッドが{total-int(total*frac)}{item}あったなら、その総数は{total-int(total*frac)}{item} - {daily*period*7}{item} = <<{total-int(total*frac)}-{daily*period*7}={total - (total * frac + daily * period * 7)}>>{total - (total * frac + daily * period * 7)}{item}に減ります。
+#### {total - (total * frac + daily * period * 7)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

@@ -1,8 +1,41 @@
-question = "Ben omab 4 toru sinist värvi ja 3 toru kollast värvi. Jasper omab pool nii palju sinist värvi torusid kui Ben, ja kolm korda nii palju kollast värvi torusid kui Ben. Mitu värvi toru on Jasperil?"
-answer = "Jasperil on 4*1/2= <<4*1/2=2>>2 toru sinist värvi\nJasperil on 3*3=<<3*3=9>>9 toru kollast värvi\nJasperil on kokku 2+9 =<<2+9=11>>11 toru värvi\n#### 11\n"
+question = "Tarmol on 4 sinist värvituubi ja 3 kollast värvituubi. Urmasel on pool nii palju siniseid värvituube kui Tarmol, ja kolm korda rohkem kollaseid värvituube kui Tarmol. Mitu värvituubi on Urmasel?"
+
+answer = """
+Urmasel on 4*1/2= <<4*1/2=2>>2 sinist värvituubi
+Urmasel on 3*3=<<3*3=9>>9 kollast värvituubi
+Urmasel on kokku 2+9 =<<2+9=11>>11 värvituubi
+#### 11
+"""
+
 id_orig = 480
+
 id_shuffled = 57
-question_annotated = "{name1,Ben} omab {n1,4} toru {color1,sinist} värvi ja {n2,3} toru {color2,kollast} värvi. {name2,Jasper} omab {frac1_txt,pool} nii palju {color1,sinist} värvi torusid kui {name1,Ben}, ja {mult1_txt,kolm} korda nii palju {color2,kollast} värvi torusid kui {name1,Ben}. Mitu värvi toru on {name2,Jasper}il?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)\n"
-answer_annotated = "{name2}il on {n1}*{frac1_val}= <<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} toru {color1} värvi\n{name2}il on {n2}*{mult1_val}=<<{n2}*{mult1_val}={n2*mult1_val}>>{n2*mult1_val} toru {color2} värvi\n{name2}il on kokku {int(n1*frac1_val)}+{n2*mult1_val} =<<{int(n1*frac1_val)}+{n2*mult1_val}={int(n1*frac1_val)+n2*mult1_val}>>{int(n1*frac1_val)+n2*mult1_val} toru värvi\n#### {int(n1*frac1_val)+n2*mult1_val}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+{name1_gen,Tarmo}l on {n1,4} {color1_par_sg,sinist} värvituubi ja {n2,3} {color2_par_sg,kollast} värvituubi. {name2_gen,Urmase}l on {frac1_txt,pool} nii palju {color1_par_pl,siniseid} värvituube kui {name1_gen,Tarmo}l, ja {mult1_txt,kolm} korda rohkem {color2_par_pl,kollaseid} värvituube kui {name1_gen,Tarmo}l. Mitu värvituubi on {name2_gen,Urmase}l?
+
+#init:
+- (name1, name1_gen), (name2, name2_gen) = sample(names_male_cases, 2)
+- (color1_par_sg, color1_par_pl), (color2_par_sg, color2_par_pl) = sample([("sinist", "siniseid"), ("kollast", "kollaseid"), ("punast", "punaseid"), ("rohelist", "rohelisi")], 2)
+- $n1 = range(2, 20)
+- $n2 = range(2, 20)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = range_str(2,6,1,numbers)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n2 * mult1_val)
+
+#answer: int(n1 * frac1_val + n2 * mult1_val)
+"""
+
+answer_annotated = """
+{name2_gen}l on {n1}*{frac1_val}= <<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {color1_par_sg} värvituubi
+{name2_gen}l on {n2}*{mult1_val}=<<{n2}*{mult1_val}={n2*mult1_val}>>{n2*mult1_val} {color2_par_sg} värvituubi
+{name2_gen}l on kokku {int(n1*frac1_val)}+{n2*mult1_val} =<<{int(n1*frac1_val)}+{n2*mult1_val}={int(n1*frac1_val)+n2*mult1_val}>>{int(n1*frac1_val)+n2*mult1_val} värvituubi
+#### {int(n1*frac1_val)+n2*mult1_val}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
 language = "est"

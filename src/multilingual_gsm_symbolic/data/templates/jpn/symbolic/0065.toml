@@ -1,0 +1,30 @@
+question = "きょうこは、自分で確定申告をするか、会計士を1人雇うか迷ってます。自分でやる場合、フリーランスの仕事をする時間が3時間減ってしまい、時給￥3500の収入を逃すことになります。会計士の料金は￥9000です。会計士を雇うと、いくら得しますか？"
+answer = """まず、きょうこが自分で確定申告をした場合の失われる収入の合計を求めます: ￥3500/時間 × 3時間 = ￥<<3500*3=10500>>10,500
+次に、会計士の料金を引いて、きょうこがいくら節約できるかを求めます: ￥10,500 - ￥9000 = ￥<<10500-9000=1500>>1500
+#### 1500
+"""
+id_orig = 164
+id_shuffled = 65
+question_annotated = """{name,きょうこ}は、自分で{task,確定申告}をするか、{profession,会計士}を1人雇うか迷ってます。自分でやる場合、{work_type,フリーランス}の仕事をする時間が{n,3}時間減ってしまい、時給{cur,￥}{rate,3500}の収入を逃すことになります。{profession,会計士}の料金は{cur,￥}{fee,9000}です。{profession,会計士}を雇うと、いくら得しますか？
+
+#init:
+- name = sample(names)
+- task = sample([\"確定申告\", \"財務計画\", \"事業会計\"])
+- profession = sample([\"会計士\", \"税理士\", \"税務コンサル\"])
+- work_type = sample([\"フリーランス\", \"コンサル\", \"パートタイム\", \"バイト\"])
+- cur = sample(currencies_sym)
+- $n = range(3, 14)
+- $rate = range(2000, 10000, 500)
+- $fee = range(5000, 20000, 500)
+
+#conditions:
+- n * rate > fee
+
+#answer: n * rate - fee
+"""
+answer_annotated = """まず、{name}が自分で{task}をした場合の失われる収入の合計を求めます: {cur}{rate}/時間 × {n}時間 = {cur}<<{rate}*{n}={rate*n}>>{rate*n}
+次に、{profession}の料金を引いて、{name}がいくら節約できるかを求めます: {cur}{rate*n} - {cur}{fee} = {cur}<<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee}
+#### {rate*n-fee}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

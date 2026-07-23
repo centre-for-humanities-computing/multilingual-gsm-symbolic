@@ -1,0 +1,33 @@
+question = "ちひろは1分間に6個のジャガイモの皮をむくことができ、10分で30個のジャガイモを炒めることができます。90個のジャガイモの皮をむいて炒めるには、全部で何分かかりますか？ ちひろは皮をむくのと炒めるのを同時にはできません。"
+answer = """まず、ちひろがジャガイモの皮をむくのにかかる時間を求めます: 90個のジャガイモ / 1分あたり6個のジャガイモ = <<90/6=15>>15分
+次に、調理するのに必要なジャガイモの回数を求めます: 90個のジャガイモ / 1回あたり30個のジャガイモ = <<90/30=3>>3回
+次に、回数に1回あたりの時間を掛けて、合計の調理時間を求めます: 3回 * 1回あたり10分 = <<3*10=30>>30分
+最後に、皮をむく時間を足して、ちひろが合計で費やす時間を求めます: 30分 + 15分 = <<30+15=45>>45分
+#### 45
+"""
+id_orig = 989
+id_shuffled = 48
+question_annotated = """{name,ちひろ}は1分間に{n1,6}個の{food,ジャガイモ}の皮をむくことができ、{t,10}分で{n2,30}個の{food,ジャガイモ}を炒めることができます。{total,90}個の{food,ジャガイモ}の皮をむいて炒めるには、全部で何分かかりますか？ {name,ちひろ}は皮をむくのと炒めるのを同時にはできません。
+
+#init:
+- name = sample(names)
+- food = sample([\"玉ねぎ\", \"ジャガイモ\", \"山芋\"])
+- $n1 = range(4, 15)
+- $n2 = range(20, 50, 5)
+- $t = range(5, 20)
+- $total = range(60, 200, 10)
+
+#conditions:
+- divides(total, n1)
+- divides(total, n2)
+
+#answer: total // n1 + (total // n2) * t
+"""
+answer_annotated = """まず、{name}が{food}の皮をむくのにかかる時間を求めます: {total}個の{food} / 1分あたり{n1}個の{food} = <<{total}/{n1}={total//n1}>>{total//n1}分
+次に、調理するのに必要な{food}の回数を求めます: {total}個の{food} / 1回あたり{n2}個の{food} = <<{total}/{n2}={total//n2}>>{total//n2}回
+次に、回数に1回あたりの時間を掛けて、合計の調理時間を求めます: {total//n2}回 * 1回あたり{t}分 = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t}分
+最後に、皮をむく時間を足して、{name}が合計で費やす時間を求めます: {(total//n2)*t}分 + {total//n1}分 = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1}分
+#### {(total//n2)*t + total//n1}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"
