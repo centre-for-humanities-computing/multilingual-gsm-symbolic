@@ -79,6 +79,8 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
         number_coverage = number_coverage_counts(
             getattr(sample, "input", ""),
             getattr(sample.output, "completion", ""),
+            metadata.get("answer", ""),
+            str(language),
         )
         rows.append(
             {

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from decimal import Decimal
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parents[1] / "paper" / "scripts"
@@ -8,7 +9,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from eval_log_utils import map_log_loader  # noqa: E402
-from number_coverage_utils import number_coverage_counts  # noqa: E402
+from number_coverage_utils import extract_numbers, number_coverage_counts  # noqa: E402
 from numbercoverage import number_coverage_grid  # noqa: E402
 from plot_config import language_order, model_sort_key, ordered_models  # noqa: E402
 from qwen_compute_budget import (  # noqa: E402
@@ -104,7 +105,35 @@ def test_number_coverage_counts() -> None:
         "all_prompt_numbers_present": False,
         "prompt_number_count": 3,
         "retrieved_prompt_number_count": 2,
+        "lhs_count": 0,
+        "lhs_retrieved": 0,
+        "rhs_count": 0,
+        "rhs_retrieved": 0,
     }
+
+
+def test_number_coverage_counts_splits_chevron_sides() -> None:
+    assert number_coverage_counts(
+        "Use 2 and 4.",
+        "The answer uses 2 and 4.",
+        "Compute <<2+2=4>>, then <<4/2=2>>.",
+    ) == {
+        "all_prompt_numbers_present": True,
+        "prompt_number_count": 2,
+        "retrieved_prompt_number_count": 2,
+        "lhs_count": 1,
+        "lhs_retrieved": 1,
+        "rhs_count": 2,
+        "rhs_retrieved": 2,
+    }
+
+
+def test_extract_numbers_equates_digits_fractions_and_words() -> None:
+    assert extract_numbers("5, five, and 5.0") == {Decimal("5")}
+    assert extract_numbers("1/2, 0.5, and half") == {Decimal("0.5")}
+    assert Decimal("25") in extract_numbers("25 and twenty-five")
+    assert Decimal("0.5") in extract_numbers("1/2 og halvdelen", "dan")
+    assert extract_numbers("Nı", "eng") == set()
 
 
 def test_model_order_only_uses_models_present_in_summary() -> None:

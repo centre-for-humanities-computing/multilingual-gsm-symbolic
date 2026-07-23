@@ -27,7 +27,7 @@ import numpy as np
 from eval_log_utils import discover_logs, sample_score, select_logs
 from inspect_ai.log import read_eval_log
 from matplotlib.ticker import PercentFormatter
-from number_coverage_utils import display_number, extract_numbers
+from number_coverage_utils import display_number, extract_chevron_side_numbers, extract_numbers
 from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_ORDER,
@@ -69,11 +69,16 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
     sample_rows: list[dict[str, Any]] = []
 
     for sample in samples:
+        language = str((sample.metadata or {}).get("language", "eng"))
         prompt = sample.input if isinstance(sample.input, str) else str(sample.input)
         response = sample.output.completion
-        prompt_numbers = extract_numbers(prompt)
-        response_numbers = extract_numbers(response)
+        prompt_numbers = extract_numbers(prompt, language)
+        response_numbers = extract_numbers(response, language)
         missing_numbers = prompt_numbers - response_numbers
+        lhs_numbers, rhs_numbers = extract_chevron_side_numbers(
+            str((sample.metadata or {}).get("answer", "")),
+            language,
+        )
 
         sample_rows.append(
             {
@@ -87,6 +92,11 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
                 "final_correct": score_to_bool(sample),
                 "prompt_number_count": len(prompt_numbers),
                 "prompt_numbers": " | ".join(display_number(value) for value in sorted(prompt_numbers)),
+                "retrieved_prompt_number_count": len(prompt_numbers & response_numbers),
+                "lhs_count": len(lhs_numbers),
+                "lhs_retrieved": len(prompt_numbers & lhs_numbers),
+                "rhs_count": len(rhs_numbers),
+                "rhs_retrieved": len(prompt_numbers & rhs_numbers),
                 "missing_prompt_number_count": len(missing_numbers),
                 "missing_prompt_numbers": " | ".join(display_number(value) for value in sorted(missing_numbers)),
                 "all_prompt_numbers_present": not missing_numbers,
