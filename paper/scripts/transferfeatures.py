@@ -181,6 +181,7 @@ def relationship_plot(
             )
 
     ax.axhline(1, color="black", linewidth=0.8, alpha=0.4, zorder=2)
+    ax.set_xlabel(xlabel, fontsize=14, labelpad=16)
     ax.set_ylabel("English performance recovered", fontsize=14)
     ax.yaxis.set_major_formatter(PercentFormatter(1))
 
@@ -246,8 +247,6 @@ def relationship_plot(
             )
 
     bottom_margin = 0.16 if use_script_shapes else (0.17 if footnote else 0.14)
-    xlabel_y = 0.18 if use_script_shapes else (0.11 if footnote else 0.09)
-    fig.supxlabel(xlabel, y=xlabel_y, fontsize=14)
     if footnote:
         footnote_y = 0.145 if use_script_shapes else 0.075
         fig.text(0.5, footnote_y, footnote, ha="center", fontsize=8, color="#4B5563")
