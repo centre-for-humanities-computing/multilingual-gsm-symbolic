@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
+import gc
 from pathlib import Path
 from typing import Any
 
@@ -127,7 +128,7 @@ def _load_one_log(
         return path.name, pd.DataFrame(), None
 
     split, task_language = parsed
-    model = model_name(log.eval.model)
+    model = model_name(log.eval.model, getattr(log.eval, "model_args", None))
     label = f"{model} / {task_language} / {split}"
     rows: list[dict[str, Any]] = []
 
@@ -147,16 +148,21 @@ def _load_one_log(
             }
         )
 
-    del log  # free the large decompressed log before returning
+    del log
+    gc.collect()
     if not rows:
+        del rows
         return label, pd.DataFrame(), None
 
     samples = pd.DataFrame(rows)
+    del rows
     grouped = samples.groupby(
         ["model", "language", "split", "sample_id", "source_id"],
         dropna=False,
         as_index=False,
     )["correct"].agg(correct_sum="sum", correct_count="size")
+    del samples
+    gc.collect()
     return label, grouped, None
 
 
@@ -179,10 +185,12 @@ def load_problem_scores(
             frames.append(frame)
         if len(frames) >= _CONCAT_CHUNK:
             concatenated = pd.concat(frames, ignore_index=True)
+            del frames
             keys = ["model", "language", "split", "sample_id", "source_id"]
             grouped = concatenated.groupby(keys, dropna=False, as_index=False).agg(
                 correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum")
             )
+            del concatenated
             frames = [grouped]
             gc.collect()
 
@@ -582,8 +590,8 @@ def main() -> None:
     parser.add_argument(
         "--workers",
         type=int,
-        default=4,
-        help="Workers used for header scans and log loading; defaults to 4 for memory efficiency.",
+        default=2,
+        help="Workers used for header scans and log loading; defaults to 2 for strict memory ceiling.",
     )
     args = parser.parse_args()
 
