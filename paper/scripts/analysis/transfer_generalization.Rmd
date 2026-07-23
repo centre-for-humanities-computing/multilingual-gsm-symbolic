@@ -1,0 +1,289 @@
+---
+title: "Generalization to MultiZebra"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+Do the GSM-Symbolic transfer findings hold on a structurally different task? We
+score **MultiZebra** (logic-grid "zebra" puzzles) per puzzle and fit the *same*
+model as GSM -- including the `model:language` transfer variance component -- so we
+can compare both the fixed effects and the transfer gap on the same footing.
+
+**Scope.** The MultiZebra runs cover 6 models (Qwen3.5 4/9/27B, EuroLLM 1.7/9/22B,
+2 families) and 5 languages -- **da, de, en, is, nl, all Germanic and Latin-script**.
+So this tests whether the **resource** and **size** effects (and their interaction)
+generalize; it cannot test typology, fertility, or script, which barely vary in a
+Germanic-only set. Predictors are on a per-doubling (log2) scale, centred at ~32M
+Common Crawl pages and an 8B model, shared with the GSM fit. The three Qwen3.5 models
+are additionally run with reasoning on and off, giving within-base pairs that let us
+test whether the **reasoning** finding from GSM generalizes too (final section).
+
+**Scoring.** `score_zebra.py` reproduces EuroEval's cell-wise metric exactly
+(alexandrainst/zebra_puzzles `compute_cell_score`: per-object set intersection,
+case-sensitive, whitespace-stripped, objects matched by sorted key), with markdown
+` ```json ` fences stripped before parsing. Validated against EuroEval's official
+aggregate to a mean absolute difference of ~1.2 points. It emits one row per
+(model, language, puzzle) with the cell counts, giving a binomial outcome
+(correct cells / total cells) analogous to GSM's correct/total.
+
+```{r setup}
+knitr::opts_chunk$set(warning = FALSE, message = TRUE)
+library(dplyr)
+library(lme4)
+library(ggplot2)
+
+zebra_all <- read.csv("generalization-analysis/zebra_puzzle_scores.csv") %>%
+  mutate(
+    resource_c = (log10_resource - 7.5) * log2(10), # doublings of CC pages
+    size_c     = log2(params_b) - 3,                 # doublings of params
+    reasoning  = factor(reasoning, levels = c("off", "on"))
+  ) %>%
+  mutate(across(c(model, base_model, family, language, puzzle), as.factor))
+
+# Truncation. The runs cap generation at 8k tokens, so reasoning-on models that
+# exhaust the budget mid-thought return an empty prediction (33% of reasoning-on
+# rows, ~0% otherwise). These are a budget artifact, not a capability signal -- and
+# they hit English heavily too (37%), so counting them wrong would spuriously flatten
+# the cross-lingual gap -- so we EXCLUDE them as the primary treatment. The Reasoning
+# section reports count-as-wrong as a sensitivity floor. `truncated` flags them.
+zebra_scored <- filter(zebra_all, truncated == 0)      # all models, truncated dropped
+zebra <- zebra_scored                                  # main resource/size comparison
+
+# Robustness cut: the reasoning-off runs never truncate (0% empty), so they give a
+# resource/size estimate with no missing-data assumption at all -- and, unlike
+# reasoning-on, their size slope is not flattened by reasoning substituting for scale.
+zebra_off <- filter(zebra_all, reasoning == "off")
+```
+
+# By language
+
+Cell accuracy and exact-solve rate both show the GSM pattern -- English best,
+Icelandic (lowest resource) clearly worst. The 1024 puzzles are the same set across
+all languages, so a `(1 | puzzle)` matched design holds.
+
+```{r by-language}
+zebra %>%
+  group_by(language) %>%
+  summarise(
+    log10_resource = first(log10_resource),
+    cell_accuracy  = sum(n_correct_cells) / sum(n_cells),
+    solve_rate     = mean(solved),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(log10_resource))
+```
+
+# Full model
+
+Same structure as the GSM comparison model: a binomial over the puzzle's cells, with
+resource, size and their interaction, and random intercepts for model, language,
+puzzle (item difficulty) and `model:language` (the transfer term). Reasoning on/off
+enter as separate models (absorbed by `(1 | model)`), exactly as in the GSM comparison
+fit. A size-only baseline gives the variance the resource feature explains.
+
+```{r fit, cache=TRUE, cache.extra=tools::md5sum("generalization-analysis/zebra_puzzle_scores.csv")}
+full <- glmer(
+  cbind(n_correct_cells, n_cells - n_correct_cells) ~ resource_c * size_c + reasoning +
+    (1 | model) + (1 | language) + (1 | puzzle) + (1 | model:language),
+  data = zebra, family = binomial())
+
+base <- glmer(
+  cbind(n_correct_cells, n_cells - n_correct_cells) ~ size_c + reasoning +
+    (1 | model) + (1 | language) + (1 | puzzle) + (1 | model:language),
+  data = zebra, family = binomial())
+
+summary(base)
+summary(full)
+```
+
+`reasoning` enters as a fixed-effect covariate, matching the GSM comparison fit -- most
+MultiZebra runs are reasoning models, so both sides control for it rather than
+restricting to the non-reasoning subset. It is a large, positive term (analysed properly,
+within base model, in the Reasoning section).
+
+The resource main effect is positive and marginal; **size is positive but not significant
+here**, which is a truncation/reasoning artifact, not an absence of a size effect. Two
+things depress it: reasoning-on truncation removes data size-dependently (small models
+truncate most), and reasoning substitutes for scale, flattening the size slope with
+thinking on (see Reasoning). On the truncation-free reasoning-off runs the size effect is
+clean and clearly significant:
+
+```{r fit-off, cache=TRUE, cache.extra=tools::md5sum("generalization-analysis/zebra_puzzle_scores.csv")}
+full_off <- glmer(
+  cbind(n_correct_cells, n_cells - n_correct_cells) ~ resource_c * size_c +
+    (1 | model) + (1 | language) + (1 | puzzle) + (1 | model:language),
+  data = zebra_off, family = binomial())
+summary(full_off)
+```
+
+```{r transfer-variance}
+sd_ml <- function(m) attr(VarCorr(m)$`model:language`, "stddev")[[1]]
+zebra_var <- data.frame(
+  task = "MultiZebra",
+  sd_ml_full = sd_ml(full),
+  sd_ml_baseline = sd_ml(base),
+  variance_explained = 1 - sd_ml(full)^2 / sd_ml(base)^2
+)
+zebra_var
+```
+
+# Comparison with GSM-Symbolic
+
+`gsm_generalization_estimates.csv` and `gsm_generalization_variance.csv` come from
+`export_gsm_estimates.R`, which fits the identical structure on the GSM cells.
+
+```{r compare-fixed}
+gsm <- read.csv("../../artifacts/analysis/gsm_generalization_estimates.csv")
+
+est <- function(fit, task) {
+  co <- summary(fit)$coefficients
+  data.frame(task = task, term = rownames(co), estimate = co[, "Estimate"],
+             se = co[, "Std. Error"], p_value = co[, "Pr(>|z|)"])
+}
+
+comparison <- bind_rows(gsm,
+                        est(full, "MultiZebra (all models)"),
+                        est(full_off, "MultiZebra (reasoning-off)")) %>%
+  filter(term %in% c("resource_c", "size_c", "resource_c:size_c", "reasoningon")) %>%
+  mutate(term = recode(term,
+                       resource_c = "resource (per doubling of CC pages)",
+                       size_c = "size (per doubling of params)",
+                       `resource_c:size_c` = "resource x size",
+                       reasoningon = "reasoning (on vs off)"),
+         term = factor(term, levels = c("resource x size", "size (per doubling of params)",
+                                        "resource (per doubling of CC pages)",
+                                        "reasoning (on vs off)")),
+         sig = cut(p_value, c(-Inf, 0.001, 0.01, 0.05, Inf), labels = c("***", "**", "*", "ns")),
+         p_value = signif(p_value, 2))
+comparison
+```
+
+```{r compare-plot, fig.height=3}
+dodge <- position_dodge(width = 0.4)
+comparison %>%
+  ggplot(aes(estimate, term, colour = task)) +
+  geom_vline(xintercept = 0, colour = "grey70") +
+  geom_pointrange(aes(xmin = estimate - 1.96 * se, xmax = estimate + 1.96 * se), position = dodge) +
+  geom_text(aes(x = estimate + 1.96 * se, label = sig), position = dodge,
+            hjust = -0.35, vjust = 0.75, show.legend = FALSE) +
+  scale_x_continuous(expand = expansion(mult = c(0.05, 0.12))) +
+  labs(x = "coefficient (log-odds)", y = NULL, colour = NULL,
+       title = "Resource, size, interaction, and reasoning: GSM-Symbolic vs MultiZebra",
+       caption = "*** p<0.001  ** p<0.01  * p<0.05") +
+  theme_minimal()
+```
+
+The **transfer variance component** and how much of it resource explains:
+
+```{r compare-variance}
+bind_rows(read.csv("../../artifacts/analysis/gsm_generalization_variance.csv"), zebra_var) %>%
+  mutate(across(where(is.numeric), ~round(., 3)))
+```
+
+# What generalizes
+
+All fits control for reasoning (a fixed-effect covariate), so the effects below are
+compared on equal footing given MultiZebra's reasoning-heavy composition.
+
+- **Reasoning helps on both tasks**: +1.2 (GSM) vs +2.3 (MultiZebra) log-odds, significant
+  on both, and larger on the logic puzzles -- reasoning is a bigger lever on MultiZebra
+  than on arithmetic. (These pooled coefficients are between-config on GSM and
+  truncation-inflated on zebra; the clean within-base analysis is the Reasoning section.)
+- **Size generalizes**: ~0.99 (GSM) vs **0.65 (MultiZebra, reasoning-off)** log-odds per
+  doubling of parameters, both highly significant (p < 0.001) -- larger models improve at
+  a broadly similar rate on logic puzzles as on arithmetic, and size dominates resource in
+  both. The all-models fit hides this (0.35, ns) only because reasoning-on truncation
+  removes small-model data and reasoning flattens the size slope (see below); on the
+  truncation-free runs the effect is clean.
+- **The resource main effect generalizes directionally**: same sign, ~0.23 (GSM) vs ~0.05
+  (MultiZebra), and marginal on zebra (p ~ 0.09). The smaller, weaker estimate is what a
+  Germanic-only set predicts -- the resource range among the mid languages is narrow and
+  the effect leans on Icelandic -- so it is consistent with GSM, just underpowered.
+- **The resource x size interaction does not replicate**: strongly negative on GSM
+  (-0.039, p < 1e-13: larger models depend less on resource) but near zero and
+  non-significant on MultiZebra (+0.03). Almost certainly a power problem -- a product
+  term needs joint variation in resource *and* size, and 6 models across 2 families gives
+  very little -- rather than a real difference.
+- **The transfer gap itself is a similar size on both tasks**: `sd(model:language)` is
+  0.49 (GSM) vs 0.46 (all models) / 0.55 (reasoning-off) on the log-odds scale, so how
+  much a model's performance swings across languages beyond its overall level is
+  comparable. Resource explains less of it on MultiZebra (~10% vs 21%), again consistent
+  with the narrow Germanic resource range.
+
+**Summary.** Reasoning, the size effect, and the magnitude of the cross-lingual transfer
+gap generalize to a structurally different task; the resource effect generalizes in
+direction; the interaction and the language-feature detail (typology, fertility, script)
+are untestable in a Germanic-only, 6-model set. The Reasoning section develops the first
+finding within base model: reasoning helps enormously and narrows the gap. A stronger test
+of the rest needs non-Germanic languages and more model families in the MultiZebra runs.
+
+# Reasoning
+
+The three Qwen3.5 models are run with thinking on and off, giving within-base pairs -- so,
+as on GSM, we can ask whether reasoning helps and whether it narrows the cross-lingual
+gap. Its effect on puzzle-solving is large: the exact-solve rate roughly triples with
+thinking on (Qwen3.5-9B 10% -> 45%, 27B 20% -> 57%).
+
+As a within-base fixed effect -- identified against the reasoning-off runs, with
+`(1 | family/base_model)` holding the base model constant -- reasoning is by far the
+largest term in the model:
+
+```{r fit-reasoning, cache=TRUE, cache.extra=tools::md5sum("generalization-analysis/zebra_puzzle_scores.csv")}
+reasoning_fit <- glmer(
+  cbind(n_correct_cells, n_cells - n_correct_cells) ~
+    resource_c + size_c + reasoning +
+    (1 | family / base_model) + (1 | language) + (1 | puzzle) + (1 | model:language),
+  data = zebra_scored, family = binomial())
+summary(reasoning_fit)
+```
+
+Its point magnitude is treatment-sensitive, though: truncation falls entirely on the
+reasoning-on side, so excluding it is a one-sided selection that lifts reasoning-on (the
+count-as-wrong floor puts the coefficient near +0.7 rather than +2.1). The direction is
+not in doubt -- reasoning is the dominant effect -- but we read the substance off the
+observed solve rates above and the gap below, not off this coefficient.
+
+Does it narrow the cross-lingual gap? We read that off the English-to-target gap directly,
+as on GSM (a `reasoning x resource` interaction is a non-significant, truncation-sensitive
+null on this Germanic set, so we do not lean on it). Because reasoning-on can exhaust the
+8k budget, we show both truncation treatments -- the primary exclude, and count-as-wrong
+as the conservative floor:
+
+```{r reasoning-gap}
+gap_table <- function(data) {
+  paired <- semi_join(data,
+    data %>% distinct(base_model, reasoning) %>% count(base_model) %>% filter(n == 2),
+    by = "base_model")
+  acc <- paired %>%
+    group_by(reasoning, language) %>%
+    summarise(acc = sum(n_correct_cells) / sum(n_cells), .groups = "drop") %>%
+    mutate(logit = qlogis(acc))
+  eng <- acc %>% filter(language == "eng") %>% select(reasoning, e_acc = acc, e_logit = logit)
+  acc %>% filter(language != "eng") %>% left_join(eng, by = "reasoning") %>%
+    group_by(reasoning) %>%
+    summarise(mean_cell_acc    = mean(acc),
+              gap_points       = mean(e_acc - acc),
+              error_odds_ratio = mean(exp(e_logit - logit)), .groups = "drop")
+}
+bind_rows(
+  cbind(treatment = "exclude-truncated (primary)",  gap_table(zebra_scored)),
+  cbind(treatment = "count-as-wrong (sensitivity)", gap_table(zebra_all))
+) %>% mutate(across(where(is.numeric), ~round(., 3)))
+```
+
+Reasoning narrows the cross-lingual gap on MultiZebra, robustly in either treatment: the
+English-to-target error odds-ratio falls from 1.85x (thinking off) to 1.54x (primary), or
+as far as 1.10x if truncations count as wrong. This mirrors GSM, where reasoning cut the
+same odds-ratio from ~2.9x to ~2.1x. So the reasoning finding generalizes -- enabling
+reasoning both raises accuracy sharply and shrinks the relative English advantage across
+the Germanic target languages. As on GSM, the per-language `reasoning x resource`
+interaction is too underpowered to attribute the narrowing to resource specifically on the
+log-odds scale, so we report it as an aggregate gap.
+
+**Caveat.** Only Qwen3.5 is run both ways, and truncated puzzles are ~1.8x harder than
+completed ones (measured against the reasoning-off runs), so the excluded estimate is a
+mild upper bound on capability while the count-as-wrong floor bounds it from below -- both
+agree on the direction and the mirror of the GSM result.
