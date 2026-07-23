@@ -194,6 +194,7 @@ def relationship_plot(
                 marker="o",
                 linestyle="None",
                 markersize=6,
+                alpha=0.55,
                 label=f,
             )
             for f in ordered_families(panel["family"])
@@ -207,6 +208,7 @@ def relationship_plot(
                 marker=SCRIPT_MARKERS.get(s, "o"),
                 linestyle="None",
                 markersize=6,
+                alpha=0.55,
                 label=f"Script: {s}",
             )
             for s in present_scripts
@@ -240,15 +242,18 @@ def relationship_plot(
             fig.legend(
                 handles,
                 labels,
-                loc="lower center",
+                title="Model family",
+                loc="upper center",
+                bbox_to_anchor=(0.5, 0.06),
                 ncol=math.ceil(len(labels) / 2),
                 frameon=False,
                 fontsize=8,
+                title_fontsize=8,
             )
 
     bottom_margin = 0.16 if use_script_shapes else (0.17 if footnote else 0.14)
     if footnote:
-        footnote_y = 0.145 if use_script_shapes else 0.075
+        footnote_y = 0.145 if use_script_shapes else 0.09
         fig.text(0.5, footnote_y, footnote, ha="center", fontsize=8, color="#4B5563")
     fig.tight_layout(rect=(0, bottom_margin, 1, 1))
     out.parent.mkdir(parents=True, exist_ok=True)
