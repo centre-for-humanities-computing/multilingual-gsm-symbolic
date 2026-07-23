@@ -79,9 +79,15 @@ def relationship_plot(
     xlabel: str,
     out: Path,
     use_script_shapes: bool = False,
+    footnote: str | None = None,
+    label_languages: bool = True,
 ) -> list[Path]:
     """Plot a descriptive feature relationship for the synthetic split only."""
-    plot_data = data.dropna(subset=[x_column, "performance_recovered"])
+    plot_data = data[
+        (data["language"] != "eng_metric") & (data["family"] != "OpenAI")
+    ].dropna(
+        subset=[x_column, "performance_recovered"]
+    )
     if plot_data.empty:
         return []
 
@@ -90,7 +96,7 @@ def relationship_plot(
     if panel.empty:
         return []
 
-    fig, ax = plt.subplots(figsize=(6.5, 5))
+    fig, ax = plt.subplots(figsize=(6.5, 5.3 if use_script_shapes else 5))
 
     for family in ordered_families(panel["family"]):
         family_rows = panel[panel["family"] == family]
@@ -98,64 +104,84 @@ def relationship_plot(
             for row in family_rows.itertuples():
                 script = LANGUAGE_SCRIPTS.get(row.language, "Latin")
                 marker = SCRIPT_MARKERS.get(script, "o")
-                ax.errorbar(
+                ax.scatter(
                     getattr(row, x_column),
                     row.performance_recovered,
-                    yerr=row.performance_recovered_stderr,
-                    fmt=marker,
-                    markersize=6.5,
-                    capsize=2,
-                    alpha=0.85,
+                    marker=marker,
+                    s=42,
+                    alpha=0.55,
                     color=FAMILY_COLORS.get(family, "#666666"),
                     zorder=3,
                 )
         else:
-            ax.errorbar(
+            ax.scatter(
                 family_rows[x_column],
                 family_rows["performance_recovered"],
-                yerr=family_rows["performance_recovered_stderr"],
-                fmt="o",
-                markersize=6.5,
-                capsize=2,
-                alpha=0.85,
+                marker="o",
+                s=42,
+                alpha=0.55,
                 color=FAMILY_COLORS.get(family, "#666666"),
                 label=family,
                 zorder=3,
             )
 
-    label_positions = panel.groupby(["family", "language"], as_index=False).agg(
-        x=(x_column, "mean"), y=("performance_recovered", "mean")
-    )
-    label_positions["family_order"] = label_positions["family"].map(FAMILY_ORDER).fillna(99)
-    label_positions = label_positions.sort_values(["family_order", "language"])
-    for row in label_positions.itertuples(index=False):
-        ax.annotate(
-            row.language,
-            (row.x, row.y),
-            xytext=(4, 3),
-            textcoords="offset points",
-            fontsize=7.5,
-            color=FAMILY_COLORS.get(row.family, "#666666"),
-        )
-
-    # Make trendline pop out prominently in vibrant crimson red
+    # Use a restrained neutral trendline so it does not compete with model colors.
     unique_x = panel[x_column].nunique()
+    slope: float | None = None
+    intercept: float | None = None
     if len(panel) >= 3 and unique_x >= 2:
         slope, intercept = np.polyfit(panel[x_column], panel["performance_recovered"], 1)
         x_line = np.linspace(panel[x_column].min(), panel[x_column].max(), 100)
         ax.plot(
             x_line,
             slope * x_line + intercept,
-            color="#D90429",
+            color="#4B5563",
             linestyle="-",
-            linewidth=2.5,
-            zorder=5,
+            linewidth=1.6,
+            alpha=0.85,
+            zorder=4,
             label="Trendline",
         )
 
+    if label_languages:
+        label_positions = (
+            panel.groupby("language", as_index=False)
+            .agg(x=(x_column, "mean"))
+            .sort_values("x")
+        )
+        x_span = max(float(panel[x_column].max() - panel[x_column].min()), 1e-9)
+        lane_last_x: list[float] = []
+        for row in label_positions.itertuples(index=False):
+            lane = next(
+                (
+                    index
+                    for index, previous_x in enumerate(lane_last_x)
+                    if row.x - previous_x >= 0.12 * x_span
+                ),
+                len(lane_last_x),
+            )
+            if lane == len(lane_last_x):
+                lane_last_x.append(row.x)
+            else:
+                lane_last_x[lane] = row.x
+            ax.annotate(
+                LANGUAGE_LABELS.get(row.language, row.language),
+                xy=(row.x, 1),
+                xycoords=ax.get_xaxis_transform(),
+                xytext=(0, 6 + 14 * lane),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                fontsize=9,
+                fontweight="bold",
+                color="#1F2937",
+                bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.82, "pad": 1.5},
+                annotation_clip=False,
+                zorder=6,
+            )
+
     ax.axhline(1, color="black", linewidth=0.8, alpha=0.4, zorder=2)
-    ax.grid(alpha=0.2)
-    ax.set_ylabel("Percentage of English performance recovered")
+    ax.set_ylabel("English performance recovered", fontsize=14)
     ax.yaxis.set_major_formatter(PercentFormatter(1))
 
     if use_script_shapes:
@@ -184,15 +210,28 @@ def relationship_plot(
             )
             for s in present_scripts
         ]
-        trend_handle = [Line2D([0], [0], color="#D90429", lw=2.5, label="Trendline")]
-        all_handles = family_handles + script_handles + trend_handle
+        trend_handle = [Line2D([0], [0], color="#4B5563", lw=1.6, alpha=0.85, label="Trendline")]
         fig.legend(
-            all_handles,
-            [h.get_label() for h in all_handles],
-            loc="lower center",
-            ncol=math.ceil(len(all_handles) / 2),
+            family_handles + trend_handle,
+            [h.get_label() for h in family_handles + trend_handle],
+            title="Model family",
+            loc="upper left",
+            bbox_to_anchor=(0.02, 0.115),
+            ncol=3,
             frameon=False,
             fontsize=8,
+            title_fontsize=8,
+        )
+        fig.legend(
+            script_handles,
+            [h.get_label().removeprefix("Script: ") for h in script_handles],
+            title="Language script",
+            loc="upper right",
+            bbox_to_anchor=(0.98, 0.115),
+            ncol=2,
+            frameon=False,
+            fontsize=8,
+            title_fontsize=8,
         )
     else:
         handles, labels = ax.get_legend_handles_labels()
@@ -206,8 +245,13 @@ def relationship_plot(
                 fontsize=8,
             )
 
-    fig.supxlabel(xlabel, y=0.09)
-    fig.tight_layout(rect=(0, 0.14, 1, 1))
+    bottom_margin = 0.16 if use_script_shapes else (0.17 if footnote else 0.14)
+    xlabel_y = 0.18 if use_script_shapes else (0.11 if footnote else 0.09)
+    fig.supxlabel(xlabel, y=xlabel_y, fontsize=14)
+    if footnote:
+        footnote_y = 0.145 if use_script_shapes else 0.075
+        fig.text(0.5, footnote_y, footnote, ha="center", fontsize=8, color="#4B5563")
+    fig.tight_layout(rect=(0, bottom_margin, 1, 1))
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -427,7 +471,9 @@ def build_transfer_table(
             }
         )
     )
-    transfer = values[values["language"] != "eng"].merge(
+    transfer = values[
+        ~values["language"].isin({"eng", "eng_metric"}) & (values["family"] != "OpenAI")
+    ].merge(
         english,
         on=["model_raw", "model", "family", "params_b", "split"],
         how="inner",
@@ -514,25 +560,40 @@ def main() -> None:
     plots = [
         (
             "normalized_fertility",
-            "TFR: target-language tokens/character divided by English tokens/character. Computed on GSM8K templates.",
+            "Tokenizer fertility ratio",
             args.out_dir / "tokenizer_fertility_vs_transfer.png",
             True,
+            "Ratio of target-language to English tokens per character, computed on GSM8K templates.",
+            False,
         ),
         (
             "typological_distance_from_english",
-            "URIEL cosine distance from English (syntax features)",
+            "Typological distance",
             args.out_dir / "typological_distance_vs_transfer.png",
             False,
+            "Typological distance is cosine distance from English using URIEL syntax features.",
+            True,
         ),
         (
             "log10_common_crawl_pages",
-            "Language-resource proxy: log10 Common Crawl page count",
+            "Language resources",
             args.out_dir / "resource_quantity_vs_transfer.png",
             False,
+            "Language resources are measured as log10 Common Crawl page count.",
+            True,
         ),
     ]
-    for column, xlabel, path, use_script_shapes in plots:
-        if saved_plots := relationship_plot(transfer, column, xlabel, path, use_script_shapes=use_script_shapes):
+    for plot in plots:
+        column, xlabel, path, use_script_shapes, footnote, label_languages = plot
+        if saved_plots := relationship_plot(
+            transfer,
+            column,
+            xlabel,
+            path,
+            use_script_shapes=use_script_shapes,
+            footnote=footnote,
+            label_languages=label_languages,
+        ):
             for saved_plot in saved_plots:
                 print(f"Saved {saved_plot}")
         else:
