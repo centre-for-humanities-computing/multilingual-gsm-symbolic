@@ -1620,21 +1620,37 @@ EXCLUDED_LANGUAGES &lt;- c(&quot;eng_metric&quot;, &quot;uncorrected_isl&quot;)<
 <h1>Load the instance table</h1>
 <p><code>collect_transfer_tables.py</code> writes one Parquet row per
 evaluated instance: <code>correct</code> as a logical, the reasoning
-mode in the <code>model</code> name, and every feature we need –
-<code>typological_distance</code>,
+mode in the <code>model</code> name, the number-parsing counts, and
+every feature we need – <code>typological_distance</code>,
 <code>log10_common_crawl_pages</code>, and the tokenizer fertilities.
 Normalised fertility is the model’s fertility relative to its own
-English fertility, so there are no separate feature tables to join.</p>
-<pre class="r"><code>observations &lt;- read_parquet(file.path(transfer_dir, &quot;analysis.parquet&quot;)) %&gt;%
+English fertility.</p>
+<p>STOPGAP: the regenerated parquet dropped tokenizer fertility for
+gemma-3 (all sizes) and EuroLLM-9B-Instruct.
+<code>recovered_fertility.csv</code> holds those values, taken from the
+previous parquet (git 19edd05); we coalesce them in until the upstream
+fertility computation is fixed, after which this join can be
+removed.</p>
+<pre class="r"><code>recovered_fertility &lt;- read.csv(&quot;recovered_fertility.csv&quot;)
+
+observations &lt;- read_parquet(file.path(transfer_dir, &quot;analysis.parquet&quot;)) %&gt;%
   select(
     source_id, language, correct, model, family, params_b, split, eval_id,
     typological_distance, log10_common_crawl_pages,
-    tokenizer_fertility, english_fertility_tokens_per_character
+    tokenizer_fertility, english_fertility_tokens_per_character,
+    all_prompt_numbers_present, prompt_number_count, retrieved_prompt_number_count
   ) %&gt;%
-  mutate(normalized_fertility = tokenizer_fertility / english_fertility_tokens_per_character)
+  left_join(recovered_fertility, by = c(&quot;model&quot;, &quot;language&quot;), suffix = c(&quot;&quot;, &quot;_rec&quot;)) %&gt;%
+  mutate(
+    tokenizer_fertility = coalesce(tokenizer_fertility, tokenizer_fertility_rec),
+    english_fertility_tokens_per_character =
+      coalesce(english_fertility_tokens_per_character, english_fertility_tokens_per_character_rec),
+    normalized_fertility = tokenizer_fertility / english_fertility_tokens_per_character
+  ) %&gt;%
+  select(-tokenizer_fertility_rec, -english_fertility_tokens_per_character_rec)
 
 dim(observations)</code></pre>
-<pre><code>## [1] 813782     13</code></pre>
+<pre><code>## [1] 836382     16</code></pre>
 </div>
 <div id="reasoning-mode" class="section level1">
 <h1>Reasoning mode</h1>
@@ -1745,11 +1761,17 @@ likelihood as the individual Bernoulli draws at roughly 1/28th the rows
     typological_distance_from_english = first(typological_distance),
     log10_common_crawl_pages = first(log10_common_crawl_pages),
     normalized_fertility = first(normalized_fertility),
+    # Number-parsing counts, summed over the cell&#39;s instances, for the
+    # &quot;parsing vs reasoning&quot; section below.
+    n_retrieved = sum(retrieved_prompt_number_count),   # prompt numbers found in the response
+    n_prompt_numbers = sum(prompt_number_count),        # prompt numbers to find
+    n_parsed = sum(all_prompt_numbers_present),          # instances with all numbers found
+    n_correct_parsed = sum(correct &amp; all_prompt_numbers_present),
     .groups = &quot;drop&quot;
   )
 
 dim(cells)</code></pre>
-<pre><code>## [1] 31500    10</code></pre>
+<pre><code>## [1] 31500    14</code></pre>
 <pre class="r"><code>summary(cells$n_total)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   20.00   20.00   20.00   20.19   20.00   40.00</code></pre>
@@ -2110,7 +2132,18 @@ incorrect for some of the models, e.g. Qwen)</li>
 </ul>
 <p>Note when writing: there are three actionable parameters, fertility,
 model size and reasoning, but depending these might have varying effects
-on downstream languages.</p>
+on downstream languages (hence the interactions). As such what we seek
+to answer which actionable levers can resource which low-resource axis
+[find a better term here]. For instance we show that while increase
+model size reduce the effect diminish the effect languages prevalance in
+the training data, increasing the size does not counteract the effect of
+low tokenizer fertility or typological distance.</p>
+<p>Note in limitations: Our “resourcity / prevalence in the training
+data” is a proxy made from common crawl based on page count. While it is
+likely close to real world distributions, it likely has systematic bias
+(e.g. underrepresenting Chinese) and does not vary across model. Ideally
+this analysis would be caried out with models where the training dataset
+distribution is well-known.</p>
 </div>
 <div id="exploratory-does-more-structure-help" class="section level2">
 <h2>Exploratory: does more structure help?</h2>
@@ -2221,6 +2254,149 @@ accuracy because large models sit near the ceiling. The fertility and
 typological-distance interactions with reasoning are entangled by their
 mutual collinearity, as for the main effects, and are not separately
 identifiable here.</p>
+<div id="reasoning-and-the-transfer-gap" class="section level3">
+<h3>Reasoning and the transfer gap</h3>
+<p>Because reasoning is a knob rather than a property of a language, its
+effect on transfer is clearest from the paired models directly –
+reasoning on versus off, across the twelve base models run both
+ways.</p>
+<pre class="r"><code>paired_bases &lt;- cells %&gt;%
+  distinct(base_model, reasoning) %&gt;%
+  count(base_model) %&gt;%
+  filter(n == 2) %&gt;%
+  pull(base_model)
+
+by_lang &lt;- cells %&gt;%
+  filter(base_model %in% paired_bases) %&gt;%
+  group_by(reasoning, language) %&gt;%
+  summarise(acc = sum(n_correct) / sum(n_total), .groups = &quot;drop&quot;) %&gt;%
+  mutate(logit = qlogis(acc))
+
+english &lt;- by_lang %&gt;% filter(language == &quot;eng&quot;) %&gt;% select(reasoning, eng_acc = acc, eng_logit = logit)
+
+by_lang %&gt;%
+  filter(language != &quot;eng&quot;) %&gt;%
+  left_join(english, by = &quot;reasoning&quot;) %&gt;%
+  group_by(reasoning) %&gt;%
+  summarise(
+    mean_accuracy       = mean(acc),
+    gap_accuracy_points = mean(eng_acc - acc),      # absolute: English minus target, in accuracy points
+    error_odds_ratio    = mean(exp(eng_logit - logit)) # relative: times more likely to err than in English
+  )</code></pre>
+<pre><code>## # A tibble: 2 × 4
+##   reasoning mean_accuracy gap_accuracy_points error_odds_ratio
+##   &lt;fct&gt;             &lt;dbl&gt;               &lt;dbl&gt;            &lt;dbl&gt;
+## 1 off               0.630               0.196             2.95
+## 2 on                0.691               0.130             2.12</code></pre>
+<p>Turning reasoning on raises accuracy across the board (~+6 points)
+and shrinks the English-to-target gap from roughly 20 to 13 accuracy
+points. It also shrinks on the <em>relative</em> scale: with reasoning
+off a model is on average about 2.9x more likely to answer incorrectly
+in a non-English language than in English, and about 2.1x with it on.
+This distinction matters – a uniform lift would narrow the absolute gap
+on its own, because the accuracy scale compresses near the ceiling,
+while leaving that error-odds ratio unchanged. The ratio falling means
+reasoning does more than raise all boats. The fitted term behind it is
+the <code>reasoning x resource</code> interaction (~-0.17, p ~ .05):
+reasoning helps lower-resource languages somewhat more even on the
+log-odds scale, though with only seven languages this differential is
+modest and we do not read it language by language.</p>
+<p>(This is also why the variance-explained figure barely moves for
+reasoning and is the wrong number to quote: reasoning defines the model
+configuration, so its transfer effect already sits inside the
+<code>model:language</code> random term whether or not reasoning is a
+fixed effect, and variance on the log-odds scale is invariant to a level
+shift. The gap above is the honest measure.)</p>
+</div>
+</div>
+<div id="is-transfer-just-about-parsing-the-problem" class="section level2">
+<h2>Is transfer just about parsing the problem?</h2>
+<p>Does a model fail in a language because it cannot <em>read</em> the
+problem, or because it cannot do the <em>maths</em> once it has read it?
+We proxy parsing by whether the response reproduces the problem’s
+numbers – <code>all_prompt_numbers_present</code>, with the underlying
+count <code>retrieved_prompt_number_count</code> out of
+<code>prompt_number_count</code>. This is a narrow, mechanical slice of
+parsing (number transcription), not full comprehension.</p>
+<p>Parsing is nearly necessary but far from sufficient: retrieving the
+numbers is almost always needed to be correct, yet plenty of full parses
+still get the wrong answer.</p>
+<pre class="r"><code>cells %&gt;%
+  group_by(language) %&gt;%
+  summarise(
+    parse_rate      = sum(n_parsed) / sum(n_total),         # all numbers retrieved
+    accuracy        = sum(n_correct) / sum(n_total),
+    acc_given_parse = sum(n_correct_parsed) / sum(n_parsed), # correct | parsed
+    .groups = &quot;drop&quot;
+  ) %&gt;%
+  arrange(accuracy)</code></pre>
+<pre><code>## # A tibble: 7 × 4
+##   language parse_rate accuracy acc_given_parse
+##   &lt;fct&gt;         &lt;dbl&gt;    &lt;dbl&gt;           &lt;dbl&gt;
+## 1 isl           0.775    0.414           0.506
+## 2 dan           0.863    0.589           0.645
+## 3 nob           0.864    0.597           0.654
+## 4 rus           0.847    0.615           0.666
+## 5 zho           0.860    0.639           0.693
+## 6 deu           0.867    0.640           0.689
+## 7 eng           0.926    0.757           0.797</code></pre>
+<p>The gap barely closes when we condition on parsing: even among
+instances where every number was retrieved, English still beats
+Icelandic ~0.80 to ~0.51. Most of the transfer gap sits <em>after</em>
+number retrieval.</p>
+<p>To see which features act at which stage, we fit the same feature
+model to two outcomes – the numbers retrieved (binomial over the
+prompt’s numbers), and correctness <em>given</em> a full parse – and
+compare their coefficients to the overall model’s.</p>
+<pre class="r"><code>parse_formula &lt;- function(lhs) as.formula(paste(
+  lhs, &quot;~ (fertility_z + typological_distance_z + log_resource_z) * log_params_z +&quot;,
+  &quot;(1 | family / model) + (1 | template) + (1 | model:language)&quot;
+))
+
+fit_parse &lt;- glmer(parse_formula(&quot;cbind(n_retrieved, n_prompt_numbers - n_retrieved)&quot;),
+                   data = filter(cells, n_prompt_numbers &gt; 0), family = binomial())</code></pre>
+<pre><code>## boundary (singular) fit: see help(&#39;isSingular&#39;)</code></pre>
+<pre class="r"><code>fit_reason &lt;- glmer(parse_formula(&quot;cbind(n_correct_parsed, n_parsed - n_correct_parsed)&quot;),
+                    data = filter(cells, n_parsed &gt; 0), family = binomial())
+
+lang_terms &lt;- c(&quot;fertility_z&quot;, &quot;typological_distance_z&quot;, &quot;log_resource_z&quot;)
+data.frame(
+  overall            = fixef(fit_full)[lang_terms],
+  parse              = fixef(fit_parse)[lang_terms],
+  reason_given_parse = fixef(fit_reason)[lang_terms]
+)</code></pre>
+<pre><code>##                           overall      parse reason_given_parse
+## fertility_z             0.2133497  0.1705142          0.2043097
+## typological_distance_z -0.3206537 -0.3919424         -0.3110031
+## log_resource_z          0.7413666  0.3395385          0.7561283</code></pre>
+<p>Reading these as log-odds on the standardised features: the resource
+effect, the strongest transfer driver, is ~0.34 on parsing but ~0.76 on
+reasoning-given-parse – essentially all of its ~0.74 overall effect is
+downstream of number retrieval. Low-resource languages do not mainly
+fail to <em>read</em> the numbers; they fail to compute the answer once
+they have them. Typological distance tilts the other way – a little
+stronger on parsing (~-0.39) than on reasoning (~-0.31), so structural
+distance impedes reading the problem somewhat more. Fertility is roughly
+even across the two.</p>
+<p>So the answer is <strong>no</strong>: transfer is not just parsing.
+The dominant, resource-driven part of the gap is a reasoning effect –
+the maths degrades in lower-resource languages even when the model has
+correctly read the numbers – which is the finding that bears on treating
+the arithmetic as language-invariant.</p>
+<p>Caveats. <code>all_prompt_numbers_present</code> captures only number
+<em>retrieval</em>; understanding the problem’s structure is not
+measured and stays in the “reasoning” bucket, so this separates “not
+mere transcription failure” rather than “pure arithmetic”. The parse
+outcome sits near ceiling (~86%) while correctness is lower, so the two
+coefficient columns are on different base rates and are best read for
+direction, not exact magnitude. And the reason-given-parse model
+conditions on a full parse – a selection the random effects absorb but
+do not fully eliminate.</p>
+</div>
+<div id="notes" class="section level2">
+<h2>Notes</h2>
+<p>Q: What was the issue with mediator / collider? Q: Add a thing on
+ensuring that parsing is not conflated with reasoning</p>
 </div>
 </div>
 

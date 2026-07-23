@@ -52,19 +52,34 @@ EXCLUDED_LANGUAGES <- c("eng_metric", "uncorrected_isl")
 # Load the instance table
 
 `collect_transfer_tables.py` writes one Parquet row per evaluated instance:
-`correct` as a logical, the reasoning mode in the `model` name, and every feature
-we need -- `typological_distance`, `log10_common_crawl_pages`, and the tokenizer
-fertilities. Normalised fertility is the model's fertility relative to its own
-English fertility, so there are no separate feature tables to join.
+`correct` as a logical, the reasoning mode in the `model` name, the number-parsing
+counts, and every feature we need -- `typological_distance`,
+`log10_common_crawl_pages`, and the tokenizer fertilities. Normalised fertility is
+the model's fertility relative to its own English fertility.
+
+STOPGAP: the regenerated parquet dropped tokenizer fertility for gemma-3 (all
+sizes) and EuroLLM-9B-Instruct. `recovered_fertility.csv` holds those values, taken
+from the previous parquet (git 19edd05); we coalesce them in until the upstream
+fertility computation is fixed, after which this join can be removed.
 
 ```{r load}
+recovered_fertility <- read.csv("recovered_fertility.csv")
+
 observations <- read_parquet(file.path(transfer_dir, "analysis.parquet")) %>%
   select(
     source_id, language, correct, model, family, params_b, split, eval_id,
     typological_distance, log10_common_crawl_pages,
-    tokenizer_fertility, english_fertility_tokens_per_character
+    tokenizer_fertility, english_fertility_tokens_per_character,
+    all_prompt_numbers_present, prompt_number_count, retrieved_prompt_number_count
   ) %>%
-  mutate(normalized_fertility = tokenizer_fertility / english_fertility_tokens_per_character)
+  left_join(recovered_fertility, by = c("model", "language"), suffix = c("", "_rec")) %>%
+  mutate(
+    tokenizer_fertility = coalesce(tokenizer_fertility, tokenizer_fertility_rec),
+    english_fertility_tokens_per_character =
+      coalesce(english_fertility_tokens_per_character, english_fertility_tokens_per_character_rec),
+    normalized_fertility = tokenizer_fertility / english_fertility_tokens_per_character
+  ) %>%
+  select(-tokenizer_fertility_rec, -english_fertility_tokens_per_character_rec)
 
 dim(observations)
 ```
@@ -145,6 +160,12 @@ cells <- observations %>%
     typological_distance_from_english = first(typological_distance),
     log10_common_crawl_pages = first(log10_common_crawl_pages),
     normalized_fertility = first(normalized_fertility),
+    # Number-parsing counts, summed over the cell's instances, for the
+    # "parsing vs reasoning" section below.
+    n_retrieved = sum(retrieved_prompt_number_count),   # prompt numbers found in the response
+    n_prompt_numbers = sum(prompt_number_count),        # prompt numbers to find
+    n_parsed = sum(all_prompt_numbers_present),          # instances with all numbers found
+    n_correct_parsed = sum(correct & all_prompt_numbers_present),
     .groups = "drop"
   )
 
@@ -509,9 +530,109 @@ measure.)
 
 
 
+## Is transfer just about parsing the problem?
+
+Does a model fail in a language because it cannot *read* the problem, or because it
+cannot do the *maths* once it has read it? We proxy parsing by whether the response
+reproduces the problem's numbers -- `all_prompt_numbers_present`, with the underlying
+count `retrieved_prompt_number_count` out of `prompt_number_count`. This is a narrow,
+mechanical slice of parsing (number transcription), not full comprehension.
+
+Parsing is nearly necessary but far from sufficient: retrieving the numbers is almost
+always needed to be correct, yet plenty of full parses still get the wrong answer.
+
+```{r parse-decomposition}
+cells %>%
+  group_by(language) %>%
+  summarise(
+    parse_rate      = sum(n_parsed) / sum(n_total),         # all numbers retrieved
+    accuracy        = sum(n_correct) / sum(n_total),
+    acc_given_parse = sum(n_correct_parsed) / sum(n_parsed), # correct | parsed
+    .groups = "drop"
+  ) %>%
+  arrange(accuracy)
+```
+
+The gap barely closes when we condition on parsing: even among instances where every
+number was retrieved, English still beats Icelandic ~0.80 to ~0.51. Most of the
+transfer gap sits *after* number retrieval.
+
+Before trusting the by-language parse comparison, we check the number extractor is
+not itself biased across languages. Every language uses the same templates with the
+same numbers, so the extracted `prompt_number_count` should be language-invariant --
+if the regex missed numbers in some language (a decimal comma, a spelled-out number,
+non-Latin digits) that language would show a lower count regardless of the model.
+
+```{r parse-extraction-check}
+cells %>%
+  group_by(language) %>%
+  summarise(
+    mean_prompt_numbers = sum(n_prompt_numbers) / sum(n_total),
+    parse_rate          = sum(n_parsed) / sum(n_total),
+    .groups = "drop"
+  ) %>%
+  arrange(mean_prompt_numbers)
+```
+
+The extracted counts are nearly identical (within ~0.1 numbers per template across
+languages), so the metric's denominator is comparable and the parse-rate differences
+are not an extraction artifact -- Icelandic's low parse rate comes with a perfectly
+normal number count, i.e. it is the model's *responses* that reproduce the numbers
+less often, not the extractor failing on Icelandic prompts. The one small asterisk is
+Chinese, which extracts ~3% fewer (occasional Chinese numerals the Western-digit regex
+misses). This check validates the prompt side only; a response-side formatting bias
+(numbers written as words in some languages' answers) would need the completion text
+to rule out, though the clean prompt side and the parse/accuracy correlation argue it
+is minor.
+
+To see which features act at which stage, we fit the same feature model to two
+outcomes -- the numbers retrieved (binomial over the prompt's numbers), and
+correctness *given* a full parse -- and compare their coefficients to the overall
+model's.
+
+```{r fit-parse-reason}
+parse_formula <- function(lhs) as.formula(paste(
+  lhs, "~ (fertility_z + typological_distance_z + log_resource_z) * log_params_z +",
+  "(1 | family / model) + (1 | template) + (1 | model:language)"
+))
+
+fit_parse <- glmer(parse_formula("cbind(n_retrieved, n_prompt_numbers - n_retrieved)"),
+                   data = filter(cells, n_prompt_numbers > 0), family = binomial())
+fit_reason <- glmer(parse_formula("cbind(n_correct_parsed, n_parsed - n_correct_parsed)"),
+                    data = filter(cells, n_parsed > 0), family = binomial())
+
+lang_terms <- c("fertility_z", "typological_distance_z", "log_resource_z")
+data.frame(
+  overall            = fixef(fit_full)[lang_terms],
+  parse              = fixef(fit_parse)[lang_terms],
+  reason_given_parse = fixef(fit_reason)[lang_terms]
+)
+```
+
+Reading these as log-odds on the standardised features: the resource effect, the
+strongest transfer driver, is ~0.34 on parsing but ~0.76 on reasoning-given-parse --
+essentially all of its ~0.74 overall effect is downstream of number retrieval.
+Low-resource languages do not mainly fail to *read* the numbers; they fail to compute
+the answer once they have them. Typological distance tilts the other way -- a little
+stronger on parsing (~-0.39) than on reasoning (~-0.31), so structural distance
+impedes reading the problem somewhat more. Fertility is roughly even across the two.
+
+So the answer is **no**: transfer is not just parsing. The dominant, resource-driven
+part of the gap is a reasoning effect -- the maths degrades in lower-resource languages
+even when the model has correctly read the numbers -- which is the finding that bears
+on treating the arithmetic as language-invariant.
+
+Caveats. `all_prompt_numbers_present` captures only number *retrieval*; understanding
+the problem's structure is not measured and stays in the "reasoning" bucket, so this
+separates "not mere transcription failure" rather than "pure arithmetic". The parse
+outcome sits near ceiling (~86%) while correctness is lower, so the two coefficient
+columns are on different base rates and are best read for direction, not exact
+magnitude. And the reason-given-parse model conditions on a full parse -- a selection
+the random effects absorb but do not fully eliminate.
+
+
 ## Notes
 
-One question we had was whether the language helps on the 
-parsing or on the "reasoning" through the math. Our proxy for parsing is whether the 
-models response includes all the correct numbers. It should be upstream.
+Q: What was the issue with mediator / collider?
+Q: Add a thing on ensuring that parsing is not conflated with reasoning 
 
