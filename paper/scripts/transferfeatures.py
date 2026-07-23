@@ -135,7 +135,7 @@ def relationship_plot(
         ax.plot(
             x_line,
             slope * x_line + intercept,
-            color="#4B5563",
+            color="#000000",
             linestyle="-",
             linewidth=1.6,
             alpha=0.85,
@@ -181,7 +181,7 @@ def relationship_plot(
             )
 
     ax.axhline(1, color="black", linewidth=0.8, alpha=0.4, zorder=2)
-    ax.set_xlabel(xlabel, fontsize=14, labelpad=16)
+    ax.set_xlabel(xlabel, fontsize=14, labelpad=16 if use_script_shapes else 8)
     ax.set_ylabel("English performance recovered", fontsize=14)
     ax.yaxis.set_major_formatter(PercentFormatter(1))
 
@@ -213,7 +213,7 @@ def relationship_plot(
             )
             for s in present_scripts
         ]
-        trend_handle = [Line2D([0], [0], color="#4B5563", lw=1.6, alpha=0.85, label="Trendline")]
+        trend_handle = [Line2D([0], [0], color="#000000", lw=1.6, alpha=0.85, label="Trendline")]
         fig.legend(
             family_handles + trend_handle,
             [h.get_label() for h in family_handles + trend_handle],
@@ -244,7 +244,7 @@ def relationship_plot(
                 labels,
                 title="Model family",
                 loc="upper center",
-                bbox_to_anchor=(0.5, 0.06),
+                bbox_to_anchor=(0.5, 0.13),
                 ncol=math.ceil(len(labels) / 2),
                 frameon=False,
                 fontsize=8,
@@ -253,7 +253,7 @@ def relationship_plot(
 
     bottom_margin = 0.16 if use_script_shapes else (0.17 if footnote else 0.14)
     if footnote:
-        footnote_y = 0.145 if use_script_shapes else 0.09
+        footnote_y = 0.145 if use_script_shapes else 0.16
         fig.text(0.5, footnote_y, footnote, ha="center", fontsize=8, color="#4B5563")
     fig.tight_layout(rect=(0, bottom_margin, 1, 1))
     out.parent.mkdir(parents=True, exist_ok=True)
