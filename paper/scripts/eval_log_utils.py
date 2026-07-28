@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import multiprocessing
 import re
 from collections.abc import Callable, Iterator
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, as_completed, wait
@@ -186,7 +187,7 @@ def map_log_loader(
 
     max_workers = min(workers, len(paths))
     paths_iter = iter(paths)
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+    with ProcessPoolExecutor(max_workers=max_workers, mp_context=multiprocessing.get_context("spawn")) as pool:
         pending = {pool.submit(loader, path, scorer) for path in islice(paths_iter, max_workers)}
         while pending:
             done, pending = wait(pending, return_when=FIRST_COMPLETED)
@@ -240,4 +241,3 @@ def normal_curve(values: np.ndarray) -> tuple[np.ndarray, np.ndarray, float, flo
     upper = min(1.0, mean + 4 * std)
     x = np.linspace(lower, upper, 500)
     return x, norm.pdf(x, loc=mean, scale=std), mean, std
-

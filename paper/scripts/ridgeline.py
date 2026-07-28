@@ -28,7 +28,7 @@ from eval_log_utils import (
     sample_synthetic_sets,
     select_logs,
 )
-from inspect_ai.log import read_eval_log
+from inspect_ai.log import read_eval_log, read_eval_log_sample_summaries
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
 from plot_config import (
@@ -117,14 +117,15 @@ def _load_one_log(
 ) -> tuple[str, pd.DataFrame | None, str | None]:
     """Read and partially aggregate one log in a worker process."""
     try:
-        log = read_eval_log(str(path))
+        log = read_eval_log(str(path), header_only=True)
+        samples = read_eval_log_sample_summaries(str(path))
     except Exception as exc:
         return path.name, None, f"Skipping unreadable log {path.name}: {exc}"
 
     parsed = parse_task(log.eval.task)
     if parsed is None:
         return path.name, None, f"Skipping unrecognized task {log.eval.task!r}"
-    if not log.samples:
+    if not samples:
         return path.name, pd.DataFrame(), None
 
     split, task_language = parsed
@@ -132,7 +133,7 @@ def _load_one_log(
     label = f"{model} / {task_language} / {split}"
     rows: list[dict[str, Any]] = []
 
-    for sample in log.samples:
+    for sample in samples:
         correct = sample_score(sample, scorer)
         if correct is None:
             continue
@@ -148,7 +149,7 @@ def _load_one_log(
             }
         )
 
-    del log
+    del log, samples
     gc.collect()
     if not rows:
         del rows
@@ -172,9 +173,7 @@ def load_problem_scores(
     workers: int,
 ) -> pd.DataFrame:
     """Load logs in parallel and combine repeated runs by model/problem."""
-    import gc
     frames: list[pd.DataFrame] = []
-    _CONCAT_CHUNK = 4  # flush accumulated frames frequently to cap memory footprint
 
     for index, (label, frame, warning) in enumerate(map_log_loader(_load_one_log, paths, scorer, workers), start=1):
         if warning:
@@ -183,34 +182,21 @@ def load_problem_scores(
             print(f"[{index}/{len(paths)}] {label}")
         if frame is not None and not frame.empty:
             frames.append(frame)
-        if len(frames) >= _CONCAT_CHUNK:
-            concatenated = pd.concat(frames, ignore_index=True)
-            del frames
-            keys = ["model", "language", "split", "sample_id", "source_id"]
-            grouped = concatenated.groupby(keys, dropna=False, as_index=False).agg(
-                correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum")
-            )
-            del concatenated
-            frames = [grouped]
-            gc.collect()
 
     if not frames:
         return pd.DataFrame()
 
     combined = pd.concat(frames, ignore_index=True)
     del frames
-    gc.collect()
 
     keys = ["model", "language", "split", "sample_id", "source_id"]
     problems = combined.groupby(keys, dropna=False, as_index=False).agg(
         correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum")
     )
     del combined
-    gc.collect()
 
     problems["correct"] = problems["correct_sum"] / problems["correct_count"]
     problems.drop(columns=["correct_sum", "correct_count"], inplace=True)
-    gc.collect()
     return problems
 
 

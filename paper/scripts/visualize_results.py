@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import multiprocessing
 import re
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
@@ -21,7 +22,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from eval_log_utils import sample_score
-from inspect_ai.log import read_eval_log
+from inspect_ai.log import read_eval_log, read_eval_log_sample_summaries
 from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, LANGUAGE_SPEAKERS, language_order
 from scipy.stats import gaussian_kde
 
@@ -48,13 +49,14 @@ def _steps(answer: str) -> int:
 
 def _load_log(path: Path) -> tuple[str, list[dict] | None, str | None]:
     try:
-        log = read_eval_log(str(path))
+        log = read_eval_log(str(path), header_only=True)
+        samples = read_eval_log_sample_summaries(str(path))
     except Exception as exc:
         return path.name, None, str(exc)
-    if not log.samples:
+    if not samples:
         return path.name, None, None
     rows = []
-    for s in log.samples:
+    for s in samples:
         score = sample_score(s, None)
         if score is None:
             continue
@@ -76,7 +78,10 @@ def load_logs(log_dir: Path, workers: int) -> dict[str, pd.DataFrame]:
     if not paths:
         return {}
     dfs = {}
-    with ProcessPoolExecutor(max_workers=min(workers, len(paths))) as pool:
+    with ProcessPoolExecutor(
+        max_workers=min(workers, len(paths)),
+        mp_context=multiprocessing.get_context("spawn"),
+    ) as pool:
         for split, rows, error in pool.map(_load_log, paths):
             if error:
                 print(f"Skipping unreadable log {split}: {error}")

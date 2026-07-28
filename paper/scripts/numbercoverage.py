@@ -16,9 +16,12 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import multiprocessing
 import re
+from collections.abc import Iterator
 from collections import defaultdict
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
+from itertools import islice
 from pathlib import Path
 from typing import Any
 
@@ -116,7 +119,7 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
         "status": str(log.status),
         "model": log.eval.model,
         "task": log.eval.task,
-        "samples": len(samples),
+        "samples": len(sample_rows),
         "final_scored_samples": len(final_scored),
         "final_accuracy": safe_rate(
             sum(row["final_correct"] for row in final_scored),
@@ -151,23 +154,28 @@ def analyze_logs(
     logs: list[Path],
     max_samples: int | None,
     workers: int,
-) -> list[tuple[dict[str, Any], list[dict[str, Any]]]]:
+) -> Iterator[tuple[dict[str, Any], list[dict[str, Any]]]]:
     if workers == 1:
-        results = []
         for path in logs:
             print(f"Analyzing {path}")
-            results.append(analyze_log(path, max_samples))
-        return results
+            yield analyze_log(path, max_samples)
+        return
 
-    ordered_results: list[tuple[dict[str, Any], list[dict[str, Any]]] | None] = [None] * len(logs)
-    with ProcessPoolExecutor(max_workers=workers) as executor:
-        futures = {executor.submit(analyze_log, path, max_samples): (index, path) for index, path in enumerate(logs)}
-        for future in as_completed(futures):
-            index, path = futures[future]
-            ordered_results[index] = future.result()
+    with ProcessPoolExecutor(
+        max_workers=workers,
+        mp_context=multiprocessing.get_context("spawn"),
+    ) as executor:
+        paths = iter(logs)
+        pending = [(path, executor.submit(analyze_log, path, max_samples)) for path in islice(paths, workers)]
+        while pending:
+            path, future = pending.pop(0)
+            yield future.result()
             print(f"Analyzed {path}")
-
-    return [result for result in ordered_results if result is not None]
+            try:
+                next_path = next(paths)
+            except StopIteration:
+                continue
+            pending.append((next_path, executor.submit(analyze_log, next_path, max_samples)))
 
 
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:

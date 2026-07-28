@@ -48,7 +48,7 @@ from eval_log_utils import (
     sample_synthetic_sets,
     select_logs,
 )
-from inspect_ai.log import read_eval_log
+from inspect_ai.log import read_eval_log, read_eval_log_sample_summaries
 from matplotlib.colors import Normalize
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
@@ -148,7 +148,8 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
     worker processes.
     """
     try:
-        log = read_eval_log(str(path))
+        log = read_eval_log(str(path), header_only=True)
+        samples = read_eval_log_sample_summaries(str(path))
     except Exception as exc:
         return path.name, None, f"Skipping unreadable log {path.name}: {exc}"
 
@@ -159,13 +160,13 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
     split, task_language = parsed_task
     label = f"{model_name(log.eval.model, log.eval.model_args)} / {task_language} / {split}"
 
-    if not log.samples:
+    if not samples:
         return label, pd.DataFrame(), None
 
     info = infer_model_info(log.eval.model)
     rows: list[dict[str, Any]] = []
 
-    for sample in log.samples:
+    for sample in samples:
         correct = sample_score(sample, scorer)
         if correct is None:
             continue
@@ -186,7 +187,7 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
             }
         )
 
-    del log  # free the large decompressed log before returning
+    del log, samples
     if not rows:
         return label, pd.DataFrame(), None
 
@@ -211,8 +212,6 @@ def load_samples(
     if not paths:
         return pd.DataFrame()
 
-    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
-
     for index, (label, frame, warning) in enumerate(map_log_loader(_load_one_log, paths, scorer, workers), start=1):
         if warning:
             print(warning)
@@ -220,8 +219,6 @@ def load_samples(
             print(f"[{index}/{len(paths)}] {label}")
         if frame is not None and not frame.empty:
             frames.append(frame)
-        if len(frames) >= _CONCAT_CHUNK:
-            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()

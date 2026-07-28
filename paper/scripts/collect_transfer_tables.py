@@ -116,7 +116,6 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     frames: list[pd.DataFrame] = []
-    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
     for label, frame, warning in map_log_loader(load_log_rows, paths, scorer, workers):
         if warning:
             print(warning)
@@ -124,8 +123,6 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
             print(f"Loaded {label}: {len(frame)} scored samples")
         if not frame.empty:
             frames.append(frame)
-        if len(frames) >= _CONCAT_CHUNK:
-            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
