@@ -20,6 +20,12 @@ LANGUAGE_LABELS = {
     "dan": "Danish",
     "nob": "Norwegian Bokmal",
     "isl": "Icelandic",
+    "mar": "Marathi",
+    "hin": "Hindi",
+    "ara": "Arabic",
+    "nld": "Dutch",
+    "est": "Estonian",
+    "jpn": "Japanese",
 }
 
 LANGUAGE_SPEAKERS = {
@@ -35,9 +41,26 @@ LANGUAGE_SPEAKERS = {
     "dan": 6_000_000,
     "nob": 5_000_000,
     "isl": 370_000,
+    "mar": 83_000_000,
+    "hin": 345_000_000,
+    "ara": 274_000_000,
+    "nld": 25_000_000,
+    "est": 1_100_000,
+    "jpn": 123_000_000,
 }
 
-HUMAN_VERIFIED_LANGUAGES = {"eng", "dan", "rus", "zho"}
+HUMAN_VERIFIED_LANGUAGES = {
+    "eng",
+    "dan",
+    "rus",
+    "zho",
+    "mar",
+    "hin",
+    "ara",
+    "nld",
+    "est",
+    "jpn",
+}
 
 LANGUAGE_COLORS = {
     "zho": "#D62828",
@@ -53,6 +76,12 @@ LANGUAGE_COLORS = {
     "dan": "#C60C30",
     "nob": "#002868",
     "isl": "#003897",
+    "mar": "#E76F51",
+    "hin": "#9B5DE5",
+    "ara": "#00A896",
+    "nld": "#F4A261",
+    "est": "#6A4C93",
+    "jpn": "#E63946",
 }
 
 FAMILY_ORDER = {
@@ -93,17 +122,23 @@ SPLIT_LABELS = {
 LANGUAGE_ORDER = {
     "zho": 0,
     "spa": 1,
-    "eng": 2,
-    "eng_metric": 3,
-    "por": 4,
-    "rus": 5,
-    "deu": 6,
-    "fra": 7,
-    "ita": 8,
-    "ukr": 9,
-    "dan": 10,
-    "nob": 11,
-    "isl": 12,
+    "hin": 2,
+    "eng": 3,
+    "eng_metric": 4,
+    "ara": 5,
+    "por": 6,
+    "jpn": 7,
+    "rus": 8,
+    "deu": 9,
+    "mar": 10,
+    "fra": 11,
+    "ita": 12,
+    "ukr": 13,
+    "nld": 14,
+    "dan": 15,
+    "nob": 16,
+    "est": 17,
+    "isl": 18,
 }
 
 PLOT_STYLE = {
@@ -263,4 +298,3 @@ def reasoning_variant_name(model: str) -> tuple[str, str | None]:
         if model.endswith(suffix):
             return model[: -len(suffix)], mode
     return model, None
-

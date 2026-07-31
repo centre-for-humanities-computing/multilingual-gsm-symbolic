@@ -42,7 +42,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
-from plot_config import FAMILY_COLORS, FAMILY_ORDER, LANGUAGE_LABELS, PLOT_STYLE, language_order, ordered_families
+from plot_config import FAMILY_COLORS, LANGUAGE_LABELS, PLOT_STYLE, language_order, ordered_families
 from scipy.spatial import distance
 from transformers import AutoTokenizer
 
@@ -70,6 +70,8 @@ LANGUAGE_SCRIPTS = {
     "mar": "Devanagari",
     "hin": "Devanagari",
     "ara": "Arabic",
+    "nld": "Latin",
+    "est": "Latin",
     "tha": "Thai",
 }
 
