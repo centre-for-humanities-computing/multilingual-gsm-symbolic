@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
 # ///
 """Plot original accuracy against sampled synthetic-set distributions by language.
 
@@ -46,6 +46,7 @@ from plot_config import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "language_ridgeline"
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 
 SYNTHETIC_COLOR = "#173B75"
 SYNTHETIC_FILL = "#AFC0DD"
@@ -532,10 +533,10 @@ def plot_headline_figure(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--log-dir",
+        "--analysis",
         type=Path,
-        default=DEFAULT_LOG_DIR,
-        help="Directory searched recursively for Inspect .eval logs.",
+        default=DEFAULT_ANALYSIS,
+        help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument(
         "--model",
@@ -586,14 +587,12 @@ def main() -> None:
     if args.workers < 1:
         parser.error("--workers must be at least 1")
 
-    paths = discover_selected_logs(args.log_dir, args.model, args.workers)
-    if not paths:
-        requested = f" for models {args.model!r}" if args.model else ""
-        raise SystemExit(f"No successful logs found{requested} in {args.log_dir}.")
-
-    print(f"Selected {len(paths)} successful logs after deduplication.")
-    print(f"Loading logs with {args.workers} worker process(es).")
-    problems = load_problem_scores(paths, args.scorer, args.workers)
+    problems = pd.read_parquet(
+        args.analysis, columns=["model", "language", "split", "id", "source_id", "correct"]
+    ).rename(columns={"id": "sample_id"})
+    problems = problems[problems["language"] != "uncorrected_isl"]
+    if args.model:
+        problems = problems[problems["model"].str.lower().isin({model.lower() for model in args.model})]
     if problems.empty:
         raise SystemExit("No scored samples found in the selected logs.")
 

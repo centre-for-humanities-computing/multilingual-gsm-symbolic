@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
 # ///
 """Plot language-transfer trade-offs under an approximate inference budget.
 
@@ -38,6 +38,7 @@ from scipy.stats import bootstrap
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 REASONING_LABELS = {"off": "reasoning off", "on": "reasoning on"}
 FAMILY_COLORS = ["#2563EB", "#DC2626", "#059669", "#7C3AED", "#D97706", "#0891B2"]
 MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*", "<", ">"]
@@ -178,6 +179,24 @@ def load_qwen_summary(selected: list[tuple[Path, Any]], scorer: str | None, work
         )
         .reset_index()
     )
+
+
+def load_qwen_summary_parquet(path: Path) -> pd.DataFrame:
+    rows = pd.read_parquet(
+        path, columns=["model", "family", "params_b", "language", "split", "id", "correct", "total_tokens"]
+    )
+    rows["model_raw"] = rows["model"].str.replace(r" \(reasoning (?:on|off)\)$", "", regex=True)
+    rows = rows[(rows["split"] == "synthetic") & (rows["language"] != "uncorrected_isl")]
+    rows = rows.dropna(subset=["correct", "total_tokens"])
+    keys = ["model_raw", "model", "family", "params_b", "language", "split"]
+    grouped = rows.groupby(keys, dropna=False)
+    summary = grouped.agg(
+        accuracy=("correct", "mean"), n_problems=("correct", "size"), avg_total_tokens=("total_tokens", "mean")
+    ).reset_index()
+    mappings = grouped.apply(
+        lambda group: dict(zip(group["id"].astype(str), group["correct"], strict=True)), include_groups=False
+    )
+    return summary.merge(mappings.rename("sample_correct").reset_index(), on=keys)
 
 
 def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
@@ -497,11 +516,10 @@ def plot_qwen_compute_budget_relative_family_transfers(summary: pd.DataFrame, ou
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--log-dir",
+        "--analysis",
         type=Path,
-        nargs="+",
-        default=[DEFAULT_LOG_DIR],
-        help="One or more directories searched recursively for .eval logs.",
+        default=DEFAULT_ANALYSIS,
+        help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument("--scorer", help="Inspect scorer name to use; defaults to math, pattern, then first score.")
@@ -509,11 +527,7 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=32, help="Workers used for log selection and full log loading.")
     args = parser.parse_args()
 
-    paths = discover_logs(args.log_dir)
-    selected = select_logs(paths, args.include_incomplete, workers=args.workers)
-    print(f"Discovered {len(paths)} logs; selected {len(selected)} after status filtering and deduplication.")
-
-    summary = load_qwen_summary(selected, args.scorer, args.workers)
+    summary = load_qwen_summary_parquet(args.analysis)
     if summary.empty:
         raise SystemExit("No scored synthetic samples with generation timings found.")
 

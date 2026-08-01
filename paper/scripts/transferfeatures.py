@@ -33,6 +33,7 @@ import argparse
 import json
 import math
 import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -370,6 +371,27 @@ def tokenizer_repo(model_raw: str) -> str | None:
     return raw if "/" in raw else None
 
 
+def model_repo(model: str) -> str | None:
+    """Recover the public tokenizer repository from the canonical model label."""
+    base = re.sub(r" \(reasoning (?:on|off)\)$", "", model, flags=re.IGNORECASE)
+    lower = base.lower()
+    if lower.startswith("qwen"):
+        return f"Qwen/{base}"
+    if lower.startswith("olmo"):
+        return f"allenai/{base}"
+    if lower.startswith("granite"):
+        return f"ibm-granite/{base}"
+    if lower.startswith("gemma"):
+        return f"google/{base}"
+    if lower.startswith("apertus"):
+        return f"swiss-ai/{base}"
+    if lower.startswith("eurollm"):
+        return f"utter-project/{base}"
+    if lower == "phi-4" or lower.startswith("phi-4-mini"):
+        return f"microsoft/{base}"
+    return None
+
+
 def text_fertility(tokenizer: Any, texts: list[str]) -> tuple[float, int, int]:
     """Return corpus tokens/non-whitespace-character ratio and its totals."""
     encoded = tokenizer(
@@ -394,7 +416,8 @@ def collect_tokenizer_fertility(
     if "eng" not in questions:
         raise ValueError("English questions are required as the fertility reference")
 
-    models = summary[["model_raw", "model", "family"]].drop_duplicates()
+    models = summary[["model", "family"]].drop_duplicates()
+    models["model_raw"] = models["model"].map(model_repo)
     rows: list[dict[str, Any]] = []
     load_errors: list[str] = []
 
@@ -514,9 +537,9 @@ def build_transfer_table(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--summary",
+        "--analysis",
         type=Path,
-        default=ARTIFACTS_DIR / "model_grid" / "run_summary.csv",
+        default=ARTIFACTS_DIR / "transfer_tables" / "analysis.parquet",
     )
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "hf_dataset" / "data")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
@@ -528,7 +551,11 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    summary = pd.read_csv(args.summary)
+    samples = pd.read_parquet(args.analysis)
+    samples = samples[samples["language"] != "uncorrected_isl"]
+    group_cols = ["model", "family", "params_b", "vocab_size", "language", "split"]
+    summary = samples.groupby(group_cols, dropna=False)["correct"].agg(accuracy="mean", n_problems="size", stderr="sem").reset_index()
+    summary["model_raw"] = summary["model"].map(model_repo)
     if "eng" not in set(summary["language"]):
         raise SystemExit("English results are required to calculate recovered performance.")
     languages = language_order(summary["language"].unique())

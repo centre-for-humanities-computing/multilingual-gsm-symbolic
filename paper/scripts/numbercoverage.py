@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
 # ///
 """Measure whether every number in each prompt appears in the model response.
 
@@ -27,6 +27,7 @@ from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from eval_log_utils import discover_logs, sample_score, select_logs
 from inspect_ai.log import read_eval_log
 from matplotlib.ticker import PercentFormatter
@@ -44,6 +45,7 @@ from plot_config import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "prompt_number_coverage"
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 plt.rcParams.update(PLOT_STYLE)
 
 
@@ -390,10 +392,10 @@ def run_self_test() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "inputs",
-        nargs="*",
+        "--analysis",
         type=Path,
-        help=f"Inspect .eval logs or directories containing logs. Defaults to {DEFAULT_LOG_DIR}.",
+        default=DEFAULT_ANALYSIS,
+        help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument(
@@ -411,26 +413,34 @@ def main() -> None:
 
     if args.self_test:
         run_self_test()
-        if not args.inputs:
-            return
+        return
 
-    inputs = args.inputs or [DEFAULT_LOG_DIR]
-    logs = discover_logs(inputs)
-    if not logs:
-        raise SystemExit("No non-empty .eval logs found.")
-
-    if args.workers is not None and args.workers < 1:
-        parser.error("--workers must be at least 1.")
-    workers = min(args.workers or 128, len(logs))
-    selected = select_logs(logs, include_incomplete=False, workers=workers)
-    logs = [path for path, _header in selected]
-    print(f"Analyzing {len(logs)} successful deduplicated log(s) with {workers} worker(s).")
-
-    summaries: list[dict[str, Any]] = []
-    sample_rows: list[dict[str, Any]] = []
-    for summary, samples in analyze_logs(logs, args.max_samples, workers):
-        summaries.append(summary)
-        sample_rows.extend(samples)
+    columns = ["model", "task", "eval_id", "id", "source_id", "language", "split", "correct",
+               "prompt_number_count", "retrieved_prompt_number_count", "lhs_count", "lhs_retrieved", "rhs_count",
+               "rhs_retrieved", "all_prompt_numbers_present"]
+    frame = pd.read_parquet(args.analysis, columns=columns)
+    frame = frame[frame["language"] != "uncorrected_isl"].copy()
+    if args.max_samples:
+        frame = frame.groupby(["model", "language", "split"], observed=True).head(args.max_samples)
+    frame["missing_prompt_number_count"] = frame["prompt_number_count"] - frame["retrieved_prompt_number_count"]
+    frame = frame.rename(columns={"id": "sample_id", "correct": "final_correct"})
+    sample_rows = frame.to_dict("records")
+    summaries = []
+    for (_model, _task, _eval), group in frame.groupby(["model", "task", "eval_id"], observed=True):
+        rows = group.to_dict("records")
+        right = summarize_group([row for row in rows if row["final_correct"]])
+        wrong = summarize_group([row for row in rows if not row["final_correct"]])
+        summaries.append({
+            "model": _model, "task": _task, "eval_id": _eval, "samples": len(rows),
+            "final_scored_samples": len(rows), "final_accuracy": float(group["final_correct"].mean()),
+            "samples_with_all_prompt_numbers_present": int(group["all_prompt_numbers_present"].sum()),
+            "all_prompt_numbers_present_rate": float(group["all_prompt_numbers_present"].mean()),
+            "number_coverage_breakdown": {"final_correct": right, "final_incorrect": wrong},
+            "correct_minus_incorrect_percentage_points": (
+                (right["all_prompt_numbers_present_rate"] - wrong["all_prompt_numbers_present_rate"]) * 100
+                if right["all_prompt_numbers_present_rate"] is not None and wrong["all_prompt_numbers_present_rate"] is not None else None
+            ),
+        })
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "summary.json").write_text(

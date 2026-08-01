@@ -76,9 +76,11 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
         correct = score >= 0.5
         language = "uncorrected_isl" if is_uncorrected_isl else metadata.get("language", task_language)
         sample_id = scalar(sample.id)
+        completion = getattr(sample.output, "completion", "") or ""
+        usage = getattr(sample.output, "usage", None)
         number_coverage = number_coverage_counts(
             getattr(sample, "input", ""),
-            getattr(sample.output, "completion", ""),
+            completion,
             metadata.get("answer", ""),
             str(language),
         )
@@ -96,7 +98,8 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
                 "split": split,
                 "target": scalar(getattr(sample, "target", None)),
                 "prompt_chars": len(str(getattr(sample, "input", "") or "")),
-                "completion_chars": len(str(getattr(sample, "output", "") or "")),
+                "completion_chars": len(str(completion)),
+                "total_tokens": scalar(getattr(usage, "total_tokens", None)),
                 **number_coverage,
                 "total_time": scalar(getattr(sample, "total_time", None)),
                 "scorer": scorer or "auto",
@@ -219,7 +222,6 @@ def build_analysis_tables(
             suffixes=("", "_model_language"),
         )
     analysis = analysis.drop(columns=["model_raw"], errors="ignore")
-
     return analysis
 
 

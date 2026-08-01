@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
 # ///
 """Visualize multilingual GSM evaluation logs across models and splits.
 
@@ -72,6 +72,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_CORRECTED_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 CORRECTION_COMPARISON_WIDTH = 13.5
 
 
@@ -1289,11 +1290,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument(
-        "--log-dir",
+        "--analysis",
         type=Path,
-        nargs="+",
-        default=[DEFAULT_LOG_DIR],
-        help="One or more directories searched recursively for .eval logs.",
+        default=DEFAULT_ANALYSIS,
+        help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument(
         "--out-dir",
@@ -1334,17 +1334,14 @@ def main() -> None:
     if args.correction_samples < 2:
         parser.error("--correction-samples must be at least 2")
 
-    paths = discover_logs(args.log_dir)
-    selected = select_logs(paths, args.include_incomplete, workers=args.workers)
-
-    print(f"Discovered {len(paths)} logs; selected {len(selected)} after status filtering and deduplication.")
-    print(f"Loading selected logs with {args.workers} worker(s).")
-
-    samples = load_samples(selected, args.scorer, workers=args.workers)
+    samples = pd.read_parquet(args.analysis).rename(columns={"id": "sample_id"})
+    samples["model_raw"] = samples["model"]
 
     if samples.empty:
         raise SystemExit("No scored samples found in the selected logs.")
 
+    corrected = samples[samples["language"] != "uncorrected_isl"].copy()
+    samples = corrected
     summary = filter_summary_models(summarize(samples))
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -1412,21 +1409,19 @@ def main() -> None:
         args.out_dir / "reasoning_delta_heatmap.png",
     )
     correction_outputs: list[Path] = []
-    if args.corrected_log_dir:
-        corrected_paths = discover_logs([args.corrected_log_dir])
-        corrected_selected = select_logs(corrected_paths, args.include_incomplete, workers=args.workers)
-        print(
-            f"Discovered {len(corrected_paths)} corrected logs; "
-            f"selected {len(corrected_selected)} after status filtering and deduplication."
-        )
-        corrected = load_samples(corrected_selected, args.scorer, workers=args.workers)
+    if "uncorrected_isl" in set(pd.read_parquet(args.analysis, columns=["language"])["language"]):
+        all_samples = pd.read_parquet(args.analysis).rename(columns={"id": "sample_id"})
+        all_samples["model_raw"] = all_samples["model"]
+        uncorrected = all_samples[all_samples["language"] == "uncorrected_isl"].copy()
+        uncorrected["language"] = "isl"
+        corrected = all_samples[all_samples["language"] == "isl"].copy()
         if corrected.empty:
-            print(f"Skipped correction comparison: no scored corrected samples found in {args.corrected_log_dir}.")
+            print("Skipped correction comparison: no corrected Icelandic samples found.")
         else:
-            languages = paired_correction_languages(samples, corrected, requested=None)
+            languages = ["isl"]
             for language in languages:
                 rows = collect_correction_comparison_rows(
-                    samples,
+                    uncorrected,
                     corrected,
                     language,
                     args.correction_samples,
