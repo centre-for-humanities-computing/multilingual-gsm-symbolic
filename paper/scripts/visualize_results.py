@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 from eval_log_utils import sample_score
 from inspect_ai.log import read_eval_log, read_eval_log_sample_summaries
-from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, LANGUAGE_SPEAKERS, language_order
+from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, language_order
 from scipy.stats import gaussian_kde
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -133,15 +133,21 @@ def plot_distribution(tables: dict, out: Path) -> None:
         # Histogram of set means (behind KDE)
         ax.hist(set_means, bins=20, color=color, alpha=0.25, edgecolor="none", density=True, zorder=1)
 
-        # KDE line (no fill)
-        kde = gaussian_kde(set_means, bw_method=0.3)
-        x = np.linspace(set_means.min() - 0.02, set_means.max() + 0.02, 400)
-        y = kde(x)
-        ax.plot(x, y, color=color, linewidth=2, zorder=3, label="Synthetic")
+        # KDE line (no fill). A constant bootstrap distribution represents a
+        # point mass and has no invertible covariance for gaussian_kde.
+        if np.ptp(set_means) <= np.finfo(float).eps:
+            peak_x = float(set_means[0])
+            peak_y = 1.0
+            ax.axvline(peak_x, color=color, linewidth=2, zorder=3, label="Synthetic")
+        else:
+            kde = gaussian_kde(set_means, bw_method=0.3)
+            x = np.linspace(set_means.min() - 0.02, set_means.max() + 0.02, 400)
+            y = kde(x)
+            ax.plot(x, y, color=color, linewidth=2, zorder=3, label="Synthetic")
+            peak_x = x[np.argmax(y)]
+            peak_y = y.max()
 
-        # Single dot at KDE peak
-        peak_x = x[np.argmax(y)]
-        peak_y = y.max()
+        # Single dot at the distribution peak
         ax.scatter(peak_x, peak_y, color=color, s=70, zorder=4)
 
         # Original accuracy line + performance degradation arrow at the dot height
@@ -284,13 +290,18 @@ def plot_language_gap(tables: dict, out: Path) -> None:
         set_means = np.array([np.mean([rng.choice(by_template[t]) for t in templates]) for _ in range(n_sets)])
 
         ax.hist(set_means, bins=20, color=color, alpha=0.2, edgecolor="none", density=True, zorder=1)
-        kde = gaussian_kde(set_means, bw_method=0.3)
-        x = np.linspace(set_means.min() - 0.02, set_means.max() + 0.02, 400)
-        y = kde(x)
-        ax.plot(x, y, color=color, linewidth=2, zorder=3, label=f"{LANGUAGE_LABELS.get(lang, lang)} (synthetic)")
-
-        peak_x = x[np.argmax(y)]
-        peak_y = y.max()
+        label = f"{LANGUAGE_LABELS.get(lang, lang)} (synthetic)"
+        if np.ptp(set_means) <= np.finfo(float).eps:
+            peak_x = float(set_means[0])
+            peak_y = 1.0
+            ax.axvline(peak_x, color=color, linewidth=2, zorder=3, label=label)
+        else:
+            kde = gaussian_kde(set_means, bw_method=0.3)
+            x = np.linspace(set_means.min() - 0.02, set_means.max() + 0.02, 400)
+            y = kde(x)
+            ax.plot(x, y, color=color, linewidth=2, zorder=3, label=label)
+            peak_x = x[np.argmax(y)]
+            peak_y = y.max()
         ax.scatter(peak_x, peak_y, color=color, s=70, zorder=4)
         peaks[lang] = (peak_x, peak_y)
 
@@ -325,40 +336,6 @@ def plot_language_gap(tables: dict, out: Path) -> None:
 
 # ── Figure 4: speakers (log) vs synthetic accuracy ───────────────────────────
 
-# Approximate L1 speaker counts (Wikipedia, rounded)
-def plot_speakers(tables: dict, out: Path) -> None:
-    rng = np.random.default_rng(0)
-    langs = [l for l in tables if "synthetic" in tables[l] and l in LANGUAGE_SPEAKERS]
-
-    fig, ax = plt.subplots(figsize=(6, 4.5))
-    for l in langs:
-        color = LANGUAGE_COLORS.get(l, "steelblue")
-        x = LANGUAGE_SPEAKERS[l]
-        vals = tables[l]["synthetic"]["correct"].values
-        y = vals.mean()
-        boot = np.array([rng.choice(vals, size=len(vals), replace=True).mean() for _ in range(1000)])
-        ci_lo, ci_hi = np.percentile(boot, 2.5), np.percentile(boot, 97.5)
-
-        ax.errorbar(x, y, yerr=[[y - ci_lo], [ci_hi - y]], fmt="o", color=color, capsize=4, markersize=7, zorder=3)
-        ax.annotate(
-            LANGUAGE_LABELS.get(l, l),
-            (x, y),
-            textcoords="offset points",
-            xytext=(6, 4),
-            fontsize=9,
-            color=color,
-        )
-
-    ax.set_xscale("log")
-    ax.set_xlabel("Number of native speakers (log scale)")
-    ax.set_ylabel("Mean accuracy (95% CI)")
-    ax.set_ylim(0, 1)
-    fig.tight_layout()
-    fig.savefig(out, bbox_inches="tight")
-    plt.close(fig)
-    print(f"Saved {out}")
-
-
 # ── main ──────────────────────────────────────────────────────────────────────
 
 
@@ -381,7 +358,6 @@ def main() -> None:
     plot_distribution(tables, args.out_dir / "distribution.png")
     plot_by_steps(tables, args.out_dir / "by_steps.png")
     plot_language_gap(tables, args.out_dir / "language_gap.png")
-    plot_speakers(tables, args.out_dir / "speakers.png")
 
 
 if __name__ == "__main__":

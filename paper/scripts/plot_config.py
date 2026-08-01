@@ -175,6 +175,8 @@ def reasoning_mode(model_args: dict[str, Any] | None) -> str | None:
 def model_name(raw_model: str, model_args: dict[str, Any] | None = None) -> str:
     name = raw_model.rstrip("/").split("/")[-1]
     mode = reasoning_mode(model_args)
+    if mode is None and name.lower().startswith("olmo-3-") and name.lower().endswith("-think"):
+        mode = "on"
     return f"{name} (reasoning {mode})" if mode else name
 
 

@@ -11,7 +11,16 @@ if str(SCRIPT_DIR) not in sys.path:
 from eval_log_utils import map_log_loader  # noqa: E402
 from number_coverage_utils import extract_numbers, number_coverage_counts  # noqa: E402
 from numbercoverage import number_coverage_grid  # noqa: E402
-from plot_config import language_order, model_sort_key, ordered_models  # noqa: E402
+from plot_config import (  # noqa: E402
+    HUMAN_VERIFIED_LANGUAGES,
+    LANGUAGE_COLORS,
+    LANGUAGE_LABELS,
+    LANGUAGE_ORDER,
+    LANGUAGE_SPEAKERS,
+    language_order,
+    model_sort_key,
+    ordered_models,
+)
 from qwen_compute_budget import (  # noqa: E402
     plot_qwen_compute_budget_family_transfers,
     plot_qwen_compute_budget_relative_transfer,
@@ -82,6 +91,27 @@ def test_language_order_retains_all_languages_with_known_first() -> None:
         "fra",
         "dan",
         "xxx",
+    ]
+
+
+def test_new_languages_have_complete_paper_metadata() -> None:
+    new_languages = {"mar", "hin", "ara", "nld", "est", "jpn"}
+
+    assert new_languages <= HUMAN_VERIFIED_LANGUAGES
+    assert new_languages <= LANGUAGE_LABELS.keys()
+    assert new_languages <= LANGUAGE_SPEAKERS.keys()
+    assert new_languages <= LANGUAGE_COLORS.keys()
+    assert new_languages <= LANGUAGE_ORDER.keys()
+
+
+def test_language_order_includes_new_languages() -> None:
+    assert language_order(["nld", "jpn", "mar", "hin", "ara", "est"]) == [
+        "hin",
+        "ara",
+        "jpn",
+        "mar",
+        "nld",
+        "est",
     ]
 
 

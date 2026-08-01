@@ -11,6 +11,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from collections.abc import Iterable, Sequence
@@ -24,63 +25,61 @@ from huggingface_hub import hf_hub_download
 MODELS = (
      #  Qwen2.5 Instruct
    # "Qwen/Qwen2.5-0.5B-Instruct",
-     "Qwen/Qwen2.5-1.5B-Instruct",
-     "Qwen/Qwen2.5-3B-Instruct",
-     "Qwen/Qwen2.5-7B-Instruct",
-     "Qwen/Qwen2.5-14B-Instruct",
-     "Qwen/Qwen2.5-32B-Instruct",
-     "Qwen/Qwen2.5-72B-Instruct",
+   # "Qwen/Qwen2.5-1.5B-Instruct",
+   # "Qwen/Qwen2.5-3B-Instruct",
+   # "Qwen/Qwen2.5-7B-Instruct",
+   # "Qwen/Qwen2.5-14B-Instruct",
+   # "Qwen/Qwen2.5-32B-Instruct",
+   # "Qwen/Qwen2.5-72B-Instruct",
 
      #  Qwen3 dense reasoning-capable models
-     "Qwen/Qwen3-0.6B",
-     "Qwen/Qwen3-1.7B",
-     "Qwen/Qwen3-4B",
-     "Qwen/Qwen3-8B",
-     "Qwen/Qwen3-14B",
-     "Qwen/Qwen3-32B",
+   # "Qwen/Qwen3-0.6B",
+   # "Qwen/Qwen3-1.7B",
+   # "Qwen/Qwen3-4B",
+   # "Qwen/Qwen3-8B",
+   # "Qwen/Qwen3-14B",
+   # "Qwen/Qwen3-32B",
 
     #   Qwen3.5 reasoning models up to 27B
-     "Qwen/Qwen3.5-0.8B",
-     "Qwen/Qwen3.5-4B",
-     "Qwen/Qwen3.5-9B",
-     "Qwen/Qwen3.5-27B",
+   # "Qwen/Qwen3.5-0.8B",
+   # "Qwen/Qwen3.5-4B",
+   # "Qwen/Qwen3.5-9B",
+   # "Qwen/Qwen3.5-27B",
 
     #   OLMo 2 Instruct
-     "allenai/OLMo-2-0425-1B-Instruct",
-     "allenai/OLMo-2-1124-7B-Instruct",
-     "allenai/OLMo-2-1124-13B-Instruct",
-     "allenai/OLMo-2-0325-32B-Instruct",
+   # "allenai/OLMo-2-0425-1B-Instruct",
+   # "allenai/OLMo-2-1124-7B-Instruct",
+   # "allenai/OLMo-2-1124-13B-Instruct",
+   # "allenai/OLMo-2-0325-32B-Instruct",
 
     #   OLMo 3
-     "allenai/Olmo-3-7B-Think",
-     "allenai/Olmo-3-32B-Think",
+    "allenai/Olmo-3-7B-Think",
+    "allenai/Olmo-3-7B-Instruct",
+    "allenai/Olmo-3-32B-Think",
+    "allenai/Olmo-3.1-32B-Instruct",
 
    #    Granite 3.2
-     "ibm-granite/granite-3.2-2b-instruct",
-     "ibm-granite/granite-3.2-8b-instruct",
+   # "ibm-granite/granite-3.2-2b-instruct",
+   # "ibm-granite/granite-3.2-8b-instruct",
 
    #    Gemma 3 IT
-     "google/gemma-3-1b-it",
-     "google/gemma-3-4b-it",
-     "google/gemma-3-12b-it",
-     "google/gemma-3-27b-it",
+   # "google/gemma-3-1b-it",
+   # "google/gemma-3-4b-it",
+   # "google/gemma-3-12b-it",
+   # "google/gemma-3-27b-it",
 
     #   Gemma 4 dense IT
-    "google/gemma-4-12B-it",
-    "google/gemma-4-31B-it",
+   # "google/gemma-4-12B-it",
+   # "google/gemma-4-31B-it",
 
    #    Apertus
-     "swiss-ai/Apertus-8B-Instruct-2509",
-     "swiss-ai/Apertus-70B-Instruct-2509",
+   # "swiss-ai/Apertus-8B-Instruct-2509",
+   # "swiss-ai/Apertus-70B-Instruct-2509",
 
     #   OpenEuroLLM
-    "utter-project/EuroLLM-1.7B-Instruct",
-    "utter-project/EuroLLM-9B-Instruct-2512",
-    "utter-project/EuroLLM-22B-Instruct-2512",
-
-      # Phi-4
-    "microsoft/Phi-4-mini-reasoning",
-    "microsoft/phi-4",
+   # "utter-project/EuroLLM-1.7B-Instruct",
+   # "utter-project/EuroLLM-9B-Instruct-2512",
+   # "utter-project/EuroLLM-22B-Instruct-2512",
 )
 # Repository id (no revision) and optional revision to apply to each task
 DATASET = "danish-foundation-models/multilingual-gsm-symbolic"
@@ -92,6 +91,7 @@ HISTORICAL_SPLITS = ("test_original", "test_synthetic")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CACHE_POLICY = Path(__file__).with_name("cache.yaml")
+INSPECT_PATCH = REPO_ROOT / "patches" / "inspect-ai-math-scorer.patch"
 CACHE_DIR = REPO_ROOT / "cache"
 LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 HISTORICAL_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
@@ -141,6 +141,19 @@ class ModelRun:
 
 def unique(values: Sequence[str]) -> list[str]:
     return list(dict.fromkeys(values))
+
+
+def patch_inspect() -> None:
+    import inspect_ai
+
+    package_root = Path(inspect_ai.__file__).resolve().parent.parent
+    command = ["patch", "--batch", "--forward", "-p1", "-i", str(INSPECT_PATCH)]
+    applied = subprocess.run(command, cwd=package_root, capture_output=True)
+    if applied.returncode == 0:
+        return
+    check = command[:2] + ["--dry-run", "--reverse"] + command[3:]
+    if subprocess.run(check, cwd=package_root, capture_output=True).returncode:
+        raise RunnerError("Installed Inspect version is incompatible with the scorer patch")
 
 
 def load_tasks(revision: str = REVISION) -> list[Task]:
@@ -194,16 +207,32 @@ def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.Ar
     )
     parser.add_argument("--reasoning-effort", help="Forwarded to Inspect for models that support it.")
     parser.add_argument(
+        "--reasoning",
+        choices=("on", "off"),
+        help="Run only the selected reasoning mode for toggleable models.",
+    )
+    parser.add_argument(
         "--concurrency",
         type=int,
-        default=128,
-        help="Max connections and samples for Inspect.",
+        help="Override size-based max connections and samples for Inspect.",
     )
     parser.add_argument(
         "--tasks",
         type=int,
         default=16,
         help="Max tasks for Inspect.",
+    )
+    parser.add_argument(
+        "--max-retries",
+        type=int,
+        default=10,
+        help="Maximum model API retries per request (default: 10).",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=600,
+        help="Model API request timeout in seconds (default: 600).",
     )
     parser.add_argument(
         "--vllm-server-arg",
@@ -254,6 +283,9 @@ def select_tasks(
 
 def model_args(model: str) -> list[str]:
     lower = model.lower()
+    if lower.startswith("allenai/olmo-3-") and lower.endswith("-think"):
+        kwargs = json.dumps({"think": True}).replace("'", "'\"'\"'")
+        return ["-M", f"default_chat_template_kwargs='{kwargs}'"]
     if lower.startswith("qwen/qwen3-") or lower.startswith("qwen/qwen3.5-"):
         return ["-M", "reasoning_parser=qwen3"]
     if "phi-4" in lower:
@@ -266,16 +298,13 @@ def reasoning_toggleable(model: str) -> bool:
     return (
         lower.startswith("qwen/qwen3-")
         or lower.startswith("qwen/qwen3.5-")
-        or (lower.startswith("allenai/olmo-3-") and lower.endswith("-think"))
         or lower.startswith("ibm-granite/granite-3.2-")
     )
 
 
 def reasoning_kwargs(model: str) -> tuple[str, str]:
     lower = model.lower()
-    if lower.startswith("allenai/olmo-3-"):
-        key = "think"
-    elif lower.startswith("ibm-granite/granite-3.2-"):
+    if lower.startswith("ibm-granite/granite-3.2-"):
         key = "thinking"
     else:
         key = "enable_thinking"
@@ -291,9 +320,11 @@ def model_runs(models: Iterable[str]) -> list[ModelRun]:
     runs = []
     for model in models:
         base_args = tuple(model_args(model))
-        if reasoning_toggleable(model):
+        lower = model.lower()
+        if lower.startswith("allenai/olmo-3-") and lower.endswith("-think"):
+            runs.append(ModelRun(model, base_args, "on"))
+        elif reasoning_toggleable(model):
             on_kwargs, off_kwargs = reasoning_kwargs(model)
-            lower = model.lower()
             is_qwen_reasoning = lower.startswith("qwen/qwen3-") or lower.startswith("qwen/qwen3.5-")
             on_args = base_args if is_qwen_reasoning else base_args + ("-M", on_kwargs)
             off_args = ("-M", off_kwargs) if is_qwen_reasoning else base_args + ("-M", off_kwargs)
@@ -312,6 +343,12 @@ def model_ref(model: str) -> str:
     if model.startswith(("openai/", "vllm/")):
         return model
     return f"vllm/{model}"
+
+
+def model_concurrency(model: str) -> int:
+    matches = re.findall(r"(\d+(?:\.\d+)?)B(?:-|$)", model, re.IGNORECASE)
+    size = float(matches[-1]) if matches else {"microsoft/phi-4": 14, "microsoft/phi-4-mini-reasoning": 3.8}.get(model.lower(), 8)
+    return 256 if size <= 2 else 128 if size <= 10 else 64 if size <= 20 else 32 if size <= 40 else 16
 
 
 def _normalize_model_arg_value(value: Any) -> Any:
@@ -382,10 +419,13 @@ def inspect_command(
     log_dir: Path = LOG_DIR,
     revision: str = REVISION,
     reasoning_effort: str | None = None,
-    concurrency: int = 128,
+    concurrency: int = 64,
     max_tasks: int = 16,
+    max_retries: int = 10,
+    timeout: int = 600,
 ) -> list[str]:
     eval_set_id = eval_set_id_for_run(run, revision)
+    inspect_executable = str(Path(sys.executable).with_name("inspect"))
     # place the revision after the task id so the HF loader parses it correctly
     specs = [
         f"hf/{DATASET}/{task.task_id}@{revision}" if revision else f"hf/{DATASET}/{task.task_id}" for task in tasks
@@ -393,13 +433,15 @@ def inspect_command(
     command = [
         # Eval sets use the log directory to skip successful tasks and retry
         # interrupted tasks without repeating their completed samples.
-        "inspect", "eval-set", *specs,
+        inspect_executable, "eval-set", *specs,
         "--id", eval_set_id,
         "--model", model_ref(run.model),
         *run.args,
         "--max-connections", str(concurrency),
         "--max-samples", str(concurrency),
         "--max-tasks", str(max_tasks),
+        "--max-retries", str(max_retries),
+        "--timeout", str(timeout),
         "--cache", str(CACHE_POLICY),
         "--log-dir", str(log_dir),
         "--log-dir-allow-dirty",
@@ -416,11 +458,20 @@ def inspect_commands(
     base_log_dir: Path = LOG_DIR,
     revision: str = REVISION,
     reasoning_effort: str | None = None,
-    concurrency: int = 128,
+    concurrency: int = 64,
     max_tasks: int = 16,
+    max_retries: int = 10,
+    timeout: int = 600,
 ) -> list[tuple[Path, str, list[str]]]:
     if not historical:
-        return [(base_log_dir, revision, inspect_command(run, tasks, base_log_dir, revision, reasoning_effort, concurrency, max_tasks))]
+        return [(
+            base_log_dir,
+            revision,
+            inspect_command(
+                run, tasks, base_log_dir, revision, reasoning_effort,
+                concurrency, max_tasks, max_retries, timeout,
+            ),
+        )]
 
     unsupported_splits = sorted({task.split for task in tasks if task.split not in HISTORICAL_SPLITS})
     if unsupported_splits:
@@ -441,7 +492,11 @@ def inspect_commands(
                 (
                     log_dir,
                     historical_revision,
-                    inspect_command(run, language_tasks, log_dir, historical_revision, reasoning_effort, concurrency, max_tasks),
+                    inspect_command(
+                        run, language_tasks, log_dir, historical_revision,
+                        reasoning_effort, concurrency, max_tasks, max_retries,
+                        timeout,
+                    ),
                 )
             )
     return commands
@@ -474,6 +529,9 @@ def merged_vllm_server_args(env: dict[str, str], overrides: dict[str, Any]) -> d
 
 def vllm_environment(server_args: dict[str, Any] | None = None) -> dict[str, str]:
     env = os.environ.copy()
+    env["PATH"] = os.pathsep.join(
+        (str(Path(sys.executable).parent), env.get("PATH", ""))
+    )
     env["INSPECT_CACHE_DIR"] = str(CACHE_DIR)
     # The CUDA 13 packages in this environment have mismatched nvcc/headers.
     # Avoid vLLM paths that require FlashInfer or DeepGEMM runtime compilation.
@@ -485,6 +543,15 @@ def vllm_environment(server_args: dict[str, Any] | None = None) -> dict[str, str
         separators=(",", ":"),
     )
     return env
+
+
+def require_hf_token(runs: Sequence[ModelRun]) -> None:
+    gated_models = [run.model for run in runs if run.model.startswith("google/gemma-")]
+    if gated_models and not os.environ.get("HF_TOKEN", "").strip():
+        raise RunnerError(
+            "HF_TOKEN must be exported before running gated Gemma models. "
+            "The token must belong to an account with Gemma access."
+        )
 
 
 def show_command(message: str, command: Sequence[str]) -> None:
@@ -508,8 +575,10 @@ def run_inspect(
     revision: str,
     reasoning_effort: str | None,
     server_args: dict[str, Any],
-    concurrency: int = 128,
+    concurrency: int = 64,
     max_tasks: int = 16,
+    max_retries: int = 10,
+    timeout: int = 600,
 ) -> None:
     suffix = f" (reasoning {run.reasoning})" if run.reasoning else ""
     for log_dir, command_revision, command in inspect_commands(
@@ -521,6 +590,8 @@ def run_inspect(
         reasoning_effort,
         concurrency,
         max_tasks,
+        max_retries,
+        timeout,
     ):
         prepare_eval_set_id(log_dir, eval_set_id_for_run(run, command_revision))
         show_command(f"Running {len(tasks)} Inspect task(s) for {run.model}{suffix}", command)
@@ -535,6 +606,7 @@ def run_inspect(
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    patch_inspect()
     revision_parser = argparse.ArgumentParser(add_help=False)
     revision_parser.add_argument("--revision", default=REVISION)
     revision_args, _ = revision_parser.parse_known_args(argv)
@@ -582,6 +654,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     log_dir = HISTORICAL_LOG_DIR if args.historical_revisions and args.log_dir == LOG_DIR else args.log_dir
     log_dir.mkdir(parents=True, exist_ok=True)
     selected_runs = model_runs(selected["model"])
+    try:
+        require_hf_token(selected_runs)
+    except RunnerError as error:
+        parser.error(str(error))
+    if args.reasoning:
+        invalid = [run.model for run in selected_runs if run.reasoning is None]
+        if invalid:
+            parser.error(
+                f"--reasoning is not supported by: {', '.join(unique(invalid))}"
+            )
+        selected_runs = [run for run in selected_runs if run.reasoning == args.reasoning]
 
     for label, values in (
         ("Models", [f"{run.model} (reasoning {run.reasoning})" if run.reasoning else run.model for run in selected_runs]),
@@ -604,8 +687,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.revision,
                     args.reasoning_effort,
                     server_args,
-                    args.concurrency,
+                    args.concurrency or model_concurrency(run.model),
                     args.tasks,
+                    args.max_retries,
+                    args.timeout,
                 )
             except Exception as error:
                 failures.append((run.model, str(error)))
