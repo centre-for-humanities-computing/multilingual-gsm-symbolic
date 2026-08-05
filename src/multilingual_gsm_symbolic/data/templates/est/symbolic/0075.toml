@@ -1,0 +1,42 @@
+question = "Poes on praegu 3 punast palli, 11 sinist palli ja 25 rohelist palli. Punased pallid maksavad 9 EUR, sinised pallid maksavad 5 EUR ja rohelised pallid maksavad 3 EUR. Kui palju teenib pood, kui kõik pallid on müüdud?"
+
+answer = """
+Punaste pallide eest: 3 palli * 9 EUR/pall = <<3*9=27>>27 EUR.
+Siniste pallide eest: 11 palli * 5 EUR/pall = <<11*5=55>>55 EUR.
+Roheliste pallide eest: 25 palli * 3 EUR/pall = <<25*3=75>>75 EUR.
+Kõigi pallide eest kokku: 27 EUR + 55 EUR + 75 EUR = <<27+55+75=157>>157 EUR.
+#### 157
+"""
+
+id_orig = 1111
+
+id_shuffled = 75
+
+question_annotated = """
+{place_ine_cap,Poes} on praegu {n1,3} {c1_part_sg,punast} palli, {n2,11} {c2_part_sg,sinist} palli ja {n3,25} {c3_part_sg,rohelist} palli. {c1_nom_pl_cap,Punased} pallid maksavad {p1,9} {cur,EUR}, {c2_nom_pl,sinised} pallid maksavad {p2,5} {cur,EUR} ja {c3_nom_pl,rohelised} pallid maksavad {p3,3} {cur,EUR}. Kui palju teenib pood, kui kõik pallid on müüdud?
+
+#init:
+- cur = sample(currencies_sym)
+- place_ine_cap = sample(["Poes", "Turul", "Laos", "Kioskis"])
+- (c1_part_sg, c1_nom_pl, c1_nom_pl_cap, c1_gen_pl_cap), (c2_part_sg, c2_nom_pl, c2_nom_pl_cap, c2_gen_pl_cap), (c3_part_sg, c3_nom_pl, c3_nom_pl_cap, c3_gen_pl_cap) = sample([("punast", "punased", "Punased", "Punaste"), ("sinist", "sinised", "Sinised", "Siniste"), ("rohelist", "rohelised", "Rohelised", "Roheliste"), ("kollast", "kollased", "Kollased", "Kollaste"), ("musta", "mustad", "Mustad", "Mustade"), ("valget", "valged", "Valged", "Valgete")], 3)
+- $n1 = range(3, 20)
+- $n2 = range(5, 30)
+- $n3 = range(15, 50)
+- $p1 = range(5, 15)
+- $p2 = range(3, 10)
+- $p3 = range(2, 8)
+
+#answer: n1*p1 + n2*p2 + n3*p3
+"""
+
+answer_annotated = """
+{c1_gen_pl_cap} pallide eest: {n1} palli * {p1} {cur}/pall = <<{n1}*{p1}={n1*p1}>>{n1*p1} {cur}.
+{c2_gen_pl_cap} pallide eest: {n2} palli * {p2} {cur}/pall = <<{n2}*{p2}={n2*p2}>>{n2*p2} {cur}.
+{c3_gen_pl_cap} pallide eest: {n3} palli * {p3} {cur}/pall = <<{n3}*{p3}={n3*p3}>>{n3*p3} {cur}.
+Kõigi pallide eest kokku: {n1*p1} {cur} + {n2*p2} {cur} + {n3*p3} {cur} = <<{n1*p1}+{n2*p2}+{n3*p3}={n1*p1 + n2*p2 + n3*p3}>>{n1*p1 + n2*p2 + n3*p3} {cur}.
+#### {n1*p1 + n2*p2 + n3*p3}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

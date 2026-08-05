@@ -1,0 +1,44 @@
+question = "ललित की कार खराब हो जाती है। कार का वज़न १२०० किलोग्राम है और उसमें उसका २५० किलोग्राम वज़न का सामान है। उसमें उसके दो छोटे बच्चे भी हैं, जिनमें से प्रत्येक का वज़न ७५ किलोग्राम है। यदि कार को चलाने के लिए लगने वाला बल उसके वज़न का १% है, तो कार को धक्का देने के लिए उसे कितना बल चाहिए?"
+
+answer = """
+उसके दो बच्चों का वज़न ७५*२=<<७५*२=१५०>>१५० किलोग्राम है
+इसलिए कार और उसमें मौजूद सभी चीज़ों का कुल वज़न १२००+२५०+१५०=<<१२००+२५०+१५०=१६००>>१६०० किलोग्राम है
+इसलिए उसे १६००*०.०१=<<१६००*०.०१=१६>>१६ किलोग्राम बल उत्पन्न करना होगा
+#### १६
+"""
+
+id_orig = 1275
+
+id_shuffled = 67
+
+question_annotated = """
+{name,ललित} की {vehicle,कार} खराब हो जाती है। {vehicle,कार} का वज़न {weight_vehicle,१२००} {unit,किलोग्राम} है और उसमें उसका {weight_item,२५०} {unit,किलोग्राम} वज़न का {item,सामान} है। उसमें उसके {num_passengers_txt,दो} छोटे {passenger_type,बच्चे} भी हैं, जिनमें से प्रत्येक का वज़न {weight_passenger,७५} {unit,किलोग्राम} है। यदि {vehicle,कार} को चलाने के लिए लगने वाला बल उसके वज़न का {force_percent,१}% है, तो {vehicle,कार} को धक्का देने के लिए उसे कितना बल चाहिए?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(['car', 'van', 'truck', 'SUV'])
+- item = sample(['luggage', 'groceries', 'equipment', 'furniture'])
+- passenger_type = sample(['children', 'friends', 'colleagues', 'teammates'])
+- unit = sample(['किलोग्राम', 'ग्राम'])
+- $weight_vehicle = range(1000, 3000, 50)
+- $weight_item = range(100, 500, 25)
+- $weight_passenger = range(50, 100, 5)
+- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- $force_percent = range(1, 6)
+
+#conditions:
+- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+
+#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+"""
+
+answer_annotated = """
+उसके {num_passengers_txt} बच्चों का वज़न {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit} है
+इसलिए {vehicle} और उसमें मौजूद सभी चीज़ों का कुल वज़न {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit} है
+इसलिए उसे {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit} बल उत्पन्न करना होगा
+#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

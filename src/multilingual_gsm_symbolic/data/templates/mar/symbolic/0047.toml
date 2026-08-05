@@ -1,0 +1,53 @@
+question = "मिहिर ने इस्टर अंडी शोध मोहिमेसाठी अंगणात ३ डझन अंडी लपवली. अमोल ला ५ अंडी सापडतात. संदीप ला अमोल पेक्षा दुप्पट अंडी सापडतात. मयूर ला संदीप पेक्षा २ ने कमी अंडी सापडतात, आणि प्रणव ला मयूर च्या अर्धी अंडी सापडतात. अंगणात अजून किती अंडी लपलेली आहेत?"
+
+answer = """
+मिहिर ने ३*१२ = <<३*१२=३६>>३६ अंडी लपवली.
+अमोल ला ५ अंडी सापडतात.
+संदीप ला ५*२ = <<५*२=१०>>१० अंडी सापडतात.
+मयूर ला १० - २ = <<१०-२=८>>८ अंडी सापडतात.
+प्रणव ला ८*१/२=<<८*१/२=४>>४ अंडी सापडतात.
+मुलांना एकूण ५ + १० + ८ + ४ = <<५+१०+८+४=२७>>२७ अंडी सापडतात.
+अंगणात अजून लपलेली अंडी एकूण ३६ - २७ = <<३६-२७=९>>९ अंडी आहेत.
+#### ९
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,मिहिर} ने इस्टर अंडी शोध मोहिमेसाठी अंगणात {n,३} डझन अंडी लपवली. {name2,अमोल} ला {x,५} अंडी सापडतात. {name3,संदीप} ला {name2,अमोल} पेक्षा {mult1_txt,दुप्पट} अंडी सापडतात. {name4,मयूर} ला {name3,संदीप} पेक्षा {y,२} ने कमी अंडी सापडतात, आणि {name5,प्रणव} ला {name4,मयूर} च्या {frac_fem,अर्धी} अंडी सापडतात. अंगणात अजून किती अंडी लपलेली आहेत?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times2)
+- frac_txt, frac_val = sample(fraction_alnum)
+- frac_fem = mar_fraction_form(frac_txt, 'fem')
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} ने {n}*१२ = <<{n}*१२={n*12}>>{n*12} अंडी लपवली.
+{name2} ला {x} अंडी सापडतात.
+{name3} ला {x}*{mult1_val} = <<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} अंडी सापडतात.
+{name4} ला {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} अंडी सापडतात.
+{name5} ला {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} अंडी सापडतात.
+मुलांना एकूण {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} अंडी सापडतात.
+अंगणात अजून लपलेली अंडी एकूण {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} अंडी आहेत.
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

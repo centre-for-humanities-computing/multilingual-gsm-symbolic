@@ -1,10 +1,10 @@
-question = "Niels gefur húsdýrunum sínum hey. Hver geit þarf 5 kg og hver kind þarf 3 kg minna en tvöfalt það sem hver geit þarf. Ef það eru 15 geitur og 12 kindur, hversu mörg kg af heyi þarf Niels?"
+question = "Davíð gefur húsdýrunum sínum hey. Hver geit þarf 5 kg og hver kind þarf 3 kg minna en tvöfalt það sem hver geit þarf. Ef það eru 15 geitur og 12 kindur, hversu mörg kg af heyi þarf Davíð fyrir allar geitur og kindur?"
 
 answer = """
 Finndu fyrst út hversu mikið hey hver kind þarf: 5 kg * 2 - 3 = <<5*2-3=7>>7 kg/kind
 Reiknaðu síðan út hversu mikið hey kindurnar þurfa samtals: 7 kg/kind * 12 kindur = <<7*12=84>>84 kg
 Reiknaðu því næst út hversu mikið hey geiturnar þurfa samtals: 5 kg/geit * 15 geitur = <<5*15=75>>75 kg
-Að lokum leggurðu þessar tvær heyupphæðir saman til að finna heildarmagnið: 84 kg + 75 kg = <<84+75=159>>159 kg
+Að lokum leggurðu þetta tvennt saman til að finna heildarmagnið af heyi: 84 kg + 75 kg = <<84+75=159>>159 kg
 #### 159
 """
 
@@ -13,17 +13,19 @@ id_orig = 937
 id_shuffled = 71
 
 question_annotated = """
-{name,Niels} gefur húsdýrunum sínum {food,hey}. Hver {animal1,geit} þarf {n1,5} {unit,kg} og hver {animal2,kind} þarf {n2,3} {unit,kg} minna en tvöfalt það sem hver {animal1,geit} þarf. Ef það eru {k1,15} {animal1,geit}ur og {k2,12} {animal2,kind}ur, hversu mörg {unit,kg} af heyi þarf {name,Niels}?
+{name,Davíð} gefur húsdýrunum sínum {food_thf,hey}. Hver {animal1_nf,geit} þarf {n1,5} {unit_thf,kg} og hver {animal2_nf,kind} þarf {n2,3} {unit_thgf,kg} minna en tvöfalt það sem hver {animal1_nf,geit} þarf. Ef það eru {k1,15} {animal1_k1,geitur} og {k2,12} {animal2_k2,kindur}, hversu mörg {unit_thf,kg} af {food_thgf,heyi} þarf {name,Davíð} fyrir allar {animal1_ft,geitur} og {animal2_ft,kindur}?
 
 #init:
 - name = sample(names_male)
-- food = sample(["hø", "korn", "foder", "halm"])
-- animal1, animal2 = sample(["ged", "ko", "hest", "æsel", "lama", "alpaka", "gris", "kalkun", "and"], 2)
-- unit = sample(["kg", "kilogram"])
+- food_thf, food_thgf = sample([("hey", "heyi"), ("korn", "korni"), ("fóður", "fóðri"), ("hálm", "hálmi")])
+- (animal1_nf, animal1_ft), (animal2_nf, animal2_ft) = sample([("geit", "geitur"), ("kind", "kindur"), ("önd", "endur"), ("gæs", "gæsir"), ("meri", "merar")], 2)
+- unit_thf, unit_thgf = sample([("kg", "kg"), ("kíló", "kílóum")])
 - $n1 = range(3, 15)
 - $n2 = range(1, 10)
 - $k1 = range(10, 50)
 - $k2 = range(10, 50)
+- animal1_k1 = animal1_nf if (k1 % 10 == 1 and k1 % 100 != 11) else animal1_ft
+- animal2_k2 = animal2_nf if (k2 % 10 == 1 and k2 % 100 != 11) else animal2_ft
 
 #conditions:
 - 2*n1 - n2 > 0
@@ -32,13 +34,13 @@ question_annotated = """
 """
 
 answer_annotated = """
-Finndu fyrst út hversu mikið {food} hver {animal2} þarf: {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2}
-Reiknaðu síðan út hversu mikið {food} {animal2}urnar þurfa samtals: {2*n1-n2} {unit}/{animal2} * {k2} {animal2}ur = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
-Reiknaðu því næst út hversu mikið {food} {animal1}urnar þurfa samtals: {n1} {unit}/{animal1} * {k1} {animal1}ur = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
-Að lokum leggurðu þessar tvær {food}upphæðir saman til að finna heildarmagnið: {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
+Finndu fyrst út hversu mikið {food_thf} hver {animal2_nf} þarf: {n1} {unit_thf} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit_thf}/{animal2_nf}
+Reiknaðu síðan út hversu mikið {food_thf} {animal2_ft}nar þurfa samtals: {2*n1-n2} {unit_thf}/{animal2_nf} * {k2} {animal2_k2} = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit_thf}
+Reiknaðu því næst út hversu mikið {food_thf} {animal1_ft}nar þurfa samtals: {n1} {unit_thf}/{animal1_nf} * {k1} {animal1_k1} = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit_thf}
+Að lokum leggurðu þetta tvennt saman til að finna heildarmagnið af {food_thgf}: {k2*(2*n1-n2)} {unit_thf} + {k1*n1} {unit_thf} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit_thf}
 #### {k1*n1 + k2*(2*n1 - n2)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

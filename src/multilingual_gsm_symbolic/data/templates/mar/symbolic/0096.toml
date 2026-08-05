@@ -1,0 +1,48 @@
+question = "स्वराच्या बाबांनी सांगितले की तिच्या वाढदिवसाच्या पार्टीसाठी ₹९० चे बजेट ठेवले आहे. तिला खात्री करायची आहे कि तिला आणि तिच्या मित्रमैत्रिणींना मिनी-गोल्फचा एक फेरा खेळता येईल, आर्केड टोकन्ससाठी ₹५ मिळतील, आणि गो-कार्ट्सवर दोनदा बसता येईल. मिनी-गोल्फचा एक फेरा ₹५ आहे. गो-कार्ट्सची एका फेरीची किंमत ₹१० आहे. ती किती मित्रमैत्रिणींना बोलावू शकते?"
+
+answer = """
+गो-कार्ट्ससाठी प्रति व्यक्ती ₹२० खर्च येईल कारण १०*२ = <<१०*२=२०>>२०
+प्रति व्यक्ती एकूण ₹३० खर्च येतो कारण ५ + ५ + २० = <<५+५+२०=३०>>३०
+एकूण ३ लोक येऊ शकतात कारण ९० / ३० = <<९०/३०=३>>३
+ती २ मित्रमैत्रिणींना बोलावू शकते कारण ३ - १ =<<३-१=२>>२
+#### २
+"""
+
+id_orig = 357
+
+id_shuffled = 96
+
+question_annotated = """
+{name,स्वरा}च्या {parent,बाबांनी} सांगितले की तिच्या वाढदिवसाच्या पार्टीसाठी {cur,₹}{budget,९०} चे बजेट ठेवले आहे. तिला खात्री करायची आहे कि तिला आणि तिच्या मित्रमैत्रिणींना {activity1,मिनी-गोल्फ}चा एक फेरा खेळता येईल, {activity2,आर्केड} टोकन्ससाठी {cur,₹}{tokens,५} मिळतील, आणि {activity3,गो-कार्ट्स}वर {times_txt,दोनदा} बसता येईल. {activity1,मिनी-गोल्फ}चा एक फेरा {cur,₹}{cost1,५} आहे. {activity3,गो-कार्ट्स}ची एका फेरीची किंमत {cur,₹}{cost2,१०} आहे. ती किती मित्रमैत्रिणींना बोलावू शकते?
+
+#init:
+- name = sample(names_female)
+- parent = sample(["आई", "बाबा", "आत्या", "काका"])
+- activity1 = sample(["मिनी-गोल्फ", "बॉलिंग", "लेझर टॅग"])
+- activity2 = sample(["आर्केड", "गेम रूम", "पिनबॉल"])
+- activity3 = sample(["गो-कार्ट्स", "बंपर कार्स", "रोलर कोस्टर"])
+- cur = sample(currencies_sym)
+- times_txt, times_val = sample(multi_times1)
+- $budget = range(50, 301, 10)
+- $tokens = range(3, 11)
+- $cost1 = range(3, 11)
+- $cost2 = range(5, 21)
+
+#conditions:
+- budget % (tokens + cost1 + cost2 * times_val) == 0
+- budget // (tokens + cost1 + cost2 * times_val) > 1
+
+#answer: budget // (tokens + cost1 + cost2 * times_val) - 1
+"""
+
+answer_annotated = """
+{activity3}साठी प्रति व्यक्ती {cur}{cost2 * times_val} खर्च येईल कारण {cost2}*{times_val} = <<{cost2}*{times_val}={cost2*times_val}>>{cost2*times_val}
+प्रति व्यक्ती एकूण {cur}{tokens + cost1 + cost2*times_val} खर्च येतो कारण {tokens} + {cost1} + {cost2*times_val} = <<{tokens}+{cost1}+{cost2*times_val}={tokens + cost1 + cost2*times_val}>>{tokens + cost1 + cost2*times_val}
+एकूण {budget // (tokens + cost1 + cost2 * times_val)} लोक येऊ शकतात कारण {budget} / {tokens + cost1 + cost2*times_val} = <<{budget}/{tokens + cost1 + cost2*times_val}={budget // (tokens + cost1 + cost2 * times_val)}>>{budget // (tokens + cost1 + cost2 * times_val)}
+ती {budget // (tokens + cost1 + cost2 * times_val) - 1} मित्रमैत्रिणींना बोलावू शकते कारण {budget // (tokens + cost1 + cost2 * times_val)} - १ =<<{budget // (tokens + cost1 + cost2 * times_val)}-१={budget // (tokens + cost1 + cost2 * times_val) - 1}>>{budget // (tokens + cost1 + cost2 * times_val) - 1}
+#### {budget // (tokens + cost1 + cost2 * times_val) - 1}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

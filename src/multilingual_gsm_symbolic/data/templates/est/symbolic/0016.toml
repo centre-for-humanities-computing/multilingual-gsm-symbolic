@@ -1,0 +1,53 @@
+question = "Kristjan müüb heategevusürituse jaoks piparkooke ja õunapirukaid. Laupäeval müüs ta 10 kasti piparkooke ja 4 kasti võrra vähem õunapirukaid kui pühapäeval. Pühapäeval müüs ta 5 kasti piparkooke rohkem kui laupäeval ja 15 kasti õunapirukaid. Kui piparkook maksis 6 EUR ja õunapirukas maksis 15 EUR, siis kui palju teenis Kristjan kahe päeva jooksul?"
+
+answer = """
+Ta müüs pühapäeval 10 + 5 = <<10+5=15>>15 kasti piparkooke.
+Kokku müüs Kristjan 10 + 15 = <<10+15=25>>25 kasti piparkooke.
+Kristjan teenis piparkooke müües 25*6 EUR = <<25*6=150>>150 EUR.
+Ta müüs laupäeval 15 - 4 = <<15-4=11>>11 kasti õunapirukaid.
+Kokku müüs Kristjan 15 + 11 = <<15+11=26>>26 kasti õunapirukaid.
+Kristjan teenis õunapirukaid müües 26*15 EUR = <<26*15=390>>390 EUR.
+Seega teenis Kristjan kahe päeva jooksul 150 EUR + 390 EUR = <<150+390=540>>540 EUR.
+#### 540
+"""
+
+id_orig = 976
+
+id_shuffled = 16
+
+question_annotated = """
+{name, Kristjan} müüb heategevusürituse jaoks {food_par_pl,piparkooke} ja {fruit,õunapirukaid}. {d1_day,laupäeva}l müüs ta {n1,10} kasti {food_par_pl,piparkooke} ja {m1,4} kasti võrra vähem {fruit,õunapirukaid} kui {d2_day,pühapäeva}l. {d2_day,pühapäeva}l müüs ta {n2,5} kasti {food_par_pl,piparkooke} rohkem kui {d1_day,laupäeva}l ja {m2,15} kasti {fruit,õunapirukaid}. Kui {food_nom_sg,piparkook} maksis {cn,6} {cur,EUR} ja {fruit_nom_sg,õunapirukas} maksis {cm,15} {cur,EUR}, siis kui palju teenis {name,Kristjan} kahe päeva jooksul?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- fruit_nom_sg, fruit_nom_pl, fruit_gen_sg, fruit_part_sg, fruit, fruit_gen_pl = sample([("õunapirukas", "õunapirukad", "õunapiruka", "õunapirukat", "õunapirukaid", "õunapirukate"), ("banaanipirukas", "banaanipirukad", "banaanipiruka", "banaanipirukat", "banaanipirukaid", "banaanipirukate"), ("apelsinipirukas", "apelsinipirukad", "apelsinipiruka", "apelsinipirukat", "apelsinipirukaid", "apelsinipirukate")])
+- cur = sample(currencies_sym)
+- food_nom_sg, food_par_pl = sample([("piparkook", "piparkooke"),("vahvel", "vahvleid"), ("rabarberikook", "rabarberikooke"), ("küpsis", "küpsiseid"), ("õunapirukas", "õunapirukaid"), ("muffin", "muffineid"), ("tassikook", "tassikooke")])
+- (d1, d1_day), (d2, d2_day) = sample_sequential(weekday_cases, 2)
+- $n1 = range(21, 30)
+- $n2 = range(11, 15)
+- $m1 = range(4, 20)
+- $m2 = range(15, 30)
+- $cn = range(7, 13)
+- $cm = range(20, 33)
+
+#conditions:
+- m1 < m2
+
+#answer: (2*n1+n2)*cn + (2*m2-m1)*cm
+"""
+
+answer_annotated = """
+Ta müüs {d2_day}l {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} kasti {food_par_pl}.
+Kokku müüs {name} {n1} + {n1+n2} = <<{n1}+{n1+n2}={2*n1+n2}>>{n1+n1+n2} kasti {food_par_pl}.
+{name} teenis {food_par_pl} müües {n1+n1+n2}*{cn} {cur} = <<{n1+n1+n2}*{cn}={(n1+n1+n2)*cn}>>{(n1+n1+n2)*cn} {cur}.
+Ta müüs {d1_day}l {m2} - {m1} = <<{m2}-{m1}={m2-m1}>>{m2-m1} kasti {fruit}.
+Kokku müüs {name} {m2} + {m2-m1} = <<{m2}+{m2-m1}={2*m2-m1}>>{2*m2-m1} kasti {fruit}.
+{name} teenis {fruit} müües {2*m2-m1}*{cm} {cur} = <<{2*m2-m1}*{cm}={(2*m2-m1)*cm}>>{(2*m2-m1)*cm} {cur}.
+Seega teenis {name} kahe päeva jooksul {(n1+n1+n2)*cn} {cur} + {(2*m2-m1)*cm} {cur} = <<{(n1+n1+n2)*cn}+{(2*m2-m1)*cm}={(2*n1+n2)*cn + (2*m2-m1)*cm}>>{(2*n1+n2)*cn + (2*m2-m1)*cm} {cur}.
+#### {(2*n1+n2)*cn + (2*m2-m1)*cm}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

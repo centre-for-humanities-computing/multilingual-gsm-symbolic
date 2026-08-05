@@ -1,0 +1,47 @@
+question = "मेरे पास १० लीटर संतरा पेय है, जिसमें दो-तिहाई पानी है, और मैं इसे १५ लीटर अनानास पेय में मिलाना चाहता हूँ, जिसमें तीन-पांचवां पानी है। लेकिन डालते समय, मैं चार लीटर संतरा पेय गिरा देता हूँ। बचे हुए २१ लीटर में कितना पानी है?"
+
+answer = """
+१५ लीटर अनानास पेय में पानी की मात्रा १५*३/५ = <<१५*३/५=९>>९ लीटर है।
+संतरा पेय के चार लीटर गिर जाने के बाद, १०-४ = <<१०-४=६>>६ लीटर संतरा पेय बचा।
+इन ६ लीटर में से, ६*२/३ = <<६*२/३=४>>४ लीटर पानी है।
+अतः, २१ लीटर में कुल ९ + ४ = <<९+४=१३>>१३ लीटर पानी है।
+#### १३
+"""
+
+id_orig = 20
+
+id_shuffled = 59
+
+question_annotated = """
+मेरे पास {n1,१०} लीटर {fruit1,संतरा} पेय है, जिसमें {frac1_txt,दो-तिहाई} पानी है, और मैं इसे {n2,१५} लीटर {fruit2,अनानास} पेय में मिलाना चाहता हूँ, जिसमें {frac2_txt,तीन-पांचवां} पानी है। लेकिन डालते समय, मैं {spill_txt,चार} लीटर {fruit1,संतरा} पेय गिरा देता हूँ। बचे हुए {total,२१} लीटर में कितना पानी है?
+
+#init:
+- fruit1, fruit2 = sample(["सेब", "अंगूर", "आम", "आड़ू", "नींबू"], 2)
+- $n1 = range(9, 21)
+- $n2 = range(12, 31)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+- spill_txt, spill_val = range_str(2, 7, 1, numbers)
+- $total = range(20, 51)
+
+#conditions:
+- spill_val < n1
+- n1 + n2 - spill_val == total
+- is_int(n2 * frac2_val)
+- is_int((n1 - spill_val) * frac1_val)
+- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+
+#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+"""
+
+answer_annotated = """
+{n2} लीटर {fruit2} पेय में पानी की मात्रा {n2}*{frac2_val} = <<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val} लीटर है।
+{fruit1} पेय के {spill_txt} लीटर गिर जाने के बाद, {n1}-{spill_val} = <<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} लीटर {fruit1} पेय बचा।
+इन {n1-spill_val} लीटर में से, {n1-spill_val}*{frac1_val} = <<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} लीटर पानी है।
+अतः, {total} लीटर में कुल {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} लीटर पानी है।
+#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

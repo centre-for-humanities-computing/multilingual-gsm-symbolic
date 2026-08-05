@@ -1,0 +1,40 @@
+question = "Apple हाई स्कूल इस वर्ष अपने फाइन आर्ट्स सेंटर में स्नातक समारोह आयोजित कर रहा है, जिसमें ६००० लोगों के बैठने की जगह है। स्नातकों के लिए ९५० सीटें और उपस्थित संकाय के लिए ३०० सीटें अलग रखने के बाद, यदि टिकट बराबर-बराबर बाँटे जाएँ, तो प्रत्येक स्नातक को अपने दोस्तों और परिवार को देने के लिए कितने टिकट मिलेंगे?"
+
+answer = """
+स्नातकों और संकाय की सीटों को जोड़ें। ९५० + ३०० = <<९५०+३००=१२५०>>१२५० सीटें संकाय और स्नातकों के लिए हैं
+कुल उपलब्ध सीटों में से संकाय और स्नातकों की सीटें घटाएँ। ६००० - १२५० = <<६०००-१२५०=४७५०>>४७५० सीटें बचती हैं।
+बची हुई सीटों को स्नातकों की संख्या से भाग दें। ४७५०/९५० = <<४७५०/९५०=५>>५ टिकट
+#### ५
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Apple हाई स्कूल} इस वर्ष अपने {venue,फाइन आर्ट्स सेंटर} में स्नातक समारोह आयोजित कर रहा है, जिसमें {total,६०००} लोगों के बैठने की जगह है। स्नातकों के लिए {graduates,९५०} सीटें और उपस्थित संकाय के लिए {faculty,३००} सीटें अलग रखने के बाद, यदि टिकट बराबर-बराबर बाँटे जाएँ, तो प्रत्येक स्नातक को अपने दोस्तों और परिवार को देने के लिए कितने टिकट मिलेंगे?
+
+#init:
+- school = sample(["Oakwood हाई स्कूल", "Riverside Academy", "Sunnyside हाई", "Greenville हाई स्कूल"])
+- venue = sample(["सभागार", "व्यायामशाला", "खेल मैदान", "सम्मेलन केंद्र"])
+- $total = range(3000, 10000, 100)
+- $graduates = range(100, 1500, 50)
+- $faculty = range(100, 500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+स्नातकों और संकाय की सीटों को जोड़ें। {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} सीटें संकाय और स्नातकों के लिए हैं
+कुल उपलब्ध सीटों में से संकाय और स्नातकों की सीटें घटाएँ। {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} सीटें बचती हैं।
+बची हुई सीटों को स्नातकों की संख्या से भाग दें। {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} टिकट
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

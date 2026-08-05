@@ -1,8 +1,36 @@
-question = "Хліб має 24 скибки. Якщо Андреа може з'їдати 2 скибки на день, а Йоган — удвічі більше, то на скільки днів вистачить хліба?"
-answer = "Йоган може з'їдати 2*2=<<2*2=4>>4 скибки на день.\nРазом Андреа і Йоган можуть з'їдати 2+4=<<2+4=6>>6 скибок на день.\nТому хліба вистачить на 24/6=<<24/6=4>>4 дні.\n#### 4\n"
+question = "Андреа та Йоган купили хліб, що має 24 скибки. Якщо Андреа може зʼїсти 2 скибки на день, а Йоган може зʼїсти у два рази більше, то на скільки днів вистачить хліба?"
+
+answer = """Йоган може зʼїсти 2*2=<<2*2=4>>4 скибки на день.
+Разом Андреа і Йоган можуть зʼїсти 2+4=<<2+4=6>>6 скибок на день.
+Тому покупки вистачить на 24/6=<<24/6=4>>4 дні.
+#### 4
+"""
 id_orig = 921
 id_shuffled = 37
-question_annotated = "{item_article,Цей} {item,хліб} має {n,24} {unit,скибки}. Якщо {name1,Андреа} може з'їдати {x,2} {unit,скибки} на день, а {name2,Йоган} може з'їдати {mult_txt,два рази} більше, то на скільки днів вистачить {item_definite,хліба}?\n\n#init:\n- item_article, item, item_definite = sample([(\"Et\", \"brød\", \"brødet\"), (\"En\", \"pizza\", \"pizzaen\"), (\"En\", \"kage\", \"kagen\"), (\"En\", \"tærte\", \"tærten\"), (\"En\", \"lasagne\", \"lasagnen\")])\n- unit = sample([\"шматки\", \"порції\", \"набори\"])\n- name1, name2 = sample(names, 2)\n- $n = range(12, 76, 3)\n- $x = range(2, 13)\n- mult_txt, mult_var = sample(multi_times)\n\n#conditions:\n- divides(n, x + x*mult_var)\n\n#answer: n // (x + x*mult_var)\n"
-answer_annotated = "{name2} може з'їдати {x}*{mult_var}=<<{x}*{mult_var}={x*mult_var}>>{x*mult_var} {unit} на день.\nРазом {name1} і {name2} можуть з'їдати {x}+{x*mult_var}=<<{x}+{x*mult_var}={x+x*mult_var}>>{x+x*mult_var} {unit} на день.\nТому {item_definite} вистачить на {n}/{x+x*mult_var}=<<{n}/{x+x*mult_var}={n//(x+x*mult_var)}>>{n//(x+x*mult_var)} дні.\n#### {n//(x+x*mult_var)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name1,Андреа} та {name2,Йоган} купили {item,хліб}, що має {n,24} {n_form_unit,скибки}. Якщо {name1,Андреа} може зʼїсти {x,2} {x_form_unit,скибки} на день, а {name2,Йоган} може зʼїсти у {mult_txt,два рази} більше, то на скільки днів вистачить {item_1, хліба}?
+
+#init:
+- item, item_1 = sample([("піца","піци"), ("торт", "торту"), ("київський торт", "київський торту"), ("медовик", "медовика"), ("тірамісу", "тірамісу")])
+- unit, unit_pl1, unit_pl2 = sample([("шматок", "шматки", "шматків"), ("шматочок", "шматочки", "шматочків"), ("порція", "порції", "порцій"), ("скибка", "скибки", "скибок")])
+- name1, name2 = sample(names, 2)
+- $n = range(12, 76, 3)
+- $x = range(2, 13)
+- mult_txt, mult_var = sample(multi_times)
+- n_form_unit = ukr_plural_measurements(n, unit, unit_pl1, unit_pl2)
+- x_form_unit = ukr_plural_measurements(x, unit, unit_pl1, unit_pl2)
+- x_mult_var_form =  ukr_plural_measurements(x*mult_var, unit, unit_pl1, unit_pl2)
+- xx_mult_var_form =  ukr_plural_measurements(x + x*mult_var, unit, unit_pl1, unit_pl2)
+- days_form = ukr_plural_measurements(n//(x+x*mult_var), "день", "дні", "днів")
+
+#conditions:
+- divides(n, x + x*mult_var)
+
+#answer: n // (x + x*mult_var)
+"""
+answer_annotated = """{name2} може зʼїсти {x}*{mult_var}=<<{x}*{mult_var}={x*mult_var}>>{x*mult_var} {x_mult_var_form} на день.
+Разом {name1} і {name2} можуть зʼїсти {x}+{x*mult_var}=<<{x}+{x*mult_var}={x+x*mult_var}>>{x+x*mult_var} {xx_mult_var_form} на день.
+Тому покупки вистачить на {n}/{x+x*mult_var}=<<{n}/{x+x*mult_var}={n//(x+x*mult_var)}>>{n//(x+x*mult_var)} {days_form}.
+#### {n//(x+x*mult_var)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

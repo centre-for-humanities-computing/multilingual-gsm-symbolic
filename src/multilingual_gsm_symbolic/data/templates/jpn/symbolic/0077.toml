@@ -1,0 +1,27 @@
+question = "あんなは15ページの研究論文を提出しなければなりません。すでに1/3を書き終えています。あと何ページ書く必要がありますか？"
+answer = """あんなはすでに研究論文の1/3を書いており、それは15ページ*1/3 = <<15*1/3=5>>5ページです。
+したがって、あと15ページ - 5ページ = <<15-5=10>>10ページ書く必要があります。
+#### 10
+"""
+id_orig = 655
+id_shuffled = 77
+question_annotated = """{name,あんな}は{n,15}ページの{document,研究論文}を提出しなければなりません。すでに{frac,1/3}を書き終えています。あと何ページ書く必要がありますか？
+
+#init:
+- name = sample(names)
+- document = sample([\"小論文\", \"レポート\", \"論文\", \"学位論文\", \"課題\"])
+- $n = range(10, 325)
+- $frac = sample(fractions)
+
+#conditions:
+- is_int(n * frac)
+- n * frac < n
+
+#answer: n - int(n * frac)
+"""
+answer_annotated = """{name}はすでに{document}の{frac}を書いており、それは{n}ページ*{frac} = <<{n}*{frac}={int(n*frac)}>>{int(n*frac)}ページです。
+したがって、あと{n}ページ - {int(n*frac)}ページ = <<{n}-{int(n*frac)}={n-int(n*frac)}>>{n-int(n*frac)}ページ書く必要があります。
+#### {n-int(n*frac)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

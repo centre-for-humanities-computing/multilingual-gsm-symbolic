@@ -32,9 +32,10 @@ def _check_answer(answer: str, template_name: str) -> list[str]:
             continue
         lhs_raw, rhs_raw = inner[:eq_idx], inner[eq_idx + 1 :]
 
-        # Normalise locale decimal commas to Python dots.
-        lhs = lhs_raw.replace(",", ".")
-        rhs = rhs_raw.replace(",", ".")
+        # Normalise locale decimal commas to Python dots and translate Devanagari digits.
+        trans = str.maketrans("०१२३४५६७८९", "0123456789")
+        lhs = lhs_raw.replace(",", ".").translate(trans)
+        rhs = rhs_raw.replace(",", ".").translate(trans)
 
         if not _RE_PURE_ARITHMETIC.match(lhs) or not _RE_PURE_ARITHMETIC.match(rhs):
             continue  # skip expressions with variables or non-arithmetic content

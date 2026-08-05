@@ -1,0 +1,49 @@
+question = "Peeter tahab teha erineva suurusega jääkuubikuid 32 grammi veega. Ta saab teha hiigelkuubikuid, mis kasutavad 4 grammi kuubiku kohta, keskmisi kuubikuid, mis kasutavad 2 grammi, ja väikseid kuubikuid, mis kasutavad 1/2 grammi. Kui ta teeb 3 hiigelkuubikut, 7 keskmist kuubikut ja 8 väikest kuubikut, siis kui palju grammi vett tal jääb üle?"
+
+answer = """
+Hiigelkuubikud kulutasid 12 grammi vett, sest 3 korda 4 on <<3*4=12>>12.
+Keskmised kuubikud kulutasid 14 grammi vett, sest 7 korda 2 on <<7*2=14>>14.
+Väikesed kuubikud kulutasid 4 grammi vett, sest 8 korda 1/2 on 4.
+See tähendab, et Peeter on ära kasutanud 30 grammi vett, sest 12 pluss 14 pluss 4 on 30.
+Peetril on alles 2 grammi vett, sest 32 miinus 30 on <<32-30=2>>2.
+#### 2
+"""
+
+id_orig = 737
+
+id_shuffled = 11
+
+question_annotated = """
+{name,Peeter} tahab teha erineva suurusega jääkuubikuid {n,32} {unit,grammi} veega. Ta saab teha hiigelkuubikuid, mis kasutavad {w1,4} {unit,grammi} kuubiku kohta, keskmisi kuubikuid, mis kasutavad {w2,2} {unit,grammi}, ja väikseid kuubikuid, mis kasutavad {w3,1/2} {unit,grammi}. Kui ta teeb {n1,3} hiigelkuubikut, {n2,7} keskmist kuubikut ja {n3,8} väikest kuubikut, siis kui palju {unit,grammi} vett tal jääb üle?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- unit = sample(["gramm", "g"])
+- $w1 = range(4, 10)
+- $w2 = range(2, 10)
+- $w3 = sample(fractions)
+- $n1 = range(3, 10)
+- $n2 = range(7, 13)
+- $n3 = sample([8, 14, 24, 15])
+- $n = range(32, 240, 4)
+
+#conditions:
+- w3 < w2 < w1
+- is_int(n3 * w3)
+- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0
+
+#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))
+"""
+
+answer_annotated = """
+Hiigelkuubikud kulutasid {n1*w1} {unit} vett, sest {n1} korda {w1} on <<{n1}*{w1}={n1*w1}>>{n1*w1}.
+Keskmised kuubikud kulutasid {n2*w2} {unit} vett, sest {n2} korda {w2} on <<{n2}*{w2}={n2*w2}>>{n2*w2}.
+Väikesed kuubikud kulutasid {int(w3*n3)} {unit} vett, sest {n3} korda {w3} on {int(n3*w3)}.
+See tähendab, et {name} on ära kasutanud {int(n3*w3+n2*w2+n1*w1)} {unit} vett, sest {n1*w1} pluss {n2*w2} pluss {int(w3*n3)} on {int(n3*w3+n2*w2+n1*w1)}.
+{name_gen}l on alles {n - (n1*w1) - (n2*w2) - int(n3*w3)} {unit} vett, sest {n} miinus {int(n3*w3+n2*w2+n1*w1)} on <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{n - (n1*w1) - (n2*w2) - int(n3*w3)}.
+#### {n - (n1*w1) - (n2*w2) - int(n3*w3)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

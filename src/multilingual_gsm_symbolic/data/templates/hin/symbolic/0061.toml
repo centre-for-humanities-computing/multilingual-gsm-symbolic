@@ -1,0 +1,44 @@
+question = "मुकेश के पास कंचों की एक थैली थी, जिसमें १० कंचों थे। उसे ले जाते समय वह एक कंकड़ se ठोकर खा गया और उसने उनमें से आधा गिरा दिए। उसने उन्हें ढूंढ़ने की बहुत कोशिश की, लेकिन उसे केवल ३ ही मिले। जब वह वापस घर गया, तो उसने कंचों को ध्यान से देखा। जिन चीज़ों को उसने उठाया था उनमें से दो कंचों नहीं थे, बल्कि मोती थे, इसलिए उसने उन्हें अलग कर दिया। अंत में मुकेश के पास कितने कंचों बचे?"
+
+answer = """
+मुकेश के कंचों गिर गए और उसके पास १०*१/२=<<१०*१/२=५>>५ कंचों बचे।
+उसने खोजा और अपने कुछ खोए हुए कंचों ढूंढ़ लिए, जिससे उसके पास फिर ५+३=<<५+३=८>>८ कंचों हो गए।
+वह घर गया और दो मोती अलग कर दिए, जिससे उसके पास ८-२=<<८-२=६>>६ कंचों बचे।
+#### ६
+"""
+
+id_orig = 1247
+
+id_shuffled = 61
+
+question_annotated = """
+{name,मुकेश} के पास {objects,कंचों} की एक थैली थी, जिसमें {n,१०} {objects,कंचों} थे। उसे ले जाते समय वह एक {obstacle,कंकड़} se ठोकर खा गया और उसने उनमें से {frac_txt,आधा} गिरा दिए। उसने उन्हें ढूंढ़ने की बहुत कोशिश की, लेकिन उसे केवल {k,३} ही मिले। जब वह वापस घर गया, तो उसने {objects,कंचों} को ध्यान से देखा। जिन चीज़ों को उसने उठाया था उनमें से {fake_num_txt,दो} {objects,कंचों} नहीं थे, बल्कि {fake_object,मोती} थे, इसलिए उसने उन्हें अलग कर दिया। अंत में {name,मुकेश} के पास कितने {objects,कंचों} बचे?
+
+#init:
+- name = sample(names_male)
+- objects = sample(['कंचे', 'सिक्के', 'बटन', 'मोती', 'कंकड़'])
+- obstacle = sample(['पत्थर', 'डंडी', 'खिलौना', 'जड़'])
+- fake_object = sample(['बटन', 'सिक्के', 'कंकड़', 'मोती'])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+
+answer_annotated = """
+{name} के {objects} गिर गए और उसके पास {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects} बचे।
+उसने खोजा और अपने कुछ खोए हुए {objects} ढूंढ़ लिए, जिससे उसके पास फिर {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects} हो गए।
+वह घर गया और {fake_num_txt} {fake_object} अलग कर दिए, जिससे उसके पास {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects} बचे।
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

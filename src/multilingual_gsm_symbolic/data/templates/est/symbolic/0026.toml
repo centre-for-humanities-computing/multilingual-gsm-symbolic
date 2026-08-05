@@ -1,0 +1,37 @@
+question = "Mees sööb 5 võileiba päevas, tema naine sööb 4 võileiba päevas ja nende poeg sööb 2 võileiba päevas. Kui palju võileiba see perekond sööb ühe nädala jooksul?"
+
+answer = """
+Selle perekonna poolt ühe päeva jooksul söödavate võileiba arv on 5 + 4 + 2 = <<5+4+2=11>>11 võileiba.
+Selle perekonna poolt ühe nädala jooksul söödavate võileiba arv on 11 * 7 = <<11*7=77>>77 võileiba.
+#### 77
+"""
+
+id_orig = 1023
+
+id_shuffled = 26
+
+question_annotated = """
+{name1,mees} sööb {n1,5} {food_par_pl,võileiba} päevas, {name2,tema naine} sööb {n2,4} {food_par_pl,võileiba} päevas ja nende {relation,poeg} sööb {n3,2} {food_par_pl,võileiba} päevas. Kui palju {food_par_pl,võileiba} see perekond sööb ühe {time_period,nädala} jooksul?
+
+#init:
+- name1 = sample(["isa", "vanaisa", "onu"])
+- name2 = sample(["tema naine", "tema elukaaslane", "tema abikaasa"])
+- relation = sample(["tütar", "poeg", "lapselaps"])
+- food_par_pl, food_gen_pl = sample([("võileiba", "võileibade"), ("pitsat", "pitsade"), ("burritot", "burritode"), ("tacot", "tacode"), ("sushirulli", "sushirullide"), ("hamburgerit", "hamburgerite")])
+- time_period = sample(["nädala", "kuu"])
+- $n1 = range(2, 9)
+- $n2 = range(2, 9)
+- $n3 = range(2, 9)
+
+#answer: (n1 + n2 + n3) * (7 if time_period == "nädala" else 30)
+"""
+
+answer_annotated = """
+Selle perekonna poolt ühe päeva jooksul söödavate {food_par_pl} arv on {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food_par_pl}.
+Selle perekonna poolt ühe {time_period} jooksul söödavate {food_par_pl} arv on {n1+n2+n3} * {7 if time_period == "nädala" else 30} = <<{n1+n2+n3}*{7 if time_period == "nädala" else 30}={(n1+n2+n3)*(7 if time_period == "nädala" else 30)}>>{(n1+n2+n3)*(7 if time_period == "nädala" else 30)} {food_par_pl}.
+#### {(n1+n2+n3)*(7 if time_period == "nädala" else 30)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

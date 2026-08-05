@@ -1,0 +1,40 @@
+question = "धूमकेतु हैली हर ७५ वर्षों में सूर्य की परिक्रमा करता है। मुकेश के पिताजी ने धूमकेतु को तब देखा था जब वे ३० वर्ष के थे। मुकेश ने धूमकेतु को दूसरी बार तब देखा जब उसकी उम्र उसके पिताजी की उस उम्र से तीन गुना थी, जब उन्होंने धूमकेतु देखा था। मुकेश ने धूमकेतु को पहली बार देखा था, तब उसकी उम्र कितनी थी?"
+
+answer = """
+मुकेश ने धूमकेतु को दूसरी बार तब देखा जब वह ३० वर्ष * ३= <<३०*३=९०>>९० वर्ष का था।
+धूमकेतु हैली हर ७५ वर्षों में दिखाई देता है, इसलिए मुकेश ने धूमकेतु को पहली बार तब देखा जब वह ९० वर्ष - ७५ वर्ष = <<९०-७५=१५>>१५ वर्ष का था।
+#### १५
+"""
+
+id_orig = 991
+
+id_shuffled = 73
+
+question_annotated = """
+धूमकेतु {comet_name,हैली} हर {orbit_period,७५} वर्षों में सूर्य की परिक्रमा करता है। {name,मुकेश} के {relative,पिताजी} ने धूमकेतु को तब देखा था जब वे {relative_age,३०} वर्ष के थे। {name,मुकेश} ने धूमकेतु को दूसरी बार तब देखा जब उसकी उम्र उसके {relative,पिताजी} की उस उम्र से {multiple_txt,तीन} गुना थी, जब उन्होंने धूमकेतु देखा था। {name,मुकेश} ने धूमकेतु को पहली बार देखा था, तब उसकी उम्र कितनी थी?
+
+#init:
+- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])
+- name = sample(names_male)
+- relative = sample(['पिताजी', 'पिता', 'चाचा', 'दादाजी'])
+- $orbit_period = range(50, 101, 5)
+- $relative_age = range(20, 51)
+- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)
+
+#conditions:
+- multiple_val * relative_age < 100
+- multiple_val * relative_age > orbit_period
+- is_int(multiple_val * relative_age - orbit_period)
+
+#answer: multiple_val * relative_age - orbit_period
+"""
+
+answer_annotated = """
+{name} ने धूमकेतु को दूसरी बार तब देखा जब वह {relative_age} वर्ष * {multiple_val}= <<{relative_age}*{multiple_val}={relative_age*multiple_val}>>{relative_age*multiple_val} वर्ष का था।
+धूमकेतु {comet_name} हर {orbit_period} वर्षों में दिखाई देता है, इसलिए {name} ने धूमकेतु को पहली बार तब देखा जब वह {relative_age*multiple_val} वर्ष - {orbit_period} वर्ष = <<{relative_age*multiple_val}-{orbit_period}={relative_age*multiple_val-orbit_period}>>{relative_age*multiple_val-orbit_period} वर्ष का था।
+#### {relative_age*multiple_val-orbit_period}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

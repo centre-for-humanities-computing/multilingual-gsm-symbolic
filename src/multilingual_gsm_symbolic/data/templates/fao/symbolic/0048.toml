@@ -1,0 +1,43 @@
+question = "Emilie kann skelja 6 rækjur um minuttin og sautera 30 rækjur upp á 10 minuttir. Hvussu langa tíð fer tað at taka henni at skelja og sautera 90 rækjur? Emilie kann ikki skelja og sautera samstundis."
+
+answer = """
+Fyrst finnur tú út av, hvussu langa tíð tað tekur Emilie at skelja rækjurnar: 90 rækjur / 6 rækjur/minutt = <<90/6=15>>15 minuttir
+Síðani finnur tú út av, hvussu nógvar skamtir av rækjum hon skal tilgera: 90 rækjur / 30 rækjur/skamt = <<90/30=3>>3 skamtir
+Síðani margfaldar tú talið av skamtum við tíðini fyri hvønn skamt fyri at finna samlaðu tilgerðartíðina: 3 skamtir * 10 minuttir/skamt = <<3*10=30>>30 minuttir
+At enda leggur tú skeljitíðina afturat fyri at finna samlaðu tíðina, Emilie brúkar: 30 minuttir + 15 minuttir = <<30+15=45>>45 minuttir
+#### 45
+"""
+
+id_orig = 989
+
+id_shuffled = 48
+
+question_annotated = """
+{name,Emilie} kann skelja {n1,6} {food,rækjur} um minuttin og sautera {n2,30} {food,rækjur} upp á {t,10} minuttir. Hvussu langa tíð fer tað at taka henni at skelja og sautera {total,90} {food,rækjur}? {name,Emilie} kann ikki skelja og sautera samstundis.
+
+#init:
+- name = sample(names_female)
+- food = sample(["rækjur", "leykar", "gularøtur", "soppir", "kræklingar"])
+- $n1 = range(4, 15)
+- $n2 = range(20, 50, 5)
+- $t = range(5, 20)
+- $total = range(60, 200, 10)
+
+#conditions:
+- divides(total, n1)
+- divides(total, n2)
+
+#answer: total // n1 + (total // n2) * t
+"""
+
+answer_annotated = """
+Fyrst finnur tú út av, hvussu langa tíð tað tekur {name} at skelja {food}nar: {total} {food} / {n1} {food}/minutt = <<{total}/{n1}={total//n1}>>{total//n1} minuttir
+Síðani finnur tú út av, hvussu nógvar skamtir av rækjum hon skal tilgera: {total} {food} / {n2} {food}/skamt = <<{total}/{n2}={total//n2}>>{total//n2} skamtir
+Síðani margfaldar tú talið av skamtum við tíðini fyri hvønn skamt fyri at finna samlaðu tilgerðartíðina: {total//n2} skamtir * {t} minuttir/skamt = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t} minuttir
+At enda leggur tú skeljitíðina afturat fyri at finna samlaðu tíðina, {name} brúkar: {(total//n2)*t} minuttir + {total//n1} minuttir = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1} minuttir
+#### {(total//n2)*t + total//n1}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

@@ -1,0 +1,44 @@
+question = "Le plus grand toboggan aquatique de Walibi mesure 300 cm de long et les gens glissent à 60 cm/minute. Le deuxième plus grand toboggan aquatique mesure 240 cm de long, mais est plus raide, donc les gens glissent à 80 cm/minute. Combien de temps de plus faut-il pour faire le plus grand toboggan par rapport au deuxième plus grand ?"
+
+answer = """
+D'abord, trouvez le temps de parcours sur le plus grand toboggan : 300 cm / 60 cm/minute = <<300/60=5>>5 minutes
+Ensuite, trouvez le temps de parcours sur le deuxième plus grand toboggan : 240 cm / 80 cm/minute = <<240/80=3>>3 minutes
+Soustrayez ensuite le temps de parcours du deuxième plus long toboggan de celui du plus long pour trouver la différence : 5 minutes - 3 minutes = <<5-3=2>>2 minutes
+#### 2
+"""
+
+id_orig = 1099
+
+id_shuffled = 87
+
+question_annotated = """
+Le plus grand toboggan aquatique {park_name,de Walibi} mesure {l1,300} {unit,cm} de long et les gens glissent à {s1,60} {unit,cm}/minute. Le deuxième plus grand toboggan aquatique mesure {l2,240} {unit,cm} de long, mais est plus raide, donc les gens glissent à {s2,80} {unit,cm}/minute. Combien de temps de plus faut-il pour faire le plus grand toboggan par rapport au deuxième plus grand ?
+
+#init:
+- park_name = sample(["du Parc Astérix", "de l'Aqua Park", "du parc aquatique", "de Disneyland"])
+- unit = sample(["cm", "m"])
+- $l1 = range(250, 401, 10)
+- $l2 = range(200, 301, 10)
+- $s1 = range(40, 81, 5)
+- $s2 = range(60, 101, 5)
+
+#conditions:
+- l1 > l2
+- s2 > s1
+- is_int(l1/s1)
+- is_int(l2/s2)
+- l1/s1 > l2/s2
+
+#answer: l1/s1 - l2/s2
+"""
+
+answer_annotated = """
+D'abord, trouvez le temps de parcours sur le plus grand toboggan : {l1} {unit} / {s1} {unit}/minute = <<{l1}/{s1}={l1//s1}>>{l1//s1} minutes
+Ensuite, trouvez le temps de parcours sur le deuxième plus grand toboggan : {l2} {unit} / {s2} {unit}/minute = <<{l2}/{s2}={l2//s2}>>{l2//s2} minutes
+Soustrayez ensuite le temps de parcours du deuxième plus long toboggan de celui du plus long pour trouver la différence : {l1//s1} minutes - {l2//s2} minutes = <<{l1//s1}-{l2//s2}={l1//s1 - l2//s2}>>{l1//s1 - l2//s2} minutes
+#### {l1//s1 - l2//s2}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

@@ -1,0 +1,36 @@
+question = "水が冷たいとき、みおは1キロを16分で泳ぎます。水が暖かいとき、1キロをその2倍の時間より2分遅く泳ぎます。暑い日に3キロ泳ぐのは、寒い日に比べて何分長くかかりますか？"
+answer = """冷たい水での1キロ = 16分
+暖かい水での1キロ = 2+2*16=34分
+冷たい水で3キロ: 3(16)=<<3*16=48>>48分
+暖かい水で3キロ: 3(34)=<<3*34=102>>102分
+みおは102-48=<<102-48=54>>54分長くかかります
+#### 54
+"""
+id_orig = 554
+id_shuffled = 93
+question_annotated = """水が冷たいとき、{name,みお}は1{unit,キロ}を{t1,16}分で泳ぎます。水が暖かいとき、1{unit,キロ}をその{mult_txt,2倍}の時間より{n,2}分遅く泳ぎます。暑い日に{d,3}{unit,キロ}泳ぐのは、寒い日に比べて何分長くかかりますか？
+
+#init:
+- name = sample(names)
+- unit = sample(['キロ', 'km'])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- mult_txt, mult_val = sample(multi_times)
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+answer_annotated = """冷たい水での1{unit} = {t1}分
+暖かい水での1{unit} = {n}+{mult_val}*{t1}={n + mult_val * t1}分
+冷たい水で{d}{unit}: {d}({t1})=<<{d}*{t1}={d*t1}>>{d*t1}分
+暖かい水で{d}{unit}: {d}({n + mult_val * t1})=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)}分
+{name}は{d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1}分長くかかります
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

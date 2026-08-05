@@ -1,0 +1,45 @@
+question = "अर्जुनकडे १० काचगोटे असलेली एक पिशवी होती. ती घेऊन जात असताना तो एका खड्यावर अडखळला आणि त्याचे अर्धे काचगोटे खाली पडले. त्याने ते शोधण्याचा खूप प्रयत्न केला, पण त्याला फक्त ३ सापडले. जेव्हा तो परत घरी गेला, तेव्हा त्याने काचगोटे नीट तपासले. त्याने उचललेल्या वस्तूंमधील दोन या काचगोटे नव्हत्या, तर मणी होते, म्हणून त्याने त्या काढून टाकल्या. शेवटी अर्जुनकडे किती काचगोटे उरले?"
+
+answer = """
+अर्जुनचे काचगोटे खाली पडले आणि त्याच्याकडे १०*१/२=<<१०*१/२=५>>५ काचगोटे उरले.
+त्याने शोधून त्याचे काही हरवलेले काचगोटे सापडले, त्यामुळे त्याच्याकडे पुन्हा ५+३=<<५+३=८>>८ काचगोटे झाले.
+तो घरी गेला आणि दोन मणी काढून टाकले, त्यामुळे त्याच्याकडे ८-२=<<८-२=६>>६ काचगोटे उरले.
+#### ६
+"""
+
+id_orig = 1247
+
+id_shuffled = 61
+
+question_annotated = """
+{name,अर्जुन}कडे {n,१०} {objects,काचगोटे} असलेली एक पिशवी होती. ती घेऊन जात असताना तो एका {obstacle,खड्यावर} अडखळला आणि त्याचे {frac_neut,अर्धे} {objects,काचगोटे} खाली पडले. त्याने ते शोधण्याचा खूप प्रयत्न केला, पण त्याला फक्त {k,३} सापडले. जेव्हा तो परत घरी गेला, तेव्हा त्याने {objects,काचगोटे} नीट तपासले. त्याने उचललेल्या वस्तूंमधील {fake_num_txt,दोन} या {objects,काचगोटे} नव्हत्या, तर {fake_object,मणी} होते, म्हणून त्याने त्या काढून टाकल्या. शेवटी {name,अर्जुन}कडे किती {objects,काचगोटे} उरले?
+
+#init:
+- name = sample(names_male)
+- objects = sample(['काचगोटे', 'नाणी', 'बटणे', 'मणी', 'खडे'])
+- obstacle = sample(['दगड', 'काठी', 'खेळणे', 'मूळ'])
+- fake_object = sample(['बटणे', 'नाणी', 'खडे', 'मणी'])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- frac_neut = mar_fraction_form(frac_txt, 'neut')
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+
+answer_annotated = """
+{name}चे {objects} खाली पडले आणि त्याच्याकडे {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects} उरले.
+त्याने शोधून त्याचे काही हरवलेले {objects} सापडले, त्यामुळे त्याच्याकडे पुन्हा {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects} झाले.
+तो घरी गेला आणि {fake_num_txt} {fake_object} काढून टाकले, त्यामुळे त्याच्याकडे {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects} उरले.
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

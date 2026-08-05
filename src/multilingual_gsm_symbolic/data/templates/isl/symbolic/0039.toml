@@ -1,25 +1,23 @@
-question = "Skólavörður þarf að þrífa í skóla með 80 kennslustofum. Þau hafa 5 daga til að klára það. Það tekur þau 15 mínútur á hverja kennslustofu. Ef þau vinna 8 tíma á dag, hversu stórt hlutfall af deginum þeirra fer að meðaltali í að þrífa kennslustofur?"
+question = "Húsvörður þarf að þrífa í skóla með 80 kennslustofum. Hann hefur 5 daga til að klára það. Það tekur hann 15 mínútur á hverja kennslustofu. Ef hann vinnur 8 tíma á dag, hversu stórt hlutfall af deginum hans fer að meðaltali í að þrífa kennslustofur?"
 
-answer = """
-Þau þurfa að þrífa 16 kennslustofur á dag, því 80/5 = <<80/5=16>>16
-Þau nota 240 mínútur í þrif á dag, því 16*15 = <<16*15=240>>240
-Þau nota 4 tíma á dag, því 240 / 60 = <<240/60=4>>4
-Þau nota 1/2 af deginum sínum í að þrífa kennslustofur, því 4 / 8 = <<4/8=0,5>>0,5
-Þau nota 50% af deginum sínum í að þrífa kennslustofur, því 0,5*100 = <<0,5*100=50>>50
-#### 50
-"""
+answer = """Hann þarf að þrífa 16 kennslustofur á dag, því 80 / 5 = <<80/5=16>>16
+Hann notar 240 mínútur í þrif á dag, því 16*15 = <<16*15=240>>240
+Hann notar 4 tíma á dag, því 240 / 60 = <<240/60=4>>4
+Hann notar 1/2 af deginum sínum í að þrífa kennslustofur, því 4 / 8 = <<4/8=0,5>>0,5
+Hann notar 50% af deginum sínum í að þrífa kennslustofur, því 0,5*100 = <<0,5*100=50>>50
+#### 50"""
 
 id_orig = 1239
 
 id_shuffled = 39
 
 question_annotated = """
-{job,skólavörður} þarf að þrífa í {building,skóla} með {n,80} kennslustofum. Þau hafa {d,5} daga til að klára það. Það tekur þau {t,15} mínútur á hverja {room,kennslustofu}. Ef þau vinna {h,8} tíma á dag, hversu stórt hlutfall af deginum þeirra fer að meðaltali í að þrífa {room_plural,kennslustofur}?
+{job,húsvörður} þarf að þrífa í {building,skóla} með {n,80} {room_thgf_ft,kennslustofum}. Hann hefur {d,5} daga til að klára það. Það tekur hann {t,15} mínútur á hverja {room_thf_et,kennslustofu}. Ef hann vinnur {h,8} tíma á dag, hversu stórt hlutfall af deginum hans fer að meðaltali í að þrífa {room_thf_ft,kennslustofur}?
 
 #init:
-- job = sample(["þjálfari", "þrif", "viðhaldsmaður"])
-- building = sample(["skrifstofubygging", "sjúkrahús", "háskóli"])
-- room, room_plural = sample([("klasselokale", "klasselokaler"), ("herbergi", "herbergi"), ("etage", "etager")])
+- job = sample(["húsvörður", "ræstir", "viðhaldsmaður"])
+- building = sample(["skrifstofubyggingu", "sjúkrahúsi", "háskóla"])
+- room_thgf_ft, room_thf_et, room_thf_ft = sample([("kennslustofum", "kennslustofu", "kennslustofur"), ("stofum", "stofu", "stofur"), ("hæðum", "hæð", "hæðir")])
 - $n = range(50, 221, 5)
 - $d = range(3, 12)
 - $t = range(10, 46, 5)
@@ -36,14 +34,14 @@ question_annotated = """
 """
 
 answer_annotated = """
-Þau þurfa að þrífa {n//d} {room_plural} á dag, því {n}/{d} = <<{n}/{d}={n//d}>>{n//d}
-Þau nota {(n//d)*t} mínútur í þrif á dag, því {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
-Þau nota {(n//d)*t/60} tíma á dag, því {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
-Þau nota {Fraction((n//d)*t/(h*60))} af deginum sínum í að þrífa {room_plural}, því {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
-Þau nota {int(100 * (n/d) * t / (h * 60))}% af deginum sínum í að þrífa {room_plural}, því {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
+Hann þarf að þrífa {n//d} {room_thf_et if ((n//d) % 10 == 1 and (n//d) % 100 != 11) else room_thf_ft} á dag, því {n} / {d} = <<{n}/{d}={n//d}>>{n//d}
+Hann notar {(n//d)*t} mínútur í þrif á dag, því {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}
+Hann notar {(n//d)*t/60} tíma á dag, því {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}
+Hann notar {Fraction((n//d)*t/(h*60))} af deginum sínum í að þrífa {room_thf_ft}, því {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}
+Hann notar {int(100 * (n/d) * t / (h * 60))}% af deginum sínum í að þrífa {room_thf_ft}, því {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}
 #### {int(100 * (n/d) * t / (h * 60))}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

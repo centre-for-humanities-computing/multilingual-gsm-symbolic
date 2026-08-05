@@ -1,0 +1,42 @@
+question = "David hevur 130,2 kr og ynskir at keypa 16 boltar úr einum kassa í byggibúðini. Hvør boltur kostar 0,2 kr. Hvussu nógvar pengar hevur David eftir, tá ið hann hevur goldið fyri boltarnar?"
+
+answer = """
+David goldi 16*0,2 kr = <<16*0,2=3,2>>3,2 kr fyri boltarnar.
+David hevur 130,2 kr - 3,2 kr = 127 kr eftir.
+#### 127
+"""
+
+id_orig = 873
+
+id_shuffled = 30
+
+question_annotated = """
+{name,David} hevur {initial_amount,130.2} {cur,kr} og ynskir at keypa {quantity,16} {item_plural,boltar} úr einum kassa í {store_type,byggibúðini}. Hvør {item,boltur} kostar {unit_price,0.2} {cur,kr}. Hvussu nógvar pengar hevur {name,David} eftir, tá ið hann hevur goldið fyri {item_plural,boltar}nar?
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- item, item_plural = sample([("boltur", "boltar"),("skrúva", "skrúvur"), ("skiva", "skivur"), ("motta", "mottur"), ("akker", "akker")])
+- store_type = sample(["byggibúð", "járnvøruhandil"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(85.5, 175, 5.5)
+- $unit_price = arange(0.2, 4.8, 0.1)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: round(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name} goldi {quantity}*{round(unit_price} {cur} = <<{quantity}*{round(unit_price}={round(quantity*unit_price}>>{round(quantity*unit_price} {cur} fyri {item_plural}nar.
+{name} hevur {initial_amount} {cur} - {round(quantity*unit_price} {cur} = {round(initial_amount - quantity * unit_price)} {cur} eftir.
+#### {round(initial_amount - quantity * unit_price)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

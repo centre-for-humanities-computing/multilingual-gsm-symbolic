@@ -1,8 +1,30 @@
 question = "Мартін має 10 гектарів ананасової плантації. Є 100 ананасів на гектар. Мартін може збирати свої ананаси кожні 3 місяці. Скільки ананасів Мартін може зібрати за рік?"
-answer = "Мартін має 100*10= <<100*10=1000>>1000 ананасів на своїй плантації.\nМартін може збирати свої ананаси 12 / 3 = <<12/3=4>>4 рази на рік\nТому Мартін може зібрати 1000*4 = <<1000*4=4000>>4000 ананасів на рік.\n#### 4000\n"
+answer = """Мартін має 100*10= <<100*10=1000>>1000 ананасів на своїй плантації.
+Мартін може збирати свої ананаси 12 / 3 = <<12/3=4>>4 рази на рік
+Тому Мартін може зібрати 1000*4 = <<1000*4=4000>>4000 ананасів на рік.
+#### 4000
+"""
 id_orig = 145
 id_shuffled = 6
-question_annotated = "{name,Мартін} має {x,10} {area,гектарів} {fruit,ананас}ової плантації. Є {k,100} {fruit_plural,ананасів} на {area_hectare,гектар}. {name, Мартін} може збирати свої {fruit_plural_harvest,ананаси} кожні {n,3} місяці. Скільки {fruit_plural,ананасів} {name,Мартін} може зібрати за рік?\n\n#init:\n- name = sample(names_male)\n- fruit, fruit_plural = sample(fruits)\n- area = sample(['гектар', 'квадратний метр'])\n- $x = range(5, 100, 5)\n- $k = range(2, 101)\n- $n = sample([1, 2, 3, 4, 6, 12])\n\n#answer: x * k * (12//n)\n"
-answer_annotated = "{name} має {k}*{x}= <<{k}*{x}={k*x}>>{k*x} {fruit_plural} на своїй плантації.\n{name} може збирати свої {fruit_plural_harvest} 12 / {n} = <<12/{n}={12//n}>>{12//n} рази на рік\nТому {name} може зібрати {k*x}*{12//n} = <<{k*x}*{12//n}={k*x*12//n}>>{k*x*12//n} {fruit} на рік.\n#### {k*x*12//n}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name,Мартін} має {x,10} {area_plural,гектарів} {fruit_accusative,ананасової} плантації. Є {k,100} {fruit_plural_from_number,ананасів} на {area,гектар}. {name, Мартін} може збирати свої {fruit_plural,ананаси} кожні {n,3} {month_form, місяці}. Скільки {fruit_plural_accusative,ананасів} {name,Мартін} може зібрати за рік?
+
+#init:
+- name = sample(names_male)
+- fruit, fruit_accusative, fruit_plural_accusative, fruit_plural = sample(fruits)
+- area, area_plural = sample([['гектар', 'гектарів'], ['квадратний метр','квадратних метрів']])
+- $x = range(5, 100, 5)
+- $k = range(2, 101)
+- $n = sample([1, 2, 3, 4, 6, 12])
+- month_form = ukr_month_form_on_number(n)
+- fruit_plural_from_number = plural(k, fruit, fruit_plural, fruit_plural_accusative)
+- fruit_plural_from_number_solution = plural(k*x*12//n, fruit, fruit_plural, fruit_plural_accusative)
+
+#answer: x * k * (12//n)
+"""
+answer_annotated = """{name} має {k}*{x}= <<{k}*{x}={k*x}>>{k*x} {fruit_plural_accusative} на своїй плантації.
+{name} може збирати свої {fruit_plural} 12 / {n} = <<12/{n}={12//n}>>{12//n} рази на рік
+Тому {name} може зібрати {k*x}*{12//n} = <<{k*x}*{12//n}={k*x*12//n}>>{k*x*12//n} {fruit_plural_from_number} на рік.
+#### {k*x*12//n}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

@@ -1,0 +1,42 @@
+question = "やすおは市場で花を売ります。マリーゴールド、ペチュニアとひまわりの3種類の花を売っています。ふだんは、マリーゴールドを1鉢あたり￥275、ペチュニアを1鉢あたり￥180、ひまわりを1鉢あたり￥210で売っています。今日はおつりが足りないので、すべての値段を最も近い￥100の位に丸めることにしました。やすおがマリーゴールドを12鉢、ペチュニアを9鉢、ひまわりを17鉢売ると、売上はいくらになりますか？"
+answer = """やすおはマリーゴールドの値段を￥275から￥300に切り上げます。
+ペチュニアの値段は￥180から￥200に切り上げます。
+ひまわりの値段は￥210から￥200に切り下げます。
+マリーゴールド12鉢の売上は、12*￥300 = ￥<<12*300=3600>>3600
+ペチュニア9鉢の売上は、9*￥200 = ￥<<9*200=1800>>1800
+ひまわり17鉢の売上は、17*￥200 = ￥<<17*200=3400>>3400
+全部合わせると、やすおの売上は￥3600 + ￥1800 + ￥3400 = ￥<<3600+1800+3400=8800>>8800です。
+#### 8800
+"""
+id_orig = 74
+id_shuffled = 51
+question_annotated = """{name,やすお}は{location,市場}で{product,花}を売ります。{item1,マリーゴールド}、{item2,ペチュニア}と{item3,ひまわり}の3種類の{product,花}を売っています。ふだんは、{item1,マリーゴールド}を1{unit,鉢}あたり{cur,￥}{p1,275}、{item2,ペチュニア}を1{unit,鉢}あたり{cur,￥}{p2,180}、{item3,ひまわり}を1{unit,鉢}あたり{cur,￥}{p3,210}で売っています。今日はおつりが足りないので、すべての値段を最も近い￥100の位に丸めることにしました。{name,やすお}が{item1,マリーゴールド}を{n1,12}{unit,鉢}、{item2,ペチュニア}を{n2,9}{unit,鉢}、{item3,ひまわり}を{n3,17}{unit,鉢}売ると、売上はいくらになりますか？
+
+#init:
+- name = sample(names)
+- product = sample([\"花\", \"花束\", \"植物\"])
+- location = sample([\"市場\", \"屋台\", \"家の前\"])
+- item1, item2, item3 = sample([\"薔薇\", \"マリーゴールド\", \"チューリップ\", \"ペチュニア\", \"ひまわり\", \"ラベンダー\"], 3)
+- unit = sample([\"束\", \"かご\", \"花束\", \"ひとまとめ\"])
+- cur = sample(currencies_sym)
+- $p1 = arange(250, 300, 5)
+- $p2 = arange(150, 250, 10)
+- $p3 = arange(200, 400, 10)
+- $n1 = range(5, 21)
+- $n2 = range(15, 31)
+- $n3 = range(35, 41)
+
+
+#answer: n1*round(p1, -2) + n2*round(p2, -2) + n3*round(p3, -2)
+"""
+answer_annotated = """{name}は{item1}の値段を{cur}{p1}から{cur}{round(p1, -2)}に切り上げます。
+{item2}の値段は{cur}{p2}から{cur}{round(p2, -2)}に{'切り上げ' if round(p2, -2) > p2 else '切り下げ'}ます。
+{item3}の値段は{cur}{p3}から{cur}{round(p3, -2)}に{'切り上げ' if round(p3, -2) > p3 else '切り下げ'}ます。
+{item1}{n1}{unit}の売上は、{n1}*{cur}{round(p1, -2)} = {cur}<<{n1}*{round(p1, -2)}={n1*round(p1, -2)}>>{n1*round(p1, -2)}
+{item2}{n2}{unit}の売上は、{n2}*{cur}{round(p2, -2)} = {cur}<<{n2}*{round(p2, -2)}={n2*round(p2, -2)}>>{n2*round(p2, -2)}
+{item3}{n3}{unit}の売上は、{n3}*{cur}{round(p3, -2)} = {cur}<<{n3}*{round(p3, -2)}={n3*round(p3, -2)}>>{n3*round(p3, -2)}
+全部合わせると、{name}の売上は{cur}{n1*round(p1, -2)} + {cur}{n2*round(p2, -2)} + {cur}{n3*round(p3, -2)} = {cur}<<{n1*round(p1, -2)}+{n2*round(p2, -2)}+{n3*round(p3, -2)}={n1*round(p1, -2) + n2*round(p2, -2) + n3*round(p3, -2)}>>{n1*round(p1, -2) + n2*round(p2, -2) + n3*round(p3, -2)}です。
+#### {n1*round(p1, -2) + n2*round(p2, -2) + n3*round(p3, -2)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

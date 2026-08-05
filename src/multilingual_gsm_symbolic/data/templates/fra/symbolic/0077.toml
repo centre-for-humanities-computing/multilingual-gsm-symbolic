@@ -1,0 +1,37 @@
+question = "Sarah doit rendre un article de recherche de 15 pages. Elle a déjà écrit un tiers de l'article de recherche. Combien de pages lui reste-t-il encore à écrire ?"
+
+answer = """
+Sarah a déjà écrit un tiers de l'article de recherche, ce qui correspond à 15 pages*1/3=<<15*1/3=5>>5 pages.
+Il lui reste donc encore à écrire 15 pages - 5 pages = <<15-5=10>>10 pages.
+#### 10
+"""
+
+id_orig = 655
+
+id_shuffled = 77
+
+question_annotated = """
+{name,Sarah} doit rendre un {document,article de recherche} de {n,15} pages. Elle a déjà écrit {frac_txt,un tiers} {document_definite,de l'article de recherche}. Combien de pages lui reste-t-il encore à écrire ?
+
+#init:
+- name = sample(names_female)
+- document, document_definite = sample([("rapport","du rapport"), ("mémoire","du mémoire"), ("devoir","du devoir"), ("article","de l'article"), ("article de recherche","de l'article de recherche")])
+- $n = range(10, 325)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * frac_val)
+- n * frac_val < n
+
+#answer: n - int(n * frac_val)
+"""
+
+answer_annotated = """
+{name} a déjà écrit {frac_txt} {document_definite}, ce qui correspond à {n} pages*{frac_val}=<<{n}*{frac_val}={int(n*frac_val)}>>{int(n*frac_val)} pages.
+Il lui reste donc encore à écrire {n} pages - {int(n*frac_val)} pages = <<{n}-{int(n*frac_val)}={n-int(n*frac_val)}>>{n-int(n*frac_val)} pages.
+#### {n-int(n*frac_val)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

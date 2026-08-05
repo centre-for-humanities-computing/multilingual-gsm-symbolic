@@ -1,0 +1,45 @@
+question = "पेफोनवरून कॉल करण्यासाठी, तुमच्या कॉलच्या प्रत्येक मिनिटासाठी तुम्हाला ₹०.२५ द्यावे लागतील. १६ मिनिटांनंतर, तो दर प्रति मिनिट ₹०.२ इतका कमी होतो. ३६ मिनिटांच्या कॉलची किंमत किती येईल?"
+
+answer = """
+पहिल्या १६ मिनिटांची किंमत १६ * ०.२५ = ₹<<१६*०.२५=४>>४ होईल.
+त्यानंतर, कॉलची ३६ - १६ = <<३६-१६=२०>>२० मिनिटे शिल्लक राहतात.
+आणि या २० मिनिटांची किंमत २० * ०.२ = ₹<<२०*०.२=४>>४ होईल.
+म्हणून एकूण, ३६ मिनिटांच्या कॉलची किंमत ४ + ४ = ₹८ होईल.
+#### ८
+"""
+
+id_orig = 1223
+
+id_shuffled = 10
+
+question_annotated = """
+{dev,पेफोन}वरून कॉल करण्यासाठी, तुमच्या कॉलच्या प्रत्येक मिनिटासाठी तुम्हाला {currency,₹}{frac1,०.२५} द्यावे लागतील. {t,१६} मिनिटांनंतर, तो दर प्रति मिनिट {currency,₹}{frac2,०.२} इतका कमी होतो. {total,३६} मिनिटांच्या कॉलची किंमत किती येईल?
+
+#init:
+- dev = sample(['फोन बूथ', 'हॉटेल रूम फोन'])
+- currency = sample(currencies_sym)
+- $frac1 = sample(fraction_decimals)
+- $frac2 = sample(fraction_decimals)
+- $t = range(10, 50)
+- $total = range(36, 100)
+
+#conditions:
+- is_int(frac1 * t)
+- is_int((total-t) * frac2)
+- frac2 < frac1
+- t < total
+
+#answer: int((frac1 * t) + frac2*(total-t))
+"""
+
+answer_annotated = """
+पहिल्या {t} मिनिटांची किंमत {t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} होईल.
+त्यानंतर, कॉलची {total} - {t} = <<{total}-{t}={total-t}>>{total-t} मिनिटे शिल्लक राहतात.
+आणि या {total-t} मिनिटांची किंमत {total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)} होईल.
+म्हणून एकूण, {total} मिनिटांच्या कॉलची किंमत {int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))} होईल.
+#### {int((frac1 * t) + frac2*(total-t))}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

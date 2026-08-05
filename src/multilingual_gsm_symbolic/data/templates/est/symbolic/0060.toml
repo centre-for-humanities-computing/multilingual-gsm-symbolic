@@ -1,0 +1,45 @@
+question = "Sander teeb iga päev 10-tunnise vahetuse, viis päeva nädalas. Ta teenib 10 EUR tunnis ja saab igal nädalal 300 EUR suuruse lisatasu, kui ettevõttel läheb hästi. Kui palju raha teenis Sander aprillikuus, kui ettevõttel läks kogu kuu väga hästi?"
+
+answer = """
+Ühe päeva jooksul teenib Sander 10 * 10 = <<10*10=100>>100 EUR
+Kui ta töötab viis päeva nädalas, siis on kogu kuu jooksul kokku 5*4=<<5*4=20>>20 päeva.
+Kuna ta teenib 100 EUR päevas, siis on kogu kuu kogusumma 20 * 100 = <<20*100=2000>>2000 EUR.
+Lisaks sai ta 300 * 4 = <<300*4=1200>>1200 EUR lisatasu, sest ettevõttel läks aprilli kõigil nädalatel hästi.
+Aprilli lõpus teenis ta kokku 2000 EUR + 1200 EUR = <<2000+1200=3200>>3200 EUR.
+#### 3200
+"""
+
+id_orig = 304
+
+id_shuffled = 60
+
+question_annotated = """
+{name,Sander} teeb iga päev {h,10}-tunnise vahetuse, {d_txt,viis} päeva nädalas. Ta teenib {r,10} {cur,EUR} tunnis ja saab igal nädalal {b,300} {cur,EUR} suuruse lisatasu, kui ettevõttel läheb hästi. Kui palju raha teenis {name,Sander} {month,aprilli}kuus, kui ettevõttel läks kogu kuu väga hästi?
+
+#init:
+- name, _ = sample(names_male_cases)
+- month = sample(["jaanuari", "veebruari", "märtsi", "aprilli", "mai", "juuni", "juuli", "augusti", "septembri", "oktoobri", "novembri", "detsembri"])
+- cur = sample(currencies_sym)
+- $h = range(6, 13)
+- d_txt, d_val = range_str(3, 7, 1, numbers)
+- $r = range(8, 31)
+- $b = range(100, 601)
+
+#conditions:
+- is_int(h * r)
+
+#answer: h * r * d_val * 4 + b * 4
+"""
+
+answer_annotated = """
+Ühe päeva jooksul teenib {name} {h} * {r} = <<{h}*{r}={h*r}>>{h*r} {cur}
+Kui ta töötab {d_txt} päeva nädalas, siis on kogu kuu jooksul kokku {d_val}*4=<<{d_val}*4={d_val*4}>>{d_val*4} päeva.
+Kuna ta teenib {h*r} {cur} päevas, siis on kogu kuu kogusumma {d_val*4} * {h*r} = <<{d_val*4}*{h*r}={d_val*4*h*r}>>{d_val*4*h*r} {cur}.
+Lisaks sai ta {b} * 4 = <<{b}*4={b*4}>>{b*4} {cur} lisatasu, sest ettevõttel läks {month} kõigil nädalatel hästi.
+{month} lõpus teenis ta kokku {d_val*4*h*r} {cur} + {b*4} {cur} = <<{d_val*4*h*r}+{b*4}={d_val*4*h*r+b*4}>>{d_val*4*h*r+b*4} {cur}.
+#### {d_val*4*h*r+b*4}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

@@ -1,0 +1,44 @@
+question = "Toitumisalase info järgi on krõpsukotis 250 kalorit ühes portsjonis. Kui 300-grammine kott sisaldab 5 portsjonit, siis mitu grammi võid sa ära süüa, kui sinu päevane kalorite eesmärk on 2000 ja sa oled juba ära söönud 1800 kalorit?"
+
+answer = """
+Kui kalorite eesmärk on 2000 ja ma olen ära söönud 1800 kalorit, siis on mul 2000-1800 = <<2000-1800=200>>200 kalorit söömiseks.
+Kui iga krõpsuportsjon sisaldab 250 kalorit ja mul on alles 200 kalorit, siis saan süüa ainult 200/250 portsjonit = 4/5 portsjonist.
+Tean, et 300-grammine krõpsukott sisaldab 5 portsjonit, seega on üks portsjon 300 grammi/5 = <<300/5=60>>60 grammi.
+Kui ma saan süüa ainult 4/5 portsjonist, siis saan süüa ainult 60 grammi * 4/5 = 48 grammi.
+#### 48
+"""
+
+id_orig = 43
+
+id_shuffled = 24
+
+question_annotated = """
+Toitumisalase info järgi on krõpsukotis {cal,250} kalorit ühes portsjonis. Kui {size,300}-grammine kott sisaldab {n,5} portsjonit, siis mitu grammi võid sa ära süüa, kui sinu päevane kalorite eesmärk on {total,2000} ja sa oled juba ära söönud {spent,1800} kalorit?
+
+#init:
+- $cal = range(150, 500, 25)
+- $size = range(100, 400, 25)
+- $n = range(4, 8)
+- $total = range(1900, 2500, 5)
+- $spent = range(600, 1900, 25)
+
+#conditions:
+- spent < total
+- is_int(5 * (total - spent) / cal)
+- divides(size, n)
+- divides(size//n, (total-spent)/cal)
+
+#answer: size//n * Fraction((total-spent)/cal)
+"""
+
+answer_annotated = """
+Kui kalorite eesmärk on {total} ja ma olen ära söönud {spent} kalorit, siis on mul {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} kalorit söömiseks.
+Kui iga krõpsuportsjon sisaldab {cal} kalorit ja mul on alles {total-spent} kalorit, siis saan süüa ainult {total-spent}/{cal} portsjonit = {Fraction((total-spent)/cal)} portsjonist.
+Tean, et {size}-grammine krõpsukott sisaldab {n} portsjonit, seega on üks portsjon {size} grammi/{n} = <<{size}/{n}={size//n}>>{size//n} grammi.
+Kui ma saan süüa ainult {Fraction((total-spent)/cal)} portsjonist, siis saan süüa ainult {size//n} grammi * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} grammi.
+#### {size//n * (total-spent)/cal}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

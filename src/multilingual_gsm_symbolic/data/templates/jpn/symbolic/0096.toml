@@ -1,0 +1,38 @@
+question = "あおばは誕生日パーティーの予算として親から￥9000貰いました。あおばは、友だち全員と一緒にボーリングをし、ゲームセンターで￥500使い、カラオケに2回乗れるようにしたいと思っています。ボーリングは￥500かかり、カラオケは1回￥1000かかります。あおばは友だちを何人招待できますか？"
+answer = """カラオケは1人あたり、￥1000*2 = ￥<<1000*2=2000>>2000 かかります。
+なので、1人あたりの費用は ￥500 + ￥500 + ￥2000 = ￥<<500+500+2000=3000>>3000 です。
+￥9000 / ￥3000 = <<9000/3000=3>>3 なので、3人の予算があります。
+あおばは友だちを　3 - 1 =<<3-1=2>>2人　招待できます。
+#### 2
+"""
+id_orig = 357
+id_shuffled = 96
+question_annotated = """{name,あおば}は誕生日パーティーの予算として{parent,親}から{cur,￥}{budget,9000}貰いました。{name,あおば}は、友だち全員と一緒に{activity1,ボーリング}をし、{activity2,ゲームセンター}で{cur,￥}{tokens,500}使い、{activity3,カラオケ}に{times,2}回乗れるようにしたいと思っています。{activity1,ボーリング}は{cur,￥}{cost1,500}かかり、{activity3,カラオケ}は1回{cur,￥}{cost2,1000}かかります。{name,あおば}は友だちを何人招待できますか？
+
+#init:
+- name = sample(names)
+- parent = sample([\"お母さん\", \"お父さん\", \"親\", \"両親\"])
+- activity1 = sample([\"ミニゴルフ\", \"ボーリング\", \"ダーツ\"])
+- activity2 = sample([\"ゲームセンター\", \"UFOキャッチャー\", \"卓球\"])
+- activity3 = sample([\"ゴーカート\", \"カラオケ\", \"ジェットコースター\"])
+- cur = sample(currencies_sym)
+- times = range(2, 6)
+- $budget = range(5000, 30100, 1000)
+- $tokens = range(300, 1100, 100)
+- $cost1 = range(300, 1100, 100)
+- $cost2 = range(500, 2100, 100)
+
+#conditions:
+- budget % (tokens + cost1 + cost2 * times) == 0
+- budget // (tokens + cost1 + cost2 * times) > 1
+
+#answer: budget // (tokens + cost1 + cost2 * times) - 1
+"""
+answer_annotated = """{activity3}は1人あたり、{cur}{cost2}*{times} = {cur}<<{cost2}*{times}={cost2*times}>>{cost2*times} かかります。
+なので、1人あたりの費用は ￥{tokens} + {cur}{cost1} + {cur}{cost2*times} = {cur}<<{tokens}+{cost1}+{cost2*times}={tokens + cost1 + cost2*times}>>{tokens + cost1 + cost2*times} です。
+{cur}{budget} / {cur}{tokens + cost1 + cost2*times} = <<{budget}/{tokens + cost1 + cost2*times}={budget // (tokens + cost1 + cost2 * times)}>>{budget // (tokens + cost1 + cost2 * times)} なので、{budget // (tokens + cost1 + cost2 * times)}人の予算があります。
+あおばは友だちを　{budget // (tokens + cost1 + cost2 * times)} - 1 =<<{budget // (tokens + cost1 + cost2 * times)}-1={budget // (tokens + cost1 + cost2 * times) - 1}>>{budget // (tokens + cost1 + cost2 * times) - 1}人　招待できます。
+#### {budget // (tokens + cost1 + cost2 * times) - 1}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

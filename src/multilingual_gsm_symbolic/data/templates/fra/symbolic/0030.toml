@@ -1,0 +1,42 @@
+question = "Lucas a 130,2 euros et veut acheter 16 boulons dans un bac d'un magasin de bricolage. Chaque boulon coûte 0,2 euros. Combien d'argent reste-t-il à Lucas après avoir payé les boulons ?"
+
+answer = """
+Lucas a payé 16*0,2 euros = <<16*0,2=3,2>>3,2 euros pour les boulons.
+Il reste à Lucas 130,2 euros - 3,2 euros = 127 euros.
+#### 127
+"""
+
+id_orig = 873
+
+id_shuffled = 30
+
+question_annotated = """
+{name,Lucas} a {initial_amount,130.2} {cur,euros} et veut acheter {quantity,16} {item_plural,boulons} dans un bac d'un {store_type,magasin de bricolage}. Chaque {item,boulon} coûte {unit_price,0.2} {cur,euros}. Combien d'argent reste-t-il à {name,Lucas} après avoir payé les {item_plural,boulons} ?
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- item, item_plural = sample([("boulon", "boulons"),("vis", "vis"), ("rondelle", "rondelles"), ("écrou", "écrous"), ("ancrage", "ancrages")])
+- store_type = sample(["magasin de bricolage", "supermarché", "entrepôt"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(85.5, 175, 5.5)
+- $unit_price = arange(0.2, 4.8, 0.1)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: round(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name} a payé {quantity}*{round(unit_price,2)} {cur} = <<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} {cur} pour les {item_plural}.
+Il reste à {name} {initial_amount} {cur} - {round(quantity*unit_price,2)} {cur} = {round(initial_amount - quantity * unit_price)} {cur}.
+#### {round(initial_amount - quantity * unit_price)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

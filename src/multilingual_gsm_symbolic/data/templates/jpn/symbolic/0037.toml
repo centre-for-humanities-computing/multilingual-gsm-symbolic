@@ -1,0 +1,30 @@
+question = "ケーキを24切れに分けます。けんとが1日に2切れ食べ、りくがその2倍を食べるとすると、そのケーキは何日もちますか？"
+answer = """りくは1日に2*2=<<2*2=4>>4切れ食べてます。
+合わせると、けんととりくは1日に2 + 4 = <<2+4=6>>6切れ食べてます。
+したがって、ケーキは24/6 = <<24/6=4>>4日もちます。
+#### 4
+"""
+id_orig = 921
+id_shuffled = 37
+question_annotated = """{item,ケーキ}を{n,24}{unit,切れ}に分けます。{name1,けんと}が1日に{x,2}{unit,切れ}食べ、{name2,りく}がその{mult_txt,2倍}を食べるとすると、その{item,ケーキ}は何日もちますか？
+
+#init:
+- item = sample([\"ピザ\", \"ケーキ\", \"スイカ\"])
+- unit = sample([\"切れ\", \"人前\"])
+- name1, name2 = sample(names, 2)
+- $n = range(12, 76, 3)
+- $x = range(2, 13)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- divides(n, x + x*mult_val)
+
+#answer: n // (x + x*mult_val)
+"""
+answer_annotated = """{name2}は1日に{x}*{mult_val}=<<{x}*{mult_val}={x*mult_val}>>{x*mult_val}{unit}食べてます。
+合わせると、{name1}と{name2}は1日に{x} + {x*mult_val} = <<{x}+{x*mult_val}={x+x*mult_val}>>{x+x*mult_val}{unit}食べてます。
+したがって、{item}は{n}/{x+x*mult_val} = <<{n}/{x+x*mult_val}={n//(x+x*mult_val)}>>{n//(x+x*mult_val)}日もちます。
+#### {n//(x+x*mult_val)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

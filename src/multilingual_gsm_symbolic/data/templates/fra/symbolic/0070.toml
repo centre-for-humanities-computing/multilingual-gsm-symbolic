@@ -1,0 +1,37 @@
+question = "Un plombier travaille 4 semaines par mois et 6 jours par semaine. S'il reçoit 50 euros par jour, combien gagne-t-il s'il travaille pendant un an ?"
+
+answer = """
+Le plombier travaille 6 jours par semaine et 4 semaines par mois, donc il travaille 6 jours/semaine * 4 semaines/mois = <<6*4=24>>24 jours/mois
+S'il gagne 50 euros par jour, il gagne 50 euros/jour * 24 jours/mois = <<50*24=1200>>1200 euros/mois
+Un an équivaut à 12 mois, donc chaque année il gagne 1200 euros/mois * 12 mois/an = <<1200*12=14400>>14.400 euros
+#### 14400
+"""
+
+id_orig = 401
+
+id_shuffled = 70
+
+question_annotated = """
+Un {occupation,plombier} travaille {w,4} semaines par mois et {d,6} jours par semaine. S'il reçoit {p,50} {cur,euros} par jour, combien gagne-t-il s'il travaille pendant un an ?
+
+#init:
+- occupation, occupation_def = sample([("plombier","Le plombier"), ("électricien","L'électricien"), ("peintre","Le peintre"), ("charpentier","Le charpentier"), ("paysagiste","Le paysagiste")])
+- cur = sample(currencies_sym)
+- $w = range(2, 5)
+- $d = range(4, 7)
+- $p = range(40, 200, 5)
+
+
+#answer: w * d * p * 12
+"""
+
+answer_annotated = """
+{occupation_def} travaille {d} jours par semaine et {w} semaines par mois, donc il travaille {d} jours/semaine * {w} semaines/mois = <<{d}*{w}={d*w}>>{d*w} jours/mois
+S'il gagne {p} {cur} par jour, il gagne {p} {cur}/jour * {d*w} jours/mois = <<{p}*{d*w}={p*d*w}>>{p*d*w} {cur}/mois
+Un an équivaut à 12 mois, donc chaque année il gagne {p*d*w} {cur}/mois * 12 mois/an = <<{p*d*w}*12={p*d*w*12}>>{p*d*w*12} {cur}
+#### {p*d*w*12}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

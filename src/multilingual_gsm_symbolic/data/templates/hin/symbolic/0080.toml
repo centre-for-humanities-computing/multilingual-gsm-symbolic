@@ -1,0 +1,49 @@
+question = "वेंडिंग मशीनें चिप्स ४० सेंट में और कैंडी बार ७५ सेंट में बेचती हैं। दिवाकर ने ₹५ खर्च किए और उसे चिप्स के ३ पैकेट मिले तथा उसके पैसे का १% छुट्टे के रूप में बचा। उसने कितने कैंडी बार खरीदे?"
+
+answer = """
+दिवाकर को ₹०.०५ छुट्टे में मिले क्योंकि ₹५*१/१०० = <<५*१/१००=०.०५>>०.०५
+दिवाकर ने ₹४.९५ खर्च किए क्योंकि ५ - ०.०५ = <<५-०.०५=४.९५>>४.९५
+दिवाकर ने चिप्स पर ₹१.२ खर्च किए क्योंकि ३*०.४ = <<३*०.४=१.२>>१.२
+दिवाकर ने कैंडी बार पर ३.७५ खर्च किए क्योंकि ४.९५ - १.२ = <<४.९५-१.२=३.७५>>३.७५
+दिवाकर ने ५ कैंडी बार खरीदे क्योंकि ३.७५ / ०.७५ = <<५=५>>५
+#### ५
+"""
+
+id_orig = 434
+
+id_shuffled = 80
+
+question_annotated = """
+वेंडिंग मशीनें {item1,चिप्स} {price1,४०} सेंट में और {item2,कैंडी बार} {price2,७५} सेंट में बेचती हैं। {name,दिवाकर} ने {cur,₹}{total,५} खर्च किए और उसे {item1,चिप्स} के {n1,३} पैकेट मिले तथा उसके पैसे का {p,१}% छुट्टे के रूप में बचा। उसने कितने {item2,कैंडी बार} खरीदे?
+
+#init:
+- name = sample(names_male)
+- item1, item2 = sample(['प्रेट्ज़ेल', 'पॉपकॉर्न', 'च्यूइंग गम', 'कुकीज़', 'क्रैकर्स'], 2)
+- cur = sample(currencies_sym)
+- $price1 = range(25, 100, 5)
+- $price2 = range(50, 150, 5)
+- $total = range(5, 21)
+- $n1 = range(1, 10)
+- $p = range(1, 10)
+
+#conditions:
+- price2 > price1
+- is_int(total * p / 100)
+- total * (100 - p) > n1 * price1
+- (total * (100 - p) - n1 * price1) % price2 == 0
+
+#answer: int((total * (100 - p) - n1 * price1) / price2)
+"""
+
+answer_annotated = """
+{name} को {cur}{total * p / 100} छुट्टे में मिले क्योंकि {cur}{total}*{p}/१०० = <<{total}*{p}/१००={total * p / 100}>>{total * p / 100}
+{name} ने {cur}{total * (100 - p) / 100} खर्च किए क्योंकि {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}
+{name} ने {item1} पर {cur}{n1 * price1 / 100} खर्च किए क्योंकि {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}
+{name} ने {item2} पर {(total * (100 - p) / 100 - n1 * price1 / 100)} खर्च किए क्योंकि {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}
+{name} ने {int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} {item2} खरीदे क्योंकि {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}={int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}>>{int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+#### {int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

@@ -1,0 +1,27 @@
+question = "ひかりは水曜日に桃を4個収穫します。次に、木曜日に桃を6個収穫します。金曜日には、水曜日に取った数の3倍の桃を収穫します。ひかりは全部で何個の桃を持っていますか？"
+answer = """水曜日と木曜日を合わせると、ひかりは桃を4個 + 6個 = <<4+6=10>>10個持っています。
+金曜日には、3*4個の桃を収穫します = <<3*4=12>>12個。
+全部で、ひかりは桃を10個 + 12個 = <<10+12=22>>22個持っています。
+#### 22
+"""
+id_orig = 1020
+id_shuffled = 20
+question_annotated = """{name,ひかり}は{d1,水曜日}に{fruit,桃}を{n1,4}個収穫します。次に、{d2,木曜日}に{fruit,桃}を{n2,6}個収穫します。{d3,金曜日}には、{d1,水曜日}に取った数の{mult_txt,3倍}の{fruit,桃}を収穫します。{name,ひかり}は全部で何個の{fruit,桃}を持っていますか？
+
+#init:
+- name = sample(names)
+- d1, d2, d3 = sample_sequential(weekdays, 3)
+- fruit = sample(fruits)
+- $n1 = range(30, 400)
+- $n2 = range(50, 400)
+- mult_txt, mult_val = sample(multi_times)
+
+#answer: n1 + n2 + mult_val * n1
+"""
+answer_annotated = """{d1}と{d2}を合わせると、{name}は{fruit}を{n1}個 + {n2}個 = <<{n1}+{n2}={n1+n2}>>{n1+n2}個持っています。
+{d3}には、{mult_val}*{n1}個の{fruit}を収穫します = <<{mult_val}*{n1}={mult_val*n1}>>{mult_val*n1}個。
+全部で、{name}は{fruit}を{n1+n2}個 + {mult_val*n1}個 = <<{n1+n2}+{n1*mult_val}={n1 + n2 + mult_val * n1}>>{n1 + n2 + mult_val * n1}個持っています。
+#### {n1 + n2 + mult_val * n1}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

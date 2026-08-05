@@ -1,0 +1,41 @@
+question = "स्मॉल ट्री शाळेत चौथीचे ९६ विद्यार्थी आहेत. त्यापैकी ४३ मुली आहेत. शुक्रवारी, चौथीच्या ५ मुली आणि चौथीचे ४ मुले अनुपस्थित होते. शुक्रवारी स्मॉल ट्री शाळेत चौथीचे किती मुले उपस्थित होते?"
+
+answer = """
+९६ चौथीच्या विद्यार्थ्यांपैकी ४३ मुली आहेत, त्यामुळे ९६ विद्यार्थी - ४३ मुली = <<९६-४३=५३>>५३ मुले.
+शुक्रवारी ५३ मुले - ४ अनुपस्थित = <<५३-४=४९>>४९ मुले.
+#### ४९
+"""
+
+id_orig = 364
+
+id_shuffled = 74
+
+question_annotated = """
+{school_name,स्मॉल ट्री} शाळेत {grade,चौथी}चे {total,९६} विद्यार्थी आहेत. त्यापैकी {num_girls,४३} मुली आहेत. {day,शुक्रवारी}, {grade,चौथी}च्या {absent_girls,५} मुली आणि {grade,चौथी}चे {absent_boys,४} मुले अनुपस्थित होते. {day,शुक्रवारी} {school_name,स्मॉल ट्री} शाळेत {grade,चौथी}चे किती मुले उपस्थित होते?
+
+#init:
+- school_name = sample(["मेपल ग्रोव्ह", "सनी हिल", "ओक रिज", "पाइन व्हॅली"])
+- grade = sample(["पहिली", "दुसरी", "तिसरी", "चौथी", "पाचवी"])
+- day = sample(["सोमवार", "मंगळवार", "बुधवार", "गुरुवार", "शुक्रवार"])
+- $total = range(50, 200)
+- $num_girls = range(20, 100)
+- $absent_girls = range(2, 10)
+- $absent_boys = range(2, 10)
+
+#conditions:
+- num_girls < total
+- absent_girls < num_girls
+- absent_boys < (total - num_girls)
+
+#answer: total - num_girls - absent_boys
+"""
+
+answer_annotated = """
+{total} {grade}च्या विद्यार्थ्यांपैकी {num_girls} मुली आहेत, त्यामुळे {total} विद्यार्थी - {num_girls} मुली = <<{total}-{num_girls}={total-num_girls}>>{total-num_girls} मुले.
+{day} {total-num_girls} मुले - {absent_boys} अनुपस्थित = <<{total-num_girls}-{absent_boys}={total-num_girls-absent_boys}>>{total-num_girls-absent_boys} मुले.
+#### {total-num_girls-absent_boys}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

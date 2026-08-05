@@ -1,0 +1,40 @@
+question = "Ein flokkur við 50 næmingum hevur ymisk frítíðarítriv. 10 dáma at baka, 5 dáma at spæla fótbólt, og hini dáma annaðhvørt at spæla telduspøl ella at spæla tónleik. Hvussu nógv dáma at spæla telduspøl, um talið, sum dámar at spæla tónleik, er tvær ferðir so stórt sum talið av teimum, sum dáma at spæla fótbólt?"
+
+answer = """
+Talið av næmingum, sum dáma at spæla tónleik, er tvær ferðir so stórt sum talið av teimum, sum dáma fótbólt, so 2 * 5 = <<2*5=10>>10
+Talið, sum dámar at spæla telduspøl, er 50 næmingar tilsamans - 10 sum dáma at baka - 5 sum dáma at spæla fótbólt - 10 sum dáma at spæla tónleik = <<50-10-5-10=25>>25
+#### 25
+"""
+
+id_orig = 740
+
+id_shuffled = 3
+
+question_annotated = """
+Ein {g,flokkur} við {n, 50} næmingum hevur ymisk frítíðarítriv. {n_1,10} dáma at {h_1, baka}, {n_2,5} dáma at spæla {h_2,fótbólt}, og hini dáma annaðhvørt at {h_3,spæla telduspøl} ella at {h_4,spæla tónleik}. Hvussu nógv dáma at {h_3,spæla telduspøl}, um talið, sum dámar at {h_4,spæla tónleik}, er tvær ferðir so stórt sum talið av teimum, sum dáma at spæla {h_2, fótbólt}?
+
+#init:
+- g = sample(["bólkur", "flokkur"])
+- h_2 = sample(sports)
+- h_1, h_3, h_4 = sample(['lesa', 'mála', 'ganga túr', 'dansa', 'baka', 'spæla telduspøl', 'spæla tónleik'], 3)
+- $n = range(5, 200)
+- $n_1 = range(2, 200)
+- $n_2 = range(2, 200)
+
+#conditions:
+- n_1 < n
+- n_2 < n
+- n - (n_1 + n_2) - (2 * n_2) > 0
+
+#answer: int(n - (n_1 + n_2) - (2 * n_2))
+"""
+
+answer_annotated = """
+Talið av næmingum, sum dáma at {h_4}, er tvær ferðir so stórt sum talið av teimum, sum dáma {h_2}, so 2 * {n_2} = <<2*{n_2}={2*n_2}>>{2*n_2}
+Talið, sum dámar at {h_3}, er {n} næmingar tilsamans - {n_1} sum dáma at {h_1} - {n_2} sum dáma at spæla {h_2} - {2*n_2} sum dáma at {h_4} = <<{n}-{n_1}-{n_2}-{2*n_2}={n-n_1-n_2-2*n_2}>>{n-n_1-n_2-2*n_2}
+#### {n-n_1-n_2-2*n_2}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

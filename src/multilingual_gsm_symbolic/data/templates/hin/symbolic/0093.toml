@@ -1,0 +1,46 @@
+question = "जब पानी ठंडा होता है, तो रोहन १६ मिनट में एक किलोमीटर tैरता है। जब पानी गर्म होता है, तो रोहन एक किलोमीटर तैरने में दो बार समय से २ मिनट अधिक लेता है। गर्म दिन में रोहन को ३ किलोमीटरs तैरने में ठंडे दिन की तुलना में कितना अधिक समय लगता है?"
+
+answer = """
+ठंडे पानी में किलोमीटर = <<१६=१६>>१६ मिनट
+गर्म पानी में किलोमीटर = २+२*१६=३४ मिनट
+ठंडे पानी में ३ किलोमीटरs: ३(१६)=<<३*१६=४८>>४८ मिनट
+गर्म पानी में ३ किलोमीटरs: ३(३४)=<<३*३४=१०२>>१०२ मिनट
+रोहन को १०२-४८=<<१०२-४८=५४>>५४ मिनट अधिक लगते हैं
+#### ५४
+"""
+
+id_orig = 554
+
+id_shuffled = 93
+
+question_annotated = """
+जब पानी ठंडा होता है, तो {name,रोहन} {t1,१६} मिनट में एक {unit,किलोमीटर} tैरता है। जब पानी गर्म होता है, तो {name,रोहन} एक {unit,किलोमीटर} तैरने में {mult_txt,दो बार} समय से {n,२} मिनट अधिक लेता है। गर्म दिन में {name,रोहन} को {d,३} {unit,किलोमीटर}s तैरने में ठंडे दिन की तुलना में कितना अधिक समय लगता है?
+
+#init:
+- name = sample(names)
+- unit = sample(['किलोमीटर'])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- mult_txt, mult_val = sample(multi_times)
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+
+answer_annotated = """
+ठंडे पानी में {unit} = <<{t1}={t1}>>{t1} मिनट
+गर्म पानी में {unit} = {n}+{mult_val}*{t1}={n + mult_val * t1} मिनट
+ठंडे पानी में {d} {unit}s: {d}({t1})=<<{d}*{t1}={d*t1}>>{d*t1} मिनट
+गर्म पानी में {d} {unit}s: {d}({n + mult_val * t1})=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} मिनट
+{name} को {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} मिनट अधिक लगते हैं
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

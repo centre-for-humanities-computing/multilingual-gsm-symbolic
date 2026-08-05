@@ -1,0 +1,34 @@
+question = "かなたの家には柿が40個あります。柿の2倍の数のトマトがあります。かなたはさらに柿を60個買い、それより40個少ない数のトマトを買いました。かなたの家にあるトマトと柿の合計は何個ですか？"
+answer = """トマトと柿を買う前、かなたは柿の2倍の数のトマトを持っていました。つまり、40個の柿*2 トマト/柿 = <<40*2=80>>80個のトマトです。
+最初にかなたが持っていたトマトと柿の合計は、80個のトマト + 40個の柿 = <<80+40=120>>120個です。
+トマトは柿より40個少なく買ったので、60個 - 40個 = <<60-40=20>>20個のトマトを買いました。
+買った合計は、20個のトマト + 60個の柿 = <<20+60=80>>80個です。
+買い物の後、かなたの家にある合計は 120個 + 80個 = <<120+80=200>>200個のトマトと柿です。
+#### 200
+"""
+id_orig = 406
+id_shuffled = 91
+question_annotated = """{name,かなた}の家には{food2,柿}が{n,40}個あります。{food2,柿}の{mult_txt,2倍}の数の{food1,トマト}があります。{name,かなた}はさらに{food2,柿}を{m,60}個買い、それより{k,40}個少ない数の{food1,トマト}を買いました。{name,かなた}の家にある{food1,トマト}と{food2,柿}の合計は何個ですか？
+
+#init:
+- name = sample(names_male)
+- food1, food2 = sample([\"トマト\", \"りんご\", \"バナナ\", \"オレンジ\", \"梨\", \"ぶどう\", \"いちじく\", \"柿\", \"梅干し\"], 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(20, 100)
+- $m = range(30, 100)
+- $k = range(10, 50)
+
+#conditions:
+- m > k
+
+#answer: mult_val*n + n + m + (m-k)
+"""
+answer_annotated = """{food1}と{food2}を買う前、{name}は{food2}の{mult_txt}の数の{food1}を持っていました。つまり、{n}個の{food2}*{mult_val} {food1}/{food2} = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val}個の{food1}です。
+最初に{name}が持っていた{food1}と{food2}の合計は、{n*mult_val}個の{food1} + {n}個の{food2} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n}個です。
+{food1}は{food2}より{k}個少なく買ったので、{m}個 - {k}個 = <<{m}-{k}={m-k}>>{m-k}個の{food1}を買いました。
+買った合計は、{m-k}個の{food1} + {m}個の{food2} = <<{m-k}+{m}={2*m-k}>>{2*m-k}個です。
+買い物の後、{name}の家にある合計は {n*mult_val+n}個 + {2*m-k}個 = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k}個の{food1}と{food2}です。
+#### {n*mult_val+n+2*m-k}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

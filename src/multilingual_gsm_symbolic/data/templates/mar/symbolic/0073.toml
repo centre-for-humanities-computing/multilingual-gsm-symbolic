@@ -1,0 +1,40 @@
+question = "धूमकेतू हॅली सूर्याभोवती दर ७५ वर्षांनी एक फेरी पूर्ण करतो. सचिनच्या वडिलांनी हा धूमकेतू ते ३० वर्षांचे असताना पाहिला होता. सचिनने हा धूमकेतू दुसऱ्यांदा तेव्हा पाहिला, जेव्हा त्याचे वय त्याच्या वडिलांनी धूमकेतू पाहिला तेव्हाच्या वयाच्या तीन पट होते. सचिनने हा धूमकेतू पहिल्यांदा पाहिला तेव्हा त्याचे वय किती होते?"
+
+answer = """
+सचिनने हा धूमकेतू दुसऱ्यांदा पाहिला तेव्हा त्याचे वय ३० वर्षे * ३ = <<३०*३=९०>>९० वर्षे होते.
+धूमकेतू हॅली दर ७५ वर्षांनी दिसतो, त्यामुळे सचिनने हा धूमकेतू पहिल्यांदा पाहिला तेव्हा त्याचे वय ९० वर्षे - ७५ वर्षे = <<९०-७५=१५>>१५ वर्षे होते.
+#### १५
+"""
+
+id_orig = 991
+
+id_shuffled = 73
+
+question_annotated = """
+धूमकेतू {comet_name,हॅली} सूर्याभोवती दर {orbit_period,७५} वर्षांनी एक फेरी पूर्ण करतो. {name,सचिन}च्या {relative,वडिलांनी} हा धूमकेतू ते {relative_age,३०} वर्षांचे असताना पाहिला होता. {name,सचिन}ने हा धूमकेतू दुसऱ्यांदा तेव्हा पाहिला, जेव्हा त्याचे वय त्याच्या {relative,वडिलांनी} धूमकेतू पाहिला तेव्हाच्या वयाच्या {multiple_txt,तीन} पट होते. {name,सचिन}ने हा धूमकेतू पहिल्यांदा पाहिला तेव्हा त्याचे वय किती होते?
+
+#init:
+- comet_name = sample(['हॅली', 'हेल-बोप्प', 'ह्याकुटके', 'एनके'])
+- name = sample(names_male)
+- relative = sample(['वडिलांनी', 'वडिलांनी', 'काकांनी', 'आजोबांनी'])
+- $orbit_period = range(50, 101, 5)
+- $relative_age = range(20, 51)
+- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)
+
+#conditions:
+- multiple_val * relative_age < 100
+- multiple_val * relative_age > orbit_period
+- is_int(multiple_val * relative_age - orbit_period)
+
+#answer: multiple_val * relative_age - orbit_period
+"""
+
+answer_annotated = """
+{name}ने हा धूमकेतू दुसऱ्यांदा पाहिला तेव्हा त्याचे वय {relative_age} वर्षे * {multiple_val} = <<{relative_age}*{multiple_val}={relative_age*multiple_val}>>{relative_age*multiple_val} वर्षे होते.
+धूमकेतू {comet_name} दर {orbit_period} वर्षांनी दिसतो, त्यामुळे {name}ने हा धूमकेतू पहिल्यांदा पाहिला तेव्हा त्याचे वय {relative_age*multiple_val} वर्षे - {orbit_period} वर्षे = <<{relative_age*multiple_val}-{orbit_period}={relative_age*multiple_val-orbit_period}>>{relative_age*multiple_val-orbit_period} वर्षे होते.
+#### {relative_age*multiple_val-orbit_period}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

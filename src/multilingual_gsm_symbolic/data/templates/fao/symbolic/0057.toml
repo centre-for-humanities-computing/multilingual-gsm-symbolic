@@ -1,0 +1,41 @@
+question = "Brian hevur 4 túbur av bláari máling og 3 túbur av gulari máling. Jesper hevur hálvt so nógvar túbur av bláari máling sum Brian og tríggjar ferðir so nógvar túbur av gulari máling sum Brian. Hvussu nógvar túbur av máling hevur Jesper?"
+
+answer = """
+Jesper hevur 4*1/2= <<4*1/2=2>>2 túbur av bláari máling
+Jesper hevur 3*3=<<3*3=9>>9 túbur av gulari máling
+Jesper hevur tilsamans 2+9 =<<2+9=11>>11 túbur av máling
+#### 11
+"""
+
+id_orig = 480
+
+id_shuffled = 57
+
+question_annotated = """
+{name1,Brian} hevur {n1,4} túbur av {color1,blá} máling og {n2,3} túbur av {color2,gul} máling. {name2,Jesper} hevur {frac1_txt,hálvt} so nógvar túbur av {color1,blá} máling sum {name1,Brian} og {mult1_txt,tríggjar ferðir} so nógvar túbur av {color2,gul} máling sum {name1,Brian}. Hvussu nógvar túbur av máling hevur {name2,Jesper}?
+
+#init:
+- name1, name2 = sample(names_male, 2)
+- color1, color2 = sample(colors, 2)
+- $n1 = range(2, 20)
+- $n2 = range(2, 20)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n2 * mult1_val)
+
+#answer: int(n1 * frac1_val + n2 * mult1_val)
+"""
+
+answer_annotated = """
+{name2} hevur {n1}*{frac1_val}= <<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} túbur av {color1} máling
+{name2} hevur {n2}*{mult1_val}=<<{n2}*{mult1_val}={n2*mult1_val}>>{n2*mult1_val} túbur av {color2} máling
+{name2} hevur tilsamans {int(n1*frac1_val)}+{n2*mult1_val} =<<{int(n1*frac1_val)}+{n2*mult1_val}={int(n1*frac1_val)+n2*mult1_val}>>{int(n1*frac1_val)+n2*mult1_val} túbur av máling
+#### {int(n1*frac1_val)+n2*mult1_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

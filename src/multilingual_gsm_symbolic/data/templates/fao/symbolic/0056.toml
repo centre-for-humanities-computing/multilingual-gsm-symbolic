@@ -1,0 +1,37 @@
+question = "Eitt glas inniheldur 8 ml mjólk. Jonas drekkur 2 gløs mjólk. Um mjólk hevur 3 kaloriur fyri hvønn ml, hvussu nógvar kaloriur fekk hann í seg?"
+
+answer = """
+Hann drakk 8*2=<<8*2=16>>16 ml mjólk
+So drakk hann 16*3=<<16*3=48>>48 kaloriur úr mjólk
+#### 48
+"""
+
+id_orig = 400
+
+id_shuffled = 56
+
+question_annotated = """
+{container_article,Eitt} {container,glas} inniheldur {vol,8} {unit,ml} {liquid,mjólk}. {name,Jonas} drekkur {num,2} {container_plural,gløs} {liquid,mjólk}. Um {liquid,mjólk} hevur {cal,3} kaloriur fyri hvønn {unit,ml}, hvussu nógvar kaloriur fekk hann í seg?
+
+#init:
+- name = sample(names_male)
+- container_article, container, container_plural = sample([("En", "kop", "kopper"), ("En", "flaske", "flasker"), ("Et", "karton", "kartoner")])
+- liquid = sample(["safi", "sodavatn", "vatn við brús", "te", "lemonada"])
+- unit = sample(["ml", "dl", "l", "millilitur", "litur"])
+- $vol = range(6, 16)
+- $num = range(2, 6)
+- $cal = range(2, 10)
+
+
+#answer: vol * num * cal
+"""
+
+answer_annotated = """
+Hann drakk {vol}*{num}=<<{vol}*{num}={vol*num}>>{vol*num} {unit} {liquid}
+So drakk hann {vol*num}*{cal}=<<{vol*num}*{cal}={vol*num*cal}>>{vol*num*cal} kaloriur úr {liquid}
+#### {vol*num*cal}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

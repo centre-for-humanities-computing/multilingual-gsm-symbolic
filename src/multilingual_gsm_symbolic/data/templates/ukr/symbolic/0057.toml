@@ -1,8 +1,37 @@
-question = "Браян має 4 тюбики синьої фарби і 3 тюбики жовтої фарби. Єспер має половину від кількості тюбиків синьої фарби Браяна і три рази більше тюбиків жовтої фарби, ніж Браян. Скільки тюбиків фарби має Єспер?"
-answer = "Єспер має 4*1/2= <<4*1/2=2>>2 тюбики синьої фарби\nЄспер має 3*3=<<3*3=9>>9 тюбиків жовтої фарби\nУсього Єспер має 2+9 =<<2+9=11>>11 тюбиків фарби\n#### 11\n"
+question = "Браян має 4 тюбики синьої фарби і 3 тюбики жовтої фарби. Єспер має 1/2 від кількості тюбиків синьої фарби, що має Браян і у три рази більше тюбиків жовтої фарби, ніж Браян. Скільки тюбиків фарби має Єспер?"
+
+answer = """Єспер має 4*1/2= <<4*1/2=2>>2 тюбики синьої фарби
+Єспер має 3*3=<<3*3=9>>9 тюбиків жовтої фарби
+Усього Єспер має 2+9 =<<2+9=11>>11 тюбиків фарби
+#### 11
+"""
 id_orig = 480
 id_shuffled = 57
-question_annotated = "{name1,Браян} має {n1,4} тюбики {color1,синьої} фарби і {n2,3} тюбики {color2,жовтої} фарби. {name2,Єспер} має {frac1_txt,halvdelen} від кількості тюбиків {color1,синьої} фарби {name1,Браян} і {mult1_txt,tre gange} більше тюбиків {color2,жовтої} фарби, ніж {name1,Браян}. Скільки тюбиків фарби має {name2,Єспер}?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = sample(multi_times)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)\n"
-answer_annotated = "{name2} має {n1}*{frac1_val}= <<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} тюбики {color1} фарби\n{name2} має {n2}*{mult1_val}=<<{n2}*{mult1_val}={n2*mult1_val}>>{n2*mult1_val} тюбиків {color2} фарби\nУсього {name2} має {int(n1*frac1_val)}+{n2*mult1_val} =<<{int(n1*frac1_val)}+{n2*mult1_val}={int(n1*frac1_val)+n2*mult1_val}>>{int(n1*frac1_val)+n2*mult1_val} тюбиків фарби\n#### {int(n1*frac1_val)+n2*mult1_val}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name1,Браян} має {n1,4} {n1_tubes, тюбики} {color1,синьої} фарби і {n2,3} тюбики {color2,жовтої} фарби. {name2,Єспер} має {frac1_val,1/2} від кількості тюбиків {color1,синьої} фарби, що має {name1,Браян} і у {mult1_txt,три рази} більше тюбиків {color2,жовтої} фарби, ніж {name1,Браян}. Скільки тюбиків фарби має {name2,Єспер}?
+
+#init:
+- name1, name2 = sample(names_male, 2)
+- color1, color2 = sample(["синьої", "жовтої", "чорвоної", "чорноЇ", "померачневої", "білої", "зеленої", "рожевої"], 2)
+- $n1 = range(2, 20)
+- $n2 = range(2, 20)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- n1_tubes = ukr_plural_measurements(n1, "тюбик", "тюбики", "тюбиків")
+- n1f_tubes = ukr_plural_measurements(int(n1*frac1_val), "тюбик", "тюбики", "тюбиків")
+- n1m_tubes = ukr_plural_measurements(n2*mult1_val, "тюбик", "тюбики", "тюбиків")
+- t_tubes = ukr_plural_measurements(int(n1*frac1_val)+n2*mult1_val, "тюбик", "тюбики", "тюбиків")
+
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n2 * mult1_val)
+
+#answer: int(n1 * frac1_val + n2 * mult1_val)
+"""
+answer_annotated = """{name2} має {n1}*{frac1_val}= <<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {n1f_tubes} {color1} фарби
+{name2} має {n2}*{mult1_val}=<<{n2}*{mult1_val}={n2*mult1_val}>>{n2*mult1_val} {n1m_tubes} {color2} фарби
+Усього {name2} має {int(n1*frac1_val)}+{n2*mult1_val} =<<{int(n1*frac1_val)}+{n2*mult1_val}={int(n1*frac1_val)+n2*mult1_val}>>{int(n1*frac1_val)+n2*mult1_val} {t_tubes} фарби
+#### {int(n1*frac1_val)+n2*mult1_val}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

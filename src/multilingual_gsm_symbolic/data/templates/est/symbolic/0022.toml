@@ -1,0 +1,39 @@
+question = "Julia valmistus õhtusöögipeoks oma kodus, kus ta kavatses serveerida hautist. Ta märkas, et tal pole enam plastmassist lusikaid, nii et ta ostis uue komplekti. Hiljem ostis ka tema abikaasa 5 uut lusikat ja andis need Juliale. Hautist valmistades kasutas Julia ära kolm lusikat. Hiljem, kui ta läks lauda katma, oli tal kokku 12 lusikat. Mitu lusikat oli selles pakis, mille Julia ostis?"
+
+answer = """
+Julia ja tema abikaasa kokku ostetud lusikate arv oli 12+3=<<12+3=15>>15 lusikat.
+Kuna abikaasa ostis 5 lusikat, siis Julia ostetud pakis oli 15-5=<<15-5=10>>10 lusikat.
+#### 10
+"""
+
+id_orig = 125
+
+id_shuffled = 22
+
+question_annotated = """
+{name,Julia} valmistus {event,õhtusöögipeoks} oma kodus, kus ta kavatses serveerida {food,hautist}. Ta märkas, et tal pole enam plastmassist {obj1_par_pl,lusikaid}, nii et ta ostis uue komplekti. Hiljem ostis ka tema abikaasa {n1,5} uut {obj1_par_sg,lusikat} ja andis need {name_gen,Julia}le. {food,hautist} valmistades kasutas {name,Julia} ära {n2_txt,kolm} {obj1_par_sg,lusikat}. Hiljem, kui ta läks lauda katma, oli tal kokku {total,12} {obj1_par_sg,lusikat}. Mitu {obj1_par_sg,lusikat} oli selles pakis, mille {name,Julia} ostis?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- event = sample(["lõunapeoks", "sünnipäevapeoks", "beebipeoks", "lauamänguõhtuks", "õhtusöögipeoks"])
+- food = sample(["hautist", "röstitud kana", "grillitud lõhet", "köögiviljalasanjat", "täidetud paprikaid"])
+- obj1_par_pl, obj1_par_sg, obj1_gen_pl= sample([("lusikaid", "lusikat", "lusikate"), ("kahvleid", "kahvlit", "kahvlite"), ("taldrikuid", "taldrikut", "taldrikute"), ("nugasid", "nuga", "nugade")])
+- $n1 = range(5, 20)
+- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- $total = range(12, 40)
+
+#conditions:
+- total + n2_val - n1 > 0
+
+#answer: total + n2_val - n1
+"""
+
+answer_annotated = """
+{name} ja tema abikaasa kokku ostetud {obj1_gen_pl} arv oli {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj1_par_sg}.
+Kuna abikaasa ostis {n1} {obj1_par_sg}, siis {name} ostetud pakis oli {total+n2_val}-{n1}=<<{total+n2_val}-{n1}={total+n2_val-n1}>>{total+n2_val-n1} {obj1_par_sg}.
+#### {total+n2_val-n1}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

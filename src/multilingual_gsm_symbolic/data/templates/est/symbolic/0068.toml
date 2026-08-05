@@ -1,0 +1,41 @@
+question = "Helenal kulub ristsõna lõpetamiseks 10 minutit ja sudoku lõpetamiseks 5 minutit. Nädalavahetusel lahendas ta 3 ristsõna ja 8 sudokut. Kui palju aega ta nende mängude peale veetis?"
+
+answer = """
+Ristsõna lõpetamiseks kulub 10 minutit ja ta lahendas neid 3, kokku 10*3 = <<10*3=30>>30 minutit
+Sudoku lõpetamiseks kulub 5 minutit ja ta lahendas neid 8, kokku 5*8 = <<5*8=40>>40 minutit
+Ta veetis ristsõnadele 30 minutit ja sudokudele 40 minutit, kokku 30+40 = <<30+40=70>>70 minutit
+#### 70
+"""
+
+id_orig = 220
+
+id_shuffled = 68
+
+question_annotated = """
+{name_gen,Helena}l kulub {game1_gen_sg,ristsõna} lõpetamiseks {t1,10} minutit ja {game2_gen_sg,sudoku} lõpetamiseks {t2,5} minutit. {period,Nädalavahetusel} lahendas ta {n1,3} {game1_num,ristsõna} ja {n2,8} {game2_num,sudokut}. Kui palju aega ta nende mängude peale veetis?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- (game1_gen_sg, game1_num, game1_gen_sg_cap, game1_all_pl), (game2_gen_sg, game2_num, game2_gen_sg_cap, game2_all_pl) = sample([("ristsõna", "ristsõna", "Ristsõna", "ristsõnadele"), ("sudoku", "sudokut", "Sudoku", "sudokudele"), ("sõnamängu", "sõnamängu", "Sõnamängu", "sõnamängudele"), ("pusle", "puslet", "Pusle", "pusledele")], 2)
+- period = sample(["Nädalavahetusel", "Puhkuse ajal", "Pühade ajal", "Vabal päeval", "Vabal ajal"])
+- $t1 = range(5, 30)
+- $t2 = range(3, 20)
+- $n1 = range(2, 10)
+- $n2 = range(4, 15)
+
+#conditions:
+- t1 > t2
+
+#answer: t1*n1 + t2*n2
+"""
+
+answer_annotated = """
+{game1_gen_sg_cap} lõpetamiseks kulub {t1} minutit ja ta lahendas neid {n1}, kokku {t1}*{n1} = <<{t1}*{n1}={t1*n1}>>{t1*n1} minutit
+{game2_gen_sg_cap} lõpetamiseks kulub {t2} minutit ja ta lahendas neid {n2}, kokku {t2}*{n2} = <<{t2}*{n2}={t2*n2}>>{t2*n2} minutit
+Ta veetis {game1_all_pl} {t1*n1} minutit ja {game2_all_pl} {t2*n2} minutit, kokku {t1*n1}+{t2*n2} = <<{t1*n1}+{t2*n2}={t1*n1 + t2*n2}>>{t1*n1 + t2*n2} minutit
+#### {t1*n1 + t2*n2}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

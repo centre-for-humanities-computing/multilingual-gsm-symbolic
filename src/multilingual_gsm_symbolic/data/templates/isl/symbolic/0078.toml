@@ -1,4 +1,4 @@
-question = "Það eru 6 kennslustundir á dag fyrir venjulegan nemanda, en Johannes þarf að taka 2 auka kennslustundir. Hver kennslustund varir í 40 mínútur. Hann sækir kennslu 5 daga í viku. Síðan notar hann 1/16 af vikulegum mínútum sínum hvorn dag á laugardegi og sunnudegi sem viðbótarnámstíma. Hversu margar klukkustundir á viku notar hann til að læra?"
+question = "Það eru 6 kennslustundir á dag fyrir venjulegan nemanda, en Jóhannes þarf að taka 2 auka kennslustundir. Hver kennslustund varir í 40 mínútur. Hann sækir kennslu 5 daga í viku. Síðan notar hann 1/16 af vikulegum mínútum sínum hvorn dag á laugardegi og sunnudegi sem viðbótarnámstíma. Hversu margar klukkustundir á viku notar hann til að læra?"
 
 answer = """
 Hann tekur 6+2=<<6+2=8>>8 kennslustundir á dag
@@ -15,7 +15,7 @@ id_orig = 1088
 id_shuffled = 78
 
 question_annotated = """
-Það eru {n1,6} kennslustundir á dag fyrir venjulegan nemanda, en {name,Johannes} þarf að taka {n2,2} auka kennslustundir. Hver kennslustund varir í {t,40} mínútur. Hann sækir kennslu {d,5} daga í viku. Síðan notar hann {frac,1/16} af vikulegum mínútum sínum hvorn dag á laugardegi og sunnudegi sem viðbótarnámstíma. Hversu margar klukkustundir á viku notar hann til að læra?
+Það eru {n1,6} kennslustundir á dag fyrir venjulegan nemanda, en {name,Jóhannes} þarf að taka {n2,2} {auka_kennslustundir,auka kennslustundir}. Hver kennslustund varir í {t,40} mínútur. Hann sækir kennslu {d,5} daga í viku. Síðan notar hann {frac,1/16} af vikulegum mínútum sínum hvorn dag á laugardegi og sunnudegi sem viðbótarnámstíma. Hversu margar klukkustundir á viku notar hann til að læra?
 
 #init:
 - name = sample(names_male)
@@ -24,6 +24,7 @@ question_annotated = """
 - $t = range(30, 61, 5)
 - $d = range(4, 7)
 - $frac = sample(fractions)
+- auka_kennslustundir = "auka kennslustund" if n2 == 1 else "auka kennslustundir"
 
 #conditions:
 - is_int((n1 + n2) * t * d * frac)
@@ -36,12 +37,12 @@ answer_annotated = """
 Hann tekur {n1}+{n2}=<<{n1}+{n2}={n1+n2}>>{n1+n2} kennslustundir á dag
 Það þýðir að hann notar {t}*{n1+n2}=<<{t}*{n1+n2}={t*(n1+n2)}>>{t*(n1+n2)} mínútur á dag í kennslustundum
 Svo notar hann {t*(n1+n2)}*{d}=<<{t*(n1+n2)}*{d}={t*(n1+n2)*d}>>{t*(n1+n2)*d} mínútur á viku
-Það þýðir að hann notar {t*(n1+n2)*d}*{frac}=<<{t*(n1+n2)*d}*{frac}={int((n1 + n2) * t * d * frac)}>>{int((n1 + n2) * t * d * frac)} mínútur hvorn dag á laugardegi og sunnudegi.
-Svo notar hann {t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}=<<{t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}={t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}>>{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)} mínútur á viku
-Svo notar hann {t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60=<<{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60={((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}>>{((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60} klukkustundir á viku
+Það þýðir að hann notar {t*(n1+n2)*d}*{frac}=<<{t*(n1+n2)*d}*{frac}={int((n1 + n2) * t * d * frac)}>>{int((n1 + n2) * t * d * frac)} {"mínútu" if (int((n1 + n2) * t * d * frac) % 10 == 1 and int((n1 + n2) * t * d * frac) % 100 != 11) else "mínútur"} hvorn dag á laugardegi og sunnudegi.
+Svo notar hann {t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}=<<{t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}={t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}>>{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)} {"mínútu" if ((t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)) % 10 == 1 and (t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)) % 100 != 11) else "mínútur"} á viku
+Svo notar hann {t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60=<<{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60={((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}>>{((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60} {"klukkustund" if (((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60 % 10 == 1 and ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60 % 100 != 11) else "klukkustundir"} á viku
 #### {((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

@@ -1,0 +1,47 @@
+question = "Prins Theodor dræbte 100 drekar við sínum máttmikla svørði, meðan prinsur Arthur, sum brúkti eitt spjót, dræbte tríggjar fjórðingar so nógvar drekar sum prinsur Theodor. Við hjálp av eini rustaðari jarnøks dræbte prinsur Wilhelm tvær ferðir so nógvar drekar sum prinsur Arthur. Men prinsur Stefan, sum hevði gloymt sítt svørð heima, dræbte ein fimting so nógvar drekar sum prinsur Wilhelm við hjálp av eini neglafíl. Hvussu nógvar drekar hevur prinsur Stefan dræbt?"
+
+answer = """
+Prinsur Arthur dræbte tríggjar fjórðingar so nógvar drekar sum prinsur Theodor, altso 100*3/4=<<100*3/4=75>>75 drekar.
+Prinsur Wilhelm dræbte tvær ferðir so nógvar drekar sum prinsur Arthur, altso 2*75=<<2*75=150>>150 drekar.
+Prinsur Stefan dræbte ein fimting so nógvar drekar sum prinsur Wilhelm, altso 150*1/5=<<150*1/5=30>>30 drekar.
+#### 30
+"""
+
+id_orig = 432
+
+id_shuffled = 92
+
+question_annotated = """
+Prins {name1,Theodor} dræbte {n1,100} {creature,drekar} við sínum máttmikla {weapon1,svørði}, meðan prinsur {name2,Arthur}, sum brúkti eitt {weapon2,spjót}, dræbte {frac1_txt,3/4} so nógvar {creature,drekar} sum prinsur {name1,Theodor}. Við hjálp av eini {weapon3,rustaðari jarnøks} dræbte prinsur {name3,Wilhelm} {mult1_txt,tvær ferðir} so nógvar {creature,drekar} sum prinsur {name2,Arthur}. Men prinsur {name4,Stefan}, sum hevði gloymt sítt {weapon4,svørð} heima, dræbte {frac2_txt,ein fimting} so nógvar {creature,drekar} sum prinsur {name3,Wilhelm} við hjálp av eini {weapon5,neglafíl}. Hvussu nógvar {creature,drekar} hevur prinsur {name4,Stefan} dræbt?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["orkar", "trøll", "goblinar", "risar"])
+- weapon1 = sample(["svørð", "stríðsøks", "stríðshamari"])
+- weapon2 = sample(["spjót", "lensa", "hellebard"])
+- weapon3 = sample(["rustaðari jarnøks", "steinhamari", "træhamari"])
+- weapon4 = sample(["svørð", "øks", "hamari"])
+- weapon5 = sample(["neglafíl", "smørknívur", "skeið", "fjøður"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+Prinsur {name2} dræbte {frac1_txt} so nógvar {creature} sum prinsur {name1}, altso {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+Prinsur {name3} dræbte {mult1_txt} so nógvar {creature} sum prinsur {name2}, altso {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+Prinsur {name4} dræbte {frac2_txt} so nógvar {creature} sum prinsur {name3}, altso {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

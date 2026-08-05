@@ -1,11 +1,11 @@
-question = "Rasmus gaat naar de winkel om wat koffie te kopen. Het normale koffiemerk dat hij koopt, kost 35 kr per kilogram. Hij moest een duurder merk kopen dat 20% meer kostte, omdat zijn favoriete merk uitverkocht was. Hij besluit een weekvoorraad koffie te kopen en hij gebruikt 1 kilogram koffie per dag. Hij besloot ook een donut te kopen voor 15 kr. Hoeveel kostte alles samen?"
+question = "Simon gaat naar de winkel om wat koffie te kopen. Het normale koffiemerk dat hij koopt, kost 35 euro's per 500 gram. Hij moest een duurder merk kopen dat 20% meer kostte, omdat zijn favoriete merk uitverkocht was. Hij besluit een weekvoorraad koffie te kopen en hij gebruikt 500 gram koffie per dag. Hij besloot ook een donut te kopen voor 15 euro's. Hoeveel kostte alles samen?"
 
 answer = """
-De koffie die hij kocht, was 35*0,2=<<35*0,2=7>>7 kr duurder per kilogram dan wat hij normaal koopt
-Dus kostte het 35+7=<<35+7=42>>42 kr per kilogram
-Hij gebruikt 1*7=<<1*7=7>>7 kilogram koffie per week
-Dus betaalde hij 42*7=<<42*7=294>>294 kr voor de koffie
-Dat betekent dat zijn totale rekening 294+15=<<294+15=309>>309 kr was
+De koffie die hij kocht, was 35*0,2=<<35*0,2=7>>7 euro's duurder per 500 gram dan wat hij normaal koopt
+Dus kostte het 35+7=<<35+7=42>>42 euro's per 500 gram
+Hij gebruikt 500*7=<<500*7=3500>>3500 gram koffie per week
+Dus betaalde hij 42*7=<<42*7=294>>294 euro's voor de koffie
+Dat betekent dat zijn totale rekening 294+15=<<294+15=309>>309 euro's was
 #### 309
 """
 
@@ -14,34 +14,35 @@ id_orig = 661
 id_shuffled = 42
 
 question_annotated = """
-{name,Rasmus} gaat naar de winkel om wat {item,koffie} te kopen. Het normale {item,koffie}merk dat hij koopt, kost {price,35} {cur,kr} per {unit,kilogram}. Hij moest een duurder merk kopen dat {percent,20}% meer kostte, omdat zijn favoriete merk uitverkocht was. Hij besluit een weekvoorraad {item,koffie} te kopen en hij gebruikt {usage,1} {unit,kilogram} {item,koffie} per dag. Hij besloot ook een {extra_item,donut} te kopen voor {extra_price,15} {cur,kr}. Hoeveel kostte alles samen?
+{name,Simon} gaat naar de winkel om wat {item,koffie} te kopen. Het normale {item,koffie}merk dat hij koopt, kost {price,35} {cur,euro's} per 500 {unit,gram}. Hij moest een duurder merk kopen dat {percent,20}% meer kostte, omdat zijn favoriete merk uitverkocht was. Hij besluit een weekvoorraad {item,koffie} te kopen en hij gebruikt {usage,500} {unit,gram} {item,koffie} per dag. Hij besloot ook een {extra_item,donut} te kopen voor {extra_price,15} {cur,euro's}. Hoeveel kostte alles samen?
 
 #init:
 - name = sample(names_male)
-- item, item_definite = sample([("koffie", "de koffie"),("thee", "de thee"), ("suiker", "de suiker"), ("meel", "het meel"), ("rijst", "de rijst")])
+- item, item_definite = sample([("koffie", "de koffie"),("thee", "de thee"), ("suiker", "de suiker"), ("bloem", "de bloem"), ("rijst", "de rijst")])
 - cur = sample(currencies_sym)
-- unit = sample(['kilogram', 'kg'])
-- extra_item = sample(['cookie', 'muffin', 'bagel'])
+- unit = sample(['g', 'kilogram', 'kg'])
+- extra_item = sample(['koekje', 'muffin', 'bagel'])
 - $price = range(20, 160)
 - $percent = range(10, 50, 5)
-- $usage = range(1, 3)
+- $usage = range(300, 800, 50)
 - $extra_price = range(8, 35)
 
 #conditions:
 - is_int(price * percent / 100)
+- divides(usage * 7, 500)
 
-#answer: (price + price * percent / 100) * 7 * usage + extra_price
+#answer: int((price + price * percent / 100) * (usage * 7 / 500)) + extra_price
 """
 
 answer_annotated = """
-{item_definite} die hij kocht, was {price}*{percent/100}=<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {cur} duurder per {unit} dan wat hij normaal koopt
-Dus kostte het {price}+{price*percent//100}=<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} {cur} per {unit}
+{item_definite} die hij kocht, was {price}*{percent/100}=<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {cur} duurder per 500 {unit} dan wat hij normaal koopt
+Dus kostte het {price}+{price*percent//100}=<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} {cur} per 500 {unit}
 Hij gebruikt {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {unit} {item} per week
-Dus betaalde hij {price+price*percent/100}*{usage*7}=<<{price+price*percent/100}*{usage*7}={int((price+price*percent/100)*usage*7)}>>{int((price+price*percent/100)*usage*7)} {cur} voor {item_definite}
-Dat betekent dat zijn totale rekening {int((price+price*percent/100)*usage*7)}+{extra_price}=<<{int((price+price*percent/100)*usage*7)}+{extra_price}={int((price+price*percent/100)*usage*7)+extra_price}>>{int((price+price*percent/100)*usage*7)+extra_price} {cur} was
-#### {int((price+price*percent/100)*usage*7)+extra_price}
+Dus betaalde hij {price+price*percent//100}*{int(usage*7/500)}=<<{price+price*percent//100}*{int(usage*7/500)}={int((price+price*percent//100)*(usage*7/500))}>>{int((price+price*percent//100)*(usage*7/500))} {cur} voor {item_definite}
+Dat betekent dat zijn totale rekening {int((price+price*percent//100)*(usage*7/500))}+{extra_price}=<<{int((price+price*percent//100)*(usage*7/500))}+{extra_price}={int((price+price*percent//100)*(usage*7/500))+extra_price}>>{int((price+price*percent//100)*(usage*7/500))+extra_price} {cur} was
+#### {int((price+price*percent//100)*(usage*7/500))+extra_price}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated; validated by a native speaker."
 
 language = "nld"

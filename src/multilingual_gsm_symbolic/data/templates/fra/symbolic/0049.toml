@@ -1,0 +1,51 @@
+question = "Mathéo collecte les déchets de 3 complexes d'appartements différents. Les deux premiers ont 200 appartements chacun et le dernier est 60 % plus grand que les deux autres réunis. Mathéo collecte les déchets 3 fois par semaine dans chaque endroit et il est payé 3 euros par ramassage pour chaque appartement. Combien d'argent gagne-t-il en une semaine ?"
+
+answer = """
+Les deux premiers complexes ont 2*200=<<2*200=400>>400 appartements
+Le 3e a 400*0,6=<<400*0,6=240>>240 appartements de plus que les deux autres réunis
+Donc au total il a 400+240=<<400+240=640>>640 appartements
+Donc il visite 640+400=<<640+400=1040>>1040 appartements à chaque fois
+Cela signifie qu'il visite 1040*3=<<1040*3=3120>>3120 appartements chaque semaine
+Donc il gagne 3120*3 euros=<<3120*3=9360>>9360 euros chaque semaine
+#### 9360
+"""
+
+id_orig = 1165
+
+id_shuffled = 49
+
+question_annotated = """
+{name,Mathéo} collecte les déchets de {n,3} complexes d'appartements différents. Les {n_first_txt,deux} premiers ont {a,200} appartements chacun et le dernier est {p,60} % plus grand que les {n_first_txt,deux} autres réunis. {name,Mathéo} collecte les déchets {f,3} fois par semaine dans chaque endroit et il est payé {r,3} {cur,euros} par ramassage pour chaque appartement. Combien d'argent gagne-t-il en une semaine ?
+
+#init:
+- name = sample(names_male)
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)
+- $a = range(100, 500, 50)
+- $p = range(20, 81, 5)
+- $f = range(2, 6)
+- $r = [1.7, 2, 2.5, 2.75, 3, 3.5]
+
+#conditions:
+- n_first_val == n-1
+- is_int((n-1)*a*p/100)
+- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)
+
+
+#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)
+"""
+
+answer_annotated = """
+Les {n_first_txt} premiers complexes ont {n_first_val}*{a}=<<{n_first_val}*{a}={n_first_val*a}>>{n_first_val*a} appartements
+Le {n}e a {n_first_val*a}*{p/100}=<<{n_first_val*a}*{p/100}={(n-1)*a*p/100}>>{int((n-1)*a*p/100)} appartements de plus que les {n_first_txt} autres réunis
+Donc au total il a {n_first_val*a}+{int((n-1)*a*p/100)}=<<{n_first_val*a}+{int((n-1)*a*p/100)}={int(n_first_val*a+(n-1)*a*p/100)}>>{int(n_first_val*a+(n-1)*a*p/100)} appartements
+Donc il visite {int(n_first_val*a+(n-1)*a*p/100)}+{n_first_val*a}=<<{int(n_first_val*a+(n-1)*a*p/100)}+{n_first_val*a}={(n-1)*a + (n-1)*a + (n-1)*a*p/100}>>{int((n-1)*a + (n-1)*a + (n-1)*a*p/100)} appartements à chaque fois
+Cela signifie qu'il visite {int((n-1)*a + (n-1)*a + (n-1)*a*p/100)}*{f}=<<{int((n-1)*a + (n-1)*a + (n-1)*a*p/100)}*{f}={((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f}>>{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)} appartements chaque semaine
+Donc il gagne {int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)}*{r} {cur}=<<{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f)}*{r}={int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)}>>{int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)} {cur} chaque semaine
+#### {int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

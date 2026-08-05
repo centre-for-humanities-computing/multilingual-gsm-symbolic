@@ -1,0 +1,39 @@
+question = "Sarah se préparait pour un dîner chez elle, où elle comptait servir du ragoût. Elle a remarqué qu'elle n'avait plus de cuillères en plastique, alors elle a acheté un nouveau paquet de cuillères. Plus tard, son mari a aussi acheté un paquet de cinq nouvelles cuillères et les a données à Sarah. Pendant qu'elle préparait le ragoût, elle a utilisé trois cuillères pour goûter son ragoût. Plus tard, quand elle est allée mettre la table, elle avait au total 12 cuillères. Combien de cuillères y avait-il dans le paquet qu'elle a acheté ?"
+
+answer = """
+Au total, elle et son mari avaient 12+3=<<12+3=15>>15 cuillères.
+Comme le mari a acheté un paquet de cinq cuillères, son paquet contenait 15-5=<<15-5=10>>10 cuillères.
+#### 10
+"""
+
+id_orig = 125
+
+id_shuffled = 22
+
+question_annotated = """
+{name,Sarah} se préparait pour {event,un dîner} chez elle, où elle comptait servir du {food,ragoût}. Elle a remarqué qu'elle n'avait plus de {obj,cuillères} en plastique, alors elle a acheté un nouveau paquet de {obj,cuillères}. Plus tard, son mari a aussi acheté un paquet de {n1_txt,cinq} nouvelles {obj,cuillères} et les a données à {name,Sarah}. Pendant qu'elle préparait le {food,ragoût}, elle a utilisé {n2_txt,trois} {obj,cuillères} pour goûter son {food,ragoût}. Plus tard, quand elle est allée mettre la table, elle avait au total {total,12} {obj,cuillères}. Combien de {obj,cuillères} y avait-il dans le paquet qu'elle a acheté ?
+
+#init:
+- name = sample(names_female)
+- event = sample(["un déjeuner", "une fête d'anniversaire", "une réunion", "un baby shower", "une soirée jeux"])
+- food = sample(["poulet rôti", "saumon grillé", "ragoût de bœuf", "gratin de légumes", "rôti de porc", "riz au lait"])
+- obj = sample(["cuillères", "fourchettes", "serviettes"])
+- n1_txt, n1_val = range_str(5, 20, 1, numbers)
+- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- $total = range(12, 40)
+
+#conditions:
+- total+n2_val-n1_val > 0
+
+#answer: total+n2_val-n1_val
+"""
+
+answer_annotated = """
+Au total, elle et son mari avaient {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj}.
+Comme le mari a acheté un paquet de {n1_txt} {obj}, son paquet contenait {total+n2_val}-{n1_val}=<<{total+n2_val}-{n1_val}={total+n2_val-n1_val}>>{total+n2_val-n1_val} {obj}.
+#### {total+n2_val-n1_val}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

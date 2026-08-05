@@ -44,6 +44,7 @@ _LANGUAGE_NAMES = {
     "nld": "Dutch",
     "fin": "Finnish",
     "isl": "Icelandic",
+    "fao": "Faroese",
     "spa": "Spanish",
     "ita": "Italian",
     "pol": "Polish",
@@ -53,6 +54,8 @@ _LANGUAGE_NAMES = {
     "hin": "Hindi",
     "mar": "Marathi",
     "jpn": "Japanese",
+    "est": "Estonian",
+    "urd": "Urdu",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")

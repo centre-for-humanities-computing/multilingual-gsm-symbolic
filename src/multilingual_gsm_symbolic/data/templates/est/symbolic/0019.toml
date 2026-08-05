@@ -1,0 +1,47 @@
+question = "60-ülesande viktoriinis on 40% küsimustest lihtsad ja ülejäänud jagunevad võrdselt keskmisteks ja rasketeks küsimusteks. Kui Diana on kindel, et saab 75% lihtsatest küsimustest õigesti, ja pool keskmistest ning rasketest küsimustest õigesti, siis mitu punkti on tal kindel saada?"
+
+answer = """
+Keskmised ja rasked küsimused moodustavad 100% - 40% = 60% viktoriinist.
+Lihtsaid küsimusi on kokku 60 küsimust*40/100 = <<60*40/100=24>>24.
+Keskmisi ja raskeid küsimusi kokku on 60 küsimust*60/100 = <<60*60/100=36>>36.
+Kui Diana on kindel, et saab 75% lihtsatest küsimustest õigesti, siis see tähendab, et ta on kindel oma 24 küsimuse*75/100 = <<24*75/100=18>>18 punkti saamisele.
+Keskmiste ja raskete küsimuste seast on ta kindel, et saab sellest pool õigesti, seega on see 36 küsimust*1/2 = <<36*1/2=18>>18 punkti.
+Seega on ta kindel, et saab oma viktoriinis 18 punkti + 18 punkti = <<18+18=36>>36 punkti.
+#### 36
+"""
+
+id_orig = 1021
+
+id_shuffled = 19
+
+question_annotated = """
+{n,60}-ülesande viktoriinis on {p1,40}% küsimustest lihtsad ja ülejäänud jagunevad võrdselt keskmisteks ja rasketeks küsimusteks. Kui {name,Diana} on kindel, et saab {r1,75}% lihtsatest küsimustest õigesti, ja {frac_txt,pool} keskmistest ning rasketest küsimustest õigesti, siis mitu punkti on tal kindel saada?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(5, 71, 5)
+- $r1 = range(5, 101, 5)
+- $n = range(10, 151, 10)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (r1/100))
+- is_int(n*(1-(p1/100))*frac_val)
+
+#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)
+"""
+
+answer_annotated = """
+Keskmised ja rasked küsimused moodustavad 100% - {p1}% = {100-p1}% viktoriinist.
+Lihtsaid küsimusi on kokku {n} küsimust*{p1}/100 = <<{n}*{p1}/100={int(n * (p1/100))}>>{int(n * (p1/100))}.
+Keskmisi ja raskeid küsimusi kokku on {n} küsimust*{100-p1}/100 = <<{n}*{100-p1}/100={int(n*(1-(p1/100)))}>>{int(n*(1-(p1/100)))}.
+Kui {name} on kindel, et saab {r1}% lihtsatest küsimustest õigesti, siis see tähendab, et ta on kindel oma {int(n * (p1/100))} küsimuse*{r1}/100 = <<{int(n * (p1/100))}*{r1}/100={int(n * (p1/100) * (r1/100))}>>{int(n * (p1/100) * (r1/100))} punkti saamisele.
+Keskmiste ja raskete küsimuste seast on ta kindel, et saab sellest {frac_txt} õigesti, seega on see {int(n*(1-(p1/100)))} küsimust*{frac_val} = <<{int(n*(1-(p1/100)))}*{frac_val}={int(n*(1-(p1/100))*frac_val)}>>{int(n*(1-(p1/100))*frac_val)} punkti.
+Seega on ta kindel, et saab oma viktoriinis {int(n * (p1/100) * (r1/100))} punkti + {int(n*(1-(p1/100))*frac_val)} punkti = <<{int(n * (p1/100) * (r1/100))}+{int(n*(1-(p1/100))*frac_val)}={int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)}>>{int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)} punkti.
+#### {int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

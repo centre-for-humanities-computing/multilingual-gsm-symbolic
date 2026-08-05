@@ -1,0 +1,42 @@
+question = "बेकरीमध्ये ब्रेडच्या एका भाकरीची किंमत ₹२ आहे. बॅगल्सची किंमत प्रत्येकी ₹१ आहे. ३ ब्रेडच्या भाकऱ्यांची किंमत २ बॅगल्सपेक्षा किती जास्त आहे?"
+
+answer = """
+३ ब्रेडच्या भाकऱ्यांची किंमत ३ * ₹२ = ₹<<३*२=६>>६ आहे.
+२ बॅगल्सची किंमत २ * ₹१ = ₹<<२*१=२>>२ आहे.
+ब्रेडच्या भाकऱ्यांची किंमत बॅगल्सपेक्षा ₹६ - ₹२ = ₹<<६-२=४>>४ ने जास्त आहे.
+#### ४
+"""
+
+id_orig = 799
+
+id_shuffled = 38
+
+question_annotated = """
+{shop,बेकरी}मध्ये {item1,ब्रेड}च्या एका भाकरीची किंमत {currency,₹}{price1,२} आहे. {item2,बॅगल्स}ची किंमत प्रत्येकी {currency,₹}{price2,१} आहे. {n1,३} {item1,ब्रेड}च्या भाकऱ्यांची किंमत {n2,२} {item2,बॅगल्स}पेक्षा किती जास्त आहे?
+
+#init:
+- item1 = sample(["ब्रेड", "सॉरडो"])
+- item2 = sample(["बॅगल", "मफिन", "क्रॉसाँ", "बिस्किट"])
+- shop = sample(["बेकरी", "कॅफे", "दुकान", "बाजार"])
+- currency = sample(currencies_sym)
+- $price1 = range(2, 10)
+- $price2 = range(1, 5)
+- $n1 = range(2, 10)
+- $n2 = range(2, 10)
+
+#conditions:
+- n1 * price1 > n2 * price2
+
+#answer: n1 * price1 - n2 * price2
+"""
+
+answer_annotated = """
+{n1} {item1}च्या भाकऱ्यांची किंमत {n1} * {currency}{price1} = {currency}<<{n1}*{price1}={n1*price1}>>{n1*price1} आहे.
+{n2} {item2}ची किंमत {n2} * {currency}{price2} = {currency}<<{n2}*{price2}={n2*price2}>>{n2*price2} आहे.
+{item1}च्या भाकऱ्यांची किंमत {item2}पेक्षा {currency}{n1*price1} - {currency}{n2*price2} = {currency}<<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} ने जास्त आहे.
+#### {n1*price1-n2*price2}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

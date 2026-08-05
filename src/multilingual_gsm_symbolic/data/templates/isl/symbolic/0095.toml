@@ -12,14 +12,16 @@ id_orig = 918
 id_shuffled = 95
 
 question_annotated = """
-Það eru {n1,6} nemendur sem stunda {sport1,tennis} og {mult_txt,tvisvar sinnum} fleiri sem stunda {sport2,handbolta}. Það eru {n2,16} strákar og {n3,22} stelpur sem stunda {sport3,fótbolta}. Ef hver nemandi tekur aðeins þátt í einum hópi, hversu margir nemendur eru alls?
+Það eru {n1,6} nemendur sem stunda {sport1,tennis} og {mult_txt,tvisvar sinnum} fleiri sem stunda {sport2,handbolta}. Það eru {n2,16} {boys_noun,strákar} og {n3,22} {girls_noun,stelpur} sem stunda {sport3,fótbolta}. Ef hver nemandi tekur aðeins þátt í einum hópi, hversu margir nemendur eru alls?
 
 #init:
-- sport1, sport2, sport3 = sample(['badminton', 'sejlsport', 'bordtennis',  "fótbolta", "handbolta", 'atletik'], 3)
+- sport1, sport2, sport3 = sample(['tennis', 'badminton', 'siglingar', 'borðtennis', 'fótbolta', 'handbolta', 'frjálsíþróttir'], 3)
 - mult_txt, mult_val = sample(multi_times)
 - $n1 = range(4, 21)
 - $n2 = range(10, 31)
 - $n3 = range(10, 31)
+- boys_noun = "strákur" if (n2 % 10 == 1 and n2 % 100 != 11) else "strákar"
+- girls_noun = "stelpa" if (n3 % 10 == 1 and n3 % 100 != 11) else "stelpur"
 
 #conditions:
 - n1 * mult_val + n2 + n3 <= 250
@@ -28,12 +30,12 @@ question_annotated = """
 """
 
 answer_annotated = """
-Það eru {n1}*{mult_val}=<<{n1}*{mult_val}={n1*mult_val}>>{n1*mult_val} nemendur sem stunda {sport2}.
-Það eru {n2} + {n3} = <<{n2}+{n3}={n2+n3}>>{n2+n3} nemendur sem stunda {sport3}.
-Alls eru {n1} + {n1*mult_val} + {n2+n3} = <<{n1}+{n1*mult_val}+{n2+n3}={n1 + n1*mult_val + n2 + n3}>>{n1 + n1*mult_val + n2 + n3} nemendur.
+Það eru {n1}*{mult_val}=<<{n1}*{mult_val}={n1*mult_val}>>{n1*mult_val} {"nemandi" if ((n1*mult_val) % 10 == 1 and (n1*mult_val) % 100 != 11) else "nemendur"} sem stunda {sport2}.
+Það eru {n2} + {n3} = <<{n2}+{n3}={n2+n3}>>{n2+n3} {"nemandi" if ((n2+n3) % 10 == 1 and (n2+n3) % 100 != 11) else "nemendur"} sem stunda {sport3}.
+Alls eru {n1} + {n1*mult_val} + {n2+n3} = <<{n1}+{n1*mult_val}+{n2+n3}={n1 + n1*mult_val + n2 + n3}>>{n1 + n1*mult_val + n2 + n3} {"nemandi" if ((n1 + n1*mult_val + n2 + n3) % 10 == 1 and (n1 + n1*mult_val + n2 + n3) % 100 != 11) else "nemendur"}.
 #### {n1 + n1*mult_val + n2 + n3}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

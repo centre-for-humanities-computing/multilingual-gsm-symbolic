@@ -1,0 +1,44 @@
+question = "Niels savnar pengar til eina skúlaútferð. Hann hevur søkt um hjálp frá skúlanum, sum hevur avgjørt at rinda helvtina av kostnaðinum fyri skúlaútferðina. Hvussu nógvar pengar vantar Niels, um hann hevur 350 kr og skúlaútferðin kostar 2000 kr?"
+
+answer = """
+Skúlin hjá Niels hevur avgjørt at gjalda 2000*1/2=<<2000*1/2=1000>>1000 kr fyri skúlaútferðina hjá honum.
+Til samans hevur Niels goldið 1000 + 350 = <<1000+350=1350>>1350 kr av skúlaútferðini síni
+Tí hevur Niels brúk fyri 2000 - 1350 = <<2000-1350=650>>650 kr aftrat til skúlaútferðina.
+#### 650
+"""
+
+id_orig = 788
+
+id_shuffled = 35
+
+question_annotated = """
+{name,Niels} savnar pengar til {event_article,eina} {event,skúlaútferð}. Hann hevur søkt um hjálp frá {organization_definite,skúlanum}, sum hevur avgjørt at rinda {fraction_txt,helvtina} av kostnaðinum fyri {event_genitive,skúlaútferðarinnar}. Hvussu nógvar pengar vantar {name,Niels}, um hann hevur {current,350} {cur,kr} og {event_definite,skúlaútferðin} kostar {total,2000} {cur,kr}?
+
+#init:
+- name = sample(names_male)
+- event_article, event, event_definite, event_genitive = sample([("eina", "útferð", "útferðin", "útferðarinnar"), ("eina", "ítróttarkapping", "ítróttarkappingin", "ítróttarkappingarinnar"), ("eina", "ráðstevna", "ráðstevnan", "ráðstevnunnar"), ("eina", "festival", "festivalurin", "festivalsins"), ("eina", "vísindastevna", "vísindastevnan", "vísindastevnunnar")])
+- cur = sample(currencies_sym)
+- organization, organization_definite = sample([("skúli", "skúlin"), ("kommuna", "kommunan"), ("lokal vælgerðarfelagsskapur", "lokali vælgerðarfelagsskapurin"), ("ungdómsklubbi", "ungdómsklubbin"), ("foreldur", "foreldrini")])
+- $fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(50, 1350, 50)
+- $total = range(1350, 7000, 50)
+
+#conditions:
+- total > current
+- total - (total * fraction_val + current) > 0
+- is_int(total * (fraction_val))
+- is_int(total - (total * (fraction_val) + current))
+
+#answer: total - (total * (fraction_val) + current)
+"""
+
+answer_annotated = """
+{name}' {organization} hevur avgjørt at gjalda {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur} fyri hansara {event}.
+Til samans hevur {name} goldið {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} av {event_definite} síni
+Tí hevur {name} brúk fyri {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} aftrat til {event_definite}.
+#### {total-(total*(fraction_val)+current)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

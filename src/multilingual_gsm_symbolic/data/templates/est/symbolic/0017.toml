@@ -1,0 +1,46 @@
+question = "Merike käib iga päev 4 kilomeetrit oma lemmikul matkarajal, mis sisaldab 2 kilomeetrit randa kõndimist ja 2 kilomeetrit kõnniteel kõndimist. Kõnniteel kõnnib Merike kaks korda kiiremini, kui ta kõnnib rannas. Kui 40 minutit tema jalutuskäigust kulub rannas kõndimisele, siis kui kaua kulub tal kogu 4-kilomeetri pikkuse jalutuskäigu läbimiseks minutites?"
+
+answer = """
+Rannas kõnnib Merike kiirusega 2 kilomeetrit 40 minutiga, ehk 2/40 = 1/20 kilomeetrit minutis.
+Kõnniteel kõnnib ta kaks korda kiiremini kui liival, ehk 2*1/20 = 0.1 kilomeetrit minutis.
+Et kõndida 2 kilomeetrit kõnniteel, kulub tal 2/0.1 = <<2/0.1=20>>20 minutit.
+Seega kulub kokku Merike 40+20 = <<40+20=60>>60 minutit, et läbida oma lemmikmarsruut.
+#### 60
+"""
+
+id_orig = 1133
+
+id_shuffled = 17
+
+question_annotated = """
+{name,Merike} käib iga päev {n,4} {unit_length,kilomeetrit} oma lemmikul matkarajal, mis sisaldab {m,2} {unit_length,kilomeetrit} randa kõndimist ja {k,2} {unit_length,kilomeetrit} kõnniteel kõndimist. Kõnniteel kõnnib {name,Merike} {mult_txt,kaks korda} kiiremini, kui ta kõnnib rannas. Kui {t,40} minutit tema jalutuskäigust kulub rannas kõndimisele, siis kui kaua kulub tal kogu {n,4}-{unit_gen,kilomeetri} pikkuse jalutuskäigu läbimiseks minutites?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- unit_nom, unit_length, unit_gen = sample([("kilomeeter", "kilomeetrit", "kilomeetri"), ("km", "km", "km")])
+- k_unit = plural(k, unit_nom, unit_length)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(3, 40)
+- $m = range(2, 20)
+- $k = range(2, 20)
+- $t = range(40, 70)
+#conditions:
+- m + k == n
+- m < t
+- mult_val *m < t
+- divides(t, m)
+- is_int(k / (mult_val*m/t))
+#answer: t+(k/(mult_val*m/t))
+"""
+
+answer_annotated = """
+Rannas kõnnib {name} kiirusega {m} {unit_length} {t} minutiga, ehk {m}/{t} = {Fraction(m/t)} {unit_length} minutis.
+Kõnniteel kõnnib ta {mult_txt} kiiremini kui liival, ehk {mult_val}*{Fraction(m/t)} = {mult_val*m/t} {unit_length} minutis.
+Et kõndida {k} {unit_length} kõnniteel, kulub tal {k}/{mult_val*m/t} = <<{k}/{mult_val*m/t}={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minutit.
+Seega kulub kokku {name} {t}+{k/(mult_val*m/t)} = <<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minutit, et läbida oma lemmikmarsruut.
+#### {t+(k/(mult_val*m/t))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

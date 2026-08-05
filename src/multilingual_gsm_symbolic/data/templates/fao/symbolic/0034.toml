@@ -1,0 +1,46 @@
+question = "Hr. Hansen seldi sítt hús fyri 2.700.000 kr. Hann rindaði eitt flytingargjald, sum er 3% av søluprísinum, og rindaði eisini eitt meklaragjald, sum er 5% av søluprísinum. Um hann eisini rindaði 1.700.000 kr fyri eftirstøðuna av láninum á húsinum, hvussu nógv er nettovinningurin hjá Hr. Hansen av søluni av húsinum?"
+
+answer = """
+Hr. Hansen rindaði 2.700.000 kr*3/100 = <<2700000*3/100=81000>>81.000 kr fyri flytingargjaldið.
+Hann rindaði 2.700.000 kr*5/100 = <<2700000*5/100=135000>>135.000 kr fyri meklaragjaldið.
+So rindaði Hr. Hansen til samans 81.000 kr + 135.000 kr + 1.700.000 kr = <<81000+135000+1700000=1916000>>1.916.000 kr fyri flytingargjaldið, meklaragjaldið og lánsupphæddina.
+Tí er nettovinningurin hjá Hr. Hansen 2.700.000 kr - 1.916.000 kr = <<2700000-1916000=784000>>784.000 kr.
+#### 784000
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{title,Hr.} {name,Hansen} seldi sítt {property,hús} fyri {price,2700000} kr. Hann rindaði eitt {fee1_name,flytingar}gjald, sum er {fee1_percent,3}% av søluprísinum, og rindaði eisini eitt {fee2_name,meklara}gjald, sum er {fee2_percent,5}% av søluprísinum. Um hann eisini rindaði {loan,1700000} kr fyri eftirstøðuna av láninum á {property,hús}inum, hvussu nógv er nettovinningurin hjá {title,Hr.} {name,Hansen} av søluni av {property,hús}inum?
+
+#init:
+- title = sample(["Hr.", "Prof.", "Dr."])
+- name = sample(["Christensen", "Johnson", "Løkke", "Jørgensen", "Rasmussen", "Frederiksen", "Johansen", "Møller", "Mortensen"])
+- property = sample(["hús", "summarhús"])
+- fee1_name = sample(["flytingar", "skrásetingar", "advokata"])
+- fee2_name = sample(["meklara", "umboðs", "ognarmeklara"])
+- $price = range(1300000, 6700000, 70000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(700000, 4700000, 100000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{title} {name} rindaði {price} kr*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{price * fee1_percent // 100} kr fyri {fee1_name}gjaldið.
+Hann rindaði {price} kr*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{price * fee2_percent // 100} kr fyri {fee2_name}gjaldið.
+So rindaði {title} {name} til samans {price * fee1_percent // 100} kr + {price * fee2_percent // 100} kr + {loan} kr = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{price * (fee1_percent + fee2_percent) // 100 + loan} kr fyri {fee1_name}gjaldið, {fee2_name}gjaldið og lánsupphæddina.
+Tí er nettovinningurin hjá {title} {name} {price} kr - {price * (fee1_percent + fee2_percent) // 100 + loan} kr = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} kr.
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

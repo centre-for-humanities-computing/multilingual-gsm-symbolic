@@ -1,0 +1,37 @@
+question = "しゅんは1週間分のコーヒーを買いに行きます。普段買うブランドのコーヒーは100グラムあたり￥500です。お気に入りのブランドが売り切れていたので、20%高い、より高価なブランドなコーヒーを買わなければなりませんでした。1日に100グラムのコーヒーを使います。さらに、￥200のドーナツも買いました。全部でいくらかかりましたか？"
+answer = """コーヒーは、いつも買うものより100グラムあたり￥500*0.2=￥<<500*0.2=100>>100高くなっていました
+したがって、100グラムあたり￥500+￥100=￥<<500+100=600>>600でした
+1週間で100*7=<<100*7=700>>700グラムのコーヒーを使います
+したがって、コーヒーには￥600*7=￥<<600*7=4200>>4200支払いました
+つまり、合計金額は￥4200+￥200=￥<<4200+200=4400>>4400でした
+#### 4400
+"""
+id_orig = 661
+id_shuffled = 42
+question_annotated = """{name,しゅん}は1週間分の{item,コーヒー}を買いに行きます。普段買うブランドの{item,コーヒー}は100{unit,グラム}あたり{cur,￥}{price,500}です。お気に入りのブランドが売り切れていたので、{percent,20}%高い、より高価なブランドな{item,コーヒー}を買わなければなりませんでした。1日に{usage,100}{unit,グラム}の{item,コーヒー}を使います。さらに、{cur,￥}{extra_price,200}の{extra_item,ドーナツ}も買いました。全部でいくらかかりましたか？
+
+#init:
+- name = sample(names)
+- item = sample(['紅茶', '小麦粉', '米'])
+- cur = sample(currencies_sym)
+- unit = sample(['グラム', 'g'])
+- extra_item = sample(['クッキー', 'マフィン', 'スコーン'])
+- $price = range(300, 2500, 100)
+- $percent = range(10, 50, 5)
+- $usage = range(100, 300, 100)
+- $extra_price = range(100, 500, 100)
+
+#conditions:
+- is_int(price * percent / 100)
+
+#answer: (price + price * percent / 100) * 7 * usage + extra_price
+"""
+answer_annotated = """{item}は、いつも買うものより100{unit}あたり{cur}{price}*{percent/100}={cur}<<{price}*{percent/100}={price*percent//100}>>{price*percent//100}高くなっていました
+したがって、100{unit}あたり{cur}{price}+{cur}{price*percent//100}={cur}<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100}でした
+1週間で{usage}*7=<<{usage}*7={usage*7}>>{usage*7}{unit}の{item}を使います
+したがって、{item}には{cur}{price+price*percent/100}*7={cur}<<{price+price*percent/100}*7={int((price+price*percent/100)*7)}>>{int((price+price*percent/100)*7)}支払いました
+つまり、合計金額は{cur}{int((price+price*percent/100)*7)}+{cur}{extra_price}={cur}<<{int((price+price*percent/100)*7)}+{extra_price}={int((price+price*percent/100)*7)+extra_price}>>{int((price+price*percent/100)*7)+extra_price}でした
+#### {int((price+price*percent/100)*7)+extra_price}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

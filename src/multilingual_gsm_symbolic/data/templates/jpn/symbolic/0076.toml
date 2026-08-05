@@ -1,0 +1,37 @@
+question = "しょうへいは先週の月曜日にマグロを3匹釣りました。最初に釣ったマグロの重さは56キロ、2匹目に釣ったマグロの重さは46キロ、残りのマグロの重さは26キロです。マグロ1キロの値段が￥5000なら、そのマグロをすべて市場で売ったあと、しょうへいはいくら稼ぎますか？"
+answer = """しょうへいは最初のマグロで 56*￥5000 = ￥<<56*5000=280000>>280,000 稼ぎます。
+2匹目のマグロで 46*￥5000 = ￥<<46*5000=230000>>230,000 稼ぎます。
+残りのマグロは 3-2 = <<3-2=1>>1 匹です。1匹あたり 26*￥5000 = ￥<<26*5000=130000>>130,000 稼ぎます。
+すべてのマグロを売って稼ぐ合計金額は ￥280,000 + ￥230,000 + ￥130,000= ￥<<280000+230000+130000=640000>>640,000 です。
+#### 640000
+"""
+id_orig = 1207
+id_shuffled = 76
+question_annotated = """{name,しょうへい}は先週の{day,月曜日}に{fish,マグロ}を{n,3}匹釣りました。最初に釣った{fish,マグロ}の重さは{w1,56}{unit,キロ}、2匹目に釣った{fish,マグロ}の重さは{w2,46}{unit,キロ}、残りの{fish,マグロ}の重さは{w3,26}{unit,キロ}です。{fish,マグロ}1{unit,キロ}の値段が{cur,￥}{price,5000}なら、その{fish,マグロ}をすべて市場で売ったあと、{name,しょうへい}はいくら稼ぎますか？
+
+#init:
+- name = sample(names)
+- fish = sample([\"マグロ\", \"サーモン\", \"鯖\", \"鮭\", \"鯛\"])
+- day = sample(weekdays)
+- unit = sample([\"キロ\", \"kg\"])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(2000, 25000, 1000)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+answer_annotated = """{name}は最初の{fish}で {w1}*{cur}{price} = {cur}<<{w1}*{price}={w1*price}>>{w1*price} 稼ぎます。
+2匹目の{fish}で {w2}*{cur}{price} = {cur}<<{w2}*{price}={w2*price}>>{w2*price} 稼ぎます。
+残りの{fish}は {n}-2 = <<{n}-2={n-2}>>{n-2} 匹です。1匹あたり {w3}*{cur}{price} = {cur}<<{w3}*{price}={w3*price}>>{w3*price} 稼ぎます。
+すべての{fish}を売って稼ぐ合計金額は {cur}{w1*price} + {cur}{w2*price} + {cur}{((n-2)*w3*price)}= {cur}<<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} です。
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

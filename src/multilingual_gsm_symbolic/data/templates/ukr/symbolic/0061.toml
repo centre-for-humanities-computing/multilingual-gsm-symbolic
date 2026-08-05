@@ -1,8 +1,39 @@
-question = "У Бертрама є мішечок із кульками, і всередині нього 10 штук. Він спіткнувся об камінь, коли ніс його, і загубив половину з них. Він поспішив пошукати їх, але знайшов лише 3. Коли він повернувся додому, то уважніше оглянув кульки. Дві з тих, що він підібрав, були не кульками, а насправді дерев’яними намистинами, тож він їх викинув. Скільки кульок у підсумку залишилося в Бертрама?"
-answer = "Бертрам загубив свої кульки, і в нього залишилося 10*1/2=<<10*1/2=5>>5 кульок.\nВін пошукав і знайшов частину своїх загублених кульок, тож у нього знову стало 5+3=<<5+3=8>>8 кульок.\nВін пішов додому й викинув дерев’яні намистини, після чого в нього залишилося 8-2=<<8-2=6>>6 кульок.\n#### 6\n"
+question = "Бертрама має мішечок із кульками, і всередині нього 10 штук. Він спіткнувся об камінь, коли ніс його, і загубив половину з них. Він поспішив знайти їх, але знайшов лише 3. Коли він повернувся додому, то уважніше оглянув кульки: два з тих, що він підібрав, були не кульками, а насправді дерев'яними намистинами, тож він їх викинув. Скільки кульок у підсумку врешті має Бертрама?"
+
+answer = """Бертрама загубив половину своїх кульок, тож у нього залишилося 10-5=<<10-5=5>>5 кульок.
+Він пошукав і знайшов частину своїх загублених кульок, тож у нього знову стало 5+3=<<5+3=8>>8 кульок.
+Він пішов додому й викинув дерев'яні намистини, після чого в нього залишилося 8-2=<<8-2=6>>6 кульок.
+#### 6
+"""
 id_orig = 1247
 id_shuffled = 61
-question_annotated = "{name,Бертрам} має мішечок із {objects,кульками}, і всередині нього {n,10} штук. Він спіткнувся об {obstacle,камінь}, коли ніс його, і загубив {frac_txt,половина} з них. Він поспішив пошукати їх, але знайшов лише {k,3}. Коли він повернувся додому, то уважніше оглянув {objects,кульки}. {fake_num_txt,два} з тих, що він підібрав, були не {objects,кульками}, а насправді {fake_object,дерев’яними намистинами}, тож він їх викинув. Скільки {objects,кульок} у підсумку залишилося в {name,Бертрама}?\n\n#init:\n- name = sample(names_male)\n- objects = sample(['кульки', 'монети', 'ґудзики', 'намистини'])\n- obstacle = sample(['камінь', 'гілка', 'корінь', 'палиця'])\n- fake_object = sample(['скляна кулька', 'дерев’яна намистина', 'камінці'])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val\n"
-answer_annotated = "{name} загубив свої {objects} і в нього залишилося {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects}.\nВін пошукав і знайшов частину своїх загублених {objects}, тож у нього знову стало {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects}.\nВін пішов додому й викинув {fake_object}и, після чого в нього залишилося {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects}.\n#### {int(n*(1-frac_val))+k-fake_num_val}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name,Бертрам} має мішечок із {obj_with,кульками}, і всередині нього {n,10} {n_shtuk,штук}. Він спіткнувся об {obstacle,камінь}, коли ніс його, і загубив {frac_acc,половину} з них. Він поспішив знайти їх, але знайшов лише {k,3}. Коли він повернувся додому, то уважніше оглянув {obj_acc_pl,кульки}: {fake_num_txt,два} з тих, що він підібрав, були не {obj_instr_pl,кульками}, а насправді {fake_obj_instr,дерев'яними намистинами}, тож він їх викинув. Скільки {obj_gen_pl,кульок} у підсумку врешті має {name,Бертрама}?
+
+#init:
+- name = sample(names_male)
+- obj_with, obj_acc_pl, obj_instr_pl, obj_gen_pl, obj_s, obj_pl1, obj_pl2 = sample([("кульками", "кульки", "кульками", "кульок", "кулька", "кульки", "кульок"), ("монетами", "монети", "монетами", "монет", "монета", "монети", "монет"), ("ґудзиками", "ґудзики", "ґудзиками", "ґудзиків", "ґудзик", "ґудзики", "ґудзиків"), ("намистинами", "намистини", "намистинами", "намистин", "намистина", "намистини", "намистин")])
+- obstacle = sample(["камінь", "гілку", "коріння", "палицю", "бруківку"])
+- fake_obj_instr, fake_obj_acc = sample([("скляними кульками", "скляні кульки"), ("дерев'яними намистинами", "дерев'яні намистини"), ("камінцями", "камінці")])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_acc, frac_val = sample([("половину", "1/2"), ("одну третю", "1/3"), ("одну четверту", "1/4"), ("одну п'яту", "1/5"), ("дві третіх", "2/3"), ("три четвертих", "3/4"), ("три п'ятих", "3/5")])
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+- n_shtuk = ukr_plural_measurements(n, "штука", "штуки", "штук")
+- n_after_loss = ukr_plural_measurements(n-int(n*frac_val), obj_s, obj_pl1, obj_pl2)
+- n_after_found = ukr_plural_measurements(n-int(n*frac_val)+k, obj_s, obj_pl1, obj_pl2)
+- n_final = ukr_plural_measurements(n-int(n*frac_val)+k-fake_num_val, obj_s, obj_pl1, obj_pl2)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: n - int(n * frac_val) + k - fake_num_val
+"""
+answer_annotated = """{name} загубив {frac_acc} своїх {obj_gen_pl}, тож у нього залишилося {n}-{int(n*frac_val)}=<<{n}-{int(n*frac_val)}={n-int(n*frac_val)}>>{n-int(n*frac_val)} {n_after_loss}.
+Він пошукав і знайшов частину своїх загублених {obj_gen_pl}, тож у нього знову стало {n-int(n*frac_val)}+{k}=<<{n-int(n*frac_val)}+{k}={n-int(n*frac_val)+k}>>{n-int(n*frac_val)+k} {n_after_found}.
+Він пішов додому й викинув {fake_obj_acc}, після чого в нього залишилося {n-int(n*frac_val)+k}-{fake_num_val}=<<{n-int(n*frac_val)+k}-{fake_num_val}={n-int(n*frac_val)+k-fake_num_val}>>{n-int(n*frac_val)+k-fake_num_val} {n_final}.
+#### {n-int(n*frac_val)+k-fake_num_val}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

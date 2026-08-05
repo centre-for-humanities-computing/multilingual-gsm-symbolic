@@ -1,0 +1,30 @@
+question = "ある長野の高校では今年、美術センターで卒業式を行います。そこには6000人分の席があります。卒業生用の950席と出席する教職員用の300席を確保すると、残りの席を均等に分けた場合、各卒業生は友人や家族に何枚ずつ配ることができますか？"
+answer = """卒業生用の席と教職員用の席を足します。950 + 300 = <<950+300=1250>>1250席が教職員と卒業生用です。
+総座席数から教職員と卒業生用の席を引きます。6000 - 1250 = <<6000-1250=4750>>4750席残ります。
+残った席数を卒業生の人数で割ります。4750/950 = <<4750/950=5>>5席
+#### 5
+"""
+id_orig = 1031
+id_shuffled = 46
+question_annotated = """ある{city,長野}の高校では今年、{venue,美術センター}で卒業式を行います。そこには{total,6000}人分の席があります。卒業生用の{graduates,950}席と出席する教職員用の{faculty,300}席を確保すると、残りの席を均等に分けた場合、各卒業生は友人や家族に何枚ずつ配ることができますか？
+
+#init:
+- city = sample(cities)
+- venue = sample([\"講堂\", \"体育館\"])
+- $total = range(3000, 10000, 100)
+- $graduates = range(100, 1500, 50)
+- $faculty = range(100, 500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+answer_annotated = """卒業生用の席と教職員用の席を足します。{graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty}席が教職員と卒業生用です。
+総座席数から教職員と卒業生用の席を引きます。{total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)}席残ります。
+残った席数を卒業生の人数で割ります。{total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates}席
+#### {(total-(graduates+faculty))//graduates}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

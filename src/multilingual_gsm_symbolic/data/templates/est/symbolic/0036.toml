@@ -1,0 +1,45 @@
+question = "Anneli läks pagaripoodi ja ostis erinevat tüüpi küpsetisi. Ta ostis 3 tosinat sõõrikuid, mis maksid 68 EUR tosin, 2 tosinat minikooke, mis maksid 80 EUR tosin, ja 6 tosinat mini-juustukooke hinnaga 55 EUR tosin. Kui suur oli arve?"
+
+answer = """
+Sõõrikute eest maksis Anneli kokku 3*68 EUR = <<3*68=204>>204 EUR.
+Minikookide eest maksis Anneli kokku 2*80 EUR = <<2*80=160>>160 EUR.
+Mini-juustukookide eest maksis Anneli kokku 6*55 EUR = <<6*55=330>>330 EUR.
+Seega maksis Anneli 204 EUR + 160 EUR + 330 EUR = <<204+160+330=694>>694 EUR.
+#### 694
+"""
+
+id_orig = 11
+
+id_shuffled = 36
+
+question_annotated = """
+{name,Anneli} läks {shop,pagaripoodi} ja ostis erinevat tüüpi {item,küpsetisi}. Ta ostis {n1,3} tosinat {item1_par_pl,sõõrikuid}, mis maksid {p1,68} {cur,EUR} tosin, {n2,2} tosinat {item2_par_pl,minikooke}, mis maksid {p2,80} {cur,EUR} tosin, ja {n3,6} tosinat {item3_par_pl,mini-juustukooke} hinnaga {p3,55} {cur,EUR} tosin. Kui suur oli arve?
+#init:
+- name, _ = sample(names_female_cases)
+- cur = sample(currencies_sym)
+- shop = sample(["pagaripoodi", "saiaputkasse", "kommipoodi", "kohvikusse"])
+- item = sample(["küpsetisi", "ahjus küpsetatud tooteid", "magustoite", "maiuseid"])
+- item1_par_pl, item1_gen_pl, item1_gen_pl_cap = sample([("sõõrikuid", "sõõrikute", "Sõõrikute"), ("sarvesaiu", "sarvesaiade", "Sarvesaiade"), ("ekleere", "ekleeride", "Ekleeride"), ("Taani saiu", "Taani saiade", "Taani saiade")])
+- item2_par_pl, item2_gen_pl, item2_gen_pl_cap = sample([("minikooke", "minikookide", "Minikookide"), ("makroone", "makroonide", "Makroonide"), ("küpsiseid", "küpsiste", "Küpsiste"), ("pirukaid", "pirukate", "Pirukate")])
+- item3_par_pl, item3_gen_pl, item3_gen_pl_cap = sample([("mini-juustukooke", "mini-juustukookide", "Mini-juustukookide"), ("brownie'sid", "brownie'de", "Brownie'de"), ("muffineid", "muffinite", "Muffinite")])
+- $n1 = range(2, 10)
+- $n2 = range(4, 10)
+- $n3 = range(2, 10)
+- $p1 = range(11, 21)
+- $p2 = range(73, 90)
+- $p3 = range(112, 120)
+
+#answer: n1 * p1 + n2 * p2 + n3 * p3
+"""
+
+answer_annotated = """
+{item1_gen_pl_cap} eest maksis {name} kokku {n1}*{p1} {cur} = <<{n1}*{p1}={n1*p1}>>{n1*p1} {cur}.
+{item2_gen_pl_cap} eest maksis {name} kokku {n2}*{p2} {cur} = <<{n2}*{p2}={n2*p2}>>{n2*p2} {cur}.
+{item3_gen_pl_cap} eest maksis {name} kokku {n3}*{p3} {cur} = <<{n3}*{p3}={n3*p3}>>{n3*p3} {cur}.
+Seega maksis {name} {n1*p1} {cur} + {n2*p2} {cur} + {n3*p3} {cur} = <<{n1*p1}+{n2*p2}+{n3*p3}={n1*p1+n2*p2+n3*p3}>>{n1*p1+n2*p2+n3*p3} {cur}.
+#### {n1*p1+n2*p2+n3*p3}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

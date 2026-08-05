@@ -1,0 +1,44 @@
+question = "Suurim veeliug veepargis Aquavere on 300 meetrit pikk ja inimesed libisevad alla kiirusega 60 meetrit minutis. Teine suurim veeliug on 240 meetrit pikk, kuid on järsem, nii et inimesed libisevad alla kiirusega 80 meetrit minutis. Kui palju kauem kulub suurima veeliu läbimiseks võrreldes teise suurima veeliuga?"
+
+answer = """
+Kõigepealt leia suurima veeliu läbimiseks kuluv aeg: 300 meetrit / 60 meetrit/min = <<300/60=5>>5 minutit
+Seejärel leia teise suurima veeliu läbimiseks kuluv aeg: 240 meetrit / 80 meetrit/min = <<240/80=3>>3 minutit
+Seejärel lahuta teise pikima veeliu läbimiseks kuluv aeg pikima veeliu ajast, et leida vahe: 5 minutit - 3 minutit = <<5-3=2>>2 minutit
+#### 2
+"""
+
+id_orig = 1099
+
+id_shuffled = 87
+
+question_annotated = """
+Suurim veeliug veepargis {park_name,Aquavere} on {l1,300} {unit,meetrit} pikk ja inimesed libisevad alla kiirusega {s1,60} {unit,meetrit} minutis. Teine suurim veeliug on {l2,240} {unit,meetrit} pikk, kuid on järsem, nii et inimesed libisevad alla kiirusega {s2,80} {unit,meetrit} minutis. Kui palju kauem kulub suurima veeliu läbimiseks võrreldes teise suurima veeliuga?
+
+#init:
+- park_name = sample(["Aquavere", "Veemaailm", "Vetevall", "Neptuni park"])
+- unit = sample(['meetrit'])
+- $l1 = range(250, 401, 10)
+- $l2 = range(200, 301, 10)
+- $s1 = range(40, 81, 5)
+- $s2 = range(60, 101, 5)
+
+#conditions:
+- l1 > l2
+- s2 > s1
+- is_int(l1/s1)
+- is_int(l2/s2)
+- l1/s1 > l2/s2
+
+#answer: l1/s1 - l2/s2
+"""
+
+answer_annotated = """
+Kõigepealt leia suurima veeliu läbimiseks kuluv aeg: {l1} {unit} / {s1} {unit}/min = <<{l1}/{s1}={l1//s1}>>{l1//s1} minutit
+Seejärel leia teise suurima veeliu läbimiseks kuluv aeg: {l2} {unit} / {s2} {unit}/min = <<{l2}/{s2}={l2//s2}>>{l2//s2} minutit
+Seejärel lahuta teise pikima veeliu läbimiseks kuluv aeg pikima veeliu ajast, et leida vahe: {l1//s1} minutit - {l2//s2} minutit = <<{l1//s1}-{l2//s2}={l1//s1 - l2//s2}>>{l1//s1 - l2//s2} minutit
+#### {l1//s1 - l2//s2}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

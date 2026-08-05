@@ -1,0 +1,28 @@
+question = "ひろむのLINEの友達の数は、ゆういちの3倍です。ゆづきのLINEの友達の数は、ゆういちの4倍です。ひろむのLINEの友達が12人なら、ゆづきのLINEの友達は何人ですか？"
+answer = """ゆういちのLINEの友達は 12/3 = <<12/3=4>>4 人です。
+ゆづきのLINEの友達は 4*4 = <<4*4=16>>16 人です。
+#### 16
+"""
+id_orig = 149
+id_shuffled = 90
+question_annotated = """{name1,ひろむ}の{platform,LINE}の友達の数は、{name2,ゆういち}の{mult1_txt,3倍}です。{name3,ゆづき}の{platform,LINE}の友達の数は、{name2,ゆういち}の{mult2_txt,4倍}です。{name1,ひろむ}の{platform,LINE}の友達が{n,12}人なら、{name3,ゆづき}の{platform,LINE}の友達は何人ですか？
+
+#init:
+- name1, name2, name3 = sample(names, 3)
+- platform = sample([\"インスタ\", \"ツイッター\", \"LINE\", \"X\"])
+- mult1_txt, mult1_val = sample(multi_times)
+- mult2_txt, mult2_val = sample(multi_times)
+- $n = range(10, 201)
+
+#conditions:
+- mult2_val != mult1_val
+- is_int(n / mult1_val)
+
+#answer: int((n / mult1_val) * mult2_val)
+"""
+answer_annotated = """{name2}の{platform}の友達は {n}/{mult1_val} = <<{n}/{mult1_val}={n//mult1_val}>>{n//mult1_val} 人です。
+{name3}の{platform}の友達は {mult2_val}*{n//mult1_val} = <<{mult2_val}*{n//mult1_val}={int((n / mult1_val) * mult2_val)}>>{int((n / mult1_val) * mult2_val)} 人です。
+#### {int((n / mult1_val) * mult2_val)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

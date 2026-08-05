@@ -1,0 +1,32 @@
+question = "パン屋のベーグル1個は￥400です。あんぱんは1個￥200です。ベーグル3個はあんぱん2個より何円高いですか？"
+answer = """ベーグル3個の値段は 3 * ￥400 = <<3*400=1200>>￥1200です。
+あんぱん2個の値段は 2 * ￥200 = <<2*200=400>>￥400です。
+ベーグルのほうがあんぱんより ￥1200 - ￥400 = <<1200-400=800>>￥800高いです。
+#### 800
+"""
+id_orig = 799
+id_shuffled = 38
+question_annotated = """{shop,パン屋}の{item1,ベーグル}1個は{currency,￥}{price1,400}です。{item2,あんぱん}は1個{currency,￥}{price2,200}です。{item1,ベーグル}{n1,3}個は{item2,あんぱん}{n2,2}個より何円高いですか？
+
+#init:
+- item1 = sample([\"ベーグル\", \"マフィン\", \"クロワッサン\"])
+- item2 = sample([\"あんぱん\", \"バターロール\", \"塩パン\"])
+- shop = sample([\"パン屋\", \"カフェ\", \"デパ地下\"])
+- currency = sample(currencies_sym)
+- $price1 = range(200, 1000, 100)
+- $price2 = range(100, 500, 50)
+- $n1 = range(2, 10)
+- $n2 = range(2, 10)
+
+#conditions:
+- n1 * price1 > n2 * price2
+
+#answer: n1 * price1 - n2 * price2
+"""
+answer_annotated = """{item1}{n1}個の値段は {n1} * {currency}{price1} = <<{n1}*{price1}={n1*price1}>>{currency}{n1*price1}です。
+{item2}{n2}個の値段は {n2} * {currency}{price2} = <<{n2}*{price2}={n2*price2}>>{currency}{n2*price2}です。
+{item1}のほうが{item2}より {currency}{n1*price1} - {currency}{n2*price2} = <<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{currency}{n1*price1-n2*price2}高いです。
+#### {n1*price1-n2*price2}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

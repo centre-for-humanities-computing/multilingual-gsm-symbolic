@@ -1,0 +1,41 @@
+question = "आशा ने एक पूरे सेब को १८ टुकड़ों में काटा। उसने ३ टुकड़े खाए, उसकी बहन ने उससे २ अधिक खाए, और उसके भाई ने उसकी बहन से ३ अधिक खाए। उन सबने मिलकर सेब के कितने टुकड़े खाए?"
+
+answer = """
+उसकी बहन ने ३ + २ = <<३+२=५>>५ टुकड़े खाए।
+उसके भाई ने ५ + ३ = <<५+३=८>>८ टुकड़े खाए।
+उन्होंने कुल मिलाकर ३ + ५ + ८ = <<३+५+८=१६>>१६ टुकड़े खाए।
+#### १६
+"""
+
+id_orig = 1189
+
+id_shuffled = 54
+
+question_annotated = """
+{name,आशा} ने एक पूरे {fruit,सेब} को {total,१८} टुकड़ों में काटा। उसने {n1,३} टुकड़े खाए, उसकी {sibling1,बहन} ने उससे {n2,२} अधिक खाए, और उसके {sibling2,भाई} ने उसकी {sibling1,बहन} से {n3,३} अधिक खाए। उन सबने मिलकर {fruit,सेब} के कितने टुकड़े खाए?
+
+#init:
+- name = sample(names_female)
+- fruit = sample(["संतरा", "नाशपाती", "आड़ू", "आम", "कीवी"])
+- sibling1, sibling2 = sample(["भाई", "बहन", "चचेरा भाई/बहन", "दोस्त"], 2)
+- $total = range(6, 33)
+- $n1 = range(2, 15)
+- $n2 = range(2, 13)
+- $n3 = range(2, 14)
+
+#conditions:
+- n1 + (n1 + n2) + (n1 + n2 + n3) <= total
+
+#answer: n1 + (n1 + n2) + (n1 + n2 + n3)
+"""
+
+answer_annotated = """
+उसकी {sibling1} ने {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} टुकड़े खाए।
+उसके {sibling2} ने {n1+n2} + {n3} = <<{n1+n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} टुकड़े खाए।
+उन्होंने कुल मिलाकर {n1} + {n1+n2} + {n1+n2+n3} = <<{n1}+{n1+n2}+{n1+n2+n3}={n1 + (n1 + n2) + (n1 + n2 + n3)}>>{n1 + (n1 + n2) + (n1 + n2 + n3)} टुकड़े खाए।
+#### {n1 + (n1 + n2) + (n1 + n2 + n3)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

@@ -1,0 +1,37 @@
+question = "水が3分の2入っているオレンジジュースを10リットル持っているとして、それを水が5分の3入っているパイナップルジュース15リットルと混ぜるとします。ところが注いでいる途中に、オレンジジュースが4リットル溢れてしまいます。残った21リットルのジュースには水が何リットル含まれていますか？"
+answer = """15リットルのパイナップルジュースには、水が 15*3/5 = <<15*3/5=9>>9 リットル入っています。
+オレンジジュースを4リットルこぼした後、オレンジジュースは 10-4 = <<10-4=6>>6 リットル残ります。
+その6リットルのうち、6*2/3 = <<6*2/3=4>>4 リットルが水です。
+したがって、21リットルのジュースに含まれている水の合計は 9 + 4 = <<9+4=13>>13 リットルです。
+#### 13
+"""
+id_orig = 20
+id_shuffled = 59
+question_annotated = """水が{frac1_txt,3分の2}入っている{fruit1,オレンジ}ジュースを{n1,10}リットル持っているとして、それを水が{frac2_txt,5分の3}入っている{fruit2,パイナップル}ジュース{n2,15}リットルと混ぜるとします。ところが注いでいる途中に、{fruit1,オレンジ}ジュースが{spill_txt,4}リットル溢れてしまいます。残った{total,21}リットルのジュースには水が何リットル含まれていますか？
+
+#init:
+- fruit1, fruit2 = sample(fruits, 2)
+- $n1 = range(9, 21)
+- $n2 = range(12, 31)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+- spill_txt, spill_val = range_str(2, 7, 1, numbers)
+- $total = range(20, 51)
+
+#conditions:
+- spill_val < n1
+- n1 + n2 - spill_val == total
+- is_int(n2 * frac2_val)
+- is_int((n1 - spill_val) * frac1_val)
+- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+
+#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+"""
+answer_annotated = """{n2}リットルの{fruit2}ジュースには、水が {n2}*{frac2_val} = <<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val} リットル入っています。
+{fruit1}ジュースを{spill_txt}リットルこぼした後、{fruit1}ジュースは {n1}-{spill_val} = <<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} リットル残ります。
+その{n1-spill_val}リットルのうち、{n1-spill_val}*{frac1_val} = <<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} リットルが水です。
+したがって、{total}リットルのジュースに含まれている水の合計は {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} リットルです。
+#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

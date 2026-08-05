@@ -1,0 +1,44 @@
+question = "संदीप शाळेच्या सहलीचा पैसे जमा करत आहे. त्याने शाळेकडे मदतीसाठी अर्ज केला आहे, आणि तिने शाळेच्या सहलीचा खर्च अर्धा उचलण्याचा निर्णय घेतला आहे. जर संदीप कडे ₹५० असतील आणि शाळेच्या सहलीचा खर्च ₹३०० असेल, तर संदीप ला अजून किती पैशांची गरज आहे?"
+
+answer = """
+संदीपच्या शाळेकडेने त्याच्या शाळेच्या सहलीचासाठी ३००*१/२=₹<<३००*१/२=१५०>>१५० देण्याचा निर्णय घेतला आहे.
+एकूण, संदीपने त्याच्या शाळेच्या सहलीचासाठी १५० + ५० = ₹<<१५०+५०=२००>>२०० इतकी रक्कम जमवली आहे.
+म्हणून, शाळेच्या सहलीचासाठी संदीपला अजून ३०० - २०० = ₹<<३००-२००=१००>>१०० ची गरज आहे.
+#### १००
+"""
+
+id_orig = 788
+
+id_shuffled = 35
+
+question_annotated = """
+{name,संदीप} {event,शाळेच्या सहलीसाठी} पैसे जमा करत आहे. त्याने {organization,शाळेकडे} मदतीसाठी अर्ज केला आहे, आणि तिने {event,शाळेच्या सहलीचा} खर्च {fraction_txt,अर्धा} उचलण्याचा निर्णय घेतला आहे. जर {name,संदीप} कडे {cur,₹}{current,५०} असतील आणि {event,शाळेच्या सहलीचा} खर्च {cur,₹}{total,३००} असेल, तर {name,संदीप} ला अजून किती पैशांची गरज आहे?
+
+#init:
+- name = sample(names_male)
+- event = sample(["शाळेची सहल", "अभ्यास सहल", "क्रीडा स्पर्धा", "परिषद", "संगीत महोत्सव", "विज्ञान मेळा"])
+- cur = sample(currencies_sym)
+- organization = sample(["शाळा", "समुदाय केंद्र", "स्थानिक धर्मादाय संस्था", "युवा क्लब", "पालक संघटना"])
+- fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(10, 200, 5)
+- $total = range(200, 1000, 10)
+
+#conditions:
+- total > current
+- total - (total * fraction_val + current) > 0
+- is_int(total * fraction_val)
+- is_int(total - (total * fraction_val + current))
+
+#answer: total - (total * fraction_val + current)
+"""
+
+answer_annotated = """
+{name}च्या {organization}ने त्याच्या {event}साठी {total}*{fraction_val}={cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} देण्याचा निर्णय घेतला आहे.
+एकूण, {name}ने त्याच्या {event}साठी {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} इतकी रक्कम जमवली आहे.
+म्हणून, {event}साठी {name}ला अजून {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} ची गरज आहे.
+#### {total-(total*fraction_val+current)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

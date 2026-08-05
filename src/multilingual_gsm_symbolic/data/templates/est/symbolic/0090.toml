@@ -1,0 +1,41 @@
+question = "Martinil on kolm korda rohkem Facebooki-sõpru kui Laural. Jaanil on neli korda rohkem Facebooki-sõpru kui Laural. Kui Martinil on 12 Facebooki-sõpra, siis mitu Facebooki-sõpra on Jaanil?"
+
+answer = """
+Laural on 12/3 = <<12/3=4>>4 Facebooki-sõpra.
+Jaanil on 4*4 = <<4*4=16>>16 Facebooki-sõpra.
+#### 16
+"""
+
+id_orig = 149
+
+id_shuffled = 90
+
+question_annotated = """
+{name1_gen,Martini}l on {mult1_txt,kolm} korda rohkem {platform_many,Facebooki-sõpru} kui {name2_gen,Laura}l. {name3_gen,Jaani}l on {mult2_txt,neli} korda rohkem {platform_many,Facebooki-sõpru} kui {name2_gen,Laura}l. Kui {name1_gen,Martini}l on {n,12} {platform_one,Facebooki-sõpra}, siis mitu {platform_one,Facebooki-sõpra} on {name3_gen,Jaani}l?
+
+#init:
+- name1, name1_gen = sample(names_male_cases)
+- name2, name2_gen = sample(names_female_cases)
+- name3, name3_gen = sample(names_male_cases)
+- platform_many, platform_one = sample([("Facebooki-sõpru", "Facebooki-sõpra"), ("Instagrami-jälgijaid", "Instagrami-jälgijat"), ("TikToki-jälgijaid", "TikToki-jälgijat"), ("Snapchati-sõpru", "Snapchati-sõpra")])
+- mult1_txt, mult1_val = sample([("kaks", 2), ("kolm", 3), ("neli", 4), ("viis", 5), ("kuus", 6)])
+- mult2_txt, mult2_val = sample([("kaks", 2), ("kolm", 3), ("neli", 4), ("viis", 5), ("kuus", 6)])
+- $n = range(10, 201)
+
+#conditions:
+- name1 != name3
+- mult2_val != mult1_val
+- is_int(n / mult1_val)
+
+#answer: int((n / mult1_val) * mult2_val)
+"""
+
+answer_annotated = """
+{name2_gen}l on {n}/{mult1_val} = <<{n}/{mult1_val}={n//mult1_val}>>{n//mult1_val} {platform_one}.
+{name3_gen}l on {mult2_val}*{n//mult1_val} = <<{mult2_val}*{n//mult1_val}={int((n / mult1_val) * mult2_val)}>>{int((n / mult1_val) * mult2_val)} {platform_one}.
+#### {int((n / mult1_val) * mult2_val)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

@@ -1,3 +1,5 @@
+from fractions import Fraction
+
 import pytest
 from conftest import get_template_files
 
@@ -94,6 +96,12 @@ def test_default_assignments_are_valid(template_file):
         if var_name not in default_assignments:
             continue
         possible_values_for_var = [assignment[var_name] for assignment in possible_assignments]
+        # Normalize possible values to ASCII for string representation matching
+        trans = str.maketrans("०१२३४५६७८९", "0123456789")
+        possible_values_for_var = [
+            str(val).translate(trans) if not isinstance(val, (int, float, Fraction)) else val
+            for val in possible_values_for_var
+        ]
         default_value = default_assignments[var_name]
 
         if isinstance(default_value, tuple):
@@ -150,7 +158,8 @@ def test_default_assignments_are_valid(template_file):
             k: v[1] for k, v in example_combination.items() if isinstance(v, tuple)
         }
         try:
-            condition_result = eval(cond, {"__builtins__": {}}, EVAL_CONTEXT_HELPERS | temp_combination)
+            cond_trans = cond.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
+            condition_result = eval(cond_trans, {"__builtins__": {}}, EVAL_CONTEXT_HELPERS | temp_combination)
             assert condition_result, (
                 f"Example assignments {default_assignments} failed condition '{cond}' for {template_file.name}"
             )
