@@ -55,6 +55,7 @@ _LANGUAGE_NAMES = {
     "mar": "Marathi",
     "jpn": "Japanese",
     "est": "Estonian",
+    "urd": "Urdu",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")
