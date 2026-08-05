@@ -59,6 +59,7 @@ def safe_rate(numerator: int, denominator: int) -> float | None:
 
 
 def summarize_group(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    rows = [row for row in rows if row.get("prompt_number_count", 1)]
     covered = sum(row["all_prompt_numbers_present"] for row in rows)
     return {
         "samples": len(rows),
@@ -104,7 +105,7 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
                 "rhs_retrieved": len(response_numbers & rhs_numbers),
                 "missing_prompt_number_count": len(missing_numbers),
                 "missing_prompt_numbers": " | ".join(display_number(value) for value in sorted(missing_numbers)),
-                "all_prompt_numbers_present": not missing_numbers,
+                "all_prompt_numbers_present": bool(prompt_numbers) and not missing_numbers,
             }
         )
 
@@ -113,6 +114,7 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
     final_incorrect_rows = [row for row in final_scored if not row["final_correct"]]
     correct_summary = summarize_group(final_correct_rows)
     incorrect_summary = summarize_group(final_incorrect_rows)
+    coverage_summary = summarize_group(sample_rows)
     correct_rate = correct_summary["all_prompt_numbers_present_rate"]
     incorrect_rate = incorrect_summary["all_prompt_numbers_present_rate"]
 
@@ -127,11 +129,9 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
             sum(row["final_correct"] for row in final_scored),
             len(final_scored),
         ),
-        "samples_with_all_prompt_numbers_present": sum(row["all_prompt_numbers_present"] for row in sample_rows),
-        "all_prompt_numbers_present_rate": safe_rate(
-            sum(row["all_prompt_numbers_present"] for row in sample_rows),
-            len(sample_rows),
-        ),
+        "number_coverage_samples": coverage_summary["samples"],
+        "samples_with_all_prompt_numbers_present": coverage_summary["samples_with_all_prompt_numbers_present"],
+        "all_prompt_numbers_present_rate": coverage_summary["all_prompt_numbers_present_rate"],
         "number_coverage_breakdown": {
             "final_correct": correct_summary,
             "final_incorrect": incorrect_summary,
@@ -141,8 +141,8 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
         ),
         "matcher": "distinct normalized complete numeric tokens",
         "note": (
-            "A sample is covered when every distinct numeric value in the original prompt "
-            "appears somewhere in the full model completion."
+            "A sample with at least one numeric value is covered when every distinct prompt value "
+            "appears in the completion; samples without numeric values are excluded."
         ),
     }
     return summary, sample_rows
@@ -197,7 +197,7 @@ def number_coverage_grid(
     for row in rows:
         model = str(row.get("model") or "").strip()
         language = str(row.get("language") or "").strip()
-        if not model or language not in LANGUAGE_ORDER:
+        if not model or language not in LANGUAGE_ORDER or not row.get("prompt_number_count", 1):
             continue
         cell = counts[(model, language)]
         cell[0] += int(bool(row["all_prompt_numbers_present"]))
@@ -430,11 +430,13 @@ def main() -> None:
         rows = group.to_dict("records")
         right = summarize_group([row for row in rows if row["final_correct"]])
         wrong = summarize_group([row for row in rows if not row["final_correct"]])
+        coverage = summarize_group(rows)
         summaries.append({
             "model": _model, "task": _task, "eval_id": _eval, "samples": len(rows),
             "final_scored_samples": len(rows), "final_accuracy": float(group["final_correct"].mean()),
-            "samples_with_all_prompt_numbers_present": int(group["all_prompt_numbers_present"].sum()),
-            "all_prompt_numbers_present_rate": float(group["all_prompt_numbers_present"].mean()),
+            "number_coverage_samples": coverage["samples"],
+            "samples_with_all_prompt_numbers_present": coverage["samples_with_all_prompt_numbers_present"],
+            "all_prompt_numbers_present_rate": coverage["all_prompt_numbers_present_rate"],
             "number_coverage_breakdown": {"final_correct": right, "final_incorrect": wrong},
             "correct_minus_incorrect_percentage_points": (
                 (right["all_prompt_numbers_present_rate"] - wrong["all_prompt_numbers_present_rate"]) * 100

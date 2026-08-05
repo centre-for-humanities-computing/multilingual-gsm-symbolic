@@ -10,7 +10,7 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from eval_log_utils import map_log_loader  # noqa: E402
 from number_coverage_utils import extract_numbers, number_coverage_counts  # noqa: E402
-from numbercoverage import number_coverage_grid  # noqa: E402
+from numbercoverage import number_coverage_grid, summarize_group  # noqa: E402
 from plot_config import (  # noqa: E402
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_COLORS,
@@ -119,6 +119,7 @@ def test_number_coverage_grid_retains_supported_metric_language() -> None:
     models, languages, rates, samples = number_coverage_grid(
         [
             {"model": "provider/model-1B", "language": "eng", "all_prompt_numbers_present": True},
+            {"model": "provider/model-1B", "language": "eng", "all_prompt_numbers_present": True, "prompt_number_count": 0},
             {"model": "provider/model-1B", "language": "eng_metric", "all_prompt_numbers_present": False},
             {"model": "provider/model-1B", "language": "invalid_suffix", "all_prompt_numbers_present": False},
         ]
@@ -128,6 +129,12 @@ def test_number_coverage_grid_retains_supported_metric_language() -> None:
     assert languages == ["eng", "eng_metric"]
     assert rates.tolist() == [[1.0, 0.0]]
     assert samples.tolist() == [[1, 1]]
+    assert summarize_group(
+        [
+            {"all_prompt_numbers_present": True, "prompt_number_count": 0},
+            {"all_prompt_numbers_present": False, "prompt_number_count": 1},
+        ]
+    )["all_prompt_numbers_present_rate"] == 0
 
 
 def test_number_coverage_counts() -> None:
@@ -148,7 +155,7 @@ def test_number_coverage_counts_splits_chevron_sides() -> None:
         "The answer uses 2 and 4.",
         "Compute <<2+2=4>>, then <<4/2=2>>.",
     ) == {
-        "all_prompt_numbers_present": True,
+        "all_prompt_numbers_present": False,
         "prompt_number_count": 0,
         "retrieved_prompt_number_count": 0,
         "lhs_count": 1,
@@ -161,6 +168,11 @@ def test_number_coverage_counts_splits_chevron_sides() -> None:
 def test_extract_numbers_equates_digit_and_fraction_forms() -> None:
     assert extract_numbers("5 and 5.0") == {Decimal("5")}
     assert extract_numbers("1/2, 0.5, and half") == {Decimal("0.5")}
+    assert extract_numbers("10kg and １２ items") == {Decimal("10"), Decimal("12")}
+    assert extract_numbers("100匹の4分の3と２倍", "jpn") == {Decimal("100"), Decimal("0.75"), Decimal("2")}
+    assert extract_numbers("4分之3", "zho") == {Decimal("0.75")}
+    assert extract_numbers("0,25 and 2.700.", "dan") == {Decimal("0.25"), Decimal("2700")}
+    assert extract_numbers("१२ and ١٢") == {Decimal("12")}
     assert extract_numbers("five, half, and twenty-five") == set()
 
 
