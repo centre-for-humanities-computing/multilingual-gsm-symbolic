@@ -84,6 +84,7 @@ _LANGUAGE_NAMES = {
     "vie": "Vietnamese",
     "zho": "Chinese",
     "est": "Estonian",
+    "urd": "Urdu",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")
