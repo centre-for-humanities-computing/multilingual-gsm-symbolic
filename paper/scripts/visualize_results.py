@@ -5,7 +5,6 @@
 
 Produces figures under ``paper/artifacts/figures`` by default:
   1. distribution.png  — 20 set-level accuracy dots + KDE, with memorisation gap arrow
-  2. language_gap.png  — overlapping language distributions
 
 Usage:
     uv run paper/scripts/visualize_results.py
@@ -137,68 +136,6 @@ def plot_distribution(tables: dict, out: Path) -> None:
     print(f"Saved {out}")
 
 
-# ── Figure 3: overlapping language distributions with language gap arrow ──────
-
-
-def plot_language_gap(tables: dict, out: Path) -> None:
-    langs = [l for l in tables if "synthetic" in tables[l]]
-    fig, ax = plt.subplots(figsize=(6, 4.5))
-
-    rng = np.random.default_rng(0)
-    n_sets = 500
-    peaks: dict[str, tuple[float, float]] = {}  # lang → (peak_x, peak_y)
-
-    for lang in langs:
-        color = LANGUAGE_COLORS.get(lang, "steelblue")
-        syn = tables[lang]["synthetic"].copy()
-        by_template = {sid: grp["correct"].values for sid, grp in syn.groupby("source_id")}
-        templates = sorted(by_template)
-        set_means = np.array([np.mean([rng.choice(by_template[t]) for t in templates]) for _ in range(n_sets)])
-
-        ax.hist(set_means, bins=20, color=color, alpha=0.2, edgecolor="none", density=True, zorder=1)
-        label = f"{LANGUAGE_LABELS.get(lang, lang)} (synthetic)"
-        if np.ptp(set_means) <= np.finfo(float).eps:
-            peak_x = float(set_means[0])
-            peak_y = 1.0
-            ax.axvline(peak_x, color=color, linewidth=2, zorder=3, label=label)
-        else:
-            kde = gaussian_kde(set_means, bw_method=0.3)
-            x = np.linspace(set_means.min() - 0.02, set_means.max() + 0.02, 400)
-            y = kde(x)
-            ax.plot(x, y, color=color, linewidth=2, zorder=3, label=label)
-            peak_x = x[np.argmax(y)]
-            peak_y = y.max()
-        ax.scatter(peak_x, peak_y, color=color, s=70, zorder=4)
-        peaks[lang] = (peak_x, peak_y)
-
-    # Arrow between highest and lowest peak_x language, raised above distributions
-    if len(peaks) >= 2:
-        sorted_langs = sorted(peaks, key=lambda l: peaks[l][0])  # noqa
-        lo_lang, hi_lang = sorted_langs[0], sorted_langs[-1]
-        lo_x, lo_py = peaks[lo_lang]
-        hi_x, hi_py = peaks[hi_lang]
-        max_peak_y = max(p[1] for p in peaks.values())
-        arrow_y = max_peak_y * 1.15
-
-        ax.annotate(
-            "",
-            xy=(hi_x, arrow_y),
-            xytext=(lo_x, arrow_y),
-            arrowprops=dict(arrowstyle="<->", color="black", lw=1.5),
-            zorder=5,
-        )
-        gap = hi_x - lo_x
-        mid_x = (lo_x + hi_x) / 2
-        ax.text(mid_x, arrow_y + max_peak_y * 0.05, f"language gap ({gap:+.1%})", ha="center", va="bottom", fontsize=8)
-
-    ax.set_xlabel("Mean accuracy")
-    ax.set_ylabel("Density")
-    ax.legend(fontsize=9)
-    fig.tight_layout()
-    fig.savefig(out, bbox_inches="tight")
-    plt.close(fig)
-    print(f"Saved {out}")
-
 
 # ── Figure 4: speakers (log) vs synthetic accuracy ───────────────────────────
 
@@ -218,7 +155,6 @@ def main() -> None:
     print("Languages:", list(tables.keys()))
 
     plot_distribution(tables, args.out_dir / "distribution.png")
-    plot_language_gap(tables, args.out_dir / "language_gap.png")
 
 
 if __name__ == "__main__":
