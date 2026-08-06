@@ -16,6 +16,7 @@ import subprocess
 import sys
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
+from functools import cache
 from pathlib import Path
 from typing import Any
 
@@ -24,33 +25,33 @@ from huggingface_hub import hf_hub_download
 
 MODELS = (
      #  Qwen2.5 Instruct
-   # "Qwen/Qwen2.5-0.5B-Instruct",
-   # "Qwen/Qwen2.5-1.5B-Instruct",
-   # "Qwen/Qwen2.5-3B-Instruct",
-   # "Qwen/Qwen2.5-7B-Instruct",
-   # "Qwen/Qwen2.5-14B-Instruct",
-   # "Qwen/Qwen2.5-32B-Instruct",
-   # "Qwen/Qwen2.5-72B-Instruct",
+    "Qwen/Qwen2.5-0.5B-Instruct",
+    "Qwen/Qwen2.5-1.5B-Instruct",
+    "Qwen/Qwen2.5-3B-Instruct",
+    "Qwen/Qwen2.5-7B-Instruct",
+    "Qwen/Qwen2.5-14B-Instruct",
+    "Qwen/Qwen2.5-32B-Instruct",
+    "Qwen/Qwen2.5-72B-Instruct",
 
      #  Qwen3 dense reasoning-capable models
-   # "Qwen/Qwen3-0.6B",
-   # "Qwen/Qwen3-1.7B",
-   # "Qwen/Qwen3-4B",
-   # "Qwen/Qwen3-8B",
-   # "Qwen/Qwen3-14B",
-   # "Qwen/Qwen3-32B",
+    "Qwen/Qwen3-0.6B",
+    "Qwen/Qwen3-1.7B",
+    "Qwen/Qwen3-4B",
+    "Qwen/Qwen3-8B",
+    "Qwen/Qwen3-14B",
+    "Qwen/Qwen3-32B",
 
     #   Qwen3.5 reasoning models up to 27B
-   # "Qwen/Qwen3.5-0.8B",
-   # "Qwen/Qwen3.5-4B",
-   # "Qwen/Qwen3.5-9B",
-   # "Qwen/Qwen3.5-27B",
+    "Qwen/Qwen3.5-0.8B",
+    "Qwen/Qwen3.5-4B",
+    "Qwen/Qwen3.5-9B",
+    "Qwen/Qwen3.5-27B",
 
     #   OLMo 2 Instruct
-   # "allenai/OLMo-2-0425-1B-Instruct",
-   # "allenai/OLMo-2-1124-7B-Instruct",
-   # "allenai/OLMo-2-1124-13B-Instruct",
-   # "allenai/OLMo-2-0325-32B-Instruct",
+    "allenai/OLMo-2-0425-1B-Instruct",
+    "allenai/OLMo-2-1124-7B-Instruct",
+    "allenai/OLMo-2-1124-13B-Instruct",
+    "allenai/OLMo-2-0325-32B-Instruct",
 
     #   OLMo 3
     "allenai/Olmo-3-7B-Think",
@@ -59,27 +60,28 @@ MODELS = (
     "allenai/Olmo-3.1-32B-Instruct",
 
    #    Granite 3.2
-   # "ibm-granite/granite-3.2-2b-instruct",
-   # "ibm-granite/granite-3.2-8b-instruct",
+    "ibm-granite/granite-3.2-2b-instruct",
+    "ibm-granite/granite-3.2-8b-instruct",
 
    #    Gemma 3 IT
-   # "google/gemma-3-1b-it",
-   # "google/gemma-3-4b-it",
-   # "google/gemma-3-12b-it",
-   # "google/gemma-3-27b-it",
+    "google/gemma-3-1b-it",
+    "google/gemma-3-4b-it",
+    "google/gemma-3-12b-it",
+    "google/gemma-3-27b-it",
 
     #   Gemma 4 dense IT
-   # "google/gemma-4-12B-it",
-   # "google/gemma-4-31B-it",
+    # "google/gemma-4-12B-it",
+    # "google/gemma-4-31B-it",
 
    #    Apertus
-   # "swiss-ai/Apertus-8B-Instruct-2509",
-   # "swiss-ai/Apertus-70B-Instruct-2509",
+    "swiss-ai/Apertus-8B-Instruct-2509",
+    "swiss-ai/Apertus-70B-Instruct-2509",
 
     #   OpenEuroLLM
-   # "utter-project/EuroLLM-1.7B-Instruct",
-   # "utter-project/EuroLLM-9B-Instruct-2512",
-   # "utter-project/EuroLLM-22B-Instruct-2512",
+    "utter-project/EuroLLM-1.7B-Instruct",
+    "utter-project/EuroLLM-9B-Instruct-2512",
+    "utter-project/EuroLLM-22B-Instruct-2512",
+
 )
 # Repository id (no revision) and optional revision to apply to each task
 DATASET = "danish-foundation-models/multilingual-gsm-symbolic"
@@ -105,20 +107,7 @@ DEFAULT_VLLM_SERVER_ARGS: dict[str, Any] = {
     "async_scheduling": True,
     "disable_log_stats": False,
 }
-RESUME_IGNORED_MODEL_ARG_KEYS = frozenset(
-    {
-        "dtype",
-        "attention_backend",
-        "max_num_seqs",
-        "async_scheduling",
-        "speculative_config",
-        "speculative_model",
-        "num_speculative_tokens",
-        "ngram_prompt_lookup_max",
-        "ngram_prompt_lookup_min",
-    }
-)
-EVAL_SET_ID_FILE = ".eval-set-id"
+COMPLETED_TASKS_FILE = ".completed-tasks.json"
 
 
 class RunnerError(RuntimeError):
@@ -130,6 +119,7 @@ class Task:
     task_id: str
     language: str
     split: str
+    prompt: str
 
 
 @dataclass(frozen=True)
@@ -147,13 +137,14 @@ def patch_inspect() -> None:
     import inspect_ai
 
     package_root = Path(inspect_ai.__file__).resolve().parent.parent
-    command = ["patch", "--batch", "--forward", "-p1", "-i", str(INSPECT_PATCH)]
-    applied = subprocess.run(command, cwd=package_root, capture_output=True)
-    if applied.returncode == 0:
-        return
-    check = command[:2] + ["--dry-run", "--reverse"] + command[3:]
-    if subprocess.run(check, cwd=package_root, capture_output=True).returncode:
-        raise RunnerError("Installed Inspect version is incompatible with the scorer patch")
+    for patch in (INSPECT_PATCH,):
+        command = ["patch", "--batch", "--forward", "-p1", "-i", str(patch)]
+        applied = subprocess.run(command, cwd=package_root, capture_output=True)
+        if applied.returncode == 0:
+            continue
+        check = command[:2] + ["--dry-run", "--reverse"] + command[3:]
+        if subprocess.run(check, cwd=package_root, capture_output=True).returncode:
+            raise RunnerError(f"Installed Inspect version is incompatible with {patch.name}")
 
 
 def load_tasks(revision: str = REVISION) -> list[Task]:
@@ -172,7 +163,19 @@ def load_tasks(revision: str = REVISION) -> list[Task]:
             f"Could not load remote eval.yaml for {DATASET}@{revision}: {error}"
         ) from error
 
-    return [Task(item["id"], item["config"], item["split"]) for item in raw_tasks]
+    return [
+        Task(
+            item["id"],
+            item["config"],
+            item["split"],
+            next(
+                solver["args"]["template"]
+                for solver in item["solvers"]
+                if solver["name"] == "prompt_template"
+            ),
+        )
+        for item in raw_tasks
+    ]
 
 
 def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.ArgumentParser:
@@ -288,8 +291,6 @@ def model_args(model: str) -> list[str]:
         return ["-M", f"default_chat_template_kwargs='{kwargs}'"]
     if lower.startswith("qwen/qwen3-") or lower.startswith("qwen/qwen3.5-"):
         return ["-M", "reasoning_parser=qwen3"]
-    if "phi-4" in lower:
-        return ["-M", "reasoning_parser=deepseek_r1"]
     return []
 
 
@@ -345,9 +346,13 @@ def model_ref(model: str) -> str:
     return f"vllm/{model}"
 
 
+def canonical_model_id(model: str) -> str:
+    return model.split("/", 1)[1] if model.startswith(("openai/", "vllm/")) else model
+
+
 def model_concurrency(model: str) -> int:
     matches = re.findall(r"(\d+(?:\.\d+)?)B(?:-|$)", model, re.IGNORECASE)
-    size = float(matches[-1]) if matches else {"microsoft/phi-4": 14, "microsoft/phi-4-mini-reasoning": 3.8}.get(model.lower(), 8)
+    size = float(matches[-1]) if matches else 8
     return 256 if size <= 2 else 128 if size <= 10 else 64 if size <= 20 else 32 if size <= 40 else 16
 
 
@@ -364,53 +369,41 @@ def _normalize_model_arg_value(value: Any) -> Any:
         return stripped
 
 
-def model_arg_dict(args: Sequence[str]) -> dict[str, Any]:
-    result: dict[str, Any] = {}
-    index = 0
-    while index < len(args):
-        flag = args[index]
-        if flag != "-M":
-            index += 1
-            continue
-        if index + 1 >= len(args):
-            raise RunnerError("Model argument flag '-M' requires a key=value argument")
-        raw = args[index + 1]
-        key, separator, value = raw.partition("=")
-        if not separator or not key:
-            raise RunnerError(f"Model argument must use key=value syntax: {raw!r}")
-        result[key] = _normalize_model_arg_value(value)
-        index += 2
-    return result
+@cache
+def parquet_digest(language: str, split: str, revision: str) -> str:
+    path = hf_hub_download(
+        repo_id=DATASET,
+        filename=f"data/{language}/{split}-00000-of-00001.parquet",
+        repo_type="dataset",
+        revision=revision,
+    )
+    with open(path, "rb") as parquet:
+        return hashlib.file_digest(parquet, "sha256").hexdigest()
 
 
-def canonical_resume_model_args(model_args: dict[str, Any]) -> dict[str, Any]:
-    return {
-        key: _normalize_model_arg_value(value)
-        for key, value in sorted(model_args.items())
-        if key not in RESUME_IGNORED_MODEL_ARG_KEYS
-    }
+def task_fingerprint(task: Task, run: ModelRun, revision: str) -> str:
+    payload = [
+        parquet_digest(task.language, task.split, revision),
+        task.prompt,
+        canonical_model_id(run.model),
+        run.reasoning or "",
+    ]
+    digest = hashlib.sha256(
+        json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    ).digest()
+    return base64.urlsafe_b64encode(digest).decode("ascii").rstrip("=")
 
 
-def deterministic_eval_set_id(model: str, revision: str, model_args: dict[str, Any]) -> str:
-    payload = {
-        "kind": "ucloudeval-eval-set-v1",
-        "dataset": DATASET,
-        "revision": revision or "",
-        "model": model_ref(model),
-        "model_args": canonical_resume_model_args(model_args),
-    }
-    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    digest = hashlib.sha256(encoded).digest()
-    return base64.b32encode(digest).decode("ascii").rstrip("=").lower()[:26]
+def load_completed_tasks(log_dir: Path) -> set[str]:
+    path = log_dir / COMPLETED_TASKS_FILE
+    return set(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else set()
 
 
-def eval_set_id_for_run(run: ModelRun, revision: str) -> str:
-    return deterministic_eval_set_id(run.model, revision, model_arg_dict(run.args))
-
-
-def prepare_eval_set_id(log_dir: Path, eval_set_id: str) -> None:
-    log_dir.mkdir(parents=True, exist_ok=True)
-    (log_dir / EVAL_SET_ID_FILE).write_text(f"{eval_set_id}\n", encoding="utf-8")
+def save_completed_tasks(log_dir: Path, completed: set[str]) -> None:
+    (log_dir / COMPLETED_TASKS_FILE).write_text(
+        json.dumps(sorted(completed), indent=2) + "\n",
+        encoding="utf-8",
+    )
 
 
 def inspect_command(
@@ -424,7 +417,6 @@ def inspect_command(
     max_retries: int = 10,
     timeout: int = 600,
 ) -> list[str]:
-    eval_set_id = eval_set_id_for_run(run, revision)
     inspect_executable = str(Path(sys.executable).with_name("inspect"))
     # place the revision after the task id so the HF loader parses it correctly
     specs = [
@@ -434,7 +426,6 @@ def inspect_command(
         # Eval sets use the log directory to skip successful tasks and retry
         # interrupted tasks without repeating their completed samples.
         inspect_executable, "eval-set", *specs,
-        "--id", eval_set_id,
         "--model", model_ref(run.model),
         *run.args,
         "--max-connections", str(concurrency),
@@ -451,27 +442,14 @@ def inspect_command(
     return command
 
 
-def inspect_commands(
-    run: ModelRun,
+def inspect_targets(
     tasks: Sequence[Task],
     historical: bool = False,
     base_log_dir: Path = LOG_DIR,
     revision: str = REVISION,
-    reasoning_effort: str | None = None,
-    concurrency: int = 64,
-    max_tasks: int = 16,
-    max_retries: int = 10,
-    timeout: int = 600,
-) -> list[tuple[Path, str, list[str]]]:
+) -> list[tuple[Path, str, list[Task]]]:
     if not historical:
-        return [(
-            base_log_dir,
-            revision,
-            inspect_command(
-                run, tasks, base_log_dir, revision, reasoning_effort,
-                concurrency, max_tasks, max_retries, timeout,
-            ),
-        )]
+        return [(base_log_dir, revision, list(tasks))]
 
     unsupported_splits = sorted({task.split for task in tasks if task.split not in HISTORICAL_SPLITS})
     if unsupported_splits:
@@ -483,23 +461,16 @@ def inspect_commands(
     if missing:
         raise RunnerError(f"No historical revisions configured for language(s): {', '.join(missing)}")
 
-    commands = []
+    targets = []
     for language in unique([task.language for task in tasks]):
-        language_tasks = [task for task in tasks if task.language == language]
+        task_ids = {task.task_id for task in tasks if task.language == language}
         for historical_revision in HISTORICAL_SYNTHETIC_REVISIONS[language]:
             log_dir = base_log_dir / language / historical_revision[:12]
-            commands.append(
-                (
-                    log_dir,
-                    historical_revision,
-                    inspect_command(
-                        run, language_tasks, log_dir, historical_revision,
-                        reasoning_effort, concurrency, max_tasks, max_retries,
-                        timeout,
-                    ),
-                )
-            )
-    return commands
+            revision_tasks = [
+                task for task in load_tasks(historical_revision) if task.task_id in task_ids
+            ]
+            targets.append((log_dir, historical_revision, revision_tasks))
+    return targets
 
 
 def parse_server_arg_values(values: Sequence[str]) -> dict[str, Any]:
@@ -581,22 +552,37 @@ def run_inspect(
     timeout: int = 600,
 ) -> None:
     suffix = f" (reasoning {run.reasoning})" if run.reasoning else ""
-    for log_dir, command_revision, command in inspect_commands(
-        run,
+    completed = load_completed_tasks(base_log_dir)
+    for log_dir, command_revision, command_tasks in inspect_targets(
         tasks,
         historical,
         base_log_dir,
         revision,
-        reasoning_effort,
-        concurrency,
-        max_tasks,
-        max_retries,
-        timeout,
     ):
-        prepare_eval_set_id(log_dir, eval_set_id_for_run(run, command_revision))
-        show_command(f"Running {len(tasks)} Inspect task(s) for {run.model}{suffix}", command)
+        pending = [
+            task
+            for task in command_tasks
+            if task_fingerprint(task, run, command_revision) not in completed
+        ]
+        if not pending:
+            print(f"Skipping {len(command_tasks)} completed task(s) for {run.model}{suffix}")
+            continue
+        command = inspect_command(
+            run,
+            pending,
+            log_dir,
+            command_revision,
+            reasoning_effort,
+            concurrency,
+            max_tasks,
+            max_retries,
+            timeout,
+        )
+        show_command(f"Running {len(pending)} Inspect task(s) for {run.model}{suffix}", command)
         try:
             subprocess.run(command, check=True, env=vllm_environment(server_args))
+            completed.update(task_fingerprint(task, run, command_revision) for task in pending)
+            save_completed_tasks(base_log_dir, completed)
         except subprocess.CalledProcessError as error:
             raise RunnerError(f"Inspect failed for {run.model}{suffix} with status {error.returncode}") from error
         except OSError as error:
