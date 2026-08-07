@@ -76,9 +76,13 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
         correct = score >= 0.5
         language = "uncorrected_isl" if is_uncorrected_isl else metadata.get("language", task_language)
         sample_id = scalar(sample.id)
+        completion = getattr(sample.output, "completion", "") or ""
+        usage = getattr(sample.output, "usage", None)
         number_coverage = number_coverage_counts(
             getattr(sample, "input", ""),
-            getattr(sample.output, "completion", ""),
+            completion,
+            metadata.get("answer", ""),
+            str(language),
         )
         rows.append(
             {
@@ -94,7 +98,8 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
                 "split": split,
                 "target": scalar(getattr(sample, "target", None)),
                 "prompt_chars": len(str(getattr(sample, "input", "") or "")),
-                "completion_chars": len(str(getattr(sample, "output", "") or "")),
+                "completion_chars": len(str(completion)),
+                "total_tokens": scalar(getattr(usage, "total_tokens", None)),
                 **number_coverage,
                 "total_time": scalar(getattr(sample, "total_time", None)),
                 "scorer": scorer or "auto",
@@ -114,7 +119,6 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
         return pd.DataFrame()
 
     frames: list[pd.DataFrame] = []
-    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
     for label, frame, warning in map_log_loader(load_log_rows, paths, scorer, workers):
         if warning:
             print(warning)
@@ -122,8 +126,6 @@ def load_observations(selected: list[tuple[Path, Any]], scorer: str | None, work
             print(f"Loaded {label}: {len(frame)} scored samples")
         if not frame.empty:
             frames.append(frame)
-        if len(frames) >= _CONCAT_CHUNK:
-            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
@@ -220,7 +222,6 @@ def build_analysis_tables(
             suffixes=("", "_model_language"),
         )
     analysis = analysis.drop(columns=["model_raw"], errors="ignore")
-
     return analysis
 
 

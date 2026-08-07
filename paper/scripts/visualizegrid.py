@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
 # ///
 """Visualize multilingual GSM evaluation logs across models and splits.
 
@@ -48,7 +48,7 @@ from eval_log_utils import (
     sample_synthetic_sets,
     select_logs,
 )
-from inspect_ai.log import read_eval_log
+from inspect_ai.log import read_eval_log, read_eval_log_sample_summaries
 from matplotlib.colors import Normalize
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
@@ -72,6 +72,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_CORRECTED_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 CORRECTION_COMPARISON_WIDTH = 13.5
 
 
@@ -93,7 +94,10 @@ FAMILY_MARKERS = {
 EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
 SPLIT_PAIR_LABELS = {
     ("Qwen2.5-1.5B-Instruct", "nob"): "Qwen2.5 1.5B (Norwegian)",
-    ("Llama-3.2-3B-Instruct", "dan"): "Llama 3.2 3B (Danish)",
+    ("Apertus-8B-Instruct-2509", "zho"): "Apertus 8B (Chinese)",
+    ("granite-3.2-2b-instruct (reasoning on)", "zho"): "Granite 2B (Chinese)",
+    ("gemma-3-4b-it", "isl"): "Gemma 3 4B (Icelandic)",
+    ("OLMo-2-0425-1B-Instruct", "eng"): "OLMo 2 1B (English)",
 }
 
 PROBLEM_KEYS = [
@@ -145,7 +149,8 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
     worker processes.
     """
     try:
-        log = read_eval_log(str(path))
+        log = read_eval_log(str(path), header_only=True)
+        samples = read_eval_log_sample_summaries(str(path))
     except Exception as exc:
         return path.name, None, f"Skipping unreadable log {path.name}: {exc}"
 
@@ -156,13 +161,13 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
     split, task_language = parsed_task
     label = f"{model_name(log.eval.model, log.eval.model_args)} / {task_language} / {split}"
 
-    if not log.samples:
+    if not samples:
         return label, pd.DataFrame(), None
 
     info = infer_model_info(log.eval.model)
     rows: list[dict[str, Any]] = []
 
-    for sample in log.samples:
+    for sample in samples:
         correct = sample_score(sample, scorer)
         if correct is None:
             continue
@@ -183,7 +188,7 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
             }
         )
 
-    del log  # free the large decompressed log before returning
+    del log, samples
     if not rows:
         return label, pd.DataFrame(), None
 
@@ -208,8 +213,6 @@ def load_samples(
     if not paths:
         return pd.DataFrame()
 
-    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
-
     for index, (label, frame, warning) in enumerate(map_log_loader(_load_one_log, paths, scorer, workers), start=1):
         if warning:
             print(warning)
@@ -217,8 +220,6 @@ def load_samples(
             print(f"[{index}/{len(paths)}] {label}")
         if frame is not None and not frame.empty:
             frames.append(frame)
-        if len(frames) >= _CONCAT_CHUNK:
-            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
@@ -530,7 +531,14 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     for row in sized.itertuples():
         label = SPLIT_PAIR_LABELS.get((row.model, row.language))
         if label:
-            ax.annotate(label, (row.original, row.synthetic), xytext=(5, 0), textcoords="offset points", fontsize=7)
+            ax.annotate(
+                label,
+                (row.original, row.synthetic),
+                xytext=(5, 0),
+                textcoords="offset points",
+                fontsize=7,
+                bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.72, "pad": 1},
+            )
 
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable.set_array([])
@@ -576,7 +584,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
 
 
 def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
-    """Plot each language's accuracy difference from the same model's English score."""
+    """Plot each language's accuracy as a share of the same model's English score."""
     order = model_order(summary)
     splits = [split for split in ["synthetic"] if split in set(summary["split"])]
     languages = language_order(language for language in summary["language"].unique() if language != "eng")
@@ -590,15 +598,18 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
         )
         if "eng" not in matrix or not languages:
             continue
-        transfer = matrix.reindex(columns=languages).sub(matrix["eng"], axis=0)
+        transfer = matrix.reindex(columns=languages).div(matrix["eng"].replace(0, np.nan), axis=0)
         if transfer.notna().any().any():
             panels.append((SPLIT_LABELS[split], transfer))
 
     if not panels:
         return False
 
-    max_gap = max(np.nanmax(np.abs(matrix.to_numpy())) for _title, matrix in panels if matrix.notna().any().any())
-    max_gap = max(max_gap, 0.05)
+    finite_values = np.concatenate(
+        [matrix.to_numpy()[np.isfinite(matrix.to_numpy())] for _title, matrix in panels]
+    )
+    value_min = min(0.0, float(finite_values.min()))
+    value_max = max(1.0, float(finite_values.max()))
     height = max(4.0, 0.42 * len(order) + 1.5)
     fig, axes = plt.subplots(
         1,
@@ -614,22 +625,22 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
             ax,
             matrix,
             title,
-            "RdBu",
-            -max_gap,
-            max_gap,
-            signed=True,
+            "YlGnBu",
+            value_min,
+            value_max,
+            signed=False,
         )
         for ax, (title, matrix) in zip(axes, panels, strict=True)
     ]
 
     axes[0].set_ylabel("Evaluated instruction-tuned model")
-    fig.suptitle("Target-language accuracy minus English accuracy for the same model")
+    fig.suptitle("Percentage of English performance recovered by target language")
     fig.subplots_adjust(left=0.2, right=0.89, bottom=0.27, top=0.84, wspace=0.18)
     colorbar_axis = fig.add_axes([0.91, 0.25, 0.012, 0.55])
     colorbar = fig.colorbar(
         images[0],
         cax=colorbar_axis,
-        label="Accuracy difference: target language - English",
+        label="Percentage of English performance recovered",
     )
     colorbar.ax.yaxis.set_major_formatter(PercentFormatter(1))
     fig.savefig(out, bbox_inches="tight")
@@ -880,19 +891,20 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     if not non_english:
         return False
 
-    by_language["gap"] = by_language["eng"] - by_language[non_english].mean(axis=1)
-    by_language["relative_gap"] = by_language["gap"] / by_language["eng"].replace(0, np.nan)
     english_accuracy = by_language["eng"].replace(0, np.nan)
     non_english_accuracy = by_language[non_english].mean(axis=1)
     non_english_stderr = np.sqrt(stderr_by_language[non_english].pow(2).sum(axis=1)) / by_language[non_english].count(
         axis=1
     )
-    relative_gap_stderr = np.sqrt(
+    performance_recovered_stderr = np.sqrt(
         (non_english_accuracy / english_accuracy.pow(2)).pow(2) * stderr_by_language["eng"].pow(2)
         + (non_english_stderr / english_accuracy).pow(2)
     )
-    by_language["relative_gap_ci95"] = (relative_gap_stderr * norm.ppf(0.975)).fillna(0)
-    gaps = by_language[["gap", "relative_gap", "relative_gap_ci95"]].dropna().reset_index()
+    by_language["performance_recovered"] = non_english_accuracy / english_accuracy
+    by_language["performance_recovered_ci95"] = (
+        performance_recovered_stderr * norm.ppf(0.975)
+    ).fillna(0)
+    gaps = by_language[["performance_recovered", "performance_recovered_ci95"]].dropna().reset_index()
 
     gaps = gaps[np.isfinite(gaps["params_b"])]
     gaps = gaps[gaps.groupby("base_model")["reasoning"].transform("nunique") == 2]
@@ -911,8 +923,8 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
                 continue
             ax.errorbar(
                 line["params_b"],
-                line["relative_gap"],
-                yerr=line["relative_gap_ci95"],
+                line["performance_recovered"],
+                yerr=line["performance_recovered_ci95"],
                 color=FAMILY_COLORS.get(family, "#666666"),
                 linestyle=line_styles[mode],
                 marker=FAMILY_MARKERS.get(family, "o"),
@@ -922,8 +934,8 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
                 label=f"{family} {mode_labels[mode]}",
             )
 
-    ax.axhline(0, color="#111827", linewidth=0.8, alpha=0.7)
-    ax.set(xlabel="Model size (B parameters)", ylabel="Relative transfer gap")
+    ax.axhline(1, color="#111827", linewidth=0.8, alpha=0.7)
+    ax.set(xlabel="Model size (B parameters)", ylabel="Percentage of English performance recovered")
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     ax.grid(axis="y", color="#E5E7EB", linewidth=0.7)
     family_handles = [
@@ -939,7 +951,7 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     first_legend = ax.legend(handles=family_handles, title="Model family", frameon=False, loc="upper left")
     ax.add_artist(first_legend)
     ax.legend(handles=mode_handles, title="Variant", frameon=False, loc="upper right")
-    fig.suptitle("Relative transfer gap by model size and reasoning mode")
+    fig.suptitle("Percentage of English performance recovered by model size and reasoning mode")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -1278,11 +1290,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument(
-        "--log-dir",
+        "--analysis",
         type=Path,
-        nargs="+",
-        default=[DEFAULT_LOG_DIR],
-        help="One or more directories searched recursively for .eval logs.",
+        default=DEFAULT_ANALYSIS,
+        help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument(
         "--out-dir",
@@ -1323,17 +1334,14 @@ def main() -> None:
     if args.correction_samples < 2:
         parser.error("--correction-samples must be at least 2")
 
-    paths = discover_logs(args.log_dir)
-    selected = select_logs(paths, args.include_incomplete, workers=args.workers)
-
-    print(f"Discovered {len(paths)} logs; selected {len(selected)} after status filtering and deduplication.")
-    print(f"Loading selected logs with {args.workers} worker(s).")
-
-    samples = load_samples(selected, args.scorer, workers=args.workers)
+    samples = pd.read_parquet(args.analysis).rename(columns={"id": "sample_id"})
+    samples["model_raw"] = samples["model"]
 
     if samples.empty:
         raise SystemExit("No scored samples found in the selected logs.")
 
+    corrected = samples[samples["language"] != "uncorrected_isl"].copy()
+    samples = corrected
     summary = filter_summary_models(summarize(samples))
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -1401,21 +1409,19 @@ def main() -> None:
         args.out_dir / "reasoning_delta_heatmap.png",
     )
     correction_outputs: list[Path] = []
-    if args.corrected_log_dir:
-        corrected_paths = discover_logs([args.corrected_log_dir])
-        corrected_selected = select_logs(corrected_paths, args.include_incomplete, workers=args.workers)
-        print(
-            f"Discovered {len(corrected_paths)} corrected logs; "
-            f"selected {len(corrected_selected)} after status filtering and deduplication."
-        )
-        corrected = load_samples(corrected_selected, args.scorer, workers=args.workers)
+    if "uncorrected_isl" in set(pd.read_parquet(args.analysis, columns=["language"])["language"]):
+        all_samples = pd.read_parquet(args.analysis).rename(columns={"id": "sample_id"})
+        all_samples["model_raw"] = all_samples["model"]
+        uncorrected = all_samples[all_samples["language"] == "uncorrected_isl"].copy()
+        uncorrected["language"] = "isl"
+        corrected = all_samples[all_samples["language"] == "isl"].copy()
         if corrected.empty:
-            print(f"Skipped correction comparison: no scored corrected samples found in {args.corrected_log_dir}.")
+            print("Skipped correction comparison: no corrected Icelandic samples found.")
         else:
-            languages = paired_correction_languages(samples, corrected, requested=None)
+            languages = ["isl"]
             for language in languages:
                 rows = collect_correction_comparison_rows(
-                    samples,
+                    uncorrected,
                     corrected,
                     language,
                     args.correction_samples,

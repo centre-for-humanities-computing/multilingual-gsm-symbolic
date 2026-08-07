@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
 # ///
 """Plot language-transfer trade-offs under an approximate inference budget.
 
@@ -38,6 +38,7 @@ from scipy.stats import bootstrap
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 REASONING_LABELS = {"off": "reasoning off", "on": "reasoning on"}
 FAMILY_COLORS = ["#2563EB", "#DC2626", "#059669", "#7C3AED", "#D97706", "#0891B2"]
 MARKERS = ["o", "s", "^", "D", "v", "P", "X", "*", "<", ">"]
@@ -180,6 +181,24 @@ def load_qwen_summary(selected: list[tuple[Path, Any]], scorer: str | None, work
     )
 
 
+def load_qwen_summary_parquet(path: Path) -> pd.DataFrame:
+    rows = pd.read_parquet(
+        path, columns=["model", "family", "params_b", "language", "split", "id", "correct", "total_tokens"]
+    )
+    rows["model_raw"] = rows["model"].str.replace(r" \(reasoning (?:on|off)\)$", "", regex=True)
+    rows = rows[(rows["split"] == "synthetic") & (rows["language"] != "uncorrected_isl")]
+    rows = rows.dropna(subset=["correct", "total_tokens"])
+    keys = ["model_raw", "model", "family", "params_b", "language", "split"]
+    grouped = rows.groupby(keys, dropna=False)
+    summary = grouped.agg(
+        accuracy=("correct", "mean"), n_problems=("correct", "size"), avg_total_tokens=("total_tokens", "mean")
+    ).reset_index()
+    mappings = grouped.apply(
+        lambda group: dict(zip(group["id"].astype(str), group["correct"], strict=True)), include_groups=False
+    )
+    return summary.merge(mappings.rename("sample_correct").reset_index(), on=keys)
+
+
 def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
     required = {
         "model_raw",
@@ -240,6 +259,7 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
     table["non_english_accuracy"] = table[non_english].mean(axis=1, skipna=True)
     table["absolute_transfer_gap"] = table["english_accuracy"] - table["non_english_accuracy"]
     table["relative_transfer_gap"] = table["absolute_transfer_gap"] / table["english_accuracy"].replace(0, np.nan)
+    table["performance_recovered"] = table["non_english_accuracy"] / table["english_accuracy"].replace(0, np.nan)
     rng = np.random.default_rng(BOOTSTRAP_SEED)
     absolute_ci: list[float] = []
     relative_ci: list[float] = []
@@ -259,6 +279,7 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
         relative_ci.append(relative_half_width)
     table["transfer_gap_ci95"] = absolute_ci
     table["relative_transfer_gap_ci95"] = relative_ci
+    table["performance_recovered_ci95"] = relative_ci
     # Dense-transformer inference is approximately two floating-point operations
     # per parameter per processed token. This intentionally reports an estimate.
     table["inference_flops"] = 2 * table["params_b"] * 1e9 * table["avg_total_tokens"]
@@ -278,6 +299,8 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
             "transfer_gap_ci95",
             "relative_transfer_gap",
             "relative_transfer_gap_ci95",
+            "performance_recovered",
+            "performance_recovered_ci95",
             "n_transfer_languages",
         ]
     ]
@@ -346,8 +369,8 @@ def _plot_compute_budget_table(
     relative: bool = False,
     faceted: bool = True,
 ) -> bool:
-    gap_column = "relative_transfer_gap" if relative else "absolute_transfer_gap"
-    ci_column = "relative_transfer_gap_ci95" if relative else "transfer_gap_ci95"
+    gap_column = "performance_recovered"
+    ci_column = "performance_recovered_ci95"
     families = sorted(table["family"].unique())
     combined = len(families) > 1
     panel_families: list[str | None] = families if combined and faceted else [None]
@@ -399,11 +422,7 @@ def _plot_compute_budget_table(
         ax.set_axisbelow(True)
         ax.set_title(panel_family if panel_family is not None else "Reasoning on vs. off under a fixed compute budget")
 
-    axes[0, 0].set_ylabel(
-        "Relative gap: (English − non-English mean) / English"
-        if relative
-        else "English accuracy − non-English mean accuracy"
-    )
+    axes[0, 0].set_ylabel("Percentage of English performance recovered")
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
         Line2D([0], [0], color="#374151", linestyle=":" if reasoning == "off" else "-", linewidth=1.8,
@@ -422,12 +441,12 @@ def _plot_compute_budget_table(
     if combined and faceted:
         fig.suptitle("Reasoning on vs. off under a fixed compute budget")
         fig.legend(handles=handles, frameon=False, fontsize=8, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 0.94))
-        fig.text(0.5, 0.015, "Lower-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
+        fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
         fig.tight_layout(rect=(0, 0.035, 1, 0.9))
     else:
         axes[0, 0].legend(handles=handles, frameon=False, fontsize=7, loc="upper right")
         axes[0, 0].text(
-            0.01, 0.02, "Lower-left is better. Bars are 95% bootstrap CIs over questions.",
+            0.01, 0.02, "Upper-left is better. Bars are 95% bootstrap CIs over questions.",
             transform=axes[0, 0].transAxes, fontsize=8, color="#4B5563",
         )
         fig.tight_layout()
@@ -497,11 +516,10 @@ def plot_qwen_compute_budget_relative_family_transfers(summary: pd.DataFrame, ou
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--log-dir",
+        "--analysis",
         type=Path,
-        nargs="+",
-        default=[DEFAULT_LOG_DIR],
-        help="One or more directories searched recursively for .eval logs.",
+        default=DEFAULT_ANALYSIS,
+        help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument("--scorer", help="Inspect scorer name to use; defaults to math, pattern, then first score.")
@@ -509,11 +527,7 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=32, help="Workers used for log selection and full log loading.")
     args = parser.parse_args()
 
-    paths = discover_logs(args.log_dir)
-    selected = select_logs(paths, args.include_incomplete, workers=args.workers)
-    print(f"Discovered {len(paths)} logs; selected {len(selected)} after status filtering and deduplication.")
-
-    summary = load_qwen_summary(selected, args.scorer, args.workers)
+    summary = load_qwen_summary_parquet(args.analysis)
     if summary.empty:
         raise SystemExit("No scored synthetic samples with generation timings found.")
 

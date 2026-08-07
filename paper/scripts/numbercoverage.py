@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
 # ///
 """Measure whether every number in each prompt appears in the model response.
 
@@ -16,18 +16,22 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import multiprocessing
 import re
+from collections.abc import Iterator
 from collections import defaultdict
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
+from itertools import islice
 from pathlib import Path
 from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from eval_log_utils import discover_logs, sample_score, select_logs
 from inspect_ai.log import read_eval_log
 from matplotlib.ticker import PercentFormatter
-from number_coverage_utils import display_number, extract_numbers
+from number_coverage_utils import display_number, extract_chevron_side_numbers, extract_numbers
 from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_ORDER,
@@ -41,6 +45,7 @@ from plot_config import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "prompt_number_coverage"
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 plt.rcParams.update(PLOT_STYLE)
 
 
@@ -54,6 +59,7 @@ def safe_rate(numerator: int, denominator: int) -> float | None:
 
 
 def summarize_group(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    rows = [row for row in rows if row.get("prompt_number_count", 1)]
     covered = sum(row["all_prompt_numbers_present"] for row in rows)
     return {
         "samples": len(rows),
@@ -69,11 +75,16 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
     sample_rows: list[dict[str, Any]] = []
 
     for sample in samples:
+        language = str((sample.metadata or {}).get("language", "eng"))
         prompt = sample.input if isinstance(sample.input, str) else str(sample.input)
         response = sample.output.completion
-        prompt_numbers = extract_numbers(prompt)
-        response_numbers = extract_numbers(response)
+        prompt_numbers = extract_numbers(prompt, language)
+        response_numbers = extract_numbers(response, language)
         missing_numbers = prompt_numbers - response_numbers
+        lhs_numbers, rhs_numbers = extract_chevron_side_numbers(
+            str((sample.metadata or {}).get("answer", "")),
+            language,
+        )
 
         sample_rows.append(
             {
@@ -87,9 +98,14 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
                 "final_correct": score_to_bool(sample),
                 "prompt_number_count": len(prompt_numbers),
                 "prompt_numbers": " | ".join(display_number(value) for value in sorted(prompt_numbers)),
+                "retrieved_prompt_number_count": len(prompt_numbers & response_numbers),
+                "lhs_count": len(lhs_numbers),
+                "lhs_retrieved": len(response_numbers & lhs_numbers),
+                "rhs_count": len(rhs_numbers),
+                "rhs_retrieved": len(response_numbers & rhs_numbers),
                 "missing_prompt_number_count": len(missing_numbers),
                 "missing_prompt_numbers": " | ".join(display_number(value) for value in sorted(missing_numbers)),
-                "all_prompt_numbers_present": not missing_numbers,
+                "all_prompt_numbers_present": bool(prompt_numbers) and not missing_numbers,
             }
         )
 
@@ -98,6 +114,7 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
     final_incorrect_rows = [row for row in final_scored if not row["final_correct"]]
     correct_summary = summarize_group(final_correct_rows)
     incorrect_summary = summarize_group(final_incorrect_rows)
+    coverage_summary = summarize_group(sample_rows)
     correct_rate = correct_summary["all_prompt_numbers_present_rate"]
     incorrect_rate = incorrect_summary["all_prompt_numbers_present_rate"]
 
@@ -106,17 +123,15 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
         "status": str(log.status),
         "model": log.eval.model,
         "task": log.eval.task,
-        "samples": len(samples),
+        "samples": len(sample_rows),
         "final_scored_samples": len(final_scored),
         "final_accuracy": safe_rate(
             sum(row["final_correct"] for row in final_scored),
             len(final_scored),
         ),
-        "samples_with_all_prompt_numbers_present": sum(row["all_prompt_numbers_present"] for row in sample_rows),
-        "all_prompt_numbers_present_rate": safe_rate(
-            sum(row["all_prompt_numbers_present"] for row in sample_rows),
-            len(sample_rows),
-        ),
+        "number_coverage_samples": coverage_summary["samples"],
+        "samples_with_all_prompt_numbers_present": coverage_summary["samples_with_all_prompt_numbers_present"],
+        "all_prompt_numbers_present_rate": coverage_summary["all_prompt_numbers_present_rate"],
         "number_coverage_breakdown": {
             "final_correct": correct_summary,
             "final_incorrect": incorrect_summary,
@@ -126,8 +141,8 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
         ),
         "matcher": "distinct normalized complete numeric tokens",
         "note": (
-            "A sample is covered when every distinct numeric value in the original prompt "
-            "appears somewhere in the full model completion."
+            "A sample with at least one numeric value is covered when every distinct prompt value "
+            "appears in the completion; samples without numeric values are excluded."
         ),
     }
     return summary, sample_rows
@@ -141,23 +156,28 @@ def analyze_logs(
     logs: list[Path],
     max_samples: int | None,
     workers: int,
-) -> list[tuple[dict[str, Any], list[dict[str, Any]]]]:
+) -> Iterator[tuple[dict[str, Any], list[dict[str, Any]]]]:
     if workers == 1:
-        results = []
         for path in logs:
             print(f"Analyzing {path}")
-            results.append(analyze_log(path, max_samples))
-        return results
+            yield analyze_log(path, max_samples)
+        return
 
-    ordered_results: list[tuple[dict[str, Any], list[dict[str, Any]]] | None] = [None] * len(logs)
-    with ProcessPoolExecutor(max_workers=workers) as executor:
-        futures = {executor.submit(analyze_log, path, max_samples): (index, path) for index, path in enumerate(logs)}
-        for future in as_completed(futures):
-            index, path = futures[future]
-            ordered_results[index] = future.result()
+    with ProcessPoolExecutor(
+        max_workers=workers,
+        mp_context=multiprocessing.get_context("spawn"),
+    ) as executor:
+        paths = iter(logs)
+        pending = [(path, executor.submit(analyze_log, path, max_samples)) for path in islice(paths, workers)]
+        while pending:
+            path, future = pending.pop(0)
+            yield future.result()
             print(f"Analyzed {path}")
-
-    return [result for result in ordered_results if result is not None]
+            try:
+                next_path = next(paths)
+            except StopIteration:
+                continue
+            pending.append((next_path, executor.submit(analyze_log, next_path, max_samples)))
 
 
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -177,7 +197,7 @@ def number_coverage_grid(
     for row in rows:
         model = str(row.get("model") or "").strip()
         language = str(row.get("language") or "").strip()
-        if not model or language not in LANGUAGE_ORDER:
+        if not model or language not in LANGUAGE_ORDER or not row.get("prompt_number_count", 1):
             continue
         cell = counts[(model, language)]
         cell[0] += int(bool(row["all_prompt_numbers_present"]))
@@ -372,10 +392,10 @@ def run_self_test() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "inputs",
-        nargs="*",
+        "--analysis",
         type=Path,
-        help=f"Inspect .eval logs or directories containing logs. Defaults to {DEFAULT_LOG_DIR}.",
+        default=DEFAULT_ANALYSIS,
+        help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument(
@@ -393,26 +413,36 @@ def main() -> None:
 
     if args.self_test:
         run_self_test()
-        if not args.inputs:
-            return
+        return
 
-    inputs = args.inputs or [DEFAULT_LOG_DIR]
-    logs = discover_logs(inputs)
-    if not logs:
-        raise SystemExit("No non-empty .eval logs found.")
-
-    if args.workers is not None and args.workers < 1:
-        parser.error("--workers must be at least 1.")
-    workers = min(args.workers or 128, len(logs))
-    selected = select_logs(logs, include_incomplete=False, workers=workers)
-    logs = [path for path, _header in selected]
-    print(f"Analyzing {len(logs)} successful deduplicated log(s) with {workers} worker(s).")
-
-    summaries: list[dict[str, Any]] = []
-    sample_rows: list[dict[str, Any]] = []
-    for summary, samples in analyze_logs(logs, args.max_samples, workers):
-        summaries.append(summary)
-        sample_rows.extend(samples)
+    columns = ["model", "task", "eval_id", "id", "source_id", "language", "split", "correct",
+               "prompt_number_count", "retrieved_prompt_number_count", "lhs_count", "lhs_retrieved", "rhs_count",
+               "rhs_retrieved", "all_prompt_numbers_present"]
+    frame = pd.read_parquet(args.analysis, columns=columns)
+    frame = frame[frame["language"] != "uncorrected_isl"].copy()
+    if args.max_samples:
+        frame = frame.groupby(["model", "language", "split"], observed=True).head(args.max_samples)
+    frame["missing_prompt_number_count"] = frame["prompt_number_count"] - frame["retrieved_prompt_number_count"]
+    frame = frame.rename(columns={"id": "sample_id", "correct": "final_correct"})
+    sample_rows = frame.to_dict("records")
+    summaries = []
+    for (_model, _task, _eval), group in frame.groupby(["model", "task", "eval_id"], observed=True):
+        rows = group.to_dict("records")
+        right = summarize_group([row for row in rows if row["final_correct"]])
+        wrong = summarize_group([row for row in rows if not row["final_correct"]])
+        coverage = summarize_group(rows)
+        summaries.append({
+            "model": _model, "task": _task, "eval_id": _eval, "samples": len(rows),
+            "final_scored_samples": len(rows), "final_accuracy": float(group["final_correct"].mean()),
+            "number_coverage_samples": coverage["samples"],
+            "samples_with_all_prompt_numbers_present": coverage["samples_with_all_prompt_numbers_present"],
+            "all_prompt_numbers_present_rate": coverage["all_prompt_numbers_present_rate"],
+            "number_coverage_breakdown": {"final_correct": right, "final_incorrect": wrong},
+            "correct_minus_incorrect_percentage_points": (
+                (right["all_prompt_numbers_present_rate"] - wrong["all_prompt_numbers_present_rate"]) * 100
+                if right["all_prompt_numbers_present_rate"] is not None and wrong["all_prompt_numbers_present_rate"] is not None else None
+            ),
+        })
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "summary.json").write_text(

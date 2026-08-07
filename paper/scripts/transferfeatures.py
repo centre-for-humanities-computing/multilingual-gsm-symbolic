@@ -32,6 +32,8 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -41,7 +43,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
-from plot_config import FAMILY_COLORS, FAMILY_ORDER, LANGUAGE_LABELS, PLOT_STYLE, language_order, ordered_families
+from plot_config import FAMILY_COLORS, LANGUAGE_LABELS, PLOT_STYLE, language_order, ordered_families
 from scipy.spatial import distance
 from transformers import AutoTokenizer
 
@@ -69,9 +71,10 @@ LANGUAGE_SCRIPTS = {
     "mar": "Devanagari",
     "hin": "Devanagari",
     "ara": "Arabic",
+    "nld": "Latin",
+    "est": "Latin",
     "tha": "Thai",
 }
-
 
 def relationship_plot(
     data: pd.DataFrame,
@@ -79,9 +82,15 @@ def relationship_plot(
     xlabel: str,
     out: Path,
     use_script_shapes: bool = False,
+    footnote: str | None = None,
+    label_languages: bool = True,
 ) -> list[Path]:
     """Plot a descriptive feature relationship for the synthetic split only."""
-    plot_data = data.dropna(subset=[x_column, "transfer_gap"])
+    plot_data = data[
+        (data["language"] != "eng_metric") & (data["family"] != "OpenAI")
+    ].dropna(
+        subset=[x_column, "performance_recovered"]
+    )
     if plot_data.empty:
         return []
 
@@ -90,7 +99,7 @@ def relationship_plot(
     if panel.empty:
         return []
 
-    fig, ax = plt.subplots(figsize=(6.5, 5))
+    fig, ax = plt.subplots(figsize=(6.5, 5.3 if use_script_shapes else 5))
 
     for family in ordered_families(panel["family"]):
         family_rows = panel[panel["family"] == family]
@@ -98,64 +107,85 @@ def relationship_plot(
             for row in family_rows.itertuples():
                 script = LANGUAGE_SCRIPTS.get(row.language, "Latin")
                 marker = SCRIPT_MARKERS.get(script, "o")
-                ax.errorbar(
+                ax.scatter(
                     getattr(row, x_column),
-                    row.transfer_gap,
-                    yerr=row.transfer_gap_stderr,
-                    fmt=marker,
-                    markersize=6.5,
-                    capsize=2,
-                    alpha=0.85,
+                    row.performance_recovered,
+                    marker=marker,
+                    s=42,
+                    alpha=0.55,
                     color=FAMILY_COLORS.get(family, "#666666"),
                     zorder=3,
                 )
         else:
-            ax.errorbar(
+            ax.scatter(
                 family_rows[x_column],
-                family_rows["transfer_gap"],
-                yerr=family_rows["transfer_gap_stderr"],
-                fmt="o",
-                markersize=6.5,
-                capsize=2,
-                alpha=0.85,
+                family_rows["performance_recovered"],
+                marker="o",
+                s=42,
+                alpha=0.55,
                 color=FAMILY_COLORS.get(family, "#666666"),
                 label=family,
                 zorder=3,
             )
 
-    label_positions = panel.groupby(["family", "language"], as_index=False).agg(
-        x=(x_column, "mean"), y=("transfer_gap", "mean")
-    )
-    label_positions["family_order"] = label_positions["family"].map(FAMILY_ORDER).fillna(99)
-    label_positions = label_positions.sort_values(["family_order", "language"])
-    for row in label_positions.itertuples(index=False):
-        ax.annotate(
-            row.language,
-            (row.x, row.y),
-            xytext=(4, 3),
-            textcoords="offset points",
-            fontsize=7.5,
-            color=FAMILY_COLORS.get(row.family, "#666666"),
-        )
-
-    # Make trendline pop out prominently in vibrant crimson red
+    # Use a restrained neutral trendline so it does not compete with model colors.
     unique_x = panel[x_column].nunique()
+    slope: float | None = None
+    intercept: float | None = None
     if len(panel) >= 3 and unique_x >= 2:
-        slope, intercept = np.polyfit(panel[x_column], panel["transfer_gap"], 1)
+        slope, intercept = np.polyfit(panel[x_column], panel["performance_recovered"], 1)
         x_line = np.linspace(panel[x_column].min(), panel[x_column].max(), 100)
         ax.plot(
             x_line,
             slope * x_line + intercept,
-            color="#D90429",
+            color="#000000",
             linestyle="-",
-            linewidth=2.5,
-            zorder=5,
+            linewidth=1.6,
+            alpha=0.85,
+            zorder=4,
             label="Trendline",
         )
 
-    ax.axhline(0, color="black", linewidth=0.8, alpha=0.4, zorder=2)
-    ax.grid(alpha=0.2)
-    ax.set_ylabel("Accuracy gap: English - target language")
+    if label_languages:
+        label_positions = (
+            panel.groupby("language", as_index=False)
+            .agg(x=(x_column, "mean"))
+            .sort_values("x")
+        )
+        x_span = max(float(panel[x_column].max() - panel[x_column].min()), 1e-9)
+        lane_last_x: list[float] = []
+        for row in label_positions.itertuples(index=False):
+            lane = next(
+                (
+                    index
+                    for index, previous_x in enumerate(lane_last_x)
+                    if row.x - previous_x >= 0.12 * x_span
+                ),
+                len(lane_last_x),
+            )
+            if lane == len(lane_last_x):
+                lane_last_x.append(row.x)
+            else:
+                lane_last_x[lane] = row.x
+            ax.annotate(
+                LANGUAGE_LABELS.get(row.language, row.language),
+                xy=(row.x, 1),
+                xycoords=ax.get_xaxis_transform(),
+                xytext=(0, 6 + 14 * lane),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                fontsize=9,
+                fontweight="bold",
+                color="#1F2937",
+                bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.82, "pad": 1.5},
+                annotation_clip=False,
+                zorder=6,
+            )
+
+    ax.axhline(1, color="black", linewidth=0.8, alpha=0.4, zorder=2)
+    ax.set_xlabel(xlabel, fontsize=14, labelpad=16 if use_script_shapes else 8)
+    ax.set_ylabel("English performance recovered", fontsize=14)
     ax.yaxis.set_major_formatter(PercentFormatter(1))
 
     if use_script_shapes:
@@ -167,6 +197,7 @@ def relationship_plot(
                 marker="o",
                 linestyle="None",
                 markersize=6,
+                alpha=0.55,
                 label=f,
             )
             for f in ordered_families(panel["family"])
@@ -180,19 +211,33 @@ def relationship_plot(
                 marker=SCRIPT_MARKERS.get(s, "o"),
                 linestyle="None",
                 markersize=6,
+                alpha=0.55,
                 label=f"Script: {s}",
             )
             for s in present_scripts
         ]
-        trend_handle = [Line2D([0], [0], color="#D90429", lw=2.5, label="Trendline")]
-        all_handles = family_handles + script_handles + trend_handle
+        trend_handle = [Line2D([0], [0], color="#000000", lw=1.6, alpha=0.85, label="Trendline")]
         fig.legend(
-            all_handles,
-            [h.get_label() for h in all_handles],
-            loc="lower center",
-            ncol=math.ceil(len(all_handles) / 2),
+            family_handles + trend_handle,
+            [h.get_label() for h in family_handles + trend_handle],
+            title="Model family",
+            loc="upper left",
+            bbox_to_anchor=(0.02, 0.115),
+            ncol=3,
             frameon=False,
             fontsize=8,
+            title_fontsize=8,
+        )
+        fig.legend(
+            script_handles,
+            [h.get_label().removeprefix("Script: ") for h in script_handles],
+            title="Language script",
+            loc="upper right",
+            bbox_to_anchor=(0.98, 0.115),
+            ncol=2,
+            frameon=False,
+            fontsize=8,
+            title_fontsize=8,
         )
     else:
         handles, labels = ax.get_legend_handles_labels()
@@ -200,14 +245,20 @@ def relationship_plot(
             fig.legend(
                 handles,
                 labels,
-                loc="lower center",
+                title="Model family",
+                loc="upper center",
+                bbox_to_anchor=(0.5, 0.13),
                 ncol=math.ceil(len(labels) / 2),
                 frameon=False,
                 fontsize=8,
+                title_fontsize=8,
             )
 
-    fig.supxlabel(xlabel, y=0.09)
-    fig.tight_layout(rect=(0, 0.14, 1, 1))
+    bottom_margin = 0.16 if use_script_shapes else (0.17 if footnote else 0.14)
+    if footnote:
+        footnote_y = 0.145 if use_script_shapes else 0.16
+        fig.text(0.5, footnote_y, footnote, ha="center", fontsize=8, color="#4B5563")
+    fig.tight_layout(rect=(0, bottom_margin, 1, 1))
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -222,6 +273,7 @@ DEFAULT_COMMON_CRAWL_CSV = ARTIFACTS_DIR / "transfer_features" / "languages.csv"
 SOURCE_METADATA = {
     "definitions": {
         "transfer_gap": "English accuracy minus target-language accuracy for the same model and split",
+        "performance_recovered": "Target-language accuracy divided by English accuracy for the same model and split",
         "tokenizer_fertility": "Tokenizer tokens divided by non-whitespace Unicode characters, with no special tokens",
         "normalized_fertility": "Target-language fertility divided by English fertility on matched source_id questions",
         "typological_distance": "Cosine distance from English over concatenated URIEL/lang2vec syntax_knn and inventory_knn vectors",
@@ -319,6 +371,27 @@ def tokenizer_repo(model_raw: str) -> str | None:
     return raw if "/" in raw else None
 
 
+def model_repo(model: str) -> str | None:
+    """Recover the public tokenizer repository from the canonical model label."""
+    base = re.sub(r" \(reasoning (?:on|off)\)$", "", model, flags=re.IGNORECASE)
+    lower = base.lower()
+    if lower.startswith("qwen"):
+        return f"Qwen/{base}"
+    if lower.startswith("olmo"):
+        return f"allenai/{base}"
+    if lower.startswith("granite"):
+        return f"ibm-granite/{base}"
+    if lower.startswith("gemma"):
+        return f"google/{base}"
+    if lower.startswith("apertus"):
+        return f"swiss-ai/{base}"
+    if lower.startswith("eurollm"):
+        return f"utter-project/{base}"
+    if lower == "phi-4" or lower.startswith("phi-4-mini"):
+        return f"microsoft/{base}"
+    return None
+
+
 def text_fertility(tokenizer: Any, texts: list[str]) -> tuple[float, int, int]:
     """Return corpus tokens/non-whitespace-character ratio and its totals."""
     encoded = tokenizer(
@@ -343,8 +416,10 @@ def collect_tokenizer_fertility(
     if "eng" not in questions:
         raise ValueError("English questions are required as the fertility reference")
 
-    models = summary[["model_raw", "model", "family"]].drop_duplicates()
+    models = summary[["model", "family"]].drop_duplicates()
+    models["model_raw"] = models["model"].map(model_repo)
     rows: list[dict[str, Any]] = []
+    load_errors: list[str] = []
 
     for model_row in models.itertuples(index=False):
         repo = tokenizer_repo(model_row.model_raw)
@@ -357,9 +432,10 @@ def collect_tokenizer_fertility(
             tokenizer = AutoTokenizer.from_pretrained(
                 repo,
                 trust_remote_code=False,
+                token=os.environ.get("HF_TOKEN"),
             )
         except Exception as exc:
-            print(f"Skipping tokenizer fertility for {model_row.model}: {exc}")
+            load_errors.append(f"{model_row.model} ({repo}): {exc}")
             continue
 
         for language, language_questions in questions.items():
@@ -394,6 +470,14 @@ def collect_tokenizer_fertility(
                 }
             )
 
+    if load_errors:
+        failures = "\n\n".join(load_errors)
+        raise RuntimeError(
+            "Failed to load required tokenizers; refusing to write incomplete fertility data. "
+            "Set HF_TOKEN to a Hugging Face token with access to gated model repositories.\n\n"
+            f"{failures}"
+        )
+
     return pd.DataFrame(rows)
 
 
@@ -416,7 +500,9 @@ def build_transfer_table(
             }
         )
     )
-    transfer = values[values["language"] != "eng"].merge(
+    transfer = values[
+        ~values["language"].isin({"eng", "eng_metric"}) & (values["family"] != "OpenAI")
+    ].merge(
         english,
         on=["model_raw", "model", "family", "params_b", "split"],
         how="inner",
@@ -425,6 +511,12 @@ def build_transfer_table(
     transfer["transfer_gap"] = transfer["english_accuracy"] - transfer["accuracy"]
     transfer["transfer_gap_stderr"] = np.sqrt(
         transfer["stderr"].fillna(0) ** 2 + transfer["english_stderr"].fillna(0) ** 2
+    )
+    english_accuracy = transfer["english_accuracy"].replace(0, np.nan)
+    transfer["performance_recovered"] = transfer["accuracy"] / english_accuracy
+    transfer["performance_recovered_stderr"] = np.sqrt(
+        (transfer["accuracy"] / english_accuracy.pow(2) * transfer["english_stderr"].fillna(0)).pow(2)
+        + (transfer["stderr"].fillna(0) / english_accuracy).pow(2)
     )
 
     transfer = transfer.merge(
@@ -445,9 +537,9 @@ def build_transfer_table(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--summary",
+        "--analysis",
         type=Path,
-        default=ARTIFACTS_DIR / "model_grid" / "run_summary.csv",
+        default=ARTIFACTS_DIR / "transfer_tables" / "analysis.parquet",
     )
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "hf_dataset" / "data")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
@@ -459,9 +551,13 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    summary = pd.read_csv(args.summary)
+    samples = pd.read_parquet(args.analysis)
+    samples = samples[samples["language"] != "uncorrected_isl"]
+    group_cols = ["model", "family", "params_b", "vocab_size", "language", "split"]
+    summary = samples.groupby(group_cols, dropna=False)["correct"].agg(accuracy="mean", n_problems="size", stderr="sem").reset_index()
+    summary["model_raw"] = summary["model"].map(model_repo)
     if "eng" not in set(summary["language"]):
-        raise SystemExit("English results are required to calculate transfer gaps.")
+        raise SystemExit("English results are required to calculate recovered performance.")
     languages = language_order(summary["language"].unique())
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -497,25 +593,40 @@ def main() -> None:
     plots = [
         (
             "normalized_fertility",
-            "TFR: target-language tokens/character divided by English tokens/character. Computed on GSM8K templates.",
+            "Tokenizer fertility ratio",
             args.out_dir / "tokenizer_fertility_vs_transfer.png",
             True,
+            "Ratio of target-language to English tokens per character, computed on GSM8K templates.",
+            False,
         ),
         (
             "typological_distance_from_english",
-            "URIEL cosine distance from English (syntax features)",
+            "Typological distance",
             args.out_dir / "typological_distance_vs_transfer.png",
             False,
+            "Typological distance is cosine distance from English using URIEL syntax features.",
+            True,
         ),
         (
             "log10_common_crawl_pages",
-            "Language-resource proxy: log10 Common Crawl page count",
+            "Language resources",
             args.out_dir / "resource_quantity_vs_transfer.png",
             False,
+            "Language resources are measured as log10 Common Crawl page count.",
+            True,
         ),
     ]
-    for column, xlabel, path, use_script_shapes in plots:
-        if saved_plots := relationship_plot(transfer, column, xlabel, path, use_script_shapes=use_script_shapes):
+    for plot in plots:
+        column, xlabel, path, use_script_shapes, footnote, label_languages = plot
+        if saved_plots := relationship_plot(
+            transfer,
+            column,
+            xlabel,
+            path,
+            use_script_shapes=use_script_shapes,
+            footnote=footnote,
+            label_languages=label_languages,
+        ):
             for saved_plot in saved_plots:
                 print(f"Saved {saved_plot}")
         else:

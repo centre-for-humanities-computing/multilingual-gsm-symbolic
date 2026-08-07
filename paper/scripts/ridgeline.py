@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "scipy"]
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
 # ///
 """Plot original accuracy against sampled synthetic-set distributions by language.
 
@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
+import gc
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +28,7 @@ from eval_log_utils import (
     sample_synthetic_sets,
     select_logs,
 )
-from inspect_ai.log import read_eval_log
+from inspect_ai.log import read_eval_log, read_eval_log_sample_summaries
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
 from plot_config import (
@@ -45,6 +46,7 @@ from plot_config import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "language_ridgeline"
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 
 SYNTHETIC_COLOR = "#173B75"
 SYNTHETIC_FILL = "#AFC0DD"
@@ -82,9 +84,9 @@ class PlotStats:
 def language_title(language: str) -> str:
     label = LANGUAGE_LABELS.get(language, language)
     speakers = LANGUAGE_SPEAKERS.get(language)
-    speaker_label = f" ({format_speaker_count(speakers)} native speakers)" if speakers else ""
+    speaker_label = f"\n({format_speaker_count(speakers)} native)" if speakers else ""
     verified = " ★" if language in HUMAN_VERIFIED_LANGUAGES else ""
-    return f"{label}{speaker_label}{verified}"
+    return f"{label}{verified}{speaker_label}"
 
 
 def discover_selected_logs(
@@ -116,22 +118,23 @@ def _load_one_log(
 ) -> tuple[str, pd.DataFrame | None, str | None]:
     """Read and partially aggregate one log in a worker process."""
     try:
-        log = read_eval_log(str(path))
+        log = read_eval_log(str(path), header_only=True)
+        samples = read_eval_log_sample_summaries(str(path))
     except Exception as exc:
         return path.name, None, f"Skipping unreadable log {path.name}: {exc}"
 
     parsed = parse_task(log.eval.task)
     if parsed is None:
         return path.name, None, f"Skipping unrecognized task {log.eval.task!r}"
-    if not log.samples:
+    if not samples:
         return path.name, pd.DataFrame(), None
 
     split, task_language = parsed
-    model = model_name(log.eval.model)
+    model = model_name(log.eval.model, getattr(log.eval, "model_args", None))
     label = f"{model} / {task_language} / {split}"
     rows: list[dict[str, Any]] = []
 
-    for sample in log.samples:
+    for sample in samples:
         correct = sample_score(sample, scorer)
         if correct is None:
             continue
@@ -147,16 +150,21 @@ def _load_one_log(
             }
         )
 
-    del log  # free the large decompressed log before returning
+    del log, samples
+    gc.collect()
     if not rows:
+        del rows
         return label, pd.DataFrame(), None
 
     samples = pd.DataFrame(rows)
+    del rows
     grouped = samples.groupby(
         ["model", "language", "split", "sample_id", "source_id"],
         dropna=False,
         as_index=False,
     )["correct"].agg(correct_sum="sum", correct_count="size")
+    del samples
+    gc.collect()
     return label, grouped, None
 
 
@@ -167,7 +175,6 @@ def load_problem_scores(
 ) -> pd.DataFrame:
     """Load logs in parallel and combine repeated runs by model/problem."""
     frames: list[pd.DataFrame] = []
-    _CONCAT_CHUNK = 8  # flush accumulated frames every N logs to cap memory
 
     for index, (label, frame, warning) in enumerate(map_log_loader(_load_one_log, paths, scorer, workers), start=1):
         if warning:
@@ -176,23 +183,22 @@ def load_problem_scores(
             print(f"[{index}/{len(paths)}] {label}")
         if frame is not None and not frame.empty:
             frames.append(frame)
-        if len(frames) >= _CONCAT_CHUNK:
-            frames = [pd.concat(frames, ignore_index=True)]
 
     if not frames:
         return pd.DataFrame()
 
     combined = pd.concat(frames, ignore_index=True)
+    del frames
+
     keys = ["model", "language", "split", "sample_id", "source_id"]
     problems = combined.groupby(keys, dropna=False, as_index=False).agg(
         correct_sum=("correct_sum", "sum"), correct_count=("correct_count", "sum")
     )
+    del combined
+
     problems["correct"] = problems["correct_sum"] / problems["correct_count"]
-    return problems.drop(columns=["correct_sum", "correct_count"])
-
-
-
-
+    problems.drop(columns=["correct_sum", "correct_count"], inplace=True)
+    return problems
 
 
 def collect_plot_data(
@@ -258,10 +264,32 @@ def plot_distributions(
     if not stats:
         raise ValueError("No languages have paired original and synthetic results.")
 
+    n_rows = len(stats)
+    if n_rows <= 4:
+        fig_height = 2.2 * n_rows + 1.0
+        left_margin = 0.30
+        right_margin = 0.97
+        top_margin = 0.85
+        bottom_margin = 0.12
+        hspace = 0.45
+        legend_y = 1.25
+        supylabel_x = 0.015
+        title_y = 0.985
+    else:
+        fig_height = 1.8 * n_rows + 1.6
+        left_margin = 0.28
+        right_margin = 0.97
+        top_margin = 0.93
+        bottom_margin = 0.07
+        hspace = 0.35
+        legend_y = 1.45
+        supylabel_x = 0.015
+        title_y = 0.988
+
     fig, axes = plt.subplots(
-        len(stats),
+        n_rows,
         1,
-        figsize=(10.5, 2.05 * len(stats) + 1.7),
+        figsize=(8.5, fig_height),
         sharex=True,
         squeeze=False,
     )
@@ -287,35 +315,35 @@ def plot_distributions(
             0,
             density,
             color=SYNTHETIC_FILL,
-            alpha=0.2,
+            alpha=0.22,
             zorder=2,
         )
-        ax.plot(x, density, color=SYNTHETIC_COLOR, linewidth=2.2, zorder=3)
+        ax.plot(x, density, color=SYNTHETIC_COLOR, linewidth=2.4, zorder=3)
         ax.scatter(
             row.synthetic_mean,
             peak_density,
             color=SYNTHETIC_COLOR,
-            s=34,
+            s=48,
             zorder=5,
         )
 
         ax.axvline(
             row.original_accuracy,
             color=ORIGINAL_COLOR,
-            linewidth=2.4,
+            linewidth=2.6,
             zorder=4,
         )
 
         arrow_y = peak_density * 1.08
         gap = abs(row.synthetic_mean - row.original_accuracy)
         if gap < 0.025:
-            cap_height = peak_density * 0.035
+            cap_height = peak_density * 0.04
             ax.hlines(
                 arrow_y,
                 row.synthetic_mean,
                 row.original_accuracy,
                 color="black",
-                linewidth=1.2,
+                linewidth=1.4,
                 zorder=6,
             )
             ax.vlines(
@@ -323,7 +351,7 @@ def plot_distributions(
                 arrow_y - cap_height,
                 arrow_y + cap_height,
                 color="black",
-                linewidth=1.2,
+                linewidth=1.4,
                 zorder=6,
             )
         else:
@@ -334,7 +362,7 @@ def plot_distributions(
                 arrowprops={
                     "arrowstyle": "<->",
                     "color": "black",
-                    "linewidth": 1.2,
+                    "linewidth": 1.4,
                     "shrinkA": 2,
                     "shrinkB": 2,
                 },
@@ -343,10 +371,11 @@ def plot_distributions(
         midpoint = (row.original_accuracy + row.synthetic_mean) / 2
         ax.text(
             midpoint,
-            arrow_y + peak_density * 0.045,
-            f"performance gap ({row.shift_pp:+.1f} pp)",
+            arrow_y + peak_density * 0.04,
+            f"gap {row.shift_pp:+.1f} pp",
             color="black",
-            fontsize=10,
+            fontsize=12,
+            fontweight="bold",
             ha="center",
             va="bottom",
             zorder=7,
@@ -357,23 +386,43 @@ def plot_distributions(
             rotation=0,
             ha="right",
             va="center",
-            labelpad=70,
-            fontsize=13,
-            fontweight="semibold",
+            labelpad=15,
+            fontsize=14,
+            fontweight="bold",
         )
-        ax.set_ylim(0, peak_density * 1.32)
-        ax.grid(axis="y", color=GRID_COLOR, linewidth=0.7, alpha=0.65)
+        ax.set_ylim(0, peak_density * 1.40)
+        ax.grid(axis="y", color=GRID_COLOR, linewidth=0.8, alpha=0.65)
         ax.set_axisbelow(True)
-        ax.tick_params(axis="y", labelsize=9)
+        ax.tick_params(axis="y", labelsize=11)
 
-    axes[-1].set_xlim(0, 1)
-    axes[-1].xaxis.set_major_formatter(PercentFormatter(1))
-    axes[-1].tick_params(axis="x", labelsize=10)
-    axes[-1].set_xlabel("Exact-answer accuracy", fontsize=13, labelpad=10)
-    fig.supylabel("Density", fontsize=13, x=0.03)
+    # Compute model-specific accuracy bounds (zoomed xlim per model)
+    all_vals: list[float] = []
+    for row in stats:
+        set_means, _, _ = distributions[row.language]
+        all_vals.extend(set_means)
+        all_vals.append(row.original_accuracy)
+
+    if all_vals:
+        data_min = float(np.min(all_vals))
+        data_max = float(np.max(all_vals))
+        pad = max(0.04, (data_max - data_min) * 0.08)
+        xmin = max(0.0, float(np.floor((data_min - pad) * 20) / 20))
+        xmax = min(1.0, float(np.ceil((data_max + pad) * 20) / 20))
+        if xmax - xmin < 0.20:
+            mid = (xmin + xmax) / 2
+            xmin = max(0.0, float(np.floor((mid - 0.10) * 20) / 20))
+            xmax = min(1.0, float(np.ceil((mid + 0.10) * 20) / 20))
+    else:
+        xmin, xmax = 0.0, 1.0
+
+    axes[-1].set_xlim(xmin, xmax)
+    axes[-1].xaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+    axes[-1].tick_params(axis="x", labelsize=14, pad=5)
+    axes[-1].set_xlabel("Exact-answer accuracy", fontsize=21, fontweight="bold", labelpad=10)
+    fig.supylabel("Density", fontsize=21, fontweight="bold", x=supylabel_x)
     fig.text(
-        0.08,
-        0.985,
+        left_margin,
+        title_y,
         f"{scope_label} | one random variant per template in each sampled set",
         fontsize=11,
         color="#596579",
@@ -388,7 +437,7 @@ def plot_distributions(
             color=ORIGINAL_COLOR,
             marker="|",
             markersize=15,
-            markeredgewidth=2.4,
+            markeredgewidth=2.8,
             linewidth=0,
             label="Original benchmark accuracy",
         ),
@@ -403,16 +452,22 @@ def plot_distributions(
     axes[0].legend(
         handles=legend_handles,
         loc="upper right",
-        bbox_to_anchor=(1, 1.42),
+        bbox_to_anchor=(1.0, legend_y),
         frameon=False,
-        ncol=3,
-        fontsize=10,
-        handlelength=1.8,
-        columnspacing=1.7,
+        ncol=2,
+        fontsize=13,
+        handlelength=1.4,
+        columnspacing=1.3,
     )
 
-    fig.tight_layout(rect=(0.045, 0.03, 1, 0.955))
-    fig.savefig(out_png, dpi=220, bbox_inches="tight", facecolor="white")
+    fig.subplots_adjust(
+        left=left_margin,
+        right=right_margin,
+        top=top_margin,
+        bottom=bottom_margin,
+        hspace=hspace,
+    )
+    fig.savefig(out_png, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
 
@@ -435,13 +490,53 @@ def write_summary(stats: list[PlotStats], out_csv: Path) -> None:
     ).to_csv(out_csv, index=False)
 
 
+def plot_headline_figure(
+    problems: pd.DataFrame,
+    headline_model: str = "Qwen2.5-7B-Instruct",
+    headline_languages: list[str] | None = None,
+    n_sets: int = 2_000,
+    seed: int = 42,
+    out_root: Path = DEFAULT_OUT_DIR,
+) -> None:
+    if headline_languages is None:
+        headline_languages = ["eng", "zho", "isl"]
+
+    model_problems = problems[problems["model"] == headline_model]
+    if model_problems.empty:
+        available_models = sorted(problems["model"].unique())
+        if not available_models:
+            return
+        headline_model = available_models[0]
+        model_problems = problems[problems["model"] == headline_model]
+
+    avail_langs = [l for l in headline_languages if l in model_problems["language"].unique()]
+    if len(avail_langs) < 3:
+        all_avail = language_order(set(model_problems["language"].unique()))
+        avail_langs = all_avail[:3]
+
+    curves, stats = collect_plot_data(model_problems, avail_langs, n_sets, seed)
+    if not stats:
+        return
+
+    out_png = out_root / "ridgeline_selected.png"
+    out_root.mkdir(parents=True, exist_ok=True)
+    plot_distributions(curves, stats, headline_model, out_png)
+    print(f"Saved headline figure {out_png}")
+
+    fig_out = REPO_ROOT / "paper" / "artifacts" / "figures" / "ridgeline_selected.png"
+    fig_out.parent.mkdir(parents=True, exist_ok=True)
+    import shutil
+    shutil.copy(out_png, fig_out)
+    print(f"Saved headline figure {fig_out}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--log-dir",
+        "--analysis",
         type=Path,
-        default=DEFAULT_LOG_DIR,
-        help="Directory searched recursively for Inspect .eval logs.",
+        default=DEFAULT_ANALYSIS,
+        help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument(
         "--model",
@@ -469,10 +564,21 @@ def main() -> None:
         help="Optional filename prefix; model identifiers are always appended.",
     )
     parser.add_argument(
+        "--headline-model",
+        default="Qwen2.5-7B-Instruct",
+        help="Model to use for the compact 3-curve headline figure (ridgeline_selected.png).",
+    )
+    parser.add_argument(
+        "--headline-languages",
+        nargs="+",
+        default=["eng", "zho", "isl"],
+        help="Language codes for the compact 3-curve headline figure.",
+    )
+    parser.add_argument(
         "--workers",
         type=int,
-        default=8,
-        help="Workers used for header scans and full log loading; use 1 to disable parallelism.",
+        default=2,
+        help="Workers used for header scans and log loading; defaults to 2 for strict memory ceiling.",
     )
     args = parser.parse_args()
 
@@ -481,14 +587,12 @@ def main() -> None:
     if args.workers < 1:
         parser.error("--workers must be at least 1")
 
-    paths = discover_selected_logs(args.log_dir, args.model, args.workers)
-    if not paths:
-        requested = f" for models {args.model!r}" if args.model else ""
-        raise SystemExit(f"No successful logs found{requested} in {args.log_dir}.")
-
-    print(f"Selected {len(paths)} successful logs after deduplication.")
-    print(f"Loading logs with {args.workers} worker process(es).")
-    problems = load_problem_scores(paths, args.scorer, args.workers)
+    problems = pd.read_parquet(
+        args.analysis, columns=["model", "language", "split", "id", "source_id", "correct"]
+    ).rename(columns={"id": "sample_id"})
+    problems = problems[problems["language"] != "uncorrected_isl"]
+    if args.model:
+        problems = problems[problems["model"].str.lower().isin({model.lower() for model in args.model})]
     if problems.empty:
         raise SystemExit("No scored samples found in the selected logs.")
 
@@ -498,6 +602,17 @@ def main() -> None:
     print(f"Languages ({len(all_languages)}): {', '.join(all_languages)}")
 
     output_root = DEFAULT_OUT_DIR
+    plot_headline_figure(
+        problems,
+        headline_model=args.headline_model,
+        headline_languages=args.headline_languages,
+        n_sets=args.samples,
+        seed=args.seed,
+        out_root=output_root,
+    )
+    import gc
+    gc.collect()
+
     for model_index, model in enumerate(models):
         model_problems = problems[problems["model"] == model]
         model_languages = language_order(
@@ -512,6 +627,8 @@ def main() -> None:
         )
         if not stats:
             print(f"Skipping {model}: no languages have paired original and synthetic results.")
+            del model_problems
+            gc.collect()
             continue
 
         family = model_family(model)
@@ -520,13 +637,12 @@ def main() -> None:
         model_slug = path_slug(model)
         base_name = f"{path_slug(args.output_name)}-{model_slug}" if args.output_name else model_slug
         out_png = out_dir / f"{base_name}.png"
-        out_csv = out_dir / f"{base_name}.csv"
 
         plot_distributions(curves, stats, model, out_png)
-        write_summary(stats, out_csv)
-
         print(f"Saved {out_png}")
-        print(f"Saved {out_csv}")
+
+        del curves, stats, model_problems
+        gc.collect()
 
 
 if __name__ == "__main__":
