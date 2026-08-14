@@ -16,11 +16,12 @@ id_orig = 976
 id_shuffled = 16
 
 question_annotated = """
-{name, Kristian} säljer {food,pepparkakor} och {fruit,äppel}paj för en insamlingskampanj. På {d1,lördag}en sålde han {n1,10} lådor {food,pepparkakor} och {m1,4} färre lådor {fruit,äppel}paj än på {d2,söndag}en. På {d2,söndag}en sålde han ytterligare {n2,5} lådor {food,pepparkakor} än på {d1,lördag}en och {m2,15} lådor {fruit,äppel}paj. Om {food,pepparkakor} kostar {cn,6} {cur,kronor} och {fruit,äppel}pajer kostar {cm,15} {cur,kronor}, hur mycket tjänade {name,Kristian} på två dagar?
+{name, Kristian} säljer {food,pepparkakor} och {fruit_stem,äppel}paj för en insamlingskampanj. På {d1,lördag}en sålde han {n1,10} lådor {food,pepparkakor} och {m1,4} färre lådor {fruit_stem,äppel}paj än på {d2,söndag}en. På {d2,söndag}en sålde han ytterligare {n2,5} lådor {food,pepparkakor} än på {d1,lördag}en och {m2,15} lådor {fruit_stem,äppel}paj. Om {food,pepparkakor} kostar {cn,6} {cur,kronor} och {fruit_stem,äppel}pajer kostar {cm,15} {cur,kronor}, hur mycket tjänade {name,Kristian} på två dagar?
 
 #init:
 - name = sample(names_male)
 - fruit, fruit_plural = sample(fruits)
+- fruit_stem = "äppel" if fruit == "äpple" else fruit
 - cur = sample(currencies_sym)
 - food = sample(["pepparkakor", "brownies", "kanelbullar", "wienerbröd"])
 - d1, d2 = sample_sequential(weekdays, 2)
@@ -41,9 +42,9 @@ answer_annotated = """
 Han sålde {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} lådor {food} på {d2}en.
 Det totala antalet lådor {food} som {name} sålde är {n1} + {n1+n2} = <<{n1}+{n1+n2}={2*n1+n2}>>{n1+n1+n2}.
 {name} tjänade {n1+n1+n2}*{cn} {cur} = <<{n1+n1+n2}*{cn}={(n1+n1+n2)*cn}>>{(n1+n1+n2)*cn} {cur} på att sälja {food}.
-Han sålde {m2} - {m1} = <<{m2}-{m1}={m2-m1}>>{m2-m1} lådor {fruit}paj på {d1}en.
-Det totala antalet lådor {fruit}paj som {name} sålde är {m2} + {m2-m1} = <<{m2}+{m2-m1}={2*m2-m1}>>{2*m2-m1}.
-Han tjänade {2*m2-m1}*{cm} {cur} = <<{2*m2-m1}*{cm}={(2*m2-m1)*cm}>>{(2*m2-m1)*cm} {cur} på att sälja {fruit}paj.
+Han sålde {m2} - {m1} = <<{m2}-{m1}={m2-m1}>>{m2-m1} lådor {fruit_stem}paj på {d1}en.
+Det totala antalet lådor {fruit_stem}paj som {name} sålde är {m2} + {m2-m1} = <<{m2}+{m2-m1}={2*m2-m1}>>{2*m2-m1}.
+Han tjänade {2*m2-m1}*{cm} {cur} = <<{2*m2-m1}*{cm}={(2*m2-m1)*cm}>>{(2*m2-m1)*cm} {cur} på att sälja {fruit_stem}paj.
 Så {name} tjänade {(n1+n1+n2)*cn} {cur} + {(2*m2-m1)*cm} {cur} = <<{(n1+n1+n2)*cn}+{(2*m2-m1)*cm}={(2*n1+n2)*cn + (2*m2-m1)*cm}>>{(2*n1+n2)*cn + (2*m2-m1)*cm} {cur} på två dagar.
 #### {(2*n1+n2)*cn + (2*m2-m1)*cm}
 """
