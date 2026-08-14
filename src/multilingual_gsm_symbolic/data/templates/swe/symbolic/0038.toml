@@ -1,0 +1,42 @@
+question = "Ett bröd på bageriet kostar 30 kronor. Bagels kostar 10 kronor styck. Hur mycket mer kostar 3 bröd än 2 bagels?"
+
+answer = """
+3 bröd kostar 3 * 30 kronor = <<3*30=90>>90 kronor.
+2 bagels kostar 2 * 10 kronor = <<2*10=20>>20 kronor.
+Bröden kostar 90 kronor - 20 kronor = <<90-20=70>>70 kronor mer än bagels.
+#### 70
+"""
+
+id_orig = 799
+
+id_shuffled = 38
+
+question_annotated = """
+Ett {item1,bröd} på {shop,bageriet} kostar {price1,30} {cur,kronor}. {item2,bagels} kostar {price2,10} {cur,kronor} styck. Hur mycket mer kostar {n1,3} {item1,bröd} än {n2,2} {item2,bagels}?
+
+#init:
+- item1 = sample(["bröd", "surdegsbröd", "rågbröd"])
+- item2 = sample(["bagels", "muffins", "croissanter", "småkakor"])
+- shop = sample(["bageriet", "kaféet", "livsmedelsbutiken", "kiosken"])
+- cur = sample(currencies_sym)
+- $price1 = range(30, 100)
+- $price2 = range(10, 35)
+- $n1 = range(2, 10)
+- $n2 = range(2, 10)
+
+#conditions:
+- n1 * price1 > n2 * price2
+
+#answer: n1 * price1 - n2 * price2
+"""
+
+answer_annotated = """
+{n1} {item1} kostar {n1} * {price1} {cur} = <<{n1}*{price1}={n1*price1}>>{n1*price1} {cur}.
+{n2} {item2} kostar {n2} * {price2} {cur} = <<{n2}*{price2}={n2*price2}>>{n2*price2} {cur}.
+{item1}en kostar {n1*price1} {cur} - {n2*price2} {cur} = <<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} {cur} mer än {item2}.
+#### {n1*price1-n2*price2}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

@@ -1,0 +1,42 @@
+question = "Erik har 130,2 kronor och vill köpa 16 bultar ur en låda på byggmarknaden. Varje bult kostar 0,2 kronor. Hur mycket pengar har Erik kvar efter att ha betalat för bultarna?"
+
+answer = """
+Erik betalade 16*0,2 kronor = <<16*0,2=3,2>>3,2 kronor för bultarna.
+Erik har 130,2 kronor - 3,2 kronor = 127 kronor kvar.
+#### 127
+"""
+
+id_orig = 873
+
+id_shuffled = 30
+
+question_annotated = """
+{name,Erik} har {initial_amount,130.2} {cur,kronor} och vill köpa {quantity,16} {item_plural,bultar} ur en låda på {store_type,byggmarknaden}. Varje {item,bult} kostar {unit_price,0.2} {cur,kronor}. Hur mycket pengar har {name,Erik} kvar efter att ha betalat för {item_plural,bultar}na?
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- item, item_plural = sample([("bult", "bultar"), ("skruv", "skruvar"), ("bricka", "brickor"), ("mutter", "muttrar"), ("expanderplugg", "expanderpluggar")])
+- store_type = sample(["byggmarknaden", "järnhandeln", "byggvaruhuset"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(85.5, 175, 5.5)
+- $unit_price = arange(0.2, 4.8, 0.1)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: round(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name} betalade {quantity}*{round(unit_price,2)} {cur} = <<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} {cur} för {item_plural}na.
+{name} har {initial_amount} {cur} - {round(quantity*unit_price,2)} {cur} = {round(initial_amount - quantity * unit_price)} {cur} kvar.
+#### {round(initial_amount - quantity * unit_price)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

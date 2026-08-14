@@ -1,0 +1,47 @@
+question = "Fru Andersson letar efter ett hus som inte får överstiga hennes budget på 2.700.000 kronor. Hon såg en fastighet med ett utgångspris på 2.370.000 kronor. Utöver det måste köparen betala ett mäklararvode som är 5 % av försäljningspriset och även en överlåtelseavgift som är 12 % av försäljningspriset. Hur mycket högre är husets totalpris än fru Anderssons budget?"
+
+answer = """
+Mäklararvodet är 2.370.000 kronor*5/100 = <<2370000*5/100=118500>>118.500 kronor.
+Överlåtelseavgiften är 2.370.000 kronor*12/100 = <<2370000*12/100=284400>>284.400 kronor.
+Husets totalpris är 2.370.000 kronor + 118.500 kronor + 284.400 kronor = 2.772.900 kronor.
+Alltså är det 2.772.900 kronor - 2.700.000 kronor = <<2772900-2700000=72900>>72.900 kronor mer än fru Anderssons budget.
+#### 72900
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name,Fru Andersson} letar efter {property_article,ett} {property,hus} som inte får överstiga hennes budget på {budget,2700000} kronor. Hon såg en fastighet med ett utgångspris på {price,2370000} kronor. Utöver det måste köparen betala ett mäklararvode som är {brokerage_fee,5} % av försäljningspriset och även en överlåtelseavgift som är {transfer_fee,12} % av försäljningspriset. Hur mycket högre är {property_definite,huset}s totalpris än {name_genitive,fru Anderssons} budget?
+
+#init:
+- name, name_genitive = sample([("Fru Andersson", "fru Anderssons"), ("Fröken Lindqvist", "fröken Lindqvists"), ("Doktor Sjöberg", "doktor Sjöbergs"), ("Fru Ek", "fru Eks")])
+- property_article, property, property_definite = sample([("ett", "hus", "huset"), ("en", "lägenhet", "lägenheten"), ("ett", "radhus", "radhuset"), ("en", "bostadsrätt", "bostadsrätten")])
+- $budget = range(2000000, 3410000, 100000)
+- $price = range(1700000, 3050000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)
+"""
+
+answer_annotated = """
+Mäklararvodet är {price} kronor*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} kronor.
+Överlåtelseavgiften är {price} kronor*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} kronor.
+{property_definite}s totalpris är {price} kronor + {int(price*brokerage_fee/100)} kronor + {int(price*transfer_fee/100)} kronor = {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kronor.
+Alltså är det {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kronor - {budget} kronor = <<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} kronor mer än {name_genitive} budget.
+#### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

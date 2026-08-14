@@ -1,0 +1,41 @@
+question = "Klara och Matilda är systrar från Stockholm som älskar att samla autografer från kändisar. Under sitt sommarlov ägnar systrarna varje eftermiddag åt att samla autografer. Efter fem veckor jämför Klara och Matilda sina autografböcker och räknar antalet autografer som varje syster har samlat in. Klara har 20 autografer i sin autografbok och Matilda har 44. Systrarna har tre veckor kvar av sommarlovet och de bestämmer sig för att de tillsammans vill nå 100 autografer innan lovet är slut. Hur många autografer måste systrarna samla in för att nå sitt mål?"
+
+answer = """
+Klara och Matilda har redan samlat in 20 + 44 autografer = <<20+44=64>>64 autografer.
+Eftersom deras mål är 100 måste de samla in 100 - 64 autografer. 100 - 64 = <<100-64=36>>36 autografer.
+#### 36
+"""
+
+id_orig = 677
+
+id_shuffled = 33
+
+question_annotated = """
+{name1,Klara} och {name2,Matilda} är systrar från {city,Stockholm} som älskar att samla autografer från {celebrity_type,kändisar}. Under sitt {vacation,sommarlov} ägnar systrarna varje eftermiddag åt att samla autografer. Efter {n1_txt,fem} veckor jämför {name1,Klara} och {name2,Matilda} sina autografböcker och räknar antalet autografer som varje syster har samlat in. {name1,Klara} har {s1,20} autografer i sin autografbok och {name2,Matilda} har {s2,44}. Systrarna har {n2_txt,tre} veckor kvar av {vacation_definite,sommarlovet} och de bestämmer sig för att de tillsammans vill nå {goal,100} autografer innan lovet är slut. Hur många autografer måste systrarna samla in för att nå sitt mål?
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- city = sample(cities)
+- celebrity_type = sample(["kändisar", "filmstjärnor", "idrottare", "musiker", "författare"])
+- vacation, vacation_definite = sample([("sommarlov", "sommarlovet"), ("vinterlov", "vinterlovet"), ("påsklov", "påsklovet"), ("höstlov", "höstlovet")])
+- n1_txt, n1_val = range_str(3, 8, 1, numbers)
+- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+- $s1 = range(15, 40)
+- $s2 = range(30, 60)
+- $goal = range(90, 150, 5)
+
+#conditions:
+- s1 + s2 < goal
+
+#answer: goal - (s1 + s2)
+"""
+
+answer_annotated = """
+{name1} och {name2} har redan samlat in {s1} + {s2} autografer = <<{s1}+{s2}={s1+s2}>>{s1+s2} autografer.
+Eftersom deras mål är {goal} måste de samla in {goal} - {s1+s2} autografer. {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} autografer.
+#### {goal-(s1+s2)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

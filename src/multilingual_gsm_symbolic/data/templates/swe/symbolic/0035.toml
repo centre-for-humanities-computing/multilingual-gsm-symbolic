@@ -1,0 +1,44 @@
+question = "Erik samlar in pengar till en skolresa. Han har ansökt om hjälp från skolan, som har beslutat att täcka hälften av kostnaden för skolresan. Hur mycket pengar saknar Erik om han har 350 kronor och skolresan kostar 2000 kronor?"
+
+answer = """
+Skolan har beslutat att betala 2000*1/2=<<2000*1/2=1000>>1000 kronor för hans skolresa.
+Sammanlagt har Erik täckt 1000 + 350 = <<1000+350=1350>>1350 kronor av skolresan.
+Därför behöver Erik 2000 - 1350 = <<2000-1350=650>>650 kronor till för skolresan.
+#### 650
+"""
+
+id_orig = 788
+
+id_shuffled = 35
+
+question_annotated = """
+{name,Erik} samlar in pengar till en {event,skolresa}. Han har ansökt om hjälp från {organization,skolan}, som har beslutat att täcka {fraction_txt,hälften} av kostnaden för {event_definite,skolresan}. Hur mycket pengar saknar {name,Erik} om han har {current,350} {cur,kronor} och {event_definite,skolresan} kostar {total,2000} {cur,kronor}?
+
+#init:
+- name = sample(names_male)
+- event, event_definite = sample([("skolresa", "skolresan"), ("utflykt", "utflykten"), ("idrottsturnering", "idrottsturneringen"), ("konferens", "konferensen"), ("musikfestival", "musikfestivalen"), ("vetenskapsmässa", "vetenskapsmässan")])
+- cur = sample(currencies_sym)
+- organization = sample(["skolan", "kommunen", "den lokala välgörenhetsorganisationen", "ungdomsklubben", "föräldraföreningen"])
+- $fraction_txt, fraction_val = sample(fraction_alnum)
+- $current = range(50, 1350, 50)
+- $total = range(1350, 7000, 50)
+
+#conditions:
+- total > current
+- total - (total * fraction_val + current) > 0
+- is_int(total * (fraction_val))
+- is_int(total - (total * (fraction_val) + current))
+
+#answer: total - (total * (fraction_val) + current)
+"""
+
+answer_annotated = """
+{organization} har beslutat att betala {total}*{fraction_val}=<<{total}*{(fraction_val)}={total*(fraction_val)}>>{total*(fraction_val)} {cur} för hans {event}.
+Sammanlagt har {name} täckt {total*(fraction_val)} + {current} = <<{total*(fraction_val)}+{current}={total*(fraction_val)+current}>>{total*(fraction_val)+current} {cur} av {event_definite}.
+Därför behöver {name} {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*(fraction_val)+current)}>>{total-(total*(fraction_val)+current)} {cur} till för {event_definite}.
+#### {total-(total*(fraction_val)+current)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"
