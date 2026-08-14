@@ -1,0 +1,39 @@
+question = "Erik får 80 mejl om dagen. 20 % av dessa mejl kräver inget svar. Han svarar på resten av dem. Hur många mejl svarar Erik på under en arbetsvecka på 5 dagar?"
+
+answer = """
+Erik får 80*20/100=<<80*20/100=16>>16 mejl som inte kräver något svar.
+Alltså svarar han på 80-16=<<80-16=64>>64 mejl per dag.
+Under en arbetsvecka på 5 dagar svarar Erik alltså på 64*5=<<64*5=320>>320 mejl.
+#### 320
+"""
+
+id_orig = 1063
+
+id_shuffled = 27
+
+question_annotated = """
+{name,Erik} får {n,80} mejl om dagen. {p,20} % av dessa mejl kräver inget svar. Han svarar på resten av dem. Hur många mejl svarar {name,Erik} på under en arbetsvecka på {d,5} dagar?
+
+#init:
+- name = sample(names_male)
+- $n = range(50, 200)
+- $p = range(5, 40)
+- $d = range(3, 7)
+
+#conditions:
+- is_int(n * p / 100)
+- is_int(n * (100 - p) / 100)
+
+#answer: d * (n * (100 - p) / 100)
+"""
+
+answer_annotated = """
+{name} får {n}*{p}/100=<<{n}*{p}/100={n*p//100}>>{n*p//100} mejl som inte kräver något svar.
+Alltså svarar han på {n}-{n*p//100}=<<{n}-{n*p//100}={n*(100-p)//100}>>{n*(100-p)//100} mejl per dag.
+Under en arbetsvecka på {d} dagar svarar {name} alltså på {n*(100-p)//100}*{d}=<<{n*(100-p)/100}*{d}={d*(n*(100-p)//100)}>>{d*(n*(100-p)//100)} mejl.
+#### {d*(n*(100-p)//100)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

@@ -1,0 +1,46 @@
+question = "I Anderssons klass med 30 elever är 20 % av klassen fotbollsspelare. Av de återstående eleverna är 25 % cheerleaders eller körmedlemmar. Dessa 3 grupper av elever måste lämna skolan tidigt i dag för att åka till en bortamatch. Hur många elever lämnar skolan tidigt?"
+
+answer = """
+20 % av de 30 eleverna i klassen är fotbollsspelare, alltså 0,2*30 = <<0,2*30=6>>6 elever.
+Det finns 30 elever och 6 är fotbollsspelare, så det återstår 30-6 = <<30-6=24>>24 elever.
+25 % av de återstående 24 eleverna är körmedlemmar eller cheerleaders, alltså 0,25*24 = <<0,25*24=6>>6 elever.
+6 elever är fotbollsspelare och 6 är körmedlemmar/cheerleaders, så 6+6 = <<6+6=12>>12 elever lämnar skolan tidigt.
+#### 12
+"""
+
+id_orig = 982
+
+id_shuffled = 25
+
+question_annotated = """
+I {lärare,Andersson}s klass med {total,30} elever är {p1,20} % av klassen {grupp1,fotbollsspelare}. Av de återstående eleverna är {p2,25} % {grupp2,cheerleaders} eller {grupp3,körmedlemmar}. Dessa 3 grupper av elever måste lämna skolan tidigt i dag för att åka till {event,en bortamatch}. Hur många elever lämnar skolan tidigt?
+
+#init:
+- lärare = sample(["Andersson", "Johansson", "Karlsson", "Bergström"])
+- grupp1 = sample(["fotbollsspelare", "basketspelare", "volleybollspelare", "simmare"])
+- grupp2, grupp3 = sample(["dansare", "körmedlemmar", "cheerleaders"], 2)
+- event = sample(["en bortamatch", "en tävling", "en turnering", "en föreställning", "ett stafettlopp"])
+- $total = range(20, 150)
+- $p1 = range(10, 50)
+- $p2 = range(15, 45)
+
+#conditions:
+- p1 < 100
+- p2 < 100
+- is_int(total * p1 / 100)
+- is_int((total - total * p1 / 100) * p2 / 100)
+
+#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)
+"""
+
+answer_annotated = """
+{p1} % av de {total} eleverna i klassen är {grupp1}, alltså {p1/100}*{total} = <<{p1/100}*{total}={int(total*p1/100)}>>{int(total*p1/100)} elever.
+Det finns {total} elever och {int(total*p1/100)} är {grupp1}, så det återstår {total}-{int(total*p1/100)} = <<{total}-{int(total*p1/100)}={total-int(total*p1/100)}>>{total-int(total*p1/100)} elever.
+{p2} % av de återstående {total-int(total*p1/100)} eleverna är {grupp3} eller {grupp2}, alltså {p2/100}*{total-int(total*p1/100)} = <<{p2/100}*{total-int(total*p1/100)}={int((total-int(total*p1/100))*p2/100)}>>{int((total-int(total*p1/100))*p2/100)} elever.
+{int(total*p1/100)} elever är {grupp1} och {int((total-int(total*p1/100))*p2/100)} är {grupp3}/{grupp2}, så {int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)} = <<{int(total*p1/100)}+{int((total-int(total*p1/100))*p2/100)}={int(total*p1/100 + (total-int(total*p1/100))*p2/100)}>>{int(total*p1/100 + (total-int(total*p1/100))*p2/100)} elever lämnar skolan tidigt.
+#### {int(total*p1/100 + (total-int(total*p1/100))*p2/100)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

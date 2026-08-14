@@ -1,0 +1,39 @@
+question = "En pappa äter 5 smörgåsar om dagen, hans fru äter 4 smörgåsar om dagen och deras son äter 2 smörgåsar om dagen. Hur många smörgåsar äter den här familjen på en vecka?"
+
+answer = """
+Antalet smörgåsar de äter på en dag är 5 + 4 + 2 = <<5+4+2=11>>11 smörgåsar.
+Antalet smörgåsar de äter på en vecka är 11 * 7 = <<11*7=77>>77 smörgåsar.
+#### 77
+"""
+
+id_orig = 1023
+
+id_shuffled = 26
+
+question_annotated = """
+{name1,En pappa} äter {n1,5} {food,smörgåsar} om {time_unit,dag}en, {name2,hans fru} äter {n2,4} {food,smörgåsar} om {time_unit,dag}en och deras {relation,son} äter {n3,2} {food,smörgåsar} om {time_unit,dag}en. Hur många {food,smörgåsar} äter den här familjen på en {time_period,vecka}{placeholder_txt,?}
+
+#init:
+- name1 = sample(["En pappa", "En farfar", "En farbror"])
+- name2 = sample(["hans fru", "hans partner", "hans maka"])
+- relation = sample(["dotter", "son", "barnbarn"])
+- food = sample(["smörgåsar", "pizzor", "burritos", "tacos", "hamburgare"])
+- time_unit = sample(["dag"])
+- time_period = sample(["vecka", "månad"])
+- placeholder_txt = "? Anta att en månad har 30 dagar." if time_period == "månad" else "?"
+- $n1 = range(2, 9)
+- $n2 = range(2, 9)
+- $n3 = range(2, 9)
+
+#answer: (n1 + n2 + n3) * (7 if time_period == "vecka" else 30)
+"""
+
+answer_annotated = """
+Antalet {food} de äter på en {time_unit} är {n1} + {n2} + {n3} = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} {food}.
+Antalet {food} de äter på en {time_period} är {n1+n2+n3} * {7 if time_period == "vecka" else 30} = <<{n1+n2+n3}*{7 if time_period == "vecka" else 30}={(n1+n2+n3)*(7 if time_period == "vecka" else 30)}>>{(n1+n2+n3)*(7 if time_period == "vecka" else 30)} {food}.
+#### {(n1+n2+n3)*(7 if time_period == "vecka" else 30)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"
