@@ -1,0 +1,49 @@
+question = "Petter vill göra isbitar av olika storlekar med 32 gram vatten. Han kan göra stora isbitar som använder 4 gram per bit, medelstora isbitar som använder 2 gram och små isbitar som använder 1/2 gram. Om han gör 3 stora isbitar, 7 medelstora isbitar och 8 små isbitar, hur många gram vatten har han kvar?"
+
+answer = """
+De stora isbitarna använde 12 gram vatten, eftersom 3 gånger 4 är lika med <<3*4=12>>12.
+De medelstora isbitarna använde 14 gram vatten, eftersom 7 gånger 2 är lika med <<7*2=14>>14.
+De små isbitarna använde 4 gram vatten, eftersom 8 gånger 1/2 är lika med 4.
+Detta betyder att Petter har använt 30 gram vatten, eftersom 12 plus 14 plus 4 är lika med 30.
+Petter har 2 gram vatten kvar, eftersom 32 minus 30 är lika med <<32-30=2>>2.
+#### 2
+"""
+
+id_orig = 737
+
+id_shuffled = 11
+
+question_annotated = """
+{name, Petter} vill göra isbitar av olika storlekar med {n,32} {unit,gram} vatten. Han kan göra stora isbitar som använder {w1,4} {unit,gram} per bit, medelstora isbitar som använder {w2,2} {unit,gram} och små isbitar som använder {w3,1/2} {unit,gram}. Om han gör {n1,3} stora isbitar, {n2,7} medelstora isbitar och {n3,8} små isbitar, hur många {unit,gram} vatten har han kvar?
+
+#init:
+- name = sample(names_male)
+- unit = sample(weights_sm)
+- $w1 = range(4, 10)
+- $w2 = range(2, 10)
+- $w3 = sample(fractions)
+- $n1 = range(3, 10)
+- $n2 = range(7, 13)
+- $n3 = sample([8, 14, 24, 15])
+- $n = range(32, 240, 4)
+
+#conditions:
+- w3 < w2 < w1
+- is_int(n3 * w3)
+- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0
+
+#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))
+"""
+
+answer_annotated = """
+De stora isbitarna använde {n1*w1} {unit} vatten, eftersom {n1} gånger {w1} är lika med <<{n1}*{w1}={n1*w1}>>{n1*w1}.
+De medelstora isbitarna använde {n2*w2} {unit} vatten, eftersom {n2} gånger {w2} är lika med <<{n2}*{w2}={n2*w2}>>{n2*w2}.
+De små isbitarna använde {int(w3*n3)} {unit} vatten, eftersom {n3} gånger {w3} är lika med {int(n3*w3)}.
+Detta betyder att {name} har använt {int(n3*w3+n2*w2+n1*w1)} {unit} vatten, eftersom {n1*w1} plus {n2*w2} plus {int(w3*n3)} är lika med {int(n3*w3+n2*w2+n1*w1)}.
+{name} har {(n - (n1*w1) - (n2*w2) - int(n3*w3))} {unit} vatten kvar, eftersom {n} minus {int(n3*w3+n2*w2+n1*w1)} är lika med <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{(n - (n1*w1) - (n2*w2) - int(n3*w3))}.
+#### {(n - (n1*w1) - (n2*w2) - int(n3*w3))}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

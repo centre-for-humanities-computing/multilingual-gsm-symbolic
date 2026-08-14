@@ -1,0 +1,53 @@
+question = "Kristian säljer pepparkakor och äpplepaj för en insamlingskampanj. På lördagen sålde han 10 lådor pepparkakor och 4 färre lådor äpplepaj än på söndagen. På söndagen sålde han ytterligare 5 lådor pepparkakor än på lördagen och 15 lådor äpplepaj. Om pepparkakor kostar 6 kronor och äpplepajer kostar 15 kronor, hur mycket tjänade Kristian på två dagar?"
+
+answer = """
+Han sålde 10 + 5 = <<10+5=15>>15 lådor pepparkakor på söndagen.
+Det totala antalet lådor pepparkakor som Kristian sålde är 10 + 15 = <<10+15=25>>25.
+Kristian tjänade 25*6 kronor = <<25*6=150>>150 kronor på att sälja pepparkakor.
+Han sålde 15 - 4 = <<15-4=11>>11 lådor äpplepaj på lördagen.
+Det totala antalet lådor äpplepaj som Kristian sålde är 15 + 11 = <<15+11=26>>26.
+Han tjänade 26*15 kronor = <<26*15=390>>390 kronor på att sälja äpplepaj.
+Så Kristian tjänade 150 kronor + 390 kronor = <<150+390=540>>540 kronor på två dagar.
+#### 540
+"""
+
+id_orig = 976
+
+id_shuffled = 16
+
+question_annotated = """
+{name, Kristian} säljer {food,pepparkakor} och {fruit,äpple}paj för en insamlingskampanj. På {d1,lördag}en sålde han {n1,10} lådor {food,pepparkakor} och {m1,4} färre lådor {fruit,äpple}paj än på {d2,söndag}en. På {d2,söndag}en sålde han ytterligare {n2,5} lådor {food,pepparkakor} än på {d1,lördag}en och {m2,15} lådor {fruit,äpple}paj. Om {food,pepparkakor} kostar {cn,6} {cur,kronor} och {fruit,äpple}pajer kostar {cm,15} {cur,kronor}, hur mycket tjänade {name,Kristian} på två dagar?
+
+#init:
+- name = sample(names_male)
+- fruit, fruit_plural = sample(fruits)
+- cur = sample(currencies_sym)
+- food = sample(["pepparkakor", "brownies", "kanelbullar", "wienerbröd"])
+- d1, d2 = sample_sequential(weekdays, 2)
+- $n1 = range(21, 30)
+- $n2 = range(11, 15)
+- $m1 = range(2, 20)
+- $m2 = range(15, 30)
+- $cn = range(7, 13)
+- $cm = range(20, 33)
+
+#conditions:
+- m1 < m2
+
+#answer: (2*n1+n2)*cn + (2*m2-m1)*cm
+"""
+
+answer_annotated = """
+Han sålde {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} lådor {food} på {d2}en.
+Det totala antalet lådor {food} som {name} sålde är {n1} + {n1+n2} = <<{n1}+{n1+n2}={2*n1+n2}>>{n1+n1+n2}.
+{name} tjänade {n1+n1+n2}*{cn} {cur} = <<{n1+n1+n2}*{cn}={(n1+n1+n2)*cn}>>{(n1+n1+n2)*cn} {cur} på att sälja {food}.
+Han sålde {m2} - {m1} = <<{m2}-{m1}={m2-m1}>>{m2-m1} lådor {fruit}paj på {d1}en.
+Det totala antalet lådor {fruit}paj som {name} sålde är {m2} + {m2-m1} = <<{m2}+{m2-m1}={2*m2-m1}>>{2*m2-m1}.
+Han tjänade {2*m2-m1}*{cm} {cur} = <<{2*m2-m1}*{cm}={(2*m2-m1)*cm}>>{(2*m2-m1)*cm} {cur} på att sälja {fruit}paj.
+Så {name} tjänade {(n1+n1+n2)*cn} {cur} + {(2*m2-m1)*cm} {cur} = <<{(n1+n1+n2)*cn}+{(2*m2-m1)*cm}={(2*n1+n2)*cn + (2*m2-m1)*cm}>>{(2*n1+n2)*cn + (2*m2-m1)*cm} {cur} på två dagar.
+#### {(2*n1+n2)*cn + (2*m2-m1)*cm}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

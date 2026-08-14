@@ -1,0 +1,46 @@
+question = "Sara gör popcorn som ett mellanmål. När pannan med majskärnorna blir varm börjar kärnorna poppa snabbare. 20 poppar under de första 30 sekunderna av tillagningen, därefter tre gånger så många under de nästa 30 sekunderna. Kärnorna ökar till fyra gånger den ursprungliga pophastigheten under de nästa 30 sekunderna, men under de sista 30 sekunderna avtar pophastigheten till hälften av hastigheten från de tidigare 30 sekunderna. Efter att Sara har tagit pannan från värmen poppar en fjärdedel av antalet kärnor som poppade under de sista 30 sekunderna av tillagningen på grund av den kvarvarande värmen. Hur många popcorn har Sara att äta?"
+
+answer = """
+Under de andra 30 sekunderna av tillagningen poppar 3*20=<<3*20=60>>60 kärnor.
+Under de tredje 30 sekunderna poppar 4*20=<<4*20=80>>80 kärnor.
+Under de sista 30 sekunderna poppar 80/2=<<80/2=40>>40 kärnor.
+Efter tillagningen gör den kvarvarande värmen att 40/4=<<40/4=10>>10 kärnor poppar.
+Alltså har Sara 20 + 60 + 80 + 40 + 10 = <<20+60+80+40+10=210>>210 popcorn att äta.
+#### 210
+"""
+
+id_orig = 1264
+
+id_shuffled = 4
+
+question_annotated = """
+{name,Sara} gör popcorn som ett mellanmål. När {p,pannan} med majskärnorna blir varm börjar kärnorna poppa snabbare. {n,20} poppar under de första {s,30} sekunderna av tillagningen, därefter {k_2_txt, tre} gånger så många under de nästa {s,30} sekunderna. Kärnorna ökar till {k_3_txt,fyra} gånger den ursprungliga pophastigheten under de nästa {s,30} sekunderna, men under de sista {s,30} sekunderna avtar pophastigheten till hälften av hastigheten från de tidigare {s,30} sekunderna. Efter att {name,Sara} har tagit {p,pannan} från värmen poppar en fjärdedel av antalet kärnor som poppade under de sista {s,30} sekunderna av tillagningen på grund av den kvarvarande värmen. Hur många popcorn har {name,Sara} att äta?
+
+
+#init:
+- name = sample(names)
+- p = sample(['pannan', 'grytan'])
+- $n = range(10, 101, 10)
+- $s = range(10, 31, 2)
+- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)
+- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)
+
+#conditions:
+- k_3_val > k_2_val
+- divides(k_3_val * n, 8)
+
+#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)
+"""
+
+answer_annotated = """
+Under de andra {s} sekunderna av tillagningen poppar {k_2_val}*{n}=<<{k_2_val}*{n}={k_2_val*n}>>{k_2_val*n} kärnor.
+Under de tredje {s} sekunderna poppar {k_3_val}*{n}=<<{k_3_val}*{n}={k_3_val*n}>>{k_3_val*n} kärnor.
+Under de sista {s} sekunderna poppar {k_3_val*n}/2=<<{k_3_val*n}/2={k_3_val*n//2}>>{k_3_val*n//2} kärnor.
+Efter tillagningen gör den kvarvarande värmen att {k_3_val*n//2}/4=<<{k_3_val*n//2}/4={k_3_val*n//8}>>{k_3_val*n//8} kärnor poppar.
+Alltså har {name} {n} + {k_2_val * n} + {k_3_val * n} + {k_3_val * n // 2} + {k_3_val * n // 8} = <<{n}+{k_2_val * n}+{k_3_val * n}+{k_3_val * n // 2}+{k_3_val * n // 8}={n+(k_2_val * n + k_3_val * n)+(k_3_val * n // 2) + (k_3_val * n // 8)}>>{n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)} popcorn att äta.
+#### {n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

@@ -1,0 +1,40 @@
+question = "Jakob och Jens har 30 minuter för att gå till skolan tillsammans. Det tar dem 6 minuter att komma till hörnet där biblioteket ligger. Det tar dem ytterligare 13 minuter att komma till brandstationen. Hur mycket tid har de kvar för att hinna till skolan utan att bli sena?"
+
+answer = """
+Jakob och Jens anländer till biblioteket med 30 - 6 = <<30-6=24>>24 minuter kvar för att hinna till brandstationen.
+Sedan anländer de till brandstationen och har 24 - 13 = <<24-13=11>>11 minuter kvar för att hinna till skolan utan att bli sena.
+#### 11
+"""
+
+id_orig = 684
+
+id_shuffled = 14
+
+question_annotated = """
+{n1,Jakob} och {n2,Jens} har {t,30} minuter för att gå till {loc1,skolan} tillsammans. Det tar dem {t1,6} minuter att komma till hörnet där {loc2,biblioteket} ligger. Det tar dem ytterligare {t2,13} minuter att komma till {loc3, brandstationen}. Hur mycket tid har de kvar för att hinna till {loc1,skolan} utan att bli sena?
+
+#init:
+- n1, n2 = sample(names, 2)
+- loc1, loc2, loc3 = sample(['skolan', 'köpcentret', 'biblioteket', 'parken', 'gymmet', 'banken', 'brandstationen'], 3)
+- $t1 = range(6, 30)
+- $t2 = range(10, 70)
+- $t = range(30, 140)
+
+#conditions:
+- not divides(t1, 5)
+- not divides(t2, 5)
+- not divides(t, 5)
+- t > t1 + t2
+
+#answer: t - t1 - t2
+"""
+
+answer_annotated = """
+{n1} och {n2} anländer till {loc2} med {t} - {t1} = <<{t}-{t1}={t-t1}>>{t-t1} minuter kvar för att hinna till {loc3}.
+Sedan anländer de till {loc3} och har {t-t1} - {t2} = <<{t-t1}-{t2}={t-t1-t2}>>{t-t1-t2} minuter kvar för att hinna till {loc1} utan att bli sena.
+#### {t-t1-t2}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"
