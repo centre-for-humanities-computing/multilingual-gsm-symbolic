@@ -1,8 +1,35 @@
-question = "Расмус пішов купити шкільне приладдя. Він купив 4 ручки, які коштували 1,5 крони кожна, 2 зошити, які коштували 4 крони кожен, і пачку паперу, яка коштувала 20 крон. Скільки всього витратив Расмус?"
-answer = "Расмус витратив 4*1,5 крони = <<4*1,5=6>>6 крон на ручки.\nВін також витратив 2*4 крони = <<2*4=8>>8 крон на зошити.\nОтже, Расмус витратив загалом 6 крон + 8 крон + 20 крон = <<6+8+20=34>>34 крони на шкільне приладдя.\n#### 34\n"
+question = "Расмус пішов купити шкільне приладдя. Він вирішив придбати ручки та зошити. Він купив 4 ручки, які коштували 1.5 крон кожна, а також 2 зошити, які коштували 4 крон кожен, і пачку паперу, яка коштувала 20 крон. Скільки всього витратив Расмус?"
+
+answer = """Расмус витратив 4*1.5 крон = <<4*1.5=6>>6 крон на ручки.
+Він також витратив 2*4 крон = <<2*4=8>>8 крон на зошити.
+Отже, Расмус витратив загалом 6 крон + 8 крон + 20 крон = <<6+8+20=34>>34 крон на шкільне приладдя.
+#### 34
+"""
 id_orig = 158
 id_shuffled = 18
-question_annotated = "{name,Расмус} пішов купити шкільне приладдя. Він купив {n1,4} {obj1,ручки}, які коштували {c1,1.5} {cur,крони} кожна, {n2,2} {obj2,зошити}, які коштували {c2,4} {cur,крони} кожен, і пачку паперу, яка коштувала {c3,20} {cur,крон}. Скільки всього витратив {name,Расмус}?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"зошити\", \"олівці\", \"кольорові олівці\", \"маркери\", \"лінійки\", \"папки\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)\n"
-answer_annotated = "{name} витратив {n1}*{c1} {cur} = <<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} крон на {obj1}.\nВін також витратив {n2}*{c2} {cur} = <<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} крон на {obj2}.\nОтже, {name} витратив загалом {int(n1*c1)} крон + {int(n2*c2)} крон + {c3} крон = <<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} крони на шкільне приладдя.\n#### {int(n1*c1+n2*c2+c3)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{name,Расмус} пішов купити шкільне приладдя. Він вирішив придбати {obj1_p1, ручки} та {obj2_p1, зошити}. Він купив {n1,4} {n1_obj1_form,ручки}, які коштували {c1,1.5} {cur,крони} кожна, а також {n2,2} {n2_obj2_form,зошити}, які коштували {c2,4} {cur,крони} кожен, і пачку паперу, яка коштувала {c3,20} {cur,крон}. Скільки всього витратив {name,Расмус}?
+
+#init:
+- name = sample(names_male)
+- (obj1_s,obj1_p1, obj1_p2) , (obj2_s,obj2_p1, obj2_p2) = sample(school_objects, 2)
+- cur = sample(curr_short)
+- $n1 = range(4, 25, 2)
+- $c1 = arange(1.5, 11.5, 0.25)
+- $n2 = range(2, 15, 2)
+- $c2 = arange(4, 19.5, 0.25)
+- $c3 = range(10, 25)
+- n1_obj1_form = ukr_plural_measurements(n1, obj1_s, obj1_p1, obj1_p2)
+- n2_obj2_form = ukr_plural_measurements(n2, obj2_s, obj2_p1, obj2_p2)
+
+#conditions:
+- is_int(n1 * c1)
+- is_int(n2 * c2)
+#answer: int(n1*c1 + n2*c2 + c3)
+"""
+answer_annotated = """{name} витратив {n1}*{c1} {cur} = <<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} {cur} на {obj1_p1}.
+Він також витратив {n2}*{c2} {cur} = <<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} {cur} на {obj2_p1}.
+Отже, {name} витратив загалом {int(n1*c1)} {cur} + {int(n2*c2)} {cur} + {c3} {cur} = <<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} {cur} на шкільне приладдя.
+#### {int(n1*c1+n2*c2+c3)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

@@ -1,8 +1,59 @@
-question = "Фермер купує корм для своїх коней. Він купує кілька різних видів сіна, вівса, моркви та цукрових кубиків. Оскільки цукрові кубики — рідкісні ласощі, він купує лише два коробки по 1 кілограму на всю стайню. Він хоче купити лише стільки моркви, щоб годувати коней, поки овочі свіжі, тож купує чотири мішки по 12 кілограмів. Сіно є основною частиною раціону коней, тож він купує сорок два тюки по 75 кілограмів. Овес — це основний продукт, яким доповнюють сіно, тож він купує двадцять мішків по 65 кілограмів. Якщо його фермерська вантажівка може перевозити 2250 кілограмів за раз, скільки поїздок знадобиться фермеру, щоб перевезти весь корм?"
-answer = "Фермер купує 2*1=<<2*1=2>>2 кілограми цукрових кубиків.\nВін купує 4*12=<<4*12=48>>48 кілограмів моркви.\nВін купує 42*75=<<42*75=3150>>3150 кілограмів сіна.\nВін купує 20*65=<<20*65=1300>>1300 кілограмів вівса.\nМаса всього корму становить 2 + 48 + 3150 + 1300 = <<2+48+3150+1300=4500>>4500 кілограмів.\nОтже, фермеру потрібно 4500 / 2250 = <<4500/2250=2>>2 поїздки, щоб перевезти весь корм у своїй фермерській вантажівці.\n#### 2\n"
+question = "Фермер купує корм для своїх коней. Він купує кілька різних видів сіна, вівса, моркви та цукрових кубиків. Оскільки цукрові кубики - це рідкісні ласощі, він купує лише 2 коробки, кожна місткістю 1 кілограм на всю стайню. Він хоче купити лише стільки моркви, щоб годувати коней, поки овочі свіжі, тож купує 4 мішки по 12 кілограм. Сіно є основною частиною раціону коней, тож він купує 42 тюки по 75 кілограм. овес — це основний продукт, яким доповнюють сіно, тож він купує 20 мішків по 65 кілограм. Якщо його фермерська вантажівка може перевозити 2250 кілограм за раз, скільки поїздок знадобиться фермеру, щоб перевезти весь корм?"
+answer = """Фермер купує 2*1=<<2*1=2>>2 кілограми цукрових кубиків.
+Він купує 4*12=<<4*12=48>>48 кілограмів моркви.
+Він купує 42*75=<<42*75=3150>>3150 кілограмів сіна.
+Він купує 20*65=<<20*65=1300>>1300 кілограмів вівса.
+Маса всього корму становить 2 + 48 + 3150 + 1300 = <<2+48+3150+1300=4500>>4500 кілограмів.
+Отже, фермеру потрібно 4500 / 2250 = <<4500/2250=2>>2 поїздки, щоб перевезти весь корм у своїй фермерській вантажівці.
+#### 2
+"""
 id_orig = 459
 id_shuffled = 7
-question_annotated = "Фермер купує корм для своїх {animals,коней}. Він купує кілька різних видів {o1,сіна}, {o2,вівса}, {o3,моркви} та {o4,цукрових кубиків}. Оскільки {o4,цукрові кубики} — рідкісні ласощі, він купує лише {n4_txt,два} коробки по {w4,1} {unit,кілограм} на всю стайню. Він хоче купити лише стільки {o3,моркви}, щоб годувати {animals_definite,коней}, поки овочі свіжі, тож купує {n3_txt,чотири} мішки по {w3,12} {unit,кілограм}. {o1,сіно} є основною частиною раціону {animals_definite,коней}, тож він купує {n1_txt,сорок два} тюки по {w1,75} {unit,кілограм}. {o2,овес} — це основний продукт, яким доповнюють {o1,сіно}, тож він купує {n2_txt,двадцять} мішків по {w2,65} {unit,кілограм}. Якщо його фермерська вантажівка може перевозити {total,2250} {unit,кілограм} за раз, скільки поїздок знадобиться фермеру, щоб перевезти весь корм?\n\n#init:\n- animals, animals_definite = sample([('коней', 'коней'), ('корів', 'корів'), ('овець', 'овець'), ('свиней', 'свиней'), ('альпак', 'альпак')])\n- unit = sample(weights_med)\n- o1, o2 = sample([\"сіно\", \"кукурудза\", \"овес\", \"яблука\", \"пшениця\"], 2)\n- o3 = sample([\"морква\", \"буряк\", \"огірки\"])\n- o4 = sample([\"цукрових кубиків\", \"кірки кавуна\", \"м'ятних цукерок\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total\n"
-answer_annotated = "Фермер купує {n4_val}*{w4}=<<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit} {o4}.\nВін купує {n3_val}*{w3}=<<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {unit} {o3}.\nВін купує {n1_val}*{w1}=<<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {unit} {o1}.\nВін купує {n2_val}*{w2}=<<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {unit} {o2}.\nМаса всього корму становить {n4_val*w4} + {n3_val*w3} + {n1_val*w1} + {n2_val*w2} = <<{n4_val*w4}+{n3_val*w3}+{n1_val*w1}+{n2_val*w2}={n1_val*w1+n2_val*w2+ n3_val*w3 + n4_val*w4}>>{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} {unit}.\nОтже, фермеру потрібно {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total} = <<{n1_val*w1+n2_val*w2+n3_val*w3+n4_val*w4}/{total}={(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}>>{(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total} поїздки, щоб перевезти весь корм у своїй фермерській вантажівці.\n#### {(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """Фермер купує корм для своїх {animals,коней}. Він купує кілька різних видів {o1_acc,сіна}, {o2_acc,вівса}, {o3_acc,моркви} та {o4_acc,цукрових кубиків}. Оскільки {o4,цукрові кубики} - це рідкісні ласощі, він купує лише {n4_val,2} {box_form, коробки}, кожна місткістю {w4,1} {w4_unit,кілограм} на всю стайню. Він хоче купити лише стільки {o3_acc,моркви}, щоб годувати {animals_definite,коней}, поки овочі свіжі, тож купує {n3_val,4} {bag_form, мішки} по {w3,12} {w3_unit,кілограм}. {o1_acc_up,Сіно} є основною частиною раціону {animals_definite,коней}, тож він купує {n1_val,42} {bales_form, тюки} по {w1,75} {w1_unit,кілограм}. {o2,овес} — це основний продукт, яким доповнюють {o1,сіно}, тож він купує {n2_val,20} мішків по {w2,65} {w2_unit,кілограм}. Якщо його фермерська вантажівка може перевозити {total,2250} {total_unit,кілограм} за раз, скільки поїздок знадобиться фермеру, щоб перевезти весь корм?
+#init:
+- animals = sample(['коней', 'корів', 'овець', 'свиней', 'альпак'])
+- unit, unit_plural_1, unit_plural_2 = sample(weights_med)
+- o1_acc, o2_acc, o3_acc = sample(["сіна", "кукурудзи", "вівса", "яблук",  "пшениці", "моркви"], 3)
+- o1_acc_up = to_title(o1_acc)
+- o4, o4_acc = sample([["цукрові кубики", "цукрових кубиків"], ["бюряки", "бюряків"]])
+- n4_val = range(2, 7, 2)
+- n3_val = range(4, 11, 2)
+- n2_val = range(15, 21, 1)
+- n1_val = range(30, 43, 2)
+- $w4 = range(1, 4)
+- $w3 = range(8, 13, 2)
+- $w2 = range(45, 70, 5)
+- $w1 = range(55, 80, 5)
+- $total = range(1500, 2300, 150)
+- w4_unit = ukr_plural_measurements(w4, unit, unit_plural_1, unit_plural_2)
+- w3_unit = ukr_plural_measurements(w3, unit, unit_plural_1, unit_plural_2)
+- w2_unit = ukr_plural_measurements(w2, unit, unit_plural_1, unit_plural_2)
+- w1_unit = ukr_plural_measurements(w1, unit, unit_plural_1, unit_plural_2)
+- total_unit = ukr_plural_measurements(total, unit, unit_plural_1, unit_plural_2)
+- box_form = ukr_plural_measurements(n4_val, "коробка", "коробки", "коробок")
+- bag_form = ukr_plural_measurements(n3_val, "мішок", "мішки", "мішків")
+- bales_form = ukr_plural_measurements(n1_val, "тюк", "тюки", "тюків")
+- n4_val_w4_unit = ukr_plural_measurements(n4_val*w4, unit, unit_plural_1, unit_plural_2)
+- n3_val_w3_unit = ukr_plural_measurements(n3_val*w3, unit, unit_plural_1, unit_plural_2)
+- n1_val_w1_unit = ukr_plural_measurements(n1_val*w1, unit, unit_plural_1, unit_plural_2)
+- n2_val_w2_unit = ukr_plural_measurements(n2_val*w2, unit, unit_plural_1, unit_plural_2)
+- overall_unit = ukr_plural_measurements(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, unit, unit_plural_1, unit_plural_2)
+- trips_form = ukr_plural_measurements((n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total, "поїздка", "поїздки", "поїздок")
+
+
+#conditions:
+- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val
+- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)
+
+#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total
+"""
+answer_annotated = """Фермер купує {n4_val}*{w4}=<<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {n4_val_w4_unit} {o4_acc}.
+Він купує {n3_val}*{w3}=<<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {n3_val_w3_unit} {o3_acc}.
+Він купує {n1_val}*{w1}=<<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {n1_val_w1_unit} {o1_acc}.
+Він купує {n2_val}*{w2}=<<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {n2_val_w2_unit} {o2_acc}.
+Маса всього корму становить {n4_val*w4} + {n3_val*w3} + {n1_val*w1} + {n2_val*w2} = <<{n4_val*w4}+{n3_val*w3}+{n1_val*w1}+{n2_val*w2}={n1_val*w1+n2_val*w2+ n3_val*w3 + n4_val*w4}>>{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} {overall_unit}.
+Отже, фермеру потрібно {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total} = <<{n1_val*w1+n2_val*w2+n3_val*w3+n4_val*w4}/{total}={(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}>>{(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total} {trips_form}, щоб перевезти весь корм у своїй фермерській вантажівці.
+#### {(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

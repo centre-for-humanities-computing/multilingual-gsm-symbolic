@@ -1,0 +1,46 @@
+question = "एक अस्पताल में १००० बिस्तरों की क्षमता है, जिनमें से १/५ भरे हुए हैं। कोरोनावायरस प्रकोप के कारण, हर दिन ५० मरीज अस्पताल में भर्ती किए जाते हैं। २ सप्ताह बाद अस्पताल में खाली बिस्तरों की कुल संख्या ज्ञात कीजिए।"
+
+answer = """
+यदि अस्पताल के बिस्तरों की कुल क्षमता का १/५ भाग भरा हुआ है, तो इसका मतलब है कि १/५ * १००० = <<१०००*१/५=२००>>२०० बिस्तरों पर मरीज हैं।
+नई भर्तियों के बिना अस्पताल में बिस्तरों की कुल खाली संख्या १००० बिस्तर - २०० बिस्तर = <<१०००-२००=८००>>८०० बिस्तर है।
+यदि हर दिन ५० लोगों को भर्ती किया जाता है, तो एक सप्ताह के बाद अस्पताल में भर्ती मरीजों की कुल संख्या ५० मरीज/दिन * ७ दिन/सप्ताह = ३५० मरीज है।
+२ सप्ताह बाद, अस्पताल में भर्ती किए गए मरीजों की कुल संख्या ३५० मरीज/सप्ताह * २ सप्ताह = <<३५०*२=७००>>७०० मरीज है, और प्रत्येक को एक बिस्तर चाहिए।
+यदि नई भर्तियों से पहले अस्पताल में ८०० खाली बिस्तर थे, तो कुल संख्या घटकर ८०० बिस्तर - ७०० बिस्तर = <<८००-७००=१००>>१०० खाली बिस्तर रह जाती है।
+#### १००
+"""
+
+id_orig = 955
+
+id_shuffled = 28
+
+question_annotated = """
+एक {facility,अस्पताल} में {total,१०००} {item,बिस्तर}ों की क्षमता है, जिनमें से {frac,१/५} भरे हुए हैं। {event,कोरोनावायरस प्रकोप} के कारण, हर दिन {daily,५०} मरीज {facility,अस्पताल} में भर्ती किए जाते हैं। {period,२} सप्ताह बाद {facility,अस्पताल} में खाली {item,बिस्तर}ों की कुल संख्या ज्ञात कीजिए।
+
+#init:
+- facility = sample(["अस्पताल", "क्लिनिक", "चिकित्सा केंद्र", "देखभाल केंद्र"])
+- item = sample(["बिस्तर", "कमरा", "वार्ड"])
+- event = sample(["flu season", "natural disaster", "major accident", "pandemic"])
+- $total = range(500, 2000, 100)
+- $frac = sample(fractions)
+- $daily = range(20, 100, 5)
+- $period = range(2, 5)
+
+#conditions:
+- is_int(total * frac)
+- total * frac + daily * period * 7 < total
+
+#answer: total - (total * frac + daily * period * 7)
+"""
+
+answer_annotated = """
+यदि {facility} के {item}ों की कुल क्षमता का {frac} भाग भरा हुआ है, तो इसका मतलब है कि {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item}ों पर मरीज हैं।
+नई भर्तियों के बिना {facility} में {item}ों की कुल खाली संख्या {total} {item} - {int(total*frac)} {item} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item} है।
+यदि हर दिन {daily} लोगों को भर्ती किया जाता है, तो एक सप्ताह के बाद {facility} में भर्ती मरीजों की कुल संख्या {daily} मरीज/दिन * ७ दिन/सप्ताह = {daily*7} मरीज है।
+{period} सप्ताह बाद, {facility} में भर्ती किए गए मरीजों की कुल संख्या {daily*7} मरीज/सप्ताह * {period} सप्ताह = <<{daily*7}*{period}={daily*period*7}>>{daily*period*7} मरीज है, और प्रत्येक को एक {item} चाहिए।
+यदि नई भर्तियों से पहले {facility} में {total-int(total*frac)} खाली {item} थे, तो कुल संख्या घटकर {total-int(total*frac)} {item} - {daily*period*7} {item} = <<{total-int(total*frac)}-{daily*period*7}={total - (total * frac + daily * period * 7)}>>{total - (total * frac + daily * period * 7)} खाली {item} रह जाती है।
+#### {total - (total * frac + daily * period * 7)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

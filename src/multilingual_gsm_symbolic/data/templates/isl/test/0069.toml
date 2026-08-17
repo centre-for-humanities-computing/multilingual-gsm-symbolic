@@ -11,14 +11,16 @@ id_orig = 300
 id_shuffled = 69
 
 question_annotated = """
-Á {day3,þriðjudag}inn ætlar {name,Pétur} að æfa í {mult_txt,tvöfalt} lengri tíma en hann gerði á {day2,mánudag}inn og {day1,sunnudag}inn samanlagt. Á {day1,sunnudag}inn æfði hann í {t1,23} mínútur. Á {day2,mánudag}inn æfði hann í {t2,16} mínútur. Hversu margar mínútur á hann að æfa á {day3,þriðjudag}inn til að ná markmiði sínu?
+Á {day3,þriðjudag}inn ætlar {name,Pétur} að æfa í {mult_txt,tvöfalt} lengri tíma en hann gerði á {day2,mánudag}inn og {day1,sunnudag}inn samanlagt. Á {day1,sunnudag}inn æfði hann í {t1,23} {min_t1,mínútur}. Á {day2,mánudag}inn æfði hann í {t2,16} {min_t2,mínútur}. Hversu margar mínútur á hann að æfa á {day3,þriðjudag}inn til að ná markmiði sínu?
 
 #init:
-- name = sample(names)
+- name = sample(names_male)
 - day1, day2, day3 = sample_sequential(weekdays, 3)
 - $t1 = range(10, 60)
 - $t2 = range(10, 60)
 - mult_txt, mult_val = sample(multi_times)
+- min_t1 = "mínútu" if (t1 % 10 == 1 and t1 % 100 != 11) else "mínútur"
+- min_t2 = "mínútu" if (t2 % 10 == 1 and t2 % 100 != 11) else "mínútur"
 
 #conditions:
 - t1 + t2 > 0
@@ -27,11 +29,11 @@ question_annotated = """
 """
 
 answer_annotated = """
-Á {day1}inn og {day2}inn æfði hann samtals í {t1+t2} mínútur því {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}
-Á {day3}inn á hann að æfa í {(t1+t2)*mult_val} mínútur því {t1+t2}*{mult_val}=<<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val}
+Á {day1}inn og {day2}inn æfði hann samtals í {t1+t2} {"mínútu" if ((t1+t2) % 10 == 1 and (t1+t2) % 100 != 11) else "mínútur"} því {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}
+Á {day3}inn á hann að æfa í {(t1+t2)*mult_val} {"mínútu" if (((t1+t2)*mult_val) % 10 == 1 and ((t1+t2)*mult_val) % 100 != 11) else "mínútur"} því {t1+t2}*{mult_val}=<<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val}
 #### {(t1+t2)*mult_val}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

@@ -1,0 +1,48 @@
+question = "अमोल कडे २ ₹२० च्या नोटा आहेत. तो प्रत्येकी ₹२ ला सहा पाणी मारण्याच्या बंदुका विकत घेतो. तो प्रत्येकी ₹३ ला पाण्याच्या फुग्यांची ३ पाकिटेही विकत घेतो. त्याच्याकडे किती पैसे उरतात?"
+
+answer = """
+अमोल कडे सुरुवातीला २ * ₹२० = ₹<<२*२०=४०>>४० आहेत.
+अमोल पाणी मारण्याच्या बंदुका वर ६*₹२ = ₹<<६*२=१२>>१२ खर्च करतो.
+अमोल पाण्याच्या फुग्यांच्या ३ पाकिटांवर * ₹३ = ₹<<३*३=९>>९ खर्च करतो.
+अमोल ने एकूण ₹१२ + ₹९ = ₹<<१२+९=२१>>२१ खर्च केले.
+अमोल कडे ₹४० - ₹२१ = ₹<<४०-२१=१९>>१९ उरतात.
+#### १९
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name,अमोल} कडे {n,२} {cur,₹}{bill,२०} च्या नोटा आहेत. तो प्रत्येकी {cur,₹}{p1,२} ला {m_txt,सहा} {item1,पाणी मारण्याच्या बंदुका} विकत घेतो. तो प्रत्येकी {cur,₹}{p2,३} ला {item2,पाण्याच्या फुग्यां}ची {k,३} पाकिटेही विकत घेतो. त्याच्याकडे किती पैसे उरतात?
+
+#init:
+- name = sample(names_male)
+- $bill = sample([5, 10, 20, 50, 100])
+- item1 = sample(["खेळण्याची गाडी", "ॲक्शन फिगर", "रंगवायचे पुस्तक", "कोडे", "फळ्यावरील खेळ"])
+- item2 = sample(["स्टिकर", "कँडी बार", "ट्रेडिंग कार्ड", "पेन्सिल", "रबर"])
+- cur = sample(currencies_sym)
+- $n = range(1, 10)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+
+#conditions:
+- n * int(bill) > m_val * p1 + k * p2
+
+#answer: n * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} कडे सुरुवातीला {n} * {cur}{bill} = {cur}<<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)} आहेत.
+{name} {item1} वर {m_val}*{cur}{p1} = {cur}<<{m_val}*{p1}={m_val*p1}>>{m_val*p1} खर्च करतो.
+{name} {item2}च्या {k} पाकिटांवर * {cur}{p2} = {cur}<<{k}*{p2}={k*p2}>>{k*p2} खर्च करतो.
+{name} ने एकूण {cur}{m_val*p1} + {cur}{k*p2} = {cur}<<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} खर्च केले.
+{name} कडे {cur}{n*int(bill)} - {cur}{m_val*p1+k*p2} = {cur}<<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} उरतात.
+#### {n*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

@@ -1,9 +1,9 @@
-question = "100 manns sækja um starf hjá Google. Af þeim sem sækja um fá aðeins 30% boð í viðtal. Af þeim sem fá viðtal fá 20% atvinnutilboð. Af þeim sem fá atvinnutilboð samþykkir þriðjungur einstaklinganna starfið. Hversu margir einstaklingar samþykkja starfið?"
+question = "100 manns sækja um starf hjá Google. Af þeim sem sækja um fá aðeins 30% boð í viðtal. Af þeim sem fá boð í viðtal fá 20% atvinnutilboð. Af þeim sem fá atvinnutilboð samþykkir þriðjungur þeirra starfið. Hversu margir samþykkja starfið?"
 
 answer = """
-Fjöldi einstaklinga sem fá boð í viðtal er 100 * 0,3 = <<100*0,3=30>>30 einstaklingar
-Fjöldi einstaklinga sem fá atvinnutilboð er 30 * 0,2 = <<30*0,2=6>>6 einstaklingar
-Fjöldi einstaklinga sem samþykkja starfið er 6*1/3=<<6*1/3=2>>2 einstaklingar
+Fjöldi þeirra sem fá boð í viðtal er 100 * 30/100 = <<100*30/100=30>>30
+Fjöldi þeirra sem fá atvinnutilboð er 30 * 20/100 = <<30*20/100=6>>6
+Fjöldi þeirra sem samþykkja starfið er 6 * 1/3 = <<6*1/3=2>>2
 #### 2
 """
 
@@ -12,14 +12,14 @@ id_orig = 718
 id_shuffled = 94
 
 question_annotated = """
-{n,100} manns sækja um starf hjá {company,Google}. Af þeim sem sækja um fá aðeins {p1,30}% boð í viðtal. Af þeim sem fá viðtal fá {p2,20}% atvinnutilboð. Af þeim sem fá atvinnutilboð samþykkir {frac_txt,þriðjungur} einstaklinganna starfið. Hversu margir einstaklingar samþykkja starfið?
+{n,100} manns sækja um starf hjá {company,Google}. Af þeim sem sækja um fá aðeins {p1,30}% boð í viðtal. Af þeim sem fá boð í viðtal fá {p2,20}% atvinnutilboð. Af þeim sem fá atvinnutilboð samþykkir {frac_txt,þriðjungur} þeirra starfið. Hversu margir samþykkja starfið?
 
 #init:
-- company = sample(["Salling Group", "LEGO", "Søstrene Grene", "Facebook", "Apple", "Rema1000", "Hatting"])
+- company = sample(["Bónus", "LEGO", "Hagkaup", "Facebook", "Apple", "Krónan", "Marel"])
 - $n = range(100, 1001, 10)
 - $p1 = range(10, 51)
 - $p2 = range(10, 51)
-- frac_txt, frac_val = sample(fraction_alnum)
+- frac_txt, frac_val = sample([("helmingur", "1/2"), ("þriðjungur", "1/3"), ("fjórðungur", "1/4"), ("fimmtungur", "1/5"), ("sjötti hluti", "1/6"), ("áttundi hluti", "1/8"), ("tíundi hluti", "1/10")])
 
 #conditions:
 - is_int(n * (p1/100))
@@ -30,12 +30,12 @@ question_annotated = """
 """
 
 answer_annotated = """
-Fjöldi einstaklinga sem fá boð í viðtal er {n} * {p1/100} = <<{n}*{p1/100}={int(n*(p1/100))}>>{int(n*(p1/100))} einstaklingar
-Fjöldi einstaklinga sem fá atvinnutilboð er {int(n*(p1/100))} * {p2/100} = <<{int(n*(p1/100))}*{p2/100}={int(n*(p1/100)*(p2/100))}>>{int(n*(p1/100)*(p2/100))} einstaklingar
-Fjöldi einstaklinga sem samþykkja starfið er {int(n*(p1/100)*(p2/100))}*{frac_val}=<<{int(n*(p1/100)*(p2/100))}*{frac_val}={ensure_int(n*(p1/100)*(p2/100)*frac_val)}>>{ensure_int(n*(p1/100)*(p2/100)*frac_val)} einstaklingar
+Fjöldi þeirra sem fá boð í viðtal er {n} * {p1}/100 = <<{n}*{p1}/100={int(n*(p1/100))}>>{int(n*(p1/100))}
+Fjöldi þeirra sem fá atvinnutilboð er {int(n*(p1/100))} * {p2}/100 = <<{int(n*(p1/100))}*{p2}/100={int(n*(p1/100)*(p2/100))}>>{int(n*(p1/100)*(p2/100))}
+Fjöldi þeirra sem samþykkja starfið er {int(n*(p1/100)*(p2/100))} * {frac_val} = <<{int(n*(p1/100)*(p2/100))}*{frac_val}={ensure_int(n*(p1/100)*(p2/100)*frac_val)}>>{ensure_int(n*(p1/100)*(p2/100)*frac_val)}
 #### {ensure_int(n*(p1/100)*(p2/100)*frac_val)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

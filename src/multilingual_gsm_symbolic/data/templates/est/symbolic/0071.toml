@@ -1,0 +1,44 @@
+question = "Toomas söödab oma kariloomi heinaga. Iga kits vajab 5 kilogrammi ja iga lammas vajab 3 kilogrammi vähem kui kaks korda nii palju, kui vajab iga kits. Toomasel on 15 kitse ja 12 lammast. Mitu kilogrammi heina on Toomasel vaja?"
+
+answer = """
+Kõigepealt selgita, kui palju heina vajab iga lammas: 5 kilogrammi * 2 - 3 = <<5*2-3=7>>7 kilogrammi/lammas
+Nüüd selgita, kui palju heina vajavad kokku lambad: 7 kilogrammi/lammas * 12 lammast = <<7*12=84>>84 kilogrammi
+Nüüd selgita, kui palju heina vajavad kokku kitsed: 5 kilogrammi/kits * 15 kitse = <<5*15=75>>75 kilogrammi
+Nüüd liida kaks heina kogust kokku, et leida kogu kogus: 84 kilogrammi + 75 kilogrammi = <<84+75=159>>159 kilogrammi
+#### 159
+"""
+
+id_orig = 937
+
+id_shuffled = 71
+
+question_annotated = """
+{name,Toomas} söödab oma kariloomi {food_com,heinaga}. Iga {animal1_nom,kits} vajab {n1,5} {unit_par,kilogrammi} ja iga {animal2_nom,lammas} vajab {n2,3} {unit_par,kilogrammi} vähem kui kaks korda nii palju, kui vajab iga {animal1_nom,kits}. {name_gen,Toomase}l on {k1,15} {animal1_par,kitse} ja {k2,12} {animal2_par,lammast}. Mitu kilogrammi heina on {name_gen,Toomase}l vaja?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- food_nom, food_com, food_par = sample([("hein", "heinaga", "heina"), ("vili", "viljaga", "vilja"), ("sööt", "söödaga", "sööta"), ("silo", "siloga", "silo")])
+- (animal1_nom, animal1_par, animal1_nom_pl), (animal2_nom, animal2_par, animal2_nom_pl) = sample([("kits", "kitse", "kitsed"), ("lammas", "lammast", "lambad"), ("lehm", "lehma", "lehmad"), ("hobune", "hobust", "hobused"), ("eesel", "eeslit", "eeslid"), ("laama", "laamat", "laamad"), ("alpaka", "alpakat", "alpakad"), ("siga", "siga", "sead"), ("kalkun", "kalkunit", "kalkunid"), ("part", "parti", "pardid")], 2)
+- unit_nom, unit_par = sample([("kilogramm", "kilogrammi"), ("kg", "kg")])
+- $n1 = range(3, 15)
+- $n2 = range(2, 10)
+- $k1 = range(10, 50)
+- $k2 = range(10, 50)
+
+#conditions:
+- 2*n1 - n2 > 0
+
+#answer: k1*n1 + k2*(2*n1 - n2)
+"""
+
+answer_annotated = """
+Kõigepealt selgita, kui palju {food_par} vajab iga {animal2_nom}: {n1} {unit_par} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit_par}/{animal2_nom}
+Nüüd selgita, kui palju {food_par} vajavad kokku {animal2_nom_pl}: {2*n1-n2} {unit_par}/{animal2_nom} * {k2} {animal2_par} = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit_par}
+Nüüd selgita, kui palju {food_par} vajavad kokku {animal1_nom_pl}: {n1} {unit_par}/{animal1_nom} * {k1} {animal1_par} = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit_par}
+Nüüd liida kaks {food_par} kogust kokku, et leida kogu kogus: {k2*(2*n1-n2)} {unit_par} + {k1*n1} {unit_par} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit_par}
+#### {k1*n1 + k2*(2*n1 - n2)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

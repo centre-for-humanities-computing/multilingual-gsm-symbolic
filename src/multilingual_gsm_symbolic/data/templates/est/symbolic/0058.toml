@@ -1,0 +1,47 @@
+question = "Üks päkapikk suudab paljaste kätega kaevandada 12 kilogrammi maaki päevas. Ta suudab pronksist kirvega kaevandada kaks korda rohkem ja terasest kirvega 50% rohkem kui pronksist kirvega. Mitu kilogrammi maaki suudavad 40 päkapikku terasest kirvestega kaevandada 30 päeva jooksul?"
+
+answer = """
+Kõigepealt leia, kui palju maaki suudab üks päkapikk pronksist kirvega kaevandada: 12 kilogrammi/päev*2=<<12*2=24>>24 kilogrammi/päev
+Seejärel korruta see kogus 150%ga, et leida, kui palju maaki suudab üks päkapikk terasest kirvega kaevandada: 24 kilogrammi/päev * 150% = <<24*150*.01=36>>36 kilogrammi/päev
+Seejärel korruta kogus, mida üks päkapikk suudab päevas terasest kirvega kaevandada, päkapikkude arvuga: 36 kilogrammi/päev/päkapikk * 40 päkapikku = <<36*40=1440>>1440 kilogrammi/päev
+Seejärel korruta päevas kaevandatav kogus päevade arvuga, et leida kokku kaevandatud maagi kogus: 1440 kilogrammi/päev * 30 päeva = <<1440*30=43200>>43,200 kilogrammi
+#### 43200
+"""
+
+id_orig = 1026
+
+id_shuffled = 58
+
+question_annotated = """
+Üks {worker_nom_sg,päkapikk} suudab {tool1_com,paljaste kätega} kaevandada {base,12} {unit_par_sg,kilogrammi} maaki päevas. Ta suudab {tool2_com,pronksist kirvega} kaevandada {mult1_txt,kaks korda} rohkem ja {tool3_com_sg,terasest kirvega} {mult2,50}% rohkem kui {tool2_com,pronksist kirvega}. Mitu {unit_par_sg,kilogrammi} maaki suudavad {n,40} {worker_count_sg,päkapikku} {tool3_com_pl,terasest kirvestega} kaevandada {days,30} päeva jooksul?
+
+#init:
+- worker_nom_sg, worker_count_sg, worker_gen_pl = sample([("päkapikk", "päkapikku", "päkapikkude"), ("kaevur", "kaevurit", "kaevurite"), ("goblin", "goblinit", "goblinide"), ("troll", "trolli", "trollide")])
+- tool1_com = sample(["paljaste kätega", "tavalise labidaga", "puust kirkaga"])
+- tool2_com = sample(["pronksist kirvega", "niklist kirkaga", "hõbedase kirkaga"])
+- tool3_com_sg, tool3_com_pl = sample([("terasest kirvega", "terasest kirvestega"), ("teraskirkaga", "teraskirkadega"), ("teemantkirkaga", "teemantkirkadega")])
+- unit_par_sg = sample(["kilogrammi", "kg"])
+- $base = range(5, 20)
+- mult1_txt, mult1_val = sample([("kaks korda", 2), ("kolm korda", 3), ("neli korda", 4)])
+- $mult2 = range(30, 80, 5)
+- $n = range(20, 50)
+- $days = range(28, 32)
+
+#conditions:
+- is_int(mult2/100*base*mult1_val)
+- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000
+
+#answer: int(base * mult1_val * (1 + mult2/100) * n * days)
+"""
+
+answer_annotated = """
+Kõigepealt leia, kui palju maaki suudab üks {worker_nom_sg} {tool2_com} kaevandada: {base} {unit_par_sg}/päev*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit_par_sg}/päev
+Seejärel korruta see kogus {100+mult2}%ga, et leida, kui palju maaki suudab üks {worker_nom_sg} {tool3_com_sg} kaevandada: {base*mult1_val} {unit_par_sg}/päev * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit_par_sg}/päev
+Seejärel korruta kogus, mida üks {worker_nom_sg} suudab päevas {tool3_com_sg} kaevandada, {worker_gen_pl} arvuga: {int(base*mult1_val*(1+mult2/100))} {unit_par_sg}/päev/{worker_nom_sg} * {n} {worker_count_sg} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit_par_sg}/päev
+Seejärel korruta päevas kaevandatav kogus päevade arvuga, et leida kokku kaevandatud maagi kogus: {int(base*mult1_val*(1+mult2/100)*n)} {unit_par_sg}/päev * {days} päeva = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit_par_sg}
+#### {int(base*mult1_val*(1+mult2/100)*n*days)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

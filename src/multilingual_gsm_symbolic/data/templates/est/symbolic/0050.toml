@@ -1,0 +1,39 @@
+question = "Reinu ristkülikukujulise magamistoa pindala on 33 ruutmeetrit. Kui ruumi pikkus on 300 cm, siis milline on ruumi ümbermõõt meetrites?"
+
+answer = """
+Ruumi pikkus on 300 cm * 1/100 meeter/cm = <<300*(1/100)=3>>3 meetrit.
+Ruumi laius on 33 ruutmeetrit / 3 meetrit = <<33/3=11>>11 meetrit.
+Ruumi ümbermõõt on 2*(11+3) = 28 meetrit
+#### 28
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+{name_gen,Reinu} ristkülikukujulise {room_type,magamistoa} pindala on {area,33} ruutmeetrit. Kui ruumi pikkus on {length,300} cm, siis milline on ruumi ümbermõõt meetrites?
+
+#init:
+- name, name_gen = sample(names_cases)
+- room_type = sample(["magamistoa", "elutoa", "õppeklassi", "kontori", "köögi"])
+- $area = range(18, 121)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+
+answer_annotated = """
+Ruumi pikkus on {length} cm * 1/100 meeter/cm = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} meetrit.
+Ruumi laius on {area} ruutmeetrit / {length * (1/100)} meetrit = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} meetrit.
+Ruumi ümbermõõt on 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} meetrit
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

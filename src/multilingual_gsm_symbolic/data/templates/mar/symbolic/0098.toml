@@ -1,0 +1,42 @@
+question = "एक साथरोग दहा लोकांना संक्रमित करतो. दररोज, प्रत्येक संक्रमित व्यक्ती आणखी सहा जणांना संक्रमित करते. तीन दिवसांनंतर किती लोक संक्रमित होतात?"
+
+answer = """
+पहिल्या दिवशी, मूळचे दहा लोक प्रत्येकी सहा जणांना संक्रमित करतात, त्यामुळे १०*६ = <<१०*६=६०>>६० अधिक लोक संक्रमित होतात.
+पहिल्या दिवसानंतर १०+६० = <<१०+६०=७०>>७० लोक संक्रमित असतात.
+दुसऱ्या दिवशी, ७०*६ = <<७०*६=४२०>>४२० अधिक लोक संक्रमित होतात.
+दुसऱ्या दिवसानंतर ७० + ४२० = <<७०+४२०=४९०>>४९० लोक संक्रमित असतात.
+तिसऱ्या दिवशी, ४९०*६ = २९४० अधिक लोक संक्रमित होतात. त्यामुळे, तीन दिवसांनंतर ४९० + २९४० = ३४३० लोक संक्रमित असतात.
+#### ३४३०
+"""
+
+id_orig = 858
+
+id_shuffled = 98
+
+question_annotated = """
+एक {disease,साथरोग} {n0_txt,दहा} लोकांना संक्रमित करतो. दररोज, प्रत्येक संक्रमित व्यक्ती आणखी {r_txt,सहा} जणांना संक्रमित करते. {d_txt,तीन} दिवसांनंतर किती लोक संक्रमित होतात?
+
+#init:
+- disease = sample(['विषाणू', 'जीवाणू', 'परजीवी', 'संसर्ग'])
+- n0_txt, n0_val = range_str(5, 21, 1, numbers)
+- r_txt, r_val = range_str(2, 8, 1, numbers)
+- d_txt, d_val = range_str(3, 5, 1, numbers)
+
+#conditions:
+- n0_val * (r_val + 1)**d_val < 20000
+
+#answer: n0_val * (r_val + 1)**d_val
+"""
+
+answer_annotated = """
+पहिल्या दिवशी, मूळचे {n0_txt} लोक प्रत्येकी {r_txt} जणांना संक्रमित करतात, त्यामुळे {n0_val}*{r_val} = <<{n0_val}*{r_val}={n0_val*r_val}>>{n0_val*r_val} अधिक लोक संक्रमित होतात.
+पहिल्या दिवसानंतर {n0_val}+{n0_val*r_val} = <<{n0_val}+{n0_val*r_val}={n0_val+n0_val*r_val}>>{n0_val+n0_val*r_val} लोक संक्रमित असतात.
+दुसऱ्या दिवशी, {n0_val+n0_val*r_val}*{r_val} = <<{n0_val+n0_val*r_val}*{r_val}={(n0_val+n0_val*r_val)*r_val}>>{(n0_val+n0_val*r_val)*r_val} अधिक लोक संक्रमित होतात.
+दुसऱ्या दिवसानंतर {n0_val+n0_val*r_val} + {(n0_val+n0_val*r_val)*r_val} = <<{n0_val+n0_val*r_val}+{(n0_val+n0_val*r_val)*r_val}={n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val}>>{n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val} लोक संक्रमित असतात.
+तिसऱ्या दिवशी, {n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val}*{r_val} = {(n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val)*r_val} अधिक लोक संक्रमित होतात. त्यामुळे, {d_txt} दिवसांनंतर {n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val} + {(n0_val+n0_val*r_val+(n0_val+n0_val*r_val)*r_val)*r_val} = {n0_val * (r_val + 1)**d_val} लोक संक्रमित असतात.
+#### {n0_val * (r_val + 1)**d_val}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

@@ -1,0 +1,42 @@
+question = "Pagarikojas maksab leivapäts 2 EUR. Muffinid maksavad 1 EUR tükk. Kui palju kallim on 3 leivapätsi võrreldes 2 muffiniga?"
+
+answer = """
+3 leivapätsi maksavad 3 * 2 EUR = <<3*2=6>>6 EUR.
+2 muffinit maksavad 2 * 1 EUR = <<2*1=2>>2 EUR.
+3 leivapätsi maksavad 6 EUR - 2 EUR = <<6-2=4>>4 EUR rohkem kui muffinid.
+#### 4
+"""
+
+id_orig = 799
+
+id_shuffled = 38
+
+question_annotated = """
+{shop_ine,Pagarikojas} maksab {item1_nom,leivapäts} {price1,2} {currency,EUR}. {item2_nom_pl,muffinid} maksavad {price2,1} {currency,EUR} tükk. Kui palju kallim on {n1,3} {item1_num,leivapätsi} võrreldes {n2,2} {item2_gen,muffini}ga?
+
+#init:
+- item1_nom, item1_num = sample([("leivapäts", "leivapätsi"), ("leib", "leiba"), ("pirukas", "pirukat"), ("kook", "kooki"), ("saiapäts", "saiapätsi"), ("sai", "saia")])
+- item2_nom_pl, item2_num, item2_gen = sample([("muffinid", "muffinit", "muffini"), ("sarvesaiad", "sarvesaia", "sarvesaia"), ("küpsised", "küpsist", "küpsise")])
+- shop_ine = sample(["Pagarikojas", "Kohvikus", "Poes", "Turul"])
+- currency = sample(currencies_sym)
+- $price1 = range(2, 10)
+- $price2 = range(1, 5)
+- $n1 = range(2, 10)
+- $n2 = range(2, 10)
+
+#conditions:
+- n1 * price1 > n2 * price2
+
+#answer: n1 * price1 - n2 * price2
+"""
+
+answer_annotated = """
+{n1} {item1_num} maksavad {n1} * {price1} {currency} = <<{n1}*{price1}={n1*price1}>>{n1*price1} {currency}.
+{n2} {item2_num} maksavad {n2} * {price2} {currency} = <<{n2}*{price2}={n2*price2}>>{n2*price2} {currency}.
+{n1} {item1_num} maksavad {n1*price1} {currency} - {n2*price2} {currency} = <<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} {currency} rohkem kui {item2_nom_pl}.
+#### {n1*price1-n2*price2}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

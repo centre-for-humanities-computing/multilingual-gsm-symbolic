@@ -1,0 +1,43 @@
+question = "Kui Jaanil ja Martinil on 100 sentimeetrit aeda ning nad lepivad, et Martin saab Jaanist 60 sentimeetrit rohkem, siis kui palju jääb Jaanile?"
+
+answer = """
+Olgu x see aia kogus, mille Jaan saab, ja y see kogus, mille Martin saab. Teame, et y = x + 60 ja y + x = 100.
+Asendades esimese võrrandi teise võrrandisse, saame 2x+60=100
+lahutades mõlemalt poolelt 60, saame 2x=40
+jagades mõlemad pooled kahega, saame x=20. See tähendab, et Jaanile jääb 20 sentimeetrit aeda.
+#### 20
+"""
+
+id_orig = 1084
+
+id_shuffled = 85
+
+question_annotated = """
+Kui {name1_gen,Jaani}l ja {name2_gen,Martini}l on {total,100} {unit,sentimeetrit} aeda ning nad lepivad, et {name2,Martin} saab {name1_gen,Jaani}st {diff,60} {unit,sentimeetrit} rohkem, siis kui palju jääb {name1_gen,Jaani}le?
+
+#init:
+- name1, name1_gen = sample(names_male_cases)
+- name2, name2_gen = sample(names_male_cases)
+- unit = sample(["sentimeetrit", "meetrit"])
+- $total = range(100, 1000, 20)
+- $diff = range(20, 200, 10)
+
+#conditions:
+- name1 != name2
+- total - diff > 10
+- is_int((total - diff) / 2)
+
+#answer: (total - diff) // 2
+"""
+
+answer_annotated = """
+Olgu x see aia kogus, mille {name1} saab, ja y see kogus, mille {name2} saab. Teame, et y = x + {diff} ja y + x = {total}.
+Asendades esimese võrrandi teise võrrandisse, saame 2x+{diff}={total}
+lahutades mõlemalt poolelt {diff}, saame 2x={total-diff}
+jagades mõlemad pooled kahega, saame x={(total-diff)//2}. See tähendab, et {name1_gen}le jääb {(total-diff)//2} {unit} aeda.
+#### {(total-diff)//2}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

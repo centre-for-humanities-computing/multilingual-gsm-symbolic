@@ -1,0 +1,41 @@
+question = "100 fólk søkja um eitt starv hjá Google. Av teimum, sum søkja, fáa bert 30% innbjóðingar til samrøðu. Av teimum, sum fáa eina samrøðu, fáa 20% eitt starvstilboð. Av teimum, sum fáa eitt starvstilboð, góðtaka ein triðingur av persónunum starvið. Hvussu nógv fólk góðtaka starvið?"
+
+answer = """
+Talið av persónum, sum fáa innbjóðingar til samrøðu, er 100 * 0,3 = <<100*0,3=30>>30 persónar
+Talið av persónum, sum fáa eitt starvstilboð, er 30 * 0,2 = <<30*0,2=6>>6 persónar
+Talið av persónum, sum góðtaka starvið, er 6*1/3=<<6*1/3=2>>2 persónar
+#### 2
+"""
+
+id_orig = 718
+
+id_shuffled = 94
+
+question_annotated = """
+{n,100} fólk søkja um eitt starv hjá {company,Google}. Av teimum, sum søkja, fáa bert {p1,30}% innbjóðingar til samrøðu. Av teimum, sum fáa eina samrøðu, fáa {p2,20}% eitt starvstilboð. Av teimum, sum fáa eitt starvstilboð, góðtaka {frac_txt,ein triðingur} av persónunum starvið. Hvussu nógv fólk góðtaka starvið?
+
+#init:
+- company = sample(["Salling Group", "LEGO", "Søstrene Grene", "Facebook", "Apple", "Rema1000", "Hatting"])
+- $n = range(100, 1001, 10)
+- $p1 = range(10, 51)
+- $p2 = range(10, 51)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * (p1/100))
+- is_int(n * (p1/100) * (p2/100))
+- is_int(n * (p1/100) * (p2/100) * frac_val)
+
+#answer: ensure_int(n * (p1/100) * (p2/100) * frac_val)
+"""
+
+answer_annotated = """
+Talið av persónum, sum fáa innbjóðingar til samrøðu, er {n} * {p1/100} = <<{n}*{p1/100}={int(n*(p1/100))}>>{int(n*(p1/100))} persónar
+Talið av persónum, sum fáa eitt starvstilboð, er {int(n*(p1/100))} * {p2/100} = <<{int(n*(p1/100))}*{p2/100}={int(n*(p1/100)*(p2/100))}>>{int(n*(p1/100)*(p2/100))} persónar
+Talið av persónum, sum góðtaka starvið, er {int(n*(p1/100)*(p2/100))}*{frac_val}=<<{int(n*(p1/100)*(p2/100))}*{frac_val}={ensure_int(n*(p1/100)*(p2/100)*frac_val)}>>{ensure_int(n*(p1/100)*(p2/100)*frac_val)} persónar
+#### {ensure_int(n*(p1/100)*(p2/100)*frac_val)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

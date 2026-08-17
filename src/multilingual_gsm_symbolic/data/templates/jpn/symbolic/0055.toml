@@ -1,0 +1,30 @@
+question = "まさこは46文字を含むひらがなの基本文字を書く練習をしていて、覚えるまで何度も練習をすることにしました。まずは全ての文字を2回書き、次にその半分の文字をさらに練習し、そのあと、今まで書いた文字を全てもう一度練習しました。まさこは全部で何文字書きましたか？"
+answer = """まさこはひらがな全文字を2回書いたので、合計は 46*2=<<46*2=92>>92 文字です。
+次に、その半分の文字を書いたので、46*1/2=<<46*1/2=23>>23 文字です。
+ここまでで、合計は 92 + 23 = <<92+23=115>>115 文字です。
+これをもう1回書くということは、書いた文字数が2倍になることなので、合計で 115 * 2 = <<115*2=230>>230 文字書いたことになります。
+#### 230
+"""
+id_orig = 546
+id_shuffled = 55
+question_annotated = """{name,まさこ}は{alphabets_val,46}文字を含む{alphabets_txt,ひらがな}の基本文字を書く練習をしていて、覚えるまで何度も練習をすることにしました。まずは全ての文字を{n1,2}回書き、次にその{frac_txt,半分}の文字をさらに練習し、そのあと、今まで書いた文字を全てもう一度練習しました。{name,まさこ}は全部で何文字書きましたか？
+
+#init:
+- name = sample(names)
+- alphabets_txt, alphabets_val = sample([(\"英語のアルファベット\", 26), (\"ひらがな\", 46), (\"カタカナ\", 46), (\"ペルシア文字のアルファベット\", 32), (\"アラビア文字のアルファベット\", 28)])
+- n1 = range(2, 20)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1 + alphabets_val * frac_val)
+"""
+answer_annotated = """{name}は{alphabets_txt}全文字を{n1}回書いたので、合計は {alphabets_val}*{n1}=<<{alphabets_val}*{n1}={alphabets_val*n1}>>{alphabets_val*n1} 文字です。
+次に、その{frac_txt}の文字を書いたので、{alphabets_val}*{frac_val}=<<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} 文字です。
+ここまでで、合計は {alphabets_val*n1} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1}+{int(alphabets_val*frac_val)}={alphabets_val*n1 + int(alphabets_val*frac_val)}>>{alphabets_val*n1 + int(alphabets_val*frac_val)} 文字です。
+これをもう1回書くということは、書いた文字数が2倍になることなので、合計で {alphabets_val*n1 + int(alphabets_val*frac_val)} * 2 = <<{alphabets_val*n1 + int(alphabets_val*frac_val)}*2={2*(alphabets_val*n1 + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1 + int(alphabets_val*frac_val))} 文字書いたことになります。
+#### {2*(alphabets_val*n1 + int(alphabets_val*frac_val))}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

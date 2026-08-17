@@ -1,0 +1,37 @@
+question = "Ein blikksmiður arbeiðir í 4 vikur hvønn mánað og í 6 dagar hvørja viku. Um hann fær 50 kr hvønn dag, hvussu nógv tjenar hann, um hann arbeiðir í eitt ár?"
+
+answer = """
+Blikksmiðurin arbeiðir í 6 dagar hvørja viku og arbeiðir í 4 vikur hvønn mánað, so hann arbeiðir í 6 dagar/viku * 4 vikur/mánað = <<6*4=24>>24 dagar/mánað
+Um hann tjenar 50 kr hvønn dag, tjenar hann 50 kr/dag * 24 dagar/mánað = <<50*24=1200>>1200 kr/mánað
+Eitt ár svarar til 12 mánaðir, so hvørt ár tjenar hann 1200 kr/mánað * 12 mánaðir/ár = <<1200*12=14400>>14.400 kr
+#### 14400
+"""
+
+id_orig = 401
+
+id_shuffled = 70
+
+question_annotated = """
+Ein {occupation,blikksmiður} arbeiðir í {w,4} vikur hvønn mánað og í {d,6} dagar hvørja viku. Um hann fær {p,50} {cur,kr} hvønn dag, hvussu nógv tjenar hann, um hann arbeiðir í eitt ár?
+
+#init:
+- occupation = sample(["blikksmiður", "elektrikari", "málari", "timburmaður", "garðyrkjumaður"])
+- cur = sample(currencies_sym)
+- $w = range(2, 5)
+- $d = range(4, 7)
+- $p = range(40, 200, 5)
+
+
+#answer: w * d * p * 12
+"""
+
+answer_annotated = """
+{occupation}in arbeiðir í {d} dagar hvørja viku og arbeiðir í {w} vikur hvønn mánað, so hann arbeiðir í {d} dagar/viku * {w} vikur/mánað = <<{d}*{w}={d*w}>>{d*w} dagar/mánað
+Um hann tjenar {p} {cur} hvønn dag, tjenar hann {p} {cur}/dag * {d*w} dagar/mánað = <<{p}*{d*w}={p*d*w}>>{p*d*w} {cur}/mánað
+Eitt ár svarar til 12 mánaðir, so hvørt ár tjenar hann {p*d*w} {cur}/mánað * 12 mánaðir/ár = <<{p*d*w}*12={p*d*w*12}>>14.400 {cur}
+#### {p*d*w*12}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

@@ -1,0 +1,40 @@
+question = "Leivapätsil on 24 viilu. Kui Helena sööb 2 viilu päevas ja Urmas sööb kaks korda rohkem, siis mitu päeva leivapäts kestab?"
+
+answer = """
+Urmas saab süüa 2*2=<<2*2=4>>4 viilu päevas.
+Koos saavad Helena ja Urmas süüa 2 + 4 = <<2+4=6>>6 viilu päevas.
+Seega kestab leivapäts 24/6 = <<24/6=4>>4 päeva.
+#### 4
+"""
+
+id_orig = 921
+
+id_shuffled = 37
+
+question_annotated = """
+{item_gen,leivapätsi}l on {n,24} {unit,viilu}. Kui {name1,Helena} sööb {x,2} {unit,viilu} päevas ja {name2,Urmas} sööb {mult_txt,kaks korda} rohkem, siis mitu päeva {item_nom,leivapäts} kestab?
+
+#init:
+- item_nom, item_gen = sample([("leivapäts", "leivapätsi"), ("pitsa", "pitsa"), ("kook", "koogi"), ("lasanje", "lasanje")])
+- unit = sample(["viilu", "tükki", "portsjonit"])
+- (name1, _), (name2, _) = sample(names_cases, 2)
+- $n = range(12, 76, 3)
+- $x = range(2, 13)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- divides(n, x + x*mult_val)
+
+#answer: n // (x + x*mult_val)
+"""
+
+answer_annotated = """
+{name2} saab süüa {x}*{mult_val}=<<{x}*{mult_val}={x*mult_val}>>{x*mult_val} {unit} päevas.
+Koos saavad {name1} ja {name2} süüa {x} + {x*mult_val} = <<{x}+{x*mult_val}={x+x*mult_val}>>{x+x*mult_val} {unit} päevas.
+Seega kestab {item_nom} {n}/{x+x*mult_val} = <<{n}/{x+x*mult_val}={n//(x+x*mult_val)}>>{n//(x+x*mult_val)} päeva.
+#### {n//(x+x*mult_val)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

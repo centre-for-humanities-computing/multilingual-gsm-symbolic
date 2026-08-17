@@ -1,0 +1,41 @@
+question = "Per fekk 278 stig í einum spæli í bowling. Nadja fekk 11 stig meira enn helvtin av tí hjá Per. Hvussu nógv stig høvdu Per og Nadja tilsamans?"
+
+answer = """
+Per = <<278=278>>278 stig
+Nadja = 1/2*278 + 11 = 150 stig
+278 + 150 = <<278+150=428>>428 stig
+Tilsamans fingu Per og Nadja 428 stig.
+#### 428
+"""
+
+id_orig = 800
+
+id_shuffled = 53
+
+question_annotated = """
+{name1,Per} fekk {n1,278} stig í einum spæli í {game,bowling}. {name2,Nadja} fekk {n2,11} stig meira enn {frac_txt,helvtin} av tí hjá {name1,Per}. Hvussu nógv stig høvdu {name1,Per} og {name2,Nadja} tilsamans?
+
+#init:
+- name1, name2 = sample(names, 2)
+- game = sample(["bowling", "pílakast", "bogaskjóting", "basketball", "tennis"])
+- $n1 = range(200, 500)
+- $n2 = range(5, 50)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(frac_val * n1)
+
+#answer: n1 + int(frac_val * n1 + n2)
+"""
+
+answer_annotated = """
+{name1} = <<{n1}={n1}>>{n1} stig
+{name2} = {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} stig
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} stig
+Tilsamans fingu {name1} og {name2} {n1 + int(frac_val * n1 + n2)} stig.
+#### {n1 + int(frac_val * n1 + n2)}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

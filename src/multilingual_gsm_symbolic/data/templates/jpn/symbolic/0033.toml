@@ -1,0 +1,31 @@
+question = "長野出身の姉妹、れなとみさきは、有名人のサインを集めるのが大好きです。学校の夏休みの間、姉妹は毎日午後にサイン集めをしています。5週間後、れなとみさきはそれぞれが集めたサインを数えるためにサイン帳を見比べました。れなのサイン帳には20個のサインがあり、みさきのサイン帳には44個あります。姉妹には夏休みがあと3週間あり、休みの終わりまでに2人合わせて100個のサインを集めたいと考えています。目標に達するには、姉妹はあと何個のサインを集める必要がありますか？"
+answer = """れなとみさきは、すでに20 + 44個のサインを集めています。つまり、<<20+44=64>>64個のサインです。
+目標は100個なので、あと100 - 64個のサインを集める必要があります。100 - 64 = <<100-64=36>>36個のサインです。
+#### 36
+"""
+id_orig = 677
+id_shuffled = 33
+question_annotated = """{city,長野}出身の姉妹、{name1,れな}と{name2,みさき}は、{celebrity_type,有名人}のサインを集めるのが大好きです。学校の{vacation_type,夏休み}の間、姉妹は毎日午後にサイン集めをしています。{n1_txt,5}週間後、{name1,れな}と{name2,みさき}はそれぞれが集めたサインを数えるためにサイン帳を見比べました。{name1,れな}のサイン帳には{s1,20}個のサインがあり、{name2,みさき}のサイン帳には{s2,44}個あります。姉妹には{vacation_type,夏休み}があと{n2_txt,3}週間あり、休みの終わりまでに2人合わせて{goal,100}個のサインを集めたいと考えています。目標に達するには、姉妹はあと何個のサインを集める必要がありますか？
+
+#init:
+- name1, name2 = sample(names_female, 2)
+- city = sample(cities)
+- celebrity_type = sample([\"俳優\", \"野球選手\", \"歌手\", \"サッカー選手\", \"作家\"])
+- vacation_type = sample([\"冬休み\", \"春休み\", \"夏休み\", \"秋休み\"])
+- n1_txt, n1_val = range_str(3, 8, 1, numbers)
+- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+- $s1 = range(15, 40)
+- $s2 = range(30, 60)
+- $goal = range(90, 150, 5)
+
+#conditions:
+- s1 + s2 < goal
+
+#answer: goal - (s1 + s2)
+"""
+answer_annotated = """{name1}と{name2}は、すでに{s1} + {s2}個のサインを集めています。つまり、<<{s1}+{s2}={s1+s2}>>{s1+s2}個のサインです。
+目標は{goal}個なので、あと{goal} - {s1+s2}個のサインを集める必要があります。{goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)}個のサインです。
+#### {goal-(s1+s2)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

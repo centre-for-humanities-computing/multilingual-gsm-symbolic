@@ -1,0 +1,43 @@
+question = "さくらは、体に15センチメートルのコバンザメが2匹くっついた、3メートルのサメを見ました。コバンザメの合計の長さは、サメの体長の何パーセントですか？"
+
+answer = """
+まず、コバンザメの合計の長さを cm で求めます: 15 cm/匹 * 2 匹 = <<15*2=30>>30 cm。
+次に、それをメートルに直すために 100 で割ります: 30 cm / 100 cm/m = <<30/100=0.3>>0.3 m。
+そして、メートルで表したコバンザメの合計の長さをサメの長さで割り、答えを百分率で表すために 100% を掛けます: 0.3/3 メートル * 100% = 10%
+
+#### 10
+"""
+
+id_orig = 473
+
+id_shuffled = 0
+
+question_annotated = """
+{n, さくら}は、体に{y,15}センチメートルのコバンザメが{k,2}匹くっついた、{x,3}メートルの{big_fish,サメ}を見ました。コバンザメの合計の長さは、{big_fish,サメ}の体長の何パーセントですか？
+
+#init:
+- n = sample(names)
+- big_fish = sample([\"イルカ\", \"クジラ\", \"サメ\"])
+- $x = range(2, 21, 1)
+- $k = range(2, 21)
+- $y = range(2, 100)
+
+#conditions:
+- k * y < x * 100
+- divides(100 * x, k*y)
+- divides(100, x * 100 / (k*y))
+
+#answer: int((k * y)/ (x * 100) * 100)
+"""
+
+answer_annotated = """
+まず、コバンザメの合計の長さを cm で求めます: {y} cm/匹 * {k} 匹 = <<{y}*{k}={k*y}>>{k*y} cm。
+次に、それをメートルに直すために 100 で割ります: {k*y} cm / 100 cm/m = <<{k*y}/100={k*y/100}>>{k*y/100} m。
+そして、メートルで表したコバンザメの合計の長さを{big_fish}の長さで割り、答えを百分率で表すために 100% を掛けます: {k*y/100}/{x} メートル * 100% = {int(k*y/(100*x)*100)}%
+
+#### {int(k*y/(100*x)*100)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "jpn"

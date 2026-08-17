@@ -1,0 +1,41 @@
+question = "Il faut 10 minutes à Margaux pour compléter un sudoku et 5 minutes pour compléter un problème d'échecs. Pendant le week-end, elle a résolu 3 sudokus et 8 problèmes d'échecs. Combien de temps a-t-elle passé à jouer à ces jeux ?"
+
+answer = """
+Il faut 10 minutes pour compléter un sudoku et elle en a complété 3, ce qui donne au total 10*3 = <<10*3=30>>30 minutes
+Il faut 5 minutes pour compléter un problème d'échecs et elle en a complété 8, ce qui donne au total 5*8 = <<5*8=40>>40 minutes
+Elle a passé 30 minutes pour les sudokus et 40 minutes pour les problèmes d'échecs, soit au total 30+40 = <<30+40=70>>70 minutes
+#### 70
+"""
+
+id_orig = 220
+
+id_shuffled = 68
+
+question_annotated = """
+Il faut {t1,10} minutes à {name,Margaux} pour compléter un {game1,sudoku} et {t2,5} minutes pour compléter un {game2,problème d'échecs}. Pendant {period,le week-end}, elle a résolu {n1,3} {game1_pl,sudokus} et {n2,8} {game2_pl,problèmes d'échecs}. Combien de temps a-t-elle passé à jouer à ces jeux ?
+
+#init:
+- name = sample(names_female)
+- game1, game1_pl, game2, game2_pl = sample([("sudoku", "sudokus", "problème d'échecs", "problèmes d'échecs"), ("jeu de mots", "jeux de mots", "casse-tête", "casse-tête"), ("mots fléchés", "mots fléchés", "rébus", "rébus"), ("problème d'échecs", "problèmes d'échecs", "sudoku", "sudokus"), ("casse-tête", "casse-tête", "jeu de mots", "jeux de mots")])
+- period = sample(["le week-end", "les vacances", "le jour férié", "la semaine"])
+- $t1 = range(5, 30)
+- $t2 = range(3, 20)
+- $n1 = range(2, 10)
+- $n2 = range(4, 15)
+
+#conditions:
+- t1 > t2
+
+#answer: t1*n1 + t2*n2
+"""
+
+answer_annotated = """
+Il faut {t1} minutes pour compléter un {game1} et elle en a complété {n1}, ce qui donne au total {t1}*{n1} = <<{t1}*{n1}={t1*n1}>>{t1*n1} minutes
+Il faut {t2} minutes pour compléter un {game2} et elle en a complété {n2}, ce qui donne au total {t2}*{n2} = <<{t2}*{n2}={t2*n2}>>{t2*n2} minutes
+Elle a passé {t1*n1} minutes pour les {game1_pl} et {t2*n2} minutes pour les {game2_pl}, soit au total {t1*n1}+{t2*n2} = <<{t1*n1}+{t2*n2}={t1*n1 + t2*n2}>>{t1*n1 + t2*n2} minutes
+#### {t1*n1 + t2*n2}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

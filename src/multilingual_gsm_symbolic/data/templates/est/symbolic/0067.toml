@@ -1,0 +1,44 @@
+question = "Jaani auto läheb katki. Auto kaalub 1200 kilogrammi ja tal on seal pagasit, mis kaalub 250 kilogrammi. Tal on seal ka kaks last, kes kaaluvad kumbki 75 kilogrammi. Kui jõud auto liigutamiseks on 1% kogu kaalust, siis kui palju jõudu peab ta auto lükkamiseks rakendama?"
+
+answer = """
+Tema kaks last kaaluvad 75*2=<<75*2=150>>150 kilogrammi
+Seega on auto ja kogu muu kokku kaal 1200+250+150=<<1200+250+150=1600>>1600 kilogrammi
+Seega peab ta tekitama 1600*0.01=<<1600*0.01=16>>16 kilogrammi
+#### 16
+"""
+
+id_orig = 1275
+
+id_shuffled = 67
+
+question_annotated = """
+{name_gen,Jaani} {vehicle_nom,auto} läheb katki. {vehicle_nom_cap,Auto} kaalub {weight_vehicle,1200} {unit,kilogrammi} ja tal on seal {item,pagasit}, mis kaalub {weight_item,250} {unit,kilogrammi}. Tal on seal ka {num_passengers_txt,kaks} {passenger_count_phrase,last}, kes kaaluvad kumbki {weight_passenger,75} {unit,kilogrammi}. Kui jõud {vehicle_gen,auto} liigutamiseks on {force_percent,1}% kogu kaalust, siis kui palju jõudu peab ta {vehicle_gen,auto} lükkamiseks rakendama?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- vehicle_nom, vehicle_nom_cap, vehicle_gen = sample([('auto', 'Auto', 'auto'), ('buss', 'Buss', 'bussi'), ('veok', 'Veok', 'veoki'), ('maastur', 'Maastur', 'maasturi')])
+- item = sample(['pagasit', 'varustust', 'mööblit', 'kraami'])
+- passenger_count_phrase = sample(['last', 'noort sõpra', 'noort kolleegi', 'noort meeskonnakaaslast'])
+- unit = sample(['kilogrammi', 'kg'])
+- $weight_vehicle = range(1000, 3000, 50)
+- $weight_item = range(100, 500, 25)
+- $weight_passenger = range(50, 100, 5)
+- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- $force_percent = range(1, 6)
+
+#conditions:
+- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+
+#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+"""
+
+answer_annotated = """
+Tema {num_passengers_txt} {passenger_count_phrase} kaaluvad {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
+Seega on {vehicle_nom} ja kogu muu kokku kaal {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
+Seega peab ta tekitama {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}
+#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

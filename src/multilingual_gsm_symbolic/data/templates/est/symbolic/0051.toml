@@ -1,0 +1,52 @@
+question = "Arturil on turuplatsil müügilett. Ta müüb kolme liiki lilli: saialilli, petuuniaid ja begooniaid. Tavaliselt müüb Artur saialilli hinnaga 2.74 EUR poti kohta, petuuniaid hinnaga 1.87 EUR poti kohta ja begooniaid hinnaga 2.12 EUR poti kohta. Arturil ei ole täna vahetusraha, nii et ta otsustas kõik oma hinnad ümardada lähima euroni. Kui Artur müüb 12 potti saialilli, 9 potti petuuniaid ja 17 potti begooniaid, siis kui palju ta teenib?"
+
+answer = """
+Artur ümardab oma saialillede hinna 2.74 EUR pealt 3 EUR peale, sest 2-le järgneva numbri väärtus on 5 või suurem.
+Artur ümardab oma petuuniate hinna 1.87 EUR pealt 2 EUR peale, sest 1-le järgneva numbri väärtus on 5 või suurem.
+Artur ümardab oma begooniate hinna 2.12 EUR pealt 2 EUR peale, sest 2-le järgneva numbri väärtus on väiksem kui 5.
+Artur müüb 12 potti saialilli hinnaga 3 EUR = <<12*3=36>>36 EUR
+Artur müüb 9 potti petuuniaid hinnaga 2 EUR = <<9*2=18>>18 EUR
+Artur müüb 17 potti begooniaid hinnaga 2 EUR = <<17*2=34>>34 EUR
+Kokku teenib Artur 36 EUR + 18 EUR + 34 EUR = <<36+18+34=88>>88 EUR
+#### 88
+"""
+
+id_orig = 74
+
+id_shuffled = 51
+
+question_annotated = """
+{name_gen,Arturi}l on {location_ade,turuplatsil} müügilett. Ta müüb kolme liiki {product_par_pl,lilli}: {item1_par_pl,saialilli}, {item2_par_pl,petuuniaid} ja {item3_par_pl,begooniaid}. Tavaliselt müüb {name,Artur} {item1_par_pl,saialilli} hinnaga {p1,2.74} {cur,EUR} {unit_gen_sg,poti} kohta, {item2_par_pl,petuuniaid} hinnaga {p2,1.87} {cur,EUR} {unit_gen_sg,poti} kohta ja {item3_par_pl,begooniaid} hinnaga {p3,2.12} {cur,EUR} {unit_gen_sg,poti} kohta. {name_gen,Arturi}l ei ole täna vahetusraha, nii et ta otsustas kõik oma hinnad ümardada lähima euroni. Kui {name,Artur} müüb {n1,12} {unit_par_sg,potti} {item1_par_pl,saialilli}, {n2,9} {unit_par_sg,potti} {item2_par_pl,petuuniaid} ja {n3,17} {unit_par_sg,potti} {item3_par_pl,begooniaid}, siis kui palju ta teenib?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- product_gen_sg, product_par_pl = sample([("lille", "lilli"), ("ürdi", "ürte"), ("taime", "taimi")])
+- location_ade = sample(["laadal", "turul", "tänavabasaaril", "turuplatsil"])
+- (item1_par_pl, item1_gen_pl), (item2_par_pl, item2_gen_pl), (item3_par_pl, item3_gen_pl) = sample([("saialilli", "saialillede"), ("petuuniaid", "petuuniate"), ("begooniaid", "begooniate"), ("roose", "rooside"), ("karikakraid", "karikakarde"), ("tulpe", "tulpide"), ("liiliaid", "liiliate"), ("päevalilli", "päevalillede"), ("orhideesid", "orhideede")], 3)
+- unit_gen_sg, unit_par_sg = sample([("kimbu", "kimpu"), ("korvi", "korvi"), ("buketi", "buketti"), ("poti", "potti")])
+- cur = sample(currencies_sym)
+- $p1 = arange(1.26, 3.53, 0.33)
+- $p2 = arange(2.27, 5.53, 0.26)
+- $p3 = arange(4.85, 6.53, 0.31)
+- $n1 = range(5, 21)
+- $n2 = range(15, 31)
+- $n3 = range(35, 41)
+
+
+#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)
+"""
+
+answer_annotated = """
+{name} ümardab oma {item1_gen_pl} hinna {p1} {cur} pealt {round(p1)} {cur} peale, sest {int(p1)}-le järgneva numbri väärtus on {'5 või suurem' if round(p1) > p1 else 'väiksem kui 5'}.
+{name} ümardab oma {item2_gen_pl} hinna {p2} {cur} pealt {round(p2)} {cur} peale, sest {int(p2)}-le järgneva numbri väärtus on {'5 või suurem' if round(p2) > p2 else 'väiksem kui 5'}.
+{name} ümardab oma {item3_gen_pl} hinna {p3} {cur} pealt {round(p3)} {cur} peale, sest {int(p3)}-le järgneva numbri väärtus on {'5 või suurem' if round(p3) > p3 else 'väiksem kui 5'}.
+{name} müüb {n1} {unit_par_sg} {item1_par_pl} hinnaga {round(p1)} {cur} = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}
+{name} müüb {n2} {unit_par_sg} {item2_par_pl} hinnaga {round(p2)} {cur} = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}
+{name} müüb {n3} {unit_par_sg} {item3_par_pl} hinnaga {round(p3)} {cur} = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}
+Kokku teenib {name} {n1*round(p1)} {cur} + {n2*round(p2)} {cur} + {n3*round(p3)} {cur} = <<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)} {cur}
+#### {n1*round(p1) + n2*round(p2) + n3*round(p3)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

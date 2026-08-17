@@ -1,9 +1,9 @@
-question = "Eitt brauð hefur 24 sneiðar. Ef Andrea getur borðað 2 sneiðar á dag, en Johan getur borðað tvisvar, hversu marga daga endist brauðið þá?"
+question = "Í einu brauði eru 24 sneiðar. Ef Andrea getur borðað 2 sneiðar á dag, en Johan getur borðað tvisvar meira, hversu marga daga endist brauðið þá?"
 
 answer = """
 Johan getur borðað 2*2=<<2*2=4>>4 sneiðar á dag.
 Saman geta Andrea og Johan borðað 2+4=<<2+4=6>>6 sneiðar á dag.
-Þá endist eitt brauð í 24/6=<<24/6=4>>4 daga.
+Þá endist brauðið í 24/6=<<24/6=4>>4 daga.
 #### 4
 """
 
@@ -12,11 +12,11 @@ id_orig = 921
 id_shuffled = 37
 
 question_annotated = """
-Eitt {item,brauð} hefur {n,24} {unit,sneiðar}. Ef {name1,Andrea} getur borðað {x,2} {unit,sneiðar} á dag, en {name2,Johan} getur borðað {mult_txt,tvisvar}, hversu marga daga endist {item,brauð}ið þá?
+Í {item_þgf,einu brauði} eru {n,24} {unit_nf,sneiðar}. Ef {name1,Andrea} getur borðað {x,2} {unit_þf,sneiðar} á dag, en {name2,Johan} getur borðað {mult_txt,tvisvar} meira, hversu marga daga endist {item_def,brauðið} þá?
 
 #init:
-- item = sample(["pizza", "kaka", "baka", "lasagna"])
-- unit = sample(["stykki", "hlutir", "skammtar"])
+- item_þgf, item_def = sample([("einu brauði", "brauðið"), ("einni pizzu", "pizzan"), ("einni köku", "kakan"), ("einni tertu", "tertan"), ("einu lasagna", "lasagnað")])
+- unit_nf, unit_þf = sample([("sneiðar", "sneiðar"), ("stykki", "stykki"), ("hlutar", "hluta"), ("skammtar", "skammta")])
 - name1, name2 = sample(names, 2)
 - $n = range(12, 76, 3)
 - $x = range(2, 13)
@@ -29,12 +29,12 @@ Eitt {item,brauð} hefur {n,24} {unit,sneiðar}. Ef {name1,Andrea} getur borða�
 """
 
 answer_annotated = """
-{name2} getur borðað {x}*{mult_var}=<<{x}*{mult_var}={x*mult_var}>>{x*mult_var} {unit} á dag.
-Saman geta {name1} og {name2} borðað {x}+{x*mult_var}=<<{x}+{x*mult_var}={x+x*mult_var}>>{x+x*mult_var} {unit} á dag.
-Þá endist eitt {item} í {n}/{x+x*mult_var}=<<{n}/{x+x*mult_var}={n//(x+x*mult_var)}>>{n//(x+x*mult_var)} daga.
+{name2} getur borðað {x}*{mult_var}=<<{x}*{mult_var}={x*mult_var}>>{x*mult_var} {unit_þf} á dag.
+Saman geta {name1} og {name2} borðað {x}+{x*mult_var}=<<{x}+{x*mult_var}={x+x*mult_var}>>{x+x*mult_var} {unit_þf} á dag.
+Þá endist {item_def} í {n}/{x+x*mult_var}=<<{n}/{x+x*mult_var}={n//(x+x*mult_var)}>>{n//(x+x*mult_var)} {"dag" if n//(x+x*mult_var) % 10 == 1 and n//(x+x*mult_var) % 100 != 11 else "daga"}.
 #### {n//(x+x*mult_var)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

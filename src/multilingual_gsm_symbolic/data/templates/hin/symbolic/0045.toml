@@ -1,0 +1,45 @@
+question = "सिया के पास एक फूलों की क्यारी है जो १११ मीटर लंबी है। सिया अपनी फूलों की क्यारी को पौधों से भरना चाहती है। सिया के फूल १२ सेंटीमीटर चौड़े बढ़ते हैं, और बागवानी के दिशानिर्देश कहते हैं कि क्यारी के साथ हर १.५ मीटर पर एक फूल लगाना चाहिए। सिया के पास पहले से ही १७ फूल हैं। दुकान पर प्रत्येक फूल वाला पौधा ₹६ का है। अपनी फूलों की क्यारी को भरने के लिए सिया दुकान पर कितने पैसे खर्च करेगी?"
+
+answer = """
+सिया की फूलों की क्यारी के लिए १११ मीटर / १.५ मीटर प्रति पौधा = <<१११/१.५=७४>>७४ पौधों की आवश्यकता है।
+सिया को ७४ पौधे - १७ पौधे = <<७४-१७=५७>>५७ पौधे खरीदने होंगे।
+सिया ५७ पौधे * ₹६ = ₹<<५७*६=३४२>>३४२ खर्च करेगी।
+#### ३४२
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,सिया} के पास एक फूलों की क्यारी है जो {length,१११} {unit_length,मीटर} लंबी है। {name,सिया} अपनी फूलों की क्यारी को पौधों से भरना चाहती है। {name,सिया} के फूल {plant_width,१२} सेंटीमीटर चौड़े बढ़ते हैं, और बागवानी के दिशानिर्देश कहते हैं कि क्यारी के साथ हर {space,१.५} {unit_length,मीटर} पर एक फूल लगाना चाहिए। {name,सिया} के पास पहले से ही {owned,१७} फूल हैं। दुकान पर प्रत्येक फूल वाला पौधा {cur,₹}{cost,६} का है। अपनी फूलों की क्यारी को भरने के लिए {name,सिया} दुकान पर कितने पैसे खर्च करेगी?
+
+#init:
+- name = sample(names_female)
+- unit_length = sample(['मीटर'])
+- cur = sample(currencies_sym)
+- $length = range(110, 220)
+- $plant_width = range(2, 13)
+- $space = arange(1, 20, 0.25)
+- $owned = range(10, 30)
+- $cost = range(3, 15)
+
+#conditions:
+- plant_width * 3 < length
+- plant_width < space
+- is_int(length / space)
+- length / space > owned
+
+#answer: int((length / space - owned) * cost)
+"""
+
+answer_annotated = """
+{name} की फूलों की क्यारी के लिए {length} {unit_length} / {space} {unit_length} प्रति पौधा = <<{length}/{space}={int(length/space)}>>{int(length/space)} पौधों की आवश्यकता है।
+{name} को {int(length/space)} पौधे - {owned} पौधे = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} पौधे खरीदने होंगे।
+{name} {int(length/space)-owned} पौधे * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)} खर्च करेगी।
+#### {int((length/space - owned) * cost)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

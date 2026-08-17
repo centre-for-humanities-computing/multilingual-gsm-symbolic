@@ -1,0 +1,40 @@
+question = "नंदिनी यह तय करने की कोशिश कर रही है कि वह अपना टैक्स खुद करे या एक अकाउंटेंट को काम पर रखे। अगर वह इसे खुद करती है, तो वह फ्रीलांस काम के ३ घंटे कम कर पाएगी, जिससे छूटी हुई आय में ₹३५/घंटा का नुकसान होगा। अकाउंटेंट ₹९० लेता है। अगर वह अकाउंटेंट को काम पर रखती है, तो उसके पास कितने अधिक पैसे होंगे?"
+
+answer = """
+पहले कुल खोई हुई आय ज्ञात करें, यदि नंदिनी अपना टैक्स खुद करती है: ₹३५/घंटा * ३ घंटे = ₹<<३५*३=१०५>>१०५
+फिर यह पता करने के लिए अकाउंटेंट की फीस घटाएँ कि नंदिनी कितने पैसे बचाती है: ₹१०५ - ₹९० = ₹<<१०५-९०=१५>>१५
+#### १५
+"""
+
+id_orig = 164
+
+id_shuffled = 65
+
+question_annotated = """
+{name,नंदिनी} यह तय करने की कोशिश कर रही है कि वह {task,अपना टैक्स} खुद करे या एक {profession,अकाउंटेंट} को काम पर रखे। अगर वह इसे खुद करती है, तो वह {work_type,फ्रीलांस} काम के {n,३} घंटे कम कर पाएगी, जिससे छूटी हुई आय में {cur,₹}{rate,३५}/घंटा का नुकसान होगा। {profession,अकाउंटेंट} {cur,₹}{fee,९०} लेता है। अगर वह {profession,अकाउंटेंट} को काम पर रखती है, तो उसके पास कितने अधिक पैसे होंगे?
+
+#init:
+- name = sample(names_female)
+- task = sample(["her taxes", "her financial planning", "her business accounting"])
+- profession = sample(["accountant", "financial advisor", "tax consultant", "bookkeeper"])
+- work_type = sample(["freelance", "consulting", "part-time", "contract"])
+- cur = sample(currencies_sym)
+- $n = range(3, 14)
+- $rate = range(20, 100)
+- $fee = range(50, 200)
+
+#conditions:
+- n * rate > fee
+
+#answer: n * rate - fee
+"""
+
+answer_annotated = """
+पहले कुल खोई हुई आय ज्ञात करें, यदि {name} {task} खुद करती है: {cur}{rate}/घंटा * {n} घंटे = {cur}<<{rate}*{n}={rate*n}>>{rate*n}
+फिर यह पता करने के लिए {profession} की फीस घटाएँ कि {name} कितने पैसे बचाती है: {cur}{rate*n} - {cur}{fee} = {cur}<<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee}
+#### {rate*n-fee}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

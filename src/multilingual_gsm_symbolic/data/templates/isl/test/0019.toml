@@ -1,4 +1,4 @@
-question = "Í spurningakeppni með 60 spurningum eru 40% spurninganna auðveldar og afganginum er skipt jafnt í miðlungsþungar og erfiðar spurningar. Ef Alma er viss um að svara 75% af auðveldu spurningunum rétt og helminginn af miðlungsþungu og erfiðu spurningunum rétt, hversu mörg stig er hún viss um að fá?"
+question = "Í spurningakeppni með 60 spurningum eru 40% spurninganna auðveldar og afganginum er skipt jafnt í miðlungsþungar og erfiðar spurningar. Ef Alma er viss um að svara 75% af auðveldu spurningunum rétt og helmingnum af miðlungsþungu og erfiðu spurningunum rétt, hversu mörg stig er hún viss um að fá?"
 
 answer = """
 Miðlungsþungu og erfiðu spurningarnar eru 100% - 40% = 60% af spurningakeppninni.
@@ -15,12 +15,12 @@ id_orig = 1021
 id_shuffled = 19
 
 question_annotated = """
-Í spurningakeppni með {n,60} spurningum eru {p1,40}% spurninganna {s1,auðveldar} og afganginum er skipt jafnt í {s2,miðlungsþungar} og {s3,erfiðar} spurningar. Ef {name,Alma} er viss um að svara {r1,75}% af auðveldu spurningunum rétt og {frac_txt,helminginn} af miðlungsþungu og erfiðu spurningunum rétt, hversu mörg stig er hún viss um að fá?
+Í spurningakeppni með {n,60} spurningum eru {p1,40}% spurninganna {s1,auðveldar} og afganginum er skipt jafnt í {s2,miðlungsþungar} og {s3,erfiðar} spurningar. Ef {name,Alma} er viss um að svara {r1,75}% af auðveldu spurningunum rétt og {frac_txt_þgf,helmingnum} af miðlungsþungu og erfiðu spurningunum rétt, hversu mörg stig er hún viss um að fá?
 
 #init:
 - s1, s2, s3 = sample(["saga", "landafræði", "líffræði", "efnafræði", "eðlisfræði", "hagfræði", "bókmenntir", "algebra", "rúmfræði"], 3)
 - name = sample(names_female)
-- $frac_txt, frac_val = sample(fraction_alnum)
+- $frac_txt_þgf, frac_val = sample([("helmingnum", "1/2"), ("þriðjungnum", "1/3"), ("fjórðungnum", "1/4"), ("fimmtungnum", "1/5")])
 - $p1 = range(5, 71, 5)
 - $r1 = range(5, 101, 5)
 - $n = range(10, 151, 10)
@@ -38,12 +38,12 @@ Miðlungsþungu og erfiðu spurningarnar eru 100% - {p1}% = {100-p1}% af spurnin
 Það eru {n} spurningar*{p1}/100 = <<{n}*{p1}/100={int(n * (p1/100))}>>{int(n * (p1/100))} auðveldar spurningar.
 Það eru alls {n} spurningar*{100-p1}/100 = <<{n}*{100-p1}/100={int(n*(1-(p1/100)))}>>{int(n*(1-(p1/100)))} miðlungsþungar og erfiðar spurningar.
 Ef {name} er viss um að svara {r1}% af auðveldu spurningunum rétt, þýðir það að hún er viss um {int(n * (p1/100))} spurningar*{r1}/100 = <<{int(n * (p1/100))}*{r1}/100={int(n * (p1/100) * (r1/100))}>>{int(n * (p1/100) * (r1/100))} stig.
-Af miðlungsþungu og erfiðu spurningunum er hún viss um að fá {frac_txt} rétt, þannig að það eru {int(n*(1-(p1/100)))} spurningar*{frac_val} = <<{int(n*(1-(p1/100)))}*{frac_val}={ensure_int(n*(1-(p1/100))*frac_val)}>>{ensure_int(n*(1-(p1/100))*frac_val)} stig.
+Af miðlungsþungu og erfiðu spurningunum er hún viss um að fá {"helminginn" if frac_txt_þgf=="helmingnum" else "þriðjunginn" if frac_txt_þgf=="þriðjungnum" else "fjórðunginn" if frac_txt_þgf=="fjórðungnum" else "fimmtunginn"} rétt, þannig að það eru {int(n*(1-(p1/100)))} spurningar*{frac_val} = <<{int(n*(1-(p1/100)))}*{frac_val}={ensure_int(n*(1-(p1/100))*frac_val)}>>{ensure_int(n*(1-(p1/100))*frac_val)} stig.
 Þannig er hún viss um að fá {int(n * (p1/100) * (r1/100))} stig + {ensure_int(n*(1-(p1/100))*frac_val)} stig = <<{int(n * (p1/100) * (r1/100))}+{ensure_int(n*(1-(p1/100))*frac_val)}={ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)}>>{ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)} stig í spurningakeppninni sinni.
 #### {ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"
 

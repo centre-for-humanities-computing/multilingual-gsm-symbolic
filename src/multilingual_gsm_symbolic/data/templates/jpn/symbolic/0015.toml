@@ -1,0 +1,32 @@
+question = "かなの犬には8匹の子犬がいて、そのうち3匹に斑点があります。だいきの犬には12匹の子犬がいて、そのうち4匹に斑点があります。子犬全体のうち、斑点があるのは何パーセントですか？"
+answer = """まず、子犬の合計数を求めます: 8匹 + 12匹 = <<8+12=20>>20匹
+次に、斑点のある子犬の合計数を求めます: 3匹 + 4匹 = <<3+4=7>>7匹
+そして、斑点のある子犬の数を子犬の合計数で割り、100%を掛けて、斑点のある子犬の割合を求めます: 7匹 / 20匹 * 100% = 35%
+#### 35
+"""
+id_orig = 458
+id_shuffled = 15
+question_annotated = """{name1, かな}の犬には{n1, 8}匹の子犬がいて、そのうち{k1,3}匹に斑点があります。{name2, だいき}の犬には{n2,12}匹の子犬がいて、そのうち{k2,4}匹に斑点があります。子犬全体のうち、斑点があるのは何パーセントですか？
+
+#init:
+- name1, name2 = sample(names, 2)
+- $n1 = range(4, 16)
+- $n2 = range(4, 20)
+- $k1 = range(2, 12)
+- $k2 = range(2, 12)
+
+#conditions:
+- k1 < n1
+- k2 < n2
+- divides(n1 + n2, k1 + k2)
+- is_int(100 * (k1+k2) / (n1+n2))
+
+#answer: int(100 * (k1+k2) / (n1+n2))
+"""
+answer_annotated = """まず、子犬の合計数を求めます: {n1}匹 + {n2}匹 = <<{n1}+{n2}={n1+n2}>>{n1+n2}匹
+次に、斑点のある子犬の合計数を求めます: {k1}匹 + {k2}匹 = <<{k1}+{k2}={k1+k2}>>{k1+k2}匹
+そして、斑点のある子犬の数を子犬の合計数で割り、100%を掛けて、斑点のある子犬の割合を求めます: {k1+k2}匹 / {n1+n2}匹 * 100% = {int(100 * (k1+k2) / (n1+n2))}%
+#### {int(100 * (k1+k2) / (n1+n2))}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

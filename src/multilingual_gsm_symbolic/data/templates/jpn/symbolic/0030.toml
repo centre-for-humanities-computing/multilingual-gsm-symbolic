@@ -1,0 +1,32 @@
+question = "さかえは￥1200持っていて、金物店からねじを16本買いたいと思っています。ねじ1本の値段は￥30です。ねじの代金を払ったあと、さかえの手元にはいくら残りますか？"
+answer = """さかえはねじを16本買うのに 16 * ￥30 = ￥<<16*30=480>>480 支払いました。
+さかえの手元には ￥1200 - ￥480 = ￥720 残ります。
+#### 720
+"""
+id_orig = 873
+id_shuffled = 30
+question_annotated = """{name,さかえ}は{cur,￥}{initial_amount,1200}持っていて、{store_type,金物}店から{item,ねじ}を{quantity,16}本買いたいと思っています。{item,ねじ}1本の値段は{cur,￥}{unit_price,30}です。{item,ねじ}の代金を払ったあと、{name,さかえ}の手元にはいくら残りますか？
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- item = sample([\"ねじ\", \"くぎ\", \"ナット\"])
+- store_type = sample([\"金物\", \"住宅改修\", \"建設資材\"])
+- $quantity = range(15, 60)
+- $initial_amount = range(100, 1300, 100)
+- $unit_price = range(5, 100, 5)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: round(initial_amount - quantity * unit_price)
+"""
+answer_annotated = """{name}は{item}を{quantity}本買うのに {quantity} * {cur}{round(unit_price)} = {cur}<<{quantity}*{round(unit_price)}={round(quantity*unit_price)}>>{round(quantity*unit_price)} 支払いました。
+{name}の手元には {cur}{initial_amount} - {cur}{round(quantity*unit_price)} = {cur}{round(initial_amount - quantity * unit_price)} 残ります。
+#### {round(initial_amount - quantity * unit_price)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

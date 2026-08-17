@@ -1,0 +1,52 @@
+question = "कोल ने ईस्टर अंडा खोज खेल के लिए आँगन में ३ दर्जन अंडे छिपाए। लामार को ५ अंडे मिलते हैं। स्टेसी को लामार से दो बार अंडे मिलते हैं। चार्ली को स्टेसी से २ कम अंडे मिलते हैं, और मेई को चार्ली के आधा अंडे मिलते हैं। आँगन में अभी भी कितने अंडे छिपे हुए हैं?"
+
+answer = """
+कोल ३*१२ = <<३*१२=३६>>३६ अंडे छिपाता है।
+लामार को ५ अंडे मिलते हैं।
+स्टेसी को ५*२ = <<५*२=१०>>१० अंडे मिलते हैं।
+चार्ली को १० - २ = <<१०-२=८>>८ अंडे मिलते हैं।
+मेई को ८*१/२=<<८*१/२=४>>४ अंडे मिलते हैं।
+बच्चों को कुल ५ + १० + ८ + ४ = <<५+१०+८+४=२७>>२७ अंडे मिलते हैं।
+आँगन में अभी भी छिपे हुए अंडों की कुल संख्या ३६ - २७ = <<३६-२७=९>>९ अंडे हैं।
+#### ९
+"""
+
+id_orig = 1164
+
+id_shuffled = 47
+
+question_annotated = """
+{name1,कोल} ने ईस्टर अंडा खोज खेल के लिए आँगन में {n,३} दर्जन अंडे छिपाए। {name2,लामार} को {x,५} अंडे मिलते हैं। {name3,स्टेसी} को {name2,लामार} से {mult1_txt,दो बार} अंडे मिलते हैं। {name4,चार्ली} को {name3,स्टेसी} से {y,२} कम अंडे मिलते हैं, और {name5,मेई} को {name4,चार्ली} के {frac_txt,आधा} अंडे मिलते हैं। आँगन में अभी भी कितने अंडे छिपे हुए हैं?
+
+#init:
+- name1, name2, name3, name4, name5 = sample(names, 5)
+- $n = range(2, 10)
+- $x = range(3, 15)
+- $y = range(1, 5)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))
+- is_int(x * mult1_val)
+- x * mult1_val - y > 0
+- is_int((x * mult1_val - y) * frac_val)
+- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)
+
+#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))
+"""
+
+answer_annotated = """
+{name1} {n}*१२ = <<{n}*१२={n*12}>>{n*12} अंडे छिपाता है।
+{name2} को {x} अंडे मिलते हैं।
+{name3} को {x}*{mult1_val} = <<{x}*{mult1_val}={x*mult1_val}>>{x*mult1_val} अंडे मिलते हैं।
+{name4} को {x*mult1_val} - {y} = <<{x*mult1_val}-{y}={x*mult1_val-y}>>{x*mult1_val-y} अंडे मिलते हैं।
+{name5} को {x*mult1_val-y}*{frac_val}=<<{x*mult1_val-y}*{frac_val}={(x*mult1_val-y)*frac_val}>>{(x*mult1_val-y)*frac_val} अंडे मिलते हैं।
+बच्चों को कुल {x} + {x*mult1_val} + {x*mult1_val-y} + {(x*mult1_val-y)*frac_val} = <<{x}+{x*mult1_val}+{x*mult1_val-y}+{(x*mult1_val-y)*frac_val}={x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}>>{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} अंडे मिलते हैं।
+आँगन में अभी भी छिपे हुए अंडों की कुल संख्या {n*12} - {x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val} = <<{n*12}-{x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val}={n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}>>{n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)} अंडे हैं।
+#### {n * 12 - (x + x*mult1_val + (x*mult1_val-y) + (x*mult1_val-y)*frac_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

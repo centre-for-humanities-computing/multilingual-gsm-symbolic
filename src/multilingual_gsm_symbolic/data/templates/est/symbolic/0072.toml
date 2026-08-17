@@ -1,0 +1,45 @@
+question = "Toomasel on 5 kirjasõpra. Ta lõpetas kirjavahetuse 2 kirjasõbraga. Iga ülejäänu saadab talle 2 kirja nädalas, mis on 5 lehekülge pikad. Ta vastab samaga. Ta suudab kirjutada ühe lehekülje 6 minutiga. Mitu tundi veedab ta kirjutades ühes nädalas?"
+
+answer = """
+Toomasel on nüüd 5-2=<<5-2=3>>3 kirjasõpra
+Seega ta saab 3*2=<<3*2=6>>6 kirja nädalas
+Seega ta kirjutab 6*5=<<6*5=30>>30 lehekülge nädalas
+Seega ta kirjutab 30*6=<<30*6=180>>180 minutit nädalas
+Seega ta kirjutab 180/60=<<180/60=3>>3 tundi nädalas
+#### 3
+"""
+
+id_orig = 242
+
+id_shuffled = 72
+
+question_annotated = """
+{name_gen,Toomase}l on {n1,5} kirjasõpra. Ta lõpetas kirjavahetuse {n2,2} kirjasõbraga. Iga ülejäänu saadab talle {l,2} kirja nädalas, mis on {p,5} lehekülge pikad. Ta vastab samaga. Ta suudab kirjutada ühe lehekülje {t,6} minutiga. Mitu tundi veedab ta kirjutades ühes nädalas?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- $n1 = range(5, 15)
+- $n2 = range(1, 5)
+- $l = range(2, 5)
+- $p = range(5, 12)
+- $t = range(4, 15)
+
+#conditions:
+- n2 < n1
+- is_int(((n1 - n2) * l * p * t) / 60)
+
+#answer: ((n1 - n2) * l * p * t) // 60
+"""
+
+answer_annotated = """
+{name_gen}l on nüüd {n1}-{n2}=<<{n1}-{n2}={n1-n2}>>{n1-n2} kirjasõpra
+Seega ta saab {n1-n2}*{l}=<<{n1-n2}*{l}={(n1-n2)*l}>>{(n1-n2)*l} kirja nädalas
+Seega ta kirjutab {(n1-n2)*l}*{p}=<<{(n1-n2)*l}*{p}={((n1-n2)*l*p)}>>{((n1-n2)*l*p)} lehekülge nädalas
+Seega ta kirjutab {( (n1-n2)*l*p )}*{t}=<<{((n1-n2)*l*p)}*{t}={((n1-n2)*l*p*t)}>>{((n1-n2)*l*p*t)} minutit nädalas
+Seega ta kirjutab {((n1-n2)*l*p*t)}/60=<<{((n1-n2)*l*p*t)}/60={((n1-n2)*l*p*t)//60}>>{((n1-n2)*l*p*t)//60} tundi nädalas
+#### {((n1-n2)*l*p*t)//60}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

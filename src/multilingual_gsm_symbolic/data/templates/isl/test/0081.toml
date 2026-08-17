@@ -1,8 +1,8 @@
-question = "Páskaeggjaleitarliðið faldi 100 egg. Jensen-tvíburarnir fundu hvor um sig 30 egg. Öll hin eggin nema 10 fundust af vinum þeirra. Hvað fundu vinirnir mörg egg?"
+question = "Páskaeggjaleitarliðið faldi 100 egg. Blöndal-tvíburarnir fundu hvor um sig 30 egg. Öll hin eggin nema 10 fundust af vinum þeirra. Hvað fundu vinirnir mörg egg?"
 
 answer = """
-Jensen-tvíburarnir fundu 30 * 2 = <<30*2=60>>60 egg.
-Fjöldinn sem var enn falinn var 100 - 60 = <<100-60=40>>40 egg
+Blöndal-tvíburarnir fundu 30 * 2 = <<30*2=60>>60 egg.
+Fjöldinn sem var enn falinn var 100 - 60 = <<100-60=40>>40 egg.
 Þar sem 10 egg fundust ekki, þýðir það að vinirnir fundu 40 - 10 = 30 egg.
 #### 30
 """
@@ -12,15 +12,16 @@ id_orig = 1025
 id_shuffled = 81
 
 question_annotated = """
-Páskaeggja{event,leitarliðið} faldi {total,100} {item,egg}. {family,Jensen}-tvíburarnir fundu hvor um sig {n,30} {item,egg}. Öll hin {item,egg}in nema {m,10} fundust af vinum þeirra. Hvað fundu vinirnir mörg {item,egg}?
+{event,Páskaeggjaleitarliðið} faldi {total,100} {item_ft,egg}. {family,Blöndal}-tvíburarnir fundu hvor um sig {n,30} {item_n,egg}. Öll hin {item_ft_gr,eggin} nema {m,10} fundust af vinum þeirra. Hvað fundu vinirnir mörg {item_ft,egg}?
 
 #init:
-- event = sample(["jægerne", "skattejægerne", "deltagerne"])
-- item = sample(["æg", "godter", "legetøj", "mønter", "slik", "goder"])
-- family = sample(["Madsen", "Hansen", "Æbelgaard", "Poulsen", "Christensen"])
+- event = sample(["Páskaeggjaleitarliðið", "Fjársjóðsleitarhópurinn", "Leitarflokkurinn"])
+- item_ft, item_ft_gr = sample([("egg", "eggin"), ("leikföng", "leikföngin"), ("tákn", "táknin"), ("spil", "spilin"), ("kort", "kortin")])
+- family = sample(["Blöndal", "Briem", "Thoroddsen", "Stephensen", "Melsteð"])
 - $total = range(50, 201, 10)
 - $n = range(10, 51)
 - $m = range(5, 21)
+- item_n = "leikfang" if (n % 10 == 1 and n % 100 != 11 and item_ft == "leikföng") else item_ft
 
 #conditions:
 - 2*n + m < total
@@ -29,12 +30,12 @@ Páskaeggja{event,leitarliðið} faldi {total,100} {item,egg}. {family,Jensen}-t
 """
 
 answer_annotated = """
-{family}-tvíburarnir fundu {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
-Fjöldinn sem var enn falinn var {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
-Þar sem {m} {item} fundust ekki, þýðir það að vinirnir fundu {total-2*n} - {m} = {total - 2*n - m} {item}.
+{family}-tvíburarnir fundu {n} * 2 = <<{n}*2={2*n}>>{2*n} {item_ft}.
+Fjöldinn sem var enn falinn var {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item_ft}.
+Þar sem {m} {item_ft} fundust ekki, þýðir það að vinirnir fundu {total-2*n} - {m} = {total - 2*n - m} {"leikfang" if ((total - 2*n - m) % 10 == 1 and (total - 2*n - m) % 100 != 11 and item_ft == "leikföng") else item_ft}.
 #### {total - 2*n - m}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

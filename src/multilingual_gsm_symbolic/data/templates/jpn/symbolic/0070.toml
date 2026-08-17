@@ -1,0 +1,27 @@
+question = "ある建設作業員は毎月4週間、毎週6日働きます。もし1日あたり￥5000の給料をもらうなら、1年間働くといくら稼ぎますか？"
+answer = """建設作業員は毎週6日働き、毎月4週間働くので、1か月に働く日数は 6日/週 × 4週/月 = <<6*4=24>>24日/月 です。
+1日あたり￥5000稼ぐので、1か月の収入は ￥5000/日 × 24日/月 = ￥<<5000*24=120000>>120,000/月 です。
+1年は12か月なので、1年間の収入は ￥120,000/月 × 12か月/年 = ￥<<120000*12=1440000>>1,440,000 です。
+#### 1440000
+"""
+id_orig = 401
+id_shuffled = 70
+question_annotated = """ある{occupation,建設作業員}は毎月{w,4}週間、毎週{d,6}日働きます。もし1日あたり{cur,￥}{p,5000}の給料をもらうなら、1年間働くといくら稼ぎますか？
+
+#init:
+- occupation = sample([\"配管工さん\", \"電気工さん\", \"塗装工さん\", \"大工さん\", \"造園作業員\"])
+- cur = sample(currencies_sym)
+- $w = range(2, 5)
+- $d = range(4, 7)
+- $p = range(4000, 20000, 500)
+
+
+#answer: w * d * p * 12
+"""
+answer_annotated = """{occupation}は毎週{d}日働き、毎月{w}週間働くので、1か月に働く日数は {d}日/週 × {w}週/月 = <<{d}*{w}={d*w}>>{d*w}日/月 です。
+1日あたり{cur}{p}稼ぐので、1か月の収入は {cur}{p}/日 × {d*w}日/月 = {cur}<<{p}*{d*w}={p*d*w}>>{p*d*w}/月 です。
+1年は12か月なので、1年間の収入は {cur}{p*d*w}/月 × 12か月/年 = {cur}<<{p*d*w}*12={p*d*w*12}>>{p*d*w*12} です。
+#### {p*d*w*12}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

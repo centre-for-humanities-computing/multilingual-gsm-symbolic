@@ -1,0 +1,39 @@
+question = "自動販売機で、￥150のポカリスエットと￥180のほうじ茶が売られています。のりゆきは￥5000を使い、ポカリスエットを3本買ったところ、おつりとして所持金の1%が残りました。彼はほうじ茶を何本買いましたか？"
+answer = """のりゆきのおつりは￥5000*1/100 = ￥<<5000*1/100=50>>50 です。
+のりゆきが使った金額は￥5000*99/100 = ￥<<5000*99/100=4950>>4950 です。
+のりゆきはポカリスエットに￥3*150 = ￥<<3*150=450>>450 使いました。
+のりゆきはほうじ茶に￥4950-450 = ￥<<4950-450=4500>>4500 使いました。
+のりゆきはほうじ茶を4500/180 = <<4500/180=25>>25 本買いました。
+#### 25
+"""
+id_orig = 434
+id_shuffled = 80
+question_annotated = """自動販売機で、{cur,￥}{price1,150}の{item1,ポカリスエット}と{cur,￥}{price2,180}の{item2,ほうじ茶}が売られています。{name,のりゆき}は{cur,￥}{total,5000}を使い、{item1,ポカリスエット}を{n1,3}本買ったところ、おつりとして所持金の{p,1}%が残りました。彼は{item2,ほうじ茶}を何本買いましたか？
+
+#init:
+- name = sample(names_male)
+- item1, item2 = sample(['ポカリスエット', '煎茶', 'ほうじ茶', '緑茶', '烏龍茶', '午後の紅茶'], 2)
+- cur = sample(currencies_sym)
+- $price1 = range(100, 200, 10)
+- $price2 = range(100, 200, 10)
+- $total = range(1000, 10000, 1000)
+- $n1 = range(1, 10)
+- $p = range(1, 10)
+
+#conditions:
+- price2 > price1
+- is_int(total * p / 100)
+- total * (100 - p) > n1 * price1
+- (total * (100 - p) - n1 * price1) % price2 == 0
+
+#answer: int((total * (100 - p) - n1 * price1) / price2)
+"""
+answer_annotated = """{name}のおつりは{cur}{total}*{p}/100 = {cur}<<{total}*{p}/100={total * p / 100}>>{total * p / 100} です。
+{name}が使った金額は{cur}{total}*{100 - p}/100 = {cur}<<{total}*{(100-p)}/100={total * (100 - p) / 100}>>{total * (100 - p) / 100} です。
+{name}は{item1}に{cur}{n1}*{price1} = {cur}<<{n1}*{price1}={n1 * price1}>>{n1 * price1} 使いました。
+{name}は{item2}に{cur}{total * (100 - p) / 100}-{n1 * price1} = {cur}<<{total * (100 - p) / 100}-{n1 * price1}={total * (100 - p) / 100 - n1 * price1}>>{total * (100 - p) / 100 - n1 * price1} 使いました。
+{name}は{item2}を{total * (100 - p) / 100 - n1 * price1}/{price2} = <<{total * (100 - p) / 100 - n1 * price1}/{price2}={int((total * (100 - p) / 100 - n1 * price1) / price2)}>>{int((total * (100 - p) / 100 - n1 * price1) / price2)} 本買いました。
+#### {int((total * (100 - p) / 100 - n1 * price1) / price2)}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

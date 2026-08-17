@@ -1,6 +1,7 @@
 import difflib
 import math
 import re
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +15,7 @@ from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 _RE_CHEVRON = re.compile(r"<<([^>]+)>>")
 _RE_PURE_ARITHMETIC = re.compile(r"^[\d+\-*/().\s]+$")
 _RE_WHITESPACE = re.compile(r"\s+")
+_DEVANAGARI_TO_ASCII = str.maketrans("०१२३४५६७८९", "0123456789")
 
 
 def _normalize_whitespace(text: str) -> str:
@@ -106,6 +108,12 @@ def validate_default_assignments(
         if var_name not in default_assignments:
             continue
         possible_values_for_var = [assignment[var_name] for assignment in possible_assignments]
+        possible_values_for_var = [
+            str(value).translate(_DEVANAGARI_TO_ASCII)
+            if not isinstance(value, (int, float, Fraction))
+            else value
+            for value in possible_values_for_var
+        ]
         default_value = default_assignments[var_name]
 
         if isinstance(default_value, tuple):
@@ -166,7 +174,11 @@ def validate_default_assignments(
             k: v[1] for k, v in example_combination.items() if isinstance(v, tuple)
         }
         try:
-            condition_result = eval(cond, {"__builtins__": {}}, EVAL_CONTEXT_HELPERS | temp_combination)
+            condition_result = eval(
+                cond.translate(_DEVANAGARI_TO_ASCII),
+                {"__builtins__": {}},
+                EVAL_CONTEXT_HELPERS | temp_combination,
+            )
             assert condition_result, f"Example assignments {default_assignments} failed condition '{cond}' for {source_name}"
         except Exception:
             pass
@@ -180,9 +192,9 @@ def _chevron_arithmetic_errors(answer: str) -> list[str]:
             continue
         lhs_raw, rhs_raw = inner[:eq_idx], inner[eq_idx + 1 :]
 
-        # Normalise locale decimal commas to Python dots.
-        lhs = lhs_raw.replace(",", ".")
-        rhs = rhs_raw.replace(",", ".")
+        # Normalise locale decimal commas and Devanagari digits for Python.
+        lhs = lhs_raw.replace(",", ".").translate(_DEVANAGARI_TO_ASCII)
+        rhs = rhs_raw.replace(",", ".").translate(_DEVANAGARI_TO_ASCII)
 
         if not _RE_PURE_ARITHMETIC.match(lhs) or not _RE_PURE_ARITHMETIC.match(rhs):
             continue

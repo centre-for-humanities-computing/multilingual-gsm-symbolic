@@ -1,0 +1,30 @@
+question = "ハレー彗星は75年ごとに太陽の周りを公転します。あさひの父親は30歳のときにその彗星を見ました。あさひは、父親がその彗星を見たときの年齢の3倍の年齢になったときに、2回目にその彗星を見ました。あさひがその彗星を初めて見たのは何歳のときですか？"
+answer = """あさひがその彗星を2回目に見たのは、30歳 * 3 = <<30*3=90>>90歳のときです。
+ハレー彗星は75年ごとに見られるので、あさひがその彗星を初めて見たのは、90歳 - 75歳 = <<90-75=15>>15歳のときです。
+#### 15
+"""
+id_orig = 991
+id_shuffled = 73
+question_annotated = """{comet_name,ハレー}彗星は{orbit_period,75}年ごとに太陽の周りを公転します。{name,あさひ}の{relative,父親}は{relative_age,30}歳のときにその彗星を見ました。{name,あさひ}は、{relative,父親}がその彗星を見たときの年齢の{multiple_txt,3}倍の年齢になったときに、2回目にその彗星を見ました。{name,あさひ}がその彗星を初めて見たのは何歳のときですか？
+
+#init:
+- comet_name = sample(['ハレー', 'ヘール・ボップ', '百武', 'エンケ'])
+- name = sample(names)
+- relative = sample(['父親', '父', 'おじ', '祖父'])
+- $orbit_period = range(50, 101, 5)
+- $relative_age = range(20, 51)
+- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)
+
+#conditions:
+- multiple_val * relative_age < 100
+- multiple_val * relative_age > orbit_period
+- is_int(multiple_val * relative_age - orbit_period)
+
+#answer: multiple_val * relative_age - orbit_period
+"""
+answer_annotated = """{name}がその彗星を2回目に見たのは、{relative_age}歳 * {multiple_val} = <<{relative_age}*{multiple_val}={relative_age*multiple_val}>>{relative_age*multiple_val}歳のときです。
+{comet_name}彗星は{orbit_period}年ごとに見られるので、{name}がその彗星を初めて見たのは、{relative_age*multiple_val}歳 - {orbit_period}歳 = <<{relative_age*multiple_val}-{orbit_period}={relative_age*multiple_val-orbit_period}>>{relative_age*multiple_val-orbit_period}歳のときです。
+#### {relative_age*multiple_val-orbit_period}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

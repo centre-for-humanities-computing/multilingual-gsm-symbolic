@@ -1,8 +1,47 @@
-question = "У мене є 10 літрів апельсинового напою, з яких дві третини — вода, і я хочу додати його до 15 літрів ананасового напою, з яких три п’ятих — вода. Але коли я наливаю його, то проливаю чотири літри апельсинового напою. Скільки води є в решті 24 літрів?"
-answer = "У 15*3/5=<<15*3/5=9>>9 літрах води з 15 літрів ананасового напою.\nПісля того як чотири літри апельсинового напою було пролито, залишилося 10-4=<<10-4=6>>6 літрів апельсинового напою.\nІз цих 6 літрів 6*2/3=<<6*2/3=4>>4 літри — це вода.\nОтже, всього є 9 + 4 = <<9+4=13>>13 літрів води з 24 літрів.\n#### 13\n"
+question = "У мене є 10 літрів апельсинового напою, з яких дві третіх — вода. Я хочу додати його до 15 літрів ананасового напою, з яких три п’ятих — вода. Але коли я наливаю його, то проливаю чотири літри апельсинового напою. Скільки води є в решті 24 літрів?"
+
+answer = """Підрахуємо кількість води ананасового напою: 15*3/5=<<15*3/5=9>>9
+Після того як чотири літри апельсинового напою було пролито, залишилося 10-4=<<10-4=6>>6 літрів.
+Із цих 6 літрів 6*2/3=<<6*2/3=4>>4 літри — це вода.
+Отже, всього є 9 + 4 = <<9+4=13>>13 літрів води з 24 літрів.
+#### 13
+"""
 id_orig = 20
 id_shuffled = 59
-question_annotated = "У мене є {n1,10} літрів {fruit1,апельсинового} напою, з яких {frac1_txt,2/3} — вода, і я хочу додати його до {n2,15} літрів {fruit2,ананасового} напою, з яких {frac2_txt,3/5} — вода. Але коли я наливаю його, то проливаю {spill_txt,чотири} літри {fruit1,апельсинового} напою. Скільки води є в решті {total,24} літрів?\n\n#init:\n- fruit1, fruit2 = sample([\"яблучний\", \"виноградний\", \"манговий\", \"персиковий\", \"лимонний\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(3, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n"
-answer_annotated = "У {n2}*{frac2_val}=<<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val} літрах води з {n2} літрів {fruit2} напою.\nПісля того як {spill_txt} літри {fruit1} напою було пролито, залишилося {n1}-{spill_val}=<<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} літрів {fruit1} напою.\nІз цих {n1-spill_val} літрів {n1-spill_val}*{frac1_val}=<<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} літри — це вода.\nОтже, всього є {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} літрів води з {total} літрів.\n#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """У мене є {n1,10} {n1_letr, літрів} {fruit1,апельсинового} напою, з яких {frac1_txt,дві третіх} — вода. Я хочу додати його до {n2,15} {n2_letr, літрів} {fruit2,ананасового} напою, з яких {frac2_txt, три п’ятих} — вода. Але коли я наливаю його, то проливаю {spill_txt,чотири} {s_letr, літри} {fruit1,апельсинового} напою. Скільки води є в решті {total,24} {total_letr, літрів}?
+
+#init:
+- fruit1, fruit2 = sample(["яблучного", "виноградного", "мангового", "персикового", "лимонного", "апельсинового", "ананасового"], 2)
+- $n1 = range(9, 21)
+- $n2 = range(12, 31)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+- spill_txt, spill_val = range_str(3, 7, 1, numbers)
+- $total = range(20, 51)
+- n1_letr = ukr_plural_measurements(n1, "літр", "літри", "літрів")
+- n2_letr = ukr_plural_measurements(n2, "літр", "літри", "літрів")
+- s_letr = ukr_plural_measurements(spill_val, "літр", "літри", "літрів")
+- total_letr = ukr_plural_measurements(total, "літр", "літри", "літрів")
+- n2frac = ukr_plural_measurements(n2*frac2_val, "літр", "літри", "літрів")
+- ns = ukr_plural_measurements(n1-spill_val, "літр", "літри", "літрів")
+- nsf = ukr_plural_measurements((n1-spill_val)*frac1_val, "літр", "літри", "літрів")
+- nsff = ukr_plural_measurements(n2*frac2_val + (n1-spill_val)*frac1_val, "літр", "літри", "літрів")
+
+
+#conditions:
+- spill_val < n1
+- n1 + n2 - spill_val == total
+- is_int(n2 * frac2_val)
+- is_int((n1 - spill_val) * frac1_val)
+- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+
+#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)
+"""
+answer_annotated = """Підрахуємо кількість води {fruit2} напою: {n2}*{frac2_val}=<<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val}
+Після того як {spill_txt} {s_letr} {fruit1} напою було пролито, залишилося {n1}-{spill_val}=<<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} {ns}.
+Із цих {n1-spill_val} літрів {n1-spill_val}*{frac1_val}=<<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} {nsf} — це вода.
+Отже, всього є {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} {nsff} води з {total} {total_letr}.
+#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

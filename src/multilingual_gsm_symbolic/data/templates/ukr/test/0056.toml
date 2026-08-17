@@ -1,8 +1,31 @@
-question = "Одна склянка містить 8 мл молока. Йонас випиває 2 склянки молока. Якщо молоко має 3 калорії на мл, скільки калорій він спожив?"
-answer = "Він випив 8*2=<<8*2=16>>16 мл молока\nОтже, він спожив 16*3=<<16*3=48>>48 калорій з молока\n#### 48\n"
+question = "Склянка містить 8 мл молока. Йонас випиває 2 склянки молока. Якщо молоко має 3 калорії на мл, скільки калорій він спожив?"
+
+answer = """Він випив 8*2=<<8*2=16>>16 мл молока
+Отже, він спожив 16*3=<<16*3=48>>48 калорій з молока
+#### 48
+"""
 id_orig = 400
 id_shuffled = 56
-question_annotated = "{container_article,Одна} {container,склянка} містить {vol,8} {unit,мл} молока. {name,Йонас} випиває {num,2} {container_plural,склянки} молока. Якщо {liquid,молоко} має {cal,3} калорії на {unit,мл}, скільки калорій він спожив?\n\n#init:\n- name = sample(names_male)\n- container_article, container, container_plural = sample([(\"En\", \"kop\", \"kopper\"), (\"En\", \"flaske\", \"flasker\"), (\"Et\", \"karton\", \"kartoner\")])\n- liquid = sample([\"сік\", \"газована вода\", \"мінеральна вода\", \"чай\", \"лимонад\"])\n- unit = sample([\"мл\", \"дл\", \"л\", \"мілілітр\", \"літр\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal\n"
-answer_annotated = "Він випив {vol}*{num}=<<{vol}*{num}={vol*num}>>{vol*num} {unit} молока\nОтже, він спожив {vol*num}*{cal}=<<{vol*num}*{cal}={vol*num*cal}>>{vol*num*cal} калорій з молока\n#### {vol*num*cal}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """{cont_s1_up,Склянка} містить {vol,8} {unit,мл} {l_2, молока}. {name,Йонас} випиває {num,2} {n_cont,склянки} {l_2, молока}. Якщо {l_1,молоко} має {cal,3} {n_cal, калорії} на {unit,мл}, скільки калорій він спожив?
+
+#init:
+- name = sample(names_male)
+- cont_s1, cont_pl1, cont_pl2 = sample([("контейнер", "контейнери", "контейнерів"), ("пляшка", "пляшки", "пляшок"), ("пачка", "пачки", "пачок"), ("упаковка", "упаковки", "упаковок")])
+- cont_s1_up = to_title(cont_s1)
+- l_1, l_2 = sample([("сік", "соку"), ("газована вода", "газованої води"), ("мінеральна вода", "мінеральної води"), ("чай", "чаю"), ("лимонад", "лимонаду")])
+- unit = sample(["мл", "л"])
+- $vol = range(6, 16)
+- $num = range(2, 6)
+- $cal = range(2, 10)
+- n_cont = ukr_plural_measurements(num, cont_s1, cont_pl1, cont_pl2)
+- n_cal = ukr_plural_measurements(cal, "калорія", "калорії", "калорій")
+
+
+#answer: vol * num * cal
+"""
+answer_annotated = """Він випив {vol}*{num}=<<{vol}*{num}={vol*num}>>{vol*num} {unit} {l_2}
+Отже, він спожив {vol*num}*{cal}=<<{vol*num}*{cal}={vol*num*cal}>>{vol*num*cal} калорій з {l_2}
+#### {vol*num*cal}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

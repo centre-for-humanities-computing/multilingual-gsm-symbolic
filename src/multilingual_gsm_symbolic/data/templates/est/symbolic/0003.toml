@@ -1,0 +1,40 @@
+question = "50 õpilasest koosneval klassil on mitmesugused hobid. 10-le meeldib küpsetada, 5-le meeldib korvpalli mängida ja ülejäänutele meeldib kas videomänge mängida või muusikat mängida. Mitmele õpilasele meeldib videomänge mängida, kui muusikat mängida meeldivate õpilaste arv on kaks korda suurem kui korvpalli mängida eelistavate õpilaste arv?"
+
+answer = """
+Muusikat mängida meeldivate õpilaste arv on kaks korda suurem kui korvpalli mängida meeldivate õpilaste arv, seega 2 * 5 = <<2*5=10>>10.
+Videomänge mängida meeldivate õpilaste arv on kokku 50 õpilast - 10, kellele meeldib küpsetada - 5, kellele meeldib korvpalli mängida - 10, kellele meeldib muusikat mängida = <<50-10-5-10=25>>25.
+#### 25
+"""
+
+id_orig = 740
+
+id_shuffled = 3
+
+question_annotated = """
+{n,50} õpilasest koosneval {g_ade,klassil} on mitmesugused hobid. {n_1,10}-le meeldib {h_1,küpsetada}, {n_2,5}-le meeldib {h_2,korvpalli mängida} ja ülejäänutele meeldib kas {h_3,videomänge mängida} või {h_4,muusikat mängida}. Mitmele õpilasele meeldib {h_3,videomänge mängida}, kui {h_4,muusikat mängida} meeldivate õpilaste arv on kaks korda suurem kui {h_2,korvpalli mängida} eelistavate õpilaste arv?
+
+#init:
+- g_nom, g_ade = sample([("grupp", "grupil"), ("klass", "klassil")])
+- h_2 = sample(["jalgpalli mängida", "käsipalli mängida", "korvpalli mängida", "tennist mängida", "sulgpalli mängida", "ujuda", "uisutada", "jalgrattaga sõita", "joosta", "golfi mängida"])
+- h_1, h_3, h_4 = sample(["lugeda", "maalida", "matkata", "tantsida", "küpsetada", "videomänge mängida", "muusikat mängida"], 3)
+- $n = range(5, 200)
+- $n_1 = range(2, 200)
+- $n_2 = range(2, 200)
+
+#conditions:
+- n_1 < n
+- n_2 < n
+- n - (n_1 + n_2) - (2 * n_2) > 0
+
+#answer: int(n - (n_1 + n_2) - (2 * n_2))
+"""
+
+answer_annotated = """
+{h_4} meeldivate õpilaste arv on kaks korda suurem kui {h_2} meeldivate õpilaste arv, seega 2 * {n_2} = <<2*{n_2}={2*n_2}>>{2*n_2}.
+{h_3} meeldivate õpilaste arv on kokku {n} õpilast - {n_1}, kellele meeldib {h_1} - {n_2}, kellele meeldib {h_2} - {2*n_2}, kellele meeldib {h_4} = <<{n}-{n_1}-{n_2}-{2*n_2}={n-n_1-n_2-2*n_2}>>{n-n_1-n_2-2*n_2}.
+#### {n-n_1-n_2-2*n_2}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

@@ -1,0 +1,40 @@
+question = "ॲपल हाय स्कूल यावर्षी त्यांच्या फाइन आर्ट्स सेंटरमध्ये पदवीदान समारंभ आयोजित करत आहे, ज्यामध्ये ६००० लोकांसाठी जागा आहे. पदवीधरांसाठी ९५० जागा आणि उपस्थित प्राध्यापकांसाठी ३०० जागा राखून ठेवल्यानंतर, तिकिटे समान वाटली तर प्रत्येक पदवीधराला आपल्या मित्र-मैत्रिणी आणि कुटुंबाला देण्यासाठी किती तिकिटे मिळतील?"
+
+answer = """
+पदवीधर आणि प्राध्यापकांच्या जागा एकत्र जोडा. ९५० + ३०० = <<९५०+३००=१२५०>>१२५० जागा प्राध्यापक आणि पदवीधरांसाठी
+एकूण उपलब्ध जागांमधून प्राध्यापक आणि पदवीधरांच्या जागा वजा करा. ६००० - १२५० = <<६०००-१२५०=४७५०>>४७५० उरलेल्या जागा.
+उरलेल्या जागा पदवीधरांच्या संख्येने भागा. ४७५०/९५० = <<४७५०/९५०=५>>५ तिकिटे
+#### ५
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,ॲपल हाय स्कूल} यावर्षी त्यांच्या {venue,फाइन आर्ट्स सेंटर}मध्ये पदवीदान समारंभ आयोजित करत आहे, ज्यामध्ये {total,६०००} लोकांसाठी जागा आहे. पदवीधरांसाठी {graduates,९५०} जागा आणि उपस्थित प्राध्यापकांसाठी {faculty,३००} जागा राखून ठेवल्यानंतर, तिकिटे समान वाटली तर प्रत्येक पदवीधराला आपल्या मित्र-मैत्रिणी आणि कुटुंबाला देण्यासाठी किती तिकिटे मिळतील?
+
+#init:
+- school = sample(["ओकवुड हाय स्कूल", "रिव्हरसाइड अकॅडमी", "सनीसाइड हाय", "ग्रीनव्हिल हाय स्कूल"])
+- venue = sample(["सभागृह", "व्यायामशाळा", "क्रीडा मैदान", "अधिवेशन केंद्र"])
+- $total = range(3000, 10000, 100)
+- $graduates = range(100, 1500, 50)
+- $faculty = range(100, 500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+पदवीधर आणि प्राध्यापकांच्या जागा एकत्र जोडा. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} जागा प्राध्यापक आणि पदवीधरांसाठी
+एकूण उपलब्ध जागांमधून प्राध्यापक आणि पदवीधरांच्या जागा वजा करा. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} उरलेल्या जागा.
+उरलेल्या जागा पदवीधरांच्या संख्येने भागा. {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} तिकिटे
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

@@ -1,0 +1,40 @@
+question = "ईस्टर अंडा खोज टीम ने १०० अंडे छिपाए। स्मिथ जुड़वाँ में से प्रत्येक को ३० अंडे मिले। बाकी सभी अंडों में से १० को छोड़कर उनके दोस्तों ने ढूँढ लिए। दोस्तों ने कितने अंडे ढूँढे?"
+
+answer = """
+स्मिथ जुड़वाँ ने ३० * २ = <<३०*२=६०>>६० अंडे ढूँढे।
+जो अंडे छिपे रह गए उनकी संख्या १०० - ६० = <<१००-६०=४०>>४० अंडे थी
+चूँकि १० अंडे नहीं मिले, इसका मतलब है कि दोस्तों ने ४० - १० = ३० अंडे ढूँढे।
+#### ३०
+"""
+
+id_orig = 1025
+
+id_shuffled = 81
+
+question_annotated = """
+{event,ईस्टर अंडा खोज} टीम ने {total,१००} {item,अंडे} छिपाए। {family,स्मिथ} जुड़वाँ में से प्रत्येक को {n,३०} {item,अंडे} मिले। बाकी सभी अंडों में से {m,१०} को छोड़कर उनके दोस्तों ने ढूँढ लिए। दोस्तों ने कितने {item,अंडे} ढूँढे?
+
+#init:
+- event = sample(["हैलोवीन कैंडी खोज", "खजाना खोज", "सुराग खोज", "चैरिटी धनसंग्रह"])
+- item = sample(["अंडे", "ट्रीट", "खिलौने", "सिक्के", "टोकन", "गेंदें", "कैंडी", "गुडीज़"])
+- family = sample(["Johnson", "Williams", "Mirzakhani", "Lopez", "Garcia", "Lee", ])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+
+answer_annotated = """
+{family} जुड़वाँ ने {n} * २ = <<{n}*२={2*n}>>{2*n} {item} ढूँढे।
+जो {item} छिपे रह गए उनकी संख्या {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item} थी
+चूँकि {m} {item} नहीं मिले, इसका मतलब है कि दोस्तों ने {total-2*n} - {m} = {total - 2*n - m} {item} ढूँढे।
+#### {total - 2*n - m}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

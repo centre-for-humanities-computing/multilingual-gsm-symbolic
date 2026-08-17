@@ -1,8 +1,35 @@
-question = "Площа прямокутної спальні Бйорна становить 33 квадратні метри. Якщо довжина його кімнати дорівнює 300 см, який периметр кімнати в метрах?"
-answer = "Довжина кімнати дорівнює 300 см * 1/100 метра/см = <<300*(1/100)=3>>3 метри.\nШирина кімнати дорівнює 33 квадратні метри / 3 метри = <<33/3=11>>11 метрів.\nПериметр кімнати дорівнює 2*(11+3) = 28 метрів\n#### 28\n"
+question ="Площа прямокутної спальні Бйорна становить 33 квадратні метри. Якщо довжина кімнати Бйорна дорівнює 300 см, який периметр кімнати в метрах?"
+
+answer = """Довжина кімнати дорівнює 300 см * 1/100 м/см = <<300*(1/100)=3>>3 метри.
+Ширина кімнати дорівнює 33 квадратні метри / 3 м = <<33/3=11>>11 метрів.
+Периметр кімнати дорівнює 2*(11+3) = 28 метрів
+#### 28
+"""
 id_orig = 440
 id_shuffled = 50
-question_annotated = "Площа прямокутної {room_type,спальні} {name,Бйорна} становить {area,33} квадратні метри. Якщо довжина його кімнати дорівнює {length,300} см, який периметр кімнати в метрах?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"вітальня\", \"кабінет\", \"кухня\", \"передпокій\"])\n- $area = range(18, 121)\n- $length = range(300, 1300, 100)\n\n#conditions:\n- is_int(area / (length * (1/100)))\n- (area / (length * (1/100))) > (length * (1/100))\n\n#answer: 2 * (area // (length * (1/100)) + length * (1/100))\n"
-answer_annotated = "Довжина кімнати дорівнює {length} см * 1/100 метра/см = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} метри.\nШирина кімнати дорівнює {area} квадратні метри / {length * (1/100)} метри = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} метрів.\nПериметр кімнати дорівнює 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} метрів\n#### {2 * (area // (length * (1/100)) + length * (1/100))}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """Площа прямокутної {room_type,спальні} {name, Бйорна} становить {area,33} {area_m_form, квадратні метри}. Якщо довжина кімнати {name, Бйорна} дорівнює {length,300} см, який периметр кімнати в метрах?
+
+#init:
+- name = sample(["Андрія", "Анни", "Тараса", "Оксани", "Антона", "Марії", "Євгена", "Вікторії"])
+- room_type = sample(["вітальні", "кухні", "кімнати", "ванни", "зали"])
+- $area = range(18, 121)
+- $length = range(300, 1300, 100)
+- area_m_form = ukr_plural_measurements(area, "квадратний метр", "квадратні метри", "квадратних метрів")
+- summ_form = ukr_plural_measurements(2 * (area // (length * (1/100)) + length * (1/100)), "метр", "метри", "метрів")
+- lform = ukr_plural_measurements(length * (1/100), "метр", "метри", "метрів")
+- llform = ukr_plural_measurements(area // (length * (1/100)), "метр", "метри", "метрів")
+
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+answer_annotated = """Довжина кімнати дорівнює {length} см * 1/100 м/см = <<{length}*(1/100)={length * (1/100)}>>{length * (1/100)} {lform}.
+Ширина кімнати дорівнює {area} {area_m_form} / {length * (1/100)} м = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} {llform}.
+Периметр кімнати дорівнює 2*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} {summ_form}
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

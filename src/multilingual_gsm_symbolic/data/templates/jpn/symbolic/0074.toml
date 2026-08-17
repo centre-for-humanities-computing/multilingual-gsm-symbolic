@@ -1,0 +1,31 @@
+question = "ある横浜の小学校の4年生は96人います。そのうち43人は女子です。金曜日に、4年生の女子5人と4年生の男子4人が欠席しました。金曜日に学校に来てた4年生の男子は何人でしたか？"
+answer = """96人の4年生のうち、43人は女子なので、96人の児童 - 43人の女子 = <<96-43=53>>53人の男子です。
+金曜日には、53人の男子 - 4人の欠席 = <<53-4=49>>49人の男子がいました。
+#### 49
+"""
+id_orig = 364
+id_shuffled = 74
+question_annotated = """ある{city,横浜}の小学校の{grade,4}年生は{total,96}人います。そのうち{num_girls,43}人は女子です。{day,金曜日}に、{grade,4}年生の女子{absent_girls,5}人と{grade,4}年生の男子{absent_boys,4}人が欠席しました。{day,金曜日}に学校に来てた{grade,4}年生の男子は何人でしたか？
+
+#init:
+- city = sample(cities)
+- grade = sample([\"1\", \"2\", \"3\", \"4\", \"5\"])
+- day = sample([\"月曜日\", \"火曜日\", \"水曜日\", \"木曜日\", \"金曜日\"])
+- $total = range(50, 200)
+- $num_girls = range(20, 100)
+- $absent_girls = range(2, 10)
+- $absent_boys = range(2, 10)
+
+#conditions:
+- num_girls < total
+- absent_girls < num_girls
+- absent_boys < (total - num_girls)
+
+#answer: total - num_girls - absent_boys
+"""
+answer_annotated = """{total}人の{grade}年生のうち、{num_girls}人は女子なので、{total}人の児童 - {num_girls}人の女子 = <<{total}-{num_girls}={total-num_girls}>>{total-num_girls}人の男子です。
+{day}には、{total-num_girls}人の男子 - {absent_boys}人の欠席 = <<{total-num_girls}-{absent_boys}={total-num_girls-absent_boys}>>{total-num_girls-absent_boys}人の男子がいました。
+#### {total-num_girls-absent_boys}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

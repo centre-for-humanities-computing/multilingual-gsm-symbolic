@@ -1,4 +1,4 @@
-question = "Strákur á 5 spil. Bróðir hans á 3 færri spil en hann. Hvað eiga þeir mörg spil samanlagt?"
+question = "Strákur á 5 spil. Bróðir hans á 3 færri spil en hann á. Hvað eiga þeir mörg spil samanlagt?"
 
 answer = """
 Bróðir hans á 5 - 3 = <<5-3=2>>2 spil.
@@ -11,12 +11,12 @@ id_orig = 579
 id_shuffled = 63
 
 question_annotated = """
-{person1,strákur} á {n,5} {item,spil}. {relation,bróðir} hans á {k,3} færri {item,spil} en hann. Hvað eiga þeir mörg {item,spil} samanlagt?
+{person1,Strákur} á {n,5} {item_þf_ft,spil}. {relation,Bróðir} hans á {k,3} færri {item_þf_ft,spil} en hann á. Hvað eiga þeir mörg {item_þf_ft,spil} samanlagt?
 
 #init:
-- person1 = sample(["nemandi", "strákur", "barn", "piltur"])
-- item = sample(["kort", "kúlur", "límmiðar", "blýantar", "strokleður", "bækur"])
-- relation = sample(["systir", "bróðir", "vinur", "frændi"])
+- person1 = sample(["Nemandi", "Strákur", "Drengur", "Piltur"])
+- item_þf_ft, item_þf_et = sample([("spil", "spil"), ("kort", "kort"), ("leikföng", "leikfang"), ("frímerki", "frímerki"), ("epli", "epli"), ("strokleður", "strokleður"), ("blöð", "blað")])
+- relation = sample(["Bróðir", "Vinur", "Frændi", "Skólafélagi"])
 - $n = range(5, 21)
 - $k = range(2, 10)
 
@@ -27,11 +27,11 @@ question_annotated = """
 """
 
 answer_annotated = """
-{relation} hans á {n} - {k} = <<{n}-{k}={n-k}>>{n-k} {item}.
-Samanlagt eiga þeir {n} + {n-k} = <<{n}+{n-k}={n+(n-k)}>>{n+(n-k)} {item}.
+{relation} hans á {n} - {k} = <<{n}-{k}={n-k}>>{n-k} {item_þf_et if ((n-k) % 10 == 1 and (n-k) % 100 != 11) else item_þf_ft}.
+Samanlagt eiga þeir {n} + {n-k} = <<{n}+{n-k}={n+(n-k)}>>{n+(n-k)} {item_þf_et if ((n+(n-k)) % 10 == 1 and (n+(n-k)) % 100 != 11) else item_þf_ft}.
 #### {n+(n-k)}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

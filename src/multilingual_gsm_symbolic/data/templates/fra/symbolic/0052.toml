@@ -1,0 +1,48 @@
+question = "Carl a deux billets de 50 euros. Il achète six pistolets à eau à 5 euros pièce. Il achète aussi 3 paquets de ballons d'eau à 8 euros pièce. Combien d'argent lui reste-t-il ?"
+
+answer = """
+Carl commence avec 2*50 euros = <<2*50=100>>100 euros.
+Carl achète six pistolets à eau * 5 euros = <<6*5=30>>30 euros en pistolets à eau.
+Carl achète 3 paquets de ballons d'eau * 8 euros = <<3*8=24>>24 euros en ballons d'eau.
+Au total, Carl a dépensé 30 euros + 24 euros = <<30+24=54>>54 euros.
+Carl a 100 euros - 54 euros = <<100-54=46>>46 euros restants.
+#### 46
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name,Carl} a {n_txt,deux} billets de {bill,50} {cur,euros}. Il achète {m_txt,six} {item1,pistolets à eau} à {p1,5} {cur,euros} pièce. Il achète aussi {k,3} paquets de {item2,ballons d'eau} à {p2,8} {cur,euros} pièce. Combien d'argent lui reste-t-il ?
+
+#init:
+- name = sample(names_male)
+- $bill = sample([50, 100, 200])
+- item1 = sample(["pistolets à eau", "petites voitures", "figurines", "livres de coloriage", "puzzles", "jeux de société"])
+- item2 = sample(["ballons d'eau", "porte-clés", "barres de chocolat", "cartes pokémon", "crayons", "gommes"])
+- cur = sample(currencies_sym)
+- n_txt, n_val = range_str(1, 10, 1, numbers)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+
+#conditions:
+- n_val * int(bill) > m_val * p1 + k * p2
+
+#answer: n_val * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} commence avec {n_val}*{bill} {cur} = <<{n_val}*{int(bill)}={n_val*int(bill)}>>{n_val*int(bill)} {cur}.
+{name} achète {m_txt} {item1} * {p1} {cur} = <<{m_val}*{p1}={m_val*p1}>>{m_val*p1} {cur} en {item1}.
+{name} achète {k} paquets de {item2} * {p2} {cur} = <<{k}*{p2}={k*p2}>>{k*p2} {cur} en {item2}.
+Au total, {name} a dépensé {m_val*p1} {cur} + {k*p2} {cur} = <<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} {cur}.
+{name} a {n_val*int(bill)} {cur} - {m_val*p1+k*p2} {cur} = <<{n_val*int(bill)}-{m_val*p1+k*p2}={n_val*int(bill)-(m_val*p1+k*p2)}>>{n_val*int(bill)-(m_val*p1+k*p2)} {cur} restants.
+#### {n_val*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

@@ -1,0 +1,41 @@
+question = "आर्या लिहायला शिकत आहे आणि तिला वर्णमाला पाठ होईपर्यंत ती ती पुन्हा पुन्हा लिहायचे ठरवते. ती ती पूर्णपणे दोनदा लिहिते, तिचा अर्धा भाग एकदा लिहिते, आणि मग तिने आधीच जे काही लिहिले आहे ते सर्व पुन्हा लिहिते. आर्याने एकूण किती अक्षरे लिहिली आहेत?"
+
+answer = """
+आर्याने वर्णमाला दोनदा लिहिली आहे, म्हणजे एकूण २६*२=<<२६*२=५२>>५२ अक्षरे.
+त्यानंतर ती वर्णमालाेचा अर्धा भाग लिहिते, म्हणजे २६*१/२=<<२६*१/२=१३>>१३ अक्षरे.
+आतापर्यंत, ही एकूण ५२ + १३ = <<५२+१३=६५>>६५ अक्षरे झाली.
+हे पुन्हा लिहिणे म्हणजे तिने लिहिलेल्या अक्षरांची संख्या दुप्पट झाली, त्यामुळे तिने एकूण ६५ * २ = <<६५*२=१३०>>१३० अक्षरे लिहिली आहेत.
+#### १३०
+"""
+
+id_orig = 546
+
+id_shuffled = 55
+
+question_annotated = """
+{name,आर्या} लिहायला शिकत आहे आणि तिला {alphabets_txt,वर्णमाला} पाठ होईपर्यंत ती ती पुन्हा पुन्हा लिहायचे ठरवते. ती ती पूर्णपणे {n1_txt,दोनदा} लिहिते, तिचा {frac_masc,अर्धा} भाग एकदा लिहिते, आणि मग तिने आधीच जे काही लिहिले आहे ते सर्व पुन्हा लिहिते. {name,आर्या}ने एकूण किती अक्षरे लिहिली आहेत?
+
+#init:
+- name = sample(names_female)
+- alphabets_txt, alphabets_val = sample([("वर्णमाला", 26), ("हिरागाना (48 अक्षरांसह)", 48), ("फारसी वर्णमाला (32 अक्षरांसह)", 32), ("अरबी अबजद (28 अक्षरांसह)", 28)])
+- n1_txt, n1_val = sample([("दोनदा", 2), ("तीन वेळा", 3), ("चार वेळा", 4), ("पाच वेळा", 5), ("सहा वेळा", 6), ("सात वेळा", 7), ("आठ वेळा", 8), ("नऊ वेळा", 9), ("दहा वेळा", 10), ("अकरा वेळा", 11)])
+- frac_txt, frac_val = sample(fraction_alnum)
+- frac_masc = mar_fraction_form(frac_txt, 'masc')
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)
+"""
+
+answer_annotated = """
+{name}ने {alphabets_txt} {n1_txt} लिहिली आहे, म्हणजे एकूण {alphabets_val}*{n1_val}=<<{alphabets_val}*{n1_val}={alphabets_val*n1_val}>>{alphabets_val*n1_val} अक्षरे.
+त्यानंतर ती {alphabets_txt}ेचा {frac_masc} भाग लिहिते, म्हणजे {alphabets_val}*{frac_val}=<<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} अक्षरे.
+आतापर्यंत, ही एकूण {alphabets_val*n1_val} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1_val}+{int(alphabets_val*frac_val)}={alphabets_val*n1_val + int(alphabets_val*frac_val)}>>{alphabets_val*n1_val + int(alphabets_val*frac_val)} अक्षरे झाली.
+हे पुन्हा लिहिणे म्हणजे तिने लिहिलेल्या अक्षरांची संख्या दुप्पट झाली, त्यामुळे तिने एकूण {alphabets_val*n1_val + int(alphabets_val*frac_val)} * २ = <<{alphabets_val*n1_val + int(alphabets_val*frac_val)}*२={2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1_val + int(alphabets_val*frac_val))} अक्षरे लिहिली आहेत.
+#### {2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

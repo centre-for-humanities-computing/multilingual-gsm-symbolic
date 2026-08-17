@@ -1,0 +1,51 @@
+question = "Jakob leigar ein hestavogn frá kl. 17 til kl. 21. Hann fær 1 tíma ókeypis. Fyrsti goldni tímin kostar 15 kr, og hvør eftirfylgjandi goldin tími kostar tvær ferðir so nógv sum fyrsti goldni tímin. Hvussu nógv rindaði hann?"
+
+answer = """
+Hann hevði hana í 21-17=<<21-17=4>>4 tímar
+Hann rindar fyri 4-1=<<4-1=3>>3 tímar
+Fyrsti tímin kostar 1*15=<<1*15=15>>15 kr
+Hinir 3-1=2 tímarnir eru dýrari
+Teir kosta 15*2=<<15*2=30>>30 kr fyri hvønn tíma
+So kosta teir 2 tímarnir 2*30=<<2*30=60>>60 kr
+So rindar hann 60+15=<<60+15=75>>75 kr fyri tímarnar
+#### 75
+"""
+
+id_orig = 652
+
+id_shuffled = 89
+
+question_annotated = """
+{name,Jakob} leigar ein {vehicle,hestavogn} frá kl. {start_time,17} til kl. {end_time,21}. Hann fær {free_hours,1} tíma ókeypis. Fyrsti goldni tímin kostar {first_hour_cost,15} {cur,kr}, og hvør eftirfylgjandi goldin tími kostar {multiplier_txt,tvær ferðir} so nógv sum fyrsti goldni tímin. Hvussu nógv rindaði hann?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(["limousine", "partybussur", "bátur", "sportsvognur"])
+- $start_time = range(13, 20)
+- $end_time = range(15, 24)
+- $free_hours = range(1, 3)
+- cur = sample(currencies_sym)
+- $first_hour_cost = range(10, 51)
+- multiplier_txt, multiplier_val = sample(multi_times)
+
+#conditions:
+- end_time - start_time > free_hours + 1
+- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)
+
+#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val
+"""
+
+answer_annotated = """
+Hann hevði hana í {end_time}-{start_time}=<<{end_time}-{start_time}={end_time-start_time}>>{end_time-start_time} tímar
+Hann rindar fyri {end_time-start_time}-{free_hours}=<<{end_time-start_time}-{free_hours}={end_time-start_time-free_hours}>>{end_time-start_time-free_hours} tímar
+Fyrsti tímin kostar 1*{first_hour_cost}=<<1*{first_hour_cost}={first_hour_cost}>>{first_hour_cost} {cur}
+Hinir {end_time-start_time-free_hours}-1={end_time-start_time-free_hours-1} tímarnir eru dýrari
+Teir kosta {first_hour_cost}*{multiplier_val}=<<{first_hour_cost}*{multiplier_val}={first_hour_cost*multiplier_val}>>{first_hour_cost*multiplier_val} {cur} fyri hvønn tíma
+So kosta teir {end_time-start_time-free_hours-1} tímarnir {end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}=<<{end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}={(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}>>{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val} {cur}
+So rindar hann {(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}=<<{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}={first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}>>{first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val} {cur} fyri tímarnar
+#### {first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

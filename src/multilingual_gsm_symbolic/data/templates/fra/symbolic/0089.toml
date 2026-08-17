@@ -1,0 +1,51 @@
+question = "Jacques loue une calèche de 17h à 21h. Il a 1 heure gratuite. La première heure payante coûte 15 euros, et chaque heure payante suivante coûte deux fois plus que la première heure payante. Combien a-t-il payé ?"
+
+answer = """
+Il l'a louée pendant 21-17=<<21-17=4>>4 heures
+Il paie pour 4-1=<<4-1=3>>3 heures
+La première heure coûte 1*15=<<1*15=15>>15 euros
+Les 3-1=2 autres heures sont plus chères
+Elles coûtent 15*2=<<15*2=30>>30 euros par heure
+Donc les 2 heures coûtent 2*30=<<2*30=60>>60 euros
+Donc il paie 60+15=<<60+15=75>>75 euros pour les heures
+#### 75
+"""
+
+id_orig = 652
+
+id_shuffled = 89
+
+question_annotated = """
+{name,Jacques} loue {vehicle,une calèche} de {start_time,17}h à {end_time,21}h. Il a {free_hours,1} heure gratuite. La première heure payante coûte {first_hour_cost,15} {cur,euros}, et chaque heure payante suivante coûte {multiplier_txt,deux fois} plus que la première heure payante. Combien a-t-il payé ?
+
+#init:
+- name = sample(names_male)
+- vehicle = sample(["une limousine", "un bus de fête", "un bateau", "une voiture de sport"])
+- $start_time = range(13, 20)
+- $end_time = range(15, 24)
+- $free_hours = range(1, 2)
+- cur = sample(currencies_sym)
+- $first_hour_cost = range(10, 51)
+- multiplier_txt, multiplier_val = sample(multi_times)
+
+#conditions:
+- end_time - start_time > free_hours + 1
+- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)
+
+#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val
+"""
+
+answer_annotated = """
+Il l'a louée pendant {end_time}-{start_time}=<<{end_time}-{start_time}={end_time-start_time}>>{end_time-start_time} heures
+Il paie pour {end_time-start_time}-{free_hours}=<<{end_time-start_time}-{free_hours}={end_time-start_time-free_hours}>>{end_time-start_time-free_hours} heures
+La première heure coûte 1*{first_hour_cost}=<<1*{first_hour_cost}={first_hour_cost}>>{first_hour_cost} {cur}
+Les {end_time-start_time-free_hours}-1={end_time-start_time-free_hours-1} autres heures sont plus chères
+Elles coûtent {first_hour_cost}*{multiplier_val}=<<{first_hour_cost}*{multiplier_val}={first_hour_cost*multiplier_val}>>{first_hour_cost*multiplier_val} {cur} par heure
+Donc les {end_time-start_time-free_hours-1} heures coûtent {end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}=<<{end_time-start_time-free_hours-1}*{first_hour_cost*multiplier_val}={(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}>>{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val} {cur}
+Donc il paie {(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}=<<{(end_time-start_time-free_hours-1)*first_hour_cost*multiplier_val}+{first_hour_cost}={first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}>>{first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val} {cur} pour les heures
+#### {first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

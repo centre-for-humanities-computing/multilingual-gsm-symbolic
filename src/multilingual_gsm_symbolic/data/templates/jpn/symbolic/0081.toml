@@ -1,0 +1,30 @@
+question = "宝探しのチームは100個のヒントを隠しました。いそぬま家の双子はそれぞれ30個のヒントを見つけました。残りのヒントのうち、10個を除いたすべてを友だちが見つけました。友だちは何個のヒントを見つけましたか？"
+answer = """いそぬま家の双子が見つけたヒントは、30 * 2 = <<30*2=60>>60個です。
+隠れたままだったヒントの数は 100 - 60 = <<100-60=40>>40個です。
+10個のヒントは見つからなかったので、友だちが見つけたヒントの数は 40 - 10 = 30個です。
+#### 30
+"""
+id_orig = 1025
+id_shuffled = 81
+question_annotated = """{event,宝探し}のチームは{total,100}個の{item,ヒント}を隠しました。{family,いそぬま}家の双子はそれぞれ{n,30}個の{item,ヒント}を見つけました。残りの{item,ヒント}のうち、{m,10}個を除いたすべてを友だちが見つけました。友だちは何個の{item,ヒント}を見つけましたか？
+
+#init:
+- event = sample([\"宝探し\", \"エスケープルーム\"])
+- item = sample([\"ヒント\", \"宝\", \"おもちゃ\", \"コイン\", \"トークン\", \"ボール\"])
+- family = sample(family_names)
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+answer_annotated = """{family}家の双子が見つけた{item}は、{n} * 2 = <<{n}*2={2*n}>>{2*n}個です。
+隠れたままだった{item}の数は {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n}個です。
+{m}個の{item}は見つからなかったので、友だちが見つけた{item}の数は {total-2*n} - {m} = {total - 2*n - m}個です。
+#### {total - 2*n - m}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

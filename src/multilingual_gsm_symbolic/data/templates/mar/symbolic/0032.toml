@@ -1,0 +1,47 @@
+question = "श्रीमती क्रूझ अशा घराच्या शोधात आहेत जे त्यांच्या ₹४००००० च्या बजेटपेक्षा जास्त जाणार नाही. त्यांनी एक मालमत्ता पाहिली ज्याची विक्री किंमत ₹३५०००० आहे. त्याशिवाय, खरेदीदाराला दलाली शुल्क द्यावे लागते, जे विक्री किमतीच्या ५% आहे, आणि हस्तांतरण शुल्कही द्यावे लागते, जे विक्री किमतीच्या १२% आहे. घराची एकूण किंमत श्रीमती क्रूझ यांच्या बजेटपेक्षा किती जास्त आहे?"
+
+answer = """
+दलाली शुल्क ₹३५००००*५/१०० = ₹<<३५००००*५/१००=१७५००>>१७५०० आहे.
+हस्तांतरण शुल्क ₹३५००००*१२/१०० = ₹<<३५००००*१२/१००=४२०००>>४२००० आहे.
+घराची एकूण किंमत ₹३५०००० + ₹१७५०० + ₹४२००० = ₹४०९५०० आहे.
+म्हणून, ती श्रीमती क्रूझ यांच्या बजेटपेक्षा ₹४०९५०० - ₹४००००० = ₹<<४०९५००-४०००००=९५००>>९५०० ने जास्त आहे.
+#### ९५००
+"""
+
+id_orig = 265
+
+id_shuffled = 32
+
+question_annotated = """
+{name, श्रीमती क्रूझ} अशा {property_type, घरा}च्या शोधात आहेत जे त्यांच्या ₹{budget, ४०००००} च्या बजेटपेक्षा जास्त जाणार नाही. त्यांनी एक मालमत्ता पाहिली ज्याची विक्री किंमत ₹{price, ३५००००} आहे. त्याशिवाय, खरेदीदाराला दलाली शुल्क द्यावे लागते, जे विक्री किमतीच्या {brokerage_fee, ५}% आहे, आणि हस्तांतरण शुल्कही द्यावे लागते, जे विक्री किमतीच्या {transfer_fee, १२}% आहे. {property_type, घरा}ची एकूण किंमत {name, श्रीमती क्रूझ} यांच्या बजेटपेक्षा किती जास्त आहे?
+
+#init:
+- name = sample(['श्रीमती स्मिथ', 'सुश्री जॉन्सन', 'डॉ. पटेल', 'श्रीमती ली'])
+- property_type = sample(['घर', 'अपार्टमेंट', 'कॉन्डो', 'टाउनहाउस'])
+- $budget = range(300000, 500000, 10000)
+- $price = range(250000, 450000, 10000)
+- $brokerage_fee = range(3, 8)
+- $transfer_fee = range(10, 15)
+
+#conditions:
+- brokerage_fee < 100
+- transfer_fee < 100
+- price < budget
+- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1
+- is_int(price * brokerage_fee / 100)
+- is_int(price * transfer_fee / 100)
+
+#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)
+"""
+
+answer_annotated = """
+दलाली शुल्क ₹{price}*{brokerage_fee}/१०० = ₹<<{price}*{brokerage_fee}/१००={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} आहे.
+हस्तांतरण शुल्क ₹{price}*{transfer_fee}/१०० = ₹<<{price}*{transfer_fee}/१००={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} आहे.
+{property_type}ची एकूण किंमत ₹{price} + ₹{int(price*brokerage_fee/100)} + ₹{int(price*transfer_fee/100)} = ₹{int(price + price*brokerage_fee/100 + price*transfer_fee/100)} आहे.
+म्हणून, ती {name} यांच्या बजेटपेक्षा ₹{int(price + price*brokerage_fee/100 + price*transfer_fee/100)} - ₹{budget} = ₹<<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} ने जास्त आहे.
+#### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

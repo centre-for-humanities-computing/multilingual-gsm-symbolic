@@ -1,8 +1,46 @@
-question = "Якщо Каспер їсть 3 яйця на день протягом 30 днів, а потім збільшує кількість до 5 яєць на день протягом 30 днів, скільки дюжин яєць знадобиться Касперу на 60 днів?"
-answer = "Спочатку він їсть 3 яйця на день протягом 30 днів, що загалом становить 3*30 = <<3*30=90>>90 яєць\nПотім він збільшує кількість до 5 яєць на день протягом 30 днів, що загалом становить 5*30 = <<5*30=150>>150 яєць\nУсього він з’їсть 90+150 = <<90+150=240>>240 яєць\nУ 1 дюжині 12 яєць, і він з’їсть 240 яєць, тобто 240/12 = 20 дюжин яєць\n#### 20\n"
+question = "Якщо Каспер їсть 3 яйця на день протягом 30 днів, а потім збільшує кількість до 5 яєць на день протягом 30 днів, скільки дюжин яєць Каспер потребуватиме на наступні 60 днів?"
+answer = """Спочатку він їсть 3 яйця на день протягом 30 днів, що загалом становить 3*30=<<3*30=90>>90 яєць
+Потім він збільшує кількість до 5 яєць на день протягом 30 днів, що загалом становить 5*30=<<5*30=150>>150 яєць
+Усього він з’їсть 90+150=<<90+150=240>>240 яєць
+У 1 дюжині 12 яєць, тому 240/12=<<240/12=20>>20 дюжин
+#### 20
+"""
 id_orig = 1141
 id_shuffled = 99
-question_annotated = "Якщо {name,Каспер} їсть {n1,3} яйця на день протягом {d1,30} днів, а потім збільшує кількість до {n2,5} яєць на день протягом {d2,30} днів, скільки дюжин яєць знадобиться {name} на {d3,60} днів?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12\n"
-answer_annotated = "Спочатку він їсть {n1} яйця на день протягом {d1} днів, що загалом становить {n1}*{d1} = <<{n1}*{d1}={n1*d1}>>{n1*d1} яєць\nПотім він збільшує кількість до {n2} яєць на день протягом {d2} днів, що загалом становить {n2}*{d2} = <<{n2}*{d2}={n2*d2}>>{n2*d2} яєць\nУсього він з’їсть {n1*d1}+{n2*d2} = <<{n1*d1}+{n2*d2}={n1*d1+n2*d2}>>{n1*d1+n2*d2} яєць\nУ 1 дюжині 12 яєць, і він з’їсть {n1*d1+n2*d2} яєць, тобто {n1*d1+n2*d2}/12 = {(n1*d1+n2*d2)//12} дюжин яєць\n#### {(n1*d1+n2*d2)//12}\n"
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+question_annotated = """Якщо {name,Каспер} їсть {n1,3} {n1_eggs_form,яйця} на день протягом {d1,30} {d1_days_form,днів}, а потім збільшує кількість до {n2,5} {n2_eggs_form,яєць} на день протягом {d2,30} {d2_days_form,днів}, скільки дюжин яєць {name, Каспер} потребуватиме на наступні {d3,60} {d3_days_form,днів}?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(2, 6)
+- $n2 = range(4, 8)
+- $d1 = range(20, 110, 2)
+- $d2 = range(20, 110, 2)
+- d3 = d1 + d2
+- eggs1 = n1 * d1
+- eggs2 = n2 * d2
+- eggs_total = eggs1 + eggs2
+- dozens = eggs_total // 12
+- n1_eggs_form = ukr_plural_measurements(n1, "яйце", "яйця", "яєць")
+- n2_eggs_form = ukr_plural_measurements(n2, "яйце", "яйця", "яєць")
+- d1_days_form = ukr_plural_measurements(d1, "день", "дні", "днів")
+- d2_days_form = ukr_plural_measurements(d2, "день", "дні", "днів")
+- d3_days_form = ukr_plural_measurements(d3, "день", "дні", "днів")
+- eggs1_form = ukr_plural_measurements(eggs1, "яйце", "яйця", "яєць")
+- eggs2_form = ukr_plural_measurements(eggs2, "яйце", "яйця", "яєць")
+- eggs_total_form = ukr_plural_measurements(eggs_total, "яйце", "яйця", "яєць")
+- dozens_form = ukr_plural_measurements(dozens, "дюжина", "дюжини", "дюжин")
+
+#conditions:
+- n2 > n1
+- divides(n1*d1 + n2*d2, 12)
+
+#answer: (n1*d1 + n2*d2) // 12
+"""
+answer_annotated = """Спочатку він їсть {n1} {n1_eggs_form} на день протягом {d1} {d1_days_form}, що загалом становить {n1}*{d1}=<<{n1}*{d1}={eggs1}>>{eggs1} {eggs1_form}
+Потім він збільшує кількість до {n2} {n2_eggs_form} на день протягом {d2} {d2_days_form}, що загалом становить {n2}*{d2}=<<{n2}*{d2}={eggs2}>>{eggs2} {eggs2_form}
+Усього він з’їсть {eggs1}+{eggs2}=<<{eggs1}+{eggs2}={eggs_total}>>{eggs_total} {eggs_total_form}
+У 1 дюжині 12 яєць, тому {eggs_total}/12=<<{eggs_total}/12={dozens}>>{dozens} {dozens_form}
+#### {dozens}
+"""
+creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

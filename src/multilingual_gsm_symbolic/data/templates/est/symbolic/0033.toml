@@ -1,0 +1,38 @@
+question = "Ene ja Jennifer on õed Los Angelesest, kes armastavad koguda kuulsustelt autogramme. Kooli suvepuhkuse ajal veedavad õed iga pärastlõuna autogramme kogudes. Pärast viit nädalat võrdlevad Ene ja Jennifer oma autogrammiraamatuid, loendades, kui palju autogramme kumbki õde on kogunud. Enel on oma raamatus 20 autogrammi ja Jenniferil on 44. Õdedel on veel kolm nädalat suvepuhkust ning nad otsustavad, et tahavad puhke lõpuks jõuda 100 autogrammini. Mitu autogrammi peavad õed veel koguma, et oma eesmärgini jõuda?"
+
+answer = """
+Ene ja Jennifer on juba kogunud 20 + 44 autogrammi = <<20+44=64>>64 autogrammi.
+Kuna nende eesmärk on 100, peavad nad veel koguma 100 - 64 autogrammi. 100 - 64 = <<100-64=36>>36 autogrammi
+#### 36
+"""
+
+id_orig = 677
+
+id_shuffled = 33
+
+question_annotated = """
+{name1,Ene} ja {name2,Jennifer} on õed Los Angelesest, kes armastavad koguda kuulsustelt autogramme. Kooli suvepuhkuse ajal veedavad õed iga pärastlõuna autogramme kogudes. Pärast {n1_txt,viit} nädalat võrdlevad {name1,Ene} ja {name2,Jennifer} oma autogrammiraamatuid, loendades, kui palju autogramme kumbki õde on kogunud. {name1_gen,Ene}l on oma raamatus {s1,20} autogrammi ja {name2_gen,Jenniferi}l on {s2,44}. Õdedel on veel {n2_txt,kolm} nädalat suvepuhkust ning nad otsustavad, et tahavad puhke lõpuks jõuda {goal,100} autogrammini. Mitu autogrammi peavad õed veel koguma, et oma eesmärgini jõuda?
+
+#init:
+- (name1, name1_gen), (name2, name2_gen) = sample(names_female_cases, 2)
+- n1_txt, n1_val = range_str(3, 8, 1, numbers)
+- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+- $s1 = range(15, 40)
+- $s2 = range(30, 60)
+- $goal = range(90, 150, 5)
+
+#conditions:
+- s1 + s2 < goal
+
+#answer: goal - (s1 + s2)
+"""
+
+answer_annotated = """
+{name1} ja {name2} on juba kogunud {s1} + {s2} autogrammi = <<{s1}+{s2}={s1+s2}>>{s1+s2} autogrammi.
+Kuna nende eesmärk on {goal}, peavad nad veel koguma {goal} - {s1+s2} autogrammi. {goal} - {s1+s2} = <<{goal}-{s1+s2}={goal-(s1+s2)}>>{goal-(s1+s2)} autogrammi
+#### {goal-(s1+s2)}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

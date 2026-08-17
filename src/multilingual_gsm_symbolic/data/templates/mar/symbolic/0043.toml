@@ -1,0 +1,40 @@
+question = "अमोल त्यांच्या शेतात काही सफरचंदे तोडण्यासाठी गेले आणि त्यांना बागेत मुंग्या यांच्या तुलनेत अर्धे इतके किडे आढळले. जर तिथे ५० मुंग्या असतील, तर बागेत एकूण कीटकांची संख्या काढा."
+
+answer = """
+जर तिथे ५० मुंग्या असतील, तर बागेत मधील किडे ची एकूण संख्या १/२*५० मुंग्या = २५ किडे आहे
+बागेत मधील एकूण कीटकांची संख्या २५ किडे + ५० मुंग्या = <<२५+५०=७५>>७५ कीटक
+#### ७५
+"""
+
+id_orig = 232
+
+id_shuffled = 43
+
+question_annotated = """
+{name,अमोल} त्यांच्या {place,शेतात} काही {fruit,सफरचंदे} तोडण्यासाठी गेले आणि त्यांना {location,बागेत} {insect2,मुंग्या} यांच्या तुलनेत {frac_neut,अर्धे} इतके {insect1,किडे} आढळले. जर तिथे {n,५०} {insect2,मुंग्या} असतील, तर {location,बागेत} एकूण कीटकांची संख्या काढा.
+
+#init:
+- name = sample(names)
+- place = sample(["फळबाग", "मागचे अंगण", "हरितगृह", "वाटप बाग"])
+- fruit = sample(["स्ट्रॉबेरी", "चेरी", "ब्लूबेरी", "रास्पबेरी"])
+- location = sample(["बाग", "शेत", "तुकडा", "लहान पट्टा"])
+- insect1, insect2 = sample(["भुंगे", "लेडीबग", "टोळ", "अळ्या", "मधमाश्या", "भुंगेरे"], 2)
+- frac_txt, frac_val = sample(fraction_alnum)
+- frac_neut = mar_fraction_form(frac_txt, 'neut')
+- $n = range(20, 201)
+
+#conditions:
+- is_int(n * frac_val)
+
+#answer: n + int(n * frac_val)
+"""
+
+answer_annotated = """
+जर तिथे {n} {insect2} असतील, तर {location} मधील {insect1} ची एकूण संख्या {frac_val}*{n} {insect2} = {int(n * frac_val)} {insect1} आहे
+{location} मधील एकूण कीटकांची संख्या {int(n * frac_val)} {insect1} + {n} {insect2} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} कीटक
+#### {n + int(n * frac_val)}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "mar"

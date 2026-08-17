@@ -1,0 +1,40 @@
+question = "Mare õpib araabia abjadi (28 tähte) kirjutama ja otsustab seda ümber kirjutada, kuni ta selle selgeks saab. Ta kirjutab tähestiku täies pikkuses kaks korda, kirjutab seejärel sellest poole ja seejärel kirjutab uuesti kõik, mida ta on juba kirjutanud. Mitu tähte on Mare kokku kirjutanud?"
+
+answer = """
+Mare on kirjutanud araabia abjadi (28 tähte) kaks korda, mis teeb kokku 28*2=<<28*2=56>>56 tähte.
+Seejärel kirjutab ta poole tähestikust, mis on 28*0.5=<<28*0.5=14>>14 tähte.
+Seni on see kokku 56 + 14 = <<56+14=70>>70 tähte.
+Selle uuesti kirjutamine tähendab, et ta on kahekordistanud nende tähtede arvu, mida ta on kirjutanud, seega on ta kokku kirjutanud 70 * 2 = <<70*2=140>>140 tähte.
+#### 140
+"""
+
+id_orig = 546
+
+id_shuffled = 55
+
+question_annotated = """
+{name,Mare} õpib {alphabets_txt,araabia abjadi (28 tähte)} kirjutama ja otsustab seda ümber kirjutada, kuni ta selle selgeks saab. Ta kirjutab tähestiku täies pikkuses {n1_txt,kaks} korda, kirjutab seejärel sellest {frac_txt,poole} ja seejärel kirjutab uuesti kõik, mida ta on juba kirjutanud. Mitu tähte on {name,Mare} kokku kirjutanud?
+
+#init:
+- name, _ = sample(names_female_cases)
+- alphabets_txt, alphabets_val = sample([("tähestikku", 26), ("hiraganat (48 tähte)", 48), ("pärsia tähestikku (32 tähte)", 32), ("araabia abjadi (28 tähte)", 28)])
+- n1_txt, n1_val = range_str(2, 15, 1, numbers)
+- frac_txt, frac_val = sample([("poole", 1/2), ("kolmandiku", 1/3), ("veerandi", 1/4)])
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)
+"""
+
+answer_annotated = """
+{name} on kirjutanud {alphabets_txt} {n1_txt} korda, mis teeb kokku {alphabets_val}*{n1_val}=<<{alphabets_val}*{n1_val}={alphabets_val*n1_val}>>{alphabets_val*n1_val} tähte.
+Seejärel kirjutab ta {frac_txt} tähestikust, mis on {alphabets_val}*{frac_val}=<<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} tähte.
+Seni on see kokku {alphabets_val*n1_val} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1_val}+{int(alphabets_val*frac_val)}={alphabets_val*n1_val + int(alphabets_val*frac_val)}>>{alphabets_val*n1_val + int(alphabets_val*frac_val)} tähte.
+Selle uuesti kirjutamine tähendab, et ta on kahekordistanud nende tähtede arvu, mida ta on kirjutanud, seega on ta kokku kirjutanud {alphabets_val*n1_val + int(alphabets_val*frac_val)} * 2 = <<{alphabets_val*n1_val + int(alphabets_val*frac_val)}*2={2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1_val + int(alphabets_val*frac_val))} tähte.
+#### {2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

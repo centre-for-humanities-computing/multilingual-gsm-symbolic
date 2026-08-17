@@ -1,0 +1,38 @@
+question = "La famille Lambert est occupée à faire des biscuits. Jusqu'à présent, ils ont fait 7995 biscuits. Ils ont 2595 biscuits parfum citron, 3075 biscuits parfum flocons d'avoine et quelques biscuits parfum chocolat. Combien de biscuits parfum chocolat ont-ils faits ?"
+
+answer = """
+Le nombre total de biscuits parfum citron et flocons d'avoine est 2595 + 3075 = <<2595+3075=5670>>5670.
+Donc ils ont fait 7995 - 5670 = <<7995-5670=2325>>2325 biscuits parfum chocolat.
+#### 2325
+"""
+
+id_orig = 1305
+
+id_shuffled = 83
+
+question_annotated = """
+La famille {family,Lambert} est occupée à faire des {item,biscuits}. Jusqu'à présent, ils ont fait {total,7995} {item,biscuits}. Ils ont {n1,2595} {item,biscuits} parfum {flavor1,citron}, {n2,3075} {item,biscuits} parfum {flavor2,flocons d'avoine} et quelques {item,biscuits} parfum {flavor3,chocolat}. Combien de {item,biscuits} parfum {flavor3,chocolat} ont-ils faits ?
+
+#init:
+- family = sample(["Lefèvre", "Garnier", "Martin", "Dubois", "Mercier"])
+- item = sample(["muffins", "cupcakes", "sablés", "brownies"])
+- flavor1, flavor2, flavor3 = sample(["vanille", "fraise", "myrtille", "citron", "orange"], 3)
+- $total = range(4995, 10000, 25)
+- $n1 = range(995, 3000, 50)
+- $n2 = range(1075, 3100, 50)
+
+#conditions:
+- n1 + n2 < total
+
+#answer: total - (n1 + n2)
+"""
+
+answer_annotated = """
+Le nombre total de {item} parfum {flavor1} et {flavor2} est {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2}.
+Donc ils ont fait {total} - {n1+n2} = <<{total}-{n1+n2}={total-(n1+n2)}>>{total-(n1+n2)} {item} parfum {flavor3}.
+#### {total-(n1+n2)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"

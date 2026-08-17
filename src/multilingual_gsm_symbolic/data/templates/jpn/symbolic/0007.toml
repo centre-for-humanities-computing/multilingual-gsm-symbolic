@@ -1,0 +1,45 @@
+question = "ある農家が馬の飼料として、干し草、オーツ麦、にんじん、そして角砂糖を買います。角砂糖はごほうびとして使うので、厩舎全体のために1キログラム入りの箱を2個だけ買います。野菜は新鮮なうちに馬に与えられる分だけ欲しいので、にんじんは12キログラム入りの袋を4袋買います。干し草は馬の主なえさなので、75キログラム入りの包みを42個買います。オーツ麦は干し草を補う副食なので、65キログラム入りの袋を20袋買います。農場のトラックが1回に2250キログラム運べるとすると、農家はすべての飼料を運ぶのに何回往復する必要がありますか。"
+answer = """農家は角砂糖を 2*1 = <<2*1=2>>2 キログラム買います。
+にんじんを 4*12 = <<4*12=48>>48 キログラム買います。
+オーツ麦を 20*65 = <<20*65=1300>>1300 キログラム買います。
+干し草を 42*75 = <<42*75=3150>>3150 キログラム買います。
+すべての飼料の重さは 2 + 48 + 1300 + 3150 = <<2+48+1300+3150=4500>>4500 キログラムです。
+したがって、農家が農場のトラックですべての飼料を運ぶのに必要な往復回数は 4500 / 2250 = <<4500/2250=2>>2 回です。
+#### 2
+"""
+id_orig = 459
+id_shuffled = 7
+question_annotated = """ある農家が{animals,馬}の飼料として、{o1,干し草}、{o2,オーツ麦}、{o3,にんじん}、そして{o4,角砂糖}を買います。{o4,角砂糖}はごほうびとして使うので、厩舎全体のために{w4,1}{unit,キログラム}入りの箱を{n4_txt,2}個だけ買います。野菜は新鮮なうちに{animals,馬}に与えられる分だけ欲しいので、{o3,にんじん}は{w3,12}{unit,キログラム}入りの袋を{n3_txt,4}袋買います。{o1,干し草}は{animals,馬}の主なえさなので、{w1,75}{unit,キログラム}入りの包みを{n1_txt,42}個買います。{o2,オーツ麦}は{o1,干し草}を補う副食なので、{w2,65}{unit,キログラム}入りの袋を{n2_txt,20}袋買います。農場のトラックが1回に{total,2250}{unit,キログラム}運べるとすると、農家はすべての飼料を運ぶのに何回往復する必要がありますか。
+
+#init:
+- animals = sample(['馬', '牛', '羊', '豚', 'アルパカ'])
+- unit = sample(weights_med)
+- o1, o2 = sample([\"干し草\", \"トウモロコシ\", \"オーツ麦\", \"りんご\", \"小麦\"], 2)
+- o3 = sample([\"にんじん\", \"ビーツ\", \"きゅうり\"])
+- o4 = sample(["角砂糖", "スイカ"])
+- n4_txt, n4_val = range_str(2, 7, 2, numbers)
+- n3_txt, n3_val = range_str(4, 11, 2, numbers)
+- n2_txt, n2_val = range_str(15, 21, 1, numbers)
+- n1_txt, n1_val = range_str(30, 43, 2, numbers)
+- $w4 = range(1, 4)
+- $w3 = range(8, 13, 2)
+- $w2 = range(45, 70, 5)
+- $w1 = range(55, 80, 5)
+- $total = range(1500, 2300, 150)
+
+#conditions:
+- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val
+- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)
+
+#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total
+"""
+answer_annotated = """農家は{o4}を {n4_val}*{w4} = <<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit}買います。
+{o3}を {n3_val}*{w3} = <<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {unit}買います。
+{o2}を {n2_val}*{w2} = <<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {unit}買います。
+{o1}を {n1_val}*{w1} = <<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {unit}買います。
+すべての飼料の重さは {n4_val*w4} + {n3_val*w3} + {n2_val*w2} + {n1_val*w1} = <<{n4_val*w4}+{n3_val*w3}+{n2_val*w2}+{n1_val*w1}={n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4}>>{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} {unit}です。
+したがって、農家が農場のトラックですべての飼料を運ぶのに必要な往復回数は {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total} = <<{n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4}/{total}={(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}>>{(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total} 回です。
+#### {(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total}
+"""
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+language = "jpn"

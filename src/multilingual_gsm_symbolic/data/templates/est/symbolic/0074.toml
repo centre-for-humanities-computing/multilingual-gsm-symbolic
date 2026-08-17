@@ -1,0 +1,41 @@
+question = "Väikepuu koolis on 96 esimese klassi õpilast. Neist 43 on tüdrukud. Esmaspäeval puudus 5 esimese klassi tüdrukut ja 4 esimese klassi poissi. Mitu esimese klassi poissi oli Väikepuu koolis esmaspäeval?"
+
+answer = """
+96 esimese klassi õpilasest 43 on tüdrukud, seega 96 õpilast - 43 tüdrukut = <<96-43=53>>53 poissi.
+Esmaspäeval oli 53 poissi - 4 puudunud = <<53-4=49>>49 poissi.
+#### 49
+"""
+
+id_orig = 364
+
+id_shuffled = 74
+
+question_annotated = """
+{school_name,Väikepuu} koolis on {total,96} {grade_gen,esimese} klassi õpilast. Neist {num_girls,43} on tüdrukud. {day_gen,esmaspäeva}l puudus {absent_girls,5} {grade_gen,esimese} klassi tüdrukut ja {absent_boys,4} {grade_gen,esimese} klassi poissi. Mitu {grade_gen,esimese} klassi poissi oli {school_name,Väikepuu} koolis {day_gen,esmaspäeva}l?
+
+#init:
+- school_name = sample(["Väikepuu", "Vahtramäe", "Tammiku", "Männiku", "Kase"])
+- grade_gen = sample(["esimese", "teise", "kolmanda", "neljanda", "viienda"])
+- (day_nom, day_gen) = sample(weekday_cases)
+- $total = range(50, 200)
+- $num_girls = range(20, 100)
+- $absent_girls = range(2, 10)
+- $absent_boys = range(2, 10)
+
+#conditions:
+- num_girls < total
+- absent_girls < num_girls
+- absent_boys < (total - num_girls)
+
+#answer: total - num_girls - absent_boys
+"""
+
+answer_annotated = """
+{total} {grade_gen} klassi õpilasest {num_girls} on tüdrukud, seega {total} õpilast - {num_girls} tüdrukut = <<{total}-{num_girls}={total-num_girls}>>{total-num_girls} poissi.
+{day_gen}l oli {total-num_girls} poissi - {absent_boys} puudunud = <<{total-num_girls}-{absent_boys}={total-num_girls-absent_boys}>>{total-num_girls-absent_boys} poissi.
+#### {total-num_girls-absent_boys}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

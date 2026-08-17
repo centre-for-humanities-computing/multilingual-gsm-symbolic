@@ -1,0 +1,38 @@
+question = "Munajahi meeskond peitis 100 muna. Tamme kaksikud leidsid kumbki 30 muna. Kõik ülejäänud munad peale 10 leidsid nende sõbrad. Mitu muna leidsid sõbrad?"
+
+answer = """
+Tamme kaksikud leidsid 30 * 2 = <<30*2=60>>60 muna.
+Ülejäänud munade arv oli 100 - 60 = <<100-60=40>>40 muna.
+Kuna 10 muna ei leitud, tähendab see, et sõbrad leidsid 40 - 10 = <<40-10=30>>30 muna.
+#### 30
+"""
+
+id_orig = 1025
+
+id_shuffled = 81
+
+question_annotated = """
+Munajahi meeskond peitis {total,100} muna. {family,Tamme} kaksikud leidsid kumbki {n,30} muna. Kõik ülejäänud munad peale {m,10} leidsid nende sõbrad. Mitu muna leidsid sõbrad?
+
+#init:
+- family = sample(["Tamme", "Kase", "Saare", "Kuuse", "Sepa"])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+
+answer_annotated = """
+{family} kaksikud leidsid {n} * 2 = <<{n}*2={2*n}>>{2*n} muna.
+Ülejäänud munade arv oli {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} muna.
+Kuna {m} muna ei leitud, tähendab see, et sõbrad leidsid {total-2*n} - {m} = <<{total-2*n}-{m}={total - 2*n - m}>>{total - 2*n - m} muna.
+#### {total - 2*n - m}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

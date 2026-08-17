@@ -1,0 +1,49 @@
+question = "Peter ynskir at gera ísterningar í ymiskum støddum við 32 grammum av vatni. Hann kann gera stórar ísterningar, sum brúka 4 gramm fyri hvønn terning, miðalstórar ísterningar, sum brúka 2 gramm og smáar ísterningar, sum brúka 1/2 gramm. Um hann ger 3 stórar ísterningar, 7 miðalstórar ísterningar og 8 smáar ísterningar, hvussu nógv gramm av vatni hevur hann eftir?"
+
+answer = """
+Stóru terningarnir brúktu 12 gramm av vatni, tí 3 ferðir 4 er <<3*4=12>>12.
+Miðalstóru terningarnir brúktu 14 gramm av vatni, tí 7 ferðir 2 er <<7*2=14>>14.
+Smáu terningarnir brúktu 4 gramm av vatni, tí 8 ferðir 1/2 er 4.
+Hetta merkir, at Peter hevur brúkt 30 gramm av vatni, tí 12 pluss 14 pluss 4 er 30.
+Peter hevur 2 gramm av vatni eftir, tí 32 minus 30 er <<32-30=2>>2.
+#### 2
+"""
+
+id_orig = 737
+
+id_shuffled = 11
+
+question_annotated = """
+{name, Peter} ynskir at gera ísterningar í ymiskum støddum við {n,32} {unit,grammum} av vatni. Hann kann gera stórar ísterningar, sum brúka {w1,4} {unit,gramm} fyri hvønn terning, miðalstórar ísterningar, sum brúka {w2,2} {unit,gramm} og smáar ísterningar, sum brúka {w3,1/2} {unit,gramm}. Um hann ger {n1,3} stórar ísterningar, {n2,7} miðalstórar ísterningar og {n3,8} smáar ísterningar, hvussu nógv {unit,gramm} av vatni hevur hann eftir?
+
+#init:
+- name = sample(names_male)
+- unit = sample(weights_sm)
+- $w1 = range(4, 10)
+- $w2 = range(2, 10)
+- $w3 = sample(fractions)
+- $n1 = range(3, 10)
+- $n2 = range(7, 13)
+- $n3 = sample([8, 14, 24, 15])
+- $n = range(32, 240, 4)
+
+#conditions:
+- w3 < w2 < w1
+- is_int(n3 * w3)
+- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0
+
+#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))
+"""
+
+answer_annotated = """
+Stóru terningarnir brúktu {n1*w1} {unit} av vatni, tí {n1} ferðir {w1} er <<{n1}*{w1}={n1*w1}>>{n1*w1}.
+Miðalstóru terningarnir brúktu {n2*w2} {unit} av vatni, tí {n2} ferðir {w2} er <<{n2}*{w2}={n2*w2}>>{n2*w2}.
+Smáu terningarnir brúktu {int(w3*n3)} {unit} av vatni, tí {n3} ferðir {w3} er {int(n3*w3)}.
+Hetta merkir, at {name} hevur brúkt {int(n3*w3+n2*w2+n1*w1)} {unit} av vatni, tí {n1*w1} pluss {n2*w2} pluss {int(w3*n3)} er {int(n3*w3+n2*w2+n1*w1)}.
+{name} hevur {(n - (n1*w1) - (n2*w2) - int(n3*w3))} {unit} av vatni eftir, tí {n} minus {int(n3*w3+n2*w2+n1*w1)} er <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{(n - (n1*w1) - (n2*w2) - int(n3*w3))}.
+#### {(n - (n1*w1) - (n2*w2) - int(n3*w3))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

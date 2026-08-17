@@ -1,0 +1,37 @@
+question = "Jaan korjab 4 banaani kolmapäeval. Seejärel korjab ta 6 banaani neljapäeval. Reedel korjab ta kolm korda nii palju banaane, kui ta korjas kolmapäeval. Mitu banaani Jaanil on?"
+
+answer = """
+Kokku kolmapäeval ja neljapäeval on Jaanil 4 banaani + 6 banaani = <<4+6=10>>10 banaani.
+Reedel korjab ta 3*4 banaani = <<3*4=12>>12 banaani.
+Kokku on Jaanil 10 banaani + 12 banaani = <<10+12=22>>22 banaani.
+#### 22
+"""
+
+id_orig = 1020
+
+id_shuffled = 20
+
+question_annotated = """
+{name,Jaan} korjab {n1,4} {fruit,banaani} {d1_day,kolmapäeva}l. Seejärel korjab ta {n2,6} {fruit,banaani} {d2_day,neljapäeva}l. {d3_day,reede}l korjab ta {mult_txt,kolm} korda nii palju {fruit_pl,banaane}, kui ta korjas {d1_day,kolmapäeva}l. Mitu {fruit,banaani} {name_gen,Jaani}l on?
+
+#init:
+- name, name_gen = sample(names_male_cases)
+- (d1, d1_day), (d2, d2_day), (d3, d3_day) = sample_sequential(weekday_cases, 3)
+- fruit_nom_sg, fruit_nom_pl, fruit_gen_sg, fruit, fruit_pl, fruit_gen_pl = sample(fruits_cases)
+- $n1 = range(30, 400)
+- $n2 = range(50, 400)
+- mult_txt, mult_val = range_str(2,6,1,numbers)
+
+#answer: n1 + n2 + mult_val * n1
+"""
+
+answer_annotated = """
+Kokku {d1_day}l ja {d2_day}l on {name_gen}l {n1} {fruit} + {n2} {fruit} = <<{n1}+{n2}={n1+n2}>>{n1+n2} {fruit}.
+{d3_day}l korjab ta {mult_val}*{n1} {fruit} = <<{mult_val}*{n1}={mult_val*n1}>>{mult_val*n1} {fruit}.
+Kokku on {name_gen}l {n1+n2} {fruit} + {mult_val*n1} {fruit} = <<{n1+n2}+{n1*mult_val}={n1 + n2 + mult_val * n1}>>{n1 + n2 + mult_val * n1} {fruit}.
+#### {n1 + n2 + mult_val * n1}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

@@ -1,7 +1,7 @@
-question = "Jónas tínir 4 bananar á miðvikudaginn. Síðan tínir hann 6 bananar á fimmtudaginn. Á föstudaginn tínir hann þrisvar sinnum jafn marga banana og hann gerði á miðvikudaginn. Hvað á Jónas marga banana?"
+question = "Jónas tínir 4 banana á miðvikudaginn. Síðan tínir hann 6 banana á fimmtudaginn. Á föstudaginn tínir hann þrisvar sinnum jafn marga banana og hann gerði á miðvikudaginn. Hvað á Jónas marga banana?"
 
 answer = """
-Samtals á miðvikudagi og fimmtudagi á Jónas 4 banana + 6 banana = <<4+6=10>>10 banana.
+Samtals á miðvikudaginn og fimmtudaginn á Jónas 4 banana + 6 banana = <<4+6=10>>10 banana.
 Á föstudaginn tínir hann 3*4 banana = <<3*4=12>>12 banana.
 Alls á Jónas 10 banana + 12 banana = <<10+12=22>>22 banana.
 #### 22
@@ -12,27 +12,29 @@ id_orig = 1020
 id_shuffled = 20
 
 question_annotated = """
-{name,Jónas} tínir {n1,4} {fruit_plural,bananar} á {d1,miðvikudag}inn. Síðan tínir hann {n2,6} {fruit_plural,bananar} á {d2,fimmtudag}inn. Á {d3,föstudag}inn tínir hann {mult_txt,þrisvar sinnum} jafn marga banana og hann gerði á {d1,miðvikudag}inn. Hvað á {name,Jónas} marga banana?
+{name,Jónas} tínir {n1,4} {fruit_n1,banana} á {d1,miðvikudag}inn. Síðan tínir hann {n2,6} {fruit_n2,banana} á {d2,fimmtudag}inn. Á {d3,föstudag}inn tínir hann {mult_txt,þrisvar sinnum} jafn {quant_acc_pl,marga} {fruit_acc_pl,banana} og hann gerði á {d1,miðvikudag}inn. Hvað á {name,Jónas} {quant_acc_pl,marga} {fruit_acc_pl,banana}?
 
 #init:
 - name = sample(names_male)
-- d1, d2, d3 = sample_sequential(weekdays, 3)
-- fruit, fruit_plural = sample(fruits)
+- d1, d2, d3 = sample_sequential(["mánudag", "þriðjudag", "miðvikudag", "fimmtudag", "föstudag", "laugardag", "sunnudag"], 3)
+- fruit_acc_sg, fruit_acc_pl = sample([("banana", "banana"), ("epli", "epli"), ("appelsínu", "appelsínur"), ("peru", "perur"), ("ananas", "ananasa"), ("melónu", "melónur")])
+- quant_acc_pl = "marga" if fruit_acc_pl == "banana" else ("marga" if fruit_acc_pl == "ananasa" else ("mörg" if fruit_acc_pl == "epli" else "margar"))
 - $n1 = range(30, 400)
 - $n2 = range(50, 400)
-- mult_txt, mult_val = sample(multi_times)
+- mult_txt, mult_val = sample([("tvisvar sinnum", 2), ("þrisvar sinnum", 3), ("fjórum sinnum", 4), ("fimm sinnum", 5), ("sex sinnum", 6)])
+- fruit_n1 = fruit_acc_sg if (n1 % 10 == 1 and n1 % 100 != 11) else fruit_acc_pl
+- fruit_n2 = fruit_acc_sg if (n2 % 10 == 1 and n2 % 100 != 11) else fruit_acc_pl
 
 #answer: n1 + n2 + mult_val * n1
 """
 
 answer_annotated = """
-Samtals á {d1}i og {d2}i á {name} {n1} banana + {n2} banana = <<{n1}+{n2}={n1+n2}>>{n1+n2} banana.
-Á {d3}inn tínir hann {mult_val}*{n1} banana = <<{mult_val}*{n1}={mult_val*n1}>>{mult_val*n1} banana.
-Alls á {name} {n1+n2} banana + {mult_val*n1} banana = <<{n1+n2}+{n1*mult_val}={n1 + n2 + mult_val * n1}>>{n1 + n2 + mult_val * n1} banana.
+Samtals á {d1}inn og {d2}inn á {name} {n1} {fruit_n1} + {n2} {fruit_n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} {fruit_acc_sg if ((n1+n2) % 10 == 1 and (n1+n2) % 100 != 11) else fruit_acc_pl}.
+Á {d3}inn tínir hann {mult_val}*{n1} {fruit_n1} = <<{mult_val}*{n1}={mult_val*n1}>>{mult_val*n1} {fruit_acc_sg if ((mult_val*n1) % 10 == 1 and (mult_val*n1) % 100 != 11) else fruit_acc_pl}.
+Alls á {name} {n1+n2} {fruit_acc_sg if ((n1+n2) % 10 == 1 and (n1+n2) % 100 != 11) else fruit_acc_pl} + {mult_val*n1} {fruit_acc_sg if ((mult_val*n1) % 10 == 1 and (mult_val*n1) % 100 != 11) else fruit_acc_pl} = <<{n1+n2}+{n1*mult_val}={n1 + n2 + mult_val * n1}>>{n1 + n2 + mult_val * n1} {fruit_acc_sg if ((n1 + n2 + mult_val * n1) % 10 == 1 and (n1 + n2 + mult_val * n1) % 100 != 11) else fruit_acc_pl}.
 #### {n1 + n2 + mult_val * n1}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"
-

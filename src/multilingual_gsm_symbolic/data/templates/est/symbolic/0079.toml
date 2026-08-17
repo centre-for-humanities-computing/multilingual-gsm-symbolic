@@ -1,0 +1,36 @@
+question = "Toomas lõpetas poole 500-tükilisest puslest ja seejärel alustas ning lõpetas ühe teise 500-tükilise pusle tunni aja jooksul. Mitu pusletükki Toomas selle tunni jooksul puslesse asetas?"
+
+answer = """
+Toomas tegi 1/2*500 pusletükki = <<500*1/2=250>>250 pusletükki.
+Toomas lõpetas 250 pusletükki + 500 pusletükki = <<250+500=750>>750 pusletükki.
+#### 750
+"""
+
+id_orig = 1074
+
+id_shuffled = 79
+
+question_annotated = """
+{name,Toomas} lõpetas {frac_txt,poole} {n1,500}-tükilisest puslest ja seejärel alustas ning lõpetas ühe teise {n2,500}-tükilise pusle tunni aja jooksul. Mitu pusletükki {name,Toomas} selle tunni jooksul puslesse asetas?
+
+#init:
+- name, _ = sample(names_cases)
+- frac_txt, frac_val = sample([("poole", "1/2"), ("kolmandiku", "1/3"), ("veerandi", "1/4"), ("viiendiku", "1/5"), ("kahe kolmandiku", "2/3"), ("kolme neljandiku", "3/4")])
+- $n1 = range(100, 501)
+- $n2 = range(300, 1001)
+
+#conditions:
+- is_int(n1 * frac_val)
+
+#answer: int(n1 * frac_val) + n2
+"""
+
+answer_annotated = """
+{name} tegi {frac_val}*{n1} pusletükki = <<{n1}*{frac_val}={int(n1*frac_val)}>>{int(n1*frac_val)} pusletükki.
+{name} lõpetas {int(n1*frac_val)} pusletükki + {n2} pusletükki = <<{int(n1*frac_val)}+{n2}={int(n1*frac_val)+n2}>>{int(n1*frac_val)+n2} pusletükki.
+#### {int(n1*frac_val)+n2}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

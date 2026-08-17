@@ -1,0 +1,39 @@
+question = "मोहित के आयताकार शयनकक्ष का क्षेत्रफल ३३ वर्ग मीटर है। यदि कमरे की लंबाई ३०० सेमी है, तो कमरे की परिमाप मीटर में क्या है?"
+
+answer = """
+कमरे की लंबाई ३०० सेमी * १/१०० मीटर/सेमी = <<३००*(१/१००)=३>>३ मीटर है।
+कमरे की चौड़ाई ३३ वर्ग मीटर / ३ मीटर = <<३३/३=११>>११ मीटर है।
+कमरे की परिमाप २*(११+३) = २८ मीटर है
+#### २८
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+{name,मोहित} के आयताकार {room_type,शयनकक्ष} का क्षेत्रफल {area,३३} वर्ग मीटर है। यदि कमरे की लंबाई {length,३००} सेमी है, तो कमरे की परिमाप मीटर में क्या है?
+
+#init:
+- name = sample(names_male)
+- room_type = sample(["बैठक कक्ष", "अध्ययन कक्ष", "कार्यालय", "रसोईघर"])
+- $area = range(18, 121)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length * (1/100)))
+- (area / (length * (1/100))) > (length * (1/100))
+
+#answer: 2 * (area // (length * (1/100)) + length * (1/100))
+"""
+
+answer_annotated = """
+कमरे की लंबाई {length} सेमी * १/१०० मीटर/सेमी = <<{length}*(१/१००)={length * (1/100)}>>{length * (1/100)} मीटर है।
+कमरे की चौड़ाई {area} वर्ग मीटर / {length * (1/100)} मीटर = <<{area}/{length * (1/100)}={area // (length * (1/100))}>>{area // (length * (1/100))} मीटर है।
+कमरे की परिमाप २*({area // (length * (1/100))}+{length * (1/100)}) = {2 * (area // (length * (1/100)) + length * (1/100))} मीटर है
+#### {2 * (area // (length * (1/100)) + length * (1/100))}
+"""
+
+creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+
+language = "hin"

@@ -1,8 +1,8 @@
-question = "Í upphafi veislunni voru 25 karlar og 15 konur. Eftir eina klukkustund fóru 1/4 af heildarfjölda fólks. Hversu margar konur eru eftir ef 22 karlar voru eftir í veislunni?"
+question = "Í upphafi veislunnar voru 25 karlar og 15 konur. Eftir eina klukkustund fór 1/4 af heildarfjöldanum. Hversu margar konur eru eftir ef 22 karlar urðu eftir í veislunni?"
 
 answer = """
-Alls voru 25 karlar + 15 konur = <<25+15=40>>40 manns sem tóku þátt í veislunni.
-Eftir eina klukkustund fóru 40 manns*1/4 = <<40*1/4=10>>10 manns fóru úr veislunni.
+Alls voru 25 karlar + 15 konur = <<25+15=40>>40 manns í veislunni í upphafi.
+Eftir eina klukkustund fóru 40 manns * 1/4 = <<40*1/4=10>>10 manns.
 Þetta þýðir að 40 manns - 10 manns = <<40-10=30>>30 manns voru eftir.
 Af þeim 30 sem voru eftir voru 30 manns - 22 karlar = <<30-22=8>>8 konur.
 #### 8
@@ -13,16 +13,20 @@ id_orig = 320
 id_shuffled = 82
 
 question_annotated = """
-Í upphafi {event,veislan} voru {m,25} {group1,karlar} og {w,15} {group2,konur}. Eftir {t,eina klukkustund} fóru {frac,1/4} af heildarfjölda fólks. Hversu margar {group2,konur} eru eftir ef {m_left,22} {group1,karlar} voru eftir í {event,veislunni}?
+Í upphafi {event_ef,veislunnar} voru {m,25} {g1_m,karlar} og {w,15} {g2_w,konur}. Eftir {t,eina klukkustund} fór {frac,1/4} af heildarfjöldanum. Hversu {group2_margir,margar} {g2_ft,konur} eru eftir ef {m_left,22} {g1_m_left,karlar} {urdu_eftir,urðu eftir} {event_prep_þgf,í veislunni}?
 
 #init:
-- event = sample(['festen', 'fejringen', 'fødselsdagen', 'konferencen', 'samlingen', 'eventet'])
-- group1, group2 = sample([ "lærere", "læger", "ingeniører", "sygeplejersker", "kunstnere", "advokater",], 2)
-- t = sample(['en time', 'to timer', 'en halv time', '45 minutter'])
+- event_ef, event_prep_þgf = sample([("veislunnar", "í veislunni"), ("hátíðarinnar", "á hátíðinni"), ("afmælisins", "í afmælinu"), ("ráðstefnunnar", "á ráðstefnunni"), ("samkomunnar", "á samkomunni"), ("viðburðarins", "á viðburðinum")])
+- t = sample(['eina klukkustund', 'tvær klukkustundir', 'hálfa klukkustund', '45 mínútur'])
 - $frac = sample(fractions)
 - $m = range(20, 75)
 - $w = range(10, 80)
 - $m_left = range(15, 35)
+- g1_m, g1_m_left = sample([("karl" if m % 10 == 1 and m % 100 != 11 else "karlar", "karl" if m_left % 10 == 1 and m_left % 100 != 11 else "karlar"), ("læknir" if m % 10 == 1 and m % 100 != 11 else "læknar", "læknir" if m_left % 10 == 1 and m_left % 100 != 11 else "læknar"), ("verkfræðingur" if m % 10 == 1 and m % 100 != 11 else "verkfræðingar", "verkfræðingur" if m_left % 10 == 1 and m_left % 100 != 11 else "verkfræðingar"), ("listamaður" if m % 10 == 1 and m % 100 != 11 else "listamenn", "listamaður" if m_left % 10 == 1 and m_left % 100 != 11 else "listamenn")])
+- g2_et, g2_ft = sample([("kona", "konur"), ("hjúkrunarfræðingur", "hjúkrunarfræðingar"), ("kennari", "kennarar"), ("lögfræðingur", "lögfræðingar")])
+- g2_w = g2_et if w % 10 == 1 and w % 100 != 11 else g2_ft
+- group2_margir = "margar" if g2_ft == "konur" else "margir"
+- urdu_eftir = "varð eftir" if m_left % 10 == 1 and m_left % 100 != 11 else "urðu eftir"
 
 #conditions:
 - m_left < m
@@ -34,13 +38,13 @@ question_annotated = """
 """
 
 answer_annotated = """
-Alls voru {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} manns sem tóku þátt í {event}.
-Eftir {t} fóru {m+w} manns*{frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} manns fóru úr {event}.
+Alls voru {m} {g1_m} + {w} {g2_w} = <<{m}+{w}={m+w}>>{m+w} manns {event_prep_þgf} í upphafi.
+Eftir {t} fóru {m+w} manns * {frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} manns.
 Þetta þýðir að {m+w} manns - {int((m+w)*frac)} manns = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} manns voru eftir.
-Af þeim {m+w-int((m+w)*frac)} sem voru eftir voru {m+w-int((m+w)*frac)} manns - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {group2}.
+Af þeim {m+w-int((m+w)*frac)} sem voru eftir {"var" if (m+w-int((m+w)*frac)-m_left) % 10 == 1 and (m+w-int((m+w)*frac)-m_left) % 100 != 11 else "voru"} {m+w-int((m+w)*frac)} manns - {m_left} {g1_m_left} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {g2_et if ((m+w-int((m+w)*frac)-m_left) % 10 == 1 and (m+w-int((m+w)*frac)-m_left) % 100 != 11) else g2_ft}.
 #### {m+w-int((m+w)*frac)-m_left}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally and human validated"
 
 language = "isl"

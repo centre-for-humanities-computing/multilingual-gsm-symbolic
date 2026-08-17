@@ -1,0 +1,40 @@
+question = "Anul on sahvris 6 purki värvilisi nonparelle. Iga värviliste nonparellide purk suudab kaunistada 8 muffinit. Anu tahab küpsetada piisavalt muffineid, et kasutada ära kõik oma värvilised nonparellid. Kui iga küpsetusplaat mahutab 12 muffinit, siis mitu plaaditäit muffineid peaks ta küpsetama?"
+
+answer = """
+Tal on piisavalt värvilisi nonparelle 6 * 8 = <<6*8=48>>48 muffini jaoks.
+Ta peab küpsetama 48 / 12 = <<48/12=4>>4 plaaditäit muffineid, et kõik muffinid ära küpsetada.
+#### 4
+"""
+
+id_orig = 469
+
+id_shuffled = 64
+
+question_annotated = """
+{name_gen,Anu}l on {location_ine,sahvris} {n,6} purki {item_par_pl,värvilisi nonparelle}. Iga {item_gen_pl,värviliste nonparellide} purk suudab kaunistada {m,8} {food_par_sg,muffinit}. {name,Anu} tahab küpsetada piisavalt {food_par_pl,muffineid}, et kasutada ära kõik oma {item_nom_pl,värvilised nonparellid}. Kui iga {container_nom_sg,küpsetusplaat} mahutab {k,12} {food_par_sg,muffinit}, siis mitu {container_gen_sg,plaaditäit} {food_par_pl,muffineid} peaks ta küpsetama?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- item_par_pl, item_gen_pl, item_nom_pl = sample([("värvilisi nonparelle", "värviliste nonparellide", "värvilised nonparellid"), ("glasuurihelbeid", "glasuurihelveste", "glasuurihelbed"), ("šokolaaditükke", "šokolaaditükkide", "šokolaaditükid"), ("kommipärleid", "kommipärlite", "kommipärlid")])
+- food_par_sg, food_gen_sg, food_par_pl, food_nom_pl = sample([("muffinit", "muffini", "muffineid", "muffinid"), ("koogikest", "koogikese", "koogikesi", "koogikesed"), ("küpsist", "küpsise", "küpsiseid", "küpsised"), ("browniet", "brownie", "brownie'sid", "brownie'sid")])
+- location_ine = sample(["sahvris", "kapis", "köögikapis", "panipaigas"])
+- container_nom_sg, container_gen_sg, container_par_pl = sample([("küpsetusplaat", "plaaditäit", "küpsetusplaate"), ("ahjuplaat", "ahjuplaaditäit", "ahjuplaate"), ("vorm", "vormitäit", "vorme"), ("rest", "restitäit", "reste")])
+- $n = range(3, 15)
+- $m = range(6, 20)
+- $k = range(6, 24)
+
+#conditions:
+- divides(n*m, k)
+
+#answer: (n*m)//k
+"""
+
+answer_annotated = """
+Tal on piisavalt {item_par_pl} {n} * {m} = <<{n}*{m}={n*m}>>{n*m} {food_gen_sg} jaoks.
+Ta peab küpsetama {n*m} / {k} = <<{n*m}/{k}={(n*m)//k}>>{(n*m)//k} {container_gen_sg} {food_par_pl}, et kõik {food_nom_pl} ära küpsetada.
+#### {(n*m)//k}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

@@ -1,0 +1,42 @@
+question = "Maria on innukas aednik. Eile sai ta oma lemmik aiataimede kasvandusest 18 uut potti potitaimi. Tal on juba 2 potti potitaimi igal 40 aknalaual oma suure maakodu akendel. Tundes end heldena, on ta otsustanud, et annab homme igalt aknalaualt 1 potti potitaimi sõpradele ja perele. Mitu potti potitaimi jääb Marial alles?"
+
+answer = """
+Eile, enne kui ta taimed kätte sai, oli Marial 2*40 = <<2*40=80>>80 potti potitaimi.
+Pärast seda, kui ta sai juurde veel 18 taime, oli tal seega kokku 80 + 18 = <<80+18=98>>98 potti potitaimi.
+Homme annab Maria ära 40*1 = <<40*1=40>>40 potti potitaimi.
+Seega jääb Marial alles 98 - 40 = <<98-40=58>>58 potti potitaimi.
+#### 58
+"""
+
+id_orig = 99
+
+id_shuffled = 13
+
+question_annotated = """
+{name,Maria} on innukas aednik. {time,eile} sai ta oma lemmik aiataimede kasvandusest {x,18} uut potti potitaimi. Tal on juba {r,2} potti potitaimi igal {w,40} aknalaual oma suure maakodu akendel. Tundes end heldena, on ta otsustanud, et annab homme igalt aknalaualt {n,1} potti potitaimi sõpradele ja perele. Mitu potti potitaimi jääb {name_gen,Maria}l alles?
+
+#init:
+- name, name_gen = sample(names_female_cases)
+- time = sample(["Eelmisel nädalal", "Kahe päeva eest", "Eelmisel ööl"])
+- $x = range(18, 50)
+- $r = range(2, 13)
+- $w = range(40, 70)
+- $n = range(1, 8)
+
+#conditions:
+- w * r + x - w*n > 0
+
+#answer: w * r + x - w*n
+"""
+
+answer_annotated = """
+{time}, enne kui ta taimed kätte sai, oli {name_gen}l {r}*{w} = <<{r}*{w}={w*r}>>{w*r} potti potitaimi.
+Pärast seda, kui ta sai juurde veel {x} taime, oli tal seega kokku {w*r} + {x} = <<{w*r}+{x}={w*r+x}>>{w*r+x} potti potitaimi.
+Homme annab {name} ära {w}*{n} = <<{w}*{n}={w*n}>>{w*n} potti potitaimi.
+Seega jääb {name_gen}l alles {w*r+x} - {w*n} = <<{w*r+x}-{w*n}={w*r+x-w*n}>>{w*r+x-w*n} potti potitaimi.
+#### {w*r+x-w*n}
+"""
+
+creation = "machine-translated from eng_metric using gpt-5.4-nano, based on eng_metric templates; computationally validated; validated by a native speaker."
+
+language = "est"

@@ -1,0 +1,44 @@
+question = "Sofie hevur eitt blómubeð, sum er 28,8 m langt. Sofie vil fylla blómubeðið við plantum. Blómurnar hjá Sofie verða 30 cm breiðar, og havuleiðbeiningin sigur, at ein skal planta eitt blóma fyri hvørjar 45 cm eftir beðinum. Sofie eigur longu 17 blómur. Hvør blómandi planta kostar 40 kr í handlinum. Hvussu nógvar pengar skal Sofie brúka fyri at fylla blómubeðið?"
+
+answer = """
+Blómubeðið hjá Sofie er 28,8 m / 45 cm fyri hvørja plantu = <<2880/45=64>>64 plantur krevjast.
+Sofie skal keypa 64 plantur - 17 plantur = <<64-17=47>>47 plantur, sum skulu keypast.
+Sofie skal brúka 47 plantur * 40 kr = <<47*40=1880>>1880 kr.
+#### 1880
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,Sofie} hevur eitt blómubeð, sum er {length,28.8} m langt. {name,Sofie} vil fylla blómubeðið við plantum. Blómurnar hjá {name,Sofie} verða {plant_width,30} cm breiðar, og havuleiðbeiningin sigur, at ein skal planta eitt blóma fyri hvørjar {space,45} cm eftir beðinum. {name,Sofie} eigur longu {owned,17} blómur. Hvør blómandi planta kostar {cost,40} {cur,kr} í handlinum. Hvussu nógvar pengar skal {name,Sofie} brúka fyri at fylla blómubeðið?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $length = arange(25, 40, 0.2)
+- $plant_width = range(20, 40)
+- $space = range(20, 60)
+- $owned = range(5, 20)
+- $cost = range(20, 100)
+
+#conditions:
+- plant_width * 3 < length*100
+- plant_width < space
+- is_int(length*100 / space)
+- length*100 / space > owned
+
+#answer: int((length*100 / space - owned) * cost)
+"""
+
+answer_annotated = """
+Blómubeðið hjá {name} er {length} m / {space} cm fyri hvørja plantu = <<{length*100}/{space}={int(length*100/space)}>>{int(length*100/space)} plantur krevjast.
+{name} skal keypa {int(length*100/space)} plantur - {owned} plantur = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} plantur, sum skulu keypast.
+{name} skal brúka {int(length*100/space)-owned} plantur * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
+#### {int(length*100/space - owned) * cost}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

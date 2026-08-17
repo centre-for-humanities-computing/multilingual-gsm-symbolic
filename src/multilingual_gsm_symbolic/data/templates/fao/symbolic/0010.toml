@@ -1,0 +1,45 @@
+question = "Fyri at ringja úr eini telefonkiosk skalt tú gjalda 0,25 krónur fyri hvønn minutt av samrøðuni. Eftir 16 minuttir fellur prísurin til 0,2 krónur fyri hvønn minutt. Hvussu nógv hevði ein 36-minutta samrøða kostað?"
+
+answer = """
+Teir fyrstu 16 minuttirnir høvdu kostað 16 * 0,25 = <<16*0,25=4>>4 krónur.
+Síðani eru 36 - 16 = <<36-16=20>>20 minuttir eftir av samrøðuni.
+Og hesir 20 minuttirnir kosta 20 * 0,2 = <<20*0,2=4>>4 krónur.
+So hevði tann 36-minutta samrøðan kostað 4 + 4 = 8 krónur til samans.
+#### 8
+"""
+
+id_orig = 1223
+
+id_shuffled = 10
+
+question_annotated = """
+Fyri at ringja úr eini {dev,telefonkiosk} skalt tú gjalda {frac1,0.25} {currency,krónur} fyri hvønn minutt av samrøðuni. Eftir {t,16} minuttir fellur prísurin til {frac2,0.2} {currency,krónur} fyri hvønn minutt. Hvussu nógv hevði ein {total,36}-minutta samrøða kostað?
+
+#init:
+- dev = sample(['phone booth', 'hotel room phone'])
+- currency = sample(currencies_sym)
+- $frac1 = sample(fraction_decimals)
+- $frac2 = sample(fraction_decimals)
+- $t = range(10, 50)
+- $total = range(36, 100)
+
+#conditions:
+- is_int(frac1 * t)
+- is_int((total-t) * frac2)
+- frac2 < frac1
+- t < total
+
+#answer: int((frac1 * t) + frac2*(total-t))
+"""
+
+answer_annotated = """
+Teir fyrstu {t} minuttirnir høvdu kostað {t} * {frac1} = <<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} {currency}.
+Síðani eru {total} - {t} = <<{total}-{t}={total-t}>>{total-t} minuttir eftir av samrøðuni.
+Og hesir {total-t} minuttirnir kosta {total-t} * {frac2} = <<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)} {currency}.
+So hevði tann {total}-minutta samrøðan kostað {int(t*frac1)} + {int((total-t)*frac2)} = {int(frac1 * t) + int(frac2*(total-t))} {currency} til samans.
+#### {int((frac1 * t) + frac2*(total-t))}
+"""
+
+creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated"
+
+language = "fao"

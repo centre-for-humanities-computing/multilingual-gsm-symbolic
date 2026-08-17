@@ -1,0 +1,41 @@
+question = "Léa a coupé une pomme en 16 morceaux. Elle a mangé 2 tranches, sa sœur en a mangé 3 de plus qu'elle et son frère en a mangé 2 de plus que sa sœur. Combien de tranches ont-ils tous mangées ?"
+
+answer = """
+Sa sœur a mangé 2 + 3 = <<2+3=5>>5 tranches.
+Son frère a mangé 5 + 2 = <<5+2=7>>7 tranches.
+Ils ont mangé au total 2 + 5 + 7 = <<2+5+7=14>>14 tranches.
+#### 14
+"""
+
+id_orig = 1189
+
+id_shuffled = 54
+
+question_annotated = """
+{name,Léa} a coupé une {fruit,pomme} en {total,16} morceaux. Elle a mangé {n1,2} tranches, {sibling1,sa sœur} en a mangé {n2,3} de plus qu'elle et {sibling2,son frère} en a mangé {n3,2} de plus que {sibling1,sa sœur}. Combien de tranches ont-ils tous mangées ?
+
+#init:
+- name = sample(names_female)
+- fruit = sample(["orange", "poire", "pêche", "mangue", "prune"])
+- sibling1, sibling2 = sample(["son frère", "sa sœur", "sa cousine", "son cousin", "son ami", "son amie"], 2)
+- $total = range(6, 33)
+- $n1 = range(2, 15)
+- $n2 = range(2, 13)
+- $n3 = range(2, 14)
+
+#conditions:
+- n1 + (n1 + n2) + (n1 + n2 + n3) <= total
+
+#answer: n1 + (n1 + n2) + (n1 + n2 + n3)
+"""
+
+answer_annotated = """
+{sibling1} a mangé {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} tranches.
+{sibling2} a mangé {n1+n2} + {n3} = <<{n1+n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} tranches.
+Ils ont mangé au total {n1} + {n1+n2} + {n1+n2+n3} = <<{n1}+{n1+n2}+{n1+n2+n3}={n1 + (n1 + n2) + (n1 + n2 + n3)}>>{n1 + (n1 + n2) + (n1 + n2 + n3)} tranches.
+#### {n1 + (n1 + n2) + (n1 + n2 + n3)}
+"""
+
+creation = "machine-translated from Danish using anthropic/claude-opus-4-8, based on Danish templates; computationally validated; validated by native speaker."
+
+language = "fra"
