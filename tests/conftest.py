@@ -6,7 +6,7 @@ from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 
 def get_template_files() -> list[Path]:
     template_files = []
-    for lang in sorted(available_languages()):
+    for lang in sorted(lang for lang in available_languages() if not lang.startswith("unvalidated_")):
         template_files.extend(sorted(_active_template_files(_DATA_ROOT / lang)))
     return template_files
 
