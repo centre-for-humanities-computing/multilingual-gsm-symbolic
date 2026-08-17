@@ -39,7 +39,7 @@ _CACHE_DIR = Path(__file__).with_name("combinations_cache")
 
 
 def _cache_path(language: str) -> Path:
-    return _CACHE_DIR / f"{language.removeprefix('unvalidated_')}.json"
+    return _CACHE_DIR / f"{language}.json"
 
 
 def _load_language_cache(language: str) -> dict[str, int]:

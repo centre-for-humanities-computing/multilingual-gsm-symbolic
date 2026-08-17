@@ -32,6 +32,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 logger = logging.getLogger(__name__)
 
 _DATA_ROOT = Path("src/multilingual_gsm_symbolic/data/templates")
+_UNVALIDATED_PREFIX = "unvalidated_"
 
 _LANGUAGE_NAMES = {
     "eng": "English",
@@ -55,6 +56,7 @@ _LANGUAGE_NAMES = {
     "mar": "Marathi",
     "jpn": "Japanese",
     "est": "Estonian",
+    "urd": "Urdu",
 }
 
 _TRANSLATE_FIELDS = ("question", "answer", "question_annotated", "answer_annotated")
@@ -286,7 +288,7 @@ def main() -> None:
     args = parser.parse_args()
 
     src_dir = _DATA_ROOT / args.src
-    tgt_dir = _DATA_ROOT / args.tgt
+    tgt_dir = _DATA_ROOT / f"{_UNVALIDATED_PREFIX}{args.tgt}"
     tgt_symbolic = tgt_dir / args.subfolder
 
     if not src_dir.exists():
