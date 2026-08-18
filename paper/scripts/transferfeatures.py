@@ -76,6 +76,7 @@ LANGUAGE_SCRIPTS = {
     "tha": "Thai",
 }
 
+
 def relationship_plot(
     data: pd.DataFrame,
     x_column: str,
@@ -84,6 +85,10 @@ def relationship_plot(
     use_script_shapes: bool = False,
     footnote: str | None = None,
     label_languages: bool = True,
+    ax: Any | None = None,
+    compact: bool = False,
+    show_legend: bool = True,
+    show_ylabel: bool = True,
 ) -> list[Path]:
     """Plot a descriptive feature relationship for the synthetic split only."""
     plot_data = data[
@@ -99,7 +104,11 @@ def relationship_plot(
     if panel.empty:
         return []
 
-    fig, ax = plt.subplots(figsize=(6.5, 5.3 if use_script_shapes else 5))
+    standalone = ax is None
+    if standalone:
+        fig, ax = plt.subplots(figsize=(6.5, 5.3 if use_script_shapes else 5))
+    else:
+        fig = ax.figure
 
     for family in ordered_families(panel["family"]):
         family_rows = panel[panel["family"] == family]
@@ -111,7 +120,7 @@ def relationship_plot(
                     getattr(row, x_column),
                     row.performance_recovered,
                     marker=marker,
-                    s=42,
+                    s=28 if compact else 42,
                     alpha=0.55,
                     color=FAMILY_COLORS.get(family, "#666666"),
                     zorder=3,
@@ -121,7 +130,7 @@ def relationship_plot(
                 family_rows[x_column],
                 family_rows["performance_recovered"],
                 marker="o",
-                s=42,
+                s=28 if compact else 42,
                 alpha=0.55,
                 color=FAMILY_COLORS.get(family, "#666666"),
                 label=family,
@@ -153,29 +162,32 @@ def relationship_plot(
             .sort_values("x")
         )
         x_span = max(float(panel[x_column].max() - panel[x_column].min()), 1e-9)
-        lane_last_x: list[float] = []
-        for row in label_positions.itertuples(index=False):
+        lane_gap = 9 if compact else 14
+        lane_last_x: dict[bool, list[float]] = {True: [], False: []}
+        for index, row in enumerate(label_positions.itertuples(index=False)):
+            above = index % 2 == 0
+            side_lanes = lane_last_x[above]
             lane = next(
                 (
                     index
-                    for index, previous_x in enumerate(lane_last_x)
-                    if row.x - previous_x >= 0.12 * x_span
+                    for index, previous_x in enumerate(side_lanes)
+                    if row.x - previous_x >= 0.16 * x_span
                 ),
-                len(lane_last_x),
+                len(side_lanes),
             )
-            if lane == len(lane_last_x):
-                lane_last_x.append(row.x)
+            if lane == len(side_lanes):
+                side_lanes.append(row.x)
             else:
-                lane_last_x[lane] = row.x
+                side_lanes[lane] = row.x
             ax.annotate(
                 LANGUAGE_LABELS.get(row.language, row.language),
-                xy=(row.x, 1),
+                xy=(row.x, 1 if above else 0),
                 xycoords=ax.get_xaxis_transform(),
-                xytext=(0, 6 + 14 * lane),
+                xytext=(0, -5 - lane_gap * lane if above else 5 + lane_gap * lane),
                 textcoords="offset points",
                 ha="center",
-                va="bottom",
-                fontsize=9,
+                va="top" if above else "bottom",
+                fontsize=7 if compact else 9,
                 fontweight="bold",
                 color="#1F2937",
                 bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.82, "pad": 1.5},
@@ -184,11 +196,19 @@ def relationship_plot(
             )
 
     ax.axhline(1, color="black", linewidth=0.8, alpha=0.4, zorder=2)
-    ax.set_xlabel(xlabel, fontsize=14, labelpad=16 if use_script_shapes else 8)
-    ax.set_ylabel("English performance recovered", fontsize=14)
+    labelpad = 10 if compact else 16 if use_script_shapes else 8
+    ax.set_xlabel(xlabel, fontsize=10 if compact else 14, labelpad=labelpad)
+    ax.set_ylabel("English performance recovered" if show_ylabel else "", fontsize=10 if compact else 14)
     ax.yaxis.set_major_formatter(PercentFormatter(1))
+    if label_languages:
+        top_tick = max(3.0, math.ceil(float(panel["performance_recovered"].max()) * 2) / 2)
+        label_band = 1.1 if compact else 1.5
+        ax.set_ylim(-label_band, top_tick + label_band)
+        ax.set_yticks(np.arange(0, top_tick + 0.01, 0.5))
+    if compact:
+        ax.tick_params(labelsize=8)
 
-    if use_script_shapes:
+    if show_legend and use_script_shapes:
         family_handles = [
             Line2D(
                 [0],
@@ -239,7 +259,7 @@ def relationship_plot(
             fontsize=8,
             title_fontsize=8,
         )
-    else:
+    elif show_legend:
         handles, labels = ax.get_legend_handles_labels()
         if handles:
             fig.legend(
@@ -254,15 +274,98 @@ def relationship_plot(
                 title_fontsize=8,
             )
 
-    bottom_margin = 0.16 if use_script_shapes else (0.17 if footnote else 0.14)
-    if footnote:
-        footnote_y = 0.145 if use_script_shapes else 0.16
-        fig.text(0.5, footnote_y, footnote, ha="center", fontsize=8, color="#4B5563")
-    fig.tight_layout(rect=(0, bottom_margin, 1, 1))
+    if standalone:
+        bottom_margin = 0.16 if use_script_shapes else (0.17 if footnote else 0.14)
+        if footnote:
+            footnote_y = 0.145 if use_script_shapes else 0.16
+            fig.text(0.5, footnote_y, footnote, ha="center", fontsize=8, color="#4B5563")
+        fig.tight_layout(rect=(0, bottom_margin, 1, 1))
+        out.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out, bbox_inches="tight")
+        plt.close(fig)
+        return [out]
+    return []
+
+
+def combined_relationship_plot(data: pd.DataFrame, plots: list[tuple[Any, ...]], out: Path) -> list[Path]:
+    """Save a compact, ICLR-page-friendly overview of all three relationships."""
+    fig, axes = plt.subplots(3, 1, figsize=(7, 8.5))
+
+    for index, (ax, plot) in enumerate(zip(axes, plots, strict=True)):
+        column, xlabel, path, use_script_shapes, _footnote, label_languages = plot
+        relationship_plot(
+            data,
+            column,
+            xlabel,
+            path,
+            use_script_shapes=use_script_shapes,
+            label_languages=label_languages,
+            ax=ax,
+            compact=True,
+            show_legend=False,
+            show_ylabel=False,
+        )
+        ax.xaxis.label.set_text(f"({chr(97 + index)}) {ax.get_xlabel()}")
+
+    panel = data[(data["split"] == "synthetic") & (data["family"] != "OpenAI")]
+    families = ordered_families(panel["family"])
+    family_handles = [
+        Line2D(
+            [0],
+            [0],
+            color=FAMILY_COLORS.get(family, "#666666"),
+            marker="o",
+            linestyle="None",
+            markersize=5,
+            alpha=0.55,
+            label=family,
+        )
+        for family in families
+    ] + [Line2D([0], [0], color="#000000", lw=1.6, alpha=0.85, label="Trendline")]
+    scripts = sorted({LANGUAGE_SCRIPTS.get(language, "Latin") for language in panel["language"].unique()})
+    script_handles = [
+        Line2D(
+            [0],
+            [0],
+            color="#333333",
+            marker=SCRIPT_MARKERS.get(script, "o"),
+            linestyle="None",
+            markersize=5,
+            alpha=0.55,
+            label=script,
+        )
+        for script in scripts
+    ]
+    fig.legend(
+        family_handles,
+        [handle.get_label() for handle in family_handles],
+        title="Model family",
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.06),
+        ncol=6,
+        frameon=False,
+        fontsize=7,
+        title_fontsize=8,
+    )
+    fig.legend(
+        script_handles,
+        [handle.get_label() for handle in script_handles],
+        title="Language script (panel a)",
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0),
+        ncol=len(script_handles),
+        frameon=False,
+        fontsize=7,
+        title_fontsize=8,
+    )
+    fig.supylabel("English performance recovered", fontsize=11)
+    fig.tight_layout(rect=(0.04, 0.15, 1, 1), h_pad=1.5)
+
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, bbox_inches="tight")
+    output = out.with_suffix(".png")
+    fig.savefig(output, bbox_inches="tight")
     plt.close(fig)
-    return [out]
+    return [output]
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
@@ -631,6 +734,13 @@ def main() -> None:
                 print(f"Saved {saved_plot}")
         else:
             print(f"Skipped {path.name}: no paired transfer observations with this feature.")
+
+    for combined_plot in combined_relationship_plot(
+        transfer,
+        plots,
+        args.out_dir / "transfer_features_combined",
+    ):
+        print(f"Saved {combined_plot}")
 
     print(f"Saved {language_features_path}")
     print(f"Saved {fertility_path}")
