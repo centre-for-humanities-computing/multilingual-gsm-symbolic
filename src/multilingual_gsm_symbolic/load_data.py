@@ -45,8 +45,6 @@ def load_replacements(language: str = "eng") -> dict:
         Mapping of replacement name → value list.
     """
     replacement_path = _DATA_ROOT / language / "replacements.json"
-    if not replacement_path.exists() and not language.startswith("unvalidated_"):
-        replacement_path = _DATA_ROOT / f"unvalidated_{language}" / "replacements.json"
     with replacement_path.open("r", encoding="utf-8") as f:
         return json.load(f)
 

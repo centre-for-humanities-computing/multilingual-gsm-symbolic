@@ -94,9 +94,7 @@ def _sync_language_cache(language: str) -> tuple[list[tuple[Path, AnnotatedQuest
     return templates, cache
 
 
-@pytest.mark.parametrize(
-    "language", sorted(lang for lang in available_languages() if not lang.startswith("unvalidated_"))
-)
+@pytest.mark.parametrize("language", sorted(available_languages()))
 def test_each_template_has_at_least_100_solutions(language: str):
     templates, cache = _sync_language_cache(language)
 

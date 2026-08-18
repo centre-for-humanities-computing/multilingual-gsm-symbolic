@@ -324,13 +324,9 @@ def test_example_40_never_produces_negative_answer():
         assert val > 0, f"Example 40 produced non-positive answer {val!r} in:\n{q.question}"
 
 
-def test_example_40_limits_leftovers_in_every_validated_language():
+def test_example_40_limits_leftovers_in_every_language():
     template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
-    template_paths = sorted(
-        path
-        for path in template_root.glob("*/symbolic/0040.toml")
-        if not path.parent.parent.name.startswith("unvalidated_")
-    )
+    template_paths = sorted(template_root.glob("*/symbolic/0040.toml"))
     assert template_paths
 
     for template_path in template_paths:
