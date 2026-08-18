@@ -70,8 +70,8 @@ MODELS = (
     "google/gemma-3-27b-it",
 
     #   Gemma 4 dense IT
-    # "google/gemma-4-12B-it",
-    # "google/gemma-4-31B-it",
+    "google/gemma-4-12B-it",
+    "google/gemma-4-31B-it",
 
    #    Apertus
     "swiss-ai/Apertus-8B-Instruct-2509",
@@ -100,7 +100,6 @@ HISTORICAL_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 OPTIONAL_LANGUAGES = {"eng_metric"}
 DEFAULT_VLLM_SERVER_ARGS: dict[str, Any] = {
     "dtype": "auto",
-    "attention_backend": "FLASH_ATTN",
     "max_num_seqs": 512,
     "gpu_memory_utilization": 0.95,
     "enable_prefix_caching": True,
@@ -498,18 +497,36 @@ def merged_vllm_server_args(env: dict[str, str], overrides: dict[str, Any]) -> d
     return merged
 
 
-def vllm_environment(server_args: dict[str, Any] | None = None) -> dict[str, str]:
+def attention_backend(model: str) -> str:
+    # Gemma 4 uses head sizes unsupported by FlashAttention on Blackwell.
+    # All other curated models should avoid vLLM's automatic backend probing,
+    # which imports the locally incompatible FlashInfer installation.
+    if model.startswith("google/gemma-4-"):
+        return "TRITON_ATTN"
+    return "FLASH_ATTN"
+
+
+def vllm_environment(
+    server_args: dict[str, Any] | None = None,
+    model: str = "",
+) -> dict[str, str]:
     env = os.environ.copy()
     env["PATH"] = os.pathsep.join(
         (str(Path(sys.executable).parent), env.get("PATH", ""))
     )
     env["INSPECT_CACHE_DIR"] = str(CACHE_DIR)
+    cache_compat = Path(__file__).with_name("cache_compat")
+    env["PYTHONPATH"] = os.pathsep.join(
+        (str(cache_compat), env.get("PYTHONPATH", ""))
+    )
     # The CUDA 13 packages in this environment have mismatched nvcc/headers.
     # Avoid vLLM paths that require FlashInfer or DeepGEMM runtime compilation.
     env["VLLM_USE_FLASHINFER_SAMPLER"] = "0"
     env["VLLM_USE_DEEP_GEMM"] = "0"
+    selected_server_args = dict(server_args or {})
+    selected_server_args.setdefault("attention_backend", attention_backend(model))
     env["VLLM_DEFAULT_SERVER_ARGS"] = json.dumps(
-        merged_vllm_server_args(env, server_args or {}),
+        merged_vllm_server_args(env, selected_server_args),
         sort_keys=True,
         separators=(",", ":"),
     )
@@ -580,7 +597,7 @@ def run_inspect(
         )
         show_command(f"Running {len(pending)} Inspect task(s) for {run.model}{suffix}", command)
         try:
-            subprocess.run(command, check=True, env=vllm_environment(server_args))
+            subprocess.run(command, check=True, env=vllm_environment(server_args, run.model))
             completed.update(task_fingerprint(task, run, command_revision) for task in pending)
             save_completed_tasks(base_log_dir, completed)
         except subprocess.CalledProcessError as error:
