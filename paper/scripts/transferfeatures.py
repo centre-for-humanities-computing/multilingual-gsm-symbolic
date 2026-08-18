@@ -468,9 +468,15 @@ def tokenizer_repo(model_raw: str) -> str | None:
     raw = model_raw.rstrip("/")
     for prefix in ("vllm/", "hf/", "transformers/"):
         if raw.lower().startswith(prefix):
-            return raw[len(prefix) :]
+            raw = raw[len(prefix) :]
+            break
     if raw.lower().startswith("openai/"):
         return None
+    # Gemma 3 checkpoints share one tokenizer. Use a single accessible/cached
+    # checkpoint so artifact regeneration does not depend on every gated model
+    # repository being individually authorized.
+    if raw.lower() in {"google/gemma-3-1b-it", "google/gemma-3-27b-it"}:
+        return "google/gemma-3-4b-it"
     return raw if "/" in raw else None
 
 
@@ -642,7 +648,7 @@ def main() -> None:
     parser.add_argument(
         "--analysis",
         type=Path,
-        default=ARTIFACTS_DIR / "transfer_tables" / "analysis.parquet",
+        default=REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet",
     )
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "hf_dataset" / "data")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)

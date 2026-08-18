@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
-set -u
+set -euo pipefail
+
+# Full Inspect logs are multi-gigabyte archives. Loading dozens concurrently can
+# fill the job cgroup with file-backed page cache even when process RSS is low.
+# Use one third of this 48-core host by default, retaining RAM headroom for the
+# parent aggregation process and the kernel page cache.
+artifact_workers="${ARTIFACT_WORKERS:-16}"
 
 log_dir="hf_dataset/logs_pr16_merged"
 historical_log_dir="hf_dataset/logs_unvalidated_revisions"
@@ -30,6 +36,7 @@ models=(
     utter-project/EuroLLM-1.7B-Instruct utter-project/EuroLLM-9B-Instruct-2512
     utter-project/EuroLLM-22B-Instruct-2512
 )
+gemma4_models=(google/gemma-4-12B-it google/gemma-4-31B-it)
 
 eval_status=0
 uv run paper/scripts/ucloudeval \
@@ -38,8 +45,12 @@ uv run paper/scripts/ucloudeval \
     --revision "$revision" \
     --log-dir "$log_dir" || eval_status=$?
 
-# Gemma 4 is intentionally disabled for now.
 gemma4_status=0
+uv run paper/scripts/ucloudeval \
+    --model "${gemma4_models[@]}" \
+    --language "${languages[@]}" \
+    --revision "$revision" \
+    --log-dir "$log_dir" || gemma4_status=$?
 
 historical_status=0
 uv run paper/scripts/ucloudeval \
@@ -50,21 +61,28 @@ uv run paper/scripts/ucloudeval \
     --log-dir "$historical_log_dir" || historical_status=$?
 
 historical_gemma4_status=0
+uv run paper/scripts/ucloudeval \
+    --model "${gemma4_models[@]}" \
+    --language isl \
+    --split all \
+    --historical-revisions \
+    --log-dir "$historical_log_dir" || historical_gemma4_status=$?
 
 if (( eval_status != 0 || gemma4_status != 0 || historical_status != 0 || historical_gemma4_status != 0 )); then
     echo "Evaluation failed; artifact regeneration not started: latest=$eval_status latest_gemma4=$gemma4_status historical_isl=$historical_status historical_isl_gemma4=$historical_gemma4_status" >&2
     exit 1
 fi
 
-uv run paper/scripts/visualizegrid.py --log-dir "$log_dir" --workers 64
-uv run paper/scripts/visualize_results.py --log-dir "$log_dir" --workers 64
-uv run paper/scripts/numbercoverage.py "$log_dir" --workers 64
-uv run paper/scripts/ridgeline.py --log-dir "$log_dir" --workers 64
-uv run paper/scripts/qwen_compute_budget.py --log-dir "$log_dir" --workers 64
-uv run paper/scripts/transferfeatures.py
 uv run --with scipy paper/scripts/collect_transfer_tables.py \
     --log-dir "$log_dir" hf_dataset/logs_unvalidated_revisions \
-    --workers 64
+    --workers "$artifact_workers"
+uv run paper/scripts/visualizegrid.py --workers "$artifact_workers"
+uv run paper/scripts/visualize_results.py
+uv run paper/scripts/numbercoverage.py --workers "$artifact_workers"
+uv run paper/scripts/ridgeline.py --workers "$artifact_workers"
+uv run paper/scripts/qwen_compute_budget.py --workers "$artifact_workers"
+uv run paper/scripts/transferfeatures.py
 uv run paper/scripts/isl_translation_tost.py
+uv run paper/scripts/migrate_cache_unlimited.py
 
 echo "Latest-language evaluation and artifact regeneration finished successfully."
