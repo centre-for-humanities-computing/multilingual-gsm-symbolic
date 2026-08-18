@@ -1,0 +1,40 @@
+question = "Katedralskolan håller studentexamen i aulan i år, som har plats för 1900 personer. När 450 platser har reserverats för studenterna och 100 platser för lärarna, hur många biljetter kan varje student ge till sina vänner och sin familj om biljetterna fördelas lika?"
+
+answer = """
+Lägg ihop platserna för studenter och lärare: 450 + 100 = <<450+100=550>>550 platser.
+Dra bort dem från det totala antalet platser: 1900 - 550 = <<1900-550=1350>>1350 platser återstår.
+Dela de återstående platserna med antalet studenter: 1350/450 = <<1350/450=3>>3 biljetter.
+#### 3
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Katedralskolan} håller studentexamen i {venue,aulan} i år, som har plats för {total,1900} personer. När {graduates,450} platser har reserverats för studenterna och {faculty,100} platser för lärarna, hur många biljetter kan varje student ge till sina vänner och sin familj om biljetterna fördelas lika?
+
+#init:
+- school = sample(["Katedralskolan", "Norra Real", "Hvitfeldtska gymnasiet", "Fredrikshovs gymnasium"])
+- venue = sample(["aulan", "idrottshallen", "konserthuset", "festsalen"])
+- $total = range(1500, 10000, 100)
+- $graduates = range(400, 1500, 50)
+- $faculty = range(100, 1500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Lägg ihop platserna för studenter och lärare: {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} platser.
+Dra bort dem från det totala antalet platser: {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} platser återstår.
+Dela de återstående platserna med antalet studenter: {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} biljetter.
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

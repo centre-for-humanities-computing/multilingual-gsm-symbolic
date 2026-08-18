@@ -198,5 +198,105 @@
     "id": 39,
     "question_annotated": "En {job,vaktmästare} ska städa {building_article,en} {building,skola} med {n,80} {room_plural,klassrum}. {job_definite,vaktmästaren} har {d,5} dagar på sig. Det tar {t,15} minuter per {room,klassrum}. Om {job_definite,vaktmästaren} arbetar {h,8} timmar om dagen, hur många procent av arbetsdagen går i genomsnitt åt till att städa {room_plural,klassrum}?\n\n#init:\n- job, job_definite = sample([(\"vaktmästare\", \"vaktmästaren\"), (\"lokalvårdare\", \"lokalvårdaren\"), (\"städare\", \"städaren\")])\n- building_article, building = sample([(\"en\", \"skola\"), (\"en\", \"kontorsbyggnad\"), (\"ett\", \"sjukhus\"), (\"ett\", \"universitet\")])\n- room, room_plural = sample([(\"klassrum\", \"klassrum\"), (\"rum\", \"rum\"), (\"våning\", \"våningar\")])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))",
     "count": 100
+  },
+  {
+    "id": 40,
+    "question_annotated": "{name,Frida} åkte till kusten på semester. Hennes föräldrar gav henne {total,75} kronor att köpa vad hon ville för. I souvenirbutiken såldes kola med erbjudandet \"Köp {n1,500} gram för {p1,20} kronor, få nästa {n2,500} gram till {discount,1/2} av priset.\" Hon tog {n12,1100} gram. Hon köpte också en blandad påse med snäckskal för {p2,17} kronor och {n3,4} magneter som kostade {p3,2} kronor styck. Hur mycket pengar har {name,Frida} kvar?\n\n#init:\n- name = sample(names_female)\n- $total = range(30, 100, 15)\n- $n1 = range(200, 651, 150)\n- $n2 = range(200, 651, 150)\n- $n12 = range(650, 1301, 150)\n- $n3 = range(4, 15, 2)\n- $p1 = range(20, 55, 5)\n- $p2 = range(17, 40, 4)\n- $p3 = range(2, 35, 3)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int((n2/n1)*discount*p1)\n- is_int((n12 - n1 - n2)/n1*p1)\n- is_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)\n- p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3 < total\n- total - ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3) > 0\n\n#answer: total-ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)",
+    "count": 100
+  },
+  {
+    "id": 41,
+    "question_annotated": "{structure_article,ett} {structure,torn} består av {n1,4} {color1,blå} {obj,klossar}, {mult_txt,två gånger} så många {color2,gula} {obj,klossar} och ett okänt antal {color3,röda} {obj,klossar}. Om det finns {total,32} {obj,klossar} i {structure_definite,tornet} totalt, hur många {color3,röda} {obj,klossar} finns det?\n\n#init:\n- structure_article, structure, structure_definite = sample([(\"ett\", \"torn\", \"tornet\"), (\"en\", \"byggnad\", \"byggnaden\"), (\"en\", \"pyramid\", \"pyramiden\"), (\"en\", \"stapel\", \"stapeln\")])\n- obj = sample([\"tegelstenar\", \"kuber\", \"plattor\"])\n- color1, color2, color3 = sample([\"gröna\", \"lila\", \"orange\", \"rosa\", \"vita\", \"svarta\"], 3)\n- $n1 = range(2, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $total = range(20, 50)\n\n#conditions:\n- total > n1 + mult_val * n1\n\n#answer: total - n1 - mult_val * n1",
+    "count": 100
+  },
+  {
+    "id": 42,
+    "question_annotated": "{name,Mikael} går till affären för att köpa {item,kaffe}. {item,kaffe}märket som han brukar köpa kostar {price,35} {cur,kronor} per {unit,kilo}. Han blev tvungen att köpa ett dyrare märke som kostade {percent,20}% mer, eftersom hans favoritmärke var slutsålt. Han bestämmer sig för att köpa {item,kaffe} för en vecka, och han använder {usage,1} {unit,kilo} {item,kaffe} om dagen. Han bestämde sig också för att köpa {extra_article,en} {extra_item,munk} för {extra_price,15} {cur,kronor}. Hur mycket kostade allt?\n\n#init:\n- name = sample(names_male)\n- item, item_definite = sample([(\"kaffe\", \"kaffet\"), (\"te\", \"teet\"), (\"socker\", \"sockret\"), (\"mjöl\", \"mjölet\"), (\"ris\", \"riset\")])\n- cur = sample(currencies_sym)\n- unit = sample([\"kilo\", \"kg\"])\n- extra_article, extra_item = sample([(\"en\", \"munk\"), (\"en\", \"kanelbulle\"), (\"en\", \"muffins\"), (\"ett\", \"wienerbröd\")])\n- $price = range(20, 160)\n- $percent = range(10, 50, 5)\n- $usage = range(1, 3)\n- $extra_price = range(8, 35)\n\n#conditions:\n- is_int(price * percent / 100)\n\n#answer: (price + price * percent / 100) * 7 * usage + extra_price",
+    "count": 100
+  },
+  {
+    "id": 43,
+    "question_annotated": "{name,Ester} åkte till sin {place,fruktträdgård} för att plocka {fruit,jordgubbar} och hittade {frac_txt,hälften} så många {insect1,nyckelpigor} som {insect2,myror} i {location,trädgården}. Om det fanns {n,50} {insect2,myror}, beräkna det totala antalet insekter i {location,trädgården}.\n\n#init:\n- name = sample(names)\n- place = sample([\"fruktträdgård\", \"köksträdgård\", \"kolonilott\", \"odling\"])\n- fruit = sample([\"jordgubbar\", \"körsbär\", \"blåbär\", \"hallon\"])\n- location = sample([\"trädgården\", \"rabatten\", \"odlingen\"])\n- insect1, insect2 = sample([\"myror\", \"skalbaggar\", \"nyckelpigor\", \"gräshoppor\", \"larver\", \"bin\", \"getingar\"], 2)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 44,
+    "question_annotated": "Det finns {n,6} flickor i {place,parken}. Om det finns {mult_txt,två gånger} så många pojkar i {place,parken}, hur många barn finns det i {place,parken}?\n\n#init:\n- place = sample([\"parken\", \"trädgården\", \"lekparken\", \"skogsdungen\"])\n- $n = range(5, 51)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- is_int(n * mult_val + 1)\n- n * (mult_val + 1) <= 200\n\n#answer: n * (mult_val + 1)",
+    "count": 100
+  },
+  {
+    "id": 45,
+    "question_annotated": "{name,Sofia} har en blomsterrabatt som är {length,28.8} m lång. {name,Sofia} vill fylla rabatten med plantor. Hennes blommor blir {plant_width,30} cm breda, och odlingsanvisningarna säger att man ska plantera en blomma med {space,45} cm mellanrum längs rabatten. {name,Sofia} äger redan {owned,17} blommor. Varje planta kostar {cost,40} {cur,kronor} i butiken. Hur mycket pengar behöver {name,Sofia} lägga i butiken för att fylla rabatten?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $length = arange(25, 40, 0.2)\n- $plant_width = range(20, 40)\n- $space = range(20, 60)\n- $owned = range(5, 20)\n- $cost = range(20, 100)\n\n#conditions:\n- plant_width * 3 < length*100\n- plant_width < space\n- is_int(length*100 / space)\n- length*100 / space > owned\n\n#answer: int((length*100 / space - owned) * cost)",
+    "count": 100
+  },
+  {
+    "id": 46,
+    "question_annotated": "{school,Katedralskolan} håller studentexamen i {venue,aulan} i år, som har plats för {total,1900} personer. När {graduates,450} platser har reserverats för studenterna och {faculty,100} platser för lärarna, hur många biljetter kan varje student ge till sina vänner och sin familj om biljetterna fördelas lika?\n\n#init:\n- school = sample([\"Katedralskolan\", \"Norra Real\", \"Hvitfeldtska gymnasiet\", \"Fredrikshovs gymnasium\"])\n- venue = sample([\"aulan\", \"idrottshallen\", \"konserthuset\", \"festsalen\"])\n- $total = range(1500, 10000, 100)\n- $graduates = range(400, 1500, 50)\n- $faculty = range(100, 1500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
+    "count": 100
+  },
+  {
+    "id": 47,
+    "question_annotated": "{name1,Carl} gömde {n,3} dussin ägg i trädgården inför påskäggsjakten. {name2,Olle} hittar {x,5} ägg. {name3,Sofia} hittar {mult1_txt,två gånger} så många som {name2,Olle}. {name4,Erik} hittar {y,2} färre än {name3,Sofia}. Och {name5,Maja} hittar {frac_txt,hälften} så många som {name4,Erik}. Hur många ägg finns fortfarande gömda i trädgården?\n\n#init:\n- name1, name2, name3, name4, name5 = sample(names, 5)\n- $n = range(2, 10)\n- $x = range(3, 15)\n- $y = range(1, 5)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))\n- is_int(x * mult1_val)\n- x * mult1_val - y > 0\n- is_int((x * mult1_val - y) * frac_val)\n- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)\n\n#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))",
+    "count": 100
+  },
+  {
+    "id": 48,
+    "question_annotated": "{name,Emma} kan skala {n1,6} {food,räkor} i minuten och steka {n2,30} {food,räkor} på {t,10} minuter. Hur lång tid tar det för henne att skala och steka {total,90} {food,räkor}? {name,Emma} kan inte skala och steka samtidigt.\n\n#init:\n- name = sample(names_female)\n- food = sample([\"räkor\", \"morötter\", \"potatisar\", \"lökar\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
+    "count": 100
+  },
+  {
+    "id": 49,
+    "question_annotated": "{name,Henrik} hämtar sopor från {n,3} olika bostadsområden. De {n_first_txt,två} första har {a,200} lägenheter var, och det sista är {p,60}% större än de {n_first_txt,två} andra tillsammans. {name,Henrik} hämtar sopor {f,3} gånger i veckan från varje område och får {r,3} {cur,kronor} per hämtning för varje lägenhet. Hur mycket pengar tjänar han på en vecka?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = [1.7, 2, 2.5, 2.75, 3, 3.5]\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "count": 100
+  },
+  {
+    "id": 50,
+    "question_annotated": "{name,Bo} har {room_article,ett} rektangulärt {room_type,sovrum} med arean {area,33} kvadratmeter. Om längden på hans rum är {length,300} cm, vad är rummets omkrets i meter?\n\n#init:\n- name = sample(names_male)\n- room_article = \"ett\"\n- room_type = sample([\"vardagsrum\", \"arbetsrum\", \"kök\", \"sovrum\"])\n- $area = range(18, 121)\n- $length = range(300, 1300, 100)\n\n#conditions:\n- is_int(area / (length // 100))\n- (area / (length // 100)) > (length // 100)\n\n#answer: 2 * (area // (length // 100) + length // 100)",
+    "count": 100
+  },
+  {
+    "id": 51,
+    "question_annotated": "{name,Albert} har ett {product_stem,blomster}stånd på {location,marknaden}. Han säljer tre sorters {product,blommor}: {item1,tulpaner}, {item2,liljor} och {item3,solrosor}. Han säljer normalt {item1,tulpaner} för {p1,18.1} {cur,kronor} per {unit,kruka}, {item2,liljor} för {p2,12.3} {cur,kronor} per {unit,kruka} och {item3,solrosor} för {p3,14.9} {cur,kronor} per {unit,kruka}. {name,Albert} har inga småmynt i dag, så han har bestämt sig för att avrunda alla priser till närmaste krona. Om han säljer {n1,12} {unit_plural,krukor} med {item1,tulpaner}, {n2,9} {unit_plural,krukor} med {item2,liljor} och {n3,17} {unit_plural,krukor} med {item3,solrosor}, hur mycket tjänar han?\n\n#init:\n- name = sample(names_male)\n- product, product_stem = sample([(\"blommor\", \"blomster\"), (\"grönsaker\", \"grönsaks\"), (\"örter\", \"ört\"), (\"plantor\", \"plant\")])\n- location = sample([\"marknaden\", \"torget\", \"bondens marknad\", \"gatan\"])\n- item1, item2, item3 = sample([\"rosor\", \"tusenskönor\", \"orkidéer\", \"pioner\", \"anemoner\", \"blåklintar\"], 3)\n- unit, unit_plural = sample([(\"kruka\", \"krukor\"), (\"bukett\", \"buketter\"), (\"korg\", \"korgar\"), (\"knippe\", \"knippen\")])\n- cur = sample(currencies_sym)\n- $p1 = arange(8.1, 23.3, 2.7)\n- $p2 = arange(14.9, 36.4, 1.7)\n- $p3 = arange(31.9, 42.8, 2.2)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
+    "count": 100
+  },
+  {
+    "id": 52,
+    "question_annotated": "{name,Carl} har {n_txt,två} sedlar på {bill,50} {cur,kronor} var. Han köper {m_txt,sex} {item1,vattenpistoler} för {p1,5} {cur,kronor} styck. Han köper också {k,3} paket {item2,vattenballonger} för {p2,8} {cur,kronor} styck. Hur mycket pengar har han kvar?\n\n#init:\n- name = sample(names_male)\n- $bill = sample([50, 100, 200])\n- item1 = sample([\"vattenpistoler\", \"leksaksbilar\", \"actionfigurer\", \"målarböcker\", \"pussel\", \"sällskapsspel\"])\n- item2 = sample([\"vattenballonger\", \"klistermärken\", \"chokladkakor\", \"samlarkort\", \"blyertspennor\", \"suddgummin\"])\n- cur = sample(currencies_sym)\n- n_txt, n_val = range_str(1, 10, 1, numbers)\n- m_txt, m_val = range_str(2, 15, 1, numbers)\n- $k = range(2, 10)\n- $p1 = range(1, 10)\n- $p2 = range(1, 10)\n\n#conditions:\n- n_val * int(bill) > m_val * p1 + k * p2\n\n#answer: n_val * int(bill) - (m_val * p1 + k * p2)",
+    "count": 100
+  },
+  {
+    "id": 53,
+    "question_annotated": "{name1,Erik} fick {n1,278} poäng i en omgång {game,bowling}. {name2,Alma} fick {n2,11} poäng mer än {frac_txt,hälften} av vad {name1,Erik} fick. Hur många poäng fick {name1,Erik} och {name2,Alma} tillsammans?\n\n#init:\n- name1, name2 = sample(names, 2)\n- game = sample([\"bowling\", \"dart\", \"bågskytte\", \"basket\", \"tennis\"])\n- $n1 = range(200, 500)\n- $n2 = range(5, 50)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(frac_val * n1)\n\n#answer: n1 + int(frac_val * n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 54,
+    "question_annotated": "{name,Ida} skar {fruit_article,ett} {fruit,äpple} i {total,16} bitar. Hon åt {n1,2} skivor, hennes {sibling1,syster} åt {n2,3} fler än hon och hennes {sibling2,bror} åt {n3,2} fler än sin {sibling1,syster}. Hur många skivor {fruit,äpple} åt de sammanlagt?\n\n#init:\n- name = sample(names_female)\n- fruit_article, fruit = sample([(\"ett\", \"äpple\"), (\"en\", \"apelsin\"), (\"ett\", \"päron\"), (\"en\", \"persika\"), (\"en\", \"mango\"), (\"en\", \"kiwi\")])\n- sibling1, sibling2 = sample([\"bror\", \"syster\", \"kusin\", \"vän\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
+    "count": 100
+  },
+  {
+    "id": 55,
+    "question_annotated": "{name,Elsa} håller på att lära sig skriva och bestämmer sig för att skriva {alphabets_txt,det latinska alfabetet (med 26 bokstäver)} om och om igen tills hon kan det. Hon skriver det helt {n1_txt,två gånger}, skriver {frac_txt,hälften} av det en gång och skriver sedan om allt hon redan har skrivit. Hur många bokstäver har {name,Elsa} skrivit sammanlagt?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"det latinska alfabetet (med 26 bokstäver)\", 26), (\"hiragana (med 48 tecken)\", 48), (\"det persiska alfabetet (med 32 bokstäver)\", 32), (\"det arabiska alfabetet (med 28 bokstäver)\", 28)])\n- n1_txt, n1_val = sample([(\"två gånger\", 2), (\"tre gånger\", 3), (\"fyra gånger\", 4), (\"fem gånger\", 5), (\"sex gånger\", 6), (\"sju gånger\", 7), (\"åtta gånger\", 8), (\"nio gånger\", 9), (\"tio gånger\", 10), (\"elva gånger\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 56,
+    "question_annotated": "{container_article,ett} {container,glas} innehåller {vol,8} {unit,ml} {liquid,mjölk}. {name,Emil} dricker {num,2} {container_plural,glas} {liquid,mjölk}. Om {liquid,mjölk} har {cal,3} kalorier per {unit,ml}, hur många kalorier fick han i sig?\n\n#init:\n- name = sample(names_male)\n- container_article, container, container_plural = sample([(\"ett\", \"glas\", \"glas\"), (\"en\", \"kopp\", \"koppar\"), (\"en\", \"flaska\", \"flaskor\"), (\"ett\", \"paket\", \"paket\")])\n- liquid = sample([\"juice\", \"läsk\", \"mineralvatten\", \"te\", \"saft\"])\n- unit = sample([\"ml\", \"dl\", \"milliliter\", \"deciliter\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n#answer: vol * num * cal",
+    "count": 100
+  },
+  {
+    "id": 57,
+    "question_annotated": "{name1,Kasper} har {n1,4} tuber {color1,blå} färg och {n2,3} tuber {color2,gul} färg. {name2,Simon} har {frac1_txt,hälften} så många tuber {color1,blå} färg som {name1,Kasper} och {mult1_txt,tre gånger} så många tuber {color2,gul} färg som {name1,Kasper}. Hur många tuber färg har {name2,Simon}?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = sample(multi_times)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
+    "count": 100
+  },
+  {
+    "id": 58,
+    "question_annotated": "En {worker,dvärg} kan bryta {base,12} {unit,kg} malm om dagen med {tool1,sina bara händer}. Han kan bryta {mult1_txt,två gånger} så mycket med en {tool2,järnhacka} och {mult2,50}% mer med en {tool3,stålhacka} än med en {tool2,järnhacka}. Hur många {unit,kg} malm kan {n,40} {worker_plural,dvärgar} med {tool3_plural,stålhackor} bryta på en månad med {days,30} dagar?\n\n#init:\n- worker, worker_plural = sample([(\"dvärg\", \"dvärgar\"), (\"goblin\", \"gobliner\"), (\"gnom\", \"gnomer\"), (\"gruvarbetare\", \"gruvarbetare\")])\n- tool1 = sample([\"sina bara händer\", \"en spade\", \"en trähacka\"])\n- unit = sample([\"kg\", \"g\"])\n- tool2 = sample([\"nickelhacka\", \"bronshacka\", \"silverhacka\"])\n- tool3, tool3_plural = sample([(\"stålhacka\", \"stålhackor\"), (\"diamanthacka\", \"diamanthackor\"), (\"mithrilhacka\", \"mithrilhackor\"), (\"titanhacka\", \"titanhackor\")])\n- $base = range(5, 20)\n- mult1_txt, mult1_val = sample(multi_times)\n- $mult2 = range(30, 80, 5)\n- $n = range(20, 50)\n- $days = range(28, 32)\n\n#conditions:\n- is_int(mult2/100*base*mult1_val)\n- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000\n\n#answer: int(base * mult1_val * (1 + mult2/100) * n * days)",
+    "count": 100
+  },
+  {
+    "id": 59,
+    "question_annotated": "Jag har {n1,10} liter {fruit1,apelsin}dryck som är {frac1_txt,två tredjedelar} vatten, och jag vill blanda den med {n2,15} liter {fruit2,ananas}dryck som är {frac2_txt,tre femtedelar} vatten. Men när jag häller spiller jag {spill_txt,fyra} liter av {fruit1,apelsin}drycken. Hur mycket vatten finns det i de återstående {total,21} litrarna?\n\n#init:\n- fruit1, fruit2 = sample([\"apelsin\", \"ananas\", \"äppel\", \"vindruvs\", \"mango\", \"persiko\", \"citron\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(3, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)",
+    "count": 100
   }
 ]

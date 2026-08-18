@@ -1,0 +1,41 @@
+question = "Ida skar ett äpple i 16 bitar. Hon åt 2 skivor, hennes syster åt 3 fler än hon och hennes bror åt 2 fler än sin syster. Hur många skivor äpple åt de sammanlagt?"
+
+answer = """
+Hennes syster åt 2 + 3 = <<2+3=5>>5 skivor.
+Hennes bror åt 5 + 2 = <<5+2=7>>7 skivor.
+Sammanlagt åt de 2 + 5 + 7 = <<2+5+7=14>>14 skivor.
+#### 14
+"""
+
+id_orig = 1189
+
+id_shuffled = 54
+
+question_annotated = """
+{name,Ida} skar {fruit_article,ett} {fruit,äpple} i {total,16} bitar. Hon åt {n1,2} skivor, hennes {sibling1,syster} åt {n2,3} fler än hon och hennes {sibling2,bror} åt {n3,2} fler än sin {sibling1,syster}. Hur många skivor {fruit,äpple} åt de sammanlagt?
+
+#init:
+- name = sample(names_female)
+- fruit_article, fruit = sample([("ett", "äpple"), ("en", "apelsin"), ("ett", "päron"), ("en", "persika"), ("en", "mango"), ("en", "kiwi")])
+- sibling1, sibling2 = sample(["bror", "syster", "kusin", "vän"], 2)
+- $total = range(6, 33)
+- $n1 = range(2, 15)
+- $n2 = range(2, 13)
+- $n3 = range(2, 14)
+
+#conditions:
+- n1 + (n1 + n2) + (n1 + n2 + n3) <= total
+
+#answer: n1 + (n1 + n2) + (n1 + n2 + n3)
+"""
+
+answer_annotated = """
+Hennes {sibling1} åt {n1} + {n2} = <<{n1}+{n2}={n1+n2}>>{n1+n2} skivor.
+Hennes {sibling2} åt {n1+n2} + {n3} = <<{n1+n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} skivor.
+Sammanlagt åt de {n1} + {n1+n2} + {n1+n2+n3} = <<{n1}+{n1+n2}+{n1+n2+n3}={n1 + (n1 + n2) + (n1 + n2 + n3)}>>{n1 + (n1 + n2) + (n1 + n2 + n3)} skivor.
+#### {n1 + (n1 + n2) + (n1 + n2 + n3)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

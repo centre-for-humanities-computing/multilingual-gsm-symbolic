@@ -1,0 +1,44 @@
+question = "Sofia har en blomsterrabatt som är 28,8 m lång. Sofia vill fylla rabatten med plantor. Hennes blommor blir 30 cm breda, och odlingsanvisningarna säger att man ska plantera en blomma med 45 cm mellanrum längs rabatten. Sofia äger redan 17 blommor. Varje planta kostar 40 kronor i butiken. Hur mycket pengar behöver Sofia lägga i butiken för att fylla rabatten?"
+
+answer = """
+Rabatten är 28,8 m lång, alltså 2880 cm / 45 cm per planta = <<2880/45=64>>64 plantor.
+Sofia behöver köpa 64 plantor - 17 plantor = <<64-17=47>>47 plantor.
+Sofia betalar 47 plantor * 40 kronor = <<47*40=1880>>1880 kronor.
+#### 1880
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,Sofia} har en blomsterrabatt som är {length,28.8} m lång. {name,Sofia} vill fylla rabatten med plantor. Hennes blommor blir {plant_width,30} cm breda, och odlingsanvisningarna säger att man ska plantera en blomma med {space,45} cm mellanrum längs rabatten. {name,Sofia} äger redan {owned,17} blommor. Varje planta kostar {cost,40} {cur,kronor} i butiken. Hur mycket pengar behöver {name,Sofia} lägga i butiken för att fylla rabatten?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $length = arange(25, 40, 0.2)
+- $plant_width = range(20, 40)
+- $space = range(20, 60)
+- $owned = range(5, 20)
+- $cost = range(20, 100)
+
+#conditions:
+- plant_width * 3 < length*100
+- plant_width < space
+- is_int(length*100 / space)
+- length*100 / space > owned
+
+#answer: int((length*100 / space - owned) * cost)
+"""
+
+answer_annotated = """
+Rabatten är {length} m lång, alltså {int(length*100)} cm / {space} cm per planta = <<{int(length*100)}/{space}={int(length*100/space)}>>{int(length*100/space)} plantor.
+{name} behöver köpa {int(length*100/space)} plantor - {owned} plantor = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} plantor.
+{name} betalar {int(length*100/space)-owned} plantor * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
+#### {int(length*100/space - owned) * cost}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

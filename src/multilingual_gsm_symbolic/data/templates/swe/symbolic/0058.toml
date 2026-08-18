@@ -1,0 +1,47 @@
+question = "En dvärg kan bryta 12 kg malm om dagen med sina bara händer. Han kan bryta två gånger så mycket med en järnhacka och 50% mer med en stålhacka än med en järnhacka. Hur många kg malm kan 40 dvärgar med stålhackor bryta på en månad med 30 dagar?"
+
+answer = """
+Räkna först ut hur mycket malm en dvärg kan bryta med en järnhacka: 12 kg/dag*2 = <<12*2=24>>24 kg/dag.
+Multiplicera sedan med 150% för att få hur mycket en dvärg kan bryta med en stålhacka: 24 kg/dag * 150% = <<24*150*.01=36>>36 kg/dag.
+Multiplicera det en dvärg bryter på en dag med antalet dvärgar: 36 kg/dag/dvärg * 40 dvärgar = <<36*40=1440>>1440 kg/dag.
+Multiplicera den dagliga mängden med antalet dagar för att få hela månadens mängd: 1440 kg/dag * 30 dagar = <<1440*30=43200>>43 200 kg.
+#### 43200
+"""
+
+id_orig = 1026
+
+id_shuffled = 58
+
+question_annotated = """
+En {worker,dvärg} kan bryta {base,12} {unit,kg} malm om dagen med {tool1,sina bara händer}. Han kan bryta {mult1_txt,två gånger} så mycket med en {tool2,järnhacka} och {mult2,50}% mer med en {tool3,stålhacka} än med en {tool2,järnhacka}. Hur många {unit,kg} malm kan {n,40} {worker_plural,dvärgar} med {tool3_plural,stålhackor} bryta på en månad med {days,30} dagar?
+
+#init:
+- worker, worker_plural = sample([("dvärg", "dvärgar"), ("goblin", "gobliner"), ("gnom", "gnomer"), ("gruvarbetare", "gruvarbetare")])
+- tool1 = sample(["sina bara händer", "en spade", "en trähacka"])
+- unit = sample(["kg", "g"])
+- tool2 = sample(["nickelhacka", "bronshacka", "silverhacka"])
+- tool3, tool3_plural = sample([("stålhacka", "stålhackor"), ("diamanthacka", "diamanthackor"), ("mithrilhacka", "mithrilhackor"), ("titanhacka", "titanhackor")])
+- $base = range(5, 20)
+- mult1_txt, mult1_val = sample(multi_times)
+- $mult2 = range(30, 80, 5)
+- $n = range(20, 50)
+- $days = range(28, 32)
+
+#conditions:
+- is_int(mult2/100*base*mult1_val)
+- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000
+
+#answer: int(base * mult1_val * (1 + mult2/100) * n * days)
+"""
+
+answer_annotated = """
+Räkna först ut hur mycket malm en {worker} kan bryta med en {tool2}: {base} {unit}/dag*{mult1_val} = <<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/dag.
+Multiplicera sedan med {100+mult2}% för att få hur mycket en {worker} kan bryta med en {tool3}: {base*mult1_val} {unit}/dag * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/dag.
+Multiplicera det en {worker} bryter på en dag med antalet {worker_plural}: {int(base*mult1_val*(1+mult2/100))} {unit}/dag/{worker} * {n} {worker_plural} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag.
+Multiplicera den dagliga mängden med antalet dagar för att få hela månadens mängd: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag * {days} dagar = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}.
+#### {int(base*mult1_val*(1+mult2/100)*n*days)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

@@ -1,0 +1,43 @@
+question = "Emma kan skala 6 räkor i minuten och steka 30 räkor på 10 minuter. Hur lång tid tar det för henne att skala och steka 90 räkor? Emma kan inte skala och steka samtidigt."
+
+answer = """
+Räkna först ut hur lång tid det tar för Emma att skala räkorna: 90 räkor / 6 räkor per minut = <<90/6=15>>15 minuter.
+Räkna sedan ut hur många portioner hon behöver steka: 90 räkor / 30 räkor per portion = <<90/30=3>>3 portioner.
+Multiplicera antalet portioner med tiden per portion för att få den totala stektiden: 3 portioner * 10 minuter per portion = <<3*10=30>>30 minuter.
+Lägg till skaltiden för att få den totala tiden: 30 minuter + 15 minuter = <<30+15=45>>45 minuter.
+#### 45
+"""
+
+id_orig = 989
+
+id_shuffled = 48
+
+question_annotated = """
+{name,Emma} kan skala {n1,6} {food,räkor} i minuten och steka {n2,30} {food,räkor} på {t,10} minuter. Hur lång tid tar det för henne att skala och steka {total,90} {food,räkor}? {name,Emma} kan inte skala och steka samtidigt.
+
+#init:
+- name = sample(names_female)
+- food = sample(["räkor", "morötter", "potatisar", "lökar"])
+- $n1 = range(4, 15)
+- $n2 = range(20, 50, 5)
+- $t = range(5, 20)
+- $total = range(60, 200, 10)
+
+#conditions:
+- divides(total, n1)
+- divides(total, n2)
+
+#answer: total // n1 + (total // n2) * t
+"""
+
+answer_annotated = """
+Räkna först ut hur lång tid det tar för {name} att skala {food}na: {total} {food} / {n1} {food} per minut = <<{total}/{n1}={total//n1}>>{total//n1} minuter.
+Räkna sedan ut hur många portioner hon behöver steka: {total} {food} / {n2} {food} per portion = <<{total}/{n2}={total//n2}>>{total//n2} portioner.
+Multiplicera antalet portioner med tiden per portion för att få den totala stektiden: {total//n2} portioner * {t} minuter per portion = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t} minuter.
+Lägg till skaltiden för att få den totala tiden: {(total//n2)*t} minuter + {total//n1} minuter = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1} minuter.
+#### {(total//n2)*t + total//n1}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

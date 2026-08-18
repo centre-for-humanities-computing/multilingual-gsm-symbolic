@@ -1,0 +1,41 @@
+question = "Erik fick 278 poäng i en omgång bowling. Alma fick 11 poäng mer än hälften av vad Erik fick. Hur många poäng fick Erik och Alma tillsammans?"
+
+answer = """
+Erik fick 278 poäng.
+Alma fick 1/2*278 + 11 = 150 poäng.
+278 + 150 = <<278+150=428>>428 poäng.
+Tillsammans fick Erik och Alma 428 poäng.
+#### 428
+"""
+
+id_orig = 800
+
+id_shuffled = 53
+
+question_annotated = """
+{name1,Erik} fick {n1,278} poäng i en omgång {game,bowling}. {name2,Alma} fick {n2,11} poäng mer än {frac_txt,hälften} av vad {name1,Erik} fick. Hur många poäng fick {name1,Erik} och {name2,Alma} tillsammans?
+
+#init:
+- name1, name2 = sample(names, 2)
+- game = sample(["bowling", "dart", "bågskytte", "basket", "tennis"])
+- $n1 = range(200, 500)
+- $n2 = range(5, 50)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(frac_val * n1)
+
+#answer: n1 + int(frac_val * n1 + n2)
+"""
+
+answer_annotated = """
+{name1} fick {n1} poäng.
+{name2} fick {frac_val}*{n1} + {n2} = {int(frac_val * n1 + n2)} poäng.
+{n1} + {int(frac_val * n1 + n2)} = <<{n1}+{int(frac_val * n1 + n2)}={n1 + int(frac_val * n1 + n2)}>>{n1 + int(frac_val * n1 + n2)} poäng.
+Tillsammans fick {name1} och {name2} {n1 + int(frac_val * n1 + n2)} poäng.
+#### {n1 + int(frac_val * n1 + n2)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

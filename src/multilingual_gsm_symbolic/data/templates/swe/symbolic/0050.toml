@@ -1,0 +1,40 @@
+question = "Bo har ett rektangulärt sovrum med arean 33 kvadratmeter. Om längden på hans rum är 300 cm, vad är rummets omkrets i meter?"
+
+answer = """
+Längden på rummet är 300 cm * 1/100 meter/cm = <<300*(1/100)=3>>3 meter.
+Bredden på rummet är 33 kvadratmeter / 3 meter = <<33/3=11>>11 meter.
+Rummets omkrets är 2*(11+3) = 28 meter.
+#### 28
+"""
+
+id_orig = 440
+
+id_shuffled = 50
+
+question_annotated = """
+{name,Bo} har {room_article,ett} rektangulärt {room_type,sovrum} med arean {area,33} kvadratmeter. Om längden på hans rum är {length,300} cm, vad är rummets omkrets i meter?
+
+#init:
+- name = sample(names_male)
+- room_article = "ett"
+- room_type = sample(["vardagsrum", "arbetsrum", "kök", "sovrum"])
+- $area = range(18, 121)
+- $length = range(300, 1300, 100)
+
+#conditions:
+- is_int(area / (length // 100))
+- (area / (length // 100)) > (length // 100)
+
+#answer: 2 * (area // (length // 100) + length // 100)
+"""
+
+answer_annotated = """
+Längden på rummet är {length} cm * 1/100 meter/cm = <<{length}*(1/100)={length // 100}>>{length // 100} meter.
+Bredden på rummet är {area} kvadratmeter / {length // 100} meter = <<{area}/{length // 100}={area // (length // 100)}>>{area // (length // 100)} meter.
+Rummets omkrets är 2*({area // (length // 100)}+{length // 100}) = {2 * (area // (length // 100) + length // 100)} meter.
+#### {2 * (area // (length // 100) + length // 100)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

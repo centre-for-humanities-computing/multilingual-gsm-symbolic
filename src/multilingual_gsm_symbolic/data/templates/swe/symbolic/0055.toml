@@ -1,0 +1,40 @@
+question = "Elsa håller på att lära sig skriva och bestämmer sig för att skriva det latinska alfabetet (med 26 bokstäver) om och om igen tills hon kan det. Hon skriver det helt två gånger, skriver hälften av det en gång och skriver sedan om allt hon redan har skrivit. Hur många bokstäver har Elsa skrivit sammanlagt?"
+
+answer = """
+Elsa har skrivit det latinska alfabetet (med 26 bokstäver) två gånger, vilket är sammanlagt 26*2 = <<26*2=52>>52 bokstäver.
+Sedan skriver hon hälften av det latinska alfabetet (med 26 bokstäver), vilket är 26*1/2 = <<26*1/2=13>>13 bokstäver.
+Så långt är det sammanlagt 52 + 13 = <<52+13=65>>65 bokstäver.
+Att skriva om allt detta betyder att hon fördubblar antalet bokstäver, så hon har skrivit sammanlagt 65 * 2 = <<65*2=130>>130 bokstäver.
+#### 130
+"""
+
+id_orig = 546
+
+id_shuffled = 55
+
+question_annotated = """
+{name,Elsa} håller på att lära sig skriva och bestämmer sig för att skriva {alphabets_txt,det latinska alfabetet (med 26 bokstäver)} om och om igen tills hon kan det. Hon skriver det helt {n1_txt,två gånger}, skriver {frac_txt,hälften} av det en gång och skriver sedan om allt hon redan har skrivit. Hur många bokstäver har {name,Elsa} skrivit sammanlagt?
+
+#init:
+- name = sample(names_female)
+- alphabets_txt, alphabets_val = sample([("det latinska alfabetet (med 26 bokstäver)", 26), ("hiragana (med 48 tecken)", 48), ("det persiska alfabetet (med 32 bokstäver)", 32), ("det arabiska alfabetet (med 28 bokstäver)", 28)])
+- n1_txt, n1_val = sample([("två gånger", 2), ("tre gånger", 3), ("fyra gånger", 4), ("fem gånger", 5), ("sex gånger", 6), ("sju gånger", 7), ("åtta gånger", 8), ("nio gånger", 9), ("tio gånger", 10), ("elva gånger", 11)])
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(alphabets_val * frac_val)
+
+#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)
+"""
+
+answer_annotated = """
+{name} har skrivit {alphabets_txt} {n1_txt}, vilket är sammanlagt {alphabets_val}*{n1_val} = <<{alphabets_val}*{n1_val}={alphabets_val*n1_val}>>{alphabets_val*n1_val} bokstäver.
+Sedan skriver hon {frac_txt} av {alphabets_txt}, vilket är {alphabets_val}*{frac_val} = <<{alphabets_val}*{frac_val}={int(alphabets_val*frac_val)}>>{int(alphabets_val*frac_val)} bokstäver.
+Så långt är det sammanlagt {alphabets_val*n1_val} + {int(alphabets_val*frac_val)} = <<{alphabets_val*n1_val}+{int(alphabets_val*frac_val)}={alphabets_val*n1_val + int(alphabets_val*frac_val)}>>{alphabets_val*n1_val + int(alphabets_val*frac_val)} bokstäver.
+Att skriva om allt detta betyder att hon fördubblar antalet bokstäver, så hon har skrivit sammanlagt {alphabets_val*n1_val + int(alphabets_val*frac_val)} * 2 = <<{alphabets_val*n1_val + int(alphabets_val*frac_val)}*2={2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}>>{2*(alphabets_val*n1_val + int(alphabets_val*frac_val))} bokstäver.
+#### {2*(alphabets_val*n1_val + int(alphabets_val*frac_val))}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

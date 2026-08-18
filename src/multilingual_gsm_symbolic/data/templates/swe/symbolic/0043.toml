@@ -1,0 +1,39 @@
+question = "Ester åkte till sin fruktträdgård för att plocka jordgubbar och hittade hälften så många nyckelpigor som myror i trädgården. Om det fanns 50 myror, beräkna det totala antalet insekter i trädgården."
+
+answer = """
+Om det fanns 50 myror är antalet nyckelpigor i trädgården 1/2*50 = 25 nyckelpigor.
+Det totala antalet insekter i trädgården är 25 nyckelpigor + 50 myror = <<25+50=75>>75 insekter.
+#### 75
+"""
+
+id_orig = 232
+
+id_shuffled = 43
+
+question_annotated = """
+{name,Ester} åkte till sin {place,fruktträdgård} för att plocka {fruit,jordgubbar} och hittade {frac_txt,hälften} så många {insect1,nyckelpigor} som {insect2,myror} i {location,trädgården}. Om det fanns {n,50} {insect2,myror}, beräkna det totala antalet insekter i {location,trädgården}.
+
+#init:
+- name = sample(names)
+- place = sample(["fruktträdgård", "köksträdgård", "kolonilott", "odling"])
+- fruit = sample(["jordgubbar", "körsbär", "blåbär", "hallon"])
+- location = sample(["trädgården", "rabatten", "odlingen"])
+- insect1, insect2 = sample(["myror", "skalbaggar", "nyckelpigor", "gräshoppor", "larver", "bin", "getingar"], 2)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(20, 201)
+
+#conditions:
+- is_int(n * frac_val)
+
+#answer: n + int(n * frac_val)
+"""
+
+answer_annotated = """
+Om det fanns {n} {insect2} är antalet {insect1} i {location} {frac_val}*{n} = {int(n * frac_val)} {insect1}.
+Det totala antalet insekter i {location} är {int(n * frac_val)} {insect1} + {n} {insect2} = <<{int(n * frac_val)}+{n}={n + int(n * frac_val)}>>{n + int(n * frac_val)} insekter.
+#### {n + int(n * frac_val)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

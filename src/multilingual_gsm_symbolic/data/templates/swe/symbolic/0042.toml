@@ -1,0 +1,47 @@
+question = "Mikael går till affären för att köpa kaffe. Kaffemärket som han brukar köpa kostar 35 kronor per kilo. Han blev tvungen att köpa ett dyrare märke som kostade 20% mer, eftersom hans favoritmärke var slutsålt. Han bestämmer sig för att köpa kaffe för en vecka, och han använder 1 kilo kaffe om dagen. Han bestämde sig också för att köpa en munk för 15 kronor. Hur mycket kostade allt?"
+
+answer = """
+Kaffet han köpte var 35*0,2 = <<35*0,2=7>>7 kronor dyrare per kilo än det han brukar köpa.
+Alltså kostade det 35+7 = <<35+7=42>>42 kronor per kilo.
+Han gör av med 1*7 = <<1*7=7>>7 kilo kaffe i veckan.
+Så han betalade 42*7 = <<42*7=294>>294 kronor för kaffet.
+Det betyder att hela notan blev 294+15 = <<294+15=309>>309 kronor.
+#### 309
+"""
+
+id_orig = 661
+
+id_shuffled = 42
+
+question_annotated = """
+{name,Mikael} går till affären för att köpa {item,kaffe}. {item,kaffe}märket som han brukar köpa kostar {price,35} {cur,kronor} per {unit,kilo}. Han blev tvungen att köpa ett dyrare märke som kostade {percent,20}% mer, eftersom hans favoritmärke var slutsålt. Han bestämmer sig för att köpa {item,kaffe} för en vecka, och han använder {usage,1} {unit,kilo} {item,kaffe} om dagen. Han bestämde sig också för att köpa {extra_article,en} {extra_item,munk} för {extra_price,15} {cur,kronor}. Hur mycket kostade allt?
+
+#init:
+- name = sample(names_male)
+- item, item_definite = sample([("kaffe", "kaffet"), ("te", "teet"), ("socker", "sockret"), ("mjöl", "mjölet"), ("ris", "riset")])
+- cur = sample(currencies_sym)
+- unit = sample(["kilo", "kg"])
+- extra_article, extra_item = sample([("en", "munk"), ("en", "kanelbulle"), ("en", "muffins"), ("ett", "wienerbröd")])
+- $price = range(20, 160)
+- $percent = range(10, 50, 5)
+- $usage = range(1, 3)
+- $extra_price = range(8, 35)
+
+#conditions:
+- is_int(price * percent / 100)
+
+#answer: (price + price * percent / 100) * 7 * usage + extra_price
+"""
+
+answer_annotated = """
+{item_definite} han köpte var {price}*{percent/100} = <<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {cur} dyrare per {unit} än det han brukar köpa.
+Alltså kostade det {price}+{price*percent//100} = <<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} {cur} per {unit}.
+Han gör av med {usage}*7 = <<{usage}*7={usage*7}>>{usage*7} {unit} {item} i veckan.
+Så han betalade {price+price*percent//100}*{usage*7} = <<{price+price*percent/100}*{usage*7}={int((price+price*percent/100)*usage*7)}>>{int((price+price*percent/100)*usage*7)} {cur} för {item_definite}.
+Det betyder att hela notan blev {int((price+price*percent/100)*usage*7)}+{extra_price} = <<{int((price+price*percent/100)*usage*7)}+{extra_price}={int((price+price*percent/100)*usage*7)+extra_price}>>{int((price+price*percent/100)*usage*7)+extra_price} {cur}.
+#### {int((price+price*percent/100)*usage*7)+extra_price}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

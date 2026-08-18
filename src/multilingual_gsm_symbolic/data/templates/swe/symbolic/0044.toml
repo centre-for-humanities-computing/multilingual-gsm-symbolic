@@ -1,0 +1,36 @@
+question = "Det finns 6 flickor i parken. Om det finns två gånger så många pojkar i parken, hur många barn finns det i parken?"
+
+answer = """
+Det finns 6*2 = <<6*2=12>>12 pojkar i parken.
+Totalt finns det 6 flickor + 12 pojkar = <<6+12=18>>18 barn i parken.
+#### 18
+"""
+
+id_orig = 365
+
+id_shuffled = 44
+
+question_annotated = """
+Det finns {n,6} flickor i {place,parken}. Om det finns {mult_txt,två gånger} så många pojkar i {place,parken}, hur många barn finns det i {place,parken}?
+
+#init:
+- place = sample(["parken", "trädgården", "lekparken", "skogsdungen"])
+- $n = range(5, 51)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- is_int(n * mult_val + 1)
+- n * (mult_val + 1) <= 200
+
+#answer: n * (mult_val + 1)
+"""
+
+answer_annotated = """
+Det finns {n}*{mult_val} = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} pojkar i {place}.
+Totalt finns det {n} flickor + {n*mult_val} pojkar = <<{n}+{n*mult_val}={n*(mult_val+1)}>>{n*(mult_val+1)} barn i {place}.
+#### {n*(mult_val+1)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"
