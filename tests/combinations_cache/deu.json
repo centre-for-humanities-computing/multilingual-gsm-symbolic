@@ -16,7 +16,7 @@
   },
   {
     "id": 3,
-    "question_annotated": "Eine {g,Klasse} mit {n, 50} Schülern hat verschiedene Hobbys. {n_1,10} mögen {h_1, Backen}, {n_2,5} mögen {h_2,Fußball spielen} und der Rest spielt entweder {h_3,Videospiele} oder macht {h_4,Musik}. Wie viele spielen gern {h_3,Videospiele}, wenn die Anzahl derer, die gern {h_4,Musik} machen, doppelt so groß ist wie die derer, die lieber {h_2, Fußball spielen}?\n\n#init:\n- g = sample([\"Gruppe\", \"Klasse\"])\n- h_2 = sample(sports)\n- h_1, h_3, h_4 = sample(['lesen', 'malen', 'wandern', 'tanzen', 'backen', 'Videospiele spielen', 'Musik spielen'], 3)\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
+    "question_annotated": "Eine {g,Klasse} mit {n, 50} Schülern hat verschiedene Hobbys. {n_1,10} {h_1, backen}, {n_2,5} {h_2,spielen Fußball} und die restlichen Schüler {h_3,spielen Videospiele} oder {h_4,musizieren}. Wie viele {h_3,spielen Videospiele}, wenn doppelt so viele Schüler {h_4,musizieren} wie es Schüler gibt, die {h_2_r,Fußball spielen}?\n\n#init:\n- g = sample([\"Gruppe\", \"Klasse\"])\n- h_1, h_4 = sample(['lesen', 'malen', 'wandern', 'tanzen', 'backen', 'musizieren'], 2)\n- h_2, h_2_r = sample([('spielen Fußball', 'Fußball spielen'), ('spielen Tennis', 'Tennis spielen')])\n- h_3, h_3_r = sample([('spielen Videospiele', 'Videospiele spielen'), ('spielen Klavier', 'Klavier spielen')])\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
     "count": 100
   },
   {
@@ -41,7 +41,7 @@
   },
   {
     "id": 8,
-    "question_annotated": "Ein Jongleur kann mit {n, 16} Bällen jonglieren. {frac_1_txt,die Hälfte} der Bälle sind {ball_type, Golf}bälle und {frac_2_txt,die Hälfte} der {ball_type, Golf}bälle ist {color, blau}. Wie viele {color, blau}e {ball_type, Golf}bälle gibt es?\n\n#init:\n- ball_type = sample([\"Golf\", \"Tennis\"])\n- color = sample(colors)\n- $frac_1_txt, frac_1_val = sample(fraction_alnum)\n- $frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer: int(n * frac_1_val * frac_2_val)",
+    "question_annotated": "Ein Jongleur jongliert mit {n, 16} Bällen. Von den Bällen sind {frac_1_txt,die Hälfte} {ball_type, Golf}bälle und {frac_2_txt,die Hälfte} der {ball_type, Golf}bälle ist {color, blau}. Wie viele {color, blau}e {ball_type, Golf}bälle gibt es?\n\n#init:\n- ball_type = sample([\"Golf\", \"Tennis\"])\n- color = sample(colors)\n- $frac_1_txt, frac_1_val = sample(fraction_alnum)\n- $frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer: int(n * frac_1_val * frac_2_val)",
     "count": 100
   },
   {
@@ -96,7 +96,7 @@
   },
   {
     "id": 19,
-    "question_annotated": "In einem Quiz mit {n,60} Fragen sind {p1,40}% der Fragen zu {s1,Geschichte} und der Rest ist gleichmäßig auf {s2,Geografie} und {s3,Biologie} verteilt. Wenn {name,Alma} sicher ist, {r1,75}% der Fragen zu {s1,Geschichte} und {frac_txt,die Hälfte} der {s2,Geografie}- und {s3,Biologie}-Fragen richtig beantwortet zu haben, wie viele Punkte wird sie sicher bekommen?\n\n#init:\n- s1, s2, s3 = sample([\"Geschichte\", \"Geografie\", \"Biologie\", \"Chemie\", \"Physik\", \"Wirtschaft\", \"Literatur\", \"Algebra\", \"Geometrie\"], 3)\n- name = sample(names_female)\n- $frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)",
+    "question_annotated": "In einem Quiz mit {n,60} Fragen sind {p1,40}% der Fragen zu {s1,Geschichte} und der Rest ist gleichmäßig auf {s2,Geografie} und {s3,Biologie} verteilt. Jede richtig beantwortete Frage gibt einen Punkt. Wenn {name,Alma} sicher ist, {r1,75}% der Fragen zu {s1,Geschichte} und {frac_txt,die Hälfte} der {s2,Geografie}- und {s3,Biologie}-Fragen richtig beantwortet zu haben, wie viele Punkte wird sie sicher bekommen?\n\n#init:\n- s1, s2, s3 = sample([\"Geschichte\", \"Geografie\", \"Biologie\", \"Chemie\", \"Physik\", \"Wirtschaft\", \"Literatur\", \"Algebra\", \"Geometrie\"], 3)\n- name = sample(names_female)\n- $frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)",
     "count": 100
   },
   {
@@ -156,7 +156,7 @@
   },
   {
     "id": 31,
-    "question_annotated": "Derzeit liegen {age_diff,16} Jahre zwischen {name1,Mia} und {name2,Emma}. Wenn {name1,Mia}, die jünger als {name2,Emma} ist, {age1,40} Jahre alt ist, wie hoch ist ihr Durchschnittsalter?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
+    "question_annotated": "Derzeit liegen {age_diff,16} Jahre zwischen {name1,Mia} und {name2,Emma}. Wenn {name1,Mia}, die jünger als {name2,Emma} ist, {age1,40} Jahre alt ist, wie hoch ist das Durchschnittsalter der beiden?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
     "count": 100
   },
   {
@@ -196,7 +196,7 @@
   },
   {
     "id": 39,
-    "question_annotated": "Ein {job,Hausmeister} soll in einer {building,Schule} mit {n,80} {room_plural,Klassenzimmern} putzen und hat dafür {d,5} Tage Zeit. Er braucht {t,15} Minuten pro {room,Klassenzimmer}. Wenn er {h,8} Stunden am Tag arbeitet, wie viel Prozent seines Tages entfallen im Durchschnitt auf das Putzen der {room_plural,Klassenzimmern}?\n\n#init:\n- job = sample([\"Hausmeister\", \"Reinigungskraft\", \"Wartungsarbeiter\"])\n- building = sample([\"Schule\", \"Universität\", \"Bibliothek\"])\n- room, room_plural = sample([(\"Klassenzimmer\", \"Klassenzimmer\"), (\"Zimmer\", \"Zimmer\"), (\"Etage\", \"Etagen\")])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))",
+    "question_annotated": "Ein {job,Hausmeister} soll innerhalb von {d,5} Tagen in einer {building,Schule} putzen, die {n,80} {room_plural,Klassenzimmer} hat. Er braucht {t,15} Minuten pro {room,Klassenzimmer}. Wenn er {h,8} Stunden am Tag arbeitet, wie viel Prozent seines Tages entfallen im Durchschnitt auf das Putzen der {room_plural,Klassenzimmer}?\n\n#init:\n- job = sample([\"Hausmeister\", \"Reinigungskraft\", \"Wartungsarbeiter\"])\n- building = sample([\"Schule\", \"Universität\", \"Bibliothek\"])\n- room, room_plural = sample([(\"Klassenzimmer\", \"Klassenzimmer\"), (\"Zimmer\", \"Zimmer\"), (\"Etage\", \"Etagen\")])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))",
     "count": 100
   },
   {
@@ -231,7 +231,7 @@
   },
   {
     "id": 46,
-    "question_annotated": "Die {school,Berliner Universität} veranstaltet dieses Jahr ihre Abschlussfeier in ihrem {venue,Festsaal}, der Platz für {total,1900} Menschen hat. Nachdem {graduates,450} Plätze für Absolventinnen/Absolventen und {faculty,100} Plätze für Fakultätsmitglieder reserviert wurden, wie viele Eintrittskarten kann jede Absolventin/jeder Absolvent an seine Freunde und Familie weitergeben, wenn die Eintrittskarten gleichmäßig verteilt werden?\n\n#init:\n- school = sample([\"Berliner Universität\", \"Hamburger Akademie\", \"Münchner Kunstschule\", \"Frankfurter Schule\"])\n- venue = sample([\"Auditorium\", \"Festsaal\", \"Atrium\"])\n- $total = range(1500, 10000, 100)\n- $graduates = range(400, 1500, 50)\n- $faculty = range(100, 1500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
+    "question_annotated": "Die {school,Berliner Universität} veranstaltet dieses Jahr ihre Abschlussfeier in ihrem {venue,Festsaal}, in dem Platz für {total,1900} Menschen hat. Nachdem {graduates,450} Plätze für Absolventinnen/Absolventen und {faculty,100} Plätze für Fakultätsmitglieder reserviert wurden, wie viele Eintrittskarten kann jede Absolventin/jeder Absolvent an seine Freunde und Familie weitergeben, wenn die Eintrittskarten gleichmäßig verteilt werden?\n\n#init:\n- school = sample([\"Berliner Universität\", \"Hamburger Akademie\", \"Münchner Kunstschule\", \"Frankfurter Schule\"])\n- venue = sample([\"Auditorium\", \"Festsaal\", \"Atrium\"])\n- $total = range(1500, 10000, 100)\n- $graduates = range(400, 1500, 50)\n- $faculty = range(100, 1500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
     "count": 100
   },
   {
@@ -396,7 +396,7 @@
   },
   {
     "id": 79,
-    "question_annotated": "Innerhalb einer Stunde beendete {name,Tobias} {frac_txt,die Hälfte} eines {n1,500}-teiligen Puzzles und stellte danach ein weiteres Puzzle mit {n2,500} Teilen fertig. Wie viele Puzzleteile verlegte {name,Tobias} in dieser Stunde?\n\n#init:\n- name = sample(names)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n1 = range(100, 501)\n- $n2 = range(300, 1001)\n\n#conditions:\n- is_int(n1 * frac_val)\n\n#answer: int(n1 * frac_val) + n2",
+    "question_annotated": "Innerhalb einer Stunde beendete {name,Tobias} {frac_txt,die Hälfte} eines {n1,500}-teiligen Puzzles und stellte danach ein weiteres Puzzle mit {n2,500} Teilen fertig. Wie viele Puzzleteile legte {name,Tobias} in dieser Stunde?\n\n#init:\n- name = sample(names)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n1 = range(100, 501)\n- $n2 = range(300, 1001)\n\n#conditions:\n- is_int(n1 * frac_val)\n\n#answer: int(n1 * frac_val) + n2",
     "count": 100
   },
   {
