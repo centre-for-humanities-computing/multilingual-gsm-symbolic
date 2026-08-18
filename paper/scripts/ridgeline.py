@@ -255,6 +255,57 @@ def collect_plot_data(
     return distributions, stats
 
 
+def draw_distribution(
+    ax: Any,
+    set_means: np.ndarray,
+    x: np.ndarray,
+    density: np.ndarray,
+    mean: float,
+    reference: float,
+) -> float:
+    """Draw the shared boxed-histogram and fitted-curve treatment."""
+    peak_density = float(density.max())
+    ax.hist(
+        set_means,
+        bins=min(18, max(8, int(np.sqrt(len(set_means)) / 2))),
+        density=True,
+        color=SYNTHETIC_FILL,
+        edgecolor="white",
+        linewidth=0.7,
+        alpha=0.72,
+        zorder=1,
+    )
+    ax.fill_between(x, 0, density, color=SYNTHETIC_FILL, alpha=0.22, zorder=2)
+    ax.plot(x, density, color=SYNTHETIC_COLOR, linewidth=2.4, zorder=3)
+    ax.scatter(mean, peak_density, color=SYNTHETIC_COLOR, s=48, zorder=5)
+    ax.axvline(reference, color=ORIGINAL_COLOR, linewidth=2.6, zorder=4)
+    return peak_density
+
+
+def save_distribution_asset(set_means: np.ndarray, out_png: Path) -> float:
+    """Save one compact headline curve using the ridgeline treatment."""
+    x, density, mean, _ = normal_curve(set_means)
+    with plt.rc_context({"font.family": "serif", "font.serif": ["Times New Roman"]}):
+        fig = plt.figure(figsize=(4.08, 1.70), dpi=100)
+        ax = fig.add_axes((0, 0.31, 1, 0.67))
+        draw_distribution(ax, set_means, x, density, mean, mean)
+        ax.set_xlim(0, 1)
+        ax.set_ylim(bottom=0)
+        ax.set_yticks([])
+        ax.set_xticks(np.linspace(0, 1, 5))
+        ax.xaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+        ax.tick_params(axis="x", labelsize=14, pad=5, colors="#4A5568")
+        ax.get_xticklabels()[0].set_ha("left")
+        ax.get_xticklabels()[-1].set_ha("right")
+        ax.grid(axis="x", color="#E7EBF1", linewidth=0.8)
+        ax.spines["bottom"].set_color("#8B97A8")
+        ax.spines["bottom"].set_linewidth(1.2)
+        out_png.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out_png, dpi=200, facecolor="white")
+        plt.close(fig)
+    return mean
+
+
 def plot_distributions(
     distributions: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]],
     stats: list[PlotStats],
@@ -297,41 +348,13 @@ def plot_distributions(
 
     for ax, row in zip(axes, stats, strict=True):
         set_means, x, density = distributions[row.language]
-        peak_density = float(density.max())
-        histogram_bins = min(18, max(8, int(np.sqrt(len(set_means)) / 2)))
-
-        ax.hist(
+        peak_density = draw_distribution(
+            ax,
             set_means,
-            bins=histogram_bins,
-            density=True,
-            color=SYNTHETIC_FILL,
-            edgecolor="white",
-            linewidth=0.7,
-            alpha=0.72,
-            zorder=1,
-        )
-        ax.fill_between(
             x,
-            0,
             density,
-            color=SYNTHETIC_FILL,
-            alpha=0.22,
-            zorder=2,
-        )
-        ax.plot(x, density, color=SYNTHETIC_COLOR, linewidth=2.4, zorder=3)
-        ax.scatter(
             row.synthetic_mean,
-            peak_density,
-            color=SYNTHETIC_COLOR,
-            s=48,
-            zorder=5,
-        )
-
-        ax.axvline(
             row.original_accuracy,
-            color=ORIGINAL_COLOR,
-            linewidth=2.6,
-            zorder=4,
         )
 
         arrow_y = peak_density * 1.08
