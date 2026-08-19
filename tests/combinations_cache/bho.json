@@ -171,7 +171,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,सली} छुट्टी खातिर समुद्र तट पर गइल। उक माता-पिता उक ${total,15} देलखें जेकरा से ओ जे चाहे ओकरा खरीद सकत। सूवनियर दुकान पर, ताफी सेल पर थी \"{n1,1} पाउंड ${p1,3} प्रति पाउंड क दर से खरीदो, {n2,1} पाउंड {discount,1/2} छूट पावो।\" ओ {n12,4} पाउंड उठा लेली। ओ ${p2,1.5} क शंख क मिश्रित थैला भी खरीदल। आरू {n3,4} चुंबक जेकरा क दर ${p3,0.25} प्रति थाना। {name,सली} क कितना पैसा बचल?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,सली} छुट्टी खातिर समुद्र तट पर गइल। उक माता-पिता उक ${total,15} देलखें जेकरा से ओ जे चाहे ओकरा खरीद सकत। सूवनियर दुकान पर, ताफी सेल पर थी \"{n1,1} पाउंड ${p1,3} प्रति पाउंड क दर से खरीदो, {n2,1} पाउंड {discount,1/2} छूट पावो।\" ओ {n12,4} पाउंड उठा लेली। ओ ${p2,1.5} क शंख क मिश्रित थैला भी खरीदल। आरू {n3,4} चुंबक जेकरा क दर ${p3,0.25} प्रति थाना। {name,सली} क कितना पैसा बचल?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -212,11 +212,6 @@
   {
     "id": 48,
     "question_annotated": "{name,एमी} {n1,6} {food,झींगा} एक मिनट मँ छील सकत बा आरू {t,10} मिनट मँ {n2,30} {food,झींगा} भूनल सकत बा। {total,90} {food,झींगा} छीलल आरू भूनल मँ ओकरा कतेक समय लागत? {name,एमी} एक साथ छीलल आरू भूनल ना कर सकत बा।\n\n#init:\n- name = sample(names_female)\n- food = sample([\"झींगा\", \"प्याज\", \"गाजर\", \"मशरूम\", \"शंख\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
-    "count": 100
-  },
-  {
-    "id": 49,
-    "question_annotated": "{name,John} कचरा इकठ्ठा करे ले {n,3} अलग-अलग अपार्टमेंट कॉम्प्लेक्स सँ। पहिला {n_first_txt,दू} में {a,200} अपार्टमेंट होय ले आ अंतिम वाला बाकी {n_first_txt,दू} सँ जोड़ल गेल सँ {p,60}% बड़का अछि। ओ {f,3} बेर एक सप्ताह में प्रत्येक जगह सँ कचरा इकठ्ठा करे ले आ ओकरा कचरा इकठ्ठा करबाक लेल प्रति अपार्टमेंट {cur,₹}{r,0.4} भुगतान भेटे ले। ओ एक सप्ताह में कितना पैसा कमाय ले?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {
@@ -287,11 +282,6 @@
   {
     "id": 63,
     "question_annotated": "Ek {person1,ladka} ke paas {n,5} {item,kaat} hain. Uske {relation,bhai} ke paas unse {k,3} {item,kaat} kam hain. Unke paas milakar kitne {item,kaat} hain?\n\n#init:\n- person1 = sample([\"vidyarthi\", \"ladka\", \"baccha\", \"chhokra\"])\n- item = sample([\"gitti\", \"stickar\", \"khilona\", \"kitab\", \"pencil\"])\n- relation = sample([\"bahin\", \"bhai\", \"dost\", \"chacha\"])\n- $n = range(5, 21)\n- $k = range(2, 10)\n\n#conditions:\n- n > k\n\n#answer: n + (n-k)",
-    "count": 100
-  },
-  {
-    "id": 64,
-    "question_annotated": "{name,मैरी} के {location,अलमारी} में {n,6} जार {item,चिप्स} बा।\nहर {item,चिप्स} के जार से {m,8} {food,कपकेक} सजाय जाय।\n{name,मैरी} चाहत बा कि सगरी {item,चिप्स} खत्म हो जाय, एकरे खातिर उनी {food,कपकेक} बेक करे चाहत बा।\nअगर हर {container,पैन} में {k,12} {food,कपकेक} बने, तो उनी कइना {container,पैन} {food,कपकेक} बेक करे के बा?\n\n#init:\n- name = sample(names_female)\n- item = sample([\"चिप्स\", \"फ्रॉस्टिंग\", \"आइसिंग\", \"चॉकलेट चिप्स\"])\n- food = sample([\"कपकेक\", \"कुकी\", \"ब्राउनी\", \"मफिन\"])\n- location = sample([\"अलमारी\", \"कपबोर्ड\", \"किचन कैबिनेट\", \"स्टोरेज रूम\"])\n- container = sample([\"पैन\", \"ट्रे\", \"बेकिंग शीट\", \"रैक\"])\n- $n = range(3, 15)\n- $m = range(6, 20)\n- $k = range(6, 24)\n\n#conditions:\n- divides(n*m, k)\n\n#answer: (n*m)//k",
     "count": 100
   },
   {
@@ -407,11 +397,6 @@
   {
     "id": 87,
     "question_annotated": "{park_name,पांच झंडा} में सबसे बड़ा वाटरस्लाइड {l1,300} {unit,मीटर} लंबा है, और लोग {s1,60} {unit,मीटर}/मिनट की रफ़्तार से नीचे फिसलते हैं। दूसरा सबसे बड़ा वाटरस्लाइड {l2,240} {unit,मीटर} लंबा है, लेकिन ज्यादा खड़ा है, इसलिए लोग {s2,80} {unit,मीटर}/मिनट की रफ़्तार से नीचे फिसलते हैं। सबसे बड़े स्लाइड पर सवार होने में दूसरे सबसे बड़े स्लाइड की तुलना में कितना ज्यादा समय लगता है?\n\n#init:\n- park_name = sample([\"छपनी दुनिया\", \"जल साहसिक\", \"जल चमत्कार\", \"नेप्च्यून का साम्राज्य\"])\n- unit = sample(['मीटर'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
-    "count": 100
-  },
-  {
-    "id": 88,
-    "question_annotated": "{name,दाणा} चलने से {mult_run_txt,चार गुना} तेज़ दौड़ सकती है, लेकिन वह दौड़ने की गति से {frac_skip_txt,आधा} तेज़ कूद सकती है। अगर वह {skip_speed,3} किलोमीटर प्रति घंटा कूद सकती है, तो {total_time_txt,छह} घंटे में वह कितने किलोमीटर की यात्रा कर सकती है अगर वह समय का {frac_run_txt,एक तिहाई} दौड़ने में और {frac_walk_txt,दो तिहाई} चलने में बिताती है?\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
     "count": 100
   },
   {

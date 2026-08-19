@@ -35,11 +35,6 @@
     "count": 100
   },
   {
-    "id": 7,
-    "question_annotated": "កសិករម្នាក់កំពុងទិញចំណីសម្រាប់ {animals,សេះ} របស់គាត់។ គាត់ទិញប្រភេទ {treat1, ឃ្នង}, {treat2,ច្បាល}, {treat3,ផ្កាជីកា} និង {rare_treat, គ្រាប់ស្ករ}។ ដោយសារ {rare_treat, គ្រាប់ស្ករ} គឺជាទទួលទានពិសេស គាត់ទិញតែ {n4_txt,ពីរ} ប្រអប់ {w4,1}-{unit,ផោន} សម្រាប់ផ្ទះសត្វទាំងមូល។ គាត់ចង់បាន {treat3,ផ្កាជីកា} គ្រប់គ្រាន់ដើម្បីចិញ្ចឹម {animals,សេះ} ខណៈដែលបន្លែស្រស់ ដូច្នេះគាត់ទិញ {n3_txt,បួន} កញ្ចប់ {w3,12}-{unit, ផោន}។ {treat1,ឃ្នង} គឺជាចំណីអាហារសំខាន់របស់ {animals,សេះ} របស់គាត់ ដូច្នេះគាត់ទិញ {n1_txt,បួនសិបពីរ} កញ្ចប់ {w1,75}-{unit,ផោន}។ {treat2, ច្បាល} គឺជាចំណីសំខាន់ដើម្បីបន្ថែម {treat1, ឃ្នង} ដូច្នេះគាត់ទិញ {n2_txt,ពីរសិប} សាខ {w2, 65}-{unit,ផោន}។ ប្រសិនបើរថយន្តកសិកម្មរបស់គាត់អាចផ្ទុក {total,2250} {unit,ផោន}s ក្នុងពេលតែមួយ តើកសិករត្រូវធ្វើដំណើរចំនួនប៉ុន្មានដើម្បីដឹកជញ្ជូនចំណីទាំងអស់?\n\n#init:\n- animals = sample(['សេះ', 'គោ', 'ពពែ', 'ជ្រូក', 'អាល់បាកា'])\n- unit = sample(weights_med)\n- treat1, treat2 = sample([\"ឃ្នង\", \"ម្រៅ\", \"ច្បាល\", \"ផ្លែប៉ោម\", \"ស្រូវ\"], 2)\n- treat3 = sample([\"ផ្កាជីកា\", \"គ្រាប់ឈូក\", \"ត្រកួន\"])\n- rare_treat = sample([\"គ្រាប់ស្ករ\", \"ស្បែកត្របែក\", \"គ្រាប់ម្រះ\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
-    "count": 100
-  },
-  {
     "id": 8,
     "question_annotated": "អ្នកលេងបាល់ចុកអាចចុក {n, 16} កូនបាល់។ {frac_1_txt, ពាក់កណ្តាល} នៃកូនបាល់ទាំងអស់គឺ {ball_type, ហ្គោល} កូនបាល់ និង {frac_2_txt, ពាក់កណ្តាល} នៃ {ball_type, ហ្គោល} កូនបាល់គឺ {color, ពណ៌ខៀវ}។ តើមាន {color, ពណ៌ខៀវ} {ball_type, ហ្គោល} កូនបាល់ប៉ុន្មាន?\n\n#init:\n- ball_type = sample([\"ហ្គោល\", \"តេនីស\"])\n- color = sample(colors)\n- frac_1_txt, frac_1_val = sample(fraction_alnum)\n- frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer:  int(n * frac_1_val * frac_2_val)",
     "count": 100
@@ -196,7 +191,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,សាលី} បានទៅលេងឆ្នេរសម្រាក។ ឪពុកម្តាយរបស់នាងបានផ្តល់ឱ្យនាង ${total,15} ដើម្បីទិញអ្វីដែលនាងចង់បាន។ នៅហាងលក់ទំនិញអនុស្សាវរីយ៍ តាហ្វីកំពុងលក់បញ្ចុះតម្លៃថា \"ទិញ {n1,1} ផោនក្នុងតម្លៃ ${p1,3} ក្នុងមួយផោន ទទួលបាន {n2,1} ផោន បញ្ចុះ {discount,1/2}។\" នាងបានយក {n12,4} ផោន។ នាងក៏បានទិញកាបូបសំបុកស្គល់សមុទ្រចម្រុះមួយក្នុងតម្លៃ ${p2,1.5} និងម៉ាញេត {n3,4} ដែលមានតម្លៃ ${p3,0.25} គ្រាន់។ តើ {name,សាលី} មានលុយសល់ប៉ុន្មាន?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,សាលី} បានទៅលេងឆ្នេរសម្រាក។ ឪពុកម្តាយរបស់នាងបានផ្តល់ឱ្យនាង ${total,15} ដើម្បីទិញអ្វីដែលនាងចង់បាន។ នៅហាងលក់ទំនិញអនុស្សាវរីយ៍ តាហ្វីកំពុងលក់បញ្ចុះតម្លៃថា \"ទិញ {n1,1} ផោនក្នុងតម្លៃ ${p1,3} ក្នុងមួយផោន ទទួលបាន {n2,1} ផោន បញ្ចុះ {discount,1/2}។\" នាងបានយក {n12,4} ផោន។ នាងក៏បានទិញកាបូបសំបុកស្គល់សមុទ្រចម្រុះមួយក្នុងតម្លៃ ${p2,1.5} និងម៉ាញេត {n3,4} ដែលមានតម្លៃ ${p3,0.25} គ្រាន់។ តើ {name,សាលី} មានលុយសល់ប៉ុន្មាន?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -312,11 +307,6 @@
   {
     "id": 63,
     "question_annotated": "{person1,ក្មេងប្រុស} មាន {n,5} {item,កាត}។ {relation,បងប្រុស} របស់គាត់ មាន {item,កាត} តិចជាងគាត់ {k,3}។ តើពួកគេមាន {item,កាត} សរុបប៉ុន្មាន?\n\n#init:\n- person1 = sample([\"សិស្ស\", \"ក្មេងប្រុស\", \"កុមារ\", \"ក្មេង\"])\n- item = sample([\"គ្រាប់ថ្ម\", \"ស្ទីកឃ័រ\", \"របស់លេង\", \"សៀវភៅ\", \"ប៊ិច\"])\n- relation = sample([\"បងស្រី\", \"បងប្រុស\", \"មិត្តភក្តិ\", \"បងប្អូន\"])\n- $n = range(5, 21)\n- $k = range(2, 10)\n\n#conditions:\n- n > k\n\n#answer: n + (n-k)",
-    "count": 100
-  },
-  {
-    "id": 64,
-    "question_annotated": "{name,ម៉ារី} មាន {n,6} ធុងនៃ {item,ស្ព្រីនកល់} នៅក្នុង {location,បន្ទប់ផ្ទុកអាហារ} របស់នាង។\nធុងនីមួយៗនៃ {item,ស្ព្រីនកល់} អាចតុបតែង {m,8} {food,កាប្កេក}។\n{name,ម៉ារី} ចង់ដុត {food,កាប្កេក} ឱ្យបានគ្រប់គ្រាន់ដើម្បីប្រើប្រាស់ {item,ស្ព្រីនកល់} ទាំងអស់របស់នាង។\nប្រសិនបើ {container,ថាស} នីមួយៗផ្ទុកបាន {k,12} {food,កាប្កេក}, នាងគួរតែដុត {container,ថាស} ចំនួនប៉ុន្មាននៃ {food,កាប្កេក}?\n\n#init:\n- name = sample(names_female)\n- item = sample([\"ស្ព្រីនកល់\", \"ផ្អែមបិទ\", \"ទឹកផ្អែម\", \"គ្រាប់កាកាអូ\"])\n- food = sample([\"កាប្កេក\", \"គុកគី\", \"ប្រាវនី\", \"ម៉ាហ្វីន\"])\n- location = sample([\"បន្ទប់ផ្ទុកអាហារ\", \"តុបិទ\", \"ទ្រុងទ្រាផ្ទះបាយ\", \"បន្ទប់ស្តុកទំនិញ\"])\n- container = sample([\"ថាស\", \"ថាសដាក់\", \"ស្លឹកដុត\", \"ទ្រា\"])\n- $n = range(3, 15)\n- $m = range(6, 20)\n- $k = range(6, 24)\n\n#conditions:\n- divides(n*m, k)\n\n#answer: (n*m)//k",
     "count": 100
   },
   {

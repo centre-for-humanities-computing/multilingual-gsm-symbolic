@@ -196,7 +196,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,ସାଲି} ବିଶ୍ରାମ ପାଇଁ ସମୁଦ୍ର ତୀରକୁ ଯାଇଥିଲେ। ତାଙ୍କ ପିତାମାତା ତାଙ୍କୁ ${total,15} ଦେଲେ ଯାହା ସେ ଯାହା ଚାହିଁବେ ତାହା କିଣିପାରିବେ। ସାଉଭେନିର୍ ଦୋକାନରେ, ଟାଫି ବିକ୍ରିରେ ଥିଲା: \"{n1,1} ପାଉଣ୍ଡ ${p1,3} ପ୍ରତି ପାଉଣ୍ଡ ହାରରେ କିଣନ୍ତୁ, {n2,1} ପାଉଣ୍ଡ {discount,1/2} ଛାଡ୍ ପାଇବେ।\" ସେ {n12,4} ପାଉଣ୍ଡ ନେଲେ। ସେ ${p2,1.5} ଟଙ୍କାରେ ଏକ ମିଶ୍ରିତ ସିପି ଥଳି ଏବଂ {n3,4} ଟି ଚୁମ୍ବକ ମଧ୍ୟ କିଣିଲେ ଯାହା ପ୍ରତ୍ୟେକ ${p3,0.25} ଥିଲା। {name,ସାଲି} କେତେ ଟଙ୍କା ବାକି ରଖିଲେ?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,ସାଲି} ବିଶ୍ରାମ ପାଇଁ ସମୁଦ୍ର ତୀରକୁ ଯାଇଥିଲେ। ତାଙ୍କ ପିତାମାତା ତାଙ୍କୁ ${total,15} ଦେଲେ ଯାହା ସେ ଯାହା ଚାହିଁବେ ତାହା କିଣିପାରିବେ। ସାଉଭେନିର୍ ଦୋକାନରେ, ଟାଫି ବିକ୍ରିରେ ଥିଲା: \"{n1,1} ପାଉଣ୍ଡ ${p1,3} ପ୍ରତି ପାଉଣ୍ଡ ହାରରେ କିଣନ୍ତୁ, {n2,1} ପାଉଣ୍ଡ {discount,1/2} ଛାଡ୍ ପାଇବେ।\" ସେ {n12,4} ପାଉଣ୍ଡ ନେଲେ। ସେ ${p2,1.5} ଟଙ୍କାରେ ଏକ ମିଶ୍ରିତ ସିପି ଥଳି ଏବଂ {n3,4} ଟି ଚୁମ୍ବକ ମଧ୍ୟ କିଣିଲେ ଯାହା ପ୍ରତ୍ୟେକ ${p3,0.25} ଥିଲା। {name,ସାଲି} କେତେ ଟଙ୍କା ବାକି ରଖିଲେ?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -267,11 +267,6 @@
   {
     "id": 54,
     "question_annotated": "{name,ଡୋକ୍ସା} ଗୋଟିଏ ପୁରା {fruit,ସେବୁ} କୁ {total,୧୮} ଖଣ୍ଡରେ କାଟିଲା। ସେ {n1,୩} ଖଣ୍ଡ ଖାଇଲା, ସେର {sibling1,ଭଉଣୀ} ତାଙ୍କଠାରୁ {n2,୨} ଅଧିକ ଖାଇଲା, ଏବଂ ସେର {sibling2,ଭାଇ} ତାଙ୍କ {sibling1,ଭଉଣୀ} ଠାରୁ {n3,୩} ଅଧିକ ଖାଇଲା। ସେମାନେ ମିଶି କେତେ ଖଣ୍ଡ {fruit,ସେବୁ} ଖାଇଲେ?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"କମଳା\", \"ନାସପାତି\", \"ପିଚ୍\", \"ଆମ୍ବ\", \"କିଉଇ\"])\n- sibling1, sibling2 = sample([\"ଭାଇ\", \"ଭଉଣୀ\", \"ଚାଚା\", \"ବନ୍ଧୁ\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
-    "count": 100
-  },
-  {
-    "id": 55,
-    "question_annotated": "{name,ଏଲିସ୍} ଲେଖିବା ଶିଖୁଛନ୍ତି ଏବଂ {alphabets_txt,ବର୍ଣ୍ଣମାଳା} କୁ ଜାଣିବା ପର୍ଯ୍ୟନ୍ତ ଏହାକୁ ପୁନରାବୃତ୍ତି କରିବାକୁ ନିଷ୍ପତ୍ତି ନେଇଛନ୍ତି । ସେ ଏହାକୁ ପୂରା {n1_txt,ଦୁଇଥର} ଲେଖନ୍ତି, ଏହାର {frac_txt,ଅର୍ଦ୍ଧେକ} କୁ ଥରେ ଲେଖନ୍ତି, ତାପରେ ସେ ଯାହା ଯାହା ପୂର୍ବରୁ ଲେଖିସାରିଛନ୍ତି ତାହାକୁ ପୁନରଲେଖନ କରନ୍ତି । {name,ଏଲିସ୍} ମୋଟ କେତେ ଅକ୍ଷର ଲେଖିଛନ୍ତି ?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"ବର୍ଣ୍ଣମାଳା\", 26), (\"ହିରାଗାନା (୪୮ ଟି ଅକ୍ଷର ସହିତ)\", 48), (\"ଫାର୍ସି ବର୍ଣ୍ଣମାଳା (୩୨ ଟି ଅକ୍ଷର ସହିତ)\", 32), (\"ଆରବି ଅବ୍ଜଦ (୨୮ ଟି ଅକ୍ଷର ସହିତ)\", 28)])\n- n1_txt, n1_val = sample([(\"ଦୁଇଥର\", 2), (\"ତିନିଥର\", 3), (\"ଚାରିଥର\", 4), (\"ପାଞ୍ଚଥର\", 5), (\"ଛଅଥର\", 6), (\"ସାତଥର\", 7), (\"ଆଠଥର\", 8), (\"ନଅଥର\", 9), (\"ଦଶଥର\", 10), (\"ଏଗାରଥର\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
     "count": 100
   },
   {
@@ -432,11 +427,6 @@
   {
     "id": 87,
     "question_annotated": "{park_name,ପାଞ୍ଚ ଫ୍ଲାଗ୍ସ} ରେ ସବୁଠାରୁ ବଡ଼ ଜଳସ୍ଲାଇଡ୍ {l1,300} {unit,ପାଦ} ଲମ୍ବ ଅଟେ, ଏବଂ ଲୋକମାନେ {s1,60} {unit,ପାଦ}/ମିନିଟ ହାରରେ ଖସିଯାନ୍ତି। ଦ୍ୱିତୀୟ ସବୁଠାରୁ ବଡ଼ ଜଳସ୍ଲାଇଡ୍ {l2,240} {unit,ପାଦ} ଲମ୍ବ ଅଟେ, କିନ୍ତୁ ଅଧିକ ଢାଲୁ, ତେଣୁ ଲୋକମାନେ {s2,80} {unit,ପାଦ}/ମିନିଟ ହାରରେ ଖସିଯାନ୍ତି। ଦ୍ୱିତୀୟ ସବୁଠାରୁ ବଡ଼ ସ୍ଲାଇଡ୍ ତୁଳନାରେ ସବୁଠାରୁ ବଡ଼ ସ୍ଲାଇଡ୍ ଚଢ଼ିବାରେ କେତେ ଅଧିକ ସମୟ ଲାଗେ?\n\n#init:\n- park_name = sample([\"ସ୍ପ୍ଲାସ୍ ୱାର୍ଲଡ୍\", \"ଆକ୍ୱା ଆଡଭେଞ୍ଚର\", \"ୱାଟର ୱଣ୍ଡରଲାଣ୍ଡ୍\", \"ନେପଚୁନ୍ ରାଜ୍ୟ\"])\n- unit = sample(['ଗଜ', 'ମିଟର'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
-    "count": 100
-  },
-  {
-    "id": 88,
-    "question_annotated": "{name,ଡାନା} ସେ ଯେତେ ଚାଲିପାରେ, ସେଥିଠାରୁ {mult_run_txt,ଚାରି ଗୁଣ} ଅଧିକ ବେଗରେ ଦୌଡ଼ିପାରେ, କିନ୍ତୁ ସେ ସେ ଯେତେ ଦୌଡ଼ିପାରେ, ସେଥିଠାରୁ {frac_skip_txt,ଅଧା} ବେଗରେ ଛାଁଟିପାରେ। ଯଦି ସେ {skip_speed,3} ମାଇଲ୍ ପ୍ରତି ଘଣ୍ଟାରେ ଛାଁଟିପାରେ, ତେବେ {total_time_txt,ଛଅ} ଘଣ୍ଟାରେ ସେ କେତେ ମାଇଲ୍ ଯାତ୍ରା କରିପାରିବ ଯଦି ସେ {frac_run_txt,ଏକ ତୃତୀୟାଂଶ} ସମୟ ଦୌଡ଼ିବାରେ ଏବଂ {frac_walk_txt,ଦୁଇ ତୃତୀୟାଂଶ} ସମୟ ଚାଲିବାରେ ଖର୍ଚ୍ଚ କରେ?\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
     "count": 100
   },
   {

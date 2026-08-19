@@ -196,7 +196,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,Sally} išla na pobrežie na dovolenku. Jej rodičia jej dali ${total,15} na kúpu čohokoľvek, čo chcela. V suvenírovej predajni bola karamelka v akcii s ponukou \"Kúpiť {n1,1} libru za ${p1,3} za libru, získať {n2,1} libru {discount,1/2} zľavu.\" Nabrala {n12,4} libier. Tiež si kúpila miešané vrecko lastúr za ${p2,1.5} a {n3,4} magnetov, ktoré stáli ${p3,0.25} každý. Koľko peňazí má {name,Sally} ešte?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,Sally} išla na pobrežie na dovolenku. Jej rodičia jej dali ${total,15} na kúpu čohokoľvek, čo chcela. V suvenírovej predajni bola karamelka v akcii s ponukou \"Kúpiť {n1,1} libru za ${p1,3} za libru, získať {n2,1} libru {discount,1/2} zľavu.\" Nabrala {n12,4} libier. Tiež si kúpila miešané vrecko lastúr za ${p2,1.5} a {n3,4} magnetov, ktoré stáli ${p3,0.25} každý. Koľko peňazí má {name,Sally} ešte?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -277,11 +277,6 @@
   {
     "id": 56,
     "question_annotated": "Jeden {container,pohár} {liquid,mlieko} má {vol,8} {unit,uncia} {liquid,mlieko}. {name,Ján} vypije {num,2} {container_plural,poháre} {liquid,mlieko}. Ak {liquid,mlieko} má {cal,3} kalórií na {unit,uncia}, koľko kalórií celkovo spotreboval?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"pohár\",\"poháre\"), (\"hrnček\",\"hrnčeky\"), (\"fľaša\",\"fľaše\"), (\"krabica\",\"krabice\")])\n- liquid = sample([\"ovocná šťava\", \"soda\", \"perlivá voda\", \"čaj\", \"limonáda\"])\n- unit = sample([\"uncia\", \"mL\", \"cc\", \"oz\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
-    "count": 100
-  },
-  {
-    "id": 57,
-    "question_annotated": "{name1,Ben} má {n1,4} trubiek {color1,modrý} farby a {n2,3} trubiek {color2,žltý} farby. {name2,Jasper} má {frac1_txt,pol} toľkých trubiek {color1,modrý} farby ako {name1,Ben}, a {mult1_txt,tri} krát toľkých trubiek {color2,žltý} farby ako {name1,Ben}. Koľko trubiek farby má {name2,Jasper}?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
     "count": 100
   },
   {

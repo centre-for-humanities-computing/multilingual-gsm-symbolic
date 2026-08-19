@@ -55,11 +55,6 @@
     "count": 100
   },
   {
-    "id": 11,
-    "question_annotated": "{name, பெட்டர்} வெவ்வேறு அளவிலான பனிக்கட்டிகளை {n,32} {unit,அவுன்ஸ்} நீருடன் உருவாக்க விரும்புகிறார்.\n\nஅவர் ஒவ்வொரு கட்டிக்கும் {w1,4} {unit,அவுன்ஸ்} பயன்படுத்தும் பெரிய கட்டிகளை, {w2,2} {unit,அவுன்ஸ்} பயன்படுத்தும் நடுத்தர கட்டிகளை, மற்றும் {w3,1/2} {unit,அவுன்ஸ்} பயன்படுத்தும் சிறிய கட்டிகளை உருவாக்கலாம்.\n\nஅவர் {n1,3} பெரிய கட்டிகள், {n2,7} நடுத்தர கட்டிகள் மற்றும் {n3,8} சிறிய கட்டிகளை உருவாக்கினால், எத்தனை {unit,அவுன்ஸ்} நீர் அவருக்கு மீதமுள்ளது?\n\n#init:\n- name = sample(names_male)\n- unit = sample(weights_sm)\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
-    "count": 100
-  },
-  {
     "id": 12,
     "question_annotated": "{name, ஜெய்ம்} சில {surface, தட்டு}களில் {obj, முட்டை}களை வைக்கிறார். ஒவ்வொரு {surface, தட்டு} {x,24} {obj, முட்டை}களை வைக்க முடியும். அவரிடம் {n,64} {obj, முட்டை}கள் மற்றும் {k,2} {surface, தட்டு}கள் இருந்தால், எத்தனை {obj, முட்டை}களை அவர் {surface, தட்டு} இல் வைக்க முடியாது?\n\n#init:\n- name = sample(names_male)\n- obj = sample([\"ஒலிவா\", \"பாதாம்\", \"குக்கி\", \"க்ராக்கர்\", \"வாழைப்பழம்\"])\n- surface = sample([\"தட்டு\", \"மேசை\", \"கிண்ணம்\", \"தட்டு\", \"கூடை\"])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x",
     "count": 100
@@ -180,11 +175,6 @@
     "count": 100
   },
   {
-    "id": 37,
-    "question_annotated": "ஒரு {item,அப்பம்} {n,24} {unit,துண்டுகள்} கொண்டது.\n{name1,அபி} ஒரு நாளுக்கு {x,2} {unit,துண்டுகள்} சாப்பிட முடியும், அதே நேரத்தில் {name2,ஜாஷ்} {mult_txt,இரண்டு மடங்கு} அதிகம் சாப்பிட முடியும் என்றால், {item,அப்பம்} எத்தனை நாட்கள் நீடிக்கும்?\n\n#init:\n- item = sample([\"பிசா\", \"கேக்\", \"பை\", \"லசக்னா\"])\n- unit = sample([\"துண்டுகள்\", \"பகுதிகள்\", \"சேவைகள்\"])\n- name1, name2 = sample(names, 2)\n- $n = range(12, 76, 3)\n- $x = range(2, 13)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- divides(n, x + x*mult_val)\n\n#answer: n // (x + x*mult_val)",
-    "count": 100
-  },
-  {
     "id": 38,
     "question_annotated": "{shop,பேக்கரி}-ல் ஒரு {item1,ரொட்டி} {currency,₹}{price1,2} விலை. {item2,பேகல்} ஒவ்வொன்றும் {currency,₹}{price2,1} விலை. {n1,3} {item1,ரொட்டி}-களின் விலை {n2,2} {item2,பேகல்}-களை விட எவ்வளவு அதிகம்?\n\n#init:\n- item1 = sample([\"ரொட்டி\", \"சோர்டோக்\"])\n- item2 = sample([\"பேகல்\", \"மஃபின்\", \"க்ரோசாண்ட்\", \"பிஸ்கட்\"])\n- shop = sample([\"பேக்கரி\", \"கேஃபே\", \"கடை\", \"சந்தை\"])\n- currency = sample(currencies_sym)\n- $price1 = range(2, 10)\n- $price2 = range(1, 5)\n- $n1 = range(2, 10)\n- $n2 = range(2, 10)\n\n#conditions:\n- n1 * price1 > n2 * price2\n\n#answer: n1 * price1 - n2 * price2",
     "count": 100
@@ -196,7 +186,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,சல்லி} விடுமுறைக்காக கடற்கரைக்குச் சென்றாள். அவரின் பெற்றோர் அவருக்கு ${total,15} விரும்பியதை வாங்க அளித்தனர். நினைவுப் பொருட்கள் கடையில், டாஃபி விற்பனையில் இருந்தது \"{n1,1} பவுண்டுக்கு ${p1,3} விலையில் வாங்குங்கள், {n2,1} பவுண்டு {discount,1/2} சலுகை பெறுங்கள்\" என்று. அவள் {n12,4} பவுண்டுகளை எடுத்தாள். மேலும் அவள் ${p2,1.5} க்கு சங்கு கலவை பை மற்றும் ஒவ்வொன்றிற்கும் ${p3,0.25} விலை கொண்ட {n3,4} காந்தங்களை வாங்கினாள். {name,சல்லி} எவ்வளவு பணம் மீதமுள்ளாள்?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,சல்லி} விடுமுறைக்காக கடற்கரைக்குச் சென்றாள். அவரின் பெற்றோர் அவருக்கு ${total,15} விரும்பியதை வாங்க அளித்தனர். நினைவுப் பொருட்கள் கடையில், டாஃபி விற்பனையில் இருந்தது \"{n1,1} பவுண்டுக்கு ${p1,3} விலையில் வாங்குங்கள், {n2,1} பவுண்டு {discount,1/2} சலுகை பெறுங்கள்\" என்று. அவள் {n12,4} பவுண்டுகளை எடுத்தாள். மேலும் அவள் ${p2,1.5} க்கு சங்கு கலவை பை மற்றும் ஒவ்வொன்றிற்கும் ${p3,0.25} விலை கொண்ட {n3,4} காந்தங்களை வாங்கினாள். {name,சல்லி} எவ்வளவு பணம் மீதமுள்ளாள்?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -270,18 +260,8 @@
     "count": 100
   },
   {
-    "id": 55,
-    "question_annotated": "{name,எலிஸ்} எழுத கற்றுக்கொள்கிறாள் மற்றும் அதை அறிந்து கொள்ளும் வரை {alphabets_txt,அகரவரிசை} ஐ மீண்டும் மீண்டும் எழுத முடிவு செய்கிறாள். அவள் அதை முழுமையாக {n1_txt,இரண்டு முறை} எழுதுகிறாள், அதில் {frac_txt,பாதியை} ஒரு முறை எழுதுகிறாள், பின்னர் அவள் ஏற்கனவே எழுதிய அனைத்தையும் மீண்டும் எழுதுகிறாள். {name,எலிஸ்} மொத்தம் எத்தனை எழுத்துக்களை எழுதியுள்ளாள்?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"அகரவரிசை\", 26), (\"ஹிரகனா (48 எழுத்துக்களுடன்)\", 48), (\"பார்சி அகரவரிசை (32 எழுத்துக்களுடன்)\", 32), (\"அரபு அப்சாத் (28 எழுத்துக்களுடன்)\", 28)])\n- n1_txt, n1_val = sample([(\"இரண்டு முறை\", 2), (\"மூன்று முறை\", 3), (\"நான்கு முறை\", 4), (\"ஐந்து முறை\", 5), (\"ஆறு முறை\", 6), (\"ஏழு முறை\", 7), (\"எட்டு முறை\", 8), (\"ஒன்பது முறை\", 9), (\"பத்து முறை\", 10), (\"பதினொன்று முறை\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
-    "count": 100
-  },
-  {
     "id": 56,
     "question_annotated": "ஒரு {container,கண்ணாடி} {liquid,பால்} {vol,8} {unit,ஆன்ஸ்} {liquid,பால்} உள்ளது. {name,ஜான்} {num,2} {container_plural,கண்ணாடிகள்} {liquid,பால்} குடிக்கிறார். ஒரு {unit,ஆன்ஸ்} {liquid,பால்} {cal,3} கலோரிகள் கொண்டிருந்தால், அவர் எத்தனை கலோரிகள் உட்கொண்டார்?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"கண்ணாடி\",\"கண்ணாடிகள்\"), (\"கப்\",\"கப்\"), (\"பாட்டில்\",\"பாட்டில்கள்\"), (\"கார்ட்டன்\",\"கார்ட்டன்கள்\")])\n- liquid = sample([\"ஜூஸ்\", \"சோடா\", \"சோடா தண்ணீர்\", \"தேநீர்\", \"லெமனேட்\"])\n- unit = sample([\"ஆன்ஸ்\", \"mL\", \"cc\", \"oz\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
-    "count": 100
-  },
-  {
-    "id": 57,
-    "question_annotated": "{name1,பென்} {n1,4} நீல வண்ணக் குழாய்களையும் {n2,3} மஞ்சள் வண்ணக் குழாய்களையும் கொண்டுள்ளார். {name2,ஜாஸ்பர்} {color1,நீல} வண்ணக் குழாய்களில் {name1,பென்} வசமுள்ளதை விட {frac1_txt,பாதியாக} கொண்டுள்ளார், மேலும் {color2,மஞ்சள்} வண்ணக் குழாய்களில் {name1,பென்} வசமுள்ளதை விட {mult1_txt,மூன்று} மடங்கு கொண்டுள்ளார். {name2,ஜாஸ்பர்} வசம் மொத்தம் எத்தனை வண்ணக் குழாய்கள் உள்ளன?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
     "count": 100
   },
   {
@@ -432,11 +412,6 @@
   {
     "id": 87,
     "question_annotated": "{park_name,ஐந்து கொடி} இல் உள்ள மிகப்பெரிய நீர்ச்சறுக்குப் பாதை {l1,300} {unit,அடி} நீளம் கொண்டது, மற்றும் மக்கள் {s1,60} {unit,அடி}/நிமிடம் வேகத்தில் சறுக்குகிறார்கள். இரண்டாவது பெரிய நீர்ச்சறுக்குப் பாதை {l2,240} {unit,அடி} நீளம் கொண்டது, ஆனால் மிகவும் சரிவானது, எனவே மக்கள் {s2,80} {unit,அடி}/நிமிடம் வேகத்தில் சறுக்குகிறார்கள். இரண்டாவது பெரிய சறுக்குப் பாதையைப் பயன்படுத்துவதை விட மிகப்பெரிய சறுக்குப் பாதையைப் பயன்படுத்துவது எவ்வளவு அதிக நேரம் எடுக்கும்?\n\n#init:\n- park_name = sample([\"ஸ்ப்ளாஸ் உலகம்\", \"அக்வா சாகசம்\", \"நீர் அற்புத உலகம்\", \"நெப்டியூனின் ராச்சியம்\"])\n- unit = sample(['கெஜம்', 'மீட்டர்'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
-    "count": 100
-  },
-  {
-    "id": 88,
-    "question_annotated": "{name,தானா} நடக்க முடிவதை விட {mult_run_txt,நான்கு மடங்கு} வேகத்தில் ஓட முடியும், ஆனால் அவள் ஓடும் வேகத்தில் {frac_skip_txt,அரை} வேகத்தில் தாவிச் செல்ல முடியும். அவள் தாவிச் செல்லும் வேகம் {skip_speed,3} மைல் ஒரு மணிநேரத்திற்கு என்றால், {total_time_txt,ஆறு} மணிநேரத்தில் அவள் எத்தனை மைல் பயணிக்க முடியும் என்றால், அவள் {frac_run_txt,மூன்றில் ஒரு பங்கு} நேரம் ஓடுவதற்கும் {frac_walk_txt,மூன்றில் இரண்டு பங்கு} நேரம் நடப்பதற்கும் செலவிட்டால்?\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
     "count": 100
   },
   {

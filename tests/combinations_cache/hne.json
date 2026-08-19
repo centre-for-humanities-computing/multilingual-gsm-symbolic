@@ -35,11 +35,6 @@
     "count": 100
   },
   {
-    "id": 7,
-    "question_annotated": "Ek kisan apne {animals,ghora} ke liye chara khareed raha hai. Woh {treat1,khar}, {treat2,jau}, {treat3,gaajar} aur {rare_treat,chini ke tukde} ki vibhinn prakar khareedta hai. Kyunki {rare_treat,chini ke tukde} ek kamyaab swaad hai, woh pure stable ke liye sirf {n4_txt,do} {w4,1}-{unit,paun} ke dabbe khareedta hai. Woh sirf utne hi {treat3,gaajar} chahta hai jitne {animals,ghora} ko sabziyan taaza rehte hue khilaya ja sake, isliye woh {n3_txt,char} {w3,12}-{unit, paun} ke thaili khareedta hai. {treat1,khar} unke {animals,ghora} ka mukhya aahar hai, isliye woh {n1_txt,chaalis do} {w1,75}-{unit,paun} ke pack khareedta hai. {treat2,jau} {treat1,khar} ki purti ke liye ek aadharbhut cheez hai, isliye woh {n2_txt,bis} {w2, 65}-{unit,paun} ke bora khareedta hai. Agar uske farm truck mein ek baar mein {total,2250} {unit,paun}s uthaya ja sakta hai, toh kisan ko saara chara transport karne ke liye kitni baar jaana padega?\n\n#init:\n- animals = sample(['ghora', 'gor', 'bheda', 'durr', 'alpaca'])\n- unit = sample(weights_med)\n- treat1, treat2 = sample([\"khar\", \"makka\", \"jau\", \"seb\", \"gehun\"], 2)\n- treat3 = sample([\"gaajar\", \"chukandar\", \"kheera\"])\n- rare_treat = sample([\"chini ke tukde\", \"tarbooj ki chilki\", \"pudina ki goli\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
-    "count": 100
-  },
-  {
     "id": 8,
     "question_annotated": "एक जादूगर {n, 16} गेंदें उछाल सकता है। {frac_1_txt, आधा} गेंदें {ball_type, गोल्फ} होती हैं, और {frac_2_txt, आधा} {ball_type, गोल्फ} गेंदें {color, नीली} होती हैं। {color, नीली} {ball_type, गोल्फ} गेंदें कितनी हैं?\n\n#init:\n- ball_type = sample([\"गोल्फ\", \"टेनिस\"])\n- color = sample(colors)\n- frac_1_txt, frac_1_val = sample(fraction_alnum)\n- frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer:  int(n * frac_1_val * frac_2_val)",
     "count": 100
@@ -52,11 +47,6 @@
   {
     "id": 10,
     "question_annotated": "किसी {dev,पब्लिक फोन} से कॉल करने के लिए, आपको अपने कॉल की प्रत्येक मिनट के लिए {currency,$}{frac1,0.25} चुकाने होंगे। {t,16} मिनट के बाद, वह कीमत प्रति मिनट {currency,$}{frac2,0.2} तक गिर जाती है। {total,36}-मिनट के कॉल की कीमत कितनी होगी?\n\n#init:\n- dev = sample(['फोन बूथ', 'होटल रूम फोन'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
-    "count": 100
-  },
-  {
-    "id": 11,
-    "question_annotated": "{name, पीटर} अलग-अलग आकार के बर्फ के क्यूब बनाना चाहता है जिसमें {n,32} {unit,औंस} पानी है।\nवह {w1,4} {unit,औंस} प्रति क्यूब का उपयोग करने वाले बड़े क्यूब, {w2,2} {unit,औंस} का उपयोग करने वाले मध्यम क्यूब, और {w3,1/2} {unit,औंस} का उपयोग करने वाले छोटे क्यूब बना सकता है।\nअगर वह {n1,3} बड़े क्यूब, {n2,7} मध्यम क्यूब, और {n3,8} छोटे क्यूब बनाता है, तो उसके पास कितने {unit,औंस} पानी बचता है?\n\n#init:\n- name = sample(names_male)\n- unit = sample(weights_sm)\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
     "count": 100
   },
   {
@@ -112,11 +102,6 @@
   {
     "id": 23,
     "question_annotated": "{name,Martha} apne {count,3} nati-nati ke liye sardi ke kapde bun rahi hai. Woh {children,tehin} hain, isliye sabka size ek jaisa hai. Woh unke liye ek {c1,topi}, {c2,dupatta}, {c3,sweater}, {c4,dastana}, aur {c5,mule} banana chahti hai. Ek {c1,topi} banane mein {n1,2} gund roon lagti hai, {n2,4} ek {c2,dupatta} ke liye, {n3,12} ek {c3,sweater} ke liye, {n4,1} ek jode {c4,dastana} ke liye, aur {n5,2} ek jode {c5,mule} ke liye. Use kitne gund roon khareedne chahiye?\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"sweater\", \"shawl\", \"topi\", \"cardigan\", \"poncho\", \"vest\", \"beanie\", \"tunic\"],3)\n- c4, c5 = sample([ \"dastana\", \"booties\", \"mule\",  \"leg warmers\", \"hathavari\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"jodi\",2), (\"tehin\",3), (\"chaar bache\", 4),  (\"paanch bache\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
-    "count": 100
-  },
-  {
-    "id": 24,
-    "question_annotated": "Iske poshanik jaankari ke anusar, ek {food,chips} thaili mein har serving par {cal,250} calories hote hain.\nAgar ek {size,300} {unit,gram} thaili mein {n,5} servings hain, to aap kitne {unit,gram} kha sakte hain agar aapka rozana calorie lakshya {total,2000} hai aur aapne pehle se hi {spent,1800} calories kha liye hain?\n\n#init:\n- food = sample([\"popcorn\", \"bread\", \"biscuit\"])\n- unit = sample([\"gram\", \"ounce\", \"oz\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
     "count": 100
   },
   {
@@ -185,13 +170,8 @@
     "count": 100
   },
   {
-    "id": 39,
-    "question_annotated": "एक {job,सफाईकर्मी} को {n,80} {room,कक्षा} वाले एक {building,स्कूल} को साफ़ करन पड़त है।\n\nउनको इसे पूरा करन के लई {d,5} दिन होत हैं।\nप्रति {room,कक्षा} उनको {t,15} मिनट लगत हैं।\nअगर वे प्रति दिन {h,8} घंटा काम करत हैं, तो औसतन उनके दिन का कितना प्रतिशत समय {room,कक्षा} साफ़ करन में लगत है?\n\n#init:\n- job = sample([\"सफाईकर्मी\", \"क्लीनर\", \"मेंटेनेंस वर्कर\"])\n- building = sample([\"ऑफिस बिल्डिंग\", \"अस्पताल\", \"विश्वविद्यालय\",])\n- room = sample([\"कमरा\", \"मंजिल\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))",
-    "count": 100
-  },
-  {
     "id": 40,
-    "question_annotated": "{name,सली} छुट्टी मनाने समुद्र तट पर गई। उसके माता-पिता ने उसे ${total,15} दिए जो भी वह चाहती खरीदने के लिए। सूवनीयर दुकान पर, ताफी बिक्री पर थी \"{n1,1} पाउंड ${p1,3} प्रति पाउंड पर खरीदें, {n2,1} पाउंड {discount,1/2} की छूट पाएं।\" उसने {n12,4} पाउंड उठाए। उसने ${p2,1.5} के लिए समुद्री शेलों का मिश्रित थैला भी खरीदा और {n3,4} मैग्नेट जो ${p3,0.25} प्रति थे। {name,सली} के पास कितना पैसा बचा है?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,सली} छुट्टी मनाने समुद्र तट पर गई। उसके माता-पिता ने उसे ${total,15} दिए जो भी वह चाहती खरीदने के लिए। सूवनीयर दुकान पर, ताफी बिक्री पर थी \"{n1,1} पाउंड ${p1,3} प्रति पाउंड पर खरीदें, {n2,1} पाउंड {discount,1/2} की छूट पाएं।\" उसने {n12,4} पाउंड उठाए। उसने ${p2,1.5} के लिए समुद्री शेलों का मिश्रित थैला भी खरीदा और {n3,4} मैग्नेट जो ${p3,0.25} प्रति थे। {name,सली} के पास कितना पैसा बचा है?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -225,18 +205,8 @@
     "count": 100
   },
   {
-    "id": 47,
-    "question_annotated": "{name1,कोल} ने {n,3} दुसरा अंडे आँगन में ईस्टर एग हंट के लिए छुपाये।\n{name2,लमार} ने {x,5} अंडे ढूंढे।\n{name3,स्टेसी} ने {name2,लमार} से {mult1_txt,दुगुना} इतने ढूंढे।\n{name4,चार्ली} ने {name3,स्टेसी} से {y,2} कम ढूंढे, और {name5,मेई} ने {name4,चार्ली} से {frac_txt,आधा} इतने ढूंढे।\nआँगन में अभी कितने अंडे छुपे हैं?\n\n#init:\n- name1, name2, name3, name4, name5 = sample(names, 5)\n- $n = range(2, 10)\n- $x = range(3, 15)\n- $y = range(1, 5)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))\n- is_int(x * mult1_val)\n- x * mult1_val - y > 0\n- is_int((x * mult1_val - y) * frac_val)\n- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)\n\n#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))",
-    "count": 100
-  },
-  {
     "id": 48,
     "question_annotated": "{name,इमली} एक मिनट में {n1,6} {food,झींगा} छील सकती है और {t,10} मिनट में {n2,30} {food,झींगा} भून सकती है। {total,90} {food,झींगा} छीलने और भूनने में उसे कितना समय लगेगा? {name,इमली} एक साथ छील और भून नहीं सकती।\n\n#init:\n- name = sample(names_female)\n- food = sample([\"झींगा\", \"प्याज\", \"गाजर\", \"मशरूम\", \"शंख\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
-    "count": 100
-  },
-  {
-    "id": 49,
-    "question_annotated": "{name,John} कचरा {n,3} अलग-अलग अपार्टमेंट कॉम्प्लेक्स से इकट्ठा करता है। पहिले {n_first_txt,dो} में से प्रत्येक में {a,200} फ्लैट हैं और आखिरी वाला बाकी {n_first_txt,dो} के कुल से {p,60}% बड़ा है। वह हर जगह से हप्ते में {f,3} बार कचरा इकट्ठा करता है और उसे हर फ्लैट के लिए एकत्र करने पर {cur,$}{r,0.4} मिलते हैं। वह हप्ते में कितना पैसा कमाता है?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {
@@ -322,11 +292,6 @@
   {
     "id": 66,
     "question_annotated": "{name,कैंडी} के पास {n1,15} हल्के {c1,नीला} धागे के बॉबिन हैं, {n2,45} गहरे {c1,नीला} धागे के बॉबिन हैं, {n3,40} हल्के {c2,हरा} धागे के बॉबिन हैं, और {n4,50} गहरे {c2,हरा} धागे के बॉबिन हैं। उसके बॉबिन में से कितना प्रतिशत {c1,नीला} है?\n\n#init:\n- name = sample(names)\n- c1, c2 = sample(colors, 2)\n- $n1 = range(15, 100, 5)\n- $n2 = range(45, 150, 5)\n- $n3 = range(20, 80, 5)\n- $n4 = range(50, 100, 5)\n\n#conditions:\n- is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))\n\n#answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))",
-    "count": 100
-  },
-  {
-    "id": 67,
-    "question_annotated": "{name,जॉन} की {vehicle,गाड़ी} खराब हो गइ। {vehicle,गाड़ी} का वजन {weight_vehicle,1200} {unit,पाउंड} है और उसमें {item,सामान} है जिसका वजन {weight_item,250} {unit,पाउंड} है। उसमें उसके {num_passengers_txt,दो} छोटे {passenger_type,बच्चे} भी हैं जिनका वजन {weight_passenger,75} {unit,पाउंड} प्रति है। अगर {vehicle,गाड़ी} को हिलाने के लिए {force_percent,1}% वजन का बल है, तो उसे {vehicle,गाड़ी} धकेलने के लिए कितना बल चाहिए?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample(['गाड़ी', 'वैन', 'ट्रक', 'एसयूवी'])\n- item = sample(['सामान', 'किराना', 'उपकरण', 'फर्नीचर'])\n- passenger_type = sample(['बच्चे', 'दोस्त', 'सहकर्मी', 'टीममेट'])\n- unit = sample(['पाउंड', 'किलोग्राम'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)",
     "count": 100
   },
   {
@@ -432,11 +397,6 @@
   {
     "id": 89,
     "question_annotated": "{name,James} ne {start_time,5} PM se {end_time,9} PM tak ek {vehicle,ghode wali gadi} kiraya kiya. Use {free_hours,1} ghante muft milte hain. Pehla bhara hua ghanta {cur,$}{first_hour_cost,15} hai, aur uske baad har bhara hua ghanta pehle bhare hue ghante se {multiplier_txt,do guna} mehnga hota hai. Usne kitna paya?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample([\"limousine\", \"party bus\", \"naav\", \"luxury car\"])\n- $start_time = range(1, 8)\n- $end_time = range(3, 12)\n- $free_hours = range(1, 3)\n- cur = sample(currencies_sym)\n- $first_hour_cost = range(10, 51)\n- multiplier_txt, multiplier_val = sample(multi_times)\n\n#conditions:\n- end_time - start_time > free_hours + 1\n- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)\n\n#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val",
-    "count": 100
-  },
-  {
-    "id": 90,
-    "question_annotated": "{name1,Charlie} ke paas {name2,Dorothy} se {mult1_txt,teen} guna zyada {platform,Facebook} dost hain. {name3,James} ke paas {name2,Dorothy} se {mult2_txt,char} guna zyada {platform,Facebook} dost hain. Agar {name1,Charlie} ke paas {platform,Facebook} par {n,12} dost hain, toh {name3,James} ke paas kitne {platform,Facebook} dost hain?\n\n#init:\n- name1, name2, name3 = sample(names, 3)\n- platform = sample([\"Instagram\", \"Twitter\", \"LinkedIn\", \"TikTok\", \"Snapchat\"])\n- mult1_txt, mult1_val = range_str(1,6,1,numbers)\n- mult2_txt, mult2_val = range_str(1,6,1,numbers)\n- $n = range(10, 201)\n\n#conditions:\n- mult2_val != mult1_val\n- is_int(n / mult1_val)\n\n#answer: int((n / mult1_val) * mult2_val)",
     "count": 100
   },
   {

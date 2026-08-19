@@ -35,11 +35,6 @@
     "count": 100
   },
   {
-    "id": 7,
-    "question_annotated": "Un fermier cumpără hrană pentru {animals,cai}. El cumpără o varietate de {treat1,fân}, {treat2,ovăz}, {treat3,morcovi} și {rare_treat,cube de zahăr}. Deoarece {rare_treat,cube de zahăr} sunt o raritate, el cumpără doar {n4_txt,două} cutii de {w4,1}-{unit,livră} pentru tot grajdul. Vrea doar suficienți {treat3,morcovi} pentru a hrăni {animals,cai} atâta timp cât legumele sunt proaspete, așa că el cumpără {n3_txt,patru} pungi de {w3,12}-{unit,livră}. {treat1,fân} este dieta principală a {animals,cai} săi, așa că el cumpără {n1_txt,patruzeci și doi} pachete de {w1,75}-{unit,livră}. {treat2,ovăz} este un aliment de bază pentru a suplimenta {treat1,fân}, așa că el cumpără {n2_txt,douăzeci} saci de {w2,65}-{unit,livră}. Dacă camionul său de fermă poate transporta {total,2250} {unit,livră} o singură dată, câte călătorii are nevoie fermierul pentru a transporta tot furajul?\n\n#init:\n- animals = sample(['cai', 'vaci', 'oi', 'porci', 'alpace'])\n- unit = sample(weights_med)\n- treat1, treat2 = sample([\"fân\", \"porumb\", \"ovăz\", \"mere\", \"grâu\"], 2)\n- treat3 = sample([\"morcovi\", \"sfeclă\", \"castraveți\"])\n- rare_treat = sample([\"cube de zahăr\", \"coajă de pepene\", \"bomboane de mentă\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
-    "count": 100
-  },
-  {
     "id": 8,
     "question_annotated": "Un artist de circ poate manipula {n, 16} mingi. {frac_1_txt,jumătate} din mingi sunt {ball_type, golf} mingi, iar {frac_2_txt,jumătate} din {ball_type,golf} mingi sunt {color, albastru}. Câte {color, albastru} {ball_type,golf} mingi sunt?\n\n#init:\n- ball_type = sample([\"golf\", \"tenis\"])\n- color = sample(colors)\n- frac_1_txt, frac_1_val = sample(fraction_alnum)\n- frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer:  int(n * frac_1_val * frac_2_val)",
     "count": 100
@@ -140,11 +135,6 @@
     "count": 100
   },
   {
-    "id": 28,
-    "question_annotated": "Un {facility,spital} are o capacitate de {total,1000} {item,pat} cu {frac,1/5} ocupate.\nDin cauza {event,epidemie de coronavirus}, {daily,50} pacienți sunt admiși în {facility,spital} în fiecare zi.\nCalculează numărul total de {item,pat} neocupate în {facility,spital} după {period,2} săptămâni.\n\n#init:\n- facility = sample([\"spital\", \"clinică\", \"centru medical\", \"centru de îngrijire\"])\n- item = sample([\"pat\", \"cameră\", \"secție\"])\n- event = sample([\"sezon gripal\", \"dezastre naturale\", \"accident major\", \"pandemie\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
-    "count": 100
-  },
-  {
     "id": 29,
     "question_annotated": "{name1,Brett} are {age1,14} ani. În {years_txt,patru} ani {relation_type,soră}a lui {name2,Angela} va fi {mult_txt,de trei ori} mai mare decât {name1,Brett} este acum. Câți ani are {name2,Angela} acum?\n\n#init:\n- name1 = sample(names_male)\n- name2 = sample(names_female)\n- relation_type = sample(['soră', 'văr'])\n- $age1 = range(8, 25)\n- years_txt, years_val = range_str(2, 10, 1, numbers)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- age1 * mult_val - years_val > 0\n\n#answer: age1 * mult_val - years_val",
     "count": 100
@@ -196,7 +186,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,Sally} s-a dus la mare pentru vacanță. Părinții ei i-au dat ${total,15} să cumpere orice dorea. La magazinul de suveniruri, caramel era la reducere cu \"Cumpără {n1,1} livră la ${p1,3} per livră, primești {n2,1} livră cu {discount,1/2} reducere.\" A luat {n12,4} livre. A cumpărat și un sac mixt de scoici pentru ${p2,1.5} și {n3,4} magneți care erau ${p3,0.25} fiecare. Câți bani mai are {name,Sally}?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,Sally} s-a dus la mare pentru vacanță. Părinții ei i-au dat ${total,15} să cumpere orice dorea. La magazinul de suveniruri, caramel era la reducere cu \"Cumpără {n1,1} livră la ${p1,3} per livră, primești {n2,1} livră cu {discount,1/2} reducere.\" A luat {n12,4} livre. A cumpărat și un sac mixt de scoici pentru ${p2,1.5} și {n3,4} magneți care erau ${p3,0.25} fiecare. Câți bani mai are {name,Sally}?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -240,11 +230,6 @@
     "count": 100
   },
   {
-    "id": 49,
-    "question_annotated": "{name,John} colectează gunoiul de la {n,3} ansambluri de apartamente diferite. Primele {n_first_txt,două} au câte {a,200} apartamente și ultima este cu {p,60}% mai mare decât celelalte {n_first_txt,două} la un loc. El colectează gunoiul {f,3} ori pe săptămână de la fiecare loc și primește {cur,$}{r,0.4} per colectare pentru fiecare apartament. Câți bani câștigă într-o săptămână?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
-    "count": 100
-  },
-  {
     "id": 50,
     "question_annotated": "Aria {room_type,cameră de dormit} dreptunghiulară a lui {name,Billie} este de {area,360} picioare pătrate. Dacă lungimea camerei este de {length,3} yard(i), care este perimetrul camerei în picioare?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"salon\", \"studiou\", \"birou\", \"bucătărie\"])\n- $area = range(200, 1200)\n- $length = range(3, 44)\n\n#conditions:\n- is_int(area / (length * 3))\n- area / (length * 3) > length * 3\n\n#answer: 2 * (area // (length * 3) + length * 3)",
     "count": 100
@@ -272,11 +257,6 @@
   {
     "id": 56,
     "question_annotated": "Un {container,pahar} de {liquid,lapte} conține {vol,8} {unit,uncie} de {liquid,lapte}. {name,Ion} bea {num,2} {container_plural,pahare} de {liquid,lapte}. Dacă {liquid,lapte} are {cal,3} calorii pe {unit,uncie}, câte calorii a consumat?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"pahar\",\"pahare\"), (\"cană\",\"cane\"), (\"sticlă\",\"sticle\"), (\"cutie\",\"cutii\")])\n- liquid = sample([\"suc\", \"sodă\", \"apă minerală\", \"ceai\", \"limonadă\"])\n- unit = sample([\"uncie\", \"mL\", \"cc\", \"oz\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
-    "count": 100
-  },
-  {
-    "id": 57,
-    "question_annotated": "{name1,Ben} are {n1,4} tuburi de {color1,albastru} vopsea și {n2,3} tuburi de {color2,galben} vopsea. {name2,Jasper} are {frac1_txt,jumatate} din tuburile de {color1,albastru} vopsea ale lui {name1,Ben}, și {mult1_txt,trei} ori de atâtea tuburi de {color2,galben} vopsea ca {name1,Ben}. Câte tuburi de vopsea are {name2,Jasper}?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
     "count": 100
   },
   {

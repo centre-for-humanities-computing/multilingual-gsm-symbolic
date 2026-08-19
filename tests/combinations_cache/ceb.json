@@ -170,13 +170,8 @@
     "count": 100
   },
   {
-    "id": 39,
-    "question_annotated": "Ang {job,limpyador} kinahanglan nga limpyohan ang {building,eskwelahan} nga adunay {n,80} ka {room,kwarto}.\n\nAdunay sila {d,5} ka adlaw aron mapuno kini.\n\nKinahanglan nila og {t,15} ka minuto matag {room,kwarto}.\n\nKung sila magtrabaho og {h,8} ka oras matag adlaw, unsang porsyento sa ilang adlaw, average, ang ginagmay sa paglimpyo sa {room,kwarto}?\n\n#init:\n- job = sample([\"taga-pa limpyo\", \"limpyador\", \"trabahador sa maintenance\"])\n- building = sample([\"gusaling opisina\", \"ospital\", \"unibersidad\",])\n- room = sample([\"kuwarto\", \"palapag\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))",
-    "count": 100
-  },
-  {
     "id": 40,
-    "question_annotated": "{name,Sally} miadto sa baybayon para sa bakasyon. Iyang mga ginikanan naghatag kaniya og ${total,15} para makapalit og bisan unsa nga gusto niya. Sa tindahan sa mga souvenir, ang taffy anaa sa sale alang sa \"Palit {n1,1} pound sa ${p1,3} kada pound, makakuha {n2,1} pound sa {discount,1/2} discount.\" Gikuha niya og {n12,4} pounds. Gipalit usab niya og usa ka bag sa mga kagatok alang sa ${p2,1.5} ug {n3,4} magnets nga ${p3,0.25} ang matag usa. Pila ang kwarta nga naa pa ni {name,Sally}?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,Sally} miadto sa baybayon para sa bakasyon. Iyang mga ginikanan naghatag kaniya og ${total,15} para makapalit og bisan unsa nga gusto niya. Sa tindahan sa mga souvenir, ang taffy anaa sa sale alang sa \"Palit {n1,1} pound sa ${p1,3} kada pound, makakuha {n2,1} pound sa {discount,1/2} discount.\" Gikuha niya og {n12,4} pounds. Gipalit usab niya og usa ka bag sa mga kagatok alang sa ${p2,1.5} ug {n3,4} magnets nga ${p3,0.25} ang matag usa. Pila ang kwarta nga naa pa ni {name,Sally}?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -242,11 +237,6 @@
   {
     "id": 53,
     "question_annotated": "{name1,Pierson} nakakuha {n1,278} puntos sa usa ka dula sa {game,boling}.\n{name2,Nikita} nakakuha {n2,11} puntos labaw pa sa {frac_txt,katunga} sa gikuha ni {name1,Pierson}.\nPila ka puntos ang gikuha ni {name1,Pierson} ug {name2,Nikita} sa kinatibuk-an?\n\n#init:\n- name1, name2 = sample(names, 2)\n- game = sample([\"boling\", \"darts\", \"archery\", \"basketball\", \"tenis\"])\n- $n1 = range(200, 500)\n- $n2 = range(5, 50)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(frac_val * n1)\n\n#answer: n1 + int(frac_val * n1 + n2)",
-    "count": 100
-  },
-  {
-    "id": 54,
-    "question_annotated": "{name,Doxa} naghiwa sa usa ka bug-os nga {fruit,mansanas} ngadto sa {total,18} ka mga piraso.\nGikaon niya ang {n1,3} ka mga piraso, ang {sibling1,hermana} niya nakaon og {n2,2} ka mas daghan kaniya, ug ang {sibling2,hermano} niya nakaon og {n3,3} ka mas daghan kaniya nga {sibling1,hermana}.\nPila ka mga piraso sa {fruit,mansanas} ang gikaon nila tanan?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"orange\", \"pera\", \"pitsa\", \"mangga\", \"kiwi\"])\n- sibling1, sibling2 = sample([\"hermano\", \"hermana\", \"pinsan\", \"higala\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
     "count": 100
   },
   {

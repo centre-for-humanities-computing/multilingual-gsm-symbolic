@@ -11,7 +11,7 @@ from multilingual_gsm_symbolic._helpers import (
     range_possibilities_str,
     range_str,
 )
-from multilingual_gsm_symbolic.load_data import available_languages
+from multilingual_gsm_symbolic.load_data import _active_template_files, available_languages
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion, Question
 
 
@@ -327,7 +327,11 @@ def test_example_40_never_produces_negative_answer():
 
 def test_example_40_limits_leftovers_in_every_language():
     template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
-    template_paths = [template_root / language / "symbolic/0040.toml" for language in available_languages()]
+    template_paths = [
+        template_root / language / "symbolic/0040.toml"
+        for language in available_languages()
+        if (template_root / language / "symbolic/0040.toml") in _active_template_files(template_root / language)
+    ]
     assert template_paths
 
     for template_path in template_paths:

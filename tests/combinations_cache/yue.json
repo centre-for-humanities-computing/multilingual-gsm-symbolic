@@ -35,16 +35,6 @@
     "count": 100
   },
   {
-    "id": 7,
-    "question_annotated": "一位農夫正為他的{animals,馬}買飼料。佢買咗多種{treat1,乾草}、{treat2,燕麥}、{treat3,紅蘿蔔}同{rare_treat,方糖}。由於{rare_treat,方糖}係一種稀有零食，佢只為整個畜欄買{n4_txt,兩} 個 {w4,1}-{unit,磅} 嘅盒子。佢只想買足夠嘅{treat3,紅蘿蔔}去餵{animals,馬}，趁蔬菜新鮮，所以佢買{n3_txt,四} 袋 {w3,12}-{unit,磅} 嘅。{treat1,乾草}係佢{animals,馬}嘅主要飲食，所以佢買{n1_txt,四十二} 包 {w1,75}-{unit,磅} 嘅。{treat2,燕麥}係補充{treat1,乾草}嘅主食，所以佢買{n2_txt,二十} 包 {w2, 65}-{unit,磅} 嘅。如果佢嘅農用卡車一次可以載{total,2250} {unit,磅}，農夫需要幾多趟先可以運晒所有飼料？\n\n#init:\n- animals = sample(['馬', '牛', '羊', '豬', '羊駝'])\n- unit = sample(weights_med)\n- treat1, treat2 = sample([\"乾草\", \"玉米\", \"燕麥\", \"蘋果\", \"小麥\"], 2)\n- treat3 = sample([\"紅蘿蔔\", \"甜菜\", \"黃瓜\"])\n- rare_treat = sample([\"方糖\", \"西瓜皮\", \"薄荷糖\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
-    "count": 100
-  },
-  {
-    "id": 8,
-    "question_annotated": "一位雜耍者可以雜耍 {n, 16} 個球。{frac_1_txt,一半} 的球是 {ball_type, 高爾夫} 球，而 {frac_2_txt,一半} 的 {ball_type, 高爾夫} 球是 {color, 藍色} 的。有多少個 {color, 藍色} {ball_type, 高爾夫} 球？\n\n#init:\n- ball_type = sample([\"高爾夫\", \"網球\"])\n- color = sample(colors)\n- frac_1_txt, frac_1_val = sample(fraction_alnum)\n- frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer:  int(n * frac_1_val * frac_2_val)",
-    "count": 100
-  },
-  {
     "id": 9,
     "question_annotated": "當 {name, 索菲} 照顧她的 {family, 侄子} 時，她便拿出各種玩具給他。那袋積木裡有 {x,31} 塊積木。那箱毛絨玩具裡有 {y,8} 隻毛絨玩具。那疊疊環塔上有 {z,9} 個彩色環。{name, 索菲} 最近買了一筒彈力球，使她給 {family, 侄子} 的玩具總數達到 {total,62} 個。筒裡有多少個彈力球？\n\n#init:\n- name = sample(names_female)\n- family = sample([\"侄子\", \"表親\", \"兄弟\"])\n- $x = range(31, 75)\n- $y = range(8, 50)\n- $z = range(9, 35)\n- $total = range(60, 250)\n\n#conditions:\n- total - (x + y + z) >= 20 \n- total - (x + y + z) < 100\n\n#answer: total - (x + y + z)",
     "count": 100
@@ -160,11 +150,6 @@
     "count": 100
   },
   {
-    "id": 35,
-    "question_annotated": "{name,約翰} 正在為 {event,學校旅行} 籌款。他已向 {organization,學校} 申請協助，該組織決定承擔 {event,學校旅行} 費用中的 {fraction_txt,一半}。如果 {name,約翰} 手頭有 {cur,$}{current,50}，而 {event,學校旅行} 的總費用為 {cur,$}{total,300}，那麼他還差多少錢？\n\n#init:\n- name = sample(names_male)\n- event = sample([\"學校旅行\", \"校外活動\", \"體育比賽\", \"會議\", \"音樂節\", \"科學展覽\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"學校\", \"社區中心\", \"本地慈善機構\", \"青年會\", \"家長會\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)",
-    "count": 100
-  },
-  {
     "id": 36,
     "question_annotated": "{name,Toula} 去了 {shop,餅店} 並購買了多種類型的 {item,點心}。她買了 {n1,3} 打 {item1,甜甜圈}，每打 ${p1,68} 元，{n2,2} 打 {item2,迷你紙杯蛋糕}，每打 ${p2,80} 元，以及 {n3,6} 打 {item3,迷你芝士蛋糕}，每打 ${p3,55} 元。總共花了多少錢？\n\n#init:\n- name = sample(names_female)\n- shop = sample([\"餅店\", \"法式餅店\", \"糖果店\", \"咖啡廳\"])\n- item = sample([\"點心\", \"烘焙食品\", \"甜點\", \"零食\"])\n- item1 = sample([\"甜甜圈\", \"羊角包\", \"泡芙\", \"丹麥酥\"])\n- item2 = sample([\"迷你紙杯蛋糕\", \"馬卡龍\", \"曲奇\", \"塔\"])\n- item3 = sample([\"迷你芝士蛋糕\", \"布朗尼\", \"瑪芬\", \"司康\"])\n- $n1 = range(1, 10)\n- $n2 = range(4, 10)\n- $n3 = range(2, 10)\n- $p1 = range(11, 21)\n- $p2 = range(73, 90)\n- $p3 = range(112, 120)\n\n#answer: n1 * p1 + n2 * p2 + n3 * p3",
     "count": 100
@@ -186,7 +171,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,莎莉} 去海邊度假。她父母給了 ${total,15} 讓她買任何她想要的東西。在紀念品店，太妃糖有優惠：「買 {n1,1} 磅，每磅 ${p1,3}，再獲 {n2,1} 磅 {discount,1/2} 折扣。」她裝了 {n12,4} 磅。她還買了一袋混合貝殼，價 ${p2,1.5}，以及 {n3,4} 個磁鐵，每個 ${p3,0.25}。{name,莎莉} 還剩多少錢？\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,莎莉} 去海邊度假。她父母給了 ${total,15} 讓她買任何她想要的東西。在紀念品店，太妃糖有優惠：「買 {n1,1} 磅，每磅 ${p1,3}，再獲 {n2,1} 磅 {discount,1/2} 折扣。」她裝了 {n12,4} 磅。她還買了一袋混合貝殼，價 ${p2,1.5}，以及 {n3,4} 個磁鐵，每個 ${p3,0.25}。{name,莎莉} 還剩多少錢？\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -197,11 +182,6 @@
   {
     "id": 42,
     "question_annotated": "{name,羅傑}去商店買一些{item,咖啡}。他通常買的{item,咖啡}品牌售價為{cur,$}{price,5}每{unit,磅}。由於他最愛的品牌賣完了，他不得不買一個貴{percent,20}%的品牌。他決定買足夠一星期的{item,咖啡}，並且每天消耗{usage,1}{unit,磅}{item,咖啡}。他也決定給自己買一個{extra_item,甜甜圈}，花費{cur,$}{extra_price,2}。所有東西一共多少錢？\n\n#init:\n- name = sample(names_male)\n- item = sample(['茶', '糖', '麵粉', '米'])\n- cur = sample(currencies_sym)\n- unit = sample(['千克', 'kg'])\n- extra_item = sample(['曲奇', '瑪芬', '貝果'])\n- $price = range(3, 25)\n- $percent = range(10, 50, 5)\n- $usage = range(1, 3)\n- $extra_price = range(1, 5)\n\n#conditions:\n- is_int(price * percent / 100)\n\n#answer: (price + price * percent / 100) * 7 * usage + extra_price",
-    "count": 100
-  },
-  {
-    "id": 43,
-    "question_annotated": "{name,戴克斯} 去咗佢嘅 {place,農場} 摘 {fruit,蘋果}，喺 {location,花園} 發現 {insect1,蟲} 嘅數量係 {insect2,螞蟻} 嘅 {frac_txt,一半}。如果 {insect2,螞蟻} 有 {n,50} 隻，計算 {location,花園} 入面昆蟲嘅總數。\n\n#init:\n- name = sample(names)\n- place = sample([\"果園\", \"後院\", \"溫室\", \"租地\"])\n- fruit = sample([\"草莓\", \"櫻桃\", \"藍莓\", \"覆盆子\"])\n- location = sample([\"花園\", \"田地\", \"地塊\", \"小塊地\"])\n- insect1, insect2 = sample([\"甲蟲\", \"瓢蟲\", \"蚱蜢\", \"毛毛蟲\", \"蜜蜂\", \"黃蜂\"], 2)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)",
     "count": 100
   },
   {
@@ -220,18 +200,8 @@
     "count": 100
   },
   {
-    "id": 47,
-    "question_annotated": "{name1,科爾} 在院子裡為復活節尋蛋遊戲藏了 {n,3} 打蛋。{name2,拉馬} 找到了 {x,5} 個蛋。{name3,斯泰西} 找到的是 {name2,拉馬} 的 {mult1_txt,兩倍}。{name4,查理} 找到了比 {name3,斯泰西} 少 {y,2} 個的數量，而 {name5,美} 找到了 {name4,查理} 的 {frac_txt,一半}。院子裡還藏了多少個蛋？\n\n#init:\n- name1, name2, name3, name4, name5 = sample(names, 5)\n- $n = range(2, 10)\n- $x = range(3, 15)\n- $y = range(1, 5)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))\n- is_int(x * mult1_val)\n- x * mult1_val - y > 0\n- is_int((x * mult1_val - y) * frac_val)\n- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)\n\n#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))",
-    "count": 100
-  },
-  {
     "id": 48,
     "question_annotated": "{name,艾米麗} 可以一分鐘剝 {n1,6} 隻 {food,蝦}，並用 {t,10} 分鐘炒 {n2,30} 隻 {food,蝦}。她剝和炒 {total,90} 隻 {food,蝦} 需要多久？{name,艾米麗} 不能同時剝和炒。\n\n#init:\n- name = sample(names_female)\n- food = sample([\"蝦\", \"洋蔥\", \"紅蘿蔔\", \"蘑菇\", \"蛤蜊\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
-    "count": 100
-  },
-  {
-    "id": 49,
-    "question_annotated": "{name,約翰} 從 {n,3} 個不同的屋苑收集垃圾。首 {n_first_txt,兩} 個各有 {a,200} 個單位，而最後一個則比其餘 {n_first_txt,兩} 個的總和多 {p,60}%。他每週從每個地方收集垃圾 {f,3} 次，每次每個單位他可獲得 {cur,$}{r,0.4}。他每週賺多少錢？\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {
@@ -260,18 +230,8 @@
     "count": 100
   },
   {
-    "id": 55,
-    "question_annotated": "{name,Elise} 正在學習書寫，並決定不斷重寫{alphabets_txt,字母表}直到她熟記為止。她完整地寫了{n1_txt,兩次}，又寫了{frac_txt,一半}一次，然後重寫她已經寫過的內容。{name,Elise} 總共寫了多少個字母？\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"字母表\", 26), (\"平假名（共 48 個字母）\", 48), (\"波斯語字母表（共 32 個字母）\", 32), (\"阿拉伯字母表（共 28 個字母）\", 28)])\n- n1_txt, n1_val = sample([(\"兩次\", 2), (\"三次\", 3), (\"四次\", 4), (\"五次\", 5), (\"六次\", 6), (\"七次\", 7), (\"八次\", 8), (\"九次\", 9), (\"十次\", 10), (\"十一次\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
-    "count": 100
-  },
-  {
     "id": 56,
     "question_annotated": "一個{container,玻璃杯}的{liquid,牛奶}是{vol,8}{unit,盎司}的{liquid,牛奶}。{name,約翰} 喝了{num,2}{container_plural,玻璃杯}的{liquid,牛奶}。如果{liquid,牛奶}每{unit,盎司}有{cal,3}卡路里，他攝入了多少卡路里？\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"玻璃杯\",\"玻璃杯\"), (\"杯\",\"杯\"), (\"瓶\",\"瓶\"), (\"紙盒\",\"紙盒\")])\n- liquid = sample([\"果汁\", \"汽水\", \"氣泡水\", \"茶\", \"檸檬水\"])\n- unit = sample([\"盎司\", \"毫升\", \"立方厘米\", \"盎司\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
-    "count": 100
-  },
-  {
-    "id": 57,
-    "question_annotated": "{name1,本}有{n1,4}管{color1,藍色}顏料和{n2,3}管{color2,黃色}顏料。{name2,賈斯珀}的{color1,藍色}顏料管數是{name1,本}的{frac1_txt,一半}，和{name1,本}的{color2,黃色}顏料管數的{mult1_txt,三}倍。{name2,賈斯珀}總共有多少管顏料？\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
     "count": 100
   },
   {
@@ -287,11 +247,6 @@
   {
     "id": 60,
     "question_annotated": "{name,華生} 每天工作 {h,10} 小時，每週 {d_txt,五} 天。他每小時賺 {cur,$}{r,10}，如果公司表現良好，每週可獲得 {cur,$}{b,300} 獎金。如果整個月公司表現都非常好，{name,華生} 在 {month,四月} 賺了多少錢？\n\n#init:\n- name = sample(names_male)\n- month = sample([\"一月\", \"二月\", \"三月\", \"四月\", \"五月\", \"六月\", \"七月\", \"八月\", \"九月\", \"十月\", \"十一月\", \"十二月\"])\n- cur = sample(currencies_sym)\n- $h = range(6, 13)\n- d_txt, d_val = range_str(3, 7, 1, numbers)\n- $r = range(8, 31)\n- $b = range(100, 601)\n\n#conditions:\n- is_int(h * r)\n\n#answer: h * r * d_val * 4 + b * 4",
-    "count": 100
-  },
-  {
-    "id": 61,
-    "question_annotated": "{name,布蘭登} 有一袋 {objects,彈珠}，裡面有 {n,10} 個。他搬著時被 {obstacle,石子} 絆倒，掉了 {frac_txt,一半}。他四處搜尋，但只找回了 {k,3} 個。回到家後，他進一步檢查了 {objects,彈珠}。{fake_num_txt,兩} 個他撿起來的不是 {objects,彈珠}，而是 {fake_object,珠子}，所以他把它們丟掉了。{name,布蘭登} 最後剩下多少 {objects,彈珠}？\n\n#init:\n- name = sample(names_male)\n- objects = sample(['彈珠', '硬幣', '鈕扣', '珠子', '小石子'])\n- obstacle = sample(['石頭', '樹枝', '玩具', '樹根'])\n- fake_object = sample(['鈕扣', '硬幣', '小石子', '珠子'])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val",
     "count": 100
   },
   {
@@ -317,11 +272,6 @@
   {
     "id": 66,
     "question_annotated": "{name, 甘蒂} 有 {n1,15} 個淺{c1, 藍色}嘅線筒，{n2,45} 個深{c1, 藍色}嘅線筒，{n3,40} 個淺{c2, 綠色}嘅線筒，同 {n4,50} 個深{c2, 綠色}嘅線筒。她嘅線筒中有百分之幾係{c1, 藍色}嘅？\n\n#init:\n- name = sample(names)\n- c1, c2 = sample(colors, 2)\n- $n1 = range(15, 100, 5)\n- $n2 = range(45, 150, 5)\n- $n3 = range(20, 80, 5)\n- $n4 = range(50, 100, 5)\n\n#conditions:\n- is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))\n\n#answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))",
-    "count": 100
-  },
-  {
-    "id": 67,
-    "question_annotated": "{name,約翰}的{vehicle,車}拋錨了。這輛{vehicle,車}重{weight_vehicle,1200}{unit,磅}，他車裡有{item,行李}重{weight_item,250}{unit,磅}。他還有他的{num_passengers_txt,兩}個年輕{passenger_type,小孩}在車裡，每個重{weight_passenger,75}{unit,磅}。如果移動{vehicle,車}所需的力是重量{force_percent,1}%，他需要多少力來推{vehicle,車}？\n\n#init:\n- name = sample(names_male)\n- vehicle = sample(['車', '廂型車', '卡車', '休旅車'])\n- item = sample(['行李', '雜貨', '設備', '家具'])\n- passenger_type = sample(['小孩', '朋友', '同事', '隊友'])\n- unit = sample(['磅', '千克'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)",
     "count": 100
   },
   {
@@ -422,11 +372,6 @@
   {
     "id": 87,
     "question_annotated": "位於 {park_name,五旗} 最大嘅水上滑梯係 {l1,300} {unit,英尺} 長，而人哋滑落去嘅速度係 {s1,60} {unit,英尺}/分鐘。第二大嘅水上滑梯係 {l2,240} {unit,英尺} 長，但係更陡，所以人哋滑落去嘅速度係 {s2,80} {unit,英尺}/分鐘。滑最大嘅滑梯比起滑第二大嘅滑梯多咗幾耐？\n\n#init:\n- park_name = sample([\"水花世界\", \"水上冒險\", \"水之仙境\", \"海神王國\"])\n- unit = sample(['碼', '米'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
-    "count": 100
-  },
-  {
-    "id": 88,
-    "question_annotated": "{name,戴娜} 跑步的速度比走路快 {mult_run_txt,四倍}，但她跳躍的速度是跑步速度的 {frac_skip_txt,一半}。如果她跳躍的速度是 {skip_speed,3} 英里每小時，那麼如果她在 {total_time_txt,六} 小時內，花 {frac_run_txt,三分之一} 的時間跑步，{frac_walk_txt,三分之二} 的時間走路，她能行進多少英里？\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
     "count": 100
   },
   {

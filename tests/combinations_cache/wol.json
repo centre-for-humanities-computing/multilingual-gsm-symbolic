@@ -30,11 +30,6 @@
     "count": 100
   },
   {
-    "id": 8,
-    "question_annotated": "Bëgg-bëgg bi man na yëngal {n, 16} balle. {frac_1_txt, benn-cer} ci balle yi ñooy {ball_type, golf} balle, te {frac_2_txt, benn-cer} ci {ball_type, golf} balle yi ñooy {color, bule}. Ñaata {color, bule} {ball_type, golf} balle la am?\n\n#init:\n- ball_type = sample([\"golf\", \"tennis\"])\n- color = sample(colors)\n- frac_1_txt, frac_1_val = sample(fraction_alnum)\n- frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer:  int(n * frac_1_val * frac_2_val)",
-    "count": 100
-  },
-  {
     "id": 10,
     "question_annotated": "Ngir defar appel ci {dev,telephone bu public}, dafa wara wut {currency,dollar}{frac1,0.25} ngir minit bu nekk ci appel bi. Gannaaw {t,16} minit, sàmm na {currency,dollar}{frac2,0.2} ci minit. Naka la appel bu {total,36} minit di tollu?\n\n#init:\n- dev = sample(['telephone bu public', 'téléphone ci biir hôtel'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
     "count": 100
@@ -115,11 +110,6 @@
     "count": 100
   },
   {
-    "id": 28,
-    "question_annotated": "Benn {facility,ndawu ndigal} am na kàttan {total,1000} {item,kat} ak {frac,1/5} ci biir mi nekk.\nNdax {event,xaaju coronavirus}, {daily,50} xale ñu dugal ci {facility,ndawu ndigal} bi bés bu nekk.\nXayma limu {item,kat} yu nekkul ci {facility,ndawu ndigal} bi gannaaw {period,2} yoon.\n\n#init:\n- facility = sample([\"ndawu ndigal\", \"klinik\", \"ndawu xel\", \"ndawu yu joxe xel\"])\n- item = sample([\"kat\", \"barab\", \"barab\"])\n- event = sample([\"xaaju yaram\", \"baaxu dund\", \"xaaju bu rëy\", \"pandemi\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
-    "count": 100
-  },
-  {
     "id": 29,
     "question_annotated": "{name1,Brett} dafa am {age1,14} at. Ci {years_txt,ñeent} at, am {relation_type,soy} {name2,Angela} dina am {mult_txt,ñett yoon} ni {name1,Brett} am na.\n\n#init:\n- name1 = sample(names_male)\n- name2 = sample(names_female)\n- relation_type = sample(['soy', 'xale bu mag'])\n- $age1 = range(8, 25)\n- years_txt, years_val = range_str(2, 10, 1, numbers)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- age1 * mult_val - years_val > 0\n\n#answer: age1 * mult_val - years_val",
     "count": 100
@@ -166,7 +156,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,aminata} dem ci wetu géej ngir fés. Ñaayam ñu ko joxe ${total,15} ngir sànni lu mu bëgg. Ci dukaŋu xel, taffy bi nekk ci sàtt ngir \"Sànni {n1,1} pon ci ${p1,3} ci pon, jot {n2,1} pon {discount,1/2} wàññi.\" Mu jël {n12,4} pon. Mu sànni itam benn xët wu am yëf yu bari ci géej ci ${p2,1.5} ak {n3,4} magnet yeneen ${p3,0.25} ci benn. Ñaata la {name,aminata} am na ci des?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,aminata} dem ci wetu géej ngir fés. Ñaayam ñu ko joxe ${total,15} ngir sànni lu mu bëgg. Ci dukaŋu xel, taffy bi nekk ci sàtt ngir \"Sànni {n1,1} pon ci ${p1,3} ci pon, jot {n2,1} pon {discount,1/2} wàññi.\" Mu jël {n12,4} pon. Mu sànni itam benn xët wu am yëf yu bari ci géej ci ${p2,1.5} ak {n3,4} magnet yeneen ${p3,0.25} ci benn. Ñaata la {name,aminata} am na ci des?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -187,11 +177,6 @@
   {
     "id": 45,
     "question_annotated": "{name,fatou} am na kër ndoxu mbóot bu {length,111} {unit_length,xal} gu. {name,fatou} di bëgg a dëgër kër ndoxu mbóotam ak ndoxu mbóot. {name,fatou} ndoxu mbóot yi di gën a yaatu {plant_width,12} pouce, te tënk yi nekk ci mbóot mi di wax ne war nga dëgër benn ndoxu mbóot ci {space,1.5} {unit_length,xal} ci kër ndoxu mbóot bi. {name,fatou} am na {owned,17} ndoxu mbóot. Ndoxu mbóot bu nekk dafay tollu {cur,CFA}{cost,6} ci duka bi. Ñari ñi ñu joxe dina tollu ñaata ngir {name,fatou} dëgër kër ndoxu mbóotam?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['xal', 'metar'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
-    "count": 100
-  },
-  {
-    "id": 46,
-    "question_annotated": "{school,Lycée Apple} dafay tegu ñu am ci {venue,Sàllu Xel} bii ci at bii, bi am na {total,6000} nit.\nGannaaw ba ñu jël {graduates,950} barab ngir ñu am yi ak {faculty,300} barab ngir màster yi, ñata ticket la nekk ci ñu am yi di am ngir joxe sàmm ak xarit, su ñu leen séddalee ni ñu mel?\n\n#init:\n- school = sample([\"Lycée Oakwood\", \"Akademi Riverside\", \"Lycée Sunnyside\", \"Lycée Greenville\"])\n- venue = sample([\"Sàllu\", \"Gymnasium\", \"Arena yëngu-yëngu\", \"Sàllu mbir-mi\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
     "count": 100
   },
   {
@@ -225,18 +210,8 @@
     "count": 100
   },
   {
-    "id": 55,
-    "question_annotated": "{name,Elise} dafa naqari xam a bind te dafa des a bindaat {alphabets_txt,mbaay} bi ba mu ko xam. Mu ko bind ci fàww {n1_txt,ñaari yoon}, mu bind {frac_txt,fecc}am benn yoon, ba mu bindaat lépp li mu bindee. Ñaata mbay la {name,Elise} bind ci yoon?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"mbaay\", 26), (\"hiragana (ak 48 mbay)\", 48), (\"mbaay Farsi (ak 32 mbay)\", 32), (\"abjad Arab (ak 28 mbay)\", 28)])\n- n1_txt, n1_val = sample([(\"ñaari yoon\", 2), (\"ñetti yoon\", 3), (\"ñeenti yoon\", 4), (\"juróomi yoon\", 5), (\"juroom-ñaari yoon\", 6), (\"juroom-ñetti yoon\", 7), (\"juroom-ñeenti yoon\", 8), (\"juroom-juroomi yoon\", 9), (\"fukki yoon\", 10), (\"fukk-ak-benn yoon\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
-    "count": 100
-  },
-  {
     "id": 56,
     "question_annotated": "Benn {container,verre} bu {liquid,su} dafa am {vol,8} {unit,unze}s bu {liquid,su}. {name,John} dafay sopp {num,2} {container_plural,verres} bu {liquid,su}. Su {liquid,su} am {cal,3} kalori ci {unit,unze}, ñaata kalori la mu jël?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"verre\",\"verres\"), (\"tas\",\"tas\"), (\"boutey\",\"boutey\"), (\"karton\",\"karton\")])\n- liquid = sample([\"jus\", \"soda\", \"ndox mu yëg\", \"té\", \"limonad\"])\n- unit = sample([\"unze\", \"mL\", \"cc\", \"oz\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
-    "count": 100
-  },
-  {
-    "id": 57,
-    "question_annotated": "{name1,Ben} am na {n1,4} tube {color1,bulu} pënt ak {n2,3} tube {color2,jàngor} pënt. {name2,Jasper} am na {frac1_txt,benn ñaari} yoon ni tube {color1,bulu} pënt yi {name1,Ben} am, ak {mult1_txt,ñett} yoon ni tube {color2,jàngor} pënt yi {name1,Ben} am. Ñaata tube pënt la {name2,Jasper} am?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
     "count": 100
   },
   {
@@ -305,11 +280,6 @@
     "count": 100
   },
   {
-    "id": 73,
-    "question_annotated": "Komet {comet_name,Halley} dëgg-dëggu na ci jant bi {orbit_period,75} at.\n{name,Bill} {relative,baba}am gisee Komet bi bu mu amee {relative_age,30} at.\n{name,Bill} gisee komet bi yoon wi ñaareel bu mu amee {multiple_txt,ñett} yoon guddaayam bu {relative,baba}am amee bu mu gisee Komet bi.\nÑaata la {name,Bill} amee bu mu gisee Komet bi yoon wi njëkk?\n\n#init:\n- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])\n- name = sample(names_male)\n- relative = sample(['baba', 'baba', 'xal', 'gumaa'])\n- $orbit_period = range(50, 101, 5)\n- $relative_age = range(20, 51)\n- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)\n\n#conditions:\n- multiple_val * relative_age < 100\n- multiple_val * relative_age > orbit_period\n- is_int(multiple_val * relative_age - orbit_period)\n\n#answer: multiple_val * relative_age - orbit_period",
-    "count": 100
-  },
-  {
     "id": 74,
     "question_annotated": "Am na {total,96} xale yu {grade,ñeent} ci {school_name,garab bu ndaw} Ecole. {num_girls,43} ci ñoom ñooy ginaaw. Ci {day,ajjuma}, {absent_girls,5} ginaaw yu {grade,ñeent} ak {absent_boys,4} góor yu {grade,ñeent} bañ a dem. Ñaata góor yu {grade,ñeent} moo nekk ci {school_name,garab bu ndaw} Ecole ci {day,ajjuma}?\n\n#init:\n- school_name = sample([\"garab yu bari\", \"tëddu leër\", \"tëddu garab\", \"ndaxu garab\"])\n- grade = sample([\"benn\", \"ñaar\", \"ñett\", \"ñeent\", \"juróom\"])\n- day = sample([\"axu\", \"talaata\", \"alarba\", \"alxames\", \"ajjuma\"])\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys",
     "count": 100
@@ -370,11 +340,6 @@
     "count": 100
   },
   {
-    "id": 88,
-    "question_annotated": "{name,Dana} mën na yéeg {mult_run_txt,ñeent yoon} gën a gaaw ni mu dëgër, waaye mën na yëg ci gaaw bu {frac_skip_txt,benn ci ñaari} gën a gaaw ni mu yéeg. Su fekkee mën na yëg ci {skip_speed,3} mil ci waxtu, ñata mil la mën a yégg ci {total_time_txt,juroom-ñeent} waxtu su fekkee mu jël {frac_run_txt,benn ci ñett} ci waxtu gi mu yéeg te {frac_walk_txt,ñaari ci ñett} ci waxtu gi mu dëgër?\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
-    "count": 100
-  },
-  {
     "id": 89,
     "question_annotated": "{name,James} mu jël benn {vehicle,araba horse} bu {start_time,5} PM ba {end_time,9} PM. Mu am na {free_hours,1} saat(s) baas. Saatu jot bi dafa tollu ci {cur,$}{first_hour_cost,15}, te saat yi ci des dafay tollu ci {multiplier_txt,ñaar yoon} saatu jot bi. Ñaata la mu dox?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample([\"limousine\", \"bus party\", \"bateau\", \"voiture luxe\"])\n- $start_time = range(1, 8)\n- $end_time = range(3, 12)\n- $free_hours = range(1, 3)\n- cur = sample(currencies_sym)\n- $first_hour_cost = range(10, 51)\n- multiplier_txt, multiplier_val = sample(multi_times)\n\n#conditions:\n- end_time - start_time > free_hours + 1\n- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)\n\n#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val",
     "count": 100
@@ -405,18 +370,8 @@
     "count": 100
   },
   {
-    "id": 96,
-    "question_annotated": "{name,Morgan} {parent,baay} wax na ne am na {cur}{budget} ci budget ngir feste bu ndeyam. Moom bëgg na xam ne ak sa xarit ñoom ñépp dinañu joge benn yoon ci {activity1}, am {cur}{tokens} ci {activity2} jeton, te dem {activity3} {times_txt}. Benn yoon ci {activity1} am na {cur}{cost1}. {activity3} yi am na {cur}{cost2} ci yoon. Lii ñaata xarit man na duggal?\n\n#init:\n- name = sample(names_female)\n- parent = sample([\"ndey\", \"baay\", \"tata\", \"baba\"])\n- activity1 = sample([\"mini-golf\", \"bowling\", \"laser tag\"])\n- activity2 = sample([\"arcade\", \"barab ci game\", \"pinball\"])\n- activity3 = sample([\"go-karts\", \"cars yu tampon\", \"roller coaster\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1",
-    "count": 100
-  },
-  {
     "id": 97,
     "question_annotated": "{name1,Julie} diggale kàttan gi ci saftaay {mult_txt,ñaar} ni mbokamam bu amul sañ-sañ {name2,Jewel}. Bépp bés, {name2,Jewel} diggale {n,50} kliya. Liggéey bi ñu def ci ñeenteelu bés lan mooy su ñu liggéeye bépp bés ci ñeenteelu bés?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- mult_txt, mult_var = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_var)\n- is_int((n + n * mult_var) * 7)\n\n#answer: (n + n * mult_var) * 7",
-    "count": 100
-  },
-  {
-    "id": 98,
-    "question_annotated": "Benn {disease,maladi} dafa yàgg {n0_txt,fukk} nit. Bés bu nekk, nit bu nekk bi yàgg dafa yàgg {r_txt,juróom-benn} beneen nit. Ñaata nit ñooy yàgg ci ginnaaw ñetti bés?\n\n#init:\n- disease = sample(['virus', 'bakteri', 'parasit', 'maladi'])\n- n0_txt, n0_val = range_str(5, 22, 1, numbers)\n- r_txt, r_val = range_str(2, 8, 1, numbers)\n#conditions:\n- n0_val * (r_val + 1)**3 < 20000\n\n#answer: n0_val * (r_val + 1)**3",
     "count": 100
   },
   {

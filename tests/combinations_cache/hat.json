@@ -191,7 +191,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,Sally} te ale nan bord lanmè pou vakans. Paran l ba li ${total,15} pou achte sa li te vle. Nan boutik souvenir an, tafi te gen pwomosyon pou \"Achte {n1,1} liv a ${p1,3} pa liv, jwenn {n2,1} liv {discount,1/2} rabè.\" Li te ranmase {n12,4} liv. Li te achte yon sak melanje konk pou ${p2,1.5} ak {n3,4} aiman ki te ${p3,0.25} chak. Konbyen lajan {name,Sally} gen anbo?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,Sally} te ale nan bord lanmè pou vakans. Paran l ba li ${total,15} pou achte sa li te vle. Nan boutik souvenir an, tafi te gen pwomosyon pou \"Achte {n1,1} liv a ${p1,3} pa liv, jwenn {n2,1} liv {discount,1/2} rabè.\" Li te ranmase {n12,4} liv. Li te achte yon sak melanje konk pou ${p2,1.5} ak {n3,4} aiman ki te ${p3,0.25} chak. Konbyen lajan {name,Sally} gen anbo?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -262,11 +262,6 @@
   {
     "id": 54,
     "question_annotated": "{name,Doxa} koupe yon {fruit,pòm} antye an {total,18} moso. Li te manje {n1,3} tranch, {sibling1,sè} li te manje {n2,2} plis pase li, ak {sibling2,frè} li te manje {n3,3} plis pase {sibling1,sè} li. Konbyen tranch {fruit,pòm} yo tout manje?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"oranj\", \"pè\", \"pèch\", \"mango\", \"kiwi\"])\n- sibling1, sibling2 = sample([\"frè\", \"sè\", \"kazin\", \"zanmi\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
-    "count": 100
-  },
-  {
-    "id": 55,
-    "question_annotated": "{name,Elise} ap aprann ekri e li deside kontinye ekri ankò {alphabets_txt,alfabè} jiskaske li konnen l. Li ekri l antyèman {n1_txt,de fwa}, ekri {frac_txt,yon mwatye} nan li yon fwa, pou l ekri ankò tout sa li deja ekri a. Konbyen lèt {name,Elise} te ekri an total?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"alfabè\", 26), (\"hiragana (ak 48 lèt)\", 48), (\"alfabè farsi (ak 32 lèt)\", 32), (\"abjad arab (ak 28 lèt)\", 28)])\n- n1_txt, n1_val = sample([(\"de fwa\", 2), (\"twa fwa\", 3), (\"kat fwa\", 4), (\"senk fwa\", 5), (\"sis fwa\", 6), (\"sèt fwa\", 7), (\"wit fwa\", 8), (\"nèf fwa\", 9), (\"dis fwa\", 10), (\"onz fwa\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
     "count": 100
   },
   {

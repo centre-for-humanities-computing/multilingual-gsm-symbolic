@@ -100,11 +100,6 @@
     "count": 100
   },
   {
-    "id": 24,
-    "question_annotated": "ইয়াৰ পুষ্টি তথ্য অনুসৰি, {food,চিপছ} ৰ এটা বগত প্ৰতি চাৰ্ভিংত {cal,250} কেলেৰী থাকে।\nযদি এটা {size,300} {unit,গ্ৰাম} বগত {n,5} টা চাৰ্ভিং থাকে, তেন্তে যদি তোমাৰ দৈনিক কেলেৰীৰ লক্ষ্য {total,2000} হয় আৰু তুমি ইতিমধ্যে {spent,1800} কেলেৰী খাই শেষ কৰিছা, তেন্তে তুমি কিমান {unit,গ্ৰাম} খাব পাৰা?\n\n#init:\n- food = sample([\"পপকৰ্ণ\", \"ব্ৰেড\",  \"কুকি\"])\n- unit = sample([\"গ্ৰাম\", \"g\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
-    "count": 100
-  },
-  {
     "id": 26,
     "question_annotated": "{name1,এজন পুৰুষ} খায় {n1,5} {food,সেন্ডৱিচ} প্ৰতি {time_unit,দিন}, {name2,তেওঁৰ পত্নী} খায় {n2,4} {food,সেন্ডৱিচ} প্ৰতি {time_unit,দিন}, আৰু তেওঁলোকৰ {relation,পুত্ৰ} খায় {n3,2} {food,সেন্ডৱিচ} প্ৰতি {time_unit,দিন}। এই পৰিবাৰটোৱে এটা {time_period,সপ্তাহ}ত কিমান {food,সেন্ডৱিচ} খায়{placeholder_txt,?}\n\n#init:\n- name1 = sample([\"এজন পিতৃ\", \"এজন ককাক\", \"এজন কাকা\"])\n- name2 = sample([\"তেওঁৰ পত্নী\", \"তেওঁৰ সঙ্গী\", \"তেওঁৰ সহধৰ্মিণী\"])\n- relation = sample([\"কন্যা\", \"পুত্ৰ\", \"পৌত্ৰ\"])\n- food = sample([\"পিজ্জা\", \"বুৰিটো\", \"টেকো\", \"ছুচি ৰ'ল\", \"হামবৰ্গাৰ\"])\n- time_unit = sample([\"দিন\"])\n- time_period = sample([\"সপ্তাহ\", \"মাহ\"])\n- placeholder_txt = \"?\" if time_period == \"week\" else \"? ধৰি লওক এটা মাহত ৩০ দিন থাকে।\"\n- $n1 = range(2, 9)\n- $n2 = range(2, 9)\n- $n3 = range(2, 9)\n\n#answer: (n1 + n2 + n3) * (7 if time_period == \"week\" else 30)",
     "count": 100
@@ -171,7 +166,7 @@
   },
   {
     "id": 40,
-    "question_annotated": "{name,চেলি} ছুটিৰ বাবে সমুদ্ৰৰ পাৰলৈ গৈছিল। তেওঁৰ অভিভাৱকে তাক ${total,15} দিছিল যেনে তেওঁ যি ইচ্ছা কিনিব পাৰে। স্মাৰকৰ দোকানত, টাফি বিক্ৰী চলি আছিল \"{n1,1} পাউণ্ড ${p1,3} প্ৰতি পাউণ্ড দামত কিনিব, {n2,1} পাউণ্ড {discount,1/2} দামত পাব\"। তেওঁ {n12,4} পাউণ্ড লৈ গ'ল। তেওঁ এটা শামুকৰ মিশ্ৰণৰ ব্যাগ ${p2,1.5} ত আৰু {n3,4} টা ম্যাগনেট কিনিছিল যিবোৰ প্ৰতিটো ${p3,0.25} আছিল। {name,চেলি} ৰ কিমান টকা বাকী থাকে?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "question_annotated": "{name,চেলি} ছুটিৰ বাবে সমুদ্ৰৰ পাৰলৈ গৈছিল। তেওঁৰ অভিভাৱকে তাক ${total,15} দিছিল যেনে তেওঁ যি ইচ্ছা কিনিব পাৰে। স্মাৰকৰ দোকানত, টাফি বিক্ৰী চলি আছিল \"{n1,1} পাউণ্ড ${p1,3} প্ৰতি পাউণ্ড দামত কিনিব, {n2,1} পাউণ্ড {discount,1/2} দামত পাব\"। তেওঁ {n12,4} পাউণ্ড লৈ গ'ল। তেওঁ এটা শামুকৰ মিশ্ৰণৰ ব্যাগ ${p2,1.5} ত আৰু {n3,4} টা ম্যাগনেট কিনিছিল যিবোৰ প্ৰতিটো ${p3,0.25} আছিল। {name,চেলি} ৰ কিমান টকা বাকী থাকে?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
     "count": 100
   },
   {
@@ -215,11 +210,6 @@
     "count": 100
   },
   {
-    "id": 49,
-    "question_annotated": "{name,জন} এ {n,3}টা বেলেগ বেলেগ আপাৰ্টমেন্ট কমপ্লেক্সৰ পৰা কচৰাত সংগ্ৰহ কৰে। প্ৰথম {n_first_txt,দুটা}ত প্ৰতিটোত {a,200}টা ফ্ল্যাট আছে আৰু শেষটো আন {n_first_txt,দুটা}ৰ মুঠতকৈ {p,60}% ডাঙৰ। তেওঁ প্ৰতি সপ্তাহত প্ৰতি ঠাইৰ পৰা {f,3} বাৰ কচৰাত সংগ্ৰহ কৰে আৰু প্ৰতিটো ফ্ল্যাটৰ প্ৰতি সংগ্ৰহৰ বাবে তেওঁ {cur,টকা}{r,0.4} পাযে। সপ্তাহত তেওঁ কিমান টকা উপাৰ্জন কৰে?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
-    "count": 100
-  },
-  {
     "id": 50,
     "question_annotated": "{name,বিলি}'ৰ আয়তাকাৰ {room_type,শয্যাকক্ষ} ৰ কালি {area,360} বৰ্গ ফুট। যদি কোঠাৰ দৈৰ্ঘ্য {length,3} গজ হয়, তেন্তে কোঠাৰ পৰিসীমা ফুটত কিমান হ'ব?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"অতিথি কক্ষ\", \"পঢ়াঘৰ\", \"কৰ্মকক্ষ\", \"ৰান্ধনঘৰ\"])\n- $area = range(200, 1200)\n- $length = range(3, 44)\n\n#conditions:\n- is_int(area / (length * 3))\n- area / (length * 3) > length * 3\n\n#answer: 2 * (area // (length * 3) + length * 3)",
     "count": 100
@@ -242,11 +232,6 @@
   {
     "id": 54,
     "question_annotated": "{name,ডক্সা}ৱে এটা সম্পূৰ্ণ {fruit,আপেল} ক {total,18} টুকুৰাত কটিয়াই দিলে। তেওঁ {n1,3} টুকুৰা খাইছিল, তেওঁৰ {sibling1,বোন} তেওঁতকৈ {n2,2} টুকুৰা বেছি খাইছিল, আৰু তেওঁৰ {sibling2,ভাই} তেওঁৰ {sibling1,বোন} তকৈ {n3,3} টুকুৰা বেছি খাইছিল। তেওঁলোক সকলোৱে কিমান টুকুৰা {fruit,আপেল} খালে?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"কমলা\", \"পাৰ\", \"পীচ\", \"আম\", \"কিউই\"])\n- sibling1, sibling2 = sample([\"ভাই\", \"বোন\", \"চাচা-ভাই\", \"বন্ধু\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
-    "count": 100
-  },
-  {
-    "id": 55,
-    "question_annotated": "{name,এলিজ} লেখা শিখছে এবং নিজেকে জানা পর্যন্ত {alphabets_txt,বর্ণমালা} পুনরায় লিখতে থাকতে সিদ্ধান্ত নিল। সে পুরোটা {n1_txt,দুই বার} লিখল, একবার এর {frac_txt,অর্ধেক} লিখল, তারপর সে যা ইতিমধ্যেই লিখেছে তা পুনরায় লিখল। মোট কতগুলো অক্ষর {name,এলিজ} লিখেছে?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"বর্ণমালা\", 26), (\"হিরাগানা (৪৮ টি অক্ষর সহ)\", 48), (\"ফার্সি বর্ণমালা (৩২ টি অক্ষর সহ)\", 32), (\"আরবি আবজাদ (২৮ টি অক্ষর সহ)\", 28)])\n- n1_txt, n1_val = sample([(\"দুই বার\", 2), (\"তিন বার\", 3), (\"চার বার\", 4), (\"পাঁচ বার\", 5), (\"ছয় বার\", 6), (\"সাত বার\", 7), (\"আট বার\", 8), (\"নয় বার\", 9), (\"দশ বার\", 10), (\"এগারো বার\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
     "count": 100
   },
   {
@@ -290,11 +275,6 @@
     "count": 100
   },
   {
-    "id": 64,
-    "question_annotated": "{name,মেরি} তেওঁৰ {location,চামানখানা} ত {n,৬} টা {item,চিঞ্চল} ৰ জাৰ আছে।\nপ্ৰতিটো {item,চিঞ্চল} ৰ জাৰে {m,৮} টা {food,কেকচুপ} সজাব পাৰে।\n{name,মেরি} তেওঁৰ {item,চিঞ্চল} শেষ কৰিবলৈ পৰ্যাপ্ত {food,কেকচুপ} ভাজিবলৈ বিচাৰে।\nযদি প্ৰতিটো {container,চট্টা} ত {k,১২} টা {food,কেকচুপ} ৰাখিব পাৰি, তেন্তে তেওঁ কিমানটা {container,চট্টা} ৰ {food,কেকচুপ} ভাজিব লাগিব?\n\n#init:\n- name = sample(names_female)\n- item = sample([\"চিঞ্চল\", \"ফ্ৰষ্টিং\", \"আইচিং\", \"চকলেট চিপছ\"])\n- food = sample([\"কেকচুপ\", \"কুকি\", \"ব্ৰাউনি\", \"মাফিন\"])\n- location = sample([\"চামানখানা\", \"চম্পা\", \"ৰান্ধনিঘৰৰ চপা\", \"জমাঘৰ\"])\n- container = sample([\"চট্টা\", \"ট্ৰে\", \"বেকিং শিট\", \"ৰেক\"])\n- $n = range(3, 15)\n- $m = range(6, 20)\n- $k = range(6, 24)\n\n#conditions:\n- divides(n*m, k)\n\n#answer: (n*m)//k",
-    "count": 100
-  },
-  {
     "id": 65,
     "question_annotated": "{name,জেকি} নিজে {task,তাঁৰ টেক্স} কৰিবলৈ নে এজন {profession,অ্যাকাউন্টেন্ট} নিয়োগ কৰিবলৈ সিদ্ধান্ত ল'ব বিচাৰিছে। যদি তেওঁ নিজে কৰে, তেওঁ {n,3} ঘণ্টা কম {work_type,ফ্ৰীলাঞ্চ} কাম কৰিব পাৰিব, যাৰ ফলত {cur,টকা}{rate,35}/ঘণ্টা হ্ৰাস পোৱা আয় হেৰুৱাব। {profession,অ্যাকাউন্টেন্ট} -এ {cur,টকা}{fee,90} লয়। যদি তেওঁ {profession,অ্যাকাউন্টেন্ট} নিয়োগ কৰে তেন্তে তেওঁৰ কিমান বেছি টকা থাকিব?\n\n#init:\n- name = sample(names_female)\n- task = sample([\"তাঁৰ টেক্স\", \"তাঁৰ আৰ্থিক পৰিকল্পনা\", \"তাঁৰ ব্যৱসায়িক অ্যাকাউন্টিং\"])\n- profession = sample([\"অ্যাকাউন্টেন্ট\", \"আৰ্থিক উপদেষ্টা\", \"টেক্স পৰামৰ্শদাতা\", \"বুককিপাৰ\"])\n- work_type = sample([\"ফ্ৰীলাঞ্চ\", \"কনচাল্টিং\", \"আংশিক সময়ৰ\", \"কনট্ৰাক্ট\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 14)\n- $rate = range(20, 100)\n- $fee = range(50, 200)\n\n#conditions:\n- n * rate > fee\n\n#answer: n * rate - fee",
     "count": 100
@@ -302,11 +282,6 @@
   {
     "id": 66,
     "question_annotated": "{name,কেন্ডি} এর {n1,15} টি হালকা {c1,নীল} সূতার স্পুল, {n2,45} টি গাঢ় {c1,নীল} সূতার স্পুল, {n3,40} টি হালকা {c2,সবুজ} সূতার স্পুল এবং {n4,50} টি গাঢ় {c2,সবুজ} সূতার স্পুল আছে। তার স্পুলগুলোর কত শতাংশ {c1,নীল}?\n\n#init:\n- name = sample(names)\n- c1, c2 = sample(colors, 2)\n- $n1 = range(15, 100, 5)\n- $n2 = range(45, 150, 5)\n- $n3 = range(20, 80, 5)\n- $n4 = range(50, 100, 5)\n\n#conditions:\n- is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))\n\n#answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))",
-    "count": 100
-  },
-  {
-    "id": 67,
-    "question_annotated": "{name,জন}ৰ {vehicle,গাড়ি} চলি নাথাকে। {vehicle,গাড়ি}টোৰ ওজন {weight_vehicle,1200} {unit,কিলোগ্ৰাম} আৰু তাৰ ভিতৰত {item,চামৰা} আছে যাৰ ওজন {weight_item,250} {unit,কিলোগ্ৰাম}। তাৰ লগত তেওঁৰ {num_passengers_txt,দুটা} সৰু {passenger_type,শিশু} আছে যিবোৰৰ ওজন প্ৰতিটো {weight_passenger,75} {unit,কিলোগ্ৰাম}। যদি {vehicle,গাড়ি}খন চলাবলৈ প্ৰয়োজনীয় বলটো মুঠ ওজনৰ {force_percent,1}% হয়, তেতিয়া তেওঁক {vehicle,গাড়ি}খন ঠেলিবলৈ কিমান বলৰ প্ৰয়োজন হ'ব?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample(['গাড়ি', 'ভেন', 'ট্ৰাক', 'SUV'])\n- item = sample(['চামৰা', 'কিনি-পিনি', 'সঁজুলি', 'ঘৰুৱা সঁজুলি'])\n- passenger_type = sample(['শিশু', 'বন্ধু', 'সহকৰ্মী', 'দলৰ সদস্য'])\n- unit = sample(['কিলোগ্ৰাম', 'kg'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)",
     "count": 100
   },
   {
@@ -402,16 +377,6 @@
   {
     "id": 86,
     "question_annotated": "{name,আলিছন} এটা {sport,দৌৰ} দলৰ বাবে যোগ্যতা অৰ্জন কৰিলে, গতিকে তেওঁ কিছুমান ক্ৰীড়া সামগ্ৰীৰ বাবে কেন্দ্ৰলৈ গ'ল। তেওঁ এটা {item1,টান্ক টপ} {cur,টকা}{p1,10} ত কিনিল, {sport, দৌৰ}ৰ এযোৰ {item2,চৰ্টছ} {item1, টান্ক টপ}তকৈ {cur,টকা}{p2,5} বেছি মূল্যত, আৰু এযোৰ {item3,টেনিচ চুজ} যিটো মূলতঃ {cur,টকা}{p3,48} আছিল কিন্তু {frac_txt,অৰ্ধ} মূল্যত বিক্ৰী হৈছিল। তেওঁৰ ওচৰত {cur,টকা}{d,2} ৰাশিৰ কাপন আছিল যিটো তেওঁ কিনা {cur,টকা}{p4,8}ৰ ক্ৰীড়া {item4,মোজা}ৰ পেকেজৰ বাবে আছিল। তেওঁ ক্ৰীড়া সামগ্ৰীত কিমান খৰচ কৰিলে?\n\n#init:\n- name = sample(names_female)\n- sport = sample([\"সাঁতুৰ\", \"চাইকেল চালন\", \"বাস্কেটবল\", \"ফুটবল\", \"ভলিবল\"])\n- item1 = sample([\"টি-শাৰ্ট\", \"জাৰ্চি\", \"স্পৰ্টছ ব্ৰা\"])\n- item2 = sample([\"চৰ্টছ\", \"লেগিংছ\", \"চুৱেট পেন্ট\"])\n- item3 = sample([\"স্নিকাৰ্চ\", \"ক্লিটছ\", \"এথলেটিক চুজ\"])\n- item4 = sample([\"মোজা\", \"হেডবেণ্ড\", \"ব্ৰাচলেট\"])\n- cur = sample(currencies_sym)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(8, 25)\n- $p2 = range(3, 15)\n- $p3 = range(30, 80, 2)\n- $p4 = range(5, 15)\n- $d = range(1, 5)\n\n#conditions:\n- is_int(p3*frac_val)\n- p3 % 2 == 0\n- p4 > d\n\n#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)",
-    "count": 100
-  },
-  {
-    "id": 87,
-    "question_annotated": "{park_name,পাঁচটি পতাকা} ত সবচেয়ে বড় পানির স্লাইডটি {l1,300} {unit,মিটার} দীর্ঘ, এবং মানুষ {s1,60} {unit,মিটার}/মিনিট বেগে স্লাইড করে।\nদ্বিতীয় বৃহত্তম পানির স্লাইডটি {l2,240} {unit,মিটার} দীর্ঘ, কিন্তু বেশি খাড়া, তাই মানুষ {s2,80} {unit,মিটার}/মিনিট বেগে স্লাইড করে।\nসবচেয়ে বড় স্লাইডটিতে চড়া দ্বিতীয় বৃহত্তম স্লাইডের তুলনায় কতটা বেশি সময় নেয়?\n\n#init:\n- park_name = sample([\"স্প্ল্যাশ বিশ্ব\", \"জল অভিযান\", \"জল অদ্ভুত জগত\", \"নেপচুনের রাজ্য\"])\n- unit = sample(['মিটার'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
-    "count": 100
-  },
-  {
-    "id": 88,
-    "question_annotated": "{name,ডানা} হাঁটিব পৰা গতিতকৈ {mult_run_txt,চাৰি গুণ} বেছি গতিত দৌড়াব পাৰে, কিন্তু তেওঁ দৌড়াব পৰা গতিতকৈ {frac_skip_txt,আধা} গতিত লাফ দিব পাৰে। যদি তেওঁ প্ৰতি ঘণ্টাত {skip_speed,3} কিলোমিটাৰ গতিত লাফ দিব পাৰে, তেন্তে {total_time_txt,ছয়} ঘণ্টাত তেওঁ কিমান কিলোমিটাৰ অতিক্ৰম কৰিব পাৰে যদি তেওঁ সময়ৰ {frac_run_txt,এক তৃতীয়াংশ} অংশ দৌড়ায় আৰু সময়ৰ {frac_walk_txt,দুই তৃতীয়াংশ} অংশ হাঁটে?\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
     "count": 100
   },
   {
