@@ -1,0 +1,38 @@
+question = "Carl har tre gånger så många vänner på Instagram som Klara. Simon har fyra gånger så många vänner på Instagram som Klara. Om Carl har 12 vänner på Instagram, hur många vänner har Simon där?"
+
+answer = """
+Klara har 12/3=<<12/3=4>>4 vänner på Instagram.
+Simon har 4*4=<<4*4=16>>16 vänner på Instagram.
+#### 16
+"""
+
+id_orig = 149
+
+id_shuffled = 90
+
+question_annotated = """
+{name1,Carl} har {mult1_txt,tre gånger} så många vänner på {platform,Instagram} som {name2,Klara}. {name3,Simon} har {mult2_txt,fyra gånger} så många vänner på {platform,Instagram} som {name2,Klara}. Om {name1,Carl} har {n,12} vänner på {platform,Instagram}, hur många vänner har {name3,Simon} där?
+
+#init:
+- name1, name2, name3 = sample(names, 3)
+- platform = sample(["Instagram", "Twitter", "LinkedIn", "TikTok", "Snapchat"])
+- mult1_txt, mult1_val = sample(multi_times)
+- mult2_txt, mult2_val = sample(multi_times)
+- $n = range(10, 201)
+
+#conditions:
+- mult2_val != mult1_val
+- is_int(n / mult1_val)
+
+#answer: int((n / mult1_val) * mult2_val)
+"""
+
+answer_annotated = """
+{name2} har {n}/{mult1_val}=<<{n}/{mult1_val}={n//mult1_val}>>{n//mult1_val} vänner på {platform}.
+{name3} har {mult2_val}*{n//mult1_val}=<<{mult2_val}*{n//mult1_val}={int((n / mult1_val) * mult2_val)}>>{int((n / mult1_val) * mult2_val)} vänner på {platform}.
+#### {int((n / mult1_val) * mult2_val)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

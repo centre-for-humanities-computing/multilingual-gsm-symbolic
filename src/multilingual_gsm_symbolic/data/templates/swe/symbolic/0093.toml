@@ -1,0 +1,47 @@
+question = "När vattnet är kallt simmar Ester en km på 16 minuter. När vattnet är varmt simmar Ester en km på 2 minuter mer än två gånger så lång tid. Hur mycket längre tid tar det för Ester att simma 3 km en varm dag än en kall dag?"
+
+answer = """
+Kallt vatten, en km: 16 minuter
+Varmt vatten, en km: 2+2*16=34 minuter
+3 km i kallt vatten: 3*16=<<3*16=48>>48 minuter
+3 km i varmt vatten: 3*34=<<3*34=102>>102 minuter
+För Ester tar det 102-48=<<102-48=54>>54 minuter längre
+#### 54
+"""
+
+id_orig = 554
+
+id_shuffled = 93
+
+question_annotated = """
+När vattnet är kallt simmar {name,Ester} en {unit,km} på {t1,16} minuter. När vattnet är varmt simmar {name,Ester} en {unit,km} på {n,2} {n_word,minuter} mer än {mult_txt,två gånger} så lång tid. Hur mycket längre tid tar det för {name,Ester} att simma {d,3} {unit,km} en varm dag än en kall dag?
+
+#init:
+- name = sample(names)
+- unit = sample(["km", "kilometer"])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- n_word = plural(n, "minut", "minuter")
+- mult_txt, mult_val = sample(multi_times)
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+
+answer_annotated = """
+Kallt vatten, en {unit}: {t1} minuter
+Varmt vatten, en {unit}: {n}+{mult_val}*{t1}={n + mult_val * t1} minuter
+{d} {unit} i kallt vatten: {d}*{t1}=<<{d}*{t1}={d*t1}>>{d*t1} minuter
+{d} {unit} i varmt vatten: {d}*{n + mult_val * t1}=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minuter
+För {name} tar det {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} minuter längre
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"
