@@ -1,0 +1,40 @@
+question = "Arrangörerna av påskäggsjakten gömde 100 ägg. Tvillingarna i familjen Lindqvist hittade 30 ägg var. Alla de andra äggen utom 10 hittades av deras vänner. Hur många ägg hittade vännerna?"
+
+answer = """
+Tvillingarna hittade 30 * 2 = <<30*2=60>>60 ägg.
+Antalet som fortfarande låg gömda var 100 - 60 = <<100-60=40>>40 ägg
+Eftersom 10 ägg aldrig hittades betyder det att vännerna hittade 40 - 10 = 30 ägg.
+#### 30
+"""
+
+id_orig = 1025
+
+id_shuffled = 81
+
+question_annotated = """
+Arrangörerna av {event,påskäggsjakten} gömde {total,100} {item,ägg}. Tvillingarna i familjen {family,Lindqvist} hittade {n,30} {item,ägg} var. Alla de andra {item_definite,äggen} utom {m,10} hittades av deras vänner. Hur många {item,ägg} hittade vännerna?
+
+#init:
+- event = sample(["påskäggsjakten", "skattjakten", "tipspromenaden", "insamlingen"])
+- item, item_definite = sample([("ägg", "äggen"), ("godsaker", "godsakerna"), ("leksaker", "leksakerna"), ("mynt", "mynten"), ("karameller", "karamellerna")])
+- family = sample(["Lindqvist", "Bergström", "Sandberg", "Holm", "Åkesson"])
+- $total = range(50, 201, 10)
+- $n = range(10, 51)
+- $m = range(5, 21)
+
+#conditions:
+- 2*n + m < total
+
+#answer: total - 2*n - m
+"""
+
+answer_annotated = """
+Tvillingarna hittade {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
+Antalet som fortfarande låg gömda var {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
+Eftersom {m} {item} aldrig hittades betyder det att vännerna hittade {total-2*n} - {m} = {total - 2*n - m} {item}.
+#### {total - 2*n - m}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

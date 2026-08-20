@@ -1,0 +1,44 @@
+question = "Nils ger sina husdjur hö. Varje get behöver 5 kg och varje ko behöver 3 kg mindre än dubbelt så mycket som varje get behöver. Om det finns 15 getter och 12 kor, hur många kg hö behöver Nils?"
+
+answer = """
+Räkna först ut hur mycket hö varje ko behöver: 5 kg * 2 - 3 = <<5*2-3=7>>7 kg/ko
+Räkna sedan ut hur mycket hö alla kor behöver tillsammans: 7 kg/ko * 12 kor = <<7*12=84>>84 kg
+Räkna därefter ut hur mycket hö alla getter behöver tillsammans: 5 kg/get * 15 getter = <<5*15=75>>75 kg
+Lägg till sist ihop de två mängderna: 84 kg + 75 kg = <<84+75=159>>159 kg
+#### 159
+"""
+
+id_orig = 937
+
+id_shuffled = 71
+
+question_annotated = """
+{name,Nils} ger sina husdjur {food,hö}. Varje {animal1,get} behöver {n1,5} {unit,kg} och varje {animal2,ko} behöver {n2,3} {unit,kg} mindre än dubbelt så mycket som varje {animal1,get} behöver. Om det finns {k1,15} {animal1_plural,getter} och {k2,12} {animal2_plural,kor}, hur många {unit,kg} {food,hö} behöver {name,Nils}?
+
+#init:
+- name = sample(names_male)
+- food = sample(["hö", "spannmål", "foder", "halm"])
+- animal1, animal1_plural, animal2, animal2_plural = sample([("get", "getter", "ko", "kor"), ("häst", "hästar", "åsna", "åsnor"), ("gris", "grisar", "kalkon", "kalkoner"), ("lama", "lamor", "alpacka", "alpackor"), ("ko", "kor", "get", "getter"), ("åsna", "åsnor", "anka", "ankor")])
+- unit = sample(["kg", "kilo", "kilogram"])
+- $n1 = range(3, 15)
+- $n2 = range(1, 10)
+- $k1 = range(10, 50)
+- $k2 = range(10, 50)
+
+#conditions:
+- 2*n1 - n2 > 0
+
+#answer: k1*n1 + k2*(2*n1 - n2)
+"""
+
+answer_annotated = """
+Räkna först ut hur mycket {food} varje {animal2} behöver: {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2}
+Räkna sedan ut hur mycket {food} alla {animal2_plural} behöver tillsammans: {2*n1-n2} {unit}/{animal2} * {k2} {animal2_plural} = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
+Räkna därefter ut hur mycket {food} alla {animal1_plural} behöver tillsammans: {n1} {unit}/{animal1} * {k1} {animal1_plural} = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
+Lägg till sist ihop de två mängderna: {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
+#### {k1*n1 + k2*(2*n1 - n2)}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

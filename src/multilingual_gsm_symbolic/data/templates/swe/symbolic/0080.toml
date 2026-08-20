@@ -1,0 +1,50 @@
+question = "Varuautomaterna säljer kringlor för 40 öre och kakor för 75 öre. Erik gjorde av med 5 kronor och fick 3 påsar kringlor och hade 1% av sina pengar kvar i växel. Hur många kakor köpte han?"
+
+answer = """
+Erik fick 0,05 kronor i växel eftersom 5*1/100 = <<5*1/100=0,05>>0,05
+Erik handlade för 4,95 kronor eftersom 5 - 0,05 = <<5-0,05=4,95>>4,95
+Erik betalade 1,2 kronor för kringlor eftersom 3*0,4 = <<3*0,4=1,2>>1,2
+Erik betalade 3,75 kronor för kakor eftersom 4,95 - 1,2 = <<4,95-1,2=3,75>>3,75
+Erik köpte 5 kakor eftersom 3,75 / 0,75 = <<3,75/0,75=5>>5
+#### 5
+"""
+
+id_orig = 434
+
+id_shuffled = 80
+
+question_annotated = """
+Varuautomaterna säljer {item1,kringlor} för {price1,40} öre och {item2,kakor} för {price2,75} öre. {name,Erik} gjorde av med {total,5} {cur,kronor} och fick {n1,3} påsar {item1,kringlor} och hade {p,1}% av sina pengar kvar i växel. Hur många {item2,kakor} köpte han?
+
+#init:
+- name = sample(names_male)
+- item1, item2 = sample(["kringlor", "popcorn", "tuggummin", "kakor", "kex"], 2)
+- cur = sample(currencies_sym)
+- cur_sing = "krona" if cur == "kronor" else cur
+- $price1 = range(25, 100, 5)
+- $price2 = range(50, 150, 5)
+- $total = range(5, 21)
+- $n1 = range(1, 10)
+- $p = range(1, 10)
+
+#conditions:
+- price2 > price1
+- is_int(total * p / 100)
+- total * (100 - p) > n1 * price1
+- (total * (100 - p) - n1 * price1) % price2 == 0
+
+#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)
+"""
+
+answer_annotated = """
+{name} fick {total * p / 100} {plural(total * p / 100, cur_sing, cur)} i växel eftersom {total}*{p}/100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}
+{name} handlade för {total * (100 - p) / 100} {plural(total * (100 - p) / 100, cur_sing, cur)} eftersom {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}
+{name} betalade {n1 * price1 / 100} {plural(n1 * price1 / 100, cur_sing, cur)} för {item1} eftersom {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}
+{name} betalade {(total * (100 - p) / 100 - n1 * price1 / 100)} {plural(total * (100 - p) / 100 - n1 * price1 / 100, cur_sing, cur)} för {item2} eftersom {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}
+{name} köpte {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} {item2} eftersom {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{total * (100 - p) / 100 - n1 * price1 / 100}/{price2/100}={ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}>>{ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+#### {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

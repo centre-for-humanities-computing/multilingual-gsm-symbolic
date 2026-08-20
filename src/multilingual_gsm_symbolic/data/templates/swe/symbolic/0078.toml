@@ -1,0 +1,47 @@
+question = "En vanlig elev har 6 lektioner om dagen, men Kristian måste gå på 2 extra lektioner. Varje lektion är 40 minuter lång. Han har undervisning 5 dagar i veckan. Sedan ägnar han 1/16 av veckans minuter åt extra studier både på lördagen och på söndagen. Hur många timmar i veckan ägnar han åt att studera?"
+
+answer = """
+Han har 6+2=<<6+2=8>>8 lektioner om dagen
+Det betyder att han sitter 40*8=<<40*8=320>>320 minuter i klassrummet varje dag
+Så han sitter där 320*5=<<320*5=1600>>1600 minuter i veckan
+Det betyder att han studerar 1600*1/16=<<1600*1/16=100>>100 minuter extra både på lördagen och på söndagen.
+Sammanlagt blir det 1600+100+100=<<1600+100+100=1800>>1800 minuter i veckan
+Alltså ägnar han 1800/60=<<1800/60=30>>30 timmar i veckan åt att studera
+#### 30
+"""
+
+id_orig = 1088
+
+id_shuffled = 78
+
+question_annotated = """
+En vanlig elev har {n1,6} lektioner om dagen, men {name,Kristian} måste gå på {n2,2} extra lektioner. Varje lektion är {t,40} minuter lång. Han har undervisning {d,5} dagar i veckan. Sedan ägnar han {frac,1/16} av veckans minuter åt extra studier både på lördagen och på söndagen. Hur många timmar i veckan ägnar han åt att studera?
+
+#init:
+- name = sample(names_male)
+- $n1 = range(5, 10)
+- $n2 = range(1, 5)
+- $t = range(30, 61, 5)
+- $d = range(4, 7)
+- $frac = sample(fractions)
+
+#conditions:
+- is_int((n1 + n2) * t * d * frac)
+- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)
+
+#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60
+"""
+
+answer_annotated = """
+Han har {n1}+{n2}=<<{n1}+{n2}={n1+n2}>>{n1+n2} lektioner om dagen
+Det betyder att han sitter {t}*{n1+n2}=<<{t}*{n1+n2}={t*(n1+n2)}>>{t*(n1+n2)} minuter i klassrummet varje dag
+Så han sitter där {t*(n1+n2)}*{d}=<<{t*(n1+n2)}*{d}={t*(n1+n2)*d}>>{t*(n1+n2)*d} minuter i veckan
+Det betyder att han studerar {t*(n1+n2)*d}*{frac}=<<{t*(n1+n2)*d}*{frac}={int((n1 + n2) * t * d * frac)}>>{int((n1 + n2) * t * d * frac)} minuter extra både på lördagen och på söndagen.
+Sammanlagt blir det {t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}=<<{t*(n1+n2)*d}+{int((n1 + n2) * t * d * frac)}+{int((n1 + n2) * t * d * frac)}={t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}>>{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)} minuter i veckan
+Alltså ägnar han {t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60=<<{t*(n1+n2)*d + 2*int((n1 + n2) * t * d * frac)}/60={((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}>>{((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60} timmar i veckan åt att studera
+#### {((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

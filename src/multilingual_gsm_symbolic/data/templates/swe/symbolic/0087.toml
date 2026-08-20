@@ -1,0 +1,44 @@
+question = "Den största vattenrutschbanan på Skara Sommarland är 300 cm lång och man åker ner i 60 cm/minut. Den näst största vattenrutschbanan är 240 cm lång men brantare, så man åker ner i 80 cm/minut. Hur mycket längre tid tar det att åka den största rutschbanan jämfört med den näst största?"
+
+answer = """
+Räkna först ut åktiden i den största rutschbanan: 300 cm / 60 cm/minut = <<300/60=5>>5 minuter
+Räkna sedan ut åktiden i den näst största rutschbanan: 240 cm / 80 cm/minut = <<240/80=3>>3 minuter
+Dra sedan bort tiden i den näst största rutschbanan från tiden i den största för att få skillnaden: 5 minuter - 3 minuter = <<5-3=2>>2 minuter
+#### 2
+"""
+
+id_orig = 1099
+
+id_shuffled = 87
+
+question_annotated = """
+Den största vattenrutschbanan på {park_name,Skara Sommarland} är {l1,300} {unit,cm} lång och man åker ner i {s1,60} {unit,cm}/minut. Den näst största vattenrutschbanan är {l2,240} {unit,cm} lång men brantare, så man åker ner i {s2,80} {unit,cm}/minut. Hur mycket längre tid tar det att åka den största rutschbanan jämfört med den näst största?
+
+#init:
+- park_name = sample(["Skara Sommarland", "Liseberg", "äventyrsbadet", "Vattenpalatset"])
+- unit = sample(["centimeter", "cm", "meter", "m"])
+- $l1 = range(250, 401, 10)
+- $l2 = range(200, 301, 10)
+- $s1 = range(40, 81, 5)
+- $s2 = range(60, 101, 5)
+
+#conditions:
+- l1 > l2
+- s2 > s1
+- is_int(l1/s1)
+- is_int(l2/s2)
+- l1/s1 > l2/s2
+
+#answer: l1/s1 - l2/s2
+"""
+
+answer_annotated = """
+Räkna först ut åktiden i den största rutschbanan: {l1} {unit} / {s1} {unit}/minut = <<{l1}/{s1}={l1//s1}>>{l1//s1} minuter
+Räkna sedan ut åktiden i den näst största rutschbanan: {l2} {unit} / {s2} {unit}/minut = <<{l2}/{s2}={l2//s2}>>{l2//s2} minuter
+Dra sedan bort tiden i den näst största rutschbanan från tiden i den största för att få skillnaden: {l1//s1} minuter - {l2//s2} minuter = <<{l1//s1}-{l2//s2}={l1//s1 - l2//s2}>>{l1//s1 - l2//s2} {plural(l1//s1 - l2//s2, "minut", "minuter")}
+#### {l1//s1 - l2//s2}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"
