@@ -11,16 +11,20 @@ id_orig = 873
 id_shuffled = 30
 
 question_annotated = """
-{name,Erik} har {initial_amount,130.2} {cur,kronor} och vill köpa {quantity,16} {item_plural,bultar} ur en låda på {store_type,byggmarknaden}. Varje {item,bult} kostar {unit_price,0.2} {cur,kronor}. Hur mycket pengar har {name,Erik} kvar efter att ha betalat för {item_plural,bultar}na?
+{name,Erik} har {initial_txt,130.2} {cur,kronor} och vill köpa {quantity,16} {item_plural,bultar} ur en låda på {store_type,byggmarknaden}. Varje {item,bult} kostar {unit_price_txt,0.2} {unit_price_cur,kronor}. Hur mycket pengar har {name,Erik} kvar efter att ha betalat för {item_plural,bultar}na?
 
 #init:
 - name = sample(names)
 - cur = sample(currencies_sym)
+- cur_sing = "krona" if cur == "kronor" else cur
 - item, item_plural = sample([("bult", "bultar"), ("skruv", "skruvar"), ("bricka", "brickor"), ("mutter", "muttrar"), ("expanderplugg", "expanderpluggar")])
 - store_type = sample(["byggmarknaden", "järnhandeln", "byggvaruhuset"])
 - $quantity = range(15, 60)
 - $initial_amount = arange(85.5, 175, 5.5)
 - $unit_price = arange(0.2, 4.8, 0.1)
+- initial_txt = int(initial_amount) if is_int(initial_amount) else round(initial_amount, 2)
+- unit_price_txt = int(unit_price) if is_int(unit_price) else round(unit_price, 2)
+- unit_price_cur = plural(unit_price, cur_sing, cur)
 
 #conditions:
 - initial_amount > quantity * unit_price
@@ -33,7 +37,7 @@ question_annotated = """
 
 answer_annotated = """
 {name} betalade {quantity}*{round(unit_price,2)} {cur} = <<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} {cur} för {item_plural}na.
-{name} har {initial_amount} {cur} - {round(quantity*unit_price,2)} {cur} = {round(initial_amount - quantity * unit_price)} {cur} kvar.
+{name} har {initial_txt} {cur} - {round(quantity*unit_price,2)} {cur} = {round(initial_amount - quantity * unit_price)} {plural(round(initial_amount - quantity * unit_price), cur_sing, cur)} kvar.
 #### {round(initial_amount - quantity * unit_price)}
 """
 

@@ -14,7 +14,7 @@ id_orig = 843
 id_shuffled = 52
 
 question_annotated = """
-{name,Carl} har {n_txt,två} {bill,50}-{cur_compound,kronors}sedlar. Han köper {m_txt,sex} {item1,vattenpistoler} för {p1,5} {cur,kronor} styck. Han köper också {k,3} paket {item2,vattenballonger} för {p2,8} {cur,kronor} styck. Hur mycket pengar har han kvar?
+{name,Carl} har {n_txt,två} {bill,50}-{cur_compound,kronors}sedlar. Han köper {m_txt,sex} {item1,vattenpistoler} för {p1,5} {p1_cur,kronor} styck. Han köper också {k,3} paket {item2,vattenballonger} för {p2,8} {p2_cur,kronor} styck. Hur mycket pengar har han kvar?
 
 #init:
 - name = sample(names_male)
@@ -22,12 +22,15 @@ question_annotated = """
 - item1 = sample(["vattenpistoler", "leksaksbilar", "actionfigurer", "målarböcker", "pussel", "sällskapsspel"])
 - item2 = sample(["vattenballonger", "klistermärken", "chokladkakor", "samlarkort", "blyertspennor", "suddgummin"])
 - cur = sample(currencies_sym)
+- cur_sing = "krona" if cur == "kronor" else cur
 - cur_compound = "kronors" if cur == "kronor" else cur + "-"
 - n_txt, n_val = range_str(1, 10, 1, numbers)
 - m_txt, m_val = range_str(2, 15, 1, numbers)
 - $k = range(2, 10)
 - $p1 = range(1, 10)
 - $p2 = range(1, 10)
+- p1_cur = plural(p1, cur_sing, cur)
+- p2_cur = plural(p2, cur_sing, cur)
 
 #conditions:
 - n_val * int(bill) > m_val * p1 + k * p2
@@ -37,10 +40,10 @@ question_annotated = """
 
 answer_annotated = """
 {name} börjar med {n_val}*{bill} = <<{n_val}*{int(bill)}={n_val*int(bill)}>>{n_val*int(bill)} {cur}.
-{name} köper {m_txt} {item1} för {p1} {cur} styck = <<{m_val}*{p1}={m_val*p1}>>{m_val*p1} {cur}.
-{name} köper {k} paket {item2} för {p2} {cur} styck = <<{k}*{p2}={k*p2}>>{k*p2} {cur}.
+{name} köper {m_txt} {item1} för {p1} {plural(p1, cur_sing, cur)} styck = <<{m_val}*{p1}={m_val*p1}>>{m_val*p1} {cur}.
+{name} köper {k} paket {item2} för {p2} {plural(p2, cur_sing, cur)} styck = <<{k}*{p2}={k*p2}>>{k*p2} {cur}.
 Sammanlagt har {name} gjort av med {m_val*p1} {cur} + {k*p2} {cur} = <<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} {cur}.
-{name} har {n_val*int(bill)} {cur} - {m_val*p1+k*p2} {cur} = <<{n_val*int(bill)}-{m_val*p1+k*p2}={n_val*int(bill)-(m_val*p1+k*p2)}>>{n_val*int(bill)-(m_val*p1+k*p2)} {cur} kvar.
+{name} har {n_val*int(bill)} {cur} - {m_val*p1+k*p2} {cur} = <<{n_val*int(bill)}-{m_val*p1+k*p2}={n_val*int(bill)-(m_val*p1+k*p2)}>>{n_val*int(bill)-(m_val*p1+k*p2)} {plural(n_val*int(bill)-(m_val*p1+k*p2), cur_sing, cur)} kvar.
 #### {n_val*int(bill)-(m_val*p1+k*p2)}
 """
 
