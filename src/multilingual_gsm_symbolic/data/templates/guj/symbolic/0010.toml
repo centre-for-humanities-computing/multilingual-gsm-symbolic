@@ -1,0 +1,8 @@
+question = "કોઈ પે ફોન પરથી કોલ કરવા માટે, તમારે તમારા કોલની દરેક મિનિટ માટે $0.25 ચૂકવવા પડશે. 16 મિનિટ પછી, તે ભાવ પ્રતિ મિનિટ $0.2 પર ઘટી જશે. 36-મિનિટનો કોલ કેટલો ખર્ચ થશે?"
+answer = "પહેલાં 16 મિનિટનો ખર્ચ 16 * 0.25 = $<<16*0.25=4>>4 થશે.\nત્યારબાદ, કોલના 36 - 16 = <<36-16=20>>20 મિનિટ બાકી રહેશે.\nઅને આ 20 મિનિટનો ખર્ચ 20 * 0.2 = $<<20*0.2=4>>4 થશે.\nતેથી કુલ મળીને, 36-મિનિટનો કોલ 4 + 4 = $8 ખર્ચ થશે.\n#### 8\n"
+id_orig = 1223
+id_shuffled = 10
+question_annotated = "કોઈ {dev,પે ફોન} પરથી કોલ કરવા માટે, તમારે તમારા કોલની દરેક મિનિટ માટે {currency,$}{frac1,0.25} ચૂકવવા પડશે. {t,16} મિનિટ પછી, તે ભાવ પ્રતિ મિનિટ {currency,$}{frac2,0.2} પર ઘટી જશે. {total,36}-મિનિટનો કોલ કેટલો ખર્ચ થશે?\n\n#init:\n- dev = sample(['ફોન બૂથ', 'હોટલ રૂમ ફોન'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))\n"
+answer_annotated = "પહેલાં {t} મિનિટનો ખર્ચ {t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} થશે.\nત્યારબાદ, કોલના {total} - {t} = <<{total}-{t}={total-t}>>{total-t} મિનિટ બાકી રહેશે.\nઅને આ {total-t} મિનિટનો ખર્ચ {total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)} થશે.\nતેથી કુલ મળીને, {total}-મિનિટનો કોલ {int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))} ખર્ચ થશે.\n#### {int((frac1 * t) + frac2*(total-t))}\n"
+creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+language = "guj"

@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "question_annotated": "Maglovita obala se širi od mora prema gradu. Potrebno je {t,10} minuta da se pokrije svakih {d,3} kilometra grada. Ako je grad {y,42} kilometara širok od obale do suprotne unutrašnje ivice, koliko će minuta trebati maglovitoj obali da pokrije cijeli grad?\n\n#init:\n- $t = range(2, 500)\n- $d = range(2, 100)\n- $y=range(2, 100)\n\n#conditions:\n- is_int(y/d)\n\n#answer: y//d*t",
+    "count": 100
+  },
+  {
+    "id": 3,
+    "question_annotated": "Jedna {g,class} od {n, 50} učenika ima razne hobije. {n_1, 10} vole {h_1, peći}, {n_2,5} vole igrati {h_2,basketball}, a ostali vole ili {h_3,igrati video igre} ili {h_4,svirati glazbu}. Koliko voli {h_3,igrati video igre} ako je broj onih koji vole {h_4,svirati glazbu} dvostruko veći od broja onih koji preferiraju igrati {h_2, basketball}?\n\n#init:\n- g = sample([\"group\", \"class\"])\n- h_2 = sample(sports)\n- h_1, h_3, h_4 = sample(['read', 'paint', 'hike', 'dance', 'bake', 'play video games', 'play music'], 3)\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
+    "count": 100
+  },
+  {
+    "id": 6,
+    "question_annotated": "{name,Ivan} ima {x,10} {area,hektar}a {fruit,ananas}ovog polja. Postoji {k,100} {fruit,ananas}a po {area,hektar}u. {name, Ivan} može ubirati svoje {fruit,ananas}e svakih {n,3} mjeseca. Koliko {fruit,ananas}a {name,Ivan} može ubrati unutar godine?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- area = sample(['hectare', 'square meter'])\n- $x = range(5, 100, 5)\n- $k = range(2, 101)\n- $n = sample([1, 2, 3, 4, 6, 12])\n\n#answer: x * k * (12//n)",
+    "count": 100
+  },
+  {
+    "id": 9,
+    "question_annotated": "Kada {name, Sophie} čuva svog {family, nećaka}, izvadi razne igračke za njega. Vrećica s građevinskim kockicama ima {x,31} kockica u sebi. Korpa s mekim igračkama ima {y,8} mekih igračaka unutra. Kula s prstenovima za slaganje ima {z,9} šarenih prstenova na sebi. {name, Sophie} je nedavno kupila cijev s prskalicama, čime je ukupan broj igračaka za svog {family, nećaka} povećala na {total,62}. Koliko prskalica je bilo u cijevi?\n\n#init:\n- name = sample(names_female)\n- family = sample([\"nećak\", \"rođak\", \"brat\"])\n- $x = range(31, 75)\n- $y = range(8, 50)\n- $z = range(9, 35)\n- $total = range(60, 250)\n\n#conditions:\n- total - (x + y + z) >= 20 \n- total - (x + y + z) < 100\n\n#answer: total - (x + y + z)",
+    "count": 100
+  },
+  {
+    "id": 11,
+    "question_annotated": "{name, Petar} želi napraviti kocke leda različitih veličina s {n,32} {unit,grama} vode. Može napraviti gigantske kocke koje koriste {w1,4} {unit,grama} po kocki, srednje kocke koje koriste {w2,2} {unit,grama}, i male kocke koje koriste {w3,1/2} {unit,grama}. Ako napravi {n1,3} gigantskih kocki, {n2,7} srednjih kocki i {n3,8} malih kocki, koliko {unit,grama} vode mu je preostalo?\n\n#init:\n- name = sample(names_male)\n- unit = sample([\"gram\", \"g\"])\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
+    "count": 100
+  },
+  {
+    "id": 13,
+    "question_annotated": "{name,Marija} je vješta vrtlarica. {time, Jučer}, dobila je {x,18} novih posuđenih biljaka od svog omiljenog rasadnika. Već ima {r,2} posuđenih biljaka na svakom od {w,40} prozorskih klupa svoje velike kuće na selu. Osjećajući se velikodušno, odlučila je da će dati {n,1} od posuđenih biljaka sa svake klupe prijateljima i obitelji sutra. Koliko posuđenih biljaka će {name,Marija} imati?\n\n#init:\n- name = sample(names_female)\n- time = sample([\"Prošle sedmice\", \"Prije dva dana\", \"Prošle noći\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
+    "count": 100
+  },
+  {
+    "id": 15,
+    "question_annotated": "{name1, Jennifer}in pas ima {n1, 8} štenaca, od kojih {k1,3} imaju mrlje. {name2, Brandon}ov pas ima {n2,12} štenaca, od kojih {k2,4} imaju mrlje. Koliki postotak svih štenaca ima mrlje?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $n1 = range(4, 16)\n- $n2 = range(4, 20)\n- $k1 = range(2, 12)\n- $k2 = range(2, 12)\n\n#conditions:\n- k1 < n1\n- k2 < n2\n- divides(n1 + n2, k1 + k2)\n- is_int(100 * (k1+k2) / (n1+n2))\n\n#answer: int(100 * (k1+k2) / (n1+n2))",
+    "count": 100
+  },
+  {
+    "id": 18,
+    "question_annotated": "{name,Raphael} je otišao kupiti školske potrepštine. Kupio je {n1,4} {obj1,olovke} koje su koštale {c1,1.5}{cur,$} svaka, {n2,2} {obj2,bilježnice} koje su koštale {c2,4}{cur,$} svaka, i pak papira koji je koštao {c3,20}{cur,$}. Koliko je {name,Raphael} potrošio na sve?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"notebooks\", \"pencils\", \"erasers\", \"crayons\", \"colored pencils\", \"markers\", \"rulers\", \"folders\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
+    "count": 100
+  },
+  {
+    "id": 21,
+    "question_annotated": "{name,Frankie} gleda televiziju nakon što završi domaću zadaću svake večeri. Na {d1,ponedjeljak} i {d2,utorak}, gledao je {h1,1}-satnu epizodu svog omiljenog showa svake večeri. Na {d3,srijeda}, gledao je nekoliko epizoda {m1,30}-minutnog showa. Na {d4,četvrtak}, završio je domaću zadaću rano i gledao je {h2,1}-satnu epizodu i {m2,30}-minutni show. Na {d5,petak}, ostao je budan kasno, pa je gledao {n2_txt,dva} {h3,1}-satne epizode. Ako je ukupno gledao {total,7} sati televizije, koliko je {m1,30}-minutnih epizoda gledao na {d3,srijeda}?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)\n- $total = range(7, 33)\n- $h1 = range(1, 7)\n- $h3 = range(1, 6)\n- $m1 = range(5, 61, 5)\n- $m2 = range(5, 61, 5)\n- $h2 = range(1, 7)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n\n#conditions: \n- divides(m1, 15)\n- divides(m2, 15)\n- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 \n\n#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)",
+    "count": 100
+  },
+  {
+    "id": 23,
+    "question_annotated": "{name,Martha} plete zimsku odjeću za svoja {count,3} unučeta. Oni su {children,trojke}, pa su svi iste veličine. Želi napraviti {c1,kapa}, {c2,šal}, {c3,pulover}, {c4,rukavice}, i {c5,čarape} za svakog od njih. Potrebno je {n1,2} klupaka vune za izradu {c1,kapa}, {n2,4} za {c2,šal}, {n3,12} za {c3,pulover}, {n4,1} za par {c4,rukavice}, i {n5,2} za par {c5,čarape}. Koliko klupaka vune će trebati kupiti?\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"sweater\", \"shawl\", \"hat\", \"cardigan\", \"poncho\", \"vest\", \"beanie\", \"tunic\"],3)\n- c4, c5 = sample([ \"mittens\", \"booties\", \"socks\",  \"leg warmers\", \"gloves\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"twins\",2), (\"triplets\",3), (\"quadruplets\", 4),  (\"quintuplets\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
+    "count": 100
+  },
+  {
+    "id": 24,
+    "question_annotated": "Prema nutritivnim informacijama, vrećica {food,čipsa} ima {cal,250} kalorija po porciji. Ako vrećica od {size,300} {unit,grama} ima {n,5} porcija, koliko {unit,grama} možete pojesti ako je vaš dnevni cilj kalorija {total,2000} i već ste unijeli {spent,1800} kalorija?\n\n#init:\n- food = sample([\"popcorn\", \"breads\",  \"cookies\"])\n- unit = sample([\"gram\", \"g\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
+    "count": 100
+  },
+  {
+    "id": 25,
+    "question_annotated": "U razredu {teacher,g. Ropera} s {total,30} učenika, {p1,20}% razreda su {group1,nogometaši}. Od preostalih učenika, {p2,25}% su {group2,navijačice} ili dio {group3,glazbenog sastava}. Ove 3 skupine učenika morat će napustiti ranije danas kako bi otputovale na gostujuću {event,utakmicu}. Koliko učenika će napustiti ranije?\n\n#init:\n- teacher = sample(['Ms. Johnson', 'Mr. Smith', 'Dr. Lee', 'Mrs. Garcia'])\n- group1 = sample(['soccer players', 'basketball players', 'volleyball players', 'swimmers'])\n- group2, group3 = sample(['dancers', 'choir members', 'debate team members', 'robotics club members'],  2)\n- event = sample(['competition', 'tournament', 'performance', 'meet'])\n- $total = range(20, 150)\n- $p1 = range(10, 50)\n- $p2 = range(15, 45)\n\n#conditions:\n- p1 < 100\n- p2 < 100\n- is_int(total * p1 / 100)\n- is_int((total - total * p1 / 100) * p2 / 100)\n\n#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)",
+    "count": 100
+  },
+  {
+    "id": 27,
+    "question_annotated": "{name,James} prima {n,80} e-mailova dnevno. {p,20}% tih e-mailova ne zahtijevaju odgovor. On odgovara na ostale. Koliko e-mailova {name,James} odgovara u {d,5} radnom tjednu?\n\n#init:\n- name = sample(names)\n- $n = range(50, 200)\n- $p = range(5, 40)\n- $d = range(3, 7)\n\n#conditions:\n- is_int(n * p / 100)\n- is_int(n * (100 - p) / 100)\n\n#answer: d * (n * (100 - p) / 100)",
+    "count": 100
+  },
+  {
+    "id": 33,
+    "question_annotated": "{name1,Carol} i {name2,Jennifer} su sestre iz {city,Los Angelesa} koje vole prikupljati potpise od {celebrity_type,poznatih ličnosti}. Tijekom {vacation_type,ljetnog raspusta} od škole, sestre svako popodne provode prikupljajući potpise. Nakon {n1_txt,pet} tjedana, {name1,Carol} i {name2,Jennifer} uspoređuju svoje knjige s autogramima, brojeći broj potpisa koje je svaka sestra prikupila. {name1,Carol} ima {s1,20} potpisa u svojoj knjizi, a {name2,Jennifer} ima {s2,44}. Sestre imaju još {n2_txt,tri} tjedna {vacation_type,ljetnog raspusta}, i odlučile su da žele do kraja raspusta prikupiti {goal,100} potpisa zajedno. Koliko potpisa sestre moraju prikupiti da bi ostvarile svoj cilj?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- city = sample(cities)\n- celebrity_type = sample([\"movie stars\", \"athletes\", \"musicians\", \"politicians\", \"authors\"])\n- vacation_type = sample([\"winter break\", \"spring break\", \"summer break\", \"fall break\"])\n- n1_txt, n1_val = range_str(3, 8, 1, numbers)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n- $s1 = range(15, 40)\n- $s2 = range(30, 60)\n- $goal = range(90, 150, 5)\n\n#conditions:\n- s1 + s2 < goal\n\n#answer: goal - (s1 + s2)",
+    "count": 100
+  },
+  {
+    "id": 36,
+    "question_annotated": "{name,Toula} otišla je u {shop,pekarnica} i kupila je razne vrste {item,peciva}. Kupila je {n1,3} tucet {item1,krofne} koji su koštali ${p1,68} po tucetu, {n2,2} tucet {item2,mini muffini} koji su koštali ${p2,80} po tucetu, i {n3,6} tucet {item3,mini cheesecakes} za ${p3,55} po tucetu. Koliko je bio ukupni trošak?\n\n#init:\n- name = sample(names_female)\n- shop = sample([\"pekarnica\", \"patiserija\", \"slastičarna\", \"kafić\"])\n- item = sample([\"peciva\", \"pekarski proizvodi\", \"deserti\", \"poslastice\"])\n- item1 = sample([\"krofne\", \"krušci\", \"ekleri\", \"danske kiflice\"])\n- item2 = sample([\"mini muffini\", \"makaronsi\", \"kolačići\", \"tarte\"])\n- item3 = sample([\"mini cheesecakes\", \"brownie\", \"muffini\", \"scones\"])\n- $n1 = range(1, 10)\n- $n2 = range(4, 10)\n- $n3 = range(2, 10)\n- $p1 = range(11, 21)\n- $p2 = range(73, 90)\n- $p3 = range(112, 120)\n\n#answer: n1 * p1 + n2 * p2 + n3 * p3",
+    "count": 100
+  },
+  {
+    "id": 40,
+    "question_annotated": "{name,Sally} otišla je na more na odmor. Njezini su joj roditelji dali ${total,15} da kupi što god želi. U suvenirnici je karamela bila na akciji \"Kupi {n1,1} funtu za ${p1,3} po funti, dobij {n2,1} funtu {discount,1/2} popusta.\" Sakupila je {n12,4} funti. Također je kupila mješovitu vrećicu školjki za ${p2,1.5} i {n3,4} magneta koji su bili ${p3,0.25} svaki. Koliko novca {name,Sally} ima preostalo?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "count": 100
+  },
+  {
+    "id": 43,
+    "question_annotated": "{name,Dax} je otišao na svoju {place,farmu} da ubere neke {fruit,jabuke} i pronašao je {frac_txt,pola} toliko {insect1,buba} koliko {insect2,mrava} u {location,vrtu}. Ako je bilo {n,50} {insect2,mrava}, izračunajte ukupan broj kukaca u {location,vrtu}.\n\n#init:\n- name = sample(names)\n- place = sample([\"orchard\", \"backyard\", \"greenhouse\", \"allotment\"])\n- fruit = sample([\"strawberries\", \"cherries\", \"blueberries\", \"raspberries\"])\n- location = sample([\"garden\", \"field\", \"plot\", \"patch\"])\n- insect1, insect2 = sample([\"beetles\", \"ladybugs\", \"grasshoppers\", \"caterpillars\", \"bees\", \"wasps\"], 2)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 46,
+    "question_annotated": "{school,Apple High School} održava diplomiranje u svom {venue,centru za likovne umjetnosti} ove godine, koji ima kapacitet od {total,6000} ljudi. Nakon što se uračuna {graduates,950} sjedala za diplomante i {faculty,300} sjedala za prisutne članove fakulteta, koliko bi svaki diplomant dobio karata za svoje prijatelje i obitelj ako se karte podijele jednako?\n\n#init:\n- school = sample([\"Oakwood High School\", \"Riverside Academy\", \"Sunnyside High\", \"Greenville High School\"])\n- venue = sample([\"Auditorium\", \"Gymnasium\", \"Sports Arena\", \"Convention Center\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
+    "count": 100
+  },
+  {
+    "id": 50,
+    "question_annotated": "Površina {name,Billie}ine pravokutne {room_type,spavaće sobe} iznosi {area,360} kvadratnih stopa. Ako je duljina sobe {length,3} jard(a), koliki je opseg sobe u stopama?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"dnevni boravak\", \"radna soba\", \"ured\", \"kuhinja\"])\n- $area = range(200, 1200)\n- $length = range(3, 44)\n\n#conditions:\n- is_int(area / (length * 3))\n- area / (length * 3) > length * 3\n\n#answer: 2 * (area // (length * 3) + length * 3)",
+    "count": 100
+  },
+  {
+    "id": 57,
+    "question_annotated": "{name1,Ben} ima {n1,4} cijevi {color1,plave} boje i {n2,3} cijevi {color2,žute} boje. {name2,Jasper} ima {frac1_txt,pola} onoliko cijevi {color1,plave} boje kao {name1,Ben}, i {mult1_txt,tri} puta onoliko cijevi {color2,žute} boje kao {name1,Ben}. Koliko cijevi boje ima {name2,Jasper}?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
+    "count": 100
+  },
+  {
+    "id": 58,
+    "question_annotated": "Jedan {worker,gnom} može rudariti {base,12} {unit,kilograma} rude dnevno s {tool1,golim rukama}. Može rudariti {mult1_txt,dva puta} više s {tool2,brončanim kopljem} i {mult2,50}% više s {tool3,čeličnim kopljem} nego s {tool2,brončanim kopljem}. Koliko {unit,kilograma} rude može {n,40} {worker,gnom}a s {tool3,čeličnim kopljem} rudariti u mjesecu od {days,30} dana?\n\n#init:\n- worker = sample([\"rudar\", \"goblin\", \"gnom\", \"troll\"])\n- tool1 = sample([\"gole ruke\", \"osnovna lopata\", \"drveno koplje\"])\n- unit = sample([\"kilograma\", \"kg\"])\n- tool2 = sample([\"nikl koplje\", \"brončano koplje\", \"srebrno koplje\"])\n- tool3 = sample([\"brončano koplje\", \"čelično koplje\", \"dijamantno koplje\", \"mithril koplje\", \"titanij koplje\"])\n- $base = range(5, 20)\n- mult1_txt, mult1_val = sample(multi_times)\n- $mult2 = range(30, 80, 5)\n- $n = range(20, 50)\n- $days = range(28, 32)\n\n#conditions:\n- is_int(mult2/100*base*mult1_val)\n- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000\n\n#answer: int(base * mult1_val * (1 + mult2/100) * n * days)",
+    "count": 100
+  },
+  {
+    "id": 59,
+    "question_annotated": "Imam {n1,10} litara {fruit1,narančasto} pića koje je {frac1_txt,dvije trećine} vode i želim ga dodati u {n2,15} litara {fruit2,ananas} pića koje je {frac2_txt,tri petine} vode. Ali dok ga sipam, prolijem {spill_txt,četiri} litre {fruit1,narančastog} pića. Koliko vode ima u preostalih {total,21} litara?\n\n#init:\n- fruit1, fruit2 = sample([\"jabuka\", \"grožđe\", \"mango\", \"breskva\", \"limun\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(2, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)",
+    "count": 100
+  },
+  {
+    "id": 70,
+    "question_annotated": "Jedan {occupation,graditelj} radi {w,4} tjedna svaki mjesec i {d,6} dana svaki tjedan. Ako dobiva {cur,$}{p,50} svaki dan, koliko zaradi ako radi godinu dana?\n\n#init:\n- occupation = sample([\"vodoinstalater\", \"električar\", \"slikar\", \"stolari\", \"vrtlar\"])\n- cur = sample(currencies_sym)\n- $w = range(2, 5)\n- $d = range(4, 7)\n- $p = range(40, 200, 5)\n\n\n#answer: w * d * p * 12",
+    "count": 100
+  },
+  {
+    "id": 74,
+    "question_annotated": "Na {school_name,Small Tree} školi ima {total,96} {grade,četvrti}-graders. {num_girls,43} od njih su djevojčice. Na {day,Petak}, {absent_girls,5} {grade,četvrti}-grade djevojčica i {absent_boys,4} {grade,četvrti}-grade dječaka bilo je odsutno. Koliko je {grade,četvrti} grade dječaka bilo na {school_name,Small Tree} školi na {day,Petak}?\n\n#init:\n- school_name = sample([\"Maple Grove\", \"Sunny Hill\", \"Oak Ridge\", \"Pine Valley\"])\n- grade = sample([\"first\", \"second\", \"third\", \"fourth\", \"fifth\"])\n- day = sample([\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\"])\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys",
+    "count": 100
+  },
+  {
+    "id": 75,
+    "question_annotated": "Trenutno se u {place,dućan} nalazi {n1,3} {c1,crvena} loptica, {n2,11} {c2,plava} loptica i {n3,25} {c3,zelena} loptica. {c1,crvena} loptice koštaju {cur,$}{p1,9}, {c2,plava} loptice koštaju {cur,$}{p2,5} i {c3,zelena} loptice koštaju {cur,$}{p3,3}. Koliko će {place,dućan} primiti nakon što se sve loptice prodaju?\n\n#init:\n- place = sample([\"store\", \"shop\", \"market\", \"warehouse\"])\n- c1, c2, c3 = sample([\"red\", \"blue\", \"green\", \"yellow\", \"purple\", \"orange\", \"pink\"], 3)\n- cur = sample(currencies_sym)\n- $n1 = range(3, 20)\n- $n2 = range(5, 30)\n- $n3 = range(15, 50)\n- $p1 = range(5, 15)\n- $p2 = range(3, 10)\n- $p3 = range(2, 8)\n\n\n#answer: n1*p1 + n2*p2 + n3*p3",
+    "count": 100
+  },
+  {
+    "id": 79,
+    "question_annotated": "{name,Teddy} je završio {frac_txt,pola} od {n1,500} dijelova slagalice, a zatim je započeo i završio još jednu {n2,500} dijelova slagalice unutar sata. Koliko dijelova slagalice je {name,Teddy} postavio tijekom tog sata?\n\n#init:\n- name = sample(names)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n1 = range(100, 501)\n- $n2 = range(300, 1001)\n\n#conditions:\n- is_int(n1 * frac_val)\n\n#answer: int(n1 * frac_val) + n2",
+    "count": 100
+  },
+  {
+    "id": 87,
+    "question_annotated": "Najveća vodena klizaljka u {park_name,Five Flags} duga je {l1,300} {unit,metara}, a ljudi klize prema dolje brzinom od {s1,60} {unit,metara}/minutu. Druga najveća vodena klizaljka duga je {l2,240} {unit,metara}, ali je strmija, pa ljudi klize prema dolje brzinom od {s2,80} {unit,metara}/minutu. Koliko je duže potrebno za vožnju najveće klizaljke u usporedbi s drugom najvećom klizaljkom?\n\n#init:\n- park_name = sample([\"Splash World\", \"Aqua Adventure\", \"Water Wonderland\", \"Neptunes Kingdom\"])\n- unit = sample(['meters'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
+    "count": 100
+  },
+  {
+    "id": 98,
+    "question_annotated": "{disease,kuga} inficira {n0_txt,deset} ljudi. Svaki dan, svaka zaražena osoba inficira {r_txt,šest} drugih. Koliko je ljudi zaraženo nakon tri dana?\n\n#init:\n- disease = sample(['virus', 'bakterija', 'parazit', 'infekcija'])\n- n0_txt, n0_val = range_str(5, 22, 1, numbers)\n- r_txt, r_val = range_str(2, 8, 1, numbers)\n#conditions:\n- n0_val * (r_val + 1)**3 < 20000\n\n#answer: n0_val * (r_val + 1)**3",
+    "count": 100
+  }
+]

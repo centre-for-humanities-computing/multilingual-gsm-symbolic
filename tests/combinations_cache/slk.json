@@ -1,0 +1,487 @@
+[
+  {
+    "id": 0,
+    "question_annotated": "{n, Benny} uvidel {x,10}-stopného {big_fish,žralok} s {k,2} {y,6}-palcovými remorami pripojenými k nemu. Aké percento dĺžky tela {big_fish,žraloka} predstavuje celková dĺžka remor?\n\n#init:\n- n = sample(names)\n- big_fish = sample([\"delfín\", \"veľryba\", \"žralok\"])\n- $x = range(10, 500, 10)\n- $k = range(2, 10)\n- $y = range(2, 100)\n\n#conditions:\n- k * y < x * 12\n- divides(k*y,12)\n- divides(x * 12, k*y)\n- divides(100, x * 12 / (k*y))\n\n#answer: int((k * y)/ (x * 12) * 100)",
+    "count": 100
+  },
+  {
+    "id": 1,
+    "question_annotated": "Hmla sa valí z mora, aby zakryla mesto. Zaberie to {t,10} minút na zakrytie každých {d,3} míľ mesta. Ak je mesto {y,42} míľ široké od pobrežia k opačnému vnútrozemskému okraju, koľko minút bude trvať, kým hmla zakryje celé mesto?\n\n#init:\n- $t = range(2, 500)\n- $d = range(2, 100)\n- $y=range(2, 100)\n\n#conditions:\n- is_int(y/d)\n\n#answer: y//d*t",
+    "count": 100
+  },
+  {
+    "id": 2,
+    "question_annotated": "{name,Jerry} hádže {sides_txt,šesťstenná} kockou. O koľko percentuálnych bodov je pravdepodobnejšie, že hodí číslo väčšie ako {target,3}, než že hodí dve {z,párne} čísla po sebe?\n\n#init:\n- name=sample(names_male)\n- sides_txt, sides_val = sample([(\"štvorstenná\", 4), (\"šesťstenná\", 6), (\"osemstenná\", 8), (\"desaťstenná\", 10), (\"dvanáststenná\", 12), (\"štrnáststenná\", 14), (\"šestnáststenná\", 16), (\"osemnáststenná\", 18), (\"dvadsaťstenná\", 20), (\"dvadsaťdva-stenná\", 22), (\"dvadsaťštyri-stenná\", 24), (\"dvadsaťšesť-stenná\", 26), (\"dvadsaťosem-stenná\", 28), (\"tridsaťstenná\", 30), (\"tridsaťdva-stenná\", 32), (\"tridsaťštyri-stenná\", 34), (\"tridsaťšesť-stenná\", 36), (\"tridsaťosem-stenná\", 38), (\"štyridsaťstenná\", 40), (\"štyridsaťdva-stenná\", 42), (\"štyridsaťštyri-stenná\", 44), (\"štyridsaťšesť-stenná\", 46), (\"štyridsaťosem-stenná\", 48), (\"päťdesiatstenná\", 50), (\"päťdesiatdva-stenná\", 52), (\"päťdesiatštyri-stenná\", 54), (\"päťdesiatšesť-stenná\", 56), (\"päťdesiatosem-stenná\", 58), (\"šesťdesiatstenná\", 60), (\"šesťdesiatdva-stenná\", 62), (\"šesťdesiatštyri-stenná\", 64), (\"šesťdesiatšesť-stenná\", 66), (\"šesťdesiatosem-stenná\", 68), (\"sedemdesiatstenná\", 70), (\"sedemdesiatdva-stenná\", 72), (\"sedemdesiatštyri-stenná\", 74), (\"sedemdesiatšesť-stenná\", 76), (\"sedemdesiatosem-stenná\", 78), (\"osemdesiatstenná\", 80), (\"osemdesiatdva-stenná\", 82), (\"osemdesiatštyri-stenná\", 84), (\"osemdesiatšesť-stenná\", 86), (\"osemdesiatosem-stenná\", 88), (\"deväťdesiatstenná\", 90), (\"deväťdesiatdva-stenná\", 92), (\"deväťdesiatštyri-stenná\", 94), (\"deväťdesiatšesť-stenná\", 96), (\"deväťdesiatosem-stenná\", 98), (\"stostenná\", 100)])\n- $target = range(1, 100)\n- z = sample([\"párne\", \"nepárne\"])\n\n#conditions: \n- target < sides_val\n- divides(sides_val-target, target)\n- is_int((sides_val-target)/sides_val * 100)\n-  int((sides_val-target)/sides_val * 100) > 25\n\n#answer: int((sides_val-target)/sides_val * 100) - 25",
+    "count": 100
+  },
+  {
+    "id": 3,
+    "question_annotated": "{g,trieda} {n, 50} študentov má rôzne koníčky. {n_1, 10} radi {h_1, piecť}, {n_2,5} hrajú {h_2,basketbal}, a zvyšok buď {h_3, hrať videohry} alebo {h_4, hrať hudbu}. Koľko z nich {h_3, hrať videohry}, ak je počet tých, ktorí {h_4, hrať hudbu}, dvojnásobkom počtu tých, ktorí preferujú {h_2, basketbal}?\n\n#init:\n- g = sample([\"skupina\", \"trieda\"])\n- h_2 = sample(sports)\n- h_1, h_3, h_4 = sample(['čítať', 'maľovať', 'turistika', 'tancovať', 'piecť', 'hrať videohry', 'hrať hudbu'], 3)\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
+    "count": 100
+  },
+  {
+    "id": 4,
+    "question_annotated": "{name,Garrett} pripravuje popcorn na desiatu. Keď sa {p, panvica} so zrnkami zahrieva, zrnká začínajú praskať rýchlejšie. {n,20} praskne v prvých {s, 30} sekundách varenia, potom {k_2_txt,tri} krát toľko v ďalších {s, 30} sekundách. Zrnká sa zvýšia na {k_3_txt,štyri} krát počiatočnú rýchlosť praskania v ďalších {s, 30} sekundách, ale v posledných {s, 30} sekundách sa praskanie spomalí na polovicu rýchlosti oproti predchádzajúcim {s, 30} sekundám. Po tom, čo {name,Garrett} zloží {p, panvicu} z tepla, štvrtina počtu zŕn, ktoré praskli v posledných {s, 30} sekundách varenia, praskne aj z reziduálneho tepla. Koľko kusov popcornu musí {name,Garrett} zjesť?\n\n\n#init:\n- name = sample(names)\n- p = sample(['panvica', 'hrniec', 'panva'])\n- $n = range(10, 101, 10)\n- $s = range(10, 31, 2)\n- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)\n- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)\n\n#conditions:\n- k_3_val > k_2_val\n- divides(k_3_val * n, 8)\n\n#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)",
+    "count": 100
+  },
+  {
+    "id": 5,
+    "question_annotated": "{name,Katy} pripravuje {drink,káva} pomocou lyžičiek cukru a šálok vody v pomere {m,7}:{n,13}. Ak použila celkom {x,120} lyžičiek cukru a šálok vody, vypočítaj počet lyžičiek cukru, ktoré použila.\n\n#init:\n- name = sample(names_female)\n- drink = sample(['káva', 'čaj'])\n- $m = range(7, 101, 3)\n- $n = range(4, 61, 3)\n- $x = range(5, 500, 5)\n\n#conditions: \n- divides(x, m+n)\n\n#answer: ((m*x)//(m+n))",
+    "count": 100
+  },
+  {
+    "id": 6,
+    "question_annotated": "{name,Ján} má {x,10} {area,hektár}ov {fruit,ananas}ového poľa. Je {k,100} {fruit,ananas}ov na {area,hektár}e. {name, Ján} môže sklizovať svoje {fruit,ananas}y každých {n,3} mesiacov. Koľko {fruit,ananas}ov môže {name,Ján} sklizovať za rok?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- area = sample(['hektár', 'štvorcový yard', 'štvorcový meter'])\n- $x = range(5, 100, 5)\n- $k = range(2, 101)\n- $n = sample([1, 2, 3, 4, 6, 12])\n\n#answer: x * k * (12//n)",
+    "count": 100
+  },
+  {
+    "id": 7,
+    "question_annotated": "Farmár kupuje krmivo pre svoje {animals,kone}. Kúpi rôzne {treat1, seno}, {treat2, oves}, {treat3, mrkva} a {rare_treat, kocky cukru}. Keďže {rare_treat,kocky cukru} sú zriedkavá pochúťka, kupuje len {n4_txt,dva} {w4,1}-{unit,libra} krabíc pre celý chov. Chce mať len dostatok {treat3,mrkvy} na kŕmenie {animals,koní}, kým sú zeleniny čerstvé, takže kupuje {n3_txt,štyri} {w3,12}-{unit,libra} vrecá. {treat1,seno} je hlavnou stravou jeho {animals,koní}, takže kupuje {n1_txt,štyridsaťdva} {w1,75}-{unit,libra} balíky. {treat2, oves} je základnou potravinou na doplnenie {treat1, sena}, takže kupuje {n2_txt,dvadsať} {w2,65}-{unit,libra} vriec. Ak jeho poľnohospodárske nákladné auto unesie {total,2250} {unit,libra}y naraz, koľko jázd potrebuje farmár na prepravu všetkého krmiva?\n\n#init:\n- animals = sample(['kone', 'kravy', 'ovce', 'prasatá', 'alpaky'])\n- unit = sample(weights_med)\n- treat1, treat2 = sample([\"seno\", \"kukurica\", \"oves\", \"jablká\", \"pšenica\"], 2)\n- treat3 = sample([\"mrkva\", \"repa\", \"uhorky\"])\n- rare_treat = sample([\"kocky cukru\", \"slupka z vodového melóna\", \"peperminty\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
+    "count": 100
+  },
+  {
+    "id": 8,
+    "question_annotated": "Žonglér dokáže žonglovať {n, 16} loptičiek. {frac_1_txt,polovica} z loptičiek je {ball_type, golfové} loptičky a {frac_2_txt,polovica} z {ball_type,golfové} loptičiek je {color, modré}. Koľko {color, modrých} {ball_type,golfové} loptičiek je?\n\n#init:\n- ball_type = sample([\"golfové\", \"tenisové\"])\n- color = sample(colors)\n- frac_1_txt, frac_1_val = sample(fraction_alnum)\n- frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer:  int(n * frac_1_val * frac_2_val)",
+    "count": 100
+  },
+  {
+    "id": 9,
+    "question_annotated": "Keď {name, Sophie} opatruje svojho {family, synovec}, vyberie pre neho rôzne hračky. Taška s kockami na stavbu má {x,31} kociek v nej. Kôš s plyšovými zvieratkami má {y,8} plyšových zvieratiek vnútri. Veža s krúžkami má {z,9} farebných krúžkov na nej. {name, Sophie} nedávno kúpila tubu s gumovými loptičkami, čo zvýšilo celkový počet hračiek pre jej {family, synovec} na {total,62}. Koľko gumových loptičiek bolo v tubu?\n\n#init:\n- name = sample(names_female)\n- family = sample([\"synovec\", \"bratranec\", \"brat\"])\n- $x = range(31, 75)\n- $y = range(8, 50)\n- $z = range(9, 35)\n- $total = range(60, 250)\n\n#conditions:\n- total - (x + y + z) >= 20 \n- total - (x + y + z) < 100\n\n#answer: total - (x + y + z)",
+    "count": 100
+  },
+  {
+    "id": 10,
+    "question_annotated": "Na uskutočnenie hovoru z {dev,telefónna búdka}, musíte zaplatiť {currency,$}{frac1,0.25} za každú minútu hovoru. Po {t,16} minútach cena klesne na {currency,$}{frac2,0.2} za minútu. Koľko by stál {total,36}-minútový hovor?\n\n#init:\n- dev = sample(['telefónna búdka', 'telefón v hotelovom pokoji'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "count": 100
+  },
+  {
+    "id": 11,
+    "question_annotated": "{name, Peter} chce vyrobiť ľadové kocky rôznych veľkostí s {n,32} {unit,uncia} vody. Môže robiť obrovské kocky, ktoré používajú {w1,4} {unit,uncia} na kocku, stredné kocky, ktoré používajú {w2,2} {unit,uncia}, a malé kocky, ktoré používajú {w3,1/2} {unit,uncia}. Ak vyrobí {n1,3} obrovských kociek, {n2,7} stredných kociek a {n3,8} malých kociek, koľko {unit,uncia} vody mu zostane?\n\n#init:\n- name = sample(names_male)\n- unit = sample(weights_sm)\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
+    "count": 100
+  },
+  {
+    "id": 12,
+    "question_annotated": "{name, Jaime} kladie {obj,vajce} na niekoľko {surface,podnos}. Každý {surface,podnos} pojme {x,24} {obj,vajce}. Ak má {n,64} {obj,vajce} a {k,2} {surface,podnos}, koľko {obj,vajce} sa mu nepodarí umiestniť na {surface,podnos}?\n\n#init:\n- name = sample(names_male)\n- obj = sample([\"oliva\", \"mandľa\", \"sušienka\", \"krekro\", \"banán\"])\n- surface = sample([\"tanier\", \"stôl\", \"miska\", \"podnos\", \"koš\"])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x",
+    "count": 100
+  },
+  {
+    "id": 13,
+    "question_annotated": "{name,Mária} je vášnivá záhradníčka. {time, včera}, dostala {x,18} nových rastlín v kvetináčoch od jej obľúbenej škôlky. Už má {r,2} rastlín v kvetináčoch na každom z {w,40} okenných parapetov jej veľkého vidieckeho domu. S pocitom štedrosti sa rozhodla, že {n,1} z rastlín z každého parapetu odovzdá priateľom a rodine zajtra. Koľko rastlín v kvetináčoch jej {name,Mária} zostane?\n\n#init:\n- name = sample(names_female)\n- time = sample([\"minulý týždeň\", \"pred dvoma dňami\", \"včera v noci\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
+    "count": 100
+  },
+  {
+    "id": 14,
+    "question_annotated": "{n1,Janko} a {n2,Jakub} majú {t,30} minút na cestu do {loc1,škola} spoločne. Trvá im to {t1,6} minút, kým sa dostanú na roh, kde je {loc2,knižnica}. Na {loc3, hasičská stanica} sa dostanú za ďalších {t2,13} minút. Koľko času im ešte zostáva, aby stihli {loc1,škola} bez meškania?\n\n#init:\n- n1, n2 = sample(names, 2)\n- loc1, loc2, loc3 = sample(['škola', 'kino', 'nákupné centrum', 'knížnica', 'park', 'posilňovňa', 'banka'], 3)\n- $t1 = range(6, 30)\n- $t2 = range(10, 70)\n- $t = range(30, 140)\n\n#conditions:\n- not divides(t1, 5)\n- not divides(t2, 5)\n- not divides(t, 5)\n- t > t1 + t2\n\n#answer: t - t1 - t2",
+    "count": 100
+  },
+  {
+    "id": 15,
+    "question_annotated": "Pes {name1, Jennifer} má {n1, 8} šteniat, {k1,3} z nich majú škvrny. Pes {name2, Brandon} má {n2,12} šteniat, {k2,4} z nich majú škvrny. Aké percento zo všetkých šteniat má škvrny?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $n1 = range(4, 16)\n- $n2 = range(4, 20)\n- $k1 = range(2, 12)\n- $k2 = range(2, 12)\n\n#conditions:\n- k1 < n1\n- k2 < n2\n- divides(n1 + n2, k1 + k2)\n- is_int(100 * (k1+k2) / (n1+n2))\n\n#answer: int(100 * (k1+k2) / (n1+n2))",
+    "count": 100
+  },
+  {
+    "id": 16,
+    "question_annotated": "{name, Sunny} predáva {food,perník} a {fruit,jablko} koláč na charitatívnu zbierku. V {d1,sobota} predal {n1,10} krabíc {food,perník} a o {m1,4} menej krabíc {fruit,jablko} koláča, než v {d2,nedeľa}. V {d2,nedeľa} predal o {n2,5} viac krabíc {food,perník} než v {d1,sobota} a {m2,15} krabíc {fruit,jablko} koláča. Ak {food,perník} stojí {cur,$}{cn,6} a {fruit,jablko} koláč stojí {cur,$}{cm,15}, koľko {name,Sunny} zarobil za dva dni?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- cur = sample(currencies_sym)\n- food = sample([\"perník\", \"sušienky\", \"brownies\", \"muffiny\", \"cupcaky\"])\n- d1, d2 = sample_sequential(weekdays, 2)\n- $n1 = range(21, 30)\n- $n2 = range(11, 15)\n- $m1 = range(4, 20)\n- $m2 = range(15, 30)\n- $cn = range(7, 13)\n- $cm = range(20, 33)\n\n#conditions:\n- m1 < m2\n\n#answer: (2*n1+n2)*cn + (2*m2-m1)*cm",
+    "count": 100
+  },
+  {
+    "id": 17,
+    "question_annotated": "{name,Babka} chodí {n,3} {unit,míla} každý deň po jej obľúbenej prechádzkovej trase, ktorá zahŕňa {m,2} {unit,míla} prechádzky po pláži a {k,1} {unit,míla} prechádzky po chodníku. Na chodníku, {name,Babka} chodí {mult_txt,dvakrát} rýchlosťou ako na pláži. Ak {t,40} minút jej prechádzky je strávených na pláži, ako dlho jej to trvá na dokončenie celej {n,3}-{unit,míla} prechádzky, v minútach?\n\n#init:\n- name = sample(names_female)\n- unit = sample(length_lg)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 60)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: t+(k/(mult_val*m/t))",
+    "count": 100
+  },
+  {
+    "id": 18,
+    "question_annotated": "{name,Raphael} išiel nakupovať školské potreby. Kúpil {n1,4} {obj1,perá}, ktoré stáli {cur,$}{c1,1.5} za kus, {n2,2} {obj2,zošity}, ktoré stáli {cur,$}{c2,4} za kus, a balík kancelárskeho papiera, ktorý stál {cur,$}{c3,20}. Koľko {name,Raphael} minul celkom?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"zošity\", \"ceruzky\", \"gumy\", \"kriedy\", \"farebné ceruzky\", \"fixy\", \"pravítka\", \"priečinky\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
+    "count": 100
+  },
+  {
+    "id": 19,
+    "question_annotated": "V {n,60}-otázkovom kvíze, {p1,40}% otázok sú {s1,ľahké}, a zvyšok je rovnako rozdelený ako {s2,stredne ťažké} a {s3,ťažké} otázky. Ak {name,Zuzana} si je istá, že získa {r1,75}% {s1,ľahké} otázok, a {frac_txt,polovica} {s2,stredne ťažké} a {s3,ťažké} otázok správne, koľko bodov si je istá, že získa?\n\n#init:\n- s1, s2, s3 = sample([\"dejiny\", \"geografia\", \"biológia\", \"chémia\", \"fyzika\", \"ekonómia\", \"literatúra\", \"algebra\", \"geometria\" ], 3)\n- name = sample(names_female)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)",
+    "count": 100
+  },
+  {
+    "id": 20,
+    "question_annotated": "{name,Ján} zozbiera {n1,4} {fruit,banán} v {d1,utorok}. Potom zozbiera {n2,6} {fruit,banán} v {d2,štvrtok}. V {d3,piatok} zozbiera {mult_txt,tri} krát toľko {fruit,banán} ako v {d1,utorok}. Koľko {fruit,banán} má {name,Ján}?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3 = sample_sequential(weekdays, 3)\n- fruit = sample(fruits)\n- $n1 = range(30, 400)\n- $n2 = range(50, 400)\n- mult_txt, mult_val = range_str(2,6,1,numbers)\n\n#answer: n1 + n2 + mult_val * n1",
+    "count": 100
+  },
+  {
+    "id": 21,
+    "question_annotated": "{name,Frankie} sleduje TV po tom, čo dokončí svoju domácu úlohu každý večer. V {d1,pondelok} a {d2,utorok}, pozrel si {h1,1}-hodinovú epizódu svojho obľúbeného seriálu každý večer. V {d3,streda}, pozrel si niekoľko epizód {m1,30}-minútového seriálu. V {d4,štvrtok}, skončil domácu úlohu skôr a pozrel si {h2,1}-hodinovú epizódu a {m2,30}-minútový seriál. V {d5,piatok}, mohol sa budiť neskoro, takže pozrel {n2_txt,dve} {h3,1}-hodinové epizódy. Ak sledoval celkovo {total,7} hodín TV, koľko {m1,30}-minútových epizód pozrel v {d3,streda}?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)\n- $total = range(7, 33)\n- $h1 = range(1, 7)\n- $h3 = range(1, 6)\n- $m1 = range(5, 61, 5)\n- $m2 = range(5, 61, 5)\n- $h2 = range(1, 7)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n\n#conditions: \n- divides(m1, 15)\n- divides(m2, 15)\n- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 \n\n#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)",
+    "count": 100
+  },
+  {
+    "id": 22,
+    "question_annotated": "{name,Julia} sa pripravovala na {event,večierok} v jej dome, kde plánovala podávať {food,dušené mäso}. Všimla si, že jej dochádzajú plastové {obj,lyžice}, takže si kúpila nový balík {obj,lyžice}. Neskôr jej manžel tiež kúpil balík {n1,5} nových {obj,lyžice} a dal ich {name,Julia}. Kým {name,Julia} varila {food,dušené mäso}, použila {n2_txt,tri} z {obj,lyžice} na ochutnávku svojho {food,dušeného mäsa}. Neskôr, keď išla nastaviť stôl, mala celkom {total,12} {obj,lyžice}. Koľko {obj,lyžice} bolo v balíku, ktorý kúpila {name,Julia}?\n\n#init:\n- name = sample(names_female)\n- event = sample([\"obedový večierok\", \"narodeninový večierok\", \"posedenie s jedlom\", \"oslava bábätka\", \"večierok hier\"])\n- food = sample([\"pečené kurča\", \"grilovaný losos\", \"hovädzie dušené mäso\", \"zeleninové lasagne\", \"plnené papriky\", \"krevety scampi\", \"krém brulee\"])\n- obj = sample([\"lyžice\", \"vidličky\", \"taniere\"])\n- $n1 = range(5, 20)\n- n2_txt, n2_val = range_str(3, 10, 1, numbers)\n- $total = range(12, 40)\n\n#conditions:\n- total+n2_val-n1 > 0\n\n#answer: total+n2_val-n1",
+    "count": 100
+  },
+  {
+    "id": 23,
+    "question_annotated": "{name,Marta} plete zimné oblečenie pre svoje {count,3} vnúčatá. Sú to {children,trojčatá}, takže majú všetky rovnakú veľkosť. Chce upliesť {c1,čiapka}, {c2,šál}, {c3,sveter}, {c4,rukavičky} a {c5,ponožky} pre každého z nich. Na výrobu {c1,čiapka} sa potrebuje {n1,2} klbákov vlny, {n2,4} pre {c2,šál}, {n3,12} pre {c3,sveter}, {n4,1} pre pár {c4,rukavičky} a {n5,2} pre pár {c5,ponožky}. Koľko klbákov vlny bude potrebovať kúpiť?\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"sveter\", \"šál\", \"čiapka\", \"kardigán\", \"pončo\", \"vesta\", \"beanie\", \"tunika\"],3)\n- c4, c5 = sample([ \"rukavičky\", \"topánočky\", \"ponožky\", \"ohrievače nôh\", \"rukavice\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"dvojčatá\",2), (\"trojčatá\",3), (\"štvorčatá\", 4),  (\"päťčatá\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
+    "count": 100
+  },
+  {
+    "id": 24,
+    "question_annotated": "Podľa výživových údajov má vrecko {food,čipsy} {cal,250} kalórií na porciu. Ak má vrecko {size,300} {unit,gram}ov {n,5} porcií, koľko {unit,gram}ov môžete zjesť, ak je váš denný cieľ kalórií {total,2000} a už ste spotrebovali {spent,1800} kalórií?\n\n#init:\n- food = sample([\"popkorn\", \"chlieb\",  \"sušienky\"])\n- unit = sample([\"gram\", \"uncia\", \"oz\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
+    "count": 100
+  },
+  {
+    "id": 25,
+    "question_annotated": "V triede {teacher,Pán Roper} s {total,30} študentmi, {p1,20}% z triedy sú {group1,futbalisti}. Zvyšných študentov triedy, {p2,25}% študentov sú {group2,cheerleaderky} alebo {group3,hudobná skupina}. Tieto 3 skupiny študentov budú musieť dnes odísť skôr, aby cestovali na vonkajší {event,zápas}. Koľko študentov odíde skôr?\n\n#init:\n- teacher = sample(['Pani Johnson', 'Pán Smith', 'Dr. Lee', 'Pani Garcia'])\n- group1 = sample(['futbalisti', 'basketbalisti', 'volejbalisti', 'plavci'])\n- group2, group3 = sample(['tanečníci', 'členovia speváckeho zboru', 'členovia debatného tímu', 'členovia robotického klubu'],  2)\n- event = sample(['súťaž', 'turnaj', 'predstavenie', 'stretnutie'])\n- $total = range(20, 150)\n- $p1 = range(10, 50)\n- $p2 = range(15, 45)\n\n#conditions:\n- p1 < 100\n- p2 < 100\n- is_int(total * p1 / 100)\n- is_int((total - total * p1 / 100) * p2 / 100)\n\n#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)",
+    "count": 100
+  },
+  {
+    "id": 26,
+    "question_annotated": "{name1,muž} je {n1,5} {food,sendviče} za {time_unit,deň}, {name2,manželka} je {n2,4} {food,sendviče} za {time_unit,deň}, a ich {relation,syn} je {n3,2} {food,sendviče} za {time_unit,deň}. Koľko {food,sendviče} táto rodina zje za jeden {time_period,týždeň}{placeholder_txt,?}\n\n#init:\n- name1 = sample([\"otec\", \"dedko\", \"strýko\"])\n- name2 = sample([\"manželka\", \"partner\", \"partnerka\"])\n- relation = sample([\"dcéra\", \"syn\", \"vnuk\"])\n- food = sample([\"pizze\", \"burritá\", \"tacos\", \"sushi roly\", \"hamburgery\"])\n- time_unit = sample([\"deň\"])\n- time_period = sample([\"týždeň\", \"mesiac\"])\n- placeholder_txt = \"? Predpokladajme, že mesiac má 30 dní.\" if time_period == \"month\" else \"?\"\n- $n1 = range(2, 9)\n- $n2 = range(2, 9)\n- $n3 = range(2, 9)\n\n#answer: (n1 + n2 + n3) * (7 if time_period == \"week\" else 30)",
+    "count": 100
+  },
+  {
+    "id": 27,
+    "question_annotated": "{name,Janko} dostáva {n,80} e-mailov denne. {p,20}% z týchto e-mailov nevyžaduje žiadnu odpoveď. Odpovedá na zvyšok z nich. Koľko e-mailov odpíše {name,Janko} počas {d,5} dňového pracovného týždňa?\n\n#init:\n- name = sample(names)\n- $n = range(50, 200)\n- $p = range(5, 40)\n- $d = range(3, 7)\n\n#conditions:\n- is_int(n * p / 100)\n- is_int(n * (100 - p) / 100)\n\n#answer: d * (n * (100 - p) / 100)",
+    "count": 100
+  },
+  {
+    "id": 28,
+    "question_annotated": "{facility,nemocnica} má kapacitu {total,1000} {item,lôžko} s {frac,1/5} obsadených. Vzhľadom na {event,vypuknutie koronavírusu} je {daily,50} pacientov prijatých do {facility,nemocnica} každý deň. Vypočítajte celkový počet neobsadených {item,lôžko} v {facility,nemocnica} po {period,2} týždňoch.\n\n#init:\n- facility = sample([\"nemocnica\", \"klinika\", \"lekárske centrum\", \"zariadenie pre starostlivosť\"])\n- item = sample([\"lôžko\", \"izba\", \"oddelenie\"])\n- event = sample([\"sezóna chrípky\", \"prírodná katastrofa\", \"veľká nehoda\", \"pandémia\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
+    "count": 100
+  },
+  {
+    "id": 29,
+    "question_annotated": "{name1,Brett} má {age1,14} rokov. O {years_txt,štyri} roky bude jeho {relation_type,sestra} {name2,Angela} {mult_txt,trikrát} staršia ako je teraz {name1,Brett}. Koľko má rokov teraz {name2,Angela}?\n\n#init:\n- name1 = sample(names_male)\n- name2 = sample(names_female)\n- relation_type = sample(['sestra', 'bratanec'])\n- $age1 = range(8, 25)\n- years_txt, years_val = range_str(2, 10, 1, numbers)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- age1 * mult_val - years_val > 0\n\n#answer: age1 * mult_val - years_val",
+    "count": 100
+  },
+  {
+    "id": 31,
+    "question_annotated": "{name1,Mia} a {name2,Emma} sú v súčasnosti o {age_diff,16} rokov vekovo od seba. Ak je {name1,Mia}, ktorá je mladšia ako {name2,Emma}, {age1,40} rokov, aký je ich priemerný vek?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
+    "count": 100
+  },
+  {
+    "id": 32,
+    "question_annotated": "{name, Pani Cruz} hľadá {property_type, dom}, ktorý nepresiahne jej ${budget, 400000} rozpočet. Uvidela nehnuteľnosť s predajnou cenou ${price, 350000}. Okrem toho musí kupujúci zaplatiť províziu, ktorá je {brokerage_fee, 5}% z predajnej ceny, a tiež poplatok za prevod, ktorý je {transfer_fee, 12}% z predajnej ceny. O koľko viac je celková cena {property_type, dom} ako rozpočet {name, Pani Cruz}?\n\n#init:\n- name = sample(['Pani Smith', 'Pani Johnson', 'Dr. Patel', 'Pani Lee'])\n- property_type = sample(['dom', 'byt', 'condo', 'radový dom'])\n- $budget = range(300000, 500000, 10000)\n- $price = range(250000, 450000, 10000)\n- $brokerage_fee = range(3, 8)\n- $transfer_fee = range(10, 15)\n\n#conditions:\n- brokerage_fee < 100\n- transfer_fee < 100\n- price < budget\n- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1\n- is_int(price * brokerage_fee / 100)\n- is_int(price * transfer_fee / 100)\n\n#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)",
+    "count": 100
+  },
+  {
+    "id": 33,
+    "question_annotated": "{name1,Carol} a {name2,Jennifer} sú sestry z {city,Los Angeles}, ktoré milujú zbieranie podpisov od {celebrity_type,celebrity}. Počas ich {vacation_type,letné prázdniny} zo školy, sestry trávia každý popoludnie zbieraním podpisov. Po {n1_txt,päť} týždňoch {name1,Carol} a {name2,Jennifer} porovnávajú svoje knihy s autogrammi a spočítavajú počet podpisov, ktoré každá sestra nazbierala. {name1,Carol} má vo svojej knihe {s1,20} podpisov a {name2,Jennifer} má {s2,44}. Sestry majú ešte {n2_txt,tri} týždne {vacation_type,letné prázdniny} a rozhodli sa, že chcú do konca prázdnin dosiahnuť {goal,100} podpisov medzi sebou. Koľko podpisov potrebujú sestry nazbierať, aby dosiahli svoj cieľ?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- city = sample(cities)\n- celebrity_type = sample([\"filmové hviezdy\", \"atleti\", \"hudobníci\", \"politici\", \"autori\"])\n- vacation_type = sample([\"zimné prázdniny\", \"jarné prázdniny\", \"letné prázdniny\", \"jesenné prázdniny\"])\n- n1_txt, n1_val = range_str(3, 8, 1, numbers)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n- $s1 = range(15, 40)\n- $s2 = range(30, 60)\n- $goal = range(90, 150, 5)\n\n#conditions:\n- s1 + s2 < goal\n\n#answer: goal - (s1 + s2)",
+    "count": 100
+  },
+  {
+    "id": 34,
+    "question_annotated": "{title,pán} {name,Tan} predal svoj {property,dom} za ${price,400000}. Zaplatil poplatky za {fee1_name,prevod}, ktoré predstavujú {fee1_percent,3}% z predajnej ceny, a tiež zaplatil {fee2_name,maklérsky} poplatok, ktorý je {fee2_percent,5}% z predajnej ceny. Ak tiež zaplatil ${loan,250000} za zostatkovú sumu úveru na {property,dom}, aké sú čisté príjmy {title,pán} {name,Tan} z predaja {property,dom}?\n\n#init:\n- title = sample(['pán', 'prof.', 'dr.'])\n- name = sample(['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'])\n- property = sample(['dom', 'byt', 'kondominium', 'vila', 'chatka'])\n- fee1_name = sample(['prevod', 'registrácia', 'právny'])\n- fee2_name = sample(['maklérsky', 'agent', 'realitný'])\n- $price = range(200000, 1000000, 10000)\n- $fee1_percent = range(1, 5)\n- $fee2_percent = range(2, 7)\n- $loan = range(100000, 700000, 10000)\n\n#conditions:\n- price > loan\n- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1\n\n#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)",
+    "count": 100
+  },
+  {
+    "id": 35,
+    "question_annotated": "{name,Ján} zbiera peniaze na {event,školský výlet}. Požiadal o pomoc od {organization,škola}, ktorá sa rozhodla uhradiť {fraction_txt,polovica} z nákladov na {event,školský výlet}. Koľko peňazí {name,Ján} chýba, ak má {cur,€}{current,50} a {event,školský výlet} stojí {cur,€}{total,300}?\n\n#init:\n- name = sample(names_male)\n- event = sample([\"školský výlet\", \"exkurzia\", \"športový turnaj\", \"konferencia\", \"hudobný festival\", \"vedecká výstava\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"škola\", \"komunitné centrum\", \"miestna charita\", \"mládežnícky klub\", \"rodičovské združenie\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)",
+    "count": 100
+  },
+  {
+    "id": 36,
+    "question_annotated": "{name,Toula} išla do {shop,pekáreň} a kúpila rôzne druhy {item,pečivo}. Kúpila {n1,3} tuctov {item1,donuty} ktoré stáli ${p1,68} za tucet, {n2,2} tuctov {item2,minikoláčiky} ktoré stáli ${p2,80} za tucet, a {n3,6} tuctov {item3,mini syrové koláče} za ${p3,55} za tucet. Aká bola celková cena?\n\n#init:\n- name = sample(names_female)\n- shop = sample([\"pekáreň\", \"cukráreň\", \"sladkáreň\", \"kaviareň\"])\n- item = sample([\"pečivo\", \"pečené výrobky\", \"dezerty\", \"dobroty\"])\n- item1 = sample([\"donuty\", \"kruassany\", \"krémeše\", \"dánske koláče\"])\n- item2 = sample([\"minikoláčiky\", \"makaróny\", \"sušienky\", \"koláče\"])\n- item3 = sample([\"mini syrové koláče\", \"brownies\", \"muffiny\", \"scones\"])\n- $n1 = range(1, 10)\n- $n2 = range(4, 10)\n- $n3 = range(2, 10)\n- $p1 = range(11, 21)\n- $p2 = range(73, 90)\n- $p3 = range(112, 120)\n\n#answer: n1 * p1 + n2 * p2 + n3 * p3",
+    "count": 100
+  },
+  {
+    "id": 37,
+    "question_annotated": "{item,bochník chleba} má {n,24} {unit,plátok}. Ak {name1,Abby} môže zjesť {x,2} {unit,plátok} denne, kým {name2,Josh} môže zjesť {mult_txt,dvojnásobne} toľko, koľko dní vydrží {item,bochník chleba}?\n\n#init:\n- item = sample([\"pizza\", \"koláč\", \"tarta\", \"lasagne\"])\n- unit = sample([\"kus\", \"porcia\", \"plátok\"])\n- name1, name2 = sample(names, 2)\n- $n = range(12, 76, 3)\n- $x = range(2, 13)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- divides(n, x + x*mult_val)\n\n#answer: n // (x + x*mult_val)",
+    "count": 100
+  },
+  {
+    "id": 38,
+    "question_annotated": "Kus {item1,chlieb} v {shop,pekáreň} stojí {currency,€}{price1,2}. {item2,bagel}y stoja {currency,€}{price2,1} každý. Koľko viac stojí {n1,3} kusov {item1,chlieb}a ako {n2,2} {item2,bagel}ov?\n\n#init:\n- item1 = sample([\"chlieb\", \"kysnutý chlieb\"])\n- item2 = sample([\"bagel\", \"muffin\", \"croissant\", \"sušienka\"])\n- shop = sample([\"pekáreň\", \"kaviareň\", \"obchod\", \"trh\"])\n- currency = sample(currencies_sym)\n- $price1 = range(2, 10)\n- $price2 = range(1, 5)\n- $n1 = range(2, 10)\n- $n2 = range(2, 10)\n\n#conditions:\n- n1 * price1 > n2 * price2\n\n#answer: n1 * price1 - n2 * price2",
+    "count": 100
+  },
+  {
+    "id": 39,
+    "question_annotated": "{job,upratovač} musí upratať {building,škola} s {n,80} {room,trieda}mi. Majú {d,5} dní na to, aby to dokončili. Trvá im {t,15} minút na {room,trieda}. Ak pracujú {h,8} hodín každý deň, aké percento ich dňa, v priemere, sa minie na upratovanie {room,trieda}?\n\n#init:\n- job = sample([\"upratovač\", \"čistič\", \"údržbár\"])\n- building = sample([\"kancelárska budova\", \"nemocnica\", \"univerzita\",])\n- room = sample([\"trieda\", \"poschodie\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))",
+    "count": 100
+  },
+  {
+    "id": 40,
+    "question_annotated": "{name,Sally} išla na pobrežie na dovolenku. Jej rodičia jej dali ${total,15} na kúpu čohokoľvek, čo chcela. V suvenírovej predajni bola karamelka v akcii s ponukou \"Kúpiť {n1,1} libru za ${p1,3} za libru, získať {n2,1} libru {discount,1/2} zľavu.\" Nabrala {n12,4} libier. Tiež si kúpila miešané vrecko lastúr za ${p2,1.5} a {n3,4} magnetov, ktoré stáli ${p3,0.25} každý. Koľko peňazí má {name,Sally} ešte?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "count": 100
+  },
+  {
+    "id": 41,
+    "question_annotated": "{structure,veža} je zložená z {n1,4} {color1,modrá} {obj,kocka}, {mult_txt,dvakrát} toľkých {color2,žltá} {obj,kocka}, a neznáme množstvo {color3,červená} {obj,kocka}. Ak je v {structure,veža} celkovo {total,32} {obj,kocka}, koľko {color3,červená} {obj,kocka} je tam?\n\n#init:\n- structure = sample([\"budova\", \"pyramída\", \"hromada\"])\n- obj = sample([\"tehla\", \"kocka\", \"dlažba\"])\n- color1, color2, color3 = sample([\"zelená\", \"fialová\", \"oranžová\", \"ružová\", \"biela\", \"čierna\"], 3)\n- $n1 = range(2, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $total = range(20, 50)\n\n#conditions:\n- total > n1 + mult_val * n1\n\n#answer: total - n1 - mult_val * n1",
+    "count": 100
+  },
+  {
+    "id": 42,
+    "question_annotated": "{name,Roger} ide do obchodu kúpiť nejakú {item,káva}. Zvyčajná značka {item,káva}, ktorú kupuje, stojí {cur,$}{price,5} za {unit,libra}. Musel kúpiť drahšiu značku, ktorá stojí o {percent,20}% viac, keďže jeho obľúbená značka bola vypredaná. Rozhodol sa kúpiť týždennú zásobu {item,káva} a spotrebuje {usage,1} {unit,libra} {item,káva} za deň. Rozhodol sa tiež kúpiť sám sebe {extra_item,kobliha} za {cur,$}{extra_price,2}. Koľko všetko stálo?\n\n#init:\n- name = sample(names_male)\n- item = sample(['čaj', 'cukor', 'múka', 'ryža'])\n- cur = sample(currencies_sym)\n- unit = sample(['kilogram', 'kg'])\n- extra_item = sample(['sušienka', 'muffin', 'bagel'])\n- $price = range(3, 25)\n- $percent = range(10, 50, 5)\n- $usage = range(1, 3)\n- $extra_price = range(1, 5)\n\n#conditions:\n- is_int(price * percent / 100)\n\n#answer: (price + price * percent / 100) * 7 * usage + extra_price",
+    "count": 100
+  },
+  {
+    "id": 43,
+    "question_annotated": "{name,Dax} išiel na svoj {place,farma} zozbierať nejaké {fruit,jablá} a našiel {frac_txt,polovica} {insect1,chrobáky} oproti {insect2,mravce} v {location,záhrada}.\n\nAk bolo {n,50} {insect2,mravce}, vypočítajte celkový počet hmyzu v {location,záhrada}.\n\n#init:\n- name = sample(names)\n- place = sample([\"sad\", \"dvor\", \"skleník\", \"pozemok\"])\n- fruit = sample([\"jahody\", \"čerešne\", \"čučoriedky\", \"maliny\"])\n- location = sample([\"záhrada\", \"pole\", \"parcela\", \"záhon\"])\n- insect1, insect2 = sample([\"chrobáky\", \"božie mliečka\", \"kobylky\", \"húsenice\", \"včely\", \"sršne\"], 2)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 44,
+    "question_annotated": "V {place,park} je {n,6} dievčat. Ak je v {place,park} {mult_txt,dvojnásobok} počtu chlapcov, koľko detí je v {place,park}?\n\n#init:\n- place = sample(['park', 'dvor', 'pole', 'ihrisko', 'záhrada'])\n- $n = range(5, 51)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- is_int(n * mult_val + 1)\n- n * (mult_val + 1) <= 200\n\n#answer: n * (mult_val + 1)",
+    "count": 100
+  },
+  {
+    "id": 45,
+    "question_annotated": "{name,Pat} má záhon, ktorý je {length,111} {unit_length,stopa} dlhý. {name,Pat} chce naplniť svoj záhon rastlinami. Kvety {name,Pat} rastú {plant_width,12} palcov široké, a záhradnícke pokyny hovoria, že treba vysadiť jeden kvet každých {space,1.5} {unit_length,stopa} po dĺžke záhonu. {name,Pat} už vlastní {owned,17} kvetov. Každá kvitnúca rastlina stojí {cur,$}{cost,6} v obchode. Koľko peňazí bude {name,Pat} míňať v obchode, aby naplnila svoj záhon?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['stopa', 'meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "count": 100
+  },
+  {
+    "id": 46,
+    "question_annotated": "{school,stredná škola Apple} usporadúva záverečné slávnosti vo svojom {venue,stredisko výtvarných umení} tento rok, ktorý má kapacitu pre {total,6000} ľudí. Po zohľadnení {graduates,950} miest pre absolventov a {faculty,300} miest pre prítomných pedagógov, koľko lístkov by dostal každý absolvent pre svojich priateľov a rodinu, ak sa lístky rozdelia rovnako?\n\n#init:\n- school = sample([\"stredná škola Oakwood\", \"akadémia Riverside\", \"stredná škola Sunnyside\", \"stredná škola Greenville\"])\n- venue = sample([\"sála\", \"športová hala\", \"športová aréna\", \"kongresové centrum\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
+    "count": 100
+  },
+  {
+    "id": 47,
+    "question_annotated": "{name1,Cole} ukryl {n,3} tucty vajec na dvore na veľkonočný lov vajec. {name2,Lamar} nájde {x,5} vajec. {name3,Stacy} nájde {mult1_txt,dvakrát} toľko ako {name2,Lamar}. {name4,Charlie} nájde o {y,2} menej ako {name3,Stacy}, a {name5,Mei} nájde {frac_txt,polovica} z toho, čo {name4,Charlie}. Koľko vajec je stále ukrytých na dvore?\n\n#init:\n- name1, name2, name3, name4, name5 = sample(names, 5)\n- $n = range(2, 10)\n- $x = range(3, 15)\n- $y = range(1, 5)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))\n- is_int(x * mult1_val)\n- x * mult1_val - y > 0\n- is_int((x * mult1_val - y) * frac_val)\n- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)\n\n#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))",
+    "count": 100
+  },
+  {
+    "id": 48,
+    "question_annotated": "{name,Emília} dokáže olúpať {n1,6} {food,krevety} za minútu a restovať {n2,30} {food,krevety} za {t,10} minút. Koľko času jej bude trvať olúpať a restovať {total,90} {food,krevety}? {name,Emília} nemôže olúpať a restovať súčasne.\n\n#init:\n- name = sample(names_female)\n- food = sample([\"krevety\", \"cibuľa\", \"mrkva\", \"huby\", \"mušle\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
+    "count": 100
+  },
+  {
+    "id": 49,
+    "question_annotated": "{name,Ján} zbiera odpad z {n,3} rôznych bytových komplexov. Prvé {n_first_txt,dva} majú {a,200} bytov každý a ten posledný je o {p,60}% väčší ako ostatné {n_first_txt,dva} dohromady. Zbiera odpad {f,3}-krát týždenne z každého miesta a dostane {cur,€}{r,0.4} za zber za každý byt. Koľko peňazí zarobí za týždeň?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "count": 100
+  },
+  {
+    "id": 50,
+    "question_annotated": "Plocha {name,Billie}ho obdĺžnikového {room_type,spálňa} je {area,360} štvorcových stôp. Ak je dĺžka miestnosti {length,3} jard(y), aký je obvod miestnosti v stopách?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"obývačka\", \"štúdió\", \"kancelária\", \"kuchyňa\"])\n- $area = range(200, 1200)\n- $length = range(3, 44)\n\n#conditions:\n- is_int(area / (length * 3))\n- area / (length * 3) > length * 3\n\n#answer: 2 * (area // (length * 3) + length * 3)",
+    "count": 100
+  },
+  {
+    "id": 51,
+    "question_annotated": "{name,Artie} má stánok s {product,kvetmi} na {location,farmárskych trhoch}. Predáva tri druhy {product,kvetov}: {item1,nechtíky}, {item2,petúnie} a {item3,begónie}. Zvyčajne predáva {item1,nechtíky} za {cur,€}{p1,2.74} za {unit,hrniec}, {item2,petúnie} za {cur,€}{p2,1.87} za {unit,hrniec} a {item3,begónie} za {cur,€}{p3,2.12} za {unit,hrniec}. {name,Artie} dnes nemá drobné, preto sa rozhodol zaokrúhliť všetky ceny na najbližšie euro. Ak {name,Artie} predá {n1,12} {unit,hrncov} {item1,nechtíky}, {n2,9} {unit,hrncov} {item2,petúnie} a {n3,17} {unit,hrncov} {item3,begónie}, koľko zarobí?\n\n#init:\n- name = sample(names_male)\n- product = sample([\"zelenina\", \"kvet\", \"bylina\", \"rastlina\"])\n- location = sample([\"miestny jarmok\", \"komunitný trh\", \"uličný bazár\", \"námestie v meste\"])\n- item1, item2, item3 = sample([\"ruže\", \"sedmokrásky\", \"tulipány\", \"lílie\", \"slnečnice\", \"orchidey\"], 3)\n- unit = sample([\"zväzok\", \"košík\", \"kytica\", \"balík\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
+    "count": 100
+  },
+  {
+    "id": 52,
+    "question_annotated": "{name,Craig} má {n,2} {cur,$}{bill,20} bankoviek. Kúpi {m_txt,šesť} {item1,striekací pištoľ} za {cur,$}{p1,2} kus. Tiež kúpi {k,3} balíčkov {item2,vodný balón} za {cur,$}{p2,3} kus. Koľko peňazí mu zostane?\n\n#init:\n- name = sample(names_male)\n- $bill = sample([5, 10, 20, 50, 100])\n- item1 = sample([\"hračkárske auto\", \"akčná figúrka\", \"kniha na maľovanie\", \"hádanka\", \"spoločenská hra\"])\n- item2 = sample([\"nálepka\", \"čokoládový tyčinka\", \"kolekčná karta\", \"ceruzka\", \"guma\"])\n- cur = sample(currencies_sym)\n- $n = range(1, 10)\n- m_txt, m_val = range_str(2, 15, 1, numbers)\n- $k = range(2, 10)\n- $p1 = range(1, 10)\n- $p2 = range(1, 10)\n\n#conditions:\n- n * int(bill) > m_val * p1 + k * p2\n\n#answer: n * int(bill) - (m_val * p1 + k * p2)",
+    "count": 100
+  },
+  {
+    "id": 53,
+    "question_annotated": "{name1,Pierson} dosiahol {n1,278} bodov v jednej hre {game,bowling}. {name2,Nikita} získal {n2,11} bodov viac než {frac_txt,polovica} počtu {name1,Pierson}. Koľko bodov mali {name1,Pierson} a {name2,Nikita} spolu?\n\n#init:\n- name1, name2 = sample(names, 2)\n- game = sample([\"bowling\", \"darts\", \"lukostreľba\", \"basketbal\", \"tenis\"])\n- $n1 = range(200, 500)\n- $n2 = range(5, 50)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(frac_val * n1)\n\n#answer: n1 + int(frac_val * n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 54,
+    "question_annotated": "{name,Doxa} nakrájala celé {fruit,jablko} na {total,18} kusov. Ona zjedla {n1,3} kúsky, jej {sibling1,sestra} zjedla {n2,2} viac než ona, a jej {sibling2,brat} zjedol {n3,3} viac než jej {sibling1,sestra}. Koľko kúskov {fruit,jablko} všetci zjedli?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"pomaranč\", \"hruška\", \"broskyňa\", \"mango\", \"kiwi\"])\n- sibling1, sibling2 = sample([\"brat\", \"sestra\", \"bratranec\", \"priateľ\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
+    "count": 100
+  },
+  {
+    "id": 55,
+    "question_annotated": "{name,Eliška} sa učí písať a rozhodne sa, že bude prepisovať {alphabets_txt,abecedu} kým si ju nezapamätá. Napíše ju celú {n1_txt,dvakrát}, napíše {frac_txt,polovica} z toho raz, potom prepíše všetko, čo už napísala. Koľko písmen napísala {name,Eliška} celkovo?\n\n#init:\n- name = sample(names_female)\n- alphabets_txt, alphabets_val = sample([(\"abeceda\", 26), (\"hiragana (s 48 písmenami)\", 48), (\"farsi abeceda (s 32 písmenami)\", 32), (\"arabská abjad (s 28 písmenami)\", 28)])\n- n1_txt, n1_val = sample([(\"dvakrát\", 2), (\"trikrát\", 3), (\"štyrikrát\", 4), (\"päťkrát\", 5), (\"šesťkrát\", 6), (\"sedemkrát\", 7), (\"osemkrát\", 8), (\"deväťkrát\", 9), (\"desaťkrát\", 10), (\"jedenásťkrát\", 11)])\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(alphabets_val * frac_val)\n\n#answer: 2 * (alphabets_val * n1_val + alphabets_val * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 56,
+    "question_annotated": "Jeden {container,pohár} {liquid,mlieko} má {vol,8} {unit,uncia} {liquid,mlieko}. {name,Ján} vypije {num,2} {container_plural,poháre} {liquid,mlieko}. Ak {liquid,mlieko} má {cal,3} kalórií na {unit,uncia}, koľko kalórií celkovo spotreboval?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"pohár\",\"poháre\"), (\"hrnček\",\"hrnčeky\"), (\"fľaša\",\"fľaše\"), (\"krabica\",\"krabice\")])\n- liquid = sample([\"ovocná šťava\", \"soda\", \"perlivá voda\", \"čaj\", \"limonáda\"])\n- unit = sample([\"uncia\", \"mL\", \"cc\", \"oz\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
+    "count": 100
+  },
+  {
+    "id": 58,
+    "question_annotated": "Jeden {worker,gnóm} dokáže ťažiť {base,12} {unit,libry} rudy za deň s {tool1,holými rukami}. Dokáže ťažiť {mult1_txt,dvakrát} toľko s {tool2,bronzovým krumpárom} a o {mult2,50}% viac s {tool3,oceľovým krumpárom} ako s {tool2,bronzovým krumpárom}. Koľko {unit,libry} rudy dokáže {n,40} {worker,gnóm}ov s {tool3,oceľovými krumpármi} ťažiť v mesiaci s {days,30} dňami?\n\n#init:\n- worker = sample([\"baník\", \"goblin\", \"gnóm\", \"troll\"])\n- tool1 = sample([\"holé ruky\", \"základná lopata\", \"drevený krumpár\"])\n- unit = sample([\"libry\", \"kg\"])\n- tool2 = sample([\"niklový krumpár\", \"bronzový krumpár\", \"strieborný krumpár\"])\n- tool3 = sample([\"oceľový krumpár\", \"diamantový krumpár\", \"mithrilový krumpár\", \"titánový krumpár\"])\n- $base = range(5, 20)\n- mult1_txt, mult1_val = sample(multi_times)\n- $mult2 = range(30, 80, 5)\n- $n = range(20, 50)\n- $days = range(28, 32)\n\n#conditions:\n- is_int(mult2/100*base*mult1_val)\n- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000\n\n#answer: int(base * mult1_val * (1 + mult2/100) * n * days)",
+    "count": 100
+  },
+  {
+    "id": 59,
+    "question_annotated": "Mám {n1,10} litrov {fruit1,pomarančový} nápoja, ktorý obsahuje {frac1_txt,dve tretiny} vody a chcem ho pridať k {n2,15} litrom {fruit2,ananasový} nápoja, ktorý obsahuje {frac2_txt,tri pätiny} vody. Ale keď ho nalejem, rozliem {spill_txt,štyri} litrov {fruit1,pomarančový} nápoja. Koľko vody je v zostávajúcich {total,21} litroch?\n\n#init:\n- fruit1, fruit2 = sample([\"jablko\", \"hrozno\", \"mango\", \"broskyňa\", \"citrón\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(2, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)",
+    "count": 100
+  },
+  {
+    "id": 60,
+    "question_annotated": "{name,Watson} pracuje {h,10}-hodinovú zmenu každý deň, {d_txt,päť} dní v týždni. Zarába {cur,$}{r,10} za hodinu a dostáva {cur,$}{b,300} bonus každý týždeň, ak sa spoločnosti darí dobre. Koľko peňazí zarobil {name,Watson} v mesiaci {month,apríl}, ak sa spoločnosti veľmi darilo počas celého mesiaca?\n\n#init:\n- name = sample(names_male)\n- month = sample([\"január\", \"február\", \"marec\", \"apríl\", \"máj\", \"jún\", \"júl\", \"august\", \"september\", \"október\", \"november\", \"december\"])\n- cur = sample(currencies_sym)\n- $h = range(6, 13)\n- d_txt, d_val = range_str(3, 7, 1, numbers)\n- $r = range(8, 31)\n- $b = range(100, 601)\n\n#conditions:\n- is_int(h * r)\n\n#answer: h * r * d_val * 4 + b * 4",
+    "count": 100
+  },
+  {
+    "id": 61,
+    "question_annotated": "{name,Brendan} má vrecko {objects,guličky} s {n,10} vnútri. Keď ho niesol, spolietol sa o {obstacle,kamienok} a stratil {frac_txt,polovica} z nich. Snažil sa ich hľadať, ale našiel len {k,3}. Keď sa vrátil domov, podrobne preskúmal svoje {objects,guličky}. {fake_num_txt,dva} z tých, ktoré zdvihol, neboli {objects,guličky}, ale v skutočnosti {fake_object,korálky}, takže sa ich zbavil. Koľko {objects,guličky} nakoniec {name,Brendan} mal?\n\n#init:\n- name = sample(names_male)\n- objects = sample(['guličky', 'mince', 'gombíky', 'korálky', 'kamienky'])\n- obstacle = sample(['kameň', 'palička', 'hračka', 'koreň'])\n- fake_object = sample(['gombíky', 'mince', 'kamienky', 'korálky'])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val",
+    "count": 100
+  },
+  {
+    "id": 62,
+    "question_annotated": "V súbore kariet {item,kúzelník} je {n1,15} {c1,červená} kariet a o {p,60}% viac {c2,zelená} kariet. Počet {c3,žltá} kariet sa rovná súčtu {c1,červená} a {c2,zelená} kariet. Koľko kariet všetkých spomenutých farieb je spolu?\n\n#init:\n- item = sample([\"kúzelník\", \"umelec\", \"kuchár\", \"vedec\", \"športovec\"])\n- c1, c2, c3 = sample([\"červená\", \"modrá\", \"zelená\", \"žltá\", \"fialová\", \"oranžová\"], 3)\n- $n1 = range(15, 81)\n- $p = range(20, 90)\n\n#conditions:\n- p < 100\n- is_int(p/100 * n1)\n\n#answer: 2 * (n1 + (p/100 * n1))",
+    "count": 100
+  },
+  {
+    "id": 63,
+    "question_annotated": "{person1,chlapec} má {n,5} {item,karta}. Jeho {relation,brat} má o {k,3} {item,karta} menej ako on. Koľko {item,karta} majú spolu?\n\n#init:\n- person1 = sample([\"študent\", \"chlapec\", \"dieťa\", \"dieťaťko\"])\n- item = sample([\"gulička\", \"nálepka\", \"hračka\", \"kniha\", \"ceruzka\"])\n- relation = sample([\"sestra\", \"brat\", \"priateľ\", \"bratranec\"])\n- $n = range(5, 21)\n- $k = range(2, 10)\n\n#conditions:\n- n > k\n\n#answer: n + (n-k)",
+    "count": 100
+  },
+  {
+    "id": 64,
+    "question_annotated": "{name,Mária} má {n,6} pohárov {item,posyp} v jej {location,špajza}. Každý pohár {item,posyp} môže ozdobiť {m,8} {food,koláčik}ov. {name,Mária} chce upiecť dostatok {food,koláčik}ov na spotrebu celého {item,posyp}. Ak každá {container,forma} pojme {k,12} {food,koláčik}ov, koľko {container,forma}ov plných {food,koláčik}ov by mala upiecť?\n\n#init:\n- name = sample(names_female)\n- item = sample([\"posyp\", \"krém\", \"glazúra\", \"čokoládové kúsky\"])\n- food = sample([\"koláčik\", \"sušienka\", \"brownie\", \"muffin\"])\n- location = sample([\"špajza\", \"skriňa\", \"skrinka v kuchyni\", \"komora\"])\n- container = sample([\"forma\", \"plech\", \"pekáč\", \"rebrík\"])\n- $n = range(3, 15)\n- $m = range(6, 20)\n- $k = range(6, 24)\n\n#conditions:\n- divides(n*m, k)\n\n#answer: (n*m)//k",
+    "count": 100
+  },
+  {
+    "id": 65,
+    "question_annotated": "{name,Jackie} sa snaží rozhodnúť, či má robiť {task,jej dane} sama alebo zamestnať jedného {profession,účtovník}. Ak to robí sama, bude schopná urobiť {n,3} menej hodín {work_type,frilanská} práce, s tým, že stratí {cur,$}{rate,35}/hodinu z vynechaných príjmov. {profession,účtovník} si účtuje {cur,$}{fee,90}. Koľko viac peňazí bude mať, ak zamestná {profession,účtovník}?\n\n#init:\n- name = sample(names_female)\n- task = sample([\"jej dane\", \"jej finančné plánovanie\", \"jej podnikové účtovníctvo\"])\n- profession = sample([\"účtovník\", \"finančný poradca\", \"daňový konzultant\", \"účtovný pracovník\"])\n- work_type = sample([\"frilanská\", \"poradenská\", \"na čiastočný úväzok\", \"zmluvná\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 14)\n- $rate = range(20, 100)\n- $fee = range(50, 200)\n\n#conditions:\n- n * rate > fee\n\n#answer: n * rate - fee",
+    "count": 100
+  },
+  {
+    "id": 66,
+    "question_annotated": "{name,Candy} má {n1,15} svetlých {c1,modrý} kľučiek nite, {n2,45} tmavých {c1,modrý} kľučiek nite, {n3,40} svetlých {c2,zelený} kľučiek nite, a {n4,50} tmavých {c2,zelený} kľučiek nite. Aké percento jej kľučiek je {c1,modrý}?\n\n#init:\n- name = sample(names)\n- c1, c2 = sample(colors, 2)\n- $n1 = range(15, 100, 5)\n- $n2 = range(45, 150, 5)\n- $n3 = range(20, 80, 5)\n- $n4 = range(50, 100, 5)\n\n#conditions:\n- is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))\n\n#answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))",
+    "count": 100
+  },
+  {
+    "id": 67,
+    "question_annotated": "{name,John} má pokazené {vehicle,auto}. {vehicle,auto} váži {weight_vehicle,1200} {unit,libry} a má v ňom {item,prtlaz} vážiace {weight_item,250} {unit,libry}. Má v ňom aj svoje {num_passengers_txt,dva} mladé {passenger_type,deti}, ktoré vážia {weight_passenger,75} {unit,libry} každé. Ak je sila potrebná na posunutie {vehicle,auto} {force_percent,1}% z celkovej hmotnosti, akú silu potrebuje na zatlačenie {vehicle,auto}?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample(['auto', 'dodávka', 'nákladné auto', 'SUV'])\n- item = sample(['prtlaz', 'potraviny', 'vybavenie', 'nábytok'])\n- passenger_type = sample(['deti', 'priatelia', 'kolegovia', 'tímoví kolegovia'])\n- unit = sample(['libry', 'kilogramy'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)",
+    "count": 100
+  },
+  {
+    "id": 68,
+    "question_annotated": "Trvá {name,Carmen} {t1,10} minút na vyriešenie {game1,krížovky} a {t2,5} minút na vyriešenie {game2,sudoku}. Počas {period,víkendu} vyriešila {n1,3} {game1,krížovky} a {n2,8} {game2,sudoku}. Koľko času strávila hraním týchto hier?\n\n#init:\n- name = sample(names_female)\n- game1, game2 = sample([\"krížovky\", \"sudoku\", \"slovné hádanky\", \"mozaiky\", \"šachové hádanky\", \"hádanky\", \"logické hádanky\"], 2)\n- period = sample([\"víkendu\", \"dovolenky\", \"sviatka\", \"voľného dňa\", \"voľného času\"])\n- $t1 = range(5, 30)\n- $t2 = range(3, 20)\n- $n1 = range(2, 10)\n- $n2 = range(4, 15)\n\n#conditions:\n- t1 > t2\n\n#answer: t1*n1 + t2*n2",
+    "count": 100
+  },
+  {
+    "id": 69,
+    "question_annotated": "V {day3,utorok}, {name,Peter} chce cvičiť {mult_txt,dvakrát} toľko času, koľko na {day2,pondelok} a {day1,nedeľa} dohromady. V {day1,nedeľa} cvičil {t1,23} minút. V {day2,pondelok} cvičil {t2,16} minút. Koľko minút musí cvičiť v {day3,utorok}, aby dosiahol svoj cieľ?\n\n#init:\n- name = sample(names)\n- day1, day2, day3 = sample_sequential(weekdays, 3)\n- $t1 = range(10, 60)\n- $t2 = range(10, 60)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- t1 + t2 > 0\n- (t1 + t2) * mult_val / 60 < 14\n#answer: (t1 + t2) * mult_val",
+    "count": 100
+  },
+  {
+    "id": 70,
+    "question_annotated": "{occupation,staviteľ} pracuje {w,4} týždne každý mesiac a {d,6} dní každý týždeň. Ak zarába {cur,$}{p,50} denne, koľko zarobí, ak pracuje rok?\n\n#init:\n- occupation = sample([\"inštalatér\", \"elektrikár\", \"maliar\", \"tesár\", \"záhradník\"])\n- cur = sample(currencies_sym)\n- $w = range(2, 5)\n- $d = range(4, 7)\n- $p = range(40, 200, 5)\n\n\n#answer: w * d * p * 12",
+    "count": 100
+  },
+  {
+    "id": 71,
+    "question_annotated": "{name,Nate} kŕmi svojich hospodárskych zvierat {food,seno}. Každá {animal1,koza} potrebuje {n1,5} {unit,libry}, a každá {animal2,lama} potrebuje o {n2,3} {unit,libry} menej než dvojnásobok toho, koľko potrebuje každá {animal1,koza}. Ak je tu {k1,15} {animal1,koza} a {k2,12} {animal2,lama}, koľko {unit,libry} {food,seno} potrebuje {name,Nate}?\n\n#init:\n- name = sample(names_male)\n- food = sample([\"seno\", \"zrno\", \"krmivo\", \"siláž\"])\n- animal1, animal2 = sample([\"koza\", \"krava\", \"kôň\", \"osol\", \"lama\", \"alpaka\", \"prasa\", \"kacúrka\", \"kačica\"], 2)\n- unit = sample([\"libry\", \"kilogramy\", \"kg\"])\n- $n1 = range(3, 15)\n- $n2 = range(1, 10)\n- $k1 = range(10, 50)\n- $k2 = range(10, 50)\n\n#conditions:\n- 2*n1 - n2 > 0\n\n#answer: k1*n1 + k2*(2*n1 - n2)",
+    "count": 100
+  },
+  {
+    "id": 72,
+    "question_annotated": "{name,Mike} bol korešpondenčným priateľom s {n1,5} ľuďmi. Ukončil korešpondenčné priateľstvo s {n2,2} z nich. Každý z nich posiela {l,2} listy týždenne, ktoré majú {p,5} strán. Odpovedá im na oplátku. Napíše stranu každých {t,6} minút. Koľko hodín týždenne trávi písaním?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 15)\n- $n2 = range(1, 5)\n- $l = range(2, 5)\n- $p = range(5, 12)\n- $t = range(4, 15)\n\n#conditions:\n- n2 < n1\n- is_int(((n1 - n2) * l * p * t) / 60)\n\n#answer: ((n1 - n2) * l * p * t) // 60",
+    "count": 100
+  },
+  {
+    "id": 73,
+    "question_annotated": "Komet {comet_name,halley} obeží Slnko každých {orbit_period,75} rokov. {name,bill}ov {relative,tatko} videl Kometu, keď mal {relative_age,30} rokov. {name,bill} videl kometu druhý raz, keď mal {multiple_txt,tri} násobok veku, aký mal jeho {relative,tatko}, keď videl Kometu. Koľko mal {name,bill} rokov, keď videl Kometu prvý raz?\n\n#init:\n- comet_name = sample(['halley', 'hale-bopp', 'hyakutake', 'encke'])\n- name = sample(names_male)\n- relative = sample(['tatko', 'otec', 'strýko', 'dedko'])\n- $orbit_period = range(50, 101, 5)\n- $relative_age = range(20, 51)\n- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)\n\n#conditions:\n- multiple_val * relative_age < 100\n- multiple_val * relative_age > orbit_period\n- is_int(multiple_val * relative_age - orbit_period)\n\n#answer: multiple_val * relative_age - orbit_period",
+    "count": 100
+  },
+  {
+    "id": 74,
+    "question_annotated": "Na škole {school_name,malý strom} je {total,96} žiakov {grade,štvrtá} triedy. {num_girls,43} z nich sú dievčatá. V {day,piatok} {absent_girls,5} dievčat {grade,štvrtá} triedy a {absent_boys,4} chlapcov {grade,štvrtá} triedy chýbali. Koľko chlapcov {grade,štvrtá} triedy bolo na škole {school_name,malý strom} v {day,piatok}?\n\n#init:\n- school_name = sample([\"Javorový háj\", \"Slnečný kopec\", \"Dubový hrebeň\", \"Borovicové údolie\"])\n- grade = sample([\"prvá\", \"druhá\", \"tretia\", \"štvrtá\", \"piata\"])\n- day = sample([\"pondelok\", \"utorok\", \"streda\", \"štvrtok\", \"piatok\"])\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys",
+    "count": 100
+  },
+  {
+    "id": 75,
+    "question_annotated": "{place,obchod} momentálne obsahuje {n1,3} {c1,červený} gule, {n2,11} {c2,modrý} gule a {n3,25} {c3,zelený} gule. {c1,červený} gule stoja {cur,€}{p1,9}, {c2,modrý} gule stoja {cur,€}{p2,5} a {c3,zelený} gule stoja {cur,€}{p3,3}. Koľko {place,obchod} získa po predaji všetkých gulí?\n\n#init:\n- place = sample([\"obchod\", \"krám\", \"trh\", \"sklad\"])\n- c1, c2, c3 = sample([\"červený\", \"modrý\", \"zelený\", \"žltý\", \"fialový\", \"oranžový\", \"ružový\"], 3)\n- cur = sample(currencies_sym)\n- $n1 = range(3, 20)\n- $n2 = range(5, 30)\n- $n3 = range(15, 50)\n- $p1 = range(5, 15)\n- $p2 = range(3, 10)\n- $p3 = range(2, 8)\n\n\n#answer: n1*p1 + n2*p2 + n3*p3",
+    "count": 100
+  },
+  {
+    "id": 76,
+    "question_annotated": "{name,Deandre} chytil {n,3} {fish,tunák}y minulý {day,pondelok}, prvý {fish,tunák}, ktorý chytil, váži {w1,56} {unit,kilogram}ov, druhý {fish,tunák}, ktorý chytil, váži {w2,46} {unit,kilogram}ov, a zvyšný {fish,tunák}, ktorý chytil, váži {w3,26} {unit,kilogram}. Ak {unit,kilogram} {fish,tunáka} stojí {cur,$}{price,0.5}, koľko zarobí po predaji všetkých {fish,tunák}ov na trhu?\n\n#init:\n- name = sample(names_male)\n- fish = sample([\"tunák\",\"losos\", \"treska\", \"pstruh\", \"pstruh oceľový\"])\n- day = sample(weekdays)\n- unit = sample([\"kilogram\", \"libra\", \"kg\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)",
+    "count": 100
+  },
+  {
+    "id": 77,
+    "question_annotated": "{name,Shiela} musí odovzdať {n,15}-stranovú {document,výskumná práca}. Už napísala {frac,1/3} z {document,výskumná práca}. Koľko strán jej zostáva napísať?\n\n#init:\n- name = sample(names_female)\n- document = sample([\"esej\", \"správa\", \"záverečná práca\", \"disertačná práca\", \"úloha\"])\n- $n = range(10, 325)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int(n * frac)\n- n * frac < n\n\n#answer: n - int(n * frac)",
+    "count": 100
+  },
+  {
+    "id": 78,
+    "question_annotated": "Bežný študent má {n1,6} hodín denne, ale {name,Janko} musí absolvovať {n2,2} extra hodín. Každá hodina trvá {t,40} minút. Do školy chodí {d,5} dní v týždni. Následne trávi {frac,1/16} svojich týždenných minút v sobotu a nedeľu na ďalšie učenie. Koľko hodín týždenne trávi učením?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 10)\n- $n2 = range(1, 5)\n- $t = range(30, 61, 5)\n- $d = range(4, 7)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int((n1 + n2) * t * d * frac)\n- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)\n\n#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60",
+    "count": 100
+  },
+  {
+    "id": 79,
+    "question_annotated": "{name,Teddy} dokončil {frac_txt,polovica} z {n1,500} dielikového puzzle, a potom začal a dokončil ďalšie {n2,500} dielikové puzzle v priebehu hodiny. Koľko dielikov puzzle {name,Teddy} zložil počas tej hodiny?\n\n#init:\n- name = sample(names)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n1 = range(100, 501)\n- $n2 = range(300, 1001)\n\n#conditions:\n- is_int(n1 * frac_val)\n\n#answer: int(n1 * frac_val) + n2",
+    "count": 100
+  },
+  {
+    "id": 80,
+    "question_annotated": "Predajné automaty predávajú {item1,čipy} za {price1,40} centov a {item2,čokoládové tyčinky} za {price2,75} centov. {name,Georg} minul {cur,$}{total,5} a dostal {n1,3} vreciek {item1,čipy} a mal {p,1}% svojich peňazí naspäť v drobných. Koľko {item2,čokoládové tyčinky} si kúpil?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['žemličky', 'popcorn', 'žuvačka', 'sušienky', 'krekry'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)",
+    "count": 100
+  },
+  {
+    "id": 81,
+    "question_annotated": "Tím {event,veľkonočná hľadačka vajíčok} ukryl {total,100} {item,vajíčka}. Dvojčatá {family,Smith} našli každý {n,30} {item,vajíčka}. Všetky ostatné {item,vajíčka} okrem {m,10} našli ich priatelia. Koľko {item,vajíčka} našli priatelia?\n\n#init:\n- event = sample([\"hľadačka cukríkov na Halloween\", \"lov pokladov\", \"súťaž v hľadaní predmetov\", \"charitatívny zber\"])\n- item = sample([\"vajíčka\", \"sladkosti\", \"hračky\", \"mince\", \"žetóny\", \"lopty\", \"cukríky\", \"odmeny\"])\n- family = sample([\"Johnson\", \"Williams\", \"Mirzakhani\", \"Lopez\", \"Garcia\", \"Lee\", ])\n- $total = range(50, 201, 10)\n- $n = range(10, 51)\n- $m = range(5, 21)\n\n#conditions:\n- 2*n + m < total\n\n#answer: total - 2*n - m",
+    "count": 100
+  },
+  {
+    "id": 82,
+    "question_annotated": "Na začiatku {event,slávnosti} bolo tam {m,25} {group1,muži} a {w,15} {group2,ženy}. Po {t,hodine} {frac,1/4} celkového počtu ľudí odišlo. Koľko {group2,ženy} zostalo, ak {m_left,22} {group1,muži} zostalo na {event,slávnosti}?\n\n#init:\n- event = sample(['slávnosť', 'schôdzka', 'konferencia', 'zhromaždenie', 'oslava'])\n- group1, group2 = sample([ \"učitelia\", \"lekári\", \"inžinieri\", \"sestry\", \"umelci\", \"advokáti\",], 2)\n- t = sample(['hodina', 'dve hodiny', 'pol hodiny', '45 minút'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left",
+    "count": 100
+  },
+  {
+    "id": 83,
+    "question_annotated": "Rodina {family,Adams} sa zaoberá prípravou {item,koláč}ov. Doteraz upekli {total,7995} {item,koláč}ov. Majú {n1,2595} {flavor1,duhový} {item,koláč}ov, {n2,3075} {flavor2,ovsený} {item,koláč}ov a aj {flavor3,čokoládový} {item,koláč}ov. Koľko {flavor3,čokoládový} {item,koláč}ov upekli?\n\n#init:\n- family = sample([\"Smith\", \"Johnson\", \"Williams\", \"Brown\", \"Jones\"])\n- item = sample([\"cupcake\", \"muffin\", \"brownie\", \"keks\"])\n- flavor1, flavor2, flavor3 = sample([\"vanilkový\", \"jahodový\", \"borůvkový\", \"citronový\", \"arašidové maslo\"], 3)\n- $total = range(4995, 10000, 25)\n- $n1 = range(995, 3000, 50)\n- $n2 = range(1075, 3200, 50)\n\n#conditions:\n- n1 + n2 < total\n\n#answer: total - (n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 84,
+    "question_annotated": "{name,mária} kúpi {n,8} akcií za {cur,$}{p,8} každú. Cena akcie vzrastie o {r1,50}% v prvom roku, kedy ju vlastní {name,mária}, potom klesne o {r2,25}% v druhom roku. Aká je konečná hodnota všetkých akcií {name,mária}?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))",
+    "count": 100
+  },
+  {
+    "id": 85,
+    "question_annotated": "Ak {name1,Sam} a {name2,Harry} majú medzi sebou {total,100} {unit,stopy} plotu, a dohodnú sa, že ho rozdelia tak, že {name2,Harry} dostane o {diff,60} {unit,stopy} viac ako {name1,Sam}, koľko zostane pre {name1,Sam}?\n\n#init:\n- name1, name2 = sample(names, 2)\n- unit = sample([\"stopy\", \"yardy\", \"metry\"])\n- $total = range(100, 1000, 20)\n- $diff = range(20, 200, 10)\n\n#conditions:\n- total - diff > 10\n- is_int((total - diff) / 2)\n\n#answer: (total - diff) // 2",
+    "count": 100
+  },
+  {
+    "id": 86,
+    "question_annotated": "{name,Alison} získala miesto v tíme {sport,beh}, takže išla nakupovať športové potreby. Kúpila si {item1, tank top} za {cur,$}{p1,10}, pár {sport,beh} {item2,šortky} za {cur,$}{p2,5} viac než stálo {item1, tank top}, a pár {item3,tenisovky}, ktoré boli pôvodne {cur,$}{p3,48}, ale boli v zľave za {frac_txt,pol} ceny. Mala kupón na {cur,$}{d,2} z balíka {cur,$}{p4,8} športových {item4,ponožky}, ktoré si tiež kúpila. Koľko minula na športové potreby?\n\n#init:\n- name = sample(names_female)\n- sport = sample([\"plávanie\", \"cyklistika\", \"basketbal\", \"futbal\", \"volejbal\"])\n- item1 = sample([\"tričko\", \"dres\", \"športová podprsenka\"])\n- item2 = sample([\"šortky\", \"legíny\", \"športové nohavice\"])\n- item3 = sample([\"tenisky\", \"kopáče\", \"športová obuv\"])\n- item4 = sample([\"ponožky\", \"čelenky\", \"zápästníky\"])\n- cur = sample(currencies_sym)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(8, 25)\n- $p2 = range(3, 15)\n- $p3 = range(30, 80, 2)\n- $p4 = range(5, 15)\n- $d = range(1, 5)\n\n#conditions:\n- is_int(p3*frac_val)\n- p3 % 2 == 0\n- p4 > d\n\n#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)",
+    "count": 100
+  },
+  {
+    "id": 87,
+    "question_annotated": "Najväčšia vodná šmykľavka v {park_name,Päť vlajiek} má dĺžku {l1,300} {unit,stopy}, a ľudia sa šmýkajú rýchlosťou {s1,60} {unit,stopy}/minútu. Druhá najväčšia vodná šmykľavka má dĺžku {l2,240} {unit,stopy}, ale je strmšia, takže ľudia sa šmýkajú rýchlosťou {s2,80} {unit,stopy}/minútu. O koľko dlhšie trvá prejsť najväčšou šmykľavkou v porovnaní s druhou najväčšou?\n\n#init:\n- park_name = sample([\"Svet splaskov\", \"Vodné dobrodružstvo\", \"Vodný zázrak\", \"Kráľovstvo Neptúna\"])\n- unit = sample(['jardy', 'metre'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
+    "count": 100
+  },
+  {
+    "id": 88,
+    "question_annotated": "{name,Dana} dokáže bežať {mult_run_txt,štyrikrát} rýchlejšie než chodiť, ale dokáže preskakuvať rýchlosťou, ktorá je {frac_skip_txt,polovica} rýchlosti, ktorou dokáže bežať. Ak sa dokáže preskakuvať rýchlosťou {skip_speed,3} míľ za hodinu, koľko míľ dokáže prejsť za {total_time_txt,šesť} hodín, ak strávi {frac_run_txt,jedna tretina} času behom a {frac_walk_txt,dve tretiny} času chôdzou?\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
+    "count": 100
+  },
+  {
+    "id": 89,
+    "question_annotated": "{name,Ján} si najme {vehicle,koňom ťahaný voz} od {start_time,5} odpoľ do {end_time,9} odpoľ. Získa {free_hours,1} hodinu zadarmo. Prvá platená hodina stojí {cur,€}{first_hour_cost,15}, a každá ďalšia platená hodina stojí {multiplier_txt,dvakrát} prvú platenú hodinu. Koľko zaplatil?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample([\"limuzína\", \"osobný autobus\", \"loď\", \"luxusné auto\"])\n- $start_time = range(1, 8)\n- $end_time = range(3, 12)\n- $free_hours = range(1, 3)\n- cur = sample(currencies_sym)\n- $first_hour_cost = range(10, 51)\n- multiplier_txt, multiplier_val = sample(multi_times)\n\n#conditions:\n- end_time - start_time > free_hours + 1\n- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)\n\n#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val",
+    "count": 100
+  },
+  {
+    "id": 90,
+    "question_annotated": "{name1,Charlie} má {mult1_txt,tri} krát toľko {platform,Facebook} priateľov ako {name2,Dorothy}. {name3,James} má {mult2_txt,štyri} krát toľko priateľov na {platform,Facebook} ako {name2,Dorothy}. Ak {name1,Charlie} má {n,12} priateľov na {platform,Facebook}, koľko {platform,Facebook} priateľov má {name3,James}?\n\n#init:\n- name1, name2, name3 = sample(names, 3)\n- platform = sample([\"Instagram\", \"Twitter\", \"LinkedIn\", \"TikTok\", \"Snapchat\"])\n- mult1_txt, mult1_val = range_str(1,6,1,numbers)\n- mult2_txt, mult2_val = range_str(1,6,1,numbers)\n- $n = range(10, 201)\n\n#conditions:\n- mult2_val != mult1_val\n- is_int(n / mult1_val)\n\n#answer: int((n / mult1_val) * mult2_val)",
+    "count": 100
+  },
+  {
+    "id": 91,
+    "question_annotated": "V dome {name,Allan} je {mult_txt,dvakrát} toľko {food1,kukurica} ako {food2,cannoli}. Má celkom {n,40} {food2,cannoli} v dome. {name,Allan} kúpil {m,60} ďalších {food2,cannoli} v obchode a {k,40} menej {food1,kukurica} než počet {food2,cannoli}. Nájdite celkový počet {food1,kukurica} a {food2,cannoli}, ktoré má {name,Allan} v dome?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"cannoli\",\"kukurica\", \"jablko\", \"banán\", \"pomaranč\", \"hruška\", \"hrozno\", \"smokva\", \"churma\", \"slivka\", \"kiwi\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)",
+    "count": 100
+  },
+  {
+    "id": 92,
+    "question_annotated": "Knieža {name1,Tadeáš} zabil {n1,100} {creature,draci} svojím mohutným {weapon1,meč}, zatiaľ čo Knieža {name2,Artur}, používajúc {weapon2,oštěp}, zabil {frac1_txt,tri štvrtiny} toľkých {creature,draci} ako Knieža {name1,Tadeáš}. Používajúc {weapon3,rezavá železná sekera}, Knieža {name3,Václav} zabil {mult1_txt,dvakrát} toľkých {creature,draci} ako Knieža {name2,Artur}. Ale Knieža {name4,Bruce}, keďže doma zabudol svoj {weapon4,meč}, zabil {frac2_txt,piata časť} toľkých {creature,draci} ako Knieža {name3,Václav} používajúc {weapon5,pilník na nechtíky}. Koľko {creature,draci} zabil Knieža {name4,Bruce}?\n\n#init:\n- name1, name2, name3, name4 = sample(names_male, 4)\n- creature = sample([\"ogri\", \"tróli\", \"goblini\", \"orkovia\", \"obri\"])\n- weapon1 = sample([\"meč\", \"palica\", \"bojová sekera\", \"bojové kladivo\"])\n- weapon2 = sample([\"oštěp\", \"kopija\", \"hádzačka\", \"halapartna\"])\n- weapon3 = sample([\"rezavá železná sekera\", \"drevená palica\", \"kamenné kladivo\", \"kostná dýka\"])\n- weapon4 = sample([\"meč\", \"sekera\", \"palica\", \"kladivo\"])\n- weapon5 = sample([\"pilník na nechtíky\", \"maslový nôž\", \"drevená lyžica\", \"pero\"])\n- $n1 = range(50, 501, 50)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n1 * frac1_val * mult1_val)\n- is_int(n1 * frac1_val * mult1_val * frac2_val)\n\n#answer: int(n1 * frac1_val * mult1_val * frac2_val)",
+    "count": 100
+  },
+  {
+    "id": 93,
+    "question_annotated": "Keď je voda studená, {name,Ray} prepláva {unit,míľa} za {t1,16} minút. Keď je voda teplá, {name,Ray} prepláva {unit,míľa} za {n,2} minút viac než {mult_txt,dvakrát} tak dlho. O koľko dlhšie trvá {name,Ray} preplávať {d,3} {unit,míľa} v horúci deň než v studený deň?\n\n#init:\n- name = sample(names)\n- unit = sample(['míľa', 'kilometer'])\n- $t1 = range(10, 50)\n- $n = range(1, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $d = range(2, 10)\n\n#conditions:\n- t1 < 60\n- n + mult_val * t1 < 60\n- d * (n + mult_val * t1) - d * t1 > 0\n\n#answer: d * (n + mult_val * t1) - d * t1",
+    "count": 100
+  },
+  {
+    "id": 95,
+    "question_annotated": "Na {sport1,tenis} hrá {n1,6} študentov a {mult_txt,dvojnásobok} toho počtu hrá {sport2,volejbal}. Na {sport3,futbal} hrá {n2,16} chlapcov a {n3,22} dievčat. Ak sa každý študent zúčastňuje len na jednej skupine, koľko študentov je spolu?\n\n#init:\n- sport1, sport2, sport3 = sample(['basketbal', 'badminton', 'stolný tenis', 'futbal', 'volejbal'], 3)\n- mult_txt, mult_var = sample(multi_times)\n- $n1 = range(4, 21)\n- $n2 = range(10, 31)\n- $n3 = range(10, 31)\n\n#conditions:\n- n1 * mult_var + n2 + n3 <= 250\n\n#answer: n1 + n1 * mult_var[1] + n2 + n3",
+    "count": 100
+  },
+  {
+    "id": 96,
+    "question_annotated": "{name,Morgan}'s {parent,tata} povedal, že mala {cur,$}{budget,90} vyčlenené na svoju narodeninovú oslavu. Chce sa uistiť, že ona a jej priatelia si zahrajú jedno kolo {activity1,minigolf}, budú mať {cur,$}{tokens,5} v {activity2,herná} žetónoch, a {times_txt,dvakrát} si zajazdia na {activity3,šprintéry}. Jedno kolo {activity1,minigolf} stojí {cur,$}{cost1,5}. {activity3,šprintéry} stoja {cur,$}{cost2,10} za jazdu. Koľko priateľov môže pozvať?\n\n#init:\n- name = sample(names_female)\n- parent = sample([\"mama\", \"tata\", \"teta\", \"strýko\"])\n- activity1 = sample([\"minigolf\", \"bowling\", \"laser tag\"])\n- activity2 = sample([\"herná\", \"herná miestnosť\", \"pinbal\"])\n- activity3 = sample([\"šprintéry\", \"bumper autíčka\", \"horská dráha\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1",
+    "count": 100
+  },
+  {
+    "id": 97,
+    "question_annotated": "{name1,Julie} obsluhuje pokladnicu presne {mult_txt,dvakrát} rýchlejšie ako jej menej skúsenú kolegyňu {name2,Jewel}. Denne {name2,Jewel} obsluhuje {n,50} zákazníkov. Aký je celkový týždenný výkon pre obe, ak pracujú všetky dni v týždni?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- mult_txt, mult_var = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_var)\n- is_int((n + n * mult_var) * 7)\n\n#answer: (n + n * mult_var) * 7",
+    "count": 100
+  },
+  {
+    "id": 98,
+    "question_annotated": "{disease,plaga} nakazí {n0_txt,desať} ľudí. Každý deň nakazí každá nakazená osoba {r_txt,šesť} ďalších. Koľko ľudí je nakazených po troch dňoch?\n\n#init:\n- disease = sample(['vírus', 'baktéria', 'parazit', 'infekcia'])\n- n0_txt, n0_val = range_str(5, 22, 1, numbers)\n- r_txt, r_val = range_str(2, 8, 1, numbers)\n#conditions:\n- n0_val * (r_val + 1)**3 < 20000\n\n#answer: n0_val * (r_val + 1)**3",
+    "count": 100
+  },
+  {
+    "id": 99,
+    "question_annotated": "Ak {name,Chester} je {n1,3} vajec za deň počas {d1,30} dní a potom zvýši to na {n2,5} vajec za deň počas {d2,30} dní, koľko tuctov vajec bude {name,Chester} potrebovať počas {d3,60} dní?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
+    "count": 100
+  }
+]
