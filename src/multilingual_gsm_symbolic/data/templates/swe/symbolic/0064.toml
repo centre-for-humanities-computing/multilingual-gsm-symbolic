@@ -1,0 +1,40 @@
+question = "Matilda har 6 burkar strössel i sitt skafferi. Varje burk strössel räcker till att dekorera 8 muffins. Matilda vill baka precis så många muffins att hon får slut på strössel. Om varje plåt rymmer 12 muffins, hur många plåtar behöver hon baka?"
+
+answer = """
+Hon har tillräckligt med strössel till 6 * 8 = <<6*8=48>>48 muffins.
+Hon behöver 48 / 12 = <<48/12=4>>4 plåtar för att baka alla muffins.
+#### 4
+"""
+
+id_orig = 469
+
+id_shuffled = 64
+
+question_annotated = """
+{name,Matilda} har {n,6} burkar {item,strössel} i sitt {location,skafferi}. Varje burk {item,strössel} räcker till att dekorera {m,8} {food,muffins}. {name,Matilda} vill baka precis så många {food,muffins} att hon får slut på {item,strössel}. Om varje {container,plåt} rymmer {k,12} {food,muffins}, hur många {container_plural,plåtar} behöver hon baka?
+
+#init:
+- name = sample(names_female)
+- item = sample(["strössel", "frosting", "glasyr", "chokladknappar"])
+- food = sample(["cupcakes", "kakor", "brownies", "muffins"])
+- location = sample(["skafferi", "skåp", "köksskåp", "förråd"])
+- container, container_plural = sample([("plåt", "plåtar"), ("form", "formar"), ("bricka", "brickor"), ("galler", "galler")])
+- $n = range(3, 15)
+- $m = range(6, 20)
+- $k = range(6, 24)
+
+#conditions:
+- divides(n*m, k)
+
+#answer: (n*m)//k
+"""
+
+answer_annotated = """
+Hon har tillräckligt med {item} till {n} * {m} = <<{n}*{m}={n*m}>>{n*m} {food}.
+Hon behöver {n*m} / {k} = <<{n*m}/{k}={(n*m)//k}>>{(n*m)//k} {container_plural} för att baka alla {food}.
+#### {(n*m)//k}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

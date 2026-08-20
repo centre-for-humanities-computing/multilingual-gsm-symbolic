@@ -1,0 +1,38 @@
+question = "På tisdagen vill Simon träna två gånger så länge som han gjorde på måndagen och söndagen tillsammans. På söndagen tränade han i 23 minuter. På måndagen tränade han i 16 minuter. Hur många minuter måste han träna på tisdagen för att nå sitt mål?"
+
+answer = """
+På söndagen och måndagen tränade han sammanlagt 39 minuter, eftersom 23 + 16 = <<23+16=39>>39.
+På tisdagen måste han träna i 78 minuter, eftersom 39*2 = <<39*2=78>>78.
+#### 78
+"""
+
+id_orig = 300
+
+id_shuffled = 69
+
+question_annotated = """
+På {day3,tisdag}en vill {name,Simon} träna {mult_txt,två gånger} så länge som han gjorde på {day2,måndag}en och {day1,söndag}en tillsammans. På {day1,söndag}en tränade han i {t1,23} minuter. På {day2,måndag}en tränade han i {t2,16} minuter. Hur många minuter måste han träna på {day3,tisdag}en för att nå sitt mål?
+
+#init:
+- name = sample(names)
+- day1, day2, day3 = sample_sequential(weekdays, 3)
+- $t1 = range(10, 60)
+- $t2 = range(10, 60)
+- mult_txt, mult_val = sample(multi_times)
+
+#conditions:
+- t1 + t2 > 0
+- (t1 + t2) * mult_val / 60 < 14
+
+#answer: (t1 + t2) * mult_val
+"""
+
+answer_annotated = """
+På {day1}en och {day2}en tränade han sammanlagt {t1+t2} minuter, eftersom {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}.
+På {day3}en måste han träna i {(t1+t2)*mult_val} minuter, eftersom {t1+t2}*{mult_val} = <<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val}.
+#### {(t1+t2)*mult_val}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

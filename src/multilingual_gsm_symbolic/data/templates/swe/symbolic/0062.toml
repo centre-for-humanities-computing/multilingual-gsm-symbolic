@@ -1,0 +1,41 @@
+question = "I en trollerikortlek finns det 15 röda kort och 60% fler gröna kort. De gula korten är lika många som de röda och gröna korten tillsammans. Hur många kort av alla nämnda färger finns det?"
+
+answer = """
+Det finns 60/100 * 15 = <<60/100*15=9>>9 fler gröna kort än röda kort.
+Det betyder att det finns 15 + 9 = <<15+9=24>>24 gröna kort.
+Det finns 15 + 24 = <<15+24=39>>39 gula kort.
+Sammanlagt finns det 39 + 39 = <<39+39=78>>78 kort i de nämnda färgerna.
+#### 78
+"""
+
+id_orig = 456
+
+id_shuffled = 62
+
+question_annotated = """
+I en {item,trolleri}kortlek finns det {n1,15} {c1,röda} kort och {p,60}% fler {c2,gröna} kort. De {c3,gula} korten är lika många som de {c1,röda} och {c2,gröna} korten tillsammans. Hur många kort av alla nämnda färger finns det?
+
+#init:
+- item = sample(["trolleri", "trollkarls", "tarot", "samlar"])
+- c1, c2, c3 = sample(["röda", "blå", "gröna", "gula", "lila", "orange"], 3)
+- $n1 = range(15, 81)
+- $p = range(20, 90)
+
+#conditions:
+- p < 100
+- is_int(p/100 * n1)
+
+#answer: 2 * (n1 + (p/100 * n1))
+"""
+
+answer_annotated = """
+Det finns {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} fler {c2} kort än {c1} kort.
+Det betyder att det finns {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)} {c2} kort.
+Det finns {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} {c3} kort.
+Sammanlagt finns det {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{2*(n1+(n1+int(p/100*n1)))} kort i de nämnda färgerna.
+#### {2*(n1+(n1+int(p/100*n1)))}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"

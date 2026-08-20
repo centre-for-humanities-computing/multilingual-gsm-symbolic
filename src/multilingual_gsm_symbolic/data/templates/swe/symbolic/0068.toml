@@ -1,0 +1,41 @@
+question = "Det tar Ingrid 10 minuter att lösa ett korsord och 5 minuter att lösa ett sudoku. Under helgen löste hon 3 korsord och 8 sudoku. Hur lång tid ägnade hon åt de här spelen?"
+
+answer = """
+Det tar 10 minuter att lösa ett korsord och hon löste 3, vilket blir 10*3 = <<10*3=30>>30 minuter.
+Det tar 5 minuter att lösa ett sudoku och hon löste 8, vilket blir 5*8 = <<5*8=40>>40 minuter.
+Hon ägnade 30 minuter åt korsord och 40 minuter åt sudoku, sammanlagt 30+40 = <<30+40=70>>70 minuter.
+#### 70
+"""
+
+id_orig = 220
+
+id_shuffled = 68
+
+question_annotated = """
+Det tar {name,Ingrid} {t1,10} minuter att lösa {game1_article,ett} {game1,korsord} och {t2,5} minuter att lösa {game2_article,ett} {game2,sudoku}. Under {period,helgen} löste hon {n1,3} {game1_plural,korsord} och {n2,8} {game2_plural,sudoku}. Hur lång tid ägnade hon åt de här spelen?
+
+#init:
+- name = sample(names_female)
+- game1_article, game1, game1_plural, game2_article, game2, game2_plural = sample([("ett", "korsord", "korsord", "ett", "sudoku", "sudoku"), ("en", "ordgåta", "ordgåtor", "ett", "schackproblem", "schackproblem"), ("ett", "pussel", "pussel", "en", "gåta", "gåtor"), ("ett", "korsord", "korsord", "en", "ordgåta", "ordgåtor"), ("ett", "sudoku", "sudoku", "en", "gåta", "gåtor")])
+- period = sample(["helgen", "semestern", "lovet", "ledigheten", "veckan"])
+- $t1 = range(5, 30)
+- $t2 = range(3, 20)
+- $n1 = range(2, 10)
+- $n2 = range(4, 15)
+
+#conditions:
+- t1 > t2
+
+#answer: t1*n1 + t2*n2
+"""
+
+answer_annotated = """
+Det tar {t1} minuter att lösa {game1_article} {game1} och hon löste {n1}, vilket blir {t1}*{n1} = <<{t1}*{n1}={t1*n1}>>{t1*n1} minuter.
+Det tar {t2} minuter att lösa {game2_article} {game2} och hon löste {n2}, vilket blir {t2}*{n2} = <<{t2}*{n2}={t2*n2}>>{t2*n2} minuter.
+Hon ägnade {t1*n1} minuter åt {game1_plural} och {t2*n2} minuter åt {game2_plural}, sammanlagt {t1*n1}+{t2*n2} = <<{t1*n1}+{t2*n2}={t1*n1 + t2*n2}>>{t1*n1 + t2*n2} minuter.
+#### {t1*n1 + t2*n2}
+"""
+
+creation = "machine-translated from Danish by Claude (manual), based on Danish templates; computationally validated"
+
+language = "swe"
