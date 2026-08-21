@@ -1,10 +1,10 @@
-question = "Mikael fångade 3 tonfiskar i måndags. Den första tonfisken han fångade väger 56 kilogram, den andra väger 46 kilogram och de återstående väger 26 kilogram var. Om ett kilogram tonfisk kostar 0,5 kronor, hur mycket tjänar han på att sälja alla tonfiskarna på marknaden?"
+question = "Mikael fångade 3 tonfiskar i måndags. Den första tonfisken han fångade väger 56 kilogram, den andra väger 46 kilogram och den återstående väger 26 kilogram. Om ett kilogram tonfisk kostar 0,5 kronor, hur mycket tjänar han på att sälja alla tonfiskarna på marknaden?"
 
 answer = """
 Mikael tjänar 56*0,5 kronor = <<56*0,5=28>>28 kronor på den första tonfisken.
 Han tjänar 46*0,5 kronor = <<46*0,5=23>>23 kronor på den andra.
-Och han tjänar 26*0,5 kronor = <<26*0,5=13>>13 kronor på var och en av de återstående.
-Sammanlagt tjänar han alltså 28 kronor + 23 kronor + 1*13 kronor = <<28+23+1*13=64>>64 kronor för alla tonfiskarna.
+Och han tjänar 26*0,5 kronor = <<26*0,5=13>>13 kronor på den återstående.
+Sammanlagt tjänar han alltså 28 kronor + 23 kronor + 13 kronor = <<28+23+13=64>>64 kronor för alla tonfiskarna.
 #### 64
 """
 
@@ -13,7 +13,7 @@ id_orig = 1207
 id_shuffled = 76
 
 question_annotated = """
-{name,Mikael} fångade {n,3} {fish_plural,tonfiskar} i {day,måndag}s. Den första {fish_definite,tonfisken} han fångade väger {w1,56} {unit,kilogram}, den andra väger {w2,46} {unit,kilogram} och de återstående väger {w3,26} {unit,kilogram} var. Om ett {unit,kilogram} {fish,tonfisk} kostar {price_txt,0.5} {price_cur,kronor}, hur mycket tjänar han på att sälja alla {fish_plural_definite,tonfiskarna} på marknaden?
+{name,Mikael} fångade {n,3} {fish_plural,tonfiskar} i {day,måndag}s. Den första {fish_definite,tonfisken} han fångade väger {w1,56} {unit,kilogram}, den andra väger {w2,46} {unit,kilogram} och {rest_subject,den återstående} väger {w3,26} {unit_each,kilogram}. Om ett {unit,kilogram} {fish,tonfisk} kostar {price_txt,0.5} {price_cur,kronor}, hur mycket tjänar han på att sälja alla {fish_plural_definite,tonfiskarna} på marknaden?
 
 #init:
 - name = sample(names_male)
@@ -29,6 +29,11 @@ question_annotated = """
 - price_txt = int(price) if is_int(price) else price
 - cur_sing = "krona" if cur == "kronor" else cur
 - price_cur = plural(price, cur_sing, cur)
+- rest_subject = "den återstående" if n - 2 == 1 else "de återstående"
+- unit_each = unit if n - 2 == 1 else unit + " var"
+- rest_object = "den återstående" if n - 2 == 1 else "var och en av de återstående"
+- rest_amount = ensure_int(w3*price) if is_int(w3*price) else w3*price
+- rest_sum_txt = str(rest_amount) if n - 2 == 1 else str(n-2) + "*" + str(rest_amount)
 
 #conditions:
 - n > 2
@@ -40,8 +45,8 @@ question_annotated = """
 answer_annotated = """
 {name} tjänar {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} på den första {fish_definite}.
 Han tjänar {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} på den andra.
-Och han tjänar {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} på var och en av de återstående.
-Sammanlagt tjänar han alltså {w1*price} {cur} + {w2*price} {cur} + {n-2}*{w3*price} {cur} = <<{w1*price}+{w2*price}+{n-2}*{w3*price}={int((w1 + w2 + (n-2)*w3) * price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur} för alla {fish_plural_definite}.
+Och han tjänar {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} på {rest_object}.
+Sammanlagt tjänar han alltså {w1*price} {cur} + {w2*price} {cur} + {rest_sum_txt} {cur} = <<{w1*price}+{w2*price}+{rest_sum_txt}={int((w1 + w2 + (n-2)*w3) * price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur} för alla {fish_plural_definite}.
 #### {int((w1 + w2 + (n-2)*w3) * price)}
 """
 
