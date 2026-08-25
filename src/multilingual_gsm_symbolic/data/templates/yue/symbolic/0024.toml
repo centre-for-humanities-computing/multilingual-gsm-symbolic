@@ -1,0 +1,8 @@
+question = "根據營養資料，一包薯片每份有250卡路里。如果一袋300克有5份，如果你的每日卡路里目標是2000而你已經攝入了1800卡路里，你可以吃多少克？"
+answer = "如果總卡路里目標是2000而我已經攝入了1800卡路里，那麼我剩下2000-1800 = <<2000-1800=200>>200卡路里可以吃\n如果每份薯片有250卡路里而我只剩下200卡路里可以吃，那麼我只能吃200/250份 = 4/5份\n我們也知道一袋300克的薯片有5份，所以每份有300克/5 = <<300/5=60>>60克\n如果我只能吃4/5份，那麼我只能吃60克 * 4/5 = 48克\n#### 48\n"
+id_orig = 43
+id_shuffled = 24
+question_annotated = "根據營養資料，一包{food,薯片}每份有{cal,250}卡路里。如果一袋{size,300}{unit,克}有{n,5}份，如果你的每日卡路里目標是{total,2000}而你已經攝入了{spent,1800}卡路里，你可以吃多少{unit,克}？\n\n#init:\n- food = sample([\"爆米花\", \"麵包\", \"曲奇\"])\n- unit = sample([\"克\", \"盎司\", \"oz\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)"
+answer_annotated = "如果總卡路里目標是{total}而我已經攝入了{spent}卡路里，那麼我剩下{total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent}卡路里可以吃\n如果每份{food}有{cal}卡路里而我只剩下{total-spent}卡路里可以吃，那麼我只能吃{total-spent}/{cal}份 = {Fraction((total-spent)/cal)}份\n我們也知道一袋{size}{unit}的{food}有{n}份，所以每份有{size}{unit}/{n} = <<{size}/{n}={size//n}>>{size//n}{unit}\n如果我只能吃{Fraction((total-spent)/cal)}份，那麼我只能吃{size//n}{unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal}{unit}\n#### {size//n * (total-spent)/cal}\n"
+creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+language = "yue"
