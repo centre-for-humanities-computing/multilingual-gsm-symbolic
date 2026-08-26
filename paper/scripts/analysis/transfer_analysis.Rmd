@@ -11,8 +11,28 @@ Which language-level features govern how well mathematical reasoning transfers
 out of English? This implements the GLMM from `analysis.md`, from the raw
 instance table through to the fitted model, with inspection at each stage.
 
+The document fits **one** model of final accuracy and **one** decomposition of
+where in a solution the transfer gap accrues. Everything else is an ablation
+against the first of those.
+
 ```{r setup}
-knitr::opts_chunk$set(warning = FALSE, message = TRUE)
+# The seven GLMM fits below take ~45 min in total, so the data-prep and fitting
+# chunks are cached. Invalidation is explicit rather than trusted to knitr's
+# code hashing:
+#   - the prep chain carries cache.extra = md5 of the input files, so a
+#     regenerated parquet forces a rebuild;
+#   - the fit chunks carry cache.extra = RHS, the model formula string, so
+#     editing the specification forces a refit even though the chunk code
+#     itself is unchanged;
+#   - dependson chains prep -> fits, so upstream changes propagate.
+# cache.lazy = FALSE because the fitted merMod objects are large and lazy
+# loading them is slower than reading them outright.
+# Delete _cache/ to force a full rebuild.
+knitr::opts_chunk$set(
+  warning = FALSE, message = TRUE,
+  cache.path = "_cache/transfer_analysis/",
+  cache.lazy = FALSE
+)
 
 library(nanoparquet)
 library(dplyr)
@@ -23,6 +43,11 @@ library(ggplot2)
 transfer_dir <- "../../artifacts/transfer_tables"
 out_dir <- "../../artifacts/analysis"
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+# Hashed into the prep chunks' cache keys.
+input_fingerprint <- function() {
+  tools::md5sum(c(file.path(transfer_dir, "analysis.parquet"), "recovered_fertility.csv"))
+}
 ```
 
 # Configuration
@@ -34,9 +59,6 @@ SPLIT <- "synthetic" # "original" for the robustness check
 # of a model's reasoning variants.
 #   gpt-5.4-nano - proprietary: no parameter count, closed tokenizer (so no
 #                  fertility). Cannot enter a model with size or fertility terms.
-# Granite and Olmo-3 (excluded earlier) are back in: they are reasoning-capable,
-# which the reasoning section below needs. Granite adds a non-Qwen on/off pair;
-# Olmo-3-7B-Think is reasoning-on only in the synthetic split.
 EXCLUDED_MODELS <- c(
   "gpt-5.4-nano"
 )
@@ -47,6 +69,24 @@ EXCLUDED_MODELS <- c(
 # the analysis. English itself is kept -- it anchors the intercept at fertility 1,
 # typological distance 0, maximum resource.
 EXCLUDED_LANGUAGES <- c("eng_metric", "uncorrected_isl")
+
+# Dataset revision. The parquet currently carries two:
+#   refs/pr/16  - all 48 models x 16 languages, every cell n = 20. Complete and
+#                 balanced.
+#   d34a0ffc..  - a re-evaluation after the dan/deu/est/jpn template fixes, plus
+#                 the new urd language. Partial: only 26 of 48 models for
+#                 dan/deu/jpn and 17 for est.
+# Pooling them would mix pre-fix and post-fix evaluations of the same templates
+# (Qwen3-8B on deu scores .902 on pr16 and .920 on the pinned revision) and would
+# triple-count some cells. We therefore pin to pr/16, which keeps the design
+# balanced and isolates the one thing the refresh changed for us -- the number
+# extraction fix, which was recomputed over every row regardless of revision.
+#
+# Consequences, to revisit once the re-evaluation is complete upstream:
+#   - dan, deu, est and jpn use their pre-fix templates;
+#   - urd is dropped (it exists only in the pinned revision, and has no
+#     typological_distance or log10_common_crawl_pages in any case).
+DATASET_REVISION <- "@refs/pr/16/"
 ```
 
 # Load the instance table
@@ -57,27 +97,41 @@ counts, and every feature we need -- `typological_distance`,
 `log10_common_crawl_pages`, and the tokenizer fertilities. Normalised fertility is
 the model's fertility relative to its own English fertility.
 
-STOPGAP: the regenerated parquet dropped tokenizer fertility for gemma-3 (all
-sizes) and EuroLLM-9B-Instruct. `recovered_fertility.csv` holds those values, taken
-from the previous parquet (git 19edd05); we coalesce them in until the upstream
-fertility computation is fixed, after which this join can be removed.
+`lhs_*` and `rhs_*` are the equation-side counts: `number_coverage_utils.py`
+parses the gold solution's `<<lhs=rhs>>` calculator annotations, so `lhs_count`
+is the operands a correct solution uses and `rhs_count` the intermediate results
+it produces; `*_retrieved` is how many of each appear in the model's response.
+These drive the reasoning-ladder section.
 
-```{r load}
+STOPGAP: the current parquet has **no** tokenizer fertility at all -- the column
+is NA for all 48 models, where the previous version had it for all but gemma-3 and
+EuroLLM-9B-Instruct. `recovered_fertility.csv` now carries the full 841
+model-by-language table, lifted from the pre-refresh parquet (git 25f32c78^), and
+we coalesce it in.
+
+This is exact rather than approximate: we pin to the `refs/pr/16` revision below,
+and those rows are unchanged between the two parquet versions (identical row
+count and identical overall accuracy to six decimal places), so the tokenizer and
+the text a fertility is computed from are both identical. The join should be
+removed once the upstream fertility computation is restored.
+
+```{r load, cache=TRUE, cache.extra=input_fingerprint()}
 recovered_fertility <- read.csv("recovered_fertility.csv")
 
 observations <- read_parquet(file.path(transfer_dir, "analysis.parquet")) %>%
   select(
-    source_id, language, correct, model, family, params_b, split, eval_id,
+    source_id, language, correct, model, family, params_b, split, eval_id, task,
     typological_distance, log10_common_crawl_pages,
     tokenizer_fertility, english_fertility_tokens_per_character,
-    all_prompt_numbers_present, prompt_number_count, retrieved_prompt_number_count
+    all_prompt_numbers_present, prompt_number_count, retrieved_prompt_number_count,
+    lhs_count, lhs_retrieved, rhs_count, rhs_retrieved
   ) %>%
   left_join(recovered_fertility, by = c("model", "language"), suffix = c("", "_rec")) %>%
   mutate(
     tokenizer_fertility = coalesce(tokenizer_fertility, tokenizer_fertility_rec),
     english_fertility_tokens_per_character =
       coalesce(english_fertility_tokens_per_character, english_fertility_tokens_per_character_rec),
-    normalized_fertility = tokenizer_fertility / english_fertility_tokens_per_character
+    relative_fertility = tokenizer_fertility / english_fertility_tokens_per_character
   ) %>%
   select(-tokenizer_fertility_rec, -english_fertility_tokens_per_character_rec)
 
@@ -87,12 +141,9 @@ dim(observations)
 # Reasoning mode
 
 Reasoning mode is explicit in the model name. Qwen3 / Qwen3.5 label the
-reasoning-on default with a bare name and only suffix `(reasoning off)`; granite
-and Olmo-3 label both sides. We give every reasoning-split model a consistent
-`(reasoning on)` / `(reasoning off)` label and derive `base_model` (the tokenizer
-identity, shared across modes) by stripping it.
+reasoning-off runs, so the bare name is the reasoning-on run.
 
-```{r reasoning}
+```{r reasoning, cache=TRUE, dependson='load'}
 # Bases that appear with a "(reasoning off)" variant: their bare form is the
 # reasoning-on run and should be labelled as such.
 off_bases <- observations %>%
@@ -118,28 +169,32 @@ observations %>%
 `EXCLUDED_MODELS` is matched on `base_model`, so it catches every reasoning
 variant of a listed model.
 
-```{r filter}
+```{r filter, cache=TRUE, dependson='reasoning', cache.extra=list(SPLIT, EXCLUDED_MODELS, EXCLUDED_LANGUAGES, DATASET_REVISION)}
 observations <- observations %>%
   filter(
     split == SPLIT,
+    str_detect(task, fixed(DATASET_REVISION)),
     !language %in% EXCLUDED_LANGUAGES,
     !base_model %in% EXCLUDED_MODELS
   )
 
 count(observations, language)
 count(observations, family, model)
+
+# Balance check: with a single revision pinned this must be one row per
+# (model, language, template) with exactly 20 instances. If a second revision
+# leaks in it shows up here as counts above 20.
+observations %>%
+  count(model, language, source_id, name = "n_instances") %>%
+  count(n_instances)
 ```
 
 # Feature coverage
 
-Every feature is present for every included cell; the only rows the parquet leaves
-without features are the ones we already drop (`gpt-5.4-nano` has no tokenizer
-fertility, `eng_metric` no language features).
-
 ```{r feature-coverage}
 observations %>%
   summarise(across(
-    c(typological_distance, log10_common_crawl_pages, normalized_fertility),
+    c(typological_distance, log10_common_crawl_pages, relative_fertility),
     ~ sum(is.na(.)), .names = "na_{.col}"
   ))
 ```
@@ -148,24 +203,23 @@ observations %>%
 
 One row per (model, language, template). Every predictor is constant within such
 a cell, so `Binomial(n_total, pi)` has the same likelihood as the individual
-Bernoulli draws at roughly 1/28th the rows -- carried through with `first()`.
+Bernoulli draws at roughly 1/20th the rows -- carried through with `first()`.
 
-```{r aggregate}
+```{r aggregate, cache=TRUE, dependson='filter'}
 cells <- observations %>%
-  group_by(model, family, language, template = source_id) %>%
+  group_by(model, base_model, family, language, template = source_id) %>%
   summarise(
     n_correct = sum(correct),
     n_total = n(),
     params_b = first(params_b),
     typological_distance_from_english = first(typological_distance),
     log10_common_crawl_pages = first(log10_common_crawl_pages),
-    normalized_fertility = first(normalized_fertility),
-    # Number-parsing counts, summed over the cell's instances, for the
-    # "parsing vs reasoning" section below.
-    n_retrieved = sum(retrieved_prompt_number_count),   # prompt numbers found in the response
-    n_prompt_numbers = sum(prompt_number_count),        # prompt numbers to find
-    n_parsed = sum(all_prompt_numbers_present),          # instances with all numbers found
-    n_correct_parsed = sum(correct & all_prompt_numbers_present),
+    relative_fertility = first(relative_fertility),
+    # Equation-side counts for the reasoning ladder.
+    n_lhs = sum(lhs_count),
+    n_lhs_ret = sum(lhs_retrieved),
+    n_rhs = sum(rhs_count),
+    n_rhs_ret = sum(rhs_retrieved),
     .groups = "drop"
   )
 
@@ -176,15 +230,11 @@ dim(cells)
 summary(cells$n_total)
 ```
 
-`n_total` is 20 per cell except for `OLMo-2-0425-1B-Instruct` in `dan`, `eng` and
-`nob`, where a duplicate evaluation run doubles it to 40. Those two runs are one
-configuration sampled twice (near-identical accuracy, same instance ids), so
-pooling them slightly overstates precision for three cells of one model; refitting
-without them moved no coefficient materially. Left pooled here pending an upstream
-dedup in `collect_transfer_tables.py`.
+`n_total` is a uniform 20 per cell -- the duplicate OLMo-2 evaluation runs that
+previously doubled three cells were removed upstream in
+`collect_transfer_tables.py`.
 
-The design is otherwise balanced -- every model seen in every language, 100
-templates each:
+The design is balanced -- every model seen in every language, 100 templates each:
 
 ```{r inspect-balance}
 table(cells$model, cells$language)
@@ -195,46 +245,107 @@ table(cells$model, cells$language)
 Standardise the continuous predictors so the interaction terms are interpretable
 at the mean and the weakly-informative priors are on a sensible scale.
 
-```{r standardise}
+## Splitting relative fertility between and within language
+
+Relative fertility -- a model's tokens-per-character on the target language
+divided by its own tokens-per-character on English -- is the only language feature
+that is a property of the *model* rather than the language, and pooling those two
+roles is what made its coefficient uninterpretable in earlier versions of this
+analysis. We split it:
+
+- `relative_fertility_between` -- the language's mean relative fertility across models.
+  A language-level quantity, and strongly collinear with typological distance
+  (r ~ 0.8): languages that are structurally distant from English also tokenise
+  badly in most models.
+- `relative_fertility_within` -- a model's deviation from that language mean. This is
+  "*this* model tokenises *this* language worse than its peers do", which is the
+  quantity we actually have a mechanism for, and it is orthogonal by construction
+  to every language-level predictor.
+
+**Only `relative_fertility_within` enters the model.** The point of splitting was to get
+the collinearity out of the fertility estimate, and `relative_fertility_between` *is* the
+collinear part -- entering it puts the problem straight back in. Two reasons it
+costs us nothing to drop:
+
+- `relative_fertility_within` is unaffected. The two arms are orthogonal by construction
+  (r = 0.00), so removing one leaves the other's estimate essentially unchanged.
+- Typological distance is *improved*. With `relative_fertility_between` in the model, the
+  typological-distance coefficient is "the effect of structural distance holding
+  between-language fertility constant" -- a near-meaningless contrast when the two
+  correlate at 0.8 over 16 languages, and one that inflates its standard error.
+  Dropping it makes the coefficient the total language-level effect, which is both
+  interpretable and better estimated.
+
+The cost is that we can no longer claim to have tested a between-language
+fertility effect separately from typological distance. We could not have done so
+honestly anyway: at r = 0.8 on 16 points they are not separately identifiable, and
+the null we previously reported for `relative_fertility_between` was underdetermination
+rather than evidence of no effect. Typological distance should now be read as the
+language-level axis those two features jointly describe -- structural distance
+from English, which travels with tokenising badly.
+
+Note this is not a return to a single pooled fertility term. The split is still
+computed; we simply enter one arm of it. Pooling is what produced the wrong sign
+in earlier versions.
+
+```{r standardise, cache=TRUE, dependson='aggregate'}
 standardise <- function(x) as.numeric((x - mean(x)) / sd(x))
 
 cells <- cells %>%
+  group_by(language) %>%
+  mutate(relative_fertility_between = mean(relative_fertility)) %>%
+  ungroup() %>%
   mutate(
+    relative_fertility_within = relative_fertility - relative_fertility_between,
     log2_params = log2(params_b),
-    fertility_z = standardise(normalized_fertility),
+    relative_fertility_between_z = standardise(relative_fertility_between),
+    relative_fertility_within_z = standardise(relative_fertility_within),
     typological_distance_z = standardise(typological_distance_from_english),
     log_resource_z = standardise(log10_common_crawl_pages),
     log_params_z = standardise(log2_params),
     # base_model is the tokenizer/weights identity shared across reasoning modes;
-    # reasoning is the on/off knob (non-reasoning models are "off"). Used below.
-    base_model = str_remove(model, "\\s*\\(reasoning (on|off)\\)$"),
-    reasoning = factor(if_else(str_detect(model, "\\(reasoning on\\)$"), "on", "off"), levels = c("off", "on"))
+    # reasoning is the on/off knob (non-reasoning models are "off").
+    reasoning = factor(if_else(str_detect(model, "\\(reasoning on\\)$"), "on", "off"),
+                       levels = c("off", "on"))
   ) %>%
   arrange(family, model, language, template)
 
 cells %>%
-  select(fertility_z, typological_distance_z, log_resource_z, log_params_z) %>%
+  select(relative_fertility_within_z, relative_fertility_between_z, typological_distance_z,
+         log_resource_z, log_params_z) %>%
   summary()
 ```
 
-Two of these are language-level, so their main effects rest on 7 points
-regardless of the 566k instances behind them. Worth seeing the collinearity
+Two predictors are language-level, so their main effects rest on 16 points
+regardless of the 1.5M instances behind them. Worth seeing the collinearity
 before reading any coefficient:
 
 ```{r inspect-collinearity}
 cells %>%
-  select(fertility_z, typological_distance_z, log_resource_z, log_params_z) %>%
+  select(relative_fertility_within_z, relative_fertility_between_z, typological_distance_z,
+         log_resource_z, log_params_z) %>%
+  cor() %>%
+  round(2)
+
+# and at the level the language predictors actually vary
+cells %>%
+  distinct(language, relative_fertility_between_z, typological_distance_z, log_resource_z) %>%
+  select(-language) %>%
   cor() %>%
   round(2)
 ```
 
-Fertility and typological distance are strongly related, so their individual
-coefficients should not be read independently.
+The split does what it is meant to: `relative_fertility_within` is orthogonal (r = 0.00)
+to typological distance, resource and `relative_fertility_between`, so its coefficient is
+free of the collinearity problem. The r ~ 0.8 between `relative_fertility_between` and
+typological distance is the reason the between arm stays out of the model -- it is
+displayed here so the reader can see what is being excluded and why, not because
+it is a candidate predictor.
 
 ```{r inspect-features-plot, fig.height=4}
 cells %>%
-  distinct(model, language, normalized_fertility, typological_distance_from_english, log10_common_crawl_pages) %>%
-  pivot_longer(c(normalized_fertility, typological_distance_from_english, log10_common_crawl_pages)) %>%
+  distinct(model, language, relative_fertility, typological_distance_from_english, log10_common_crawl_pages) %>%
+  pivot_longer(c(relative_fertility, typological_distance_from_english, log10_common_crawl_pages)) %>%
   ggplot(aes(value, language)) +
   geom_point(alpha = 0.3) +
   facet_wrap(~name, scales = "free_x") +
@@ -247,7 +358,8 @@ recover.
 
 Languages are ordered by resource level and coloured on a sequential ramp rather
 than with categorical hues: resource is a magnitude, so the colour should carry
-the ordering. `mako` runs dark to light through a single blue-green hue, is
+the ordering. The legend states each language's absolute Common Crawl page count;
+the spread is large, from ~0.6M pages for Marathi to ~880M for English. `mako` runs dark to light through a single blue-green hue, is
 monotonic in lightness (so the order survives greyscale and colour-vision
 deficiency), and avoids the pale yellow end of `viridis` that disappears against
 a white panel. Highest-resource language is darkest.
@@ -258,7 +370,14 @@ language_levels <- cells %>%
   arrange(desc(log10_common_crawl_pages))
 
 # Label with the resource value so the legend states the ordering explicitly.
-language_labels <- sprintf("%s (%.1f)", language_levels$language, language_levels$log10_common_crawl_pages)
+# Label with the absolute Common Crawl page count, so the legend states the
+# ordering in a concrete unit rather than a log value or a ratio to English.
+pages_lab <- function(l) {
+  v <- 10^l
+  ifelse(v >= 1e9, paste0(round(v/1e9, 1), "B"), paste0(round(v/1e6), "M"))
+}
+language_labels <- sprintf("%s (%s)", language_levels$language,
+                           pages_lab(language_levels$log10_common_crawl_pages))
 names(language_labels) <- language_levels$language
 
 language_levels
@@ -281,7 +400,7 @@ cells %>%
   coord_cartesian(ylim = c(0, 1)) +
   labs(
     x = "log2 parameters (B)", y = "accuracy",
-    colour = expression(Language ~ (log[10] ~ CC ~ pages)),
+    colour = "Language\n(Common Crawl pages)",
     title = "Transfer gap narrows with scale",
     subtitle = "Languages ordered by resource level, darkest = highest resource"
   ) +
@@ -289,201 +408,346 @@ cells %>%
   theme(panel.grid.minor = element_blank())
 ```
 
-# Model
+# The model
 
-Language features are model-by-language (fertility) or language-only
-(typological distance, resource). Interacting them with size tests the claim that
-scale governs how much of the transfer gap survives.
-
-The baseline drops the language features and keeps size; the quantity of
-interest is how far `sd(model:language)` shrinks between the two, i.e. how much
-of the cross-lingual transfer variation the language features explain.
-
-This document fits the model with lme4, keeping `template` and `family` as random
-effects (the model as written in `analysis.md`) -- glmer handles them quickly. The
-Bayesian counterpart in `transfer_brms.Rmd` makes those two fixed instead, purely
-for sampling geometry (as random effects the template SD funnels and the
-single-model family, Apertus, makes a flat ridge that saturates the NUTS
-treedepth); `sd(model:language)`, the quantity of interest, is the same either way.
-
-We save the prepared cells so the Bayesian document reads them directly rather than
-re-running the 786k-row prep.
-
-```{r save-cells}
+```{r save-cells, cache=TRUE, dependson='standardise'}
 cells <- cells %>% mutate(across(c(model, base_model, family, language, template), as.factor))
 saveRDS(cells, file.path(out_dir, "model_cells.rds"))
 ```
 
-`script` (shared vs. not) from `analysis.md` is deliberately absent. With only
-`zho` and `rus` non-Latin out of 7 languages it is nearly collinear with
-typological distance and not separately identifiable -- report it descriptively
-instead.
+## Random-effects structure
 
-## lme4
+Four grouping factors, each of which corresponds to a level at which one of our
+predictors varies:
 
-`glmer` wants `cbind(successes, failures)` rather than brms' `trials()` syntax.
-The baseline drops the language features; comparing its `sd(model:language)` to the
-full model's is how we read off the transfer variance the features explain.
+- `(1 | family/base_model)` -- model skill. `base_model` is the weights identity
+  shared across reasoning modes.
+- `(1 | model)` -- nested inside `base_model`, this is the reasoning variant. It
+  matters because `reasoning` is a fixed effect that varies at exactly this
+  level: without it, the reasoning main effect would be tested against cell noise
+  rather than against how much reasoning helps *across* base models.
+- `(1 | template)` -- item difficulty, the largest single component.
+- `(1 | language)` -- the per-language residual, discussed below.
+- `(1 | model:language)` -- model-specific transfer idiosyncrasy.
 
-```{r fit-lme4}
+The `(1 | language)` term is the one worth justifying, because it is what makes
+the language-level coefficients honest rather than merely large. `log_resource_z`
+and `typological_distance_z` vary only across the 16 languages, but without a
+language intercept their standard errors are computed from the `model:language`
+stratum -- roughly (models x languages) cells treated as independent evidence
+about a predictor with 16 actual points. That is pseudo-replication, and it does
+not wash out with more data at the instance or model level. The `nolang`
+comparison below quantifies what it costs.
+
+The fixed-effect structure interacts the language features with size and with
+reasoning, because the question is not only whether each feature hurts but
+whether either of the two levers we can actually pull -- scale, reasoning --
+narrows the gap it opens.
+
+The specification lives in its own uncached chunk so that the formula strings are
+always in scope, and so that the fit chunks can key their cache on `RHS`: edit the
+model and every fit below rebuilds, leave it alone and none of them do.
+
+```{r model-spec}
 library(lme4)
 
-random_effects <- "(1 | family / model) + (1 | template) + (1 | model:language)"
+ctrl <- glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 3e5))
 
-fit_baseline <- glmer(
-  as.formula(paste("cbind(n_correct, n_total - n_correct) ~ log_params_z +", random_effects)),
-  data = cells, family = binomial()
-)
-fit_full <- glmer(
-  as.formula(paste(
-    "cbind(n_correct, n_total - n_correct) ~",
-    "(fertility_z + typological_distance_z + log_resource_z) * log_params_z +", random_effects
-  )),
-  data = cells, family = binomial()
+RE <- "(1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) + (1 | model:language)"
+FEAT <- "(relative_fertility_within_z + typological_distance_z + log_resource_z)"
+RHS <- paste(
+  FEAT, "* log_params_z +",
+  "reasoning * (relative_fertility_within_z +",
+  "typological_distance_z + log_resource_z + log_params_z) +", RE
 )
 
-summary(fit_full)
+cat(RHS)
 ```
 
-```{r inspect-lme4-variance}
-VarCorr(fit_full)
+```{r fit-lme4, cache=TRUE, dependson='save-cells', cache.extra=RHS}
+fit_main <- glmer(
+  as.formula(paste("cbind(n_correct, n_total - n_correct) ~", RHS)),
+  data = cells, family = binomial(), control = ctrl
+)
+```
 
-sd_baseline <- attr(VarCorr(fit_baseline)$`model:language`, "stddev")[[1]]
-sd_full <- attr(VarCorr(fit_full)$`model:language`, "stddev")[[1]]
+```{r summary-main}
+summary(fit_main)
+```
+
+The baseline drops the language features and keeps size, with the same random
+structure. Comparing variance components between the two is how we read off the
+transfer variation the features explain.
+
+```{r fit-baseline, cache=TRUE, dependson='save-cells', cache.extra=RE}
+fit_baseline <- glmer(
+  as.formula(paste("cbind(n_correct, n_total - n_correct) ~ log_params_z +", RE)),
+  data = cells, family = binomial(), control = ctrl
+)
+```
+
+```{r summary-baseline}
+summary(fit_baseline)
+
+VarCorr(fit_main)
+VarCorr(fit_baseline)
+```
+
+## Results
+
+Size is the largest single effect (`log_params_z` ~ 1.88, p < 1e-16). Among the
+language features, resource level dominates (`log_resource_z` ~ 0.71, p < 1e-16):
+higher-resource languages are substantially easier. Typological distance hurts
+(~ -0.29, p = 1.5e-4), and within-language relative fertility hurts in the theoretically
+expected direction (~ -0.07, p = .019) -- a model that tokenises a language worse
+than its peers do performs worse on it.
+
+Read the typological-distance coefficient as the whole language-level axis of
+structural distance from English, which travels with tokenising that language
+badly (r ~ 0.8 between the two over our 16 languages). It is not a distance effect
+net of tokenisation; the design cannot separate those.
+
+That sign on fertility is worth flagging: pooled fertility carried a *positive*
+coefficient in earlier versions of this analysis, which never made sense. It was
+an artifact of the between-language collinearity, and splitting the term both
+fixes the sign and explains the old result.
+
+The interactions are where the actionable content sits, and the two levers behave
+differently:
+
+- **Scale buffers resource.** `log_resource_z:log_params_z` ~ -0.25, p < 1e-16.
+  Larger models suffer less from a language being low-resource.
+- **Scale does not buffer typological distance.** ~ 0.02, p = .45. Nor fertility
+  (p = .42).
+- **Reasoning buffers resource.** `log_resource_z:reasoningon` ~ -0.15, p = .004.
+- **Reasoning also buffers typological distance.** ~ +0.12, p = .013. The main
+  effect is negative, so a positive interaction means the distance penalty shrinks
+  when reasoning is on.
+
+So scale helps only against data scarcity, while reasoning helps against both.
+Reasoning is the only lever here that does anything about structural distance --
+which is the more useful finding of the two, because distance is the feature you
+cannot change about a language.
+
+A caveat on that last bullet, because it is new. In an earlier specification that
+also carried a between-language fertility term, this interaction was ~0.03 with
+p = .67, and the document concluded that neither lever touched structural
+distance. The two terms are collinear at r ~ 0.8 and were splitting one effect
+between them (`relative_fertility_between:reasoning` took ~0.12, p = .13). Dropping the
+between arm assigns it to typological distance, which is the interpretation the
+design supports -- but it means the effect is identified off a language-level axis
+that confounds structural distance with tokenisation quality, and should be
+described that way rather than as "reasoning helps with grammar".
+
+### Effect sizes in interpretable units
+
+Coefficients are per standard deviation of a standardised predictor, which is
+convenient for fitting and useless for intuition. Both size and resource are
+log-transformed, so dividing by the SD puts them in *doublings*, and the two can
+then be quoted against each other.
+
+Note that standardising makes the choice of log base irrelevant to the fit --
+`z(log10 x)` and `z(log2 x)` are the same vector to numerical precision -- so this
+is purely a reporting transformation and changes nothing estimated above.
+
+```{r effect-units}
+sd_p <- sd(cells$log2_params)
+sd_r <- sd(cells$log10_common_crawl_pages)
+b <- fixef(fit_main)
+
+per_doubling_params <- b[["log_params_z"]] / sd_p
+per_doubling_pages  <- b[["log_resource_z"]] / sd_r * log10(2)
+
+tibble::tibble(
+  quantity = c("per doubling of parameters", "per doubling of Common Crawl pages",
+               "doublings of data equal to one doubling of parameters"),
+  value = c(per_doubling_params, per_doubling_pages,
+            per_doubling_params / per_doubling_pages)
+)
+```
+
+Model size buys about **1.0 log-odds per doubling of parameters**, and language
+resource about **0.25 log-odds per doubling of Common Crawl pages**. So one
+doubling of model size is worth roughly **four doublings of language data**, i.e.
+about 15x the data -- a convenient way to state the trade-off, and directly
+comparable to how scaling laws are usually reported.
+
+The same exchange rate prices the language gaps themselves: the observed range of
+resource levels, English down to Marathi, costs about **2.7 doublings of model
+size (~6x the parameters)**, and the range of typological distance about **1.1
+doublings (~2x)**.
+
+Two caveats on these numbers. They use main effects at the sample means and
+therefore ignore the `resource x size` interaction, which makes the true exchange
+rate depend on model size; and Common Crawl pages is a proxy for a language's
+share of the training mixture, not a measurement of it.
+
+The reasoning **main** effect is not significant (~ 0.49, p = .12). This is a
+consequence of the `(1 | model)` term putting it on the correct stratum: it is
+tested against the 12 base models run both ways, which is genuinely thin evidence
+for an average lift. The claim this model supports is the interaction -- reasoning
+differentially helps languages that are far from English on both axes -- not
+"reasoning raises accuracy".
+For the latter, the paired comparison further down is better evidence and does
+not depend on this specification at all.
+
+## How much transfer variation do the features explain?
+
+With a language intercept present, the question splits into two, and they have
+very different answers.
+
+```{r variance-explained}
+vc <- function(f, g) attr(VarCorr(f)[[g]], "stddev")[[1]]
 
 tibble(
-  model = c("baseline (size only)", "full (language features)"),
-  sd_model_language = c(sd_baseline, sd_full),
-  variance_explained = c(NA, 1 - sd_full^2 / sd_baseline^2)
+  component = c("language", "model:language"),
+  sd_baseline = c(vc(fit_baseline, "language"), vc(fit_baseline, "model:language")),
+  sd_full = c(vc(fit_main, "language"), vc(fit_main, "model:language"))
+) %>%
+  mutate(variance_explained = 1 - sd_full^2 / sd_baseline^2)
+```
+
+- **Between-language variance: ~89% explained** (SD 0.83 -> 0.27). Almost all of
+  *why some languages are harder than others* is captured by resource level,
+  typological distance and fertility.
+- **Model-by-language variance: ~20% explained** (SD 0.65 -> 0.58). *Which* model
+  struggles with *which* language, beyond that language's general difficulty, is
+  largely unexplained. `relative_fertility_within` is the only predictor operating at this
+  level and its effect is small.
+
+The second number is a real negative result and belongs in the write-up: language
+features are close to sufficient for language difficulty, and close to useless for
+model-specific transfer failure.
+
+Note that earlier versions of this analysis reported a single pooled figure
+(~64% of `sd(model:language)`) because there was no language intercept to
+separate the two components; that number is not comparable to either of these.
+
+## Which languages do we predict poorly?
+
+```{r language-residuals}
+ranef(fit_main)$language %>%
+  tibble::rownames_to_column("language") %>%
+  arrange(`(Intercept)`)
+```
+
+The features over-predict `rus`, `deu`, `isl` and `est`, and under-predict `nob`,
+`ara`, `ita` and `dan`. Russian is the striking case: second-highest resource and
+low typological distance, so the model expects a great deal and does not get it.
+
+There is a candidate explanation worth one follow-up. The languages that
+*over*-perform their predictions -- Norwegian, Danish, Italian -- all have close,
+high-resource relatives (Swedish/German/English; French/Spanish), while our
+features only measure distance to *English*. A resource-weighted typological
+proximity to the whole training mix, rather than to English alone, would test
+that. Treat it as a hypothesis: 16 shrunken residuals will support many stories.
+
+`zho` at +0.14 is consistent with Common Crawl page counts underestimating
+Chinese resource, which is a known weakness of the proxy.
+
+## What the language intercept costs
+
+Refitting the identical model without `(1 | language)` isolates the effect of
+using the wrong error stratum.
+
+```{r fit-nolang, cache=TRUE, dependson='save-cells', cache.extra=RHS}
+fit_nolang <- glmer(
+  as.formula(paste("cbind(n_correct, n_total - n_correct) ~",
+                   sub("\\(1 \\| language\\) \\+ ", "", RHS))),
+  data = cells, family = binomial(), control = ctrl
 )
 ```
 
-## Analysis of results
+```{r nolang-comparison}
+summary(fit_nolang)
 
-KCE: the following is a work in progress
-
-We see that size have the largest effect of parameters, with larger models performing (1.94, p<0.05) 
-secondly see that higher resource languages leads to a higher performance (.699, p<0.05), but 
-that the effect is less pronounced for larger models (-.210, p<0.05). 
-Language with a higher typological distance from English, generally leads to worse performance (-.299, p<0.05)
-and higher tokenizer fertility improved the likelihood of obtaining the correct answer (.193, p<0.05).
-
-The interactions between tokenizer fertility and the model size (-.0576, p=.423), and
-between typological distance and model size (.0332, p=.634) where not found to be significant,
-indicating that effect of fertility and language distance remains a problem regardless of the size
-(or at least we couldn't detect if it was influenced by it).
-
-Beyond the individual coefficients we can ask how much of the cross-lingual transfer these
-language features account for. The model-by-language random effect captures how much a model's
-accuracy in a given language departs from its overall skill and the template difficulty -- the
-transfer variation the fixed effects leave unexplained. Adding the three language features
-shrinks this variance component from $\sigma^2 = 1.10$ (SD 1.05) in the size-only baseline to
-$\sigma^2 = 0.39$ (SD 0.63) in the full model, a 64% reduction in variance (40% on the SD scale).
-Roughly two-thirds of the transfer variation that remains after accounting for model skill and
-template difficulty is thus captured by tokenizer fertility, typological distance and resource
-level together.
-
-Questions:
-
-- [x] what about resourcity and typological distance
-- [ ] what about reasoning
-- Is it a difference in parsing or "reasoning"
-- is there more of the variance that could be explained?
-- there is high correlation between fertility and language distance (estionian might fix it). 
-  - One potential solution it to decompose into fertility across model (fertility between), this should be colinear 
-    to typoligical distance, while the model devisation from the langauge mean fertility (fertility within) would 
-    be orthogonal
-- add bootstrap on proportion of variance explained (for later)
-- [x] compute the what languages we currently predict the transfer poorly on and see if there is any language features we need to add (what is the unexplained variance) 
-  - potentially some systematicity, but hard to say with only 7 languages
-    - non-linearity in resource: It seems to overreport on low-resource languages and underreport on high-resource (we could apply non-linearity to resourcity)
-    - Chinese is likely an outlier (estimates of resourcity is likely incorrect for some of the models, e.g. Qwen)
-    - 
-
-
-Note when writing:
-there are three actionable parameters, fertility, model size and reasoning, but depending these might have varying effects on downstream languages (hence the interactions). 
-As such what we seek to answer which actionable levers can resource which low-resource axis [find a better term here]. For instance we show that while increase model size reduce the
-effect diminish the effect languages prevalance in the training data, increasing the size does not counteract the effect of low tokenizer fertility or typological distance.
-
-Note in limitations:
-Our "resourcity / prevalence in the training data" is a proxy made from common crawl based on page count. While it is likely close to real world distributions, 
-it likely has systematic bias (e.g. underrepresenting Chinese) and does not vary across model. Ideally this analysis would be caried out with models where the
-training dataset distribution is well-known. 
-
-
-## Exploratory: does more structure help?
-
-Two additions the questions above point to, each refitting the full model with one
-extra term.
-
-A **resource x typological-distance** interaction. It is significant but a minor
-lever -- variance explained moves 64.4% to 65.9%. The coefficient is positive, so a
-high resource level *buffers* the typological-distance penalty: distance hurts less
-when there is more data for the language.
-
-```{r explore-resource-typo}
-fit_rxt <- update(fit_full, . ~ . + typological_distance_z:log_resource_z)
-
-anova(fit_full, fit_rxt)
-summary(fit_rxt)$coefficients["typological_distance_z:log_resource_z", , drop = FALSE]
+tm <- summary(fit_main)$coefficients
+tn <- summary(fit_nolang)$coefficients
+keep <- intersect(rownames(tm), rownames(tn))
+round(data.frame(
+  est_nolang = tn[keep, 1], se_nolang = tn[keep, 2], p_nolang = tn[keep, 4],
+  est_main = tm[keep, 1], se_main = tm[keep, 2], p_main = tm[keep, 4],
+  se_ratio = tm[keep, 2] / tn[keep, 2]
+), 4)
 ```
 
-A **per-language residual** `(1 | language)`. Strongly significant, with
-`sd(language)` ~ 0.42: roughly half of the transfer variation the three features
-leave unexplained is systematic *per-language* structure, not model-by-language
-idiosyncrasy -- i.e. there are language features still to add. The random-effect
-estimates show which languages the features over- or under-predict, a starting
-point for "which languages do we transfer to poorly".
+The result is about as clean as this kind of check gets: standard errors inflate
+by ~2.6x on *exactly* the two language-level predictors and are unchanged
+(0.90-1.00x) on every other term. Point estimates barely move (`log_resource_z`
+0.7092 -> 0.7119, `typological_distance_z` -0.2882 -> -0.2876), so this is purely
+an inference correction, not a different answer.
 
-```{r explore-language-residual}
-fit_lang <- update(fit_full, . ~ . + (1 | language))
+The consequential case is typological distance: z = -9.8 without the intercept,
+-3.8 with it. Both are significant, but the first overstates the evidence by a
+factor the design does not support. Resource behaves the same way (z = 24.1 to
+9.4) and survives comfortably either way.
 
-anova(fit_full, fit_lang)
-VarCorr(fit_lang)
-ranef(fit_lang)$language
+# Ablations
+
+Two additions the earlier analysis flagged as promising. Both are null once
+tested on the correct stratum with 16 languages.
+
+## Resource x typological distance
+
+Does a high resource level buffer the typological-distance penalty?
+
+```{r ablation-resource-typology, cache=TRUE, dependson=c('save-cells','fit-lme4'), cache.extra=RHS}
+fit_rxt <- update(fit_main, . ~ . + typological_distance_z:log_resource_z)
 ```
 
+```{r ablation-resource-typology-result}
+round(summary(fit_rxt)$coefficients["typological_distance_z:log_resource_z", , drop = FALSE], 4)
+anova(fit_main, fit_rxt)
 
-## Reasoning
-
-Reasoning is a model-level knob you can actually turn, so it gets its own model. The
-reasoning-capable models are run both ways -- `Qwen3-8B (reasoning on)` vs
-`(reasoning off)` -- a within-base paired design, so the effect is identified
-*within* `base_model` (12 paired base models across Granite, Qwen3 and Qwen3.5;
-Olmo-3-7B-Think is reasoning-on only, so it contributes no pair). We add `reasoning`
-as a fixed effect and interact it with the language features and size, to ask not
-just whether reasoning helps but whether it narrows the transfer gap.
-
-```{r fit-reasoning}
-fit_reasoning <- glmer(
-  cbind(n_correct, n_total - n_correct) ~
-    (fertility_z + typological_distance_z + log_resource_z) * log_params_z +
-    reasoning * (fertility_z + typological_distance_z + log_resource_z + log_params_z) +
-    (1 | family / base_model) + (1 | template) + (1 | model:language),
-  data = cells, family = binomial()
-)
-
-round(summary(fit_reasoning)$coefficients, 4)
+summary(fit_rxt)
 ```
 
-Reasoning raises accuracy (`reasoningon` ~ +0.30 logit, p ~ .01). More useful for
-transfer, the resource advantage *shrinks* under reasoning
-(`log_resource_z:reasoningon` ~ -0.19, p ~ .05): reasoning helps lower-resource
-languages relatively more, so it is a lever that narrows the resource-driven gap.
-Reasoning also interacts with size (`log_params_z:reasoningon` ~ +0.28, p ~ .02) --
-larger models gain more on the logit scale, though small models can gain more in raw
-accuracy because large models sit near the ceiling. The fertility and
-typological-distance interactions with reasoning are entangled by their mutual
-collinearity, as for the main effects, and are not separately identifiable here.
+No: ~0.02, p = .68. Earlier versions found this interaction significant, but that
+was a third language-level term tested against `model:language` variance -- the
+same stratum error the language intercept fixes. It is the sharpest illustration
+in this document of why the random structure matters.
 
+## Script
 
+`script` was previously dropped as unidentifiable. With 7 non-Latin languages out
+of 16 it now *is* identifiable, though the leverage is thin: it comes almost
+entirely from Cyrillic `rus`/`ukr` (non-Latin but typologically close to English)
+against Latin-script `est` (typologically distant).
 
-### Reasoning and the transfer gap
+```{r ablation-script, cache=TRUE, dependson='save-cells', cache.extra=RHS}
+non_latin <- c("ara", "hin", "jpn", "mar", "rus", "ukr", "urd", "zho")
+cells_script <- cells %>%
+  mutate(non_latin = factor(if_else(language %in% non_latin, "yes", "no"), levels = c("no", "yes")))
 
-Because reasoning is a knob rather than a property of a language, its effect on transfer
-is clearest from the paired models directly -- reasoning on versus off, across the twelve
-base models run both ways.
+fit_script <- glmer(as.formula(paste("cbind(n_correct, n_total - n_correct) ~ non_latin +", RHS)),
+                    data = cells_script, family = binomial(), control = ctrl)
+```
+
+```{r ablation-script-result}
+round(summary(fit_script)$coefficients[c("non_latinyes", "typological_distance_z"), , drop = FALSE], 4)
+
+summary(fit_script)
+```
+
+Also null (~ -0.03, p = .90). Note the converse is informative too: typological
+distance barely moves when script is added (-0.29 -> -0.28, still p < .05), so the
+typological-distance effect is not a writing-system effect in disguise. The URIEL
+distance we use is cosine distance from English over the 103-feature `syntax_knn`
+vector -- purely morphosyntactic (word order, adposition and adjective order, case
+marking), a property of the spoken language -- so it carries no orthographic
+information to begin with.
+
+Note that `transferfeatures.py` describes this feature in its module docstring and
+in the exported `feature_sources.json` as concatenating `syntax_knn` *and*
+`inventory_knn`. The code does not: `collect_language_features()` requests
+`syntax_knn` alone, and records the accurate label in `typological_feature_set`.
+The prose provenance is stale and should be corrected upstream.
+
+# Reasoning and the transfer gap
+
+Because reasoning is a knob rather than a property of a language, its average
+effect is clearest from the paired models directly -- reasoning on versus off,
+across the base models run both ways.
 
 ```{r reasoning-transfer-gap}
 paired_bases <- cells %>%
@@ -506,133 +770,324 @@ by_lang %>%
   group_by(reasoning) %>%
   summarise(
     mean_accuracy       = mean(acc),
-    gap_accuracy_points = mean(eng_acc - acc),      # absolute: English minus target, in accuracy points
-    error_odds_ratio    = mean(exp(eng_logit - logit)) # relative: times more likely to err than in English
+    gap_accuracy_points = mean(eng_acc - acc),      # absolute: English minus target
+    # Two relative measures, because they are NOT the same and the difference
+    # is large at our accuracy levels. The odds ratio is what the GLMM is linear
+    # in; the risk ratio is what the phrase "times more likely to be wrong"
+    # actually means. Reporting the former with the latter's wording overstates
+    # the gap by 40-85% here.
+    odds_ratio          = mean(exp(eng_logit - logit)),
+    risk_ratio          = mean((1 - acc) / (1 - eng_acc))
   )
 ```
 
-Turning reasoning on raises accuracy across the board (~+6 points) and shrinks the
-English-to-target gap from roughly 20 to 13 accuracy points. It also shrinks on the
-*relative* scale: with reasoning off a model is on average about 2.9x more likely to answer
-incorrectly in a non-English language than in English, and about 2.1x with it on. This
-distinction matters -- a uniform lift would narrow the absolute gap on its own, because the
-accuracy scale compresses near the ceiling, while leaving that error-odds ratio unchanged.
-The ratio falling means reasoning does more than raise all boats. The fitted term behind it
-is the `reasoning x resource` interaction (~-0.17, p ~ .05): reasoning helps lower-resource
-languages somewhat more even on the log-odds scale, though with only seven languages this
-differential is modest and we do not read it language by language.
+Turning reasoning on raises accuracy across the board (0.62 to 0.69, ~+7 points)
+and shrinks the English-to-target gap from 20.6 to 12.9 accuracy points. It also
+shrinks on the *relative* scale, on both of the measures below: with reasoning
+off a model is on average **2.2x more likely** to answer incorrectly in a
+non-English language than in English, falling to 1.7x with reasoning on; on the
+odds scale the same comparison is 3.1x falling to 2.1x.
 
-(This is also why the variance-explained figure barely moves for reasoning and is the wrong
-number to quote: reasoning defines the model configuration, so its transfer effect already
-sits inside the `model:language` random term whether or not reasoning is a fixed effect, and
-variance on the log-odds scale is invariant to a level shift. The gap above is the honest
-measure.)
+Keep those two apart. "Times more likely to be wrong" is a **risk** ratio; the
+GLMM is linear in the **odds** ratio, and at our accuracy levels they diverge
+badly -- 3.1 versus 2.2 on average, and 6.0 versus 3.2 for Marathi. Quoting an
+odds ratio with risk-ratio wording is the standard misreading and inflates the
+claim substantially, so state which one is meant. We report the risk ratio, as
+the quantity the plain-language phrasing actually names.
 
+One consequence to keep in view when reading the figures against the coefficient
+table. A risk ratio depends on the base rate it is measured against: at 32B the
+English error rate is ~7%, so a given absolute drop in accuracy produces a larger
+ratio than the same drop at 4B, where the English error rate is far higher. On the
+risk-ratio scale the large model therefore shows the *steeper* resource slope,
+while the fitted interaction -- estimated on the odds scale -- is
+`log_resource_z:log_params_z` = -0.25, meaning scale *reduces* the resource
+penalty. Both are correct statements about different quantities. The inferential
+claim is the coefficient; the risk-ratio figure is the descriptive one.
 
+The distinction between the two gap measures matters. A uniform lift narrows the
+absolute gap on its own, because the accuracy scale compresses near the ceiling,
+while leaving the error-odds ratio unchanged. The ratio falling from 3.1 to 2.1
+means reasoning does more than raise all boats -- and the fitted term behind that
+is the `reasoning x resource` interaction in the main model (~ -0.13, p = .009).
 
-## Is transfer just about parsing the problem?
+This paired comparison, not the model's reasoning main effect, is the right
+evidence for "reasoning helps". The two answer different questions and both
+belong in the paper.
 
-Does a model fail in a language because it cannot *read* the problem, or because it
-cannot do the *maths* once it has read it? We proxy parsing by whether the response
-reproduces the problem's numbers -- `all_prompt_numbers_present`, with the underlying
-count `retrieved_prompt_number_count` out of `prompt_number_count`. This is a narrow,
-mechanical slice of parsing (number transcription), not full comprehension.
+# Where in the solution does the gap accrue?
 
-Parsing is nearly necessary but far from sufficient: retrieving the numbers is almost
-always needed to be correct, yet plenty of full parses still get the wrong answer.
+The earlier version of this section asked a binary question -- is the gap about
+parsing the problem or doing the maths? -- using whether the response reproduced
+the prompt's numbers. The equation-side counts let us ask a graded version
+instead, which is both sharper and avoids a serious measurement problem with the
+prompt-number metric (see the caveat at the end of this section).
 
-```{r parse-decomposition}
+Three rungs, increasing in depth through the solution:
+
+1. **LHS** -- the operands a correct solution uses. Roughly "did the model take
+   in the right inputs?"
+2. **RHS** -- the intermediate results a correct solution produces. "Did the
+   model actually compute the intervening steps?"
+3. **Final answer** -- `correct`, i.e. the main model above.
+
+All three are marginal, not conditional: rung 2 does not condition on having
+passed rung 1. So the ladder measures *total accumulated* degradation at
+increasing depth, which is what we want for a claim about compounding, and it
+avoids conditioning on a post-treatment variable.
+
+```{r ladder-descriptive}
 cells %>%
   group_by(language) %>%
   summarise(
-    parse_rate      = sum(n_parsed) / sum(n_total),         # all numbers retrieved
-    accuracy        = sum(n_correct) / sum(n_total),
-    acc_given_parse = sum(n_correct_parsed) / sum(n_parsed), # correct | parsed
+    lhs_rate = sum(n_lhs_ret) / sum(n_lhs),
+    rhs_rate = sum(n_rhs_ret) / sum(n_rhs),
+    accuracy = sum(n_correct) / sum(n_total),
     .groups = "drop"
   ) %>%
-  arrange(accuracy)
+  arrange(desc(accuracy))
 ```
 
-The gap barely closes when we condition on parsing: even among instances where every
-number was retrieved, English still beats Icelandic ~0.80 to ~0.51. Most of the
-transfer gap sits *after* number retrieval.
-
-Before trusting the by-language parse comparison, we check the number extractor is
-not itself biased across languages. Every language uses the same templates with the
-same numbers, so the extracted `prompt_number_count` should be language-invariant --
-if the regex missed numbers in some language (a decimal comma, a spelled-out number,
-non-Latin digits) that language would show a lower count regardless of the model.
-
-```{r parse-extraction-check}
+```{r ladder-validation}
+# The chevron denominators come from the gold solution, so they should be
+# language-invariant: same templates, same equations. If they are not, the
+# rungs are not comparable across languages.
 cells %>%
   group_by(language) %>%
-  summarise(
-    mean_prompt_numbers = sum(n_prompt_numbers) / sum(n_total),
-    parse_rate          = sum(n_parsed) / sum(n_total),
-    .groups = "drop"
-  ) %>%
-  arrange(mean_prompt_numbers)
+  summarise(mean_lhs = sum(n_lhs) / sum(n_total),
+            mean_rhs = sum(n_rhs) / sum(n_total),
+            .groups = "drop") %>%
+  arrange(mean_lhs)
+
+# cells with no chevrons at all, which drop out of the ladder fits
+sum(cells$n_lhs == 0)
 ```
 
-The extracted counts are nearly identical (within ~0.1 numbers per template across
-languages), so the metric's denominator is comparable and the parse-rate differences
-are not an extraction artifact -- Icelandic's low parse rate comes with a perfectly
-normal number count, i.e. it is the model's *responses* that reproduce the numbers
-less often, not the extractor failing on Icelandic prompts. The one small asterisk is
-Chinese, which extracts ~3% fewer (occasional Chinese numerals the Western-digit regex
-misses). This check validates the prompt side only; a response-side formatting bias
-(numbers written as words in some languages' answers) would need the completion text
-to rule out, though the clean prompt side and the parse/accuracy correlation argue it
-is minor.
+`lhs_count` and `rhs_count` are near-identical across all 16 languages and only
+~2% of cells have no chevrons, uniformly distributed, so the denominators are
+comparable and the rungs measure what we intend.
 
-To see which features act at which stage, we fit the same feature model to two
-outcomes -- the numbers retrieved (binomial over the prompt's numbers), and
-correctness *given* a full parse -- and compare their coefficients to the overall
-model's.
+```{r fit-ladder, cache=TRUE, dependson='save-cells', cache.extra=RHS}
+fit_lhs <- glmer(as.formula(paste("cbind(n_lhs_ret, n_lhs - n_lhs_ret) ~", RHS)),
+                 data = filter(cells, n_lhs > 0), family = binomial(), control = ctrl)
 
-```{r fit-parse-reason}
-parse_formula <- function(lhs) as.formula(paste(
-  lhs, "~ (fertility_z + typological_distance_z + log_resource_z) * log_params_z +",
-  "(1 | family / model) + (1 | template) + (1 | model:language)"
-))
+fit_rhs <- glmer(as.formula(paste("cbind(n_rhs_ret, n_rhs - n_rhs_ret) ~", RHS)),
+                 data = filter(cells, n_rhs > 0), family = binomial(), control = ctrl)
+```
 
-fit_parse <- glmer(parse_formula("cbind(n_retrieved, n_prompt_numbers - n_retrieved)"),
-                   data = filter(cells, n_prompt_numbers > 0), family = binomial())
-fit_reason <- glmer(parse_formula("cbind(n_correct_parsed, n_parsed - n_correct_parsed)"),
-                    data = filter(cells, n_parsed > 0), family = binomial())
+The comparison that matters is across rungs, so the side-by-side comes first; the
+two fits in full follow.
 
-lang_terms <- c("fertility_z", "typological_distance_z", "log_resource_z")
-data.frame(
-  overall            = fixef(fit_full)[lang_terms],
-  parse              = fixef(fit_parse)[lang_terms],
-  reason_given_parse = fixef(fit_reason)[lang_terms]
+```{r ladder-comparison}
+ladder_terms <- c("relative_fertility_within_z", "typological_distance_z",
+                  "log_resource_z", "log_params_z", "log_resource_z:log_params_z")
+round(data.frame(
+  lhs   = summary(fit_lhs)$coefficients[ladder_terms, 1],
+  rhs   = summary(fit_rhs)$coefficients[ladder_terms, 1],
+  final = summary(fit_main)$coefficients[ladder_terms, 1]
+), 4)
+```
+
+```{r summary-ladder}
+summary(fit_lhs)
+summary(fit_rhs)
+```
+
+## Reading the ladder
+
+Every coefficient grows along the chain: typological distance
+-0.09 -> -0.17 -> -0.29 (3.2x end to end), resource 0.30 -> 0.42 -> 0.71 (2.4x),
+within-language relative fertility -0.03 -> -0.07 -> -0.07 (2.0x). Size grows fastest
+(0.49 -> 0.93 -> 1.88, 3.8x), as does the size-buffers-resource interaction
+(-0.07 -> -0.12 -> -0.25).
+
+**The marginal ladder cannot, on its own, establish that this is compounding.**
+The three outcomes have different base rates and different residual dispersion, so
+logit coefficients are not directly comparable in magnitude across them. A pure
+scale difference between the outcomes would inflate every coefficient by roughly a
+common factor -- which is very close to what we observe. There is no feature here
+that stays flat and could serve as an internal control.
+
+An earlier version of this analysis did report such a control: typological
+distance appeared flat across the rungs (-0.28, -0.27, -0.29) while resource
+tripled, and the contrast was read as evidence that structural distance is a cost
+paid once at input while data scarcity accumulates. That pattern was an artifact
+of a number-extraction bug. Japanese is the most typologically distant language in
+the set, and unmatched kanji numerals artificially depressed its LHS and RHS rates
+-- the two rungs that depend on extracting numbers from responses -- which
+inflated the typological-distance coefficient at exactly those rungs. With the
+extraction fixed, Japanese moves from 0.68/0.59 to 0.78/0.64 and the coefficient
+at the LHS rung drops by two thirds. The conclusion did not survive the fix, and
+the "fixed tax versus accumulating penalty" reading should not be quoted from
+earlier drafts -- typological distance is now the *fastest*-growing of the three,
+the opposite of what that reading claimed.
+
+So read the ladder as descriptive: the gap widens with depth on the raw rates
+(English to Marathi runs 0.19 at LHS, 0.30 at RHS, 0.36 at the final answer), and
+leave the question of *why* to the adjusted analysis below, which compares
+coefficients within a single outcome and is not exposed to the scale objection.
+
+`sd(language)` also grows along the ladder (0.14 -> 0.16 -> 0.27), and the
+`family` variance collapses to the boundary at the LHS rung -- model family is
+irrelevant to retrieving numbers and dominant for arithmetic. That last contrast
+is on the same scale caveat, but a variance component going to zero is not a
+matter of degree.
+
+```{r ladder-variance}
+sdl <- function(f, g) attr(VarCorr(f)[[g]], "stddev")[[1]]
+tibble(
+  rung = c("lhs", "rhs", "final"),
+  language = c(sdl(fit_lhs, "language"), sdl(fit_rhs, "language"), sdl(fit_main, "language")),
+  model_language = c(sdl(fit_lhs, "model:language"), sdl(fit_rhs, "model:language"), sdl(fit_main, "model:language")),
+  family = c(sdl(fit_lhs, "family"), sdl(fit_rhs, "family"), sdl(fit_main, "family"))
 )
 ```
 
-Reading these as log-odds on the standardised features: the resource effect, the
-strongest transfer driver, is ~0.34 on parsing but ~0.76 on reasoning-given-parse --
-essentially all of its ~0.74 overall effect is downstream of number retrieval.
-Low-resource languages do not mainly fail to *read* the numbers; they fail to compute
-the answer once they have them. Typological distance tilts the other way -- a little
-stronger on parsing (~-0.39) than on reasoning (~-0.31), so structural distance
-impedes reading the problem somewhat more. Fertility is roughly even across the two.
+## Per-step versus accumulated
 
-So the answer is **no**: transfer is not just parsing. The dominant, resource-driven
-part of the gap is a reasoning effect -- the maths degrades in lower-resource languages
-even when the model has correctly read the numbers -- which is the finding that bears
-on treating the arithmetic as language-invariant.
+The marginal ladder cannot separate two mechanisms: each reasoning step being
+individually harder in low-resource languages, versus each step being equally hard
+with the deficit simply accumulating over more steps.
 
-Caveats. `all_prompt_numbers_present` captures only number *retrieval*; understanding
-the problem's structure is not measured and stays in the "reasoning" bucket, so this
-separates "not mere transcription failure" rather than "pure arithmetic". The parse
-outcome sits near ceiling (~86%) while correctness is lower, so the two coefficient
-columns are on different base rates and are best read for direction, not exact
-magnitude. And the reason-given-parse model conditions on a full parse -- a selection
-the random effects absorb but do not fully eliminate.
+Conditioning hard on a full operand parse does not work as a test. Among
+instances where every operand was retrieved, the RHS rate is ~97% -- at ceiling,
+with nothing left to explain -- and the conditioning is severely differential
+across languages (full-LHS rates run from ~0.34 for `mar` to ~0.61 for `eng`), so
+it would compare the top third of one language against the top two thirds of
+another. That is selection on a collider, and it would produce a table that looks
+meaningful and is not.
 
+Adjusting for operand retrieval instead of conditioning on it keeps the full
+sample and avoids the ceiling. It is still mediator adjustment, so the coefficient
+is not a clean causal effect, but it is statistically well behaved.
 
-## Notes
+```{r fit-rhs-adjusted, cache=TRUE, dependson='save-cells', cache.extra=RHS}
+cells_adj <- cells %>%
+  filter(n_lhs > 0, n_rhs > 0) %>%
+  mutate(lhs_rate_z = as.numeric(scale(n_lhs_ret / n_lhs)))
 
-Q: What was the issue with mediator / collider?
-Q: Add a thing on ensuring that parsing is not conflated with reasoning 
+fit_rhs_adj <- glmer(
+  as.formula(paste("cbind(n_rhs_ret, n_rhs - n_rhs_ret) ~ lhs_rate_z +", RHS)),
+  data = cells_adj, family = binomial(), control = ctrl
+)
+```
 
+```{r rhs-adjusted-comparison}
+tt <- c("log_resource_z", "typological_distance_z", "relative_fertility_within_z")
+round(data.frame(
+  unadjusted = summary(fit_rhs)$coefficients[tt, 1],
+  adjusted = summary(fit_rhs_adj)$coefficients[tt, 1],
+  adj_se = summary(fit_rhs_adj)$coefficients[tt, 2],
+  adj_p = summary(fit_rhs_adj)$coefficients[tt, 4]
+), 4)
+
+summary(fit_rhs_adj)
+```
+
+All three language features behave the same way: most of their effect on producing
+intermediate results is inherited from how well the operands were read, and a
+small but statistically clear residual survives.
+
+| feature | unadjusted | adjusted | share propagated | adjusted p |
+|---|---|---|---|---|
+| `log_resource_z` | 0.420 | 0.099 | 76% | < 1e-4 |
+| `typological_distance_z` | -0.172 | -0.075 | 56% | < 1e-4 |
+| `relative_fertility_within_z` | -0.067 | -0.033 | 50% | .005 |
+
+Because this comparison is made *within a single outcome*, it is not exposed to
+the cross-outcome scale objection that limits the marginal ladder, which is why it
+carries the interpretation:
+
+> **The transfer gap is predominantly a failure to take in the problem correctly.
+> Once a model has read the operands, its remaining per-step disadvantage is real
+> but small -- roughly a quarter to a half of the raw effect.**
+
+This is consistent with the conditional descriptive above: among instances where
+every operand was retrieved, intermediate results follow ~97% of the time
+regardless of language. The arithmetic itself is close to language-invariant; what
+differs is getting the right numbers into it.
+
+The three features differ in degree rather than kind, and the ordering is
+interpretable: resource is the most propagated (76%), typological distance less so
+(56%), fertility least (50%). Data scarcity does most of its damage by the model
+failing to take the problem in; structural distance and bad tokenisation keep more
+of a per-step penalty. The gap between 56% and 50% rests on the two smallest
+coefficients in the model, so treat that end of the ordering as suggestive.
+
+Two caveats, and the second cuts against the residuals:
+
+1. This is mediator adjustment, not identified mediation. Anything affecting both
+   operand retrieval and intermediate production without being in the model --
+   item-specific model competence, say -- can bias the adjusted coefficients. The
+   random effects absorb some of this but not all.
+2. `lhs_rate_z` measures operand retrieval imperfectly, and adjusting for a noisily
+   measured mediator *under*-adjusts. The residual direct effects are therefore
+   biased away from zero, so the adjusted column is best read as an upper bound on
+   the true per-step penalties. The propagated shares are correspondingly lower
+   bounds -- the reading-stage story is if anything stronger than the table shows.
+
+## Caveat: the prompt-number metric is not usable
+
+The previous version of this section used `all_prompt_numbers_present`. It is
+still not usable for Japanese, though the failure mode has changed.
+
+The prompt numbers are recovered by extracting from the prompt text, so the metric
+is only comparable across languages if extraction is equally reliable in each. It
+was not. In the earlier parquet, Japanese kanji numerals went unmatched and ~93%
+of Japanese prompts yielded zero extractable numbers (mean 0.08 against 3.24 for
+English); because an empty set evaluated vacuously true, Japanese was recorded as
+the *best*-parsing language in the study, above English.
+
+The upstream refresh fixed the under-extraction, and fixed it broadly: `ara`
+(2.74 -> 3.22), `nld` (3.08 -> 3.23), `ita` (3.07 -> 3.22) and `zho` (3.13 -> 3.26)
+all moved into line, and fifteen of sixteen languages now sit within 0.13 numbers
+per template of English.
+
+Japanese overshot. It now extracts **4.37** numbers per prompt against English's
+3.24 -- an excess of 1.13 per template, on 82 of 100 templates -- with
+`retrieved_prompt_number_count` inflated to match (3.91 against 3.10). The
+templates are identical across languages, so this is spurious matching, and kanji
+numerals inside ordinary words are the obvious candidate: 一緒, 一番, 十分 and 二人
+all contain characters that are numerals standing alone. The bias has flipped
+sign rather than disappeared -- more spurious prompt numbers makes "all present"
+harder to satisfy, so Japanese should now look artificially *bad* where it
+previously looked artificially good.
+
+```{r prompt-number-check}
+# The templates are shared, so prompt_number_count should be language-invariant.
+# Any language far from the others is an extraction artifact, not a finding.
+cells_pn <- observations %>%
+  group_by(language) %>%
+  summarise(mean_prompt_numbers = mean(prompt_number_count),
+            mean_retrieved = mean(retrieved_prompt_number_count),
+            .groups = "drop") %>%
+  arrange(desc(mean_prompt_numbers))
+cells_pn
+```
+
+The ladder is unaffected by any of this, which is why it is the instrument this
+document uses. Its denominators come from the gold solution's `<<lhs=rhs>>`
+chevrons, which are written in ASCII digits in every language -- verified
+language-invariant in the validation chunk above -- and its numerators from model
+responses, which use ASCII digits too. Japanese sits mid-table on both rungs, in
+line with its accuracy.
+
+# Notes and limitations
+
+Our resource proxy is Common Crawl page count. While probably close to real-world
+distributions, it likely has systematic bias (Chinese looks underestimated, and
+its positive language residual is consistent with that) and does not vary across
+model. Ideally this analysis would use models whose training distribution is
+known.
+
+The reasoning main effect is identified from the 12 base models run both ways;
+Olmo-3-7B-Think is reasoning-on only and contributes only between-base
+information. Worth confirming the coefficient is stable on paired bases alone.
+
+Outstanding:
+
+- [ ] bootstrap the variance-explained proportions (`bootMer`)
+- [ ] resource-weighted typological proximity to the training mix, rather than
+      distance to English alone -- suggested by the language residuals
+- [ ] confirm the reasoning main effect on paired bases only
+- [ ] upstream: kanji numeral extraction in `number_coverage_utils.py`
