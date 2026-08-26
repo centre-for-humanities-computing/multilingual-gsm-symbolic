@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "question_annotated": "Mgła nadciąga z oceanu, aby zakryć miasto. Zajmuje to {t,10} minut na zakrycie każdego {d,3} kilometra miasta. Jeśli miasto ma {y,42} kilometry od wybrzeża oceanicznego do przeciwległej krawędzi lądowej, ile minut zajmie zatoczce mgły zakrycie całego miasta?\n\n#init:\n- $t = range(2, 500)\n- $d = range(2, 100)\n- $y=range(2, 100)\n\n#conditions:\n- is_int(y/d)\n\n#answer: y//d*t",
+    "count": 100
+  },
+  {
+    "id": 3,
+    "question_annotated": "{g, klasa} {n, 50} uczniów ma różne hobby. {n_1, 10} lubi {h_1, piec}, {n_2, 5} lubi grać w {h_2, koszykówkę}, a reszta lubi albo {h_3, grać w gry wideo} albo {h_4, grać na muzyce}. Ilu lubi {h_3, grać w gry wideo}, jeśli liczba tych, którzy lubią {h_4, grać na muzyce}, jest dwa razy większa niż liczba tych, którzy preferują {h_2, koszykówkę}?\n\n#init:\n- g = sample([\"grupa\", \"klasa\"])\n- h_2 = sample(sports)\n- h_1, h_3, h_4 = sample(['czytać', 'malować', 'wędrować', 'tańczyć', 'piec', 'grać w gry wideo', 'grać na muzyce'], 3)\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
+    "count": 100
+  },
+  {
+    "id": 10,
+    "question_annotated": "Aby wykonać połączenie z {dev,automatu telefonicznego}, musisz zapłacić {currency,$}{frac1,0.25} za każdą minutę rozmowy. Po {t,16} minutach cena spada do {currency,$}{frac2,0.2} za minutę. Ile kosztowałoby {total,36}-minutowe połączenie?\n\n#init:\n- dev = sample(['automat telefoniczny', 'telefon w pokoju hotelowym'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "count": 100
+  },
+  {
+    "id": 13,
+    "question_annotated": "{name,Mary} jest zapalonym ogrodnikiem. {time, Wczoraj}, otrzymała {x,18} nowych roślin w doniczkach od swojej ulubionej szkółki roślin. Ma już {r,2} rośliny w doniczkach na każdym z {w,40} okiennych parapetów w swoim dużym domu wiejskim. Czując się hojnie, zdecydowała, że jutro podaruje {n,1} z roślin w doniczkach z każdego parapetu do przyjaciół i rodziny. Ile roślin w doniczkach {name,Mary} pozostanie?\n\n#init:\n- name = sample(names_female)\n- time = sample([\"Ostatni tydzień\", \"Dwa dni temu\", \"Wczoraj wieczorem\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
+    "count": 100
+  },
+  {
+    "id": 18,
+    "question_annotated": "{name,Raphael} poszedł kupić przybory szkolne. Kupił {n1,4} {obj1,pióra} po {cur, zł}{c1,1.5} każde, {n2,2} {obj2,zeszyty} po {cur, zł}{c2,4} każdy, oraz rolkę papieru do drukowania za {cur, zł}{c3,20}. Ile {name,Raphael} wydał na wszystko?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"zeszyty\", \"ołowki\", \"gumki\", \"kredki\", \"kolorowe ołówki\", \"markery\", \"linijki\", \"teczki\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
+    "count": 100
+  },
+  {
+    "id": 24,
+    "question_annotated": "Zgodnie z informacjami o wartości odżywczej, paczka {food, chips} ma {cal, 250} kalorii na porcję. Jeśli {size, 300} {unit, gram} paczka ma {n, 5} porcji, ile {unit, gram}ów możesz zjeść, jeśli Twoje dzienne zapotrzebowanie kaloryczne wynosi {total, 2000} i już spożyłeś {spent, 1800} kalorii?\n\n#init:\n- food = sample([\"popcorn\", \"breads\",  \"cookies\"])\n- unit = sample([\"gram\", \"g\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
+    "count": 100
+  },
+  {
+    "id": 25,
+    "question_annotated": "W klasie {teacher,pana Ropera} liczącej {total,30} uczniów, {p1,20}% klasy stanowią {group1,piłkarze}. Spośród pozostałych uczniów, {p2,25}% to {group2,chorążowie} lub członkowie {group3,orkiestry}. Te 3 grupy uczniów muszą opuścić szkołę wcześnie dziś, aby podróżować na wyjazdowy {event,mecz}. Ile uczniów odchodzi wcześnie?\n\n#init:\n- teacher = sample(['Ms. Johnson', 'Mr. Smith', 'Dr. Lee', 'Mrs. Garcia'])\n- group1 = sample(['piłkarze nożni', 'koszykarze', 'siatkarze', 'pływacy'])\n- group2, group3 = sample(['tancerze', 'członkowie chóru', 'uczestnicy zespołu debat', 'członkowie klubu robotyki'],  2)\n- event = sample(['konkurs', 'turniej', 'występ', 'zawody'])\n- $total = range(20, 150)\n- $p1 = range(10, 50)\n- $p2 = range(15, 45)\n\n#conditions:\n- p1 < 100\n- p2 < 100\n- is_int(total * p1 / 100)\n- is_int((total - total * p1 / 100) * p2 / 100)\n\n#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)",
+    "count": 100
+  },
+  {
+    "id": 38,
+    "question_annotated": "Bochenek {item1, chleba} w {shop, piekarni} kosztuje {currency, $}{price1, 2}. {item2, bułeczki} kosztują {currency, $}{price2, 1} każda. O ile więcej kosztują {n1, 3} bochenki {item1, chleba} niż {n2, 2} {item2, bułeczki}?\n\n#init:\n- item1 = sample([\"chleb\", \"chleb na zakwasie\"])\n- item2 = sample([\"bułeczki\", \"muffinki\", \"croissant\", \"biszkopty\"])\n- shop = sample([\"piekarnia\", \"kawiarnia\", \"sklep\", \"rynek\"])\n- currency = sample(currencies_sym)\n- $price1 = range(2, 10)\n- $price2 = range(1, 5)\n- $n1 = range(2, 10)\n- $n2 = range(2, 10)\n\n#conditions:\n- n1 * price1 > n2 * price2\n\n#answer: n1 * price1 - n2 * price2",
+    "count": 100
+  },
+  {
+    "id": 46,
+    "question_annotated": "{school,Apple High School} organizuje uroczystość absolutorium w tym roku w {venue,Fine Arts Center}, który pomieści {total,6000} osób. Po uwzględnieniu {graduates,950} miejsc dla absolwentów i {faculty,300} miejsc dla uczestniczącej kadry, ile biletów otrzyma każdy absolwent, aby przekazać je swoim przyjaciołom i rodzinie, jeśli bilety zostaną podzielone równo?\n\n#init:\n- school = sample([\"Oakwood High School\", \"Riverside Academy\", \"Sunnyside High\", \"Greenville High School\"])\n- venue = sample([\"Auditorium\", \"Gymnasium\", \"Sports Arena\", \"Convention Center\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
+    "count": 100
+  },
+  {
+    "id": 48,
+    "question_annotated": "{name,Emily} może obrać {n1,6} {food,krewetek} na minutę i smażyć {n2,30} {food,krewetek} w {t,10} minutach. Ile czasu zajmie jej obieranie i smażenie {total,90} {food,krewetek}? {name,Emily} nie może jednocześnie obierać i smażyć.\n\n#init:\n- name = sample(names_female)\n- food = sample([\"krewetki\", \"cebula\", \"marchew\", \"grzyby\", \"małże\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
+    "count": 100
+  },
+  {
+    "id": 49,
+    "question_annotated": "{name,Jan} zbiera śmieci z {n,3} różnych kompleksów mieszkaniowych. Pierwsze {n_first_txt,dwa} mają po {a,200} mieszkań każde, a ostatni jest o {p,60}% większy niż pozostałe {n_first_txt,dwa} razem wzięte. Zbiera śmieci {f,3} razy w tygodniu z każdego miejsca i otrzymuje {cur,$}{r,0.4} za każde zebranie za mieszkanie. Ile pieniędzy zarabia w tygodniu?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "count": 100
+  },
+  {
+    "id": 50,
+    "question_annotated": "Pole prostokątnej {room_type,sypialnia} {name,Billie} wynosi {area,360} stóp kwadratowych. Jeśli długość pokoju wynosi {length,3} jard(y), jaki jest obwód pokoju w stopach?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"salon\", \"gabinet\", \"biuro\", \"kuchnia\"])\n- $area = range(200, 1200)\n- $length = range(3, 44)\n\n#conditions:\n- is_int(area / (length * 3))\n- area / (length * 3) > length * 3\n\n#answer: 2 * (area // (length * 3) + length * 3)",
+    "count": 100
+  },
+  {
+    "id": 59,
+    "question_annotated": "Mam {n1,10} litrów napoju {fruit1,pomarańczowego}, który w {frac1_txt,dwie trzecie} składa się z wody i chcę go dodać do {n2,15} litrów napoju {fruit2,ananasowego}, który w {frac2_txt,trzy piąte} składa się z wody. Ale podczas nalewania rozlano {spill_txt,cztery} litry napoju {fruit1,pomarańczowego}. Ile wody jest w pozostałych {total,21} litrach?\n\n#init:\n- fruit1, fruit2 = sample([\"jabłko\", \"winogrono\", \"mango\", \"brzoskwinia\", \"cytryna\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(2, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)",
+    "count": 100
+  },
+  {
+    "id": 62,
+    "question_annotated": "W zestawie kart {item,magika} znajduje się {n1,15} kart {c1,czerwonych}, a {c2,zielonych} o {p,60}% więcej. {c3,Żółtych} kart jest tyle, ile suma kart {c1,czerwonych} i {c2,zielonych}. Ile jest kart wszystkich wymienionych kolorów?\n\n#init:\n- item = sample([\"magika\", \"artysty\", \"kucharza\", \"naukowca\", \"sportowca\"])\n- c1, c2, c3 = sample([\"czerwonych\", \"niebieskich\", \"zielonych\", \"żółtych\", \"fioletowych\", \"pomarańczowych\"], 3)\n- $n1 = range(15, 81)\n- $p = range(20, 90)\n\n#conditions:\n- p < 100\n- is_int(p/100 * n1)\n\n#answer: 2 * (n1 + (p/100 * n1))",
+    "count": 100
+  },
+  {
+    "id": 70,
+    "question_annotated": "{occupation,budowlaniec} pracuje przez {w,4} tygodni każdego miesiąca i przez {d,6} dni każdego tygodnia. Jeśli otrzymuje {cur,$}{p,50} za każdy dzień, ile zarobi, jeśli pracuje przez rok?\n\n#init:\n- occupation = sample([\"hydraulik\", \"elektryk\", \"malarz\", \"stolarz\", \"ogrodnik\"])\n- cur = sample(currencies_sym)\n- $w = range(2, 5)\n- $d = range(4, 7)\n- $p = range(40, 200, 5)\n\n\n#answer: w * d * p * 12",
+    "count": 100
+  },
+  {
+    "id": 72,
+    "question_annotated": "{name,Mike} był listownym korespondentem z {n1,5} osobami. Przestał być korespondentem z {n2,2} z nich. Każdy wysyła {l,2} listów tygodniowo, które mają {p,5} stron. Odpowiada w ten sam sposób. Potrafi napisać stronę co {t,6} minut. Ile godzin tygodniowo spędza na pisanie?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 15)\n- $n2 = range(1, 5)\n- $l = range(2, 5)\n- $p = range(5, 12)\n- $t = range(4, 15)\n\n#conditions:\n- n2 < n1\n- is_int(((n1 - n2) * l * p * t) / 60)\n\n#answer: ((n1 - n2) * l * p * t) // 60",
+    "count": 100
+  },
+  {
+    "id": 73,
+    "question_annotated": "Kometa {comet_name,Halley} krąży wokół Słońca co {orbit_period,75} lat. Tata {name,Bill} widział Kometę, gdy miał {relative_age,30} lat. {name,Bill} zobaczył kometę po raz drugi, gdy miał {multiple_txt,trzy} razy więcej lat niż jego {relative,tata}, gdy widział Kometę. Ile lat miał {name,Bill}, gdy zobaczył Kometę po raz pierwszy?\n\n#init:\n- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])\n- name = sample(names_male)\n- relative = sample(['tata', 'ojciec', 'wujek', 'dziadek'])\n- $orbit_period = range(50, 101, 5)\n- $relative_age = range(20, 51)\n- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)\n\n#conditions:\n- multiple_val * relative_age < 100\n- multiple_val * relative_age > orbit_period\n- is_int(multiple_val * relative_age - orbit_period)\n\n#answer: multiple_val * relative_age - orbit_period",
+    "count": 100
+  },
+  {
+    "id": 78,
+    "question_annotated": "W ciągu dnia normalny uczeń ma {n1,6} godzin lekcyjnych, ale {name,Jan} musi brać {n2,2} dodatkowe zajęcia. Każde zajęcia trwają {t,40} minut. Chodzi na zajęcia przez {d,5} dni w tygodniu. Następnie spędza {frac,1/16} swoich tygodniowych minut w sobotę i niedzielę na dodatkowe nauki. Ile godzin w tygodniu spędza na nauki?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 10)\n- $n2 = range(1, 5)\n- $t = range(30, 61, 5)\n- $d = range(4, 7)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int((n1 + n2) * t * d * frac)\n- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)\n\n#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60",
+    "count": 100
+  },
+  {
+    "id": 83,
+    "question_annotated": "Rodzina {family,Adamsów} jest zajęta pieczeniem {item,ciasteczek}. Jak dotąd upiekli {total,7995} {item,ciasteczek}. Mają {n1,2595} {item,ciasteczek} {flavor1,tęczowych}, {n2,3075} {item,ciasteczek} {flavor2,owsianych} i kilka {item,ciasteczek} {flavor3,z czekoladowymi płatkami}. Ile {item,ciasteczek} {flavor3,z czekoladowymi płatkami} upiekli?\n\n#init:\n- family = sample([\"Smith\", \"Johnson\", \"Williams\", \"Brown\", \"Jones\"])\n- item = sample([\"cupcake\", \"muffin\", \"brownie\", \"biscuit\"])\n- flavor1, flavor2, flavor3 = sample([\"vanilla\", \"strawberry\", \"blueberry\", \"lemon\", \"peanut butter\"], 3)\n- $total = range(4995, 10000, 25)\n- $n1 = range(995, 3000, 50)\n- $n2 = range(1075, 3200, 50)\n\n#conditions:\n- n1 + n2 < total\n\n#answer: total - (n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 88,
+    "question_annotated": "{name,Dana} może biec {mult_run_txt,cztery razy} szybciej niż chodzić, ale może podskakiwać z prędkością, która jest {frac_skip_txt,połowa} tak szybka jak bieganie. Jeśli może podskakiwać z prędkością {skip_speed,3} kilometrów na godzinę, ile kilometrów może przebyć w {total_time_txt,sześć} godzin, jeśli spędza {frac_run_txt,jedna trzecia} czasu na bieganie i {frac_walk_txt,dwie trzecie} czasu na chodzenie?\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))",
+    "count": 100
+  },
+  {
+    "id": 91,
+    "question_annotated": "W domu {name,Allan} jest {mult_txt,dwa razy} więcej {food1,ziaren kukurydzy} niż {food2,cannoli}. Ma łącznie {n,40} {food2,cannoli} w swoim domu. {name,Allan} kupił {m,60} więcej {food2,cannoli} w sklepie i {k,40} mniej {food1,ziaren kukurydzy} niż liczba {food2,cannoli}. Znajdź łączną liczbę {food1,ziaren kukurydzy} i {food2,cannoli}, które {name,Allan} ma w domu?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"cannoli\",\"corn\", \"apple\", \"banana\", \"orange\", \"pear\", \"grape\", \"fig\", \"persimmon\", \"plum\", \"kiwi\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)",
+    "count": 100
+  },
+  {
+    "id": 97,
+    "question_annotated": "{name1,Julie} obsługuje kasę dokładnie {mult_txt,dwa razy} szybciej niż jej mniej doświadczona koleżanka {name2,Jewel}. Codziennie {name2,Jewel} obsługuje {n,50} klientów. Jaka jest całkowita tygodniowa produkcja dla obu, jeśli pracują wszystkie dni w tygodniu?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- mult_txt, mult_var = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_var)\n- is_int((n + n * mult_var) * 7)\n\n#answer: (n + n * mult_var) * 7",
+    "count": 100
+  },
+  {
+    "id": 98,
+    "question_annotated": "{disease,plaga} zaraża {n0_txt,dziesięć} osób. Każdego dnia każda zarażona osoba zaraża {r_txt,sześć} innych. Ile osób jest zarażonych po trzech dniach?\n\n#init:\n- disease = sample(['virus', 'bacteria', 'parasite', 'infection'])\n- n0_txt, n0_val = range_str(5, 22, 1, numbers)\n- r_txt, r_val = range_str(2, 8, 1, numbers)\n#conditions:\n- n0_val * (r_val + 1)**3 < 20000\n\n#answer: n0_val * (r_val + 1)**3",
+    "count": 100
+  },
+  {
+    "id": 99,
+    "question_annotated": "Jeśli {name,Chester} zjada {n1,3} jajka dziennie przez {d1,30} dni, a następnie zwiększa to do {n2,5} jajek dziennie przez {d2,30} dni, ile tuzinów jajek będzie potrzebował {name,Chester} przez {d3,60} dni?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
+    "count": 100
+  }
+]

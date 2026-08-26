@@ -1,0 +1,467 @@
+[
+  {
+    "id": 0,
+    "question_annotated": "{n, Benny} {k,2} adet {y,6}-inçlik remorası takılı olan {x,10}-ayaklık bir {big_fish,köpekbalığı} gördü. Remoraların toplam uzunluğu, {big_fish,köpekbalığı}'nın vücut uzunluğunun yüzde kaçıdır?\n\n#init:\n- n = sample(names)\n- big_fish = sample([\"delfin\", \"balina\", \"köpekbalığı\"])\n- $x = range(10, 500, 10)\n- $k = range(2, 10)\n- $y = range(2, 100)\n\n#conditions:\n- k * y < x * 12\n- divides(k*y,12)\n- divides(x * 12, k*y)\n- divides(100, x * 12 / (k*y))\n\n#answer: int((k * y)/ (x * 12) * 100)",
+    "count": 100
+  },
+  {
+    "id": 1,
+    "question_annotated": "Şehri kaplamak için okyanustan bir sis tabakası geliyor. Şehrin her {d,3} milini kaplaması {t,10} dakika sürüyor. Şehir okyanus kıyısından karşı iç kesim kenarına kadar {y,42} mil genişliğindeyse, sis tabakasının tüm şehri kaplaması ne kadar dakika sürer?\n\n#init:\n- $t = range(2, 500)\n- $d = range(2, 100)\n- $y=range(2, 100)\n\n#conditions:\n- is_int(y/d)\n\n#answer: y//d*t",
+    "count": 100
+  },
+  {
+    "id": 2,
+    "question_annotated": "{name,Ahmet}, {sides_txt,altı-yüzlü} bir zar atıyor. {target,3}'ten büyük bir sayı atma olasılığı, iki {z,çift} sayı üst üste atma olasılığından yüzde puanı olarak ifade edildiğinde ne kadar daha fazladır?\n\n#init:\n- name=sample(names_male)\n- sides_txt, sides_val = sample([(\"4-yüzlü\", 4), (\"altı-yüzlü\", 6), (\"8-yüzlü\", 8), (\"10-yüzlü\", 10), (\"12-yüzlü\", 12), (\"14-yüzlü\", 14), (\"16-yüzlü\", 16), (\"18-yüzlü\", 18), (\"20-yüzlü\", 20), (\"22-yüzlü\", 22), (\"24-yüzlü\", 24), (\"26-yüzlü\", 26), (\"28-yüzlü\", 28), (\"30-yüzlü\", 30), (\"32-yüzlü\", 32), (\"34-yüzlü\", 34), (\"36-yüzlü\", 36), (\"38-yüzlü\", 38), (\"40-yüzlü\", 40), (\"42-yüzlü\", 42), (\"44-yüzlü\", 44), (\"46-yüzlü\", 46), (\"48-yüzlü\", 48), (\"50-yüzlü\", 50), (\"52-yüzlü\", 52), (\"54-yüzlü\", 54), (\"56-yüzlü\", 56), (\"58-yüzlü\", 58), (\"60-yüzlü\", 60), (\"62-yüzlü\", 62), (\"64-yüzlü\", 64), (\"66-yüzlü\", 66), (\"68-yüzlü\", 68), (\"70-yüzlü\", 70), (\"72-yüzlü\", 72), (\"74-yüzlü\", 74), (\"76-yüzlü\", 76), (\"78-yüzlü\", 78), (\"80-yüzlü\", 80), (\"82-yüzlü\", 82), (\"84-yüzlü\", 84), (\"86-yüzlü\", 86), (\"88-yüzlü\", 88), (\"90-yüzlü\", 90), (\"92-yüzlü\", 92), (\"94-yüzlü\", 94), (\"96-yüzlü\", 96), (\"98-yüzlü\", 98), (\"100-yüzlü\", 100)])\n- $target = range(1, 100)\n- z = sample([\"çift\", \"tek\"])\n\n#conditions: \n- target < sides_val\n- divides(sides_val-target, target)\n- is_int((sides_val-target)/sides_val * 100)\n-  int((sides_val-target)/sides_val * 100) > 25\n\n#answer: int((sides_val-target)/sides_val * 100) - 25",
+    "count": 100
+  },
+  {
+    "id": 3,
+    "question_annotated": "{n, 50} öğrenciden oluşan bir {g,sınıf} çeşitli hobilere sahiptir. {n_1, 10} {h_1, fırıncılık yapmak} sever, {n_2,5} {h_2,basketbol} oynamayı sever, ve geri kalanlar ise ya {h_3,bilgisayar oyunu oynamak} ya da {h_4,müzik yapmak} sever. {h_3,bilgisayar oyunu oynamak} seven kaç kişi vardır eğer {h_4,müzik yapmak} sevenlerin sayısı, {h_2, basketbol} oynamayı tercih edenlerin sayısının iki katı ise?\n\n#init:\n- g = sample([\"grup\", \"sınıf\"])\n- h_2 = sample(sports)\n- h_1, h_3, h_4 = sample(['okumak', 'resim yapmak', 'doğa yürüyüşü', 'dans etmek', 'fırıncılık yapmak', 'bilgisayar oyunu oynamak', 'müzik yapmak'], 3)\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
+    "count": 100
+  },
+  {
+    "id": 4,
+    "question_annotated": "{name,Garrett} atıştırmalık olarak patlamış mısır patlatıyor. {p, tencere} içindeki çekirdekler ısınırken, çekirdekler daha hızlı patlamaya başlıyor. Pişirmenin ilk {s, 30} saniyesinde {n,20} tanesi patlıyor, sonra bir sonraki {s, 30} saniyede bunun {k_2_txt,üç} katı. Çekirdekler bir sonraki {s, 30} saniyede başlangıç patlama hızının {k_3_txt,dört} katına çıkıyor, ancak son {s, 30} saniyede, patlama hızı geçmiş {s, 30} saniyeye göre yarıya düşüyor. {name,Garrett} {p, tencere}'yi ısıdan aldıktan sonra, pişirmenin son {s, 30} saniyesinde patlayan çekirdek sayısının çeyreği de kalıntı ısıdan dolayı patlıyor. {name,Garrett} kaç parça patlamış mısır yemek zorunda?\n\n\n#init:\n- name = sample(names)\n- p = sample(['tencere', 'kazan', 'tava'])\n- $n = range(10, 101, 10)\n- $s = range(10, 31, 2)\n- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)\n- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)\n\n#conditions:\n- k_3_val > k_2_val\n- divides(k_3_val * n, 8)\n\n#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)",
+    "count": 100
+  },
+  {
+    "id": 5,
+    "question_annotated": "{name,Katy} {drink,kahve} hazırlarken şeker kaşığı ve su bardağı oranını {m,7}:{n,13} olarak kullanır. Eğer toplam {x,120} adet şeker kaşığı ve su bardağı kullandıysa, kullandığı şeker kaşığı sayısını hesaplayınız.\n\n#init:\n- name = sample(names_female)\n- drink = sample(['kahve', 'çay'])\n- $m = range(7, 101, 3)\n- $n = range(4, 61, 3)\n- $x = range(5, 500, 5)\n\n#conditions: \n- divides(x, m+n)\n\n#answer: ((m*x)//(m+n))",
+    "count": 100
+  },
+  {
+    "id": 6,
+    "question_annotated": "{name,John} {x,10} {area,hektar} {fruit,ananas} tarlasına sahiptir. Her {area,hektar} başına {k,100} {fruit,ananas} bulunur. {name, John} {fruit,ananas}larını her {n,3} ayda bir hasat edebilir. Bir yıl içinde {name,John} kaç {fruit,ananas} hasat edebilir?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- area = sample(['hektar', 'kare yarda', 'kare metre'])\n- $x = range(5, 100, 5)\n- $k = range(2, 101)\n- $n = sample([1, 2, 3, 4, 6, 12])\n\n#answer: x * k * (12//n)",
+    "count": 100
+  },
+  {
+    "id": 7,
+    "question_annotated": "Bir çiftçi {animals,atlar} için yem alıyor. Çeşitli {treat1,saman}, {treat2,yulaf}, {treat3,havuç} ve {rare_treat,şeker küpleri} alıyor. {rare_treat,şeker küpleri} nadir bir ikram olduğu için, tüm ahır için sadece {n4_txt,iki} {w4,1}-{unit,libra} kutu alıyor. Sadece sebzeler tazeyken {animals,atlar}ı beslemek için yeterli {treat3,havuç} istiyor, bu yüzden {n3_txt,dört} {w3,12}-{unit,libra} poşet alıyor. {treat1,saman} {animals,atlar}ının ana besin kaynağı, bu yüzden {n1_txt,kırkiki} {w1,75}-{unit,libra} paket alıyor. {treat2,yulaf}, {treat1,saman}ı tamamlamak için temel bir gıda, bu yüzden {n2_txt,yirmi} {w2, 65}-{unit,libra} çuval alıyor. Çiftlik kamyonunun bir seferde {total,2250} {unit,libra} taşıyabilmesi durumunda, tüm yemi taşımak için çiftçinin kaç sefer yapması gerekir?\n\n#init:\n- animals = sample(['atlar', 'sığırlar', 'koyunlar', 'domuzlar', 'alpakalar'])\n- unit = sample(weights_med)\n- treat1, treat2 = sample([\"saman\", \"mısır\", \"yulaf\", \"elma\", \"buğday\"], 2)\n- treat3 = sample([\"havuç\", \"pancar\", \"salatalık\"])\n- rare_treat = sample([\"şeker küpleri\", \"karpuz kabuğu\", \"nane şekerleri\"])\n- n4_txt, n4_val = range_str(2, 7, 2, numbers)\n- n3_txt, n3_val = range_str(4, 11, 2, numbers)\n- n2_txt, n2_val = range_str(15, 21, 1, numbers)\n- n1_txt, n1_val = range_str(30, 43, 2, numbers)\n- $w4 = range(1, 4)\n- $w3 = range(8, 13, 2)\n- $w2 = range(45, 70, 5)\n- $w1 = range(55, 80, 5)\n- $total = range(1500, 2300, 150)\n\n#conditions:\n- w4*n4_val < w3*n3_val < w2*n2_val < w1 * n1_val\n- divides(n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4, total)\n\n#answer: (n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4)//total",
+    "count": 100
+  },
+  {
+    "id": 9,
+    "question_annotated": "{name, Sophie} {family, yeğen}ine bakarken, ona çeşitli oyuncaklar çıkarır. Yapı blokları çantasında {x,31} blok bulunuyor. Pelüş hayvanlar kutusunda {y,8} pelüş hayvan var. Yığılan halkalar kulesinde {z,9} çok renkli halka var. {name, Sophie} yakın zamanda bir tüp zıplayan top aldı, {family, yeğen}i için toplam oyuncak sayısını {total,62}'ye çıkarıyor. Tüpte kaç zıplayan top vardı?\n\n#init:\n- name = sample(names_female)\n- family = sample([\"yeğen\", \"kuzen\", \"kardeş\"])\n- $x = range(31, 75)\n- $y = range(8, 50)\n- $z = range(9, 35)\n- $total = range(60, 250)\n\n#conditions:\n- total - (x + y + z) >= 20 \n- total - (x + y + z) < 100\n\n#answer: total - (x + y + z)",
+    "count": 100
+  },
+  {
+    "id": 10,
+    "question_annotated": "Bir {dev,ödemeli telefon}dan arama yapmak için, her dakika için {currency,₺}{frac1,0.25} ödemeniz gerekir. {t,16} dakika sonra, bu fiyat dakikada {currency,₺}{frac2,0.2} seviyesine düşer. {total,36}-dakikalık bir arama ne kadar tutar?\n\n#init:\n- dev = sample(['telefon kulübesi', 'otel odası telefonu'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "count": 100
+  },
+  {
+    "id": 11,
+    "question_annotated": "{name, Peter} {n,32} {unit,ons} su ile farklı boyutlarda buz küpü yapmak istiyor. Küp başına {w1,4} {unit,ons} su kullanan dev küpler, {w2,2} {unit,ons} su kullanan orta boy küpler ve {w3,1/2} {unit,ons} su kullanan küçük küpler yapabilir. Eğer {n1,3} dev küp, {n2,7} orta boy küp ve {n3,8} küçük küp yaparsa, geriye ne kadar {unit,ons} su kalır?\n\n#init:\n- name = sample(names_male)\n- unit = sample(weights_sm)\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
+    "count": 100
+  },
+  {
+    "id": 12,
+    "question_annotated": "{name, Jaime} bazı {surface,tepsi}lere {obj,yumurta} yerleştirir. Her {surface,tepsi} {x,24} {obj,yumurta} tutabilir. Elinde {n,64} {obj,yumurta} ve {k,2} {surface,tepsi} varsa, {surface,tepsi} üzerine yerleştiremediği {obj,yumurta} sayısı kaçtır?\n\n#init:\n- name = sample(names_male)\n- obj = sample([\"zeytin\", \"badem\", \"kurabiye\", \"kraker\", \"muz\"])\n- surface = sample([\"tabak\", \"masa\", \"kase\", \"tepsi\", \"sepet\"])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x",
+    "count": 100
+  },
+  {
+    "id": 13,
+    "question_annotated": "{name,Mary} tutkulu bir bahçıvandır. {time, Dün}, favori fidanlığından {x,18} yeni saksılı bitki aldı. Büyük kırsal evinin {w,40} pencere pervazının her birinde zaten {r,2} saksılı bitkisi var. Cömert hissederek, yarın her pencere pervazından arkadaşlarına ve ailesine {n,1} saksılı bitki vereceğine karar verdi. {name,Mary} kaç saksılı bitkiyle kalacak?\n\n#init:\n- name = sample(names_female)\n- time = sample([\"Geçen hafta\", \"İki gün önce\", \"Geçen gece\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
+    "count": 100
+  },
+  {
+    "id": 14,
+    "question_annotated": "{n1,Ahmet} ve {n2,Mehmet}, birlikte {loc1,okul}a yürümek için {t,30} dakikaları var. {loc2,kütüphane}nin bulunduğu köşeye varmaları {t1,6} dakika sürüyor. {loc3,itfaiye}ye varmaları için ise {t2,13} dakika daha geçiyor. Geç kalmadan {loc1,okul}a varmak için ne kadar süreleri daha kaldı?\n\n#init:\n- n1, n2 = sample(names, 2)\n- loc1, loc2, loc3 = sample(['okul', 'sinema', 'AVM', 'kütüphane', 'park', 'spor salonu', 'banka'], 3)\n- $t1 = range(6, 30)\n- $t2 = range(10, 70)\n- $t = range(30, 140)\n\n#conditions:\n- not divides(t1, 5)\n- not divides(t2, 5)\n- not divides(t, 5)\n- t > t1 + t2\n\n#answer: t - t1 - t2",
+    "count": 100
+  },
+  {
+    "id": 15,
+    "question_annotated": "{name1, Jennifer}'in köpeğinin {n1, 8} yavrusu var, bunlardan {k1,3}'ü benekli. {name2, Brandon}'in köpeğinin {n2,12} yavrusu var, bunlardan {k2,4}'ü benekli. Tüm yavruların yüzde kaçı benekli?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $n1 = range(4, 16)\n- $n2 = range(4, 20)\n- $k1 = range(2, 12)\n- $k2 = range(2, 12)\n\n#conditions:\n- k1 < n1\n- k2 < n2\n- divides(n1 + n2, k1 + k2)\n- is_int(100 * (k1+k2) / (n1+n2))\n\n#answer: int(100 * (k1+k2) / (n1+n2))",
+    "count": 100
+  },
+  {
+    "id": 16,
+    "question_annotated": "{name, Sunny} bir bağış toplamak için {food,zencefilli kurabiye} ve {fruit,elma} pastası satıyor. {d1,Cumartesi} günü, {n1,10} kutu {food,zencefilli kurabiye} ve {d2,Pazar} gününe göre {m1,4} kutu daha az {fruit,elma} pastası sattı. {d2,Pazar} günü, {d1,Cumartesi} gününe göre {n2,5} kutu daha fazla {food,zencefilli kurabiye} ve {m2,15} kutu {fruit,elma} pastası sattı. Eğer {food,zencefilli kurabiye} {cur,$}{cn,6} ve {fruit,elma} pastası {cur,$}{cm,15} ise, {name,Sunny} iki gün için ne kadar kazandı?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- cur = sample(currencies_sym)\n- food = sample([\"zencefilli kurabiye\", \"kurabiye\", \"brownie\", \"muffin\", \"cupcake\"])\n- d1, d2 = sample_sequential(weekdays, 2)\n- $n1 = range(21, 30)\n- $n2 = range(11, 15)\n- $m1 = range(4, 20)\n- $m2 = range(15, 30)\n- $cn = range(7, 13)\n- $cm = range(20, 33)\n\n#conditions:\n- m1 < m2\n\n#answer: (2*n1+n2)*cn + (2*m2-m1)*cm",
+    "count": 100
+  },
+  {
+    "id": 17,
+    "question_annotated": "{name,Büyükanne} her gün favori yürüyüş yolunda {n,3} {unit,mil} yürür; bu yol {m,2} {unit,mil} kumsalda ve {k,1} {unit,mil} kaldırımda yürümeyi içerir. Kaldırımda, {name,Büyükanne} kumsaldaki hızının {mult_txt,iki kat} hızında yürür. Eğer yürüyüşünün {t,40} dakikası kumsalda geçiyorsa, tüm {n,3}-{unit,mil} yürüyüşünü tamamlayıp bitirmesi dakika cinsinden ne kadar sürer?\n\n#init:\n- name = sample(names_female)\n- unit = sample(length_lg)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 60)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: t+(k/(mult_val*m/t))",
+    "count": 100
+  },
+  {
+    "id": 18,
+    "question_annotated": "{name,Rafael} okul malzemeleri almaya gitti. {n1,4} {obj1,kalem} aldı, her biri {cur,₺}{c1,1.5} değerinde, {n2,2} {obj2,defter} aldı, her biri {cur,₺}{c2,4} değerinde ve {cur,₺}{c3,20} değerinde bir paket bond kağıdı aldı. {name,Rafael} her şey için ne kadar harcadı?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"defter\", \"kalem\", \"silgi\", \"boya kalemi\", \"renkli kalem\", \"keçeli kalem\", \"cetvel\", \"dosya\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
+    "count": 100
+  },
+  {
+    "id": 20,
+    "question_annotated": "{name,John} {d1,Çarşamba} günü {n1,4} {fruit,muz} toplar. Sonra {d2,Perşembe} günü {n2,6} {fruit,muz} toplar. {d3,Cuma} günü, {d1,Çarşamba} günü topladığı {fruit,muz} sayısının {mult_txt,üç} katını toplar. {name,John} toplam kaç {fruit,muz} toplar?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3 = sample_sequential(weekdays, 3)\n- fruit = sample(fruits)\n- $n1 = range(30, 400)\n- $n2 = range(50, 400)\n- mult_txt, mult_val = range_str(2,6,1,numbers)\n\n#answer: n1 + n2 + mult_val * n1",
+    "count": 100
+  },
+  {
+    "id": 21,
+    "question_annotated": "{name,Frankie} her gece ödevini bitirdikten sonra televizyon izler. {d1,pazartesi} ve {d2,salı} günlerinde, her gece en sevdiği dizinin {h1,1}-saatlik bir bölümünü izledi. {d3,çarşamba} günü, {m1,30}-dakikalık bir diziden birkaç bölüm izledi. {d4,perşembe} günü, ödevini erken bitirdi ve bir {h2,1}-saatlik bölüm ile bir {m2,30}-dakikalık gösteri izledi. {d5,cuma} günü, geç saatlere kadar uyanık kaldı, bu yüzden {n2_txt,iki} adet {h3,1}-saatlik bölüm izledi. Eğer toplamda {total,7} saat televizyon izlediyse, {d3,çarşamba} günü kaç adet {m1,30}-dakikalık bölüm izledi?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)\n- $total = range(7, 33)\n- $h1 = range(1, 7)\n- $h3 = range(1, 6)\n- $m1 = range(5, 61, 5)\n- $m2 = range(5, 61, 5)\n- $h2 = range(1, 7)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n\n#conditions: \n- divides(m1, 15)\n- divides(m2, 15)\n- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 \n\n#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)",
+    "count": 100
+  },
+  {
+    "id": 22,
+    "question_annotated": "{name,Julia} evinde bir {event,yemek partisi} için hazırlanıyor ve burada {food,yahni} ikram etmeyi planlıyordu. Plastik {obj,kasıklar} stokunun bittiğini fark etti, bu yüzden yeni bir {obj,kasıklar} paketi aldı. Daha sonra, kocası da {n1,5} yeni {obj,kasıklar} paket satın alarak bunları {name,Julia}'ya verdi. {name,Julia} {food,yahni}'yi yaparken, {food,yahni}'sini tatmak için {obj,kasıklar}'dan {n2_txt,üç} tanesini kullandı. Daha sonra, masayı kurmaya gittiğinde, toplamda {total,12} {obj,kasıklar} vardı. {name,Julia}'nın satın aldığı pakette kaç adet {obj,kasıklar} vardı?\n\n#init:\n- name = sample(names_female)\n- event = sample([\"öğle yemeği partisi\", \"doğum günü partisi\", \"ortak yemek partisi\", \"bebek şenliği\", \"oyun gecesi\"])\n- food = sample([\"fırında tavuk\", \"ızgara somon\", \"dana yahnisi\", \"sebze lazanyası\", \"biber dolması\", \"karides yemeği\", \"krem brüle\"])\n- obj = sample([\"kasıklar\", \"çatallar\", \"tabaklar\"])\n- $n1 = range(5, 20)\n- n2_txt, n2_val = range_str(3, 10, 1, numbers)\n- $total = range(12, 40)\n\n#conditions:\n- total+n2_val-n1 > 0\n\n#answer: total+n2_val-n1",
+    "count": 100
+  },
+  {
+    "id": 23,
+    "question_annotated": "{name,Martha} {count,3} torunu için kışlık giysiler örmektedir. Onlar {children,üçüz}, bu yüzden hepsi aynı bedendir. Her biri için bir {c1,şapka}, {c2,atkı}, {c3,kazak}, {c4,eldiven} ve {c5,çorap} yapmak istiyor. Bir {c1,şapka} yapmak için {n1,2} yün yumak, bir {c2,atkı} için {n2,4}, bir {c3,kazak} için {n3,12}, bir çift {c4,eldiven} için {n4,1} ve bir çift {c5,çorap} için {n5,2} gerekir. Kaç yün yumak alması gerekecek?\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"kazak\", \"şal\", \"şapka\", \"hırka\", \"ponço\", \"yelek\", \"bere\", \"tunik\"],3)\n- c4, c5 = sample([ \"eldiven\", \"bebek ayakkabısı\", \"çorap\",  \"bacak ısıtıcısı\", \"parmaklı eldiven\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"ikiz\",2), (\"üçüz\",3), (\"dörtlü\", 4),  (\"beşiz\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
+    "count": 100
+  },
+  {
+    "id": 24,
+    "question_annotated": "Beslenme bilgilerine göre, bir {food,çips} paketi porsiyon başına {cal,250} kalori içeriyor. Eğer {size,300} {unit,gram}lık bir paket {n,5} porsiyon içeriyorsa, günlük kalori hedefiniz {total,2000} ve daha önce {spent,1800} kalori tükettiyseniz kaç {unit,gram} yiyebilirsiniz?\n\n#init:\n- food = sample([\"patlamış mısır\", \"ekmekler\", \"kurabiyeler\"])\n- unit = sample([\"gram\", \"ons\", \"oz\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
+    "count": 100
+  },
+  {
+    "id": 25,
+    "question_annotated": "{teacher,Bay Roper}'in {total,30} öğrencilik sınıfında, %{p1,20}'si {group1,futbolcular}dir. Kalan öğrencilerden %{p2,25}'i {group2,alkışçılar} veya {group3,müzik bandı} üyesidir. Bu 3 öğrenci grubu, bugün dışarıda bir {event,yarışma}a gitmek için erken ayrılmak zorunda kalacak. Kaç öğrenci erken ayrılıyor?\n\n#init:\n- teacher = sample(['Bayan Johnson', 'Bay Smith', 'Doktor Lee', 'Bayan Garcia'])\n- group1 = sample(['futbolcular', 'basketbolcular', 'voleybolcular', 'yüzücüler'])\n- group2, group3 = sample(['dansçılar', 'koro üyeleri', 'münazara takım üyeleri', 'robotik kulüp üyeleri'],  2)\n- event = sample(['yarışma', 'turnuva', 'gösteri', 'buluşma'])\n- $total = range(20, 150)\n- $p1 = range(10, 50)\n- $p2 = range(15, 45)\n\n#conditions:\n- p1 < 100\n- p2 < 100\n- is_int(total * p1 / 100)\n- is_int((total - total * p1 / 100) * p2 / 100)\n\n#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)",
+    "count": 100
+  },
+  {
+    "id": 26,
+    "question_annotated": "{name1,Bir adam} bir {time_unit,gün} {n1,5} {food,sandviçler} yer, {name2,karısı} bir {time_unit,gün} {n2,4} {food,sandviçler} yer ve onların {relation,oğul}u bir {time_unit,gün} {n3,2} {food,sandviçler} yer. Bu aile bir {time_period,hafta} içinde kaç {food,sandviçler} yer{placeholder_txt,?}\n\n#init:\n- name1 = sample([\"Bir baba\", \"Bir büyükbaba\", \"Bir amca\"])\n- name2 = sample([\"karısı\", \"partneri\", \"eşi\"])\n- relation = sample([\"kız\", \"oğul\", \"torun\"])\n- food = sample([\"pizzalar\", \"burritolar\", \"taco'lar\", \"sushi rulo'ları\", \"hamburgerler\"])\n- time_unit = sample([\"gün\"])\n- time_period = sample([\"week\", \"month\"])\n- placeholder_txt = \"?\" if time_period == \"month\" else \"?\"\n- $n1 = range(2, 9)\n- $n2 = range(2, 9)\n- $n3 = range(2, 9)\n\n#answer: (n1 + n2 + n3) * (7 if time_period == \"week\" else 30)",
+    "count": 100
+  },
+  {
+    "id": 27,
+    "question_annotated": "{name,James} günde {n,80} e-posta alır. Bu e-postaların {p,20}%'si herhangi bir yanıt gerektirmez. Kalanlarına yanıt verir. {name,James} bir {d,5} günlük çalışma haftasında kaç e-postaya yanıt verir?\n\n#init:\n- name = sample(names)\n- $n = range(50, 200)\n- $p = range(5, 40)\n- $d = range(3, 7)\n\n#conditions:\n- is_int(n * p / 100)\n- is_int(n * (100 - p) / 100)\n\n#answer: d * (n * (100 - p) / 100)",
+    "count": 100
+  },
+  {
+    "id": 28,
+    "question_annotated": "Bir {facility,hastane}, {total,1000} {item,yatak} kapasitesine sahiptir ve {frac,1/5}'i doludur. {event,koronavirüs salgını} nedeniyle, her gün {daily,50} hasta {facility,hastane}'ye kabul edilir. {period,2} hafta sonra {facility,hastane} içinde boş kalan toplam {item,yatak} sayısını hesaplayınız.\n\n#init:\n- facility = sample([\"hastane\", \"klinik\", \"tıbbi merkez\", \"bakım tesisi\"])\n- item = sample([\"yatak\", \"oda\", \"servis\"])\n- event = sample([\"grip sezonu\", \"doğal afet\", \"büyük kaza\", \"pandemi\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
+    "count": 100
+  },
+  {
+    "id": 29,
+    "question_annotated": "{name1,Brett} {age1,14} yaşında. {years_txt,dört} yıl sonra {relation_type,kız kardeş} {name2,Angela}, {name1,Brett}'in şu anki yaşının {mult_txt,üç katı} olacak. {name2,Angela} şu an kaç yaşında?\n\n#init:\n- name1 = sample(names_male)\n- name2 = sample(names_female)\n- relation_type = sample(['kız kardeş', 'kuzen'])\n- $age1 = range(8, 25)\n- years_txt, years_val = range_str(2, 10, 1, numbers)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- age1 * mult_val - years_val > 0\n\n#answer: age1 * mult_val - years_val",
+    "count": 100
+  },
+  {
+    "id": 31,
+    "question_annotated": "{name1,Mia} ve {name2,Emma} yaşları arasında şu anda {age_diff,16} yıl fark var. Eğer {name1,Mia}, {name2,Emma}'dan küçük olup {age1,40} yaşındaysa, yaşlarının ortalaması nedir?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
+    "count": 100
+  },
+  {
+    "id": 32,
+    "question_annotated": "{name, Bayan Cruz} ${budget, 400000} bütçesini aşmayacak bir {property_type, ev} arıyor. Satış fiyatı ${price, 350000} olan bir mülk gördü. Bunun üzerine, alıcı satış fiyatının {brokerage_fee, 5}%'i olan bir aracı komisyonu ve ayrıca satış fiyatının {transfer_fee, 12}%'i olan bir devir ücreti ödemek zorunda. {property_type, ev}'in toplam fiyatı {name, Bayan Cruz}'un bütçesinden ne kadar fazladır?\n\n#init:\n- name = sample(['Bayan Smith', 'Bayan Johnson', 'Dr. Patel', 'Bayan Lee'])\n- property_type = sample(['ev', 'daire', 'site evi', 'katlı ev'])\n- $budget = range(300000, 500000, 10000)\n- $price = range(250000, 450000, 10000)\n- $brokerage_fee = range(3, 8)\n- $transfer_fee = range(10, 15)\n\n#conditions:\n- brokerage_fee < 100\n- transfer_fee < 100\n- price < budget\n- price + price*brokerage_fee/100 + price*transfer_fee/100 > budget + 1\n- is_int(price * brokerage_fee / 100)\n- is_int(price * transfer_fee / 100)\n\n#answer: int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)",
+    "count": 100
+  },
+  {
+    "id": 33,
+    "question_annotated": "{name1,Carol} ve {name2,Jennifer}, {city,Los Angeles}'dan kız kardeşlerdir ve {celebrity_type,ünlüler}'den imzaları toplamayı severler. Okullarından aldıkları {vacation_type,yaz tatili} sırasında, kız kardeşler her öğleden sonra imza toplarlar. {n1_txt,beş} hafta sonra, {name1,Carol} ve {name2,Jennifer} imza kitaplarını karşılaştırır, her kız kardeşin topladığı imza sayısını sayarlar. {name1,Carol} kitabında {s1,20} imzası vardır ve {name2,Jennifer} kitabında {s2,44} imzası vardır. Kız kardeşlerin {vacation_type,yaz tatili}'nden {n2_txt,üç} haftaları daha vardır ve tatilin sonunda aralarında {goal,100} imzaya ulaşmak istemeye karar verirler. Hedeflerine ulaşmak için kız kardeşlerin kaç imza toplaması gerekir?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- city = sample(cities)\n- celebrity_type = sample([\"film yıldızları\", \"sporcular\", \"müzisyenler\", \"siyasetçiler\", \"yazarlar\"])\n- vacation_type = sample([\"kış tatili\", \"bahar tatili\", \"yaz tatili\", \"sonbahar tatili\"])\n- n1_txt, n1_val = range_str(3, 8, 1, numbers)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n- $s1 = range(15, 40)\n- $s2 = range(30, 60)\n- $goal = range(90, 150, 5)\n\n#conditions:\n- s1 + s2 < goal\n\n#answer: goal - (s1 + s2)",
+    "count": 100
+  },
+  {
+    "id": 34,
+    "question_annotated": "{title,Bay} {name,Yılmaz} {property,ev}ini ${price,400000} karşılığında sattı. Satış fiyatının % {fee1_percent,3}'ü tutarındaki {fee1_name,devir} ücretlerini ve satış fiyatının % {fee2_percent,5}'i olan {fee2_name,aracılık} ücretini de ödedi. Ayrıca {property,ev}in kalan kredi tutarı için ${loan,250000} ödediğine göre, {title,Bay} {name,Yılmaz}'ın {property,ev}i satışından elde edilen net geliri ne kadardır?\n\n#init:\n- title = sample(['Bay', 'Prof.', 'Dr.'])\n- name = sample(['Yılmaz', 'Kaya', 'Demir', 'Çelik', 'Öztürk', 'Arslan', 'Kurt', 'Şahin', 'Yıldız', 'Aydın'])\n- property = sample(['ev', 'daire', 'konut', 'villa', 'kulübe'])\n- fee1_name = sample(['devir', 'kayıt', 'yasal'])\n- fee2_name = sample(['aracılık', 'temsilci', 'emlakçı'])\n- $price = range(200000, 1000000, 10000)\n- $fee1_percent = range(1, 5)\n- $fee2_percent = range(2, 7)\n- $loan = range(100000, 700000, 10000)\n\n#conditions:\n- price > loan\n- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1\n\n#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)",
+    "count": 100
+  },
+  {
+    "id": 35,
+    "question_annotated": "{name,John} bir {event,okul gezisi} için para toplamaktadır. {organization,okul}dan yardım istemiştir; bu da {event,okul gezisi} maliyetinin {fraction_txt,yarım}ını karşılamaya karar vermiştir. {cur,$}{current,50} parası varsa ve {event,okul gezisi} {cur,$}{total,300} ise {name,John} ne kadar para eksiktir?\n\n#init:\n- name = sample(names_male)\n- event = sample([\"okul gezisi\", \"saha gezisi\", \"spor turnuvası\", \"konferans\", \"müzik festivali\", \"bilim fuarı\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"okul\", \"topluluk merkezi\", \"yerel yardım kuruluşu\", \"gençlik kulübü\", \"ebeveyn derneği\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)",
+    "count": 100
+  },
+  {
+    "id": 36,
+    "question_annotated": "{name,Toula} {shop,fırın}a gitti ve çeşitli {item,hamur işleri} türü satın aldı. {n1,3} düzine {item1,donut} bir düzinesi ${p1,68} tutan, {n2,2} düzine {item2,minik kupa kek} bir düzinesi ${p2,80} tutan ve {n3,6} düzine {item3,minik peynirli kek} bir düzinesi ${p3,55} tutan satın aldı. Toplam maliyet ne kadardı?\n\n#init:\n- name = sample(names_female)\n- shop = sample([\"fırın\", \"pastane\", \"şekerleme dükkanı\", \"kafeterya\"])\n- item = sample([\"hamur işleri\", \"fırın ürünleri\", \"tatlılar\", \"lezzetler\"])\n- item1 = sample([\"donut\", \"kruvasan\", \"ekler\", \"danish\"])\n- item2 = sample([\"minik kupa kek\", \"makaron\", \"kurabiye\", \"tart\"])\n- item3 = sample([\"minik peynirli kek\", \"brownie\", \"muffin\", \"scone\"])\n- $n1 = range(1, 10)\n- $n2 = range(4, 10)\n- $n3 = range(2, 10)\n- $p1 = range(11, 21)\n- $p2 = range(73, 90)\n- $p3 = range(112, 120)\n\n#answer: n1 * p1 + n2 * p2 + n3 * p3",
+    "count": 100
+  },
+  {
+    "id": 37,
+    "question_annotated": "{item,ekmek} {n,24} {unit,dilim} içerir. Eğer {name1,Abby} günde {x,2} {unit,dilim} yiyebiliyorsa ve {name2,Josh} {mult_txt,iki katı} kadar yiyebiliyorsa, {item,ekmek} kaç gün dayanır?\n\n#init:\n- item = sample([\"pizza\", \"kek\", \"turtta\", \"lasagna\"])\n- unit = sample([\"parça\", \"porsiyon\", \"servis\"])\n- name1, name2 = sample(names, 2)\n- $n = range(12, 76, 3)\n- $x = range(2, 13)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- divides(n, x + x*mult_val)\n\n#answer: n // (x + x*mult_val)",
+    "count": 100
+  },
+  {
+    "id": 38,
+    "question_annotated": "Bir {item1,ekmek} {shop,fırın}'da {currency}{price1,2} tutarındadır. {item2,bagel}ler her biri {currency}{price2,1}'dir. {n1,3} adet {item1,ekmek} {n2,2} adet {item2,bagel}'den ne kadar daha pahalıdır?\n\n#init:\n- item1 = sample([\"ekmek\", \"ekşi maya ekmeği\"])\n- item2 = sample([\"bagel\", \"muffin\", \"kruvasan\", \"bisküvi\"])\n- shop = sample([\"fırın\", \"kafe\", \"mağaza\", \"market\"])\n- currency = sample(currencies_sym)\n- $price1 = range(2, 10)\n- $price2 = range(1, 5)\n- $n1 = range(2, 10)\n- $n2 = range(2, 10)\n\n#conditions:\n- n1 * price1 > n2 * price2\n\n#answer: n1 * price1 - n2 * price2",
+    "count": 100
+  },
+  {
+    "id": 39,
+    "question_annotated": "{job,bakıcı}, {n,80} {room,sınıf} bulunan bir {building,okul}u temizlemek zorunda. Bunu bitirmek için {d,5} günleri var. Her {room,sınıf} için {t,15} dakika sürüyor. Günde {h,8} saat çalışırlarsa, günlerinin ortalama yüzde kaçı {room,sınıf} temizlemeye harcanır?\n\n#init:\n- job = sample([\"bakıcı\", \"temizlikçi\", \"bakım işçisi\"])\n- building = sample([\"ofis binası\", \"hastane\", \"üniversite\",])\n- room = sample([\"oda\", \"kat\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))",
+    "count": 100
+  },
+  {
+    "id": 40,
+    "question_annotated": "{name,Sally} tatil için sahile gitti. Ailesi ona istediğini almak için ${total,15} verdi. Hediyelik eşya dükkanında, taffy için indirim vardı: \"{n1,1} poundu ${p1,3} dolara al, {n2,1} poundu {discount,1/2} indirimle al.\" {n12,4} pound aldı. Ayrıca {p2,1.5} dolarlık bir karışık deniz kabuğu torbası ve {n3,4} adet mıknatıs aldı, bunların her biri {p3,0.25} dolardı. {name,Sally} ne kadar para arttı?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(1, 6)\n- $n2 = range(1, 6)\n- $n12 = range(2, 12)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(n1 * p1 + n2 * (1-discount) * p1 + (n12 - n1 - n2) * p1 + p2 + n3 * p3)\n- n1*p1 + n2*(1-discount)*p1 + (n12-n1-n2)*p1 + p2 + n3*p3 < total\n\n#answer: total-int(n1*p1+n2*(1-discount)*p1+(n12-n1-n2)*p1+p2+n3*p3)",
+    "count": 100
+  },
+  {
+    "id": 41,
+    "question_annotated": "Bir {structure,kule} {n1,4} {color1,mavi} {obj,blok}, {mult_txt,iki kat} kadar {color2,sarı} {obj,blok} ve bilinmeyen sayıda {color3,kırmızı} {obj,blok} ile yapılmıştır. Eğer {structure,kule}de toplam {total,32} {obj,blok} varsa, kaç tane {color3,kırmızı} {obj,blok} vardır?\n\n#init:\n- structure = sample([\"bina\", \"piramit\", \"yığın\"])\n- obj = sample([\"tuğla\", \"küp\", \"kiremit\"])\n- color1, color2, color3 = sample([\"yeşil\", \"mor\", \"turuncu\", \"pembe\", \"beyaz\", \"siyah\"], 3)\n- $n1 = range(2, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $total = range(20, 50)\n\n#conditions:\n- total > n1 + mult_val * n1\n\n#answer: total - n1 - mult_val * n1",
+    "count": 100
+  },
+  {
+    "id": 42,
+    "question_annotated": "{name,Roger} bazı {item,kahve} almak için markete gitti. Normalde aldığı {item,kahve} markası {unit,kilogram} başına {cur,₺}{price,5} tutarındadır. Favori markası tükenmiş olduğu için {percent,20}% daha pahalı olan bir marka almak zorunda kaldı. Haftalık {item,kahve} alımına karar verdi ve günde {usage,1} {unit,kilogram} {item,kahve} kullanıyor. Ayrıca kendisine {extra_item,donut} için {cur,₺}{extra_price,2} almaya karar verdi. Her şey toplamda ne kadara mal oldu?\n\n#init:\n- name = sample(names_male)\n- item = sample(['çay', 'şeker', 'un', 'pirinç'])\n- cur = sample(currencies_sym)\n- unit = sample(['kilogram', 'kg'])\n- extra_item = sample(['kurabiye', 'muffin', 'bagel'])\n- $price = range(3, 25)\n- $percent = range(10, 50, 5)\n- $usage = range(1, 3)\n- $extra_price = range(1, 5)\n\n#conditions:\n- is_int(price * percent / 100)\n\n#answer: (price + price * percent / 100) * 7 * usage + extra_price",
+    "count": 100
+  },
+  {
+    "id": 43,
+    "question_annotated": "{name,Dax}, {place,çiftlik}'e bazı {fruit,elmalar} toplamaya gitti ve {location,bahçe}'de {insect2,karıncalar}'ın {frac_txt,yarım}ı kadar {insect1,böcekler} buldu. Eğer {n,50} {insect2,karıncalar} varsa, {location,bahçe}'deki toplam böcek sayısını hesaplayın.\n\n#init:\n- name = sample(names)\n- place = sample([\"meyve bahçesi\", \"arka bahçe\", \"sera\", \"arazi\"])\n- fruit = sample([\"çilekler\", \"kirazlar\", \"yaban mersinleri\", \"ahududular\"])\n- location = sample([\"bahçe\", \"tarla\", \"parsel\", \"yama\"])\n- insect1, insect2 = sample([\"böcekler\", \"uğur böcekleri\", \"çekirgeler\", \"tırtıllar\", \"arılar\", \"yaban arıları\"], 2)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 44,
+    "question_annotated": "{place,park}'da {n,6} kız var. {place,park}'da erkek sayısı {mult_txt,iki kat} ise, {place,park}'da kaç çocuk var?\n\n#init:\n- place = sample(['park', 'avlu', 'tarla', 'oyun alanı', 'bahçe'])\n- $n = range(5, 51)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- is_int(n * mult_val + 1)\n- n * (mult_val + 1) <= 200\n\n#answer: n * (mult_val + 1)",
+    "count": 100
+  },
+  {
+    "id": 45,
+    "question_annotated": "{name,Pat}'in {length,111} {unit_length,fit} uzunluğunda bir çiçek tarlası var. {name,Pat} çiçek tarlasını bitkilerle doldurmak istiyor. {name,Pat}'ın çiçekleri {plant_width,12} inç genişliğinde büyüyor ve bahçecilik kuralları tarla boyunca her {space,1.5} {unit_length,fit} için bir çiçek dikilmesini söylüyor. {name,Pat} zaten {owned,17} çiçeğe sahip. Her çiçekli bitki mağazada {cur,$}{cost,6} tutuyor. Çiçek tarlasını doldurmak için {name,Pat} mağazada ne kadar para harcamalı?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['fit', 'metre'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "count": 100
+  },
+  {
+    "id": 46,
+    "question_annotated": "{school,elma lisesi} bu yıl {venue,güzel sanatlar merkezi}nde mezuniyet töreni düzenliyor ve kapasitesi {total,6000} kişidir. Mezunlar için {graduates,950} koltuk ve katılan öğretim üyeleri için {faculty,300} koltuk ayrıldıktan sonra, biletler eşit şekilde paylaştırılırsa her mezun arkadaşlarına ve ailesine vermek için kaç bilet alır?\n\n#init:\n- school = sample([\"meşelik lisesi\", \"sahil akademisi\", \"güneşli lisesi\", \"yeşil şehir lisesi\"])\n- venue = sample([\"konser salonu\", \"spor salonu\", \"spor arenası\", \"kongre merkezi\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
+    "count": 100
+  },
+  {
+    "id": 47,
+    "question_annotated": "{name1,Cole} bahçede Paskalya yumurta avı için {n,3} düzine yumurta sakladı. {name2,Lamar} {x,5} yumurta bulur. {name3,Stacy} {name2,Lamar}'ın {mult1_txt,iki katı} kadar bulur. {name4,Charlie} {name3,Stacy}'den {y,2} az bulur ve {name5,Mei} {name4,Charlie}'nin {frac_txt,yarım} kadarını bulur. Bahçede hala kaç yumurta saklı?\n\n#init:\n- name1, name2, name3, name4, name5 = sample(names, 5)\n- $n = range(2, 10)\n- $x = range(3, 15)\n- $y = range(1, 5)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)))\n- is_int(x * mult1_val)\n- x * mult1_val - y > 0\n- is_int((x * mult1_val - y) * frac_val)\n- n * 12 > x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y)\n\n#answer: n * 12 - (x + mult1_val * x + (mult1_val * x - y) + frac_val * (mult1_val * x - y))",
+    "count": 100
+  },
+  {
+    "id": 48,
+    "question_annotated": "{name,Emily} bir dakikada {n1,6} {food,karides} soyabilir ve {t,10} dakikada {n2,30} {food,karides} soteleyebilir. {total,90} {food,karides} soyması ve sotelemesi onun için ne kadar sürer? {name,Emily} aynı anda soyma ve soteleme yapamaz.\n\n#init:\n- name = sample(names_female)\n- food = sample([\"karides\", \"soğan\", \"havuç\", \"mantar\", \"midye\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
+    "count": 100
+  },
+  {
+    "id": 49,
+    "question_annotated": "{name,John} {n,3} farklı apartman kompleksinden çöp toplar. İlk {n_first_txt,iki} kompleksin her birinde {a,200} daire bulunur ve sonuncusu diğer {n_first_txt,iki}'nin toplamından {p,60}% daha büyüktür. Her yerden haftada {f,3} kez çöp toplar ve her daire için her toplama başına {cur,$}{r,0.4} ücret alır. Haftada ne kadar para kazanır?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "count": 100
+  },
+  {
+    "id": 50,
+    "question_annotated": "{name,Billie}'in dikdörtgen {room_type,yatak odası} alanı {area,360} kare fit'tir. Odanın uzunluğu {length,3} yard ise, odanın çevresi fit cinsinden kaçtır?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"oturma odası\", \"çalışma odası\", \"ofis\", \"mutfak\"])\n- $area = range(200, 1200)\n- $length = range(3, 44)\n\n#conditions:\n- is_int(area / (length * 3))\n- area / (length * 3) > length * 3\n\n#answer: 2 * (area // (length * 3) + length * 3)",
+    "count": 100
+  },
+  {
+    "id": 51,
+    "question_annotated": "{name,Artie} {location,Çiftçi Pazarı}'nda bir {product,çiçek} tezgahı açtı. Üç tür {product,çiçek} satar: {item1,kadife çiçeği}, {item2,petunya} ve {item3,begonya}. Genellikle {item1,kadife çiçeği} için {cur,$}{p1,2.74}, {item2,petunya} için {cur,$}{p2,1.87} ve {item3,begonya} için {cur,$}{p3,2.12} fiyatı ödenir, her biri {unit,saksı} başına. {name,Artie} bugün bozuk parası olmadığı için tüm fiyatlarını en yakın dolara yuvarlamaya karar verdi. Eğer {name,Artie} {n1,12} {unit,saksı} {item1,kadife çiçeği}, {n2,9} {unit,saksı} {item2,petunya} ve {n3,17} {unit,saksı} {item3,begonya} satar, ne kadar kazanır?\n\n#init:\n- name = sample(names_male)\n- product = sample([\"sebze\", \"çiçek\", \"ot\", \"bitki\"])\n- location = sample([\"yerel pazar\", \"topluluk pazarı\", \"sokak pazarı\", \"kent meydanı\"])\n- item1, item2, item3 = sample([\"gül\", \"papatya\", \"lale\", \"zambak\", \"ayçiçeği\", \"orkide\"], 3)\n- unit = sample([\"demet\", \"sepet\", \"buket\", \"paket\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
+    "count": 100
+  },
+  {
+    "id": 52,
+    "question_annotated": "{name,Craig} {n,2} adet {cur,$}{bill,20} değerinde banknotu var. {m_txt,altı} adet {item1,su tabancası}ları {cur,$}{p1,2} fiyatından satın alır. Ayrıca {k,3} paket {item2,su balonu}leri {cur,$}{p2,3} fiyatından satın alır. Elinde ne kadar para kalır?\n\n#init:\n- name = sample(names_male)\n- $bill = sample([5, 10, 20, 50, 100])\n- item1 = sample([\"oyun arabası\", \"aksiyon figürü\", \"boyama kitabı\", \"puzzle\", \"masa oyunu\"])\n- item2 = sample([\"sticker\", \"çikolata barı\", \"koleksiyon kartı\", \"kalem\", \"silgi\"])\n- cur = sample(currencies_sym)\n- $n = range(1, 10)\n- m_txt, m_val = range_str(2, 15, 1, numbers)\n- $k = range(2, 10)\n- $p1 = range(1, 10)\n- $p2 = range(1, 10)\n\n#conditions:\n- n * int(bill) > m_val * p1 + k * p2\n\n#answer: n * int(bill) - (m_val * p1 + k * p2)",
+    "count": 100
+  },
+  {
+    "id": 53,
+    "question_annotated": "{name1,Pierson} bir {game,bowling} maçında {n1,278} puan aldı. {name2,Nikita}, {name1,Pierson}'un {frac_txt,half} kadarından {n2,11} puan daha fazla puan aldı. {name1,Pierson} ve {name2,Nikita} toplamda kaç puan yaptılar?\n\n#init:\n- name1, name2 = sample(names, 2)\n- game = sample([\"bowling\", \"dart\", \"okçuluk\", \"basketbol\", \"tenis\"])\n- $n1 = range(200, 500)\n- $n2 = range(5, 50)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(frac_val * n1)\n\n#answer: n1 + int(frac_val * n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 54,
+    "question_annotated": "{name,Doxa} bütün bir {fruit,elma}yı {total,18} dilime böldü. O {n1,3} dilim yedi, {sibling1,kız kardeş}i ondan {n2,2} fazla yedi ve {sibling2,erkek kardeş}i {sibling1,kız kardeş}inden {n3,3} fazla yedi. {fruit,elma} dilimlerinden hepsi birlikte kaç tane yedi?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"portakal\", \"armut\", \"şeftali\", \"mango\", \"kivi\"])\n- sibling1, sibling2 = sample([\"erkek kardeş\", \"kız kardeş\", \"kuzen\", \"arkadaş\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
+    "count": 100
+  },
+  {
+    "id": 56,
+    "question_annotated": "Bir {container,bardak} {liquid,süt}, {vol,8} {unit,ons} {liquid,süt} içerir. {name,Mehmet} {num,2} {container_plural,bardaklar} {liquid,süt} içerir. Eğer {liquid,süt} {unit,ons} başına {cal,3} kalori içeriyorsa, o toplam kaç kalori almıştır?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"bardak\",\"bardaklar\"), (\"fincan\",\"fincanlar\"), (\"şişe\",\"şişeler\"), (\"paket\",\"paketler\")])\n- liquid = sample([\"meyve suyu\", \"soda\", \"maden suyu\", \"çay\", \"limonata\"])\n- unit = sample([\"ons\", \"mL\", \"cc\", \"oz\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
+    "count": 100
+  },
+  {
+    "id": 58,
+    "question_annotated": "Bir {worker,gnom}, {tool1,çıplak elleriyle} günde {base,12} {unit,libra} maden çıkarabilir. Bir {tool2,bronz kazma} ile {mult1_txt,iki kat} daha fazla çıkarabilir ve bir {tool2,bronz kazma}'a kıyasla bir {tool3,çelik kazma} ile %{mult2,50} daha fazla. {days,30} günlük bir ayda {n,40} {worker,gnom} {tool3,çelik kazma} ile ne kadar {unit,libra} maden çıkarabilir?\n\n#init:\n- worker = sample([\"madenci\", \"goblin\", \"gnom\", \"troll\"])\n- tool1 = sample([\"çıplak eller\", \"temel kürek\", \"ahşap kazma\"])\n- unit = sample([\"libra\", \"kg\"])\n- tool2 = sample([\"nikel kazma\", \"bronz kazma\", \"gümüş kazma\"])\n- tool3 = sample([\"çelik kazma\", \"elmas kazma\", \"mithril kazma\", \"titanyum kazma\"])\n- $base = range(5, 20)\n- mult1_txt, mult1_val = sample(multi_times)\n- $mult2 = range(30, 80, 5)\n- $n = range(20, 50)\n- $days = range(28, 32)\n\n#conditions:\n- is_int(mult2/100*base*mult1_val)\n- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000\n\n#answer: int(base * mult1_val * (1 + mult2/100) * n * days)",
+    "count": 100
+  },
+  {
+    "id": 59,
+    "question_annotated": "Elimde {n1,10} litre {fruit1,portakal} içeceği var ve su oranı {frac1_txt,üçte iki}. Bunu su oranı {frac2_txt,beşte üç} olan {n2,15} litrelik {fruit2,ananas} içeceğine eklemek istiyorum. Ancak dökerken {fruit1,portakal} içeceğinden {spill_txt,dört} litre döktüm. Kalan {total,21} litrede ne kadar su var?\n\n#init:\n- fruit1, fruit2 = sample([\"elma\", \"üzüm\", \"mango\", \"şeftali\", \"limon\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(2, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)",
+    "count": 100
+  },
+  {
+    "id": 60,
+    "question_annotated": "{name,Watson} her gün {h,10}-saatlik bir vardiya çalışır, haftada {d_txt,beş} gün. Saat başına {cur,$}{r,10} kazanır ve şirket iyi performans gösterirse her hafta {cur,$}{b,300} bonus alır. Şirket tüm ay boyunca çok iyi performans gösterdiyse {name,Watson} {month,nisan} ayında ne kadar para kazandı?\n\n#init:\n- name = sample(names_male)\n- month = sample([\"Ocak\", \"Şubat\", \"Mart\", \"Nisan\", \"Mayıs\", \"Haziran\", \"Temmuz\", \"Ağustos\", \"Eylül\", \"Ekim\", \"Kasım\", \"Aralık\"])\n- cur = sample(currencies_sym)\n- $h = range(6, 13)\n- d_txt, d_val = range_str(3, 7, 1, numbers)\n- $r = range(8, 31)\n- $b = range(100, 601)\n\n#conditions:\n- is_int(h * r)\n\n#answer: h * r * d_val * 4 + b * 4",
+    "count": 100
+  },
+  {
+    "id": 61,
+    "question_annotated": "{name,Brendan} içinde {n,10} tane {objects,mermerler} olan bir çantası var. Onu taşırken bir {obstacle,çakıl} üzerine takıldı ve onların {frac_txt,yarı}sını düşürdü. Onları aramak için koşuşturdu ama sadece {k,3} tane bulabildi. Evine geri döndüğünde, {objects,mermerler}i daha dikkatli inceledi. Topladıklarının {fake_num_txt,iki} tanesi {objects,mermerler} değil, aslında {fake_object,boncuklar} idi bu yüzden onlardan kurtuldu. {name,Brendan} sonunda kaç tane {objects,mermerler} ile kaldı?\n\n#init:\n- name = sample(names_male)\n- objects = sample(['mermerler', 'bozuk paralar', 'düğmeler', 'boncuklar', 'çakıl taşları'])\n- obstacle = sample(['kaya', 'çubuk', 'oyuncak', 'kök'])\n- fake_object = sample(['düğmeler', 'bozuk paralar', 'çakıl taşları', 'boncuklar'])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val",
+    "count": 100
+  },
+  {
+    "id": 62,
+    "question_annotated": "{item,sihirbaz}'in bir destesinde, {n1,15} {c1,kırmızı} kart ve {p,60}% daha fazla {c2,yeşil} kart bulunmaktadır. {c3,sarı} kartların sayısı, {c1,kırmızı} ve {c2,yeşil} kartların toplamı kadardır. Bahsedilen tüm renklerden toplam kaç kart vardır?\n\n#init:\n- item = sample([\"sihirbaz\", \"sanatçı\", \"aşçı\", \"bilim insanı\", \"sporcu\"])\n- c1, c2, c3 = sample([\"kırmızı\", \"mavi\", \"yeşil\", \"sarı\", \"mor\", \"turuncu\"], 3)\n- $n1 = range(15, 81)\n- $p = range(20, 90)\n\n#conditions:\n- p < 100\n- is_int(p/100 * n1)\n\n#answer: 2 * (n1 + (p/100 * n1))",
+    "count": 100
+  },
+  {
+    "id": 63,
+    "question_annotated": "Bir {person1,erkek çocuk} {n,5} {item,kart}ı var. Onun {relation,erkek kardeş}inin {k,3} {item,kart}ı daha az var. Birlikte toplam kaç {item,kart}ları var?\n\n#init:\n- person1 = sample([\"öğrenci\", \"erkek çocuk\", \"çocuk\", \"çocuk\"])\n- item = sample([\"mermer\", \"etiket\", \"oyuncak\", \"kitap\", \"kalem\"])\n- relation = sample([\"kız kardeş\", \"erkek kardeş\", \"arkadaş\", \"kuzen\"])\n- $n = range(5, 21)\n- $k = range(2, 10)\n\n#conditions:\n- n > k\n\n#answer: n + (n-k)",
+    "count": 100
+  },
+  {
+    "id": 64,
+    "question_annotated": "{name,Mary} {location,kiler}inde {n,6} adet {item,renkli şeker} kavanozu var. Her bir {item,renkli şeker} kavanozu {m,8} adet {food,kupkek} süsleyebilir. {name,Mary}, tüm {item,renkli şeker}lerini kullanacak kadar {food,kupkek} pişirmek istiyor. Eğer her {container,tava} {k,12} adet {food,kupkek} tutuyorsa, toplamda kaç {container,tava} {food,kupkek} pişirmeli?\n\n#init:\n- name = sample(names_female)\n- item = sample([\"renkli şeker\", \"krema\", \"glasür\", \"çikolata parçacıkları\"])\n- food = sample([\"kupkek\", \"kurabiye\", \"brownie\", \"muffin\"])\n- location = sample([\"kiler\", \"dolap\", \"mutfak dolabı\", \"depolama odası\"])\n- container = sample([\"tava\", \"tepsi\", \"fırın tepsisi\", \"raf\"])\n- $n = range(3, 15)\n- $m = range(6, 20)\n- $k = range(6, 24)\n\n#conditions:\n- divides(n*m, k)\n\n#answer: (n*m)//k",
+    "count": 100
+  },
+  {
+    "id": 65,
+    "question_annotated": "{name,Jackie}, {task,vergi işlerini} kendisi mi yapacağına yoksa bir {profession,muhasebeci} işe alıp almaya karar vermeye çalışıyor. Eğer kendisi yaparsa, {n,3} saat daha az {work_type,serbest} işi yapabilecektir, bu da saatte {cur,₺}{rate,35} kayıp gelir anlamına gelir. {profession,muhasebeci} {cur,₺}{fee,90} ücret alır. {profession,muhasebeci}yi işe alırsa ne kadar daha fazla parası olur?\n\n#init:\n- name = sample(names_female)\n- task = sample([\"vergilerini\", \"finansal planlamasını\", \"iş muhasebesini\"])\n- profession = sample([\"muhasebeci\", \"finansal danışman\", \"vergi danışmanı\", \"muhasebe uzmanı\"])\n- work_type = sample([\"serbest\", \"danışmanlık\", \"yarı zamanlı\", \"sözleşmeli\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 14)\n- $rate = range(20, 100)\n- $fee = range(50, 200)\n\n#conditions:\n- n * rate > fee\n\n#answer: n * rate - fee",
+    "count": 100
+  },
+  {
+    "id": 66,
+    "question_annotated": "{name,Candy} {n1,15} adet açık {c1,mavi} iplik makarası, {n2,45} adet koyu {c1,mavi} iplik makarası, {n3,40} adet açık {c2,yeşil} iplik makarası ve {n4,50} adet koyu {c2,yeşil} iplik makarası var. Makaralarının yüzde kaçı {c1,mavi} renktedir?\n\n#init:\n- name = sample(names)\n- c1, c2 = sample(colors, 2)\n- $n1 = range(15, 100, 5)\n- $n2 = range(45, 150, 5)\n- $n3 = range(20, 80, 5)\n- $n4 = range(50, 100, 5)\n\n#conditions:\n- is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))\n\n#answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))",
+    "count": 100
+  },
+  {
+    "id": 67,
+    "question_annotated": "{name,John}'in {vehicle,araba} arızalanıyor. {vehicle,araba} {weight_vehicle,1200} {unit,pound} ağırlığındadır ve içinde {weight_item,250} {unit,pound} ağırlığında {item,bagaj} var. Ayrıca içinde her biri {weight_passenger,75} {unit,pound} ağırlığında olan {num_passengers_txt,iki} küçük {passenger_type,çocuk} vardır. Eğer {vehicle,araba}yı hareket ettirmek için gereken kuvvet, ağırlığın {force_percent,1}% ise, {vehicle,araba}yı itmek için ne kadar kuvvete ihtiyacı var?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample(['araba', 'van', 'kamyon', 'SUV'])\n- item = sample(['bagaj', 'market alışverişi', 'ekipman', 'mobilya'])\n- passenger_type = sample(['çocuk', 'arkadaş', 'meslektaş', 'takım arkadaşı'])\n- unit = sample(['pound', 'kilogram'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)",
+    "count": 100
+  },
+  {
+    "id": 68,
+    "question_annotated": "{name,Carmen} bir {game1,crossword bulmacası} bitirmek için {t1,10} dakika sürer ve {game2,sudoku bulmacası} bitirmek için {t2,5} dakika sürer. {period,hafta sonu} boyunca {n1,3} {game1,crossword bulmacası} ve {n2,8} {game2,sudoku bulmacası} çözdü. Bu oyunları oynarken ne kadar zaman harcadı?\n\n#init:\n- name = sample(names_female)\n- game1, game2 = sample([\"crossword bulmacası\", \"sudoku bulmacası\", \"kelime bulmacası\", \"yapboz\", \"satranç bulmacası\", \"bilmece\", \"zeka sorusu\"], 2)\n- period = sample([\"hafta sonu\", \"tatil\", \"bayram\", \"izin günü\", \"boş zaman\"])\n- $t1 = range(5, 30)\n- $t2 = range(3, 20)\n- $n1 = range(2, 10)\n- $n2 = range(4, 15)\n\n#conditions:\n- t1 > t2\n\n#answer: t1*n1 + t2*n2",
+    "count": 100
+  },
+  {
+    "id": 69,
+    "question_annotated": "{day3,salı} günü, {name,Peter} {day2,pazartesi} ve {day1,pazar} günlerinde birlikte yaptığı sürenin {mult_txt,iki katı} kadar egzersiz yapmak istiyor. {day1,pazar} günü {t1,23} dakika egzersiz yaptı. {day2,pazartesi} günü {t2,16} dakika egzersiz yaptı. Hedefine ulaşmak için {day3,salı} günü kaç dakika egzersiz yapması gerekiyor?\n\n#init:\n- name = sample(names)\n- day1, day2, day3 = sample_sequential(weekdays, 3)\n- $t1 = range(10, 60)\n- $t2 = range(10, 60)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- t1 + t2 > 0\n- (t1 + t2) * mult_val / 60 < 14\n#answer: (t1 + t2) * mult_val",
+    "count": 100
+  },
+  {
+    "id": 70,
+    "question_annotated": "Bir {occupation,inşaatçı} her ay {w,4} hafta ve her hafta {d,6} gün çalışır. Eğer her gün {cur,₺}{p,50} kazanırsa, bir yıl çalışırsa ne kadar kazanır?\n\n#init:\n- occupation = sample([\"su tesisatçısı\", \"elektrikçi\", \"boyacı\", \"marangoz\", \"peyzajcı\"])\n- cur = sample(currencies_sym)\n- $w = range(2, 5)\n- $d = range(4, 7)\n- $p = range(40, 200, 5)\n\n\n#answer: w * d * p * 12",
+    "count": 100
+  },
+  {
+    "id": 71,
+    "question_annotated": "{name,Nate} hayvanlarına {food,yem} veriyor. Her {animal1,keçi} {n1,5} {unit,libra} yem alır, ve her {animal2,lama} ise her {animal1,keçi}'nin aldığı miktarın iki katından {n2,3} {unit,libra} daha az yem alır. Eğer {k1,15} {animal1,keçi} ve {k2,12} {animal2,lama} varsa, {name,Nate} toplam kaç {unit,libra} {food,yem}e ihtiyacı var?\n\n#init:\n- name = sample(names_male)\n- food = sample([\"yem\", \"tahıl\", \"karışık yem\", \"silaj\"])\n- animal1, animal2 = sample([\"keçi\", \"inek\", \"at\", \"deve\", \"lama\", \"alpaka\", \"domuz\", \"hindi\", \"ördek\"], 2)\n- unit = sample([\"libra\", \"kilogram\", \"kg\"])\n- $n1 = range(3, 15)\n- $n2 = range(1, 10)\n- $k1 = range(10, 50)\n- $k2 = range(10, 50)\n\n#conditions:\n- 2*n1 - n2 > 0\n\n#answer: k1*n1 + k2*(2*n1 - n2)",
+    "count": 100
+  },
+  {
+    "id": 72,
+    "question_annotated": "{name,Mike} {n1,5} kişi ile kalem arkadaşıydı. Onlardan {n2,2} tanesiyle kalem arkadaşlığını bıraktı. Her biri haftada {l,2} adet {p,5} sayfalık mektup gönderiyor. Aynı şekilde karşılık veriyor. Bir sayfayı {t,6} dakikada yazabiliyor. Haftada yazmak için kaç saat harcar?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 15)\n- $n2 = range(1, 5)\n- $l = range(2, 5)\n- $p = range(5, 12)\n- $t = range(4, 15)\n\n#conditions:\n- n2 < n1\n- is_int(((n1 - n2) * l * p * t) / 60)\n\n#answer: ((n1 - n2) * l * p * t) // 60",
+    "count": 100
+  },
+  {
+    "id": 73,
+    "question_annotated": "{comet_name,Halley} kuyruklu yıldızı, Güneş etrafında her {orbit_period,75} yılda bir döner. {name,Bill}'in {relative,baba}si, {relative_age,30} yaşındayken Kuyruklu Yıldızı görmüştü. {name,Bill}, Kuyruklu Yıldızı ikinci kez gördüğünde, {relative,baba}nın Kuyruklu Yıldızı gördüğü yaşın {multiple_txt,üç} katındaydı. {name,Bill} Kuyruklu Yıldızı ilk kez gördüğünde kaç yaşındaydı?\n\n#init:\n- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])\n- name = sample(names_male)\n- relative = sample(['baba', 'baba', 'amca', 'dede'])\n- $orbit_period = range(50, 101, 5)\n- $relative_age = range(20, 51)\n- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)\n\n#conditions:\n- multiple_val * relative_age < 100\n- multiple_val * relative_age > orbit_period\n- is_int(multiple_val * relative_age - orbit_period)\n\n#answer: multiple_val * relative_age - orbit_period",
+    "count": 100
+  },
+  {
+    "id": 74,
+    "question_annotated": "{school_name,küçük ağaç} Okulu'nda {total,96} {grade,dördüncü} sınıf öğrencisi var.\n{num_girls,43} tanesi kızdır.\n{day,cuma} günü, {absent_girls,5} {grade,dördüncü} sınıf kız ve {absent_boys,4} {grade,dördüncü} sınıf erkek öğrenci devamsızlık yaptı.\n{day,cuma} günü {school_name,küçük ağaç} Okulu'nda kaç {grade,dördüncü} sınıf erkek öğrenci vardı?\n\n#init:\n- school_name = sample([\"akçaağaç vadisi\", \"güneş tepesi\", \"meşe sırtı\", \"çam vadisi\"])\n- grade = sample([\"birinci\", \"ikinci\", \"üçüncü\", \"dördüncü\", \"beşinci\"])\n- day = sample([\"pazartesi\", \"salı\", \"çarşamba\", \"perşembe\", \"cuma\"])\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys",
+    "count": 100
+  },
+  {
+    "id": 75,
+    "question_annotated": "Şu anda {place,mağaza}'da {n1,3} {c1,kırmızı} top, {n2,11} {c2,mavi} top ve {n3,25} {c3,yeşil} top bulunmaktadır. {c1,kırmızı} toplar {cur,₺}{p1,9}, {c2,mavi} toplar {cur,₺}{p2,5} ve {c3,yeşil} toplar {cur,₺}{p3,3} fiyatındadır. Tüm toplar satıldıktan sonra {place,mağaza} ne kadar kazanacaktır?\n\n#init:\n- place = sample([\"mağaza\", \"dükkan\", \"market\", \"depo\"])\n- c1, c2, c3 = sample([\"kırmızı\", \"mavi\", \"yeşil\", \"sarı\", \"mor\", \"turuncu\", \"pembe\"], 3)\n- cur = sample(currencies_sym)\n- $n1 = range(3, 20)\n- $n2 = range(5, 30)\n- $n3 = range(15, 50)\n- $p1 = range(5, 15)\n- $p2 = range(3, 10)\n- $p3 = range(2, 8)\n\n\n#answer: n1*p1 + n2*p2 + n3*p3",
+    "count": 100
+  },
+  {
+    "id": 76,
+    "question_annotated": "{name,Deandre} geçen {day,pazartesi} {n,3} {fish,ton} yakaladı, yakaladığı ilk {fish,ton} {w1,56} {unit,kilogram} ağırlığındadır, yakaladığı ikinci {fish,ton} {w2,46} {unit,kilogram} ağırlığındadır ve yakaladığı kalan {fish,ton} {w3,26} {unit,kilogram} ağırlığındadır. Eğer bir {unit,kilogram} {fish,ton} {cur,$}{price,0.5} tutarsa, tüm {fish,ton}ları pazara sattıktan sonra ne kadar kazanacaktır?\n\n#init:\n- name = sample(names_male)\n- fish = sample([\"ton\", \"somon\", \"morina\", \"alabalık\", \"steelhead\"])\n- day = sample(weekdays)\n- unit = sample([\"kilogram\", \"libra\", \"kg\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)",
+    "count": 100
+  },
+  {
+    "id": 77,
+    "question_annotated": "{name,Şiela}, bir {n,15}-sayfalık {document,araştırma makalesi} teslim etmesi gerekmektedir. Zaten {document,araştırma makalesi}'nin {frac,1/3}'ünü yazdı. Yazması için kaç sayfa kaldı?\n\n#init:\n- name = sample(names_female)\n- document = sample([\"deneme\", \"rapor\", \"tez\", \"doktora tezi\", \"ödev\"])\n- $n = range(10, 325)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int(n * frac)\n- n * frac < n\n\n#answer: n - int(n * frac)",
+    "count": 100
+  },
+  {
+    "id": 78,
+    "question_annotated": "Normal bir öğrenci için günde {n1,6} ders saati vardır ancak {name,Ahmet} {n2,2} ekstra ders almak zorundadır. Her ders {t,40} dakika sürer. Haftada {d,5} gün derse gider. Daha sonra haftalık dakikalarının {frac,1/16}'sını Cumartesi ve Pazar günlerinin her birinde ekstra öğrenme zamanı olarak harcar. Haftada öğrenmeye kaç saat harcar?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 10)\n- $n2 = range(1, 5)\n- $t = range(30, 61, 5)\n- $d = range(4, 7)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int((n1 + n2) * t * d * frac)\n- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)\n\n#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60",
+    "count": 100
+  },
+  {
+    "id": 79,
+    "question_annotated": "{name,Teddy} {n1,500} parçalı bir yapbozun {frac_txt,yarım}ını tamamladı, ardından bir saat içinde başka bir {n2,500} parçalı yapboza başladı ve tamamladı. Bu saat içinde {name,Teddy} kaç yapboz parçası yerleştirdi?\n\n#init:\n- name = sample(names)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n1 = range(100, 501)\n- $n2 = range(300, 1001)\n\n#conditions:\n- is_int(n1 * frac_val)\n\n#answer: int(n1 * frac_val) + n2",
+    "count": 100
+  },
+  {
+    "id": 80,
+    "question_annotated": "Otomatlar {item1,cips} için {price1,40} sent ve {item2,çikolata barı} için {price2,75} sent satar. {name,George} {cur,₺}{total,5} harcadı ve {n1,3} paket {item1,cips} aldı ve parasının {p,1}%'i bozuk para olarak kaldı. Kaç {item2,çikolata barı} satın aldı?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['pretzel', 'patlamış mısır', 'sakız', 'kurabiye', 'kraker'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)",
+    "count": 100
+  },
+  {
+    "id": 81,
+    "question_annotated": "{event,Paskalya yumurta avı} ekibi {total,100} {item,yumurta} sakladı. {family,Smith} ikizleri her biri {n,30} {item,yumurta} buldu. {m,10} dışında diğer tüm {item,yumurta} arkadaşları tarafından bulundu. Arkadaşlar kaç {item,yumurta} buldu?\n\n#init:\n- event = sample([\"Cadılar Bayramı şeker avı\", \"Hazine avı\", \"İpucu avı\", \"Hayır toplama etkinliği\"])\n- item = sample([\"yumurta\", \"tatlı\", \"oyuncak\", \"bozuk para\", \"jeton\", \"top\", \"şeker\", \"hediye\"])\n- family = sample([\"Johnson\", \"Williams\", \"Mirzakhani\", \"Lopez\", \"Garcia\", \"Lee\", ])\n- $total = range(50, 201, 10)\n- $n = range(10, 51)\n- $m = range(5, 21)\n\n#conditions:\n- 2*n + m < total\n\n#answer: total - 2*n - m",
+    "count": 100
+  },
+  {
+    "id": 82,
+    "question_annotated": "{event,parti}nin başında, {m,25} {group1,erkek} ve {w,15} {group2,kadın} vardı. {t,bir saat} sonra, insanların toplam sayısının {frac,1/4}'ü ayrıldı. {m_left,22} {group1,erkek} {event,parti}de kaldıysa, kaç {group2,kadın} kaldı?\n\n#init:\n- event = sample(['parti', 'toplantı', 'konferans', 'buluşma', 'kutlama'])\n- group1, group2 = sample([ \"öğretmen\", \"doktor\", \"mühendis\", \"hemşire\", \"sanatçı\", \"avukat\",], 2)\n- t = sample(['bir saat', 'iki saat', 'yarım saat', '45 dakika'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left",
+    "count": 100
+  },
+  {
+    "id": 83,
+    "question_annotated": "{family,Adams} ailesi {item,kurabiye} yapımıyla meşgul. Şu ana kadar {total,7995} {item,kurabiye} yaptılar. {n1,2595} {flavor1,gökkuşağı} {item,kurabiye}, {n2,3075} {flavor2,yulaf} {item,kurabiye} ve biraz da {flavor3,çikolatalı} {item,kurabiye}leri var. Kaç tane {flavor3,çikolatalı} {item,kurabiye} yaptılar?\n\n#init:\n- family = sample([\"Smith\", \"Johnson\", \"Williams\", \"Brown\", \"Jones\"])\n- item = sample([\"kek\", \"muffin\", \"brownie\", \"bisküvi\"])\n- flavor1, flavor2, flavor3 = sample([\"vanilya\", \"çilek\", \"yaban mersini\", \"limon\", \"fıstık ezmesi\"], 3)\n- $total = range(4995, 10000, 25)\n- $n1 = range(995, 3000, 50)\n- $n2 = range(1075, 3200, 50)\n\n#conditions:\n- n1 + n2 < total\n\n#answer: total - (n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 84,
+    "question_annotated": "{name,Maria} {cur,$}{p,8} fiyatından {n,8} adet hisse senedi satın alır. Hisse fiyatı {name,Maria} elinde tuttuğu ilk yıl {r1,50}% artar, ardından ikinci yıl {r2,25}% düşer. Tüm {name,Maria}'a ait hisselerin son değeri nedir?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))",
+    "count": 100
+  },
+  {
+    "id": 85,
+    "question_annotated": "Eğer {name1,Sam} ve {name2,Harry} arasında {total,100} {unit,fit} çit varsa ve {name2,Harry}'nin {name1,Sam}'dan {diff,60} {unit,fit} fazla alması konusunda anlaşmaya varırlarsa, {name1,Sam}'a ne kadar kalır?\n\n#init:\n- name1, name2 = sample(names, 2)\n- unit = sample([\"fit\", \"yarda\", \"metre\"])\n- $total = range(100, 1000, 20)\n- $diff = range(20, 200, 10)\n\n#conditions:\n- total - diff > 10\n- is_int((total - diff) / 2)\n\n#answer: (total - diff) // 2",
+    "count": 100
+  },
+  {
+    "id": 86,
+    "question_annotated": "{name,Alison} {sport,koşu} takımında bir yer almaya hak kazandı, bu yüzden bazı spor ekipmanları için alışverişe gitti. Bir {item1,atlet} için {cur,₺}{p1,10}, {item1,atlet}'in fiyatından {cur,₺}{p2,5} daha fazla olan bir çift {sport, koşu} {item2,şort} ve başlangıçta {cur,₺}{p3,48} olan ancak {frac_txt,yarım} fiyatına indirimde olan bir çift {item3,tenis ayakkabısı} aldı. Ayrıca satın aldığı {cur,₺}{p4,8} değerindeki {item4,çorap} paketinden {cur,₺}{d,2} indirim sağlayan bir kuponu vardı. Spor malzemeleri için ne kadar harcadı?\n\n#init:\n- name = sample(names_female)\n- sport = sample([\"yüzme\", \"bisiklet\", \"basketbol\", \"futbol\", \"voleybol\"])\n- item1 = sample([\"tişört\", \"form\", \"spor sütyeni\"])\n- item2 = sample([\"şort\", \"tayt\", \"spor pantolon\"])\n- item3 = sample([\"spor ayakkabı\", \"çivili ayakkabı\", \"atletik ayakkabı\"])\n- item4 = sample([\"çorap\", \"alın bandı\", \"bileklik\"])\n- cur = sample(currencies_sym)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(8, 25)\n- $p2 = range(3, 15)\n- $p3 = range(30, 80, 2)\n- $p4 = range(5, 15)\n- $d = range(1, 5)\n\n#conditions:\n- is_int(p3*frac_val)\n- p3 % 2 == 0\n- p4 > d\n\n#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)",
+    "count": 100
+  },
+  {
+    "id": 87,
+    "question_annotated": "{park_name,Beş Bayrak}’teki en büyük su kaydırak {l1,300} {unit,ayak} uzunluğundadır ve insanlar {s1,60} {unit,ayak}/dakika hızla kayar. İkinci en büyük su kaydırak {l2,240} {unit,ayak} uzunluğundadır, ancak daha dik olduğu için insanlar {s2,80} {unit,ayak}/dakika hızla kayar. En büyük kaydırağı sürmek, ikinci en büyük kaydırağa kıyasla ne kadar daha uzun sürer?\n\n#init:\n- park_name = sample([\"Su Dünyası\", \"Su Macerası\", \"Su Harikalar Diyarı\", \"Neptün'ün Krallığı\"])\n- unit = sample(['yarda', 'metre'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
+    "count": 100
+  },
+  {
+    "id": 89,
+    "question_annotated": "{name,James}, {start_time,5} öğleden sonra'dan {end_time,9} öğleden sonra'ya kadar {vehicle,at arabası} kiralar. O, {free_hours,1} saat ücretsiz hakkına sahiptir. İlk ücretli saat {cur,₺}{first_hour_cost,15}'dir ve ardından gelen her ücretli saat, ilk ücretli saatin {multiplier_txt,iki katı} maliyetindedir. Ne kadar ödedi?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample([\"limuzin\", \"parti otobüsü\", \"tekne\", \"lüks araba\"])\n- $start_time = range(1, 8)\n- $end_time = range(3, 12)\n- $free_hours = range(1, 3)\n- cur = sample(currencies_sym)\n- $first_hour_cost = range(10, 51)\n- multiplier_txt, multiplier_val = sample(multi_times)\n\n#conditions:\n- end_time - start_time > free_hours + 1\n- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)\n\n#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val",
+    "count": 100
+  },
+  {
+    "id": 90,
+    "question_annotated": "{name1,Charlie}, {name2,Dorothy}'nin {mult1_txt,üç} katı kadar {platform,Facebook} arkadaşı vardır. {name3,James}, {platform,Facebook}'ta {name2,Dorothy}'nin {mult2_txt,dört} katı kadar arkadaşı vardır. Eğer {name1,Charlie}, {platform,Facebook}'ta {n,12} arkadaşı varsa, {name3,James}'in kaç {platform,Facebook} arkadaşı vardır?\n\n#init:\n- name1, name2, name3 = sample(names, 3)\n- platform = sample([\"Instagram\", \"Twitter\", \"LinkedIn\", \"TikTok\", \"Snapchat\"])\n- mult1_txt, mult1_val = range_str(1,6,1,numbers)\n- mult2_txt, mult2_val = range_str(1,6,1,numbers)\n- $n = range(10, 201)\n\n#conditions:\n- mult2_val != mult1_val\n- is_int(n / mult1_val)\n\n#answer: int((n / mult1_val) * mult2_val)",
+    "count": 100
+  },
+  {
+    "id": 91,
+    "question_annotated": "{name,Allan}'ın evinde, {food1,mısır} sayısı {food2,kannoli} sayısının {mult_txt,iki kat} katı kadardır. Evinde toplam {n,40} {food2,kannoli} bulunmaktadır. {name,Allan} mağazadan {m,60} adet daha {food2,kannoli} ve {food2,kannoli} sayısından {k,40} adet az {food1,mısır} aldı. {name,Allan}'ın evindeki {food1,mısır} ve {food2,kannoli} sayılarının toplamını bulunuz?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"kannoli\", \"mısır\", \"elma\", \"muz\", \"portakal\", \"armut\", \"üzüm\", \"incir\", \"kaki\", \"erik\", \"kivi\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)",
+    "count": 100
+  },
+  {
+    "id": 93,
+    "question_annotated": "Su soğuk olduğunda {name,Ray} bir {unit,mil}i {t1,16} dakikada yüzer. Su sıcak olduğunda {name,Ray} bir {unit,mil}i {mult_txt,iki kat} süreden {n,2} dakika daha fazla sürede yüzer. Sıcak bir günde soğuk bir güne göre {name,Ray} {d,3} {unit,mil} yüzmek için ne kadar daha fazla zaman harcar?\n\n#init:\n- name = sample(names)\n- unit = sample(['mil', 'kilometre'])\n- $t1 = range(10, 50)\n- $n = range(1, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $d = range(2, 10)\n\n#conditions:\n- t1 < 60\n- n + mult_val * t1 < 60\n- d * (n + mult_val * t1) - d * t1 > 0\n\n#answer: d * (n + mult_val * t1) - d * t1",
+    "count": 100
+  },
+  {
+    "id": 94,
+    "question_annotated": "{n,100} kişi {company,Google} şirketi için iş başvurusunda bulunur. Başvuranlar arasında, yalnızca {p1,30}% mülakat alır. Mülakat alanlar arasında, {p2,20}% iş teklifi alır. İş teklifi alanlar arasında, {frac_txt,üçte bir} pozisyonu kabul eder. Pozisyonu kaç kişi kabul eder?\n\n#init:\n- company = sample([\"Microsoft\", \"Apple\", \"Amazon\", \"Facebook\", \"Netflix\", \"Tesla\", \"Microsoft\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: ensure_int(n * (p1/100) * (p2/100) * frac_val)",
+    "count": 100
+  },
+  {
+    "id": 95,
+    "question_annotated": "{n1,6} öğrenci {sport1,tenis} oynuyor ve {mult_txt,iki katı} o sayı {sport2,voleybol} oynuyor. {n2,16} erkek ve {n3,22} kız {sport3,futbol} oynuyor. Her öğrenci sadece bir gruba katılıyorsa, toplamda kaç öğrenci vardır?\n\n#init:\n- sport1, sport2, sport3 = sample(['basketbol', 'badminton', 'masa tenisi', 'futbol', 'voleybol'], 3)\n- mult_txt, mult_var = sample(multi_times)\n- $n1 = range(4, 21)\n- $n2 = range(10, 31)\n- $n3 = range(10, 31)\n\n#conditions:\n- n1 * mult_var + n2 + n3 <= 250\n\n#answer: n1 + n1 * mult_var[1] + n2 + n3",
+    "count": 100
+  },
+  {
+    "id": 96,
+    "question_annotated": "{name,Morgan}'in {parent,baba} ona doğum günü partisi için {cur,$}{budget,90} bütçesi olduğunu söyledi. O ve arkadaşlarının bir tur {activity1,mini-golf} oynamasını, {activity2,arcade} jetonlarında {cur,$}{tokens,5} bulunmasını ve {activity3,go-kart} {times_txt,iki kez} binmesini istiyor. Bir tur {activity1,mini-golf} {cur,$}{cost1,5}. {activity3,go-kart} bir binme için {cur,$}{cost2,10}. Kaç arkadaşını davet edebilir?\n\n#init:\n- name = sample(names_female)\n- parent = sample([\"anne\", \"baba\", \"teyze\", \"amca\"])\n- activity1 = sample([\"mini-golf\", \"bowling\", \"lazer tag\"])\n- activity2 = sample([\"arcade\", \"oyun salonu\", \"pinball\"])\n- activity3 = sample([\"go-kart\", \"çarpışan arabalar\", \"yokaklı tren\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1",
+    "count": 100
+  },
+  {
+    "id": 97,
+    "question_annotated": "{name1,Julie} deneyimi daha az olan meslektaşı {name2,Jewel}’den tam olarak {mult_txt,iki kat} daha hızlı kasayı çalıştırır. Günlük olarak {name2,Jewel} {n,50} müşteri işler. Eğer haftanın her gününde çalışıyorlarsa, ikisinin toplam haftalık üretimi nedir?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- mult_txt, mult_var = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_var)\n- is_int((n + n * mult_var) * 7)\n\n#answer: (n + n * mult_var) * 7",
+    "count": 100
+  },
+  {
+    "id": 98,
+    "question_annotated": "Bir {disease,veba} {n0_txt,on} kişiyi enfekte eder. Her gün, her enfekte kişi {r_txt,altı} başka kişiyi enfekte eder. Üç gün sonra kaç kişi enfekte olur?\n\n#init:\n- disease = sample(['virüs', 'bakteri', 'parazit', 'enfeksiyon'])\n- n0_txt, n0_val = range_str(5, 22, 1, numbers)\n- r_txt, r_val = range_str(2, 8, 1, numbers)\n#conditions:\n- n0_val * (r_val + 1)**3 < 20000\n\n#answer: n0_val * (r_val + 1)**3",
+    "count": 100
+  },
+  {
+    "id": 99,
+    "question_annotated": "Eğer {name,Chester} günde {n1,3} yumurta yer ve {d1,30} gün boyunca devam ederse, ardından günde {n2,5} yumurtaya çıkarır ve {d2,30} gün boyunca yaparsa, {name,Chester} {d3,60} gün için kaç düzine yumurta ihtiyacı olacak?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
+    "count": 100
+  }
+]

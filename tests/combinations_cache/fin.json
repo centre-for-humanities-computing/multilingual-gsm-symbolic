@@ -1,0 +1,107 @@
+[
+  {
+    "id": 0,
+    "question_annotated": "{n, Benny} näki {x,10}-jalkaisen {big_fish,hain} jossa oli {k,2} {y,6}-tuumaa pitkiä remoroita kiinnittyneenä siihen. Mikä prosentti {big_fish,hain} ruumiin pituudesta on remoroiden yhdistetty pituus?\n\n#init:\n- n = sample(names)\n- big_fish = sample([\"delfiini\", \"valas\", \"hai\"])\n- $x = range(10, 500, 10)\n- $k = range(2, 10)\n- $y = range(2, 100)\n\n#conditions:\n- k * y < x * 12\n- divides(k*y,12)\n- divides(x * 12, k*y)\n- divides(100, x * 12 / (k*y))\n\n#answer: int((k * y)/ (x * 12) * 100)",
+    "count": 100
+  },
+  {
+    "id": 1,
+    "question_annotated": "Sumupilvi liikkuu mereltä kohti kaupunkia. Kaupungin jokaista {d,3} kilometriä varten kuluu {t,10} minuuttia. Jos kaupunki on {y,42} kilometrin levyinen rannalta vastakkaiseen sisämaareunalle, kuinka monta minuuttia sumupilven kuluu peittää koko kaupunki?\n\n#init:\n- $t = range(2, 500)\n- $d = range(2, 100)\n- $y=range(2, 100)\n\n#conditions:\n- is_int(y/d)\n\n#answer: y//d*t",
+    "count": 100
+  },
+  {
+    "id": 4,
+    "question_annotated": "{name,Garrett} on tekemässä popcornia välipalaksi. Kun {p, pannu} jyviä lämpenee, jyvät alkavat räiskyä nopeammin. {n,20} räiskyy ensimmäisen {s, 30} sekunnin aikana, sitten {k_2_txt,kolme} kertaa se määrä seuraavien {s, 30} sekunnin aikana. Jyvämäärä kasvaa {k_3_txt,neljä} kertaa alkuperäiseen räiskymisnopeuteen seuraavien {s, 30} sekunnin aikana, mutta viimeisen {s, 30} sekunnin aikana räiskyminen hidastuu puoleen edellisten {s, 30} sekunnin nopeudesta. Kun {name,Garrett} ottaa {p, pannun} pois lämmöltä, neljäsosa jyvämäärästä, jotka räiskyivät viimeisen {s, 30} sekunnin aikana, räiskyy myös jälkilämmöstä. Montako popcornin kappaletta {name,Garrett} joutuu syömään?\n\n\n#init:\n- name = sample(names)\n- p = sample(['pan', 'pot', 'skillet'])\n- $n = range(10, 101, 10)\n- $s = range(10, 31, 2)\n- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)\n- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)\n\n#conditions:\n- k_3_val > k_2_val\n- divides(k_3_val * n, 8)\n\n#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)",
+    "count": 100
+  },
+  {
+    "id": 11,
+    "question_annotated": "{name, Peter} haluaa tehdä erikokoisia jääpalaa {n,32} {unit,gram}maa vettä. Hän voi tehdä jättipaloja, jotka käyttävät {w1,4} {unit,gram}maa per palaa, keskikokoisia paloja, jotka käyttävät {w2,2} {unit,gram}maa, ja pieniä paloja, jotka käyttävät {w3,1/2} {unit,gram}maa. Jos hän tekee {n1,3} jättipalaa, {n2,7} keskikokoista palaa ja {n3,8} pientä palaa, kuinka monta {unit,gram}maa vettä hänellä on jäljellä?\n\n#init:\n- name = sample(names_male)\n- unit = sample([\"gram\", \"g\"])\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
+    "count": 100
+  },
+  {
+    "id": 13,
+    "question_annotated": "{name,Maria} on intohimoinen puutarhuri. {time, eilen} hän sai {x,18} uutta ruukkukasvia hänen lempikasvihuoneestaan. Hänellä on jo {r,2} ruukkukasvia jokaisella {w,40} ikkunalaudalla hänen suurella maalaistalollaan. Anteliaana hän on päättänyt, että hän antaa {n,1} ruukkukasvia jokaiselta laudalta ystäville ja sukulaisille huomenna. Kuinka monta ruukkukasvia {name,Maria} jää?\n\n#init:\n- name = sample(names_female)\n- time = sample([\"Viime viikolla\", \"Kaksi päivää sitten\", \"Viime yönä\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
+    "count": 100
+  },
+  {
+    "id": 15,
+    "question_annotated": "{name1, Jennifer}in koiralla on {n1, 8} pentua, joista {k1,3} on täplikkäitä. {name2, Brandon}in koiralla on {n2,12} pentua, joista {k2,4} on täplikkäitä. Mikä prosentti kaikista pennuista on täplikkäitä?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $n1 = range(4, 16)\n- $n2 = range(4, 20)\n- $k1 = range(2, 12)\n- $k2 = range(2, 12)\n\n#conditions:\n- k1 < n1\n- k2 < n2\n- divides(n1 + n2, k1 + k2)\n- is_int(100 * (k1+k2) / (n1+n2))\n\n#answer: int(100 * (k1+k2) / (n1+n2))",
+    "count": 100
+  },
+  {
+    "id": 24,
+    "question_annotated": "Ravintotietojen mukaan {food,patapussi}ssa on {cal,250} kaloria annosta kohden. Jos {size,300} {unit,gramma}n pussissa on {n,5} annosta, kuinka monta {unit,gramma}a voit syödä, jos päivittäinen kaloritavoitteesi on {total,2000} ja olet jo kuluttanut {spent,1800} kaloria?\n\n#init:\n- food = sample([\"popcorn\", \"leivät\",  \"keksit\"])\n- unit = sample([\"gramma\", \"g\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
+    "count": 100
+  },
+  {
+    "id": 27,
+    "question_annotated": "{name,James} saa {n,80} sähköpostia päivässä. {p,20}% näistä sähköposteista ei vaadi vastausta. Hän vastaa muihin. Kuinka moneen sähköpostiin {name,James} vastaa {d,5} päivän työviikossa?\n\n#init:\n- name = sample(names)\n- $n = range(50, 200)\n- $p = range(5, 40)\n- $d = range(3, 7)\n\n#conditions:\n- is_int(n * p / 100)\n- is_int(n * (100 - p) / 100)\n\n#answer: d * (n * (100 - p) / 100)",
+    "count": 100
+  },
+  {
+    "id": 31,
+    "question_annotated": "{name1,Mia} ja {name2,Emma} ovat tällä hetkellä {age_diff,16} vuoden ikäeroa. Jos {name1,Mia}, joka on {name2,Emma}a nuorempi, on {age1,40}-vuotias, mikä on heidän ikänsä keskiarvo?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
+    "count": 100
+  },
+  {
+    "id": 38,
+    "question_annotated": "{item1,leipä} leipä {shop,leipomo}ssa maksaa {currency,$}{price1,2}. {item2,bageli}t maksavat {currency,$}{price2,1} kpl. Kuinka paljon enemmän {n1,3} leipää {item1,leipä} maksaa kuin {n2,2} {item2,bageli}ä?\n\n#init:\n- item1 = sample([\"leipä\", \"hapankorppu\"])\n- item2 = sample([\"bageli\", \"muffini\", \"kroissantti\", \"keksi\"])\n- shop = sample([\"leipomo\", \"kahvila\", \"kauppa\", \"tori\"])\n- currency = sample(currencies_sym)\n- $price1 = range(2, 10)\n- $price2 = range(1, 5)\n- $n1 = range(2, 10)\n- $n2 = range(2, 10)\n\n#conditions:\n- n1 * price1 > n2 * price2\n\n#answer: n1 * price1 - n2 * price2",
+    "count": 100
+  },
+  {
+    "id": 46,
+    "question_annotated": "{school,Apple High School} järjestää päättäjäiset tänä vuonna {venue,Fine Arts Center}issä, jossa on tilaa {total,6000} henkilölle. Kun {graduates,950} paikkaa valmistuville ja {faculty,300} paikkaa osallistuville opettajille on huomioitu, kuinka monta lippua jokainen valmistuva saa jakaa ystävilleen ja perheelleen, jos liput jaetaan tasan?\n\n#init:\n- school = sample([\"Oakwood High School\", \"Riverside Academy\", \"Sunnyside High\", \"Greenville High School\"])\n- venue = sample([\"Auditorium\", \"Gymnasium\", \"Sports Arena\", \"Convention Center\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
+    "count": 100
+  },
+  {
+    "id": 50,
+    "question_annotated": "{name,Billie}n suorakulmaisen {room_type,makuuhuoneen} pinta-ala on {area,360} neliöjalkaa. Jos huoneen pituus on {length,3} jalka(t), mikä on huoneen kehä jalkoina?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"living room\", \"study\", \"office\", \"kitchen\"])\n- $area = range(200, 1200)\n- $length = range(3, 44)\n\n#conditions:\n- is_int(area / (length * 3))\n- area / (length * 3) > length * 3\n\n#answer: 2 * (area // (length * 3) + length * 3)",
+    "count": 100
+  },
+  {
+    "id": 54,
+    "question_annotated": "{name,Doxa} leikkasi koko {fruit,omenan} {total,18} palaksi. Hän söi {n1,3} palaa, hänen {sibling1,siskonsa} söi {n2,2} enemmän kuin hän, ja hänen {sibling2,veljensä} söi {n3,3} enemmän kuin hänen {sibling1,siskonsa}. Kuinka monta {fruit,omenan} palaa he söivät yhteensä?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"orange\", \"pear\", \"peach\", \"mango\", \"kiwi\"])\n- sibling1, sibling2 = sample([\"brother\", \"sister\", \"cousin\", \"friend\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
+    "count": 100
+  },
+  {
+    "id": 56,
+    "question_annotated": "{container,lasillinen} {liquid,maitoa} on {vol,8} {unit,unssia} {liquid,maitoa}. {name,John} juo {num,2} {container_plural,laseja} {liquid,maitoa}. Jos {liquid,maitoa} on {cal,3} kaloria {unit,unssi} kohden, kuinka monta kaloria hän kulutti?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"lasillinen\",\"laseja\"), (\"kuppi\",\"kuppeja\"), (\"pullo\",\"pulloja\"), (\"paketti\",\"paketteja\")])\n- liquid = sample([\"mehua\", \"limsaa\", \"kuohuvaa vettä\", \"teetä\", \"sitruunamehua\"])\n- unit = sample([\"unssi\", \"mL\", \"cc\", \"oz\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
+    "count": 100
+  },
+  {
+    "id": 63,
+    "question_annotated": "{person1,poika}lla on {n,5} {item,kortti}a. Hänen {relation,veljellään} on {k,3} {item,kortti}a vähemmän kuin hänellä. Kuinka monta {item,kortti}a heillä on yhteensä?\n\n#init:\n- person1 = sample([\"opiskelija\", \"poika\", \"lapsi\", \"kaveri\"])\n- item = sample([\"marmori\", \"tarra\", \"lelu\", \"kirja\", \"kynä\"])\n- relation = sample([\"sisko\", \"veli\", \"ystävä\", \"serkku\"])\n- $n = range(5, 21)\n- $k = range(2, 10)\n\n#conditions:\n- n > k\n\n#answer: n + (n-k)",
+    "count": 100
+  },
+  {
+    "id": 78,
+    "question_annotated": "Normaalin opiskelijan päivässä on {n1,6} jaksoa, mutta {name,John} joutuu käymään {n2,2} lisäluokkaa. Jokainen luokka on {t,40} minuuttia pitkä. Hän käy luokalla {d,5} päivää viikossa. Hän käyttää sitten {frac,1/16} viikoittaisista minuuteistaan lauantaina ja sunnuntaina lisäoppimiseen. Kuinka monta tuntia viikossa hän käyttää oppimiseen?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 10)\n- $n2 = range(1, 5)\n- $t = range(30, 61, 5)\n- $d = range(4, 7)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int((n1 + n2) * t * d * frac)\n- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)\n\n#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60",
+    "count": 100
+  },
+  {
+    "id": 82,
+    "question_annotated": "Juhlan alussa paikalla oli {m,25} {group1,miehiä} ja {w,15} {group2,naisia}. {t,tunnin} kuluttua {frac,1/4} kaikista ihmisistä lähti. Kuinka monta {group2,naista} jäi, jos {m_left,22} {group1,miestä} jäi {event,juhlaan}?\n\n#init:\n- event = sample(['party', 'meeting', 'conference', 'gathering', 'celebration'])\n- group1, group2 = sample([ \"teachers\", \"doctors\", \"engineers\", \"nurses\", \"artists\", \"lawyers\",], 2)\n- t = sample(['an hour', 'two hours', 'half an hour', '45 minutes'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left",
+    "count": 100
+  },
+  {
+    "id": 85,
+    "question_annotated": "Jos {name1,Sam} ja {name2,Harry} jakavat {total,100} {unit,senttimetriä} aidan keskenään, ja he sopivat että {name2,Harry} saa {diff,60} {unit,senttimetriä} enemmän kuin {name1,Sam}, kuinka paljon jää {name1,Sam}:lle?\n\n#init:\n- name1, name2 = sample(names, 2)\n- unit = sample([\"senttimetriä\", \"metriä\"])\n- $total = range(100, 1000, 20)\n- $diff = range(20, 200, 10)\n\n#conditions:\n- total - diff > 10\n- is_int((total - diff) / 2)\n\n#answer: (total - diff) // 2",
+    "count": 100
+  },
+  {
+    "id": 90,
+    "question_annotated": "{name1,Charlie}lla on {mult1_txt,kolme} kertaa niin monta {platform,Facebook}-kaveria kuin {name2,Dorothy}lla. {name3,James}illa on {mult2_txt,neljä} kertaa niin monta {platform,Facebook}-kaveria kuin {name2,Dorothy}lla. Jos {name1,Charlie}lla on {n,12} {platform,Facebook}-kaveria, kuinka monta {platform,Facebook}-kaveria {name3,James}illa on?\n\n#init:\n- name1, name2, name3 = sample(names, 3)\n- platform = sample([\"Instagram\", \"Twitter\", \"LinkedIn\", \"TikTok\", \"Snapchat\"])\n- mult1_txt, mult1_val = range_str(1,6,1,numbers)\n- mult2_txt, mult2_val = range_str(1,6,1,numbers)\n- $n = range(10, 201)\n\n#conditions:\n- mult2_val != mult1_val\n- is_int(n / mult1_val)\n\n#answer: int((n / mult1_val) * mult2_val)",
+    "count": 100
+  },
+  {
+    "id": 96,
+    "question_annotated": "{name,Morganin} {parent,isä} sanoi, että hänellä oli {cur,$}{budget,90} budjetoitu syntymäpäiväjuhliinsa. Hän haluaa varmistaa, että hän ja hänen ystävänsä pääsevät pelaamaan yhden kierroksen {activity1,minigolfi}, saavat {cur,$}{tokens,5} {activity2,pelihalli} rahaa ja pääsevät ajamaan {activity3,karting} {times_txt,kahdesti}. Yksi kierros {activity1,minigolfi} maksaa {cur,$}{cost1,5}. {activity3,karting} maksaa {cur,$}{cost2,10} per ajelu. Kuinka monta ystävää hän voi kutsua?\n\n#init:\n- name = sample(names_female)\n- parent = sample([\"mom\", \"dad\", \"aunt\", \"uncle\"])\n- activity1 = sample([\"mini-golf\", \"bowling\", \"laser tag\"])\n- activity2 = sample([\"arcade\", \"game room\", \"pinball\"])\n- activity3 = sample([\"go-karts\", \"bumper cars\", \"roller coaster\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1",
+    "count": 100
+  },
+  {
+    "id": 99,
+    "question_annotated": "Jos {name,Chester} syö {n1,3} munaa päivässä {d1,30} päivän ajan ja sitten lisää sen {n2,5} munaan päivässä {d2,30} päivän ajan, kuinka monta munatustiinaa {name,Chester} tarvitsee {d3,60} päivän ajaksi?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
+    "count": 100
+  }
+]
