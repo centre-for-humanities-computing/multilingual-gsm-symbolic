@@ -1,0 +1,47 @@
+question = """
+Samuel is arranging his grandma’s teacups. They are stored in boxes and inside the boxes, they are stacked 5 rows high with 4 cups in each row. Of the 26 boxes in her attic, 6 of the boxes contain pans, half of the remaining boxes contain decorations, and the rest of the boxes contain her teacups. Samuel breaks 2 of the cups every time he picks up one of the boxes. By the time Samuel has taken all of the teacups out of the boxes, how many teacups are left?
+"""
+
+answer = """
+Taking the boxes of pans out of the total attic boxes shows that 26 boxes – 6 boxes of pans = 20 boxes are either decorations or teacups.
+Since half of these boxes are decorations, the other half must be made up of 20 boxes / 2 = <<20/2=10>>10 boxes of teacups.
+Each box of cups initially has 5 rows x 4 cups = <<5*4=20>>20 teacups inside.
+Samuel breaks cups each time he picks up a box, which means each box now contains 20 – 2 = <<20-2=18>>18 teacups.
+Therefore, there are 10 boxes * 18 teacups = <<10*18=180>>180 teacups left.
+#### 180
+"""
+
+id_orig = 2224
+id_shuffled = 2562
+
+question_annotated = """
+{name,Samuel} is arranging his grandma’s teacups. They are stored in boxes and inside the boxes, they are stacked {rows,5} rows high with {cups,4} cups in each row. Of the {total,26} boxes in her attic, {pans,6} of the boxes contain pans, half of the remaining boxes contain decorations, and the rest of the boxes contain her teacups. {name,Samuel} breaks {broken,2} of the cups every time he picks up one of the boxes. By the time {name,Samuel} has taken all of the teacups out of the boxes, how many teacups are left?
+
+#init:
+- name = sample(names_male)
+- $rows = range(2, 7)
+- $cups = range(2, 7)
+- $total = range(12, 62)
+- $pans = range(1, 7)
+- $broken = range(1, 5)
+
+#conditions:
+- pans < total
+- divides(total - pans, 2)
+- broken < rows * cups
+
+#answer: (total - pans) // 2 * (rows * cups - broken)
+"""
+
+answer_annotated = """
+Taking the boxes of pans out of the total attic boxes shows that {total} boxes – {pans} boxes of pans = {total-pans} boxes are either decorations or teacups.
+Since half of these boxes are decorations, the other half must be made up of {total-pans} boxes / 2 = <<{total-pans}/2={(total-pans)//2}>>{(total-pans)//2} boxes of teacups.
+Each box of cups initially has {rows} rows x {cups} cups = <<{rows}*{cups}={rows*cups}>>{rows*cups} teacups inside.
+{name} breaks cups each time he picks up a box, which means each box now contains {rows*cups} – {broken} = <<{rows*cups}-{broken}={rows*cups-broken}>>{rows*cups-broken} teacups.
+Therefore, there are {(total-pans)//2} boxes * {rows*cups-broken} teacups = <<{(total-pans)//2}*{rows*cups-broken}={(total-pans)//2*(rows*cups-broken)}>>{(total-pans)//2*(rows*cups-broken)} teacups left.
+#### {(total-pans)//2*(rows*cups-broken)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

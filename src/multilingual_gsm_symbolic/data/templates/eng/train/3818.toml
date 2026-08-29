@@ -1,0 +1,46 @@
+question = """
+Toby wants to walk an average of 9,000 steps per day over the next week. On Sunday he walked 9,400 steps. On Monday he walked 9,100 steps. On Tuesday he walked 8,300 steps. On Wednesday he walked 9,200 steps. On Thursday he walked 8,900 steps. How many steps does he need to average on Friday and Saturday to meet his goal?
+"""
+
+answer = """
+He needs to walk 63,000 steps in a week because 7 x 9,000 = <<7*9000=63000>>63,000
+He has 18,100 steps to walk on Friday and Saturday because 63,000 - 9,400 - 9,100 - 8,300 - 9,200 - 8,900 = <<63000-9400-9100-8300-9200-8900=18100>>18,100
+He needs to walk an average of 9,050 on Friday and Saturday because 18,100 / 2 = <<18100/2=9050>>9,050
+#### 9,050
+"""
+
+id_orig = 3134
+id_shuffled = 3818
+
+question_annotated = """
+{name,Toby} wants to walk an average of {g_txt,9,000} steps per day over the next week. On Sunday he walked {su_txt,9,400} steps. On Monday he walked {mo_txt,9,100} steps. On Tuesday he walked {tu_txt,8,300} steps. On Wednesday he walked {we_txt,9,200} steps. On Thursday he walked {th_txt,8,900} steps. How many steps does he need to average on Friday and Saturday to meet his goal?
+
+#init:
+- name = sample(["Toby", "Marcus", "Kevin", "Derek"])
+- g_txt, g = sample([("5,000", 5000), ("6,000", 6000), ("7,000", 7000), ("8,000", 8000), ("9,000", 9000), ("10,000", 10000), ("11,000", 11000), ("12,000", 12000)])
+- su_txt, su = sample([("9,400", 9400), ("8,600", 8600), ("9,800", 9800), ("7,800", 7800)])
+- mo_txt, mo = sample([("9,100", 9100), ("8,400", 8400), ("9,700", 9700), ("8,200", 8200)])
+- tu_txt, tu = sample([("8,300", 8300), ("9,500", 9500), ("8,700", 8700), ("7,900", 7900)])
+- we_txt, we = sample([("9,200", 9200), ("8,500", 8500), ("9,900", 9900), ("8,100", 8100)])
+- th_txt, th = sample([("8,900", 8900), ("9,300", 9300), ("8,100", 8100), ("9,600", 9600)])
+
+#conditions:
+- 7*g - (su + mo + tu + we + th) > 0
+- divides(7*g - (su + mo + tu + we + th), 2)
+- (7*g - (su + mo + tu + we + th)) % 1000 >= 100
+- ((7*g - (su + mo + tu + we + th)) // 2) % 1000 < 100
+- ((7*g - (su + mo + tu + we + th)) // 2) % 100 >= 10
+
+#answer: (7*g - (su + mo + tu + we + th)) // 2
+"""
+
+answer_annotated = """
+He needs to walk {7*g//1000},000 steps in a week because 7 x {g_txt} = <<7*{g}={7*g}>>{7*g//1000},000
+He has {(7*g - (su + mo + tu + we + th))//1000},{(7*g - (su + mo + tu + we + th))%1000} steps to walk on Friday and Saturday because {7*g//1000},000 - {su_txt} - {mo_txt} - {tu_txt} - {we_txt} - {th_txt} = <<{7*g}-{su}-{mo}-{tu}-{we}-{th}={7*g - (su + mo + tu + we + th)}>>{(7*g - (su + mo + tu + we + th))//1000},{(7*g - (su + mo + tu + we + th))%1000}
+He needs to walk an average of {(7*g - (su + mo + tu + we + th))//2//1000},0{(7*g - (su + mo + tu + we + th))//2%100} on Friday and Saturday because {(7*g - (su + mo + tu + we + th))//1000},{(7*g - (su + mo + tu + we + th))%1000} / 2 = <<{7*g - (su + mo + tu + we + th)}/2={(7*g - (su + mo + tu + we + th))//2}>>{(7*g - (su + mo + tu + we + th))//2//1000},0{(7*g - (su + mo + tu + we + th))//2%100}
+#### {(7*g - (su + mo + tu + we + th))//2//1000},0{(7*g - (su + mo + tu + we + th))//2%100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

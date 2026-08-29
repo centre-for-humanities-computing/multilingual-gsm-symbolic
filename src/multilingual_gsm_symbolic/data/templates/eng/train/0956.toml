@@ -1,0 +1,54 @@
+question = """
+Earl has $90; Fred has $48; Greg has $36. Earl owes Fred $28. Fred owes Greg $32. Greg owes Earl $40. When all debts are paid, how much will Greg and Earl have together in dollars?
+"""
+
+answer = """
+Earl will have $90 - $28 = $<<90-28=62>>62 after paying off his debt to Fred.
+Fred will have $48 + $28 = $<<48+28=76>>76 after being paid by Earl.
+But then Fred will have $76 - $32 = $<<76-32=44>>44 after paying Greg.
+Greg will have $36 + $32 = $<<36+32=68>>68 after Fred paid him.
+Then, Greg will have $68 - $40 = $<<68-40=28>>28 after paying off his debt to Earl.
+Then, Earl will then have $62 + $40 = $<<62+40=102>>102.
+So together, Greg and Earl will have $28 + $102 = $<<28+102=130>>130.
+#### 130
+"""
+
+id_orig = 860
+id_shuffled = 956
+
+question_annotated = """
+{n1,Earl} has ${a,90}; {n2,Fred} has ${b,48}; {n3,Greg} has ${c,36}. {n1,Earl} owes {n2,Fred} ${p,28}. {n2,Fred} owes {n3,Greg} ${q,32}. {n3,Greg} owes {n1,Earl} ${r,40}. When all debts are paid, how much will {n3,Greg} and {n1,Earl} have together in dollars?
+
+#init:
+- n1 = sample(["Earl"])
+- n2 = sample(["Fred"])
+- n3 = sample(["Greg"])
+- $a = range(50, 120, 10)
+- $b = range(24, 76, 4)
+- $c = range(20, 40, 4)
+- $p = range(8, 33, 5)
+- $q = range(8, 38, 6)
+- $r = range(10, 41, 6)
+
+#conditions:
+- a > p
+- b + p > q
+- c + q > r
+
+#answer: (c + q - r) + (a - p + r)
+"""
+
+answer_annotated = """
+{n1} will have ${a} - ${p} = $<<{a}-{p}={a-p}>>{a-p} after paying off his debt to {n2}.
+{n2} will have ${b} + ${p} = $<<{b}+{p}={b+p}>>{b+p} after being paid by {n1}.
+But then {n2} will have ${b+p} - ${q} = $<<{b+p}-{q}={b+p-q}>>{b+p-q} after paying {n3}.
+{n3} will have ${c} + ${q} = $<<{c}+{q}={c+q}>>{c+q} after {n2} paid him.
+Then, {n3} will have ${c+q} - ${r} = $<<{c+q}-{r}={c+q-r}>>{c+q-r} after paying off his debt to {n1}.
+Then, {n1} will then have ${a-p} + ${r} = $<<{a-p}+{r}={a-p+r}>>{a-p+r}.
+So together, {n3} and {n1} will have ${c+q-r} + ${a-p+r} = $<<{c+q-r}+{a-p+r}={(c+q-r)+(a-p+r)}>>{(c+q-r)+(a-p+r)}.
+#### {(c + q - r) + (a - p + r)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

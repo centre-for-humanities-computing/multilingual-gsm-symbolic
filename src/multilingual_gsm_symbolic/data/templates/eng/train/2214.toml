@@ -1,0 +1,48 @@
+question = """
+At a shop in Japan, women's T-shirts are sold every 30 minutes for $18, and men's T-shirts are sold every 40 minutes for $15. This shop is open from 10 am until 10 pm. How much does the shop earn selling T-shirts per week?
+"""
+
+answer = """
+First, the shop is open 12 hours * 60 minutes = <<12*60=720>>720 minutes per day.
+So, 720 / 30 = <<720/30=24>>24 women's T-shirts sold per day.
+The shop earns 24 * $18 = $<<24*18=432>>432 selling women's T-shirts per day.
+Similarly, 720 / 40 = <<720/40=18>>18 men's T-shirts are sold per day.
+The shop earns 18 * $15 = $<<18*15=270>>270 selling men's T-shirts per day.
+The shop earns $432 + $270 = $<<432+270=702>>702 per day selling T-shirts.
+The shop earns $702 * 7 = $<<702*7=4914>>4914 per week.
+#### 4914
+"""
+
+id_orig = 1931
+id_shuffled = 2214
+
+question_annotated = """
+At a shop in Japan, women's T-shirts are sold every {wi,30} minutes for ${wp,18}, and men's T-shirts are sold every {mi,40} minutes for ${mp,15}. This shop is open from 10 am until 10 pm. How much does the shop earn selling T-shirts per week?
+
+#init:
+- $wi = range(5, 61)
+- $wp = range(10, 21)
+- $mi = range(5, 61)
+- $mp = range(10, 21)
+
+#conditions:
+- is_int(720/wi)
+- is_int(720/mi)
+
+#answer: (720//wi*wp + 720//mi*mp)*7
+"""
+
+answer_annotated = """
+First, the shop is open 12 hours * 60 minutes = <<12*60=720>>720 minutes per day.
+So, 720 / {wi} = <<720/{wi}={720//wi}>>{720//wi} women's T-shirts sold per day.
+The shop earns {720//wi} * ${wp} = $<<{720//wi}*{wp}={720//wi*wp}>>{720//wi*wp} selling women's T-shirts per day.
+Similarly, 720 / {mi} = <<720/{mi}={720//mi}>>{720//mi} men's T-shirts are sold per day.
+The shop earns {720//mi} * ${mp} = $<<{720//mi}*{mp}={720//mi*mp}>>{720//mi*mp} selling men's T-shirts per day.
+The shop earns ${720//wi*wp} + ${720//mi*mp} = $<<{720//wi*wp}+{720//mi*mp}={720//wi*wp+720//mi*mp}>>{720//wi*wp+720//mi*mp} per day selling T-shirts.
+The shop earns ${720//wi*wp+720//mi*mp} * 7 = $<<{720//wi*wp+720//mi*mp}*7={(720//wi*wp+720//mi*mp)*7}>>{(720//wi*wp+720//mi*mp)*7} per week.
+#### {(720//wi*wp + 720//mi*mp)*7}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

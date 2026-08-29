@@ -1,0 +1,48 @@
+question = """
+John is trying to save money by buying cheap calorie-dense food.  He can buy 10 burritos for $6 that have 120 calories each.  He could also buy 5 burgers that are 400 calories each for $8.  How many more calories per dollar does he get from the burgers?
+"""
+
+answer = """
+The burritos have 10*120=<<10*120=1200>>1200 calories
+That means he gets 1200/6=<<1200/6=200>>200 calories per dollar
+The burgers get 5*400=<<5*400=2000>>2000 calories
+So he gets 2000/8=<<2000/8=250>>250 calories per dollar
+So he gets 250-200=<<250-200=50>>50 more calories per dollar from the burgers
+#### 50
+"""
+
+id_orig = 3435
+id_shuffled = 4070
+
+question_annotated = """
+{name,John} is trying to save money by buying cheap calorie-dense food.  He can buy {nb,10} burritos for ${pb,6} that have {cb,120} calories each.  He could also buy {nk,5} burgers that are {ck,400} calories each for ${pk,8}.  How many more calories per dollar does he get from the burgers?
+
+#init:
+- name = sample(names_male)
+- $nb = range(4, 21)
+- $cb = range(100, 210, 10)
+- $pb = range(6, 26, 2)
+- $nk = range(2, 10)
+- $ck = range(200, 520, 40)
+- $pk = range(8, 36, 4)
+
+#conditions:
+- divides(nb * cb, pb)
+- divides(nk * ck, pk)
+- nk * ck * pb > nb * cb * pk
+
+#answer: nk*ck//pk - nb*cb//pb
+"""
+
+answer_annotated = """
+The burritos have {nb}*{cb}=<<{nb}*{cb}={nb*cb}>>{nb*cb} calories
+That means he gets {nb*cb}/{pb}=<<{nb*cb}/{pb}={nb*cb//pb}>>{nb*cb//pb} calories per dollar
+The burgers get {nk}*{ck}=<<{nk}*{ck}={nk*ck}>>{nk*ck} calories
+So he gets {nk*ck}/{pk}=<<{nk*ck}/{pk}={nk*ck//pk}>>{nk*ck//pk} calories per dollar
+So he gets {nk*ck//pk}-{nb*cb//pb}=<<{nk*ck//pk}-{nb*cb//pb}={nk*ck//pk - nb*cb//pb}>>{nk*ck//pk - nb*cb//pb} more calories per dollar from the burgers
+#### {nk*ck//pk - nb*cb//pb}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Stan weighs 5 more pounds than Steve. Steve is eight pounds lighter than Jim. If Jim weighs 110 pounds and the three of them crowd onto a scale at the same time, what is their total weight?
+"""
+
+answer = """
+Steve weighs 110 - 8 = <<110-8=102>>102 pounds.
+Stan weighs 102 + 5 = <<102+5=107>>107 pounds.
+Their total weight is 102 + 107 + 110 = <<102+107+110=319>>319 pounds.
+#### 319
+"""
+
+id_orig = 478
+id_shuffled = 551
+
+question_annotated = """
+{n1,Stan} weighs {s,5} more pounds than {n2,Steve}. {n2,Steve} is {d_txt,eight} pounds lighter than {n3,Jim}. If {n3,Jim} weighs {j,110} pounds and the three of them crowd onto a scale at the same time, what is their total weight?
+
+#init:
+- n1 = sample(["Stan", "Chris", "Oliver", "Noah", "Eric"])
+- n2 = sample(["Steve", "Jason", "Carl", "William", "Tyler"])
+- n3 = sample(["Jim", "Lucas", "Alex", "Joshua", "Ethan"])
+- d_txt, d = sample([("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10)])
+- $j = range(60, 260, 2)
+- $s = range(1, 21)
+
+#conditions:
+- j > d
+
+#answer: (j - d) + (j - d + s) + j
+"""
+
+answer_annotated = """
+{n2} weighs {j} - {d} = <<{j}-{d}={j-d}>>{j-d} pounds.
+{n1} weighs {j-d} + {s} = <<{j-d}+{s}={j-d+s}>>{j-d+s} pounds.
+Their total weight is {j-d} + {j-d+s} + {j} = <<{j-d}+{j-d+s}+{j}={(j-d)+(j-d+s)+j}>>{(j-d)+(j-d+s)+j} pounds.
+#### {(j-d)+(j-d+s)+j}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

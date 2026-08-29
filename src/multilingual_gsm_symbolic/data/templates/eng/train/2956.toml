@@ -1,0 +1,40 @@
+question = """
+The moon is made of 50% iron, 20% carbon, and the remainder is other elements. Mars weighs twice as much as the moon, but has the exact same composition. If Mars is 150 tons of other elements, how many tons does the moon weigh?
+"""
+
+answer = """
+30% of Mars is made up of other elements because 100 - 50 - 20 = <<100-50-20=30>>30
+Mars weighs 500 tons because 150 / .3 = <<150/.3=500>>500
+The moon weighs 250 tons because 500 / 2 = <<500/2=250>>250
+#### 250
+"""
+
+id_orig = 2555
+id_shuffled = 2956
+
+question_annotated = """
+The moon is made of {iron,50}% iron, {carbon,20}% carbon, and the remainder is other elements. Mars weighs twice as much as the moon, but has the exact same composition. If Mars is {other,150} tons of other elements, how many tons does the moon weigh?
+
+#init:
+- $iron = range(5, 95, 5)
+- $carbon = range(5, 95, 5)
+- $other = range(10, 400, 10)
+
+#conditions:
+- iron + carbon < 100
+- divides(iron + carbon, 10)
+- divides(other * 200, 100 - iron - carbon)
+
+#answer: other*100//(100-iron-carbon)//2
+"""
+
+answer_annotated = """
+{100-iron-carbon}% of Mars is made up of other elements because 100 - {iron} - {carbon} = <<100-{iron}-{carbon}={100-iron-carbon}>>{100-iron-carbon}
+Mars weighs {other*100//(100-iron-carbon)} tons because {other} / .{(100-iron-carbon)//10} = <<{other}/.{(100-iron-carbon)//10}={other*100//(100-iron-carbon)}>>{other*100//(100-iron-carbon)}
+The moon weighs {other*100//(100-iron-carbon)//2} tons because {other*100//(100-iron-carbon)} / 2 = <<{other*100//(100-iron-carbon)}/2={other*100//(100-iron-carbon)//2}>>{other*100//(100-iron-carbon)//2}
+#### {other*100//(100-iron-carbon)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

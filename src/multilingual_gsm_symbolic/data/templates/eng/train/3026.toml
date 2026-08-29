@@ -1,0 +1,48 @@
+question = """
+Nancy and Rose are making bracelets, and there are eight beads in each bracelet.  Nancy has 40 metal beads and 20 more pearl beads. Rose has 20 crystal beads and twice as many stone beads as crystal beads. How many bracelets can Nancy and Rose make?
+"""
+
+answer = """
+Nancy has 40 + 20 = <<40+20=60>>60 pearl beads.
+So, Nancy has a total of 40 + 60 = <<40+60=100>>100 beads.
+Rose has 2 x 20 = <<2*20=40>>40 stone beads.
+So, Rose has 20 + 40 = <<20+40=60>>60 beads.
+Thus, Nancy and Rose have 100 + 60 = <<100+60=160>>160 beads altogether.
+Therefore, they can make 160/8 = <<160/8=20>>20 bracelets.
+#### 20
+"""
+
+id_orig = 2609
+id_shuffled = 3026
+
+question_annotated = """
+{n1,Nancy} and {n2,Rose} are making bracelets, and there are {bt,eight} beads in each bracelet.  {n1,Nancy} has {m,40} metal beads and {p,20} more pearl beads. {n2,Rose} has {c,20} crystal beads and {wt,twice} as many stone beads as crystal beads. How many bracelets can {n1,Nancy} and {n2,Rose} make?
+
+#init:
+- n1 = sample(names_female)
+- n2 = sample(names_female)
+- bt, bn = sample([("eight", 8), ("four", 4), ("five", 5), ("six", 6), ("ten", 10)])
+- wt, wv = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $m = range(10, 210, 10)
+- $p = range(5, 105, 5)
+- $c = range(5, 105, 5)
+
+#conditions:
+- divides(2*m + p + c*wv + c, bn)
+
+#answer: (2*m + p + c*wv + c) // bn
+"""
+
+answer_annotated = """
+{n1} has {m} + {p} = <<{m}+{p}={m+p}>>{m+p} pearl beads.
+So, {n1} has a total of {m} + {m+p} = <<{m}+{m+p}={2*m+p}>>{2*m+p} beads.
+{n2} has {wv} x {c} = <<{wv}*{c}={wv*c}>>{wv*c} stone beads.
+So, {n2} has {c} + {wv*c} = <<{c}+{wv*c}={c*wv+c}>>{c*wv+c} beads.
+Thus, {n1} and {n2} have {2*m+p} + {c*wv+c} = <<{2*m+p}+{c*wv+c}={2*m+p+c*wv+c}>>{2*m+p+c*wv+c} beads altogether.
+Therefore, they can make {2*m+p+c*wv+c}/{bn} = <<{2*m+p+c*wv+c}/{bn}={(2*m+p+c*wv+c)//bn}>>{(2*m+p+c*wv+c)//bn} bracelets.
+#### {(2*m + p + c*wv + c) // bn}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

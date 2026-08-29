@@ -1,0 +1,46 @@
+question = """
+Alicia has to buy some books for the new school year. She buys 2 math books, 3 art books, and 6 science books, for a total of $30. If both the math and science books cost $3 each, what was the cost of each art book?
+"""
+
+answer = """
+The total cost of maths books is 2*3 = <<2*3=6>>6 dollars
+The total cost of science books is 6*3 = <<6*3=18>>18 dollars
+The total cost for maths and science books is 6+18 = <<6+18=24>>24 dollars
+The cost for art books is 30-24 = <<30-24=6>>6 dollars.
+Since he bought 3 art books, the cost for each art book will be 6/3 = 2 dollars
+#### 2
+"""
+
+id_orig = 1938
+id_shuffled = 2221
+
+question_annotated = """
+{name,Alicia} has to buy some books for the new school year. She buys {m,2} math books, {a,3} art books, and {s,6} science books, for a total of ${t,30}. If both the math and science books cost ${p,3} each, what was the cost of each art book?
+
+#init:
+- name = sample(names_female)
+- $m = range(1, 6)
+- $a = range(1, 10)
+- $s = range(1, 10)
+- $p = range(2, 10)
+- $t = range(10, 120)
+
+#conditions:
+- t - p*(m + s) > 0
+- divides(t - p*(m + s), a)
+
+#answer: (t - p*(m + s)) // a
+"""
+
+answer_annotated = """
+The total cost of maths books is {m}*{p} = <<{m}*{p}={m*p}>>{m*p} dollars
+The total cost of science books is {s}*{p} = <<{s}*{p}={s*p}>>{s*p} dollars
+The total cost for maths and science books is {m*p}+{s*p} = <<{m*p}+{s*p}={m*p+s*p}>>{m*p+s*p} dollars
+The cost for art books is {t}-{m*p+s*p} = <<{t}-{m*p+s*p}={t-m*p-s*p}>>{t-m*p-s*p} dollars.
+Since he bought {a} art books, the cost for each art book will be {t-m*p-s*p}/{a} = {(t-m*p-s*p)//a} dollars
+#### {(t-m*p-s*p)//a}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

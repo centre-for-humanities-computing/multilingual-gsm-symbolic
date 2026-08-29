@@ -1,0 +1,45 @@
+question = """
+Kristy baked cookies because her friends are coming over to her house. She ate 2 of them and gave her brother 1 cookie. Her first friend arrived and took 3 cookies. The second and third friends to arrive took 5 cookies each. If there are 6 cookies left, how many cookies did Kristy bake?
+"""
+
+answer = """
+There were 6 + 5 = <<6+5=11>>11 cookies left before the third friend took 5.
+There were 11 + 5 = <<11+5=16>>16 cookies left before the second friend took 5.
+There were 16 + 3 = <<16+3=19>>19 cookies left before the first friend took 3.
+There were 19 + 1 = <<19+1=20>>20 cookies left before Kristy gave 1 cookie to her brother.
+There were 20 + 2 = <<20+2=22>>22 cookies that Kristy baked.
+#### 22
+"""
+
+id_orig = 2079
+id_shuffled = 2408
+
+question_annotated = """
+{name,Kristy} baked cookies because her friends are coming over to her house. She ate {e,2} of them and gave her brother {b,1} cookie. Her first friend arrived and took {f1,3} cookies. The second and third friends to arrive took {f23,5} cookies each. If there are {left,6} cookies left, how many cookies did {name,Kristy} bake?
+
+#init:
+- name = sample(names_female)
+- $e = range(2, 10)
+- $b = range(1, 2)
+- $f1 = range(2, 12)
+- $f23 = range(2, 12)
+- $left = range(2, 14)
+
+#conditions:
+- left > 0
+
+#answer: left + 2*f23 + f1 + b + e
+"""
+
+answer_annotated = """
+There were {left} + {f23} = <<{left}+{f23}={left+f23}>>{left+f23} cookies left before the third friend took {f23}.
+There were {left+f23} + {f23} = <<{left+f23}+{f23}={left+2*f23}>>{left+2*f23} cookies left before the second friend took {f23}.
+There were {left+2*f23} + {f1} = <<{left+2*f23}+{f1}={left+2*f23+f1}>>{left+2*f23+f1} cookies left before the first friend took {f1}.
+There were {left+2*f23+f1} + {b} = <<{left+2*f23+f1}+{b}={left+2*f23+f1+b}>>{left+2*f23+f1+b} cookies left before {name} gave {b} cookie to her brother.
+There were {left+2*f23+f1+b} + {e} = <<{left+2*f23+f1+b}+{e}={left+2*f23+f1+b+e}>>{left+2*f23+f1+b+e} cookies that {name} baked.
+#### {left + 2*f23 + f1 + b + e}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

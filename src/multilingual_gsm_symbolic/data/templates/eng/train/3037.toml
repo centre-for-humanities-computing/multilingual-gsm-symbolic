@@ -1,0 +1,49 @@
+question = """
+Ryan started with 36 tokens at the arcade. Ryan wasted a third of his tokens on Pac-Man, a fourth of his tokens on Candy Crush, and 7 on Ski-ball. Then, his parents bought him seven times as many tokens as he spent on Ski-ball. How many tokens did Ryan end up with?
+"""
+
+answer = """
+Ryan used 36/3 = <<36/3=12>>12 tokens on Pac-Man.
+Ryan used 36/4 = <<36/4=9>>9 tokens on Candy Crush.
+Ryan used a total of 12+9+7 = <<12+9+7=28>>28 tokens on all three games.
+Ryan had 36-28 = <<36-28=8>>8 tokens left.
+Ryan’s parents bought him 2*7 = <<2*7=14>>14 more tokens.
+Ryan had 8+14 = <<8+14=22>>22 tokens after his parents bought him some.
+#### 22
+"""
+
+id_orig = 2620
+id_shuffled = 3037
+
+question_annotated = """
+{name,Ryan} started with {t,36} tokens at the arcade. {name,Ryan} wasted a {f1_txt,third} of his tokens on Pac-Man, a {f2_txt,fourth} of his tokens on Candy Crush, and {s,7} on Ski-ball. Then, his parents bought him seven times as many tokens as he spent on Ski-ball. How many tokens did {name,Ryan} end up with?
+
+#init:
+- name = sample(names_male)
+- $t = range(24, 120, 2)
+- f1_txt, f1 = sample([("third", 3), ("fourth", 4), ("fifth", 5), ("sixth", 6)])
+- f2_txt, f2 = sample([("third", 3), ("fourth", 4), ("fifth", 5), ("sixth", 6)])
+- $s = range(2, 20)
+
+#conditions:
+- f1 != f2
+- divides(t, f1)
+- divides(t, f2)
+- t // f1 + t // f2 + s < t
+
+#answer: t - t//f1 - t//f2 + s
+"""
+
+answer_annotated = """
+{name} used {t}/{f1} = <<{t}/{f1}={t//f1}>>{t//f1} tokens on Pac-Man.
+{name} used {t}/{f2} = <<{t}/{f2}={t//f2}>>{t//f2} tokens on Candy Crush.
+{name} used a total of {t//f1}+{t//f2}+{s} = <<{t//f1}+{t//f2}+{s}={t//f1+t//f2+s}>>{t//f1+t//f2+s} tokens on all three games.
+{name} had {t}-{t//f1+t//f2+s} = <<{t}-{t//f1+t//f2+s}={t-(t//f1+t//f2+s)}>>{t-(t//f1+t//f2+s)} tokens left.
+{name}’s parents bought him 2*{s} = <<2*{s}={2*s}>>{2*s} more tokens.
+{name} had {t-(t//f1+t//f2+s)}+{2*s} = <<{t-(t//f1+t//f2+s)}+{2*s}={t-(t//f1+t//f2+s)+2*s}>>{t-(t//f1+t//f2+s)+2*s} tokens after his parents bought him some.
+#### {t - t//f1 - t//f2 + s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+Ann's favorite store was having a summer clearance. For $75 she bought 5 pairs of shorts for $7 each and 2 pairs of shoes for $10 each. She also bought 4 tops, all at the same price. How much did each top cost?
+"""
+
+answer = """
+She bought 5 shorts at $7 each so 5*7=$<<5*7=35>>35
+She bought 2 pair of shoes at $10 each so 2*10=$<<2*10=20>>20
+The shorts and shoes cost her 35+20 = $<<35+20=55>>55
+We know she spent 75 total and the shorts and shoes cost $55 which left a difference of 75-55 = $<<75-55=20>>20
+She bought 4 tops for a total of $20 so 20/4 = $5
+#### 5
+"""
+
+id_orig = 23
+id_shuffled = 139
+
+question_annotated = """
+{name,Ann}'s favorite store was having a summer clearance. For ${total,75} she bought {scount,5} pairs of shorts for ${sprice,7} each and {hcount,2} pairs of shoes for ${hprice,10} each. She also bought {tcount,4} tops, all at the same price. How much did each top cost?
+
+#init:
+- name = sample(names_female)
+- $total = range(65, 215, 10)
+- $scount = range(2, 8)
+- $sprice = range(4, 13)
+- $hcount = range(2, 7)
+- $hprice = range(5, 16)
+- $tcount = range(2, 7)
+
+#conditions:
+- divides(total - scount*sprice - hcount*hprice, tcount)
+- total - scount*sprice - hcount*hprice > 0
+
+#answer: (total - scount*sprice - hcount*hprice)//tcount
+"""
+
+answer_annotated = """
+She bought {scount} shorts at ${sprice} each so {scount}*{sprice}=$<<{scount}*{sprice}={scount*sprice}>>{scount*sprice}
+She bought {hcount} pair of shoes at ${hprice} each so {hcount}*{hprice}=$<<{hcount}*{hprice}={hcount*hprice}>>{hcount*hprice}
+The shorts and shoes cost her {scount*sprice}+{hcount*hprice} = $<<{scount*sprice}+{hcount*hprice}={scount*sprice+hcount*hprice}>>{scount*sprice+hcount*hprice}
+We know she spent {total} total and the shorts and shoes cost ${scount*sprice+hcount*hprice} which left a difference of {total}-{scount*sprice+hcount*hprice} = $<<{total}-{scount*sprice+hcount*hprice}={total-scount*sprice-hcount*hprice}>>{total-scount*sprice-hcount*hprice}
+She bought {tcount} tops for a total of ${total-scount*sprice-hcount*hprice} so {total-scount*sprice-hcount*hprice}/{tcount} = ${(total-scount*sprice-hcount*hprice)//tcount}
+#### {(total-scount*scount-hcount*hprice)//tcount if False else (total-scount*sprice-hcount*hprice)//tcount}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

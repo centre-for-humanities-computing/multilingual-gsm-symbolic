@@ -1,0 +1,46 @@
+question = """
+Carly is making burgers for a neighborhood BBQ. Each burger needs to be cooked for 4 minutes on each side. Carly can fit 5 burgers on the grill at once. If half her 30 guests want 2 burgers and the other half each want 1, how long will it take Carly to cook all the burgers?
+"""
+
+answer = """
+First find half the number of guests at Carly's party: 30 guests / 2 = <<30/2=15>>15 guests
+Then multiply that number by 2 for the number of burgers half the guests want: 15 guests * 2 burgers/guest = <<15*2=30>>30 burgers
+Then add the 15 burgers for the 15 guests who only want 1 to find the total number of burgers: 30 burgers + 15 burgers = 45 burgers
+Then divide the total number of burgers by the number of burgers Carly can cook at once to find the number of batches she cooks: 45 burgers / 5 burgers/batch = <<45/5=9>>9 batches
+Then multiply the number of sides per burger by the cooking time per side to find each burger's total cook time: 4 minutes/side * 2 sides = <<4*2=8>>8 minutes
+Finally, multiply each batch's cook time by the number of batches to find the total cook time: 8 minutes/batch * 9 batches = <<8*9=72>>72 minutes
+#### 72
+"""
+
+id_orig = 2985
+id_shuffled = 3559
+
+question_annotated = """
+{name,Carly} is making burgers for a neighborhood BBQ. Each burger needs to be cooked for {t,4} minutes on each side. {name,Carly} can fit {b,5} burgers on the grill at once. If half her {g,30} guests want {k,2} burgers and the other half each want 1, how long will it take {name,Carly} to cook all the burgers?
+
+#init:
+- name = sample(names_female)
+- $t = range(2, 11)
+- $b = range(2, 22)
+- $g = range(10, 210, 2)
+- $k = range(1, 6)
+
+#conditions:
+- divides(g//2*(k+1), b)
+
+#answer: t*2*(g//2*(k+1)//b)
+"""
+
+answer_annotated = """
+First find half the number of guests at {name}'s party: {g} guests / 2 = <<{g}/2={g//2}>>{g//2} guests
+Then multiply that number by {k} for the number of burgers half the guests want: {g//2} guests * {k} burgers/guest = <<{g//2}*{k}={g//2*k}>>{g//2*k} burgers
+Then add the {g//2} burgers for the {g//2} guests who only want 1 to find the total number of burgers: {g//2*k} burgers + {g//2} burgers = {g//2*(k+1)} burgers
+Then divide the total number of burgers by the number of burgers {name} can cook at once to find the number of batches she cooks: {g//2*(k+1)} burgers / {b} burgers/batch = <<{g//2*(k+1)}/{b}={g//2*(k+1)//b}>>{g//2*(k+1)//b} batches
+Then multiply the number of sides per burger by the cooking time per side to find each burger's total cook time: {t} minutes/side * 2 sides = <<{t}*2={t*2}>>{t*2} minutes
+Finally, multiply each batch's cook time by the number of batches to find the total cook time: {t*2} minutes/batch * {g//2*(k+1)//b} batches = <<{t*2}*{g//2*(k+1)//b}={t*2*(g//2*(k+1)//b)}>>{t*2*(g//2*(k+1)//b)} minutes
+#### {t*2*(g//2*(k+1)//b)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

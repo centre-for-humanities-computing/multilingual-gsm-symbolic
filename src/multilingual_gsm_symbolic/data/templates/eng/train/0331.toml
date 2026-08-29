@@ -1,0 +1,39 @@
+question = """
+Mary used 15 gallons of fuel this week. Last week she used 20% less. How much fuel did she use in total for the two weeks?
+"""
+
+answer = """
+Last week, she used 15 gallons * 0.2 = <<15*0.2=3>>3 gallons less fuel than she used this week.
+This means that she used 15 gallons – 3 gallons = <<15-3=12>>12 gallons of fuel last week.
+In total, Mary used 15 gallons + 12 gallons = <<15+12=27>>27 gallons of fuel.
+#### 27
+"""
+
+id_orig = 291
+id_shuffled = 331
+
+question_annotated = """
+{name,Mary} used {a,15} gallons of fuel this week. Last week she used {p,20}% less. How much fuel did she use in total for the two weeks?
+
+#init:
+- name = sample(names_female)
+- $a = range(10, 210)
+- $p = range(5, 55, 5)
+
+#conditions:
+- divides(a * p, 100)
+- a - a*p//100 > 0
+
+#answer: a + a - a*p//100
+"""
+
+answer_annotated = """
+Last week, she used {a} gallons * {p/100} = <<{a}*{p/100}={a*p//100}>>{a*p//100} gallons less fuel than she used this week.
+This means that she used {a} gallons – {a*p//100} gallons = <<{a}-{a*p//100}={a-a*p//100}>>{a-a*p//100} gallons of fuel last week.
+In total, {name} used {a} gallons + {a-a*p//100} gallons = <<{a}+{a-a*p//100}={a+a-a*p//100}>>{a+a-a*p//100} gallons of fuel.
+#### {a+a-a*p//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

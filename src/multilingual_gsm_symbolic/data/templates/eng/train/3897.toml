@@ -1,0 +1,50 @@
+question = """
+Antonella has ten Canadian coins in her purse that are either loonies or toonies. A loonie equals $1 and a toonie equals $2. If she bought a $3 Frappuccino and still has $11, how many toonies did she initially have?
+"""
+
+answer = """
+If Antonella spent $3 and now has $11, that means initially she had $3 + $11 = $<<3+11=14>>14
+Let the number of loonies Antonella had be L and the number of toonies be T. Initially she had in her purse a total of 1L + 2T = $14
+We also know that she had 10 coins in total or 10=L+T
+That means initially she had T=10-L toonies
+Combining both equations we know that 14=1L+2*(10-L)
+If we multiply through the parentheses, we get 14=1L+20-2L
+If we combine the variables on one side and the constants on another, we get -6=-1L or L=6
+Knowing the value of L, we can solve for T= 10 - L = 10 - 6 = <<10-6=4>>4
+#### 4
+"""
+
+id_orig = 3284
+id_shuffled = 3897
+
+question_annotated = """
+{name,Antonella} has {n_txt,ten} Canadian coins in her purse that are either loonies or toonies. A loonie equals $1 and a toonie equals $2. If she bought a ${price,3} Frappuccino and still has ${left,11}, how many toonies did she initially have?
+
+#init:
+- name = sample(names_female)
+- n_txt, n_val = sample([("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12), ("thirteen", 13), ("fourteen", 14), ("fifteen", 15), ("sixteen", 16), ("seventeen", 17), ("eighteen", 18), ("nineteen", 19), ("twenty", 20)])
+- $price = range(2, 12)
+- $left = range(5, 50)
+
+#conditions:
+- price + left > n_val
+- price + left < 2 * n_val
+
+#answer: price + left - n_val
+"""
+
+answer_annotated = """
+If {name} spent ${price} and now has ${left}, that means initially she had ${price} + ${left} = $<<{price}+{left}={price+left}>>{price+left}
+Let the number of loonies {name} had be L and the number of toonies be T. Initially she had in her purse a total of 1L + 2T = ${price+left}
+We also know that she had {n_val} coins in total or {n_val}=L+T
+That means initially she had T={n_val}-L toonies
+Combining both equations we know that {price+left}=1L+2*({n_val}-L)
+If we multiply through the parentheses, we get {price+left}=1L+{2*n_val}-2L
+If we combine the variables on one side and the constants on another, we get {price+left-2*n_val}=-1L or L={2*n_val-price-left}
+Knowing the value of L, we can solve for T= {n_val} - L = {n_val} - {2*n_val-price-left} = <<{n_val}-{2*n_val-price-left}={price+left-n_val}>>{price+left-n_val}
+#### {price+left-n_val}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

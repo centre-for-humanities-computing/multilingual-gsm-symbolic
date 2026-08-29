@@ -1,0 +1,44 @@
+question = """
+Jim is a maintenance worker at a pool. Every time someone jumps in the pool, they cause 400 ml of water to splash out and evaporate. Jim has to get everyone out of the pool, clean, and refill it when it gets below 80% full. If the pool holds 2000 L of water, how many times can people jump in the pool before Jim has to clean it?
+"""
+
+answer = """
+First figure out how many liters of water are left in the pool when it's 80% full: 2000L * .8 = <<2000*.8=1600>>1600 L
+Now subtract that amount from the pool's total capacity to find how much water can splash out before Jim has to refill it: 2000 L - 1600 L = <<2000-1600=400>>400 L
+Now multiply that amount by 1000 to convert it to milliliters: 400 L * 1000 ml/L = <<400*1000=400000>>400,000 ml
+Finally, divide that amount by the amount that splashes out with each jump to find the number of jumps before pool cleaning: 400,000 ml / 400 ml/jump = <<400000/400=1000>>1000 jumps
+#### 1000
+"""
+
+id_orig = 3557
+id_shuffled = 4204
+
+question_annotated = """
+{name,Jim} is a maintenance worker at a pool. Every time someone jumps in the pool, they cause {s,400} ml of water to splash out and evaporate. {name,Jim} has to get everyone out of the pool, clean, and refill it when it gets below {p,80}% full. If the pool holds {c,2000} L of water, how many times can people jump in the pool before {name,Jim} has to clean it?
+
+#init:
+- name = sample(names_male)
+- $c = range(1000, 21000, 500)
+- $p = range(50, 100, 10)
+- $p2 = range(5, 10)
+- $s = range(50, 1050, 50)
+
+#conditions:
+- p == p2 * 10
+- c * (10 - p2) > 0
+- divides(c * (10 - p2) * 100, s)
+
+#answer: c*(10-p2)*100//s
+"""
+
+answer_annotated = """
+First figure out how many liters of water are left in the pool when it's {p}% full: {c}L * .{p2} = <<{c}*.{p2}={c*p2//10}>>{c*p2//10} L
+Now subtract that amount from the pool's total capacity to find how much water can splash out before {name} has to refill it: {c} L - {c*p2//10} L = <<{c}-{c*p2//10}={c*(10-p2)//10}>>{c*(10-p2)//10} L
+Now multiply that amount by 1000 to convert it to milliliters: {c*(10-p2)//10} L * 1000 ml/L = <<{c*(10-p2)//10}*1000={c*(10-p2)*100}>>{c*(10-p2)*100} ml
+Finally, divide that amount by the amount that splashes out with each jump to find the number of jumps before pool cleaning: {c*(10-p2)*100} ml / {s} ml/jump = <<{c*(10-p2)*100}/{s}={c*(10-p2)*100//s}>>{c*(10-p2)*100//s} jumps
+#### {c*(10-p2)*100//s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

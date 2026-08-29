@@ -1,0 +1,44 @@
+question = """
+Tom, Tim, and Paul are collecting photos of cars. Paul has 10 photos more than Tim. Tim has one hundred photos less than the total amount of photos which is 152. How many photos does Tom have?
+"""
+
+answer = """
+Tim has 152 photos - 100 photos = <<152-100=52>>52 photos.
+When Tim has 52 photos, then Paul has 52 + 10 photos = <<52+10=62>>62 photos.
+Tim and Paul have together 52 photos + 62 photos = <<52+62=114>>114 photos.
+That leaves Tom with 152 photos - 114 photos = <<152-114=38>>38 photos.
+#### 38
+"""
+
+id_orig = 1050
+id_shuffled = 1146
+
+question_annotated = """
+{n_tom,Tom}, {n_tim,Tim}, and {n_paul,Paul} are collecting photos of cars. {n_paul,Paul} has {more,10} photos more than {n_tim,Tim}. {n_tim,Tim} has {w_less,one hundred} photos less than the total amount of photos which is {total,152}. How many photos does {n_tom,Tom} have?
+
+#init:
+- n_tom = sample(["Tom"])
+- n_tim = sample(["Tim"])
+- n_paul = sample(["Paul"])
+- w_less, less = sample([("twenty", 20), ("thirty", 30), ("forty", 40), ("fifty", 50), ("sixty", 60), ("seventy", 70), ("eighty", 80), ("ninety", 90), ("one hundred", 100)])
+- $total = range(40, 240, 2)
+- $more = range(2, 22, 2)
+
+#conditions:
+- less < total
+- 2 * less - total - more > 0
+
+#answer: 2*less - total - more
+"""
+
+answer_annotated = """
+{n_tim} has {total} photos - {less} photos = <<{total}-{less}={total-less}>>{total-less} photos.
+When {n_tim} has {total-less} photos, then {n_paul} has {total-less} + {more} photos = <<{total-less}+{more}={total-less+more}>>{total-less+more} photos.
+{n_tim} and {n_paul} have together {total-less} photos + {total-less+more} photos = <<{total-less}+{total-less+more}={2*(total-less)+more}>>{2*(total-less)+more} photos.
+That leaves {n_tom} with {total} photos - {2*(total-less)+more} photos = <<{total}-{2*(total-less)+more}={2*less-total-more}>>{2*less-total-more} photos.
+#### {2*less-total-more}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

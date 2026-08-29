@@ -1,0 +1,49 @@
+question = """
+Marla has a grid of squares that has 10 rows and 15 squares in each row. She colors 4 rows of 6 squares in the middle of the grid with red. She colors all squares on the first 2 and last 2 rows with blue. Then she colors the rest with green. How many squares does Marla color green?
+"""
+
+answer = """
+There are 10 x 15 = <<10*15=150>>150 squares in a grid.
+4 x 6 = <<4*6=24>>24 squares are colored red.
+There are 2 + 2 = <<2+2=4>>4 rows that are all blue.
+Thus, a total of 4 x 15 = <<4*15=60>>60 squares are colored blue.
+24 + 60 = <<24+60=84>>84 squares are color red or blue.
+Therefore, 150 - 84 = <<150-84=66>>66 square are green.
+#### 66
+"""
+
+id_orig = 355
+id_shuffled = 408
+
+question_annotated = """
+{name,Marla} has a grid of squares that has {rows,10} rows and {cols,15} squares in each row. She colors {red_rows,4} rows of {red_cols,6} squares in the middle of the grid with red. She colors all squares on the first {blue_edge,2} and last {blue_edge,2} rows with blue. Then she colors the rest with green. How many squares does {name,Marla} color green?
+
+#init:
+- name = sample(names)
+- $rows = range(8, 30)
+- $cols = range(10, 40)
+- $red_rows = range(2, 8)
+- $red_cols = range(2, 12)
+- $blue_edge = range(1, 3)
+
+#conditions:
+- red_rows + 2*blue_edge < rows
+- red_cols < cols
+- rows*cols - red_rows*red_cols - 2*blue_edge*cols > 0
+
+#answer: rows*cols - red_rows*red_cols - 2*blue_edge*cols
+"""
+
+answer_annotated = """
+There are {rows} x {cols} = <<{rows}*{cols}={rows*cols}>>{rows*cols} squares in a grid.
+{red_rows} x {red_cols} = <<{red_rows}*{red_cols}={red_rows*red_cols}>>{red_rows*red_cols} squares are colored red.
+There are {blue_edge} + {blue_edge} = <<{blue_edge}+{blue_edge}={blue_edge*2}>>{blue_edge*2} rows that are all blue.
+Thus, a total of {blue_edge*2} x {cols} = <<{blue_edge*2}*{cols}={blue_edge*2*cols}>>{blue_edge*2*cols} squares are colored blue.
+{red_rows*red_cols} + {blue_edge*2*cols} = <<{red_rows*red_cols}+{blue_edge*2*cols}={red_rows*red_cols+blue_edge*2*cols}>>{red_rows*red_cols+blue_edge*2*cols} squares are color red or blue.
+Therefore, {rows*cols} - {red_rows*red_cols+blue_edge*2*cols} = <<{rows*cols}-{red_rows*red_cols+blue_edge*2*cols}={rows*cols-red_rows*red_cols-blue_edge*2*cols}>>{rows*cols-red_rows*red_cols-blue_edge*2*cols} square are green.
+#### {rows*cols - red_rows*red_cols - 2*blue_edge*cols}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

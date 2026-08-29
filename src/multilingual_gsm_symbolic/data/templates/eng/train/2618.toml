@@ -1,0 +1,50 @@
+question = """
+June’s class has 25 students. 60% are girls and the rest are boys. 40% of the boys like playing basketball and the rest don't. The number of girls who like playing basketball is double the number of boys who don't like to. What percentage of the girls in the class like playing basketball?
+"""
+
+answer = """
+40% of the class is boys because 100-60=<<100-60=40>>40
+There are 10 boys because 25x.4=<<25*.4=10>>10
+60% of the boys don't like playing basketball because 100-40=<<100-40=60>>60
+6 boys don't like playing basketball because 10x.6=6
+12 girls like playing basketball because 6x2=<<6*2=12>>12
+There are 15 girls in the class because 25-10=<<25-10=15>>15
+80% of the girls in class like playing basketball because 12/15=<<12/15=.8>>.8
+#### 80
+"""
+
+id_orig = 2270
+id_shuffled = 2618
+
+question_annotated = """
+{name,June}’s class has {t,25} students. {gp,60}% are girls and the rest are boys. {bp,40}% of the boys like playing basketball and the rest don't. The number of girls who like playing basketball is double the number of boys who don't like to. What percentage of the girls in the class like playing basketball?
+
+#init:
+- name = sample(names_female)
+- $t = range(20, 205, 5)
+- $gp = range(10, 86, 5)
+- $bp = range(10, 91, 10)
+
+#conditions:
+- divides(t * (100-gp), 100)
+- divides(t * (100-gp) * (100-bp), 10000)
+- divides(2 * (100-gp) * (100-bp), gp * 10)
+- 2 * (100-gp) * (100-bp) < gp * 100
+
+#answer: 2*(100-gp)*(100-bp)//gp
+"""
+
+answer_annotated = """
+{100-gp}% of the class is boys because 100-{gp}=<<100-{gp}={100-gp}>>{100-gp}
+There are {t*(100-gp)//100} boys because {t}x.{bp//10}=<<{t}*.{bp//10}={t*(100-gp)//100}>>{t*(100-gp)//100}
+{100-bp}% of the boys don't like playing basketball because 100-{bp}=<<100-{bp}={100-bp}>>{100-bp}
+{t*(100-gp)*(100-bp)//10000} boys don't like playing basketball because {t*(100-gp)//100}x.{(100-bp)//10}={t*(100-gp)*(100-bp)//10000}
+{2*(t*(100-gp)*(100-bp)//10000)} girls like playing basketball because {t*(100-gp)*(100-bp)//10000}x2=<<{t*(100-gp)*(100-bp)//10000}*2={2*(t*(100-gp)*(100-bp)//10000)}>>{2*(t*(100-gp)*(100-bp)//10000)}
+There are {t - t*(100-gp)//100} girls in the class because {t}-{t*(100-gp)//100}=<<{t}-{t*(100-gp)//100}={t - t*(100-gp)//100}>>{t - t*(100-gp)//100}
+{2*(100-gp)*(100-bp)//gp}% of the girls in class like playing basketball because {2*(t*(100-gp)*(100-bp)//10000)}/{t - t*(100-gp)//100}=<<{2*(t*(100-gp)*(100-bp)//10000)}/{t - t*(100-gp)//100}=.{2*(100-gp)*(100-bp)//gp//10}>>.{2*(100-gp)*(100-bp)//gp//10}
+#### {2*(100-gp)*(100-bp)//gp}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

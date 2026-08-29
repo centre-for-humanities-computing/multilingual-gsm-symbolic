@@ -1,0 +1,42 @@
+question = """
+Ten adults went to a ball game with eleven children. Adult tickets are $8 each and the total bill was $124. How many dollars is one child's ticket?
+"""
+
+answer = """
+Adults = 10 * 8 = $<<10*8=80>>80
+Children = 124 - 80 = $<<124-80=44>>44
+Child = 44/11 = $<<44/11=4>>4
+Each child's ticket is $<<4=4>>4.
+#### 4
+"""
+
+id_orig = 2677
+id_shuffled = 3128
+
+question_annotated = """
+{adults_txt,Ten} adults went to a ball game with {kids_txt,eleven} children. Adult tickets are ${aprice,8} each and the total bill was ${total,124}. How many dollars is one child's ticket?
+
+#init:
+- adults_txt, adults = sample([("Ten", 10), ("Twelve", 12), ("Fifteen", 15), ("Twenty", 20)])
+- kids_txt, kids = sample([("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- $aprice = range(2, 22)
+- $total = range(50, 350)
+
+#conditions:
+- total > adults * aprice + kids
+- divides(total - adults * aprice, kids)
+
+#answer: (total - adults * aprice) // kids
+"""
+
+answer_annotated = """
+Adults = {adults} * {aprice} = $<<{adults}*{aprice}={adults*aprice}>>{adults*aprice}
+Children = {total} - {adults*aprice} = $<<{total}-{adults*aprice}={total - adults*aprice}>>{total - adults*aprice}
+Child = {total - adults*aprice}/{kids} = $<<{total - adults*aprice}/{kids}={(total - adults*aprice)//kids}>>{(total - adults*aprice)//kids}
+Each child's ticket is $<<{(total - adults*aprice)//kids}={(total - adults*aprice)//kids}>>{(total - adults*aprice)//kids}.
+#### {(total - adults * aprice) // kids}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

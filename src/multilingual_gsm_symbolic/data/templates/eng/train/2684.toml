@@ -1,0 +1,42 @@
+question = """
+Latia wants to buy a Samsung TV worth $1700. She works for a delivery service company for a month earning $10 per hour for a 30-hour workweek. How many more hours does she have to work to buy the TV?
+"""
+
+answer = """
+In a week, Latia earns 30*10 = $<<30*10=300>>300.
+In a month, she earns 300*4 = $<<300*4=1200>>1200.
+If the TV was worth $1700, the total amount she has to work for to buy the TV is 1700-1200 = $<<1700-1200=500>>500.
+Since she earns $10 per hour, she'll have to work for $500/$10 = <<500/10=50>>50 more hours to buy the TV.
+#### 50
+"""
+
+id_orig = 2336
+id_shuffled = 2684
+
+question_annotated = """
+{name,Latia} wants to buy a Samsung TV worth ${price,1700}. She works for a delivery service company for a month earning ${rate,10} per hour for a {hrs,30}-hour workweek. How many more hours does she have to work to buy the TV?
+
+#init:
+- name = sample(names_female)
+- $price = range(200, 4200, 20)
+- $rate = range(5, 30)
+- $hrs = range(10, 40, 5)
+
+#conditions:
+- price > hrs * rate * 4
+- divides(price - hrs * rate * 4, rate)
+
+#answer: (price - hrs * rate * 4) // rate
+"""
+
+answer_annotated = """
+In a week, {name} earns {hrs}*{rate} = $<<{hrs}*{rate}={hrs*rate}>>{hrs*rate}.
+In a month, she earns {hrs*rate}*4 = $<<{hrs*rate}*4={hrs*rate*4}>>{hrs*rate*4}.
+If the TV was worth ${price}, the total amount she has to work for to buy the TV is {price}-{hrs*rate*4} = $<<{price}-{hrs*rate*4}={price-hrs*rate*4}>>{price-hrs*rate*4}.
+Since she earns ${rate} per hour, she'll have to work for ${price-hrs*rate*4}/${rate} = <<{price-hrs*rate*4}/{rate}={(price-hrs*rate*4)//rate}>>{(price-hrs*rate*4)//rate} more hours to buy the TV.
+#### {(price - hrs * rate * 4) // rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,38 @@
+question = """
+John injures his shoulder while lifting weights.  After the injury, his bench press goes down 80%.  After a bit of training, he manages to triple the weight he can bench.  If he started with a 500-pound bench press, what is it now?
+"""
+
+answer = """
+He lost 500*.8=<<500*.8=400>>400 pounds from his bench
+So his bench went to 500-400=<<500-400=100>>100 pounds
+After training it increased to 100*3=<<100*3=300>>300 pounds
+#### 300
+"""
+
+id_orig = 1798
+id_shuffled = 1997
+
+question_annotated = """
+{name,John} injures his shoulder while lifting weights.  After the injury, his bench press goes down {pc,80}%.  After a bit of training, he manages to triple the weight he can bench.  If he started with a {w,500}-pound bench press, what is it now?
+
+#init:
+- name = sample(names_male)
+- $pc = range(10, 100, 10)
+- $w = range(100, 1000, 25)
+
+#conditions:
+- divides(w*pc, 100)
+
+#answer: (w - w*pc//100)*3
+"""
+
+answer_annotated = """
+He lost {w}*.{pc//10}=<<{w}*.{pc//10}={w*pc//100}>>{w*pc//100} pounds from his bench
+So his bench went to {w}-{w*pc//100}=<<{w}-{w*pc//100}={w-w*pc//100}>>{w-w*pc//100} pounds
+After training it increased to {w-w*pc//100}*3=<<{w-w*pc//100}*3={(w-w*pc//100)*3}>>{(w-w*pc//100)*3} pounds
+#### {(w - w*pc//100)*3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

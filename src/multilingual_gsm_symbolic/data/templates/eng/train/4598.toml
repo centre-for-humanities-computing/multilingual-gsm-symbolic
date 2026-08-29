@@ -1,0 +1,54 @@
+question = """
+Mary needs school supplies. She has 6 classes and needs 1 folder for each class. She also needs 3 pencils for each class. She decides that for every 6 pencils she should have 1 eraser. She also needs a set of paints for an art class.  Folders cost $6, pencils cost $2, and erasers cost $1. If she spends $80, how much did the set of paints cost in dollars?
+"""
+
+answer = """
+Mary needs 6*1= <<6*1=6>>6 folders.
+Mary needs 6*3= <<6*3=18>>18 pencils.
+Mary needs 18/6= <<18/6=3>>3 erasers.
+Mary spends 6*6= $<<6*6=36>>36 on folders.
+Mary spends 18*2= $<<18*2=36>>36 on pencils.
+Mary spends 3*1= $<<3*1=3>>3 on erasers.
+Mary spends 36+36+3= $<<36+36+3=75>>75 on all the supplies except the paints.
+Mary spends 80-75= $<<80-75=5>>5 on the paint set.
+#### 5
+"""
+
+id_orig = 3904
+id_shuffled = 4598
+
+question_annotated = """
+{name,Mary} needs school supplies. She has {c,6} classes and needs 1 folder for each class. She also needs {p,3} pencils for each class. She decides that for every {er,6} pencils she should have 1 eraser. She also needs a set of paints for an art class.  Folders cost ${fc,6}, pencils cost ${pc,2}, and erasers cost $1. If she spends ${tot,80}, how much did the set of paints cost in dollars?
+
+#init:
+- name = sample(names_female)
+- $c = range(2, 12)
+- $p = range(2, 6)
+- $er = range(2, 8)
+- $fc = range(2, 8)
+- $pc = range(1, 5)
+- $tot = range(50, 210, 10)
+
+#conditions:
+- divides(c*p, er)
+- c*p >= er
+- tot - (c*fc + c*p*pc + c*p//er) > 0
+
+#answer: tot - (c*fc + c*p*pc + c*p//er)
+"""
+
+answer_annotated = """
+{name} needs {c}*1= <<{c}*1={c}>>{c} folders.
+{name} needs {c}*{p}= <<{c}*{p}={c*p}>>{c*p} pencils.
+{name} needs {c*p}/{er}= <<{c*p}/{er}={c*p//er}>>{c*p//er} erasers.
+{name} spends {c}*{fc}= $<<{c}*{fc}={c*fc}>>{c*fc} on folders.
+{name} spends {c*p}*{pc}= $<<{c*p}*{pc}={c*p*pc}>>{c*p*pc} on pencils.
+{name} spends {c*p//er}*1= $<<{c*p//er}*1={c*p//er}>>{c*p//er} on erasers.
+{name} spends {c*fc}+{c*p*pc}+{c*p//er}= $<<{c*fc}+{c*p*pc}+{c*p//er}={c*fc+c*p*pc+c*p//er}>>{c*fc+c*p*pc+c*p//er} on all the supplies except the paints.
+{name} spends {tot}-{c*fc+c*p*pc+c*p//er}= $<<{tot}-{c*fc+c*p*pc+c*p//er}={tot-(c*fc+c*p*pc+c*p//er)}>>{tot-(c*fc+c*p*pc+c*p//er)} on the paint set.
+#### {tot - (c*fc + c*p*pc + c*p//er)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

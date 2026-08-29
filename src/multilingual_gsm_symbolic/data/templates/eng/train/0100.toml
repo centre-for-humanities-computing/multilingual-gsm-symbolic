@@ -1,0 +1,40 @@
+question = """
+A craft store makes a third of its sales in the fabric section, a quarter of its sales in the jewelry section, and the rest in the stationery section. They made 36 sales today. How many sales were in the stationery section?
+"""
+
+answer = """
+The craft store made 36 / 3 = <<36/3=12>>12 sales in the fabric section.
+It made 36 / 4 = <<36/4=9>>9 sales in the jewelry section.
+Thus, there were 36 - 12 - 9 = <<36-12-9=15>>15 sales in the stationery section.
+#### 15
+"""
+
+id_orig = 100
+id_shuffled = 100
+
+question_annotated = """
+A craft store makes a {f1_txt,third} of its sales in the fabric section, a {f2_txt,quarter} of its sales in the jewelry section, and the rest in the stationery section. They made {tot,36} sales today. How many sales were in the stationery section?
+
+#init:
+- f1_txt, d1 = sample([("half", 2), ("third", 3), ("quarter", 4), ("fifth", 5)])
+- f2_txt, d2 = sample([("half", 2), ("third", 3), ("quarter", 4), ("fifth", 5)])
+- $tot = range(12, 1212, 12)
+
+#conditions:
+- divides(tot, d1)
+- divides(tot, d2)
+- tot - tot//d1 - tot//d2 > 0
+
+#answer: tot - tot//d1 - tot//d2
+"""
+
+answer_annotated = """
+The craft store made {tot} / {d1} = <<{tot}/{d1}={tot//d1}>>{tot//d1} sales in the fabric section.
+It made {tot} / {d2} = <<{tot}/{d2}={tot//d2}>>{tot//d2} sales in the jewelry section.
+Thus, there were {tot} - {tot//d1} - {tot//d2} = <<{tot}-{tot//d1}-{tot//d2}={tot - tot//d1 - tot//d2}>>{tot - tot//d1 - tot//d2} sales in the stationery section.
+#### {tot - tot//d1 - tot//d2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

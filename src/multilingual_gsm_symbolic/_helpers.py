@@ -545,7 +545,58 @@ def try_parse_fraction(value: Any) -> Any:
 
 def capitalize_sentences(text: str) -> str:
     text = text[0].upper() + text[1:] if text else text
-    return _RE_SENTENCE_CAP.sub(lambda m: m.group(1) + m.group(2).upper(), text)
+    # Protect known abbreviations ("a.m.", "lbs.", "e.g.") so their dots and the
+    # letter following them are not mistaken for sentence boundaries. Their case
+    # is preserved exactly as written.
+    protected = text
+    for abbreviation in _SENTENCE_CAP_ABBREVIATIONS:
+        protected = re.sub(
+            rf"(?<![\w.-])({re.escape(abbreviation)})\.",
+            lambda m: m.group(1).replace(".", "\x00") + "\x00",
+            protected,
+            flags=re.IGNORECASE,
+        )
+    capped = _RE_SENTENCE_CAP.sub(lambda m: m.group(1) + m.group(2).upper(), protected)
+    return capped.replace("\x00", ".")
+
+
+# Abbreviations after which a lowercase letter is not the start of a new sentence.
+# Matched against the text immediately preceding sentence-ending punctuation.
+_SENTENCE_CAP_ABBREVIATIONS = (
+    "a.m",
+    "p.m",
+    "p.e",
+    "p.t.o",
+    "u.s",
+    "u.k",
+    "d.c",
+    "e.g",
+    "i.e",
+    "etc",
+    "lbs",
+    "lb",
+    "oz",
+    "ft",
+    "kg",
+    "km",
+    "cm",
+    "ml",
+    "mi",
+    "hr",
+    "hrs",
+    "min",
+    "sec",
+    "dr",
+    "mr",
+    "mrs",
+    "jr",
+    "sr",
+    "vs",
+    "approx",
+    "dept",
+    "est",
+    "inc",
+)
 
 
 # Languages that use comma as decimal separator and period as thousands separator

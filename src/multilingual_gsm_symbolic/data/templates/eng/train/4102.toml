@@ -1,0 +1,44 @@
+question = """
+George is about to celebrate his 25th birthday. Since his 15th birthday, he's been given a special $1 bill from his parents. They told him that on his 25th birthday, for every bill he still has, they will give him $1.5 in exchange. He spent 20% of his special bills. How much will he receive from his parents when he exchanges them?
+"""
+
+answer = """
+He received 10 special bills because 25 - 15 = <<25-15=10>>10
+He has 80% of them left because 100 - 20 = <<100-20=80>>80
+He has 8 left because 10 x .8 = <<10*.8=8>>8
+His parents will give her $12 for them because 8 x 1.5 = <<8*1.5=12>>12
+#### 12
+"""
+
+id_orig = 3467
+id_shuffled = 4102
+
+question_annotated = """
+{name,George} is about to celebrate his {b,25}th birthday. Since his {s,15}th birthday, he's been given a special $1 bill from his parents. They told him that on his {b,25}th birthday, for every bill he still has, they will give him ${r,1.5} in exchange. He spent {p,20}% of his special bills. How much will he receive from his parents when he exchanges them?
+
+#init:
+- name = sample(names_male)
+- $b = range(20, 60)
+- $s = range(2, 20)
+- $p = range(10, 100, 10)
+- $r = sample([1.5, 2, 2.5])
+
+#conditions:
+- b > s
+- divides((b-s)*(100-p), 100)
+- is_int((b-s)*(100-p)/100*r)
+
+#answer: int((b-s)*(100-p)/100*r)
+"""
+
+answer_annotated = """
+He received {b-s} special bills because {b} - {s} = <<{b}-{s}={b-s}>>{b-s}
+He has {100-p}% of them left because 100 - {p} = <<100-{p}={100-p}>>{100-p}
+He has {int((b-s)*(100-p)/100)} left because {b-s} x .{(100-p)/10} = <<{b-s}*.{(100-p)/10}={int((b-s)*(100-p)/100)}>>{int((b-s)*(100-p)/100)}
+His parents will give her ${int((b-s)*(100-p)/100*r)} for them because {int((b-s)*(100-p)/100)} x {r} = <<{int((b-s)*(100-p)/100)}*{r}={int((b-s)*(100-p)/100*r)}>>{int((b-s)*(100-p)/100*r)}
+#### {int((b-s)*(100-p)/100*r)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

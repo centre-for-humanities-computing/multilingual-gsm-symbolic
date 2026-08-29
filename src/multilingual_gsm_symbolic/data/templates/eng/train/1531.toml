@@ -1,0 +1,46 @@
+question = """
+Christian and Sue wanted to get a $50.00 bottle of perfume for their mom for her birthday.  Christian had $5.00 saved up and Sue had $7.00.  Christian then mowed 4 of his neighbors' yards, charging $5.00 each, while Sue walked 6 dogs for her neighbors, charging $2.00 per dog.  How much more money will Christian and Sue need to make in order to buy the bottle of perfume for their mom?
+"""
+
+answer = """
+Christian just mowed 4 yards at $5.00 each so he made 4*5 = $<<4*5=20.00>>20.00
+Sue just walked 6 dogs at $2.00 each so she made 6*2 = $<<6*2=12.00>>12.00
+Christian had $5.00 saved and just made $20.00 while Sue had $7.00 saved and just made $12.00 so together they had 5+20+7+12 = $<<5+20+7+12=44>>44
+The perfume cost $50.00 and they had $44.00 so they needed to make 50-44 = $<<50-44=6.00>>6.00 more dollars
+#### 6
+"""
+
+id_orig = 1424
+id_shuffled = 1531
+
+question_annotated = """
+{name1,Christian} and {name2,Sue} wanted to get a ${p,50}.00 bottle of perfume for their mom for her birthday.  {name1,Christian} had ${s1,5}.00 saved up and {name2,Sue} had ${s2,7}.00.  {name1,Christian} then mowed {m1,4} of his neighbors' yards, charging ${c1,5}.00 each, while {name2,Sue} walked {m2,6} dogs for her neighbors, charging ${c2,2}.00 per dog.  How much more money will {name1,Christian} and {name2,Sue} need to make in order to buy the bottle of perfume for their mom?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_female)
+- $p = range(20, 90, 30)
+- $s1 = range(1, 11, 2)
+- $m1 = range(2, 8)
+- $c1 = range(2, 9)
+- $s2 = range(1, 11, 2)
+- $m2 = range(2, 9)
+- $c2 = range(1, 6)
+
+#conditions:
+- p > s1 + m1 * c1 + s2 + m2 * c2
+
+#answer: p-s1-m1*c1-s2-m2*c2
+"""
+
+answer_annotated = """
+{name1} just mowed {m1} yards at ${c1}.00 each so he made {m1}*{c1} = $<<{m1}*{c1}={m1*c1}.00>>{m1*c1}.00
+{name2} just walked {m2} dogs at ${c2}.00 each so she made {m2}*{c2} = $<<{m2}*{c2}={m2*c2}.00>>{m2*c2}.00
+{name1} had ${s1}.00 saved and just made ${m1*c1}.00 while {name2} had ${s2}.00 saved and just made ${m2*c2}.00 so together they had {s1}+{m1*c1}+{s2}+{m2*c2} = $<<{s1}+{m1*c1}+{s2}+{m2*c2}={s1+m1*c1+s2+m2*c2}>>{s1+m1*c1+s2+m2*c2}
+The perfume cost ${p}.00 and they had ${s1+m1*c1+s2+m2*c2}.00 so they needed to make {p}-{s1+m1*c1+s2+m2*c2} = $<<{p}-{s1+m1*c1+s2+m2*c2}={p-s1-m1*c1-s2-m2*c2}.00>>{p-s1-m1*c1-s2-m2*c2}.00 more dollars
+#### {p-s1-m1*c1-s2-m2*c2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

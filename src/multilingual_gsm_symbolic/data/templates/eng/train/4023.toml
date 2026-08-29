@@ -1,0 +1,48 @@
+question = """
+Jacque arrived in France and his suitcase weighed 5 pounds.  While in France, he picked up 5 bottles of perfume that weighed 1.2 ounces each, 4 pounds of chocolate, 2 bars of soap that weighed 5 ounces each and 2 jars of jam that weighed 8 ounces each.  Considering 16 ounces is the same as 1 pound, how much did Jacque's suitcase weigh on the return flight home?
+"""
+
+answer = """
+He bought 5 bottles of perfume that weighed 1.2 oz each so they weighed 5*1.2 = <<5*1.2=6>>6 oz
+2 bars of soap weighed 5 oz each so they weighed 2*5 = <<2*5=10>>10 oz
+2 jars of jam weighed 8 oz each so they weighed 2*8 = <<8*2=16>>16 oz
+The perfume is 6 oz, the soap is 10 oz and the jam is 16 oz for a total of 6+10+16 = <<6+10+16=32>>32 oz
+16 oz is 1 pound, and he had 32 oz in products so he had 32/16 = <<32/16=2>>2 pounds of products
+His suitcase weighed 5 pounds, and the chocolate weighed 4 pounds and the remaining products weighed 2 pounds so his suitcase weighed 5+4+2 = <<5+4+2=11>>11 pounds
+#### 11
+"""
+
+id_orig = 3388
+id_shuffled = 4023
+
+question_annotated = """
+{name,Jacque} arrived in France and his suitcase weighed {s,5} pounds.  While in France, he picked up 5 bottles of perfume that weighed 1.2 ounces each, {c,4} pounds of chocolate, {k,2} bars of soap that weighed {v,5} ounces each and {j,2} jars of jam that weighed {m,8} ounces each.  Considering 16 ounces is the same as 1 pound, how much did {name,Jacque}'s suitcase weigh on the return flight home?
+
+#init:
+- name = sample(names_male)
+- $s = range(3, 9)
+- $c = range(1, 9)
+- $k = range(1, 4)
+- $v = range(2, 10)
+- $j = range(1, 4)
+- $m = range(2, 11)
+
+#conditions:
+- divides(6 + k*v + m*j, 16)
+
+#answer: s + c + (6 + k*v + m*j)//16
+"""
+
+answer_annotated = """
+He bought 5 bottles of perfume that weighed 1.2 oz each so they weighed 5*1.2 = <<5*1.2=6>>6 oz
+{k} bars of soap weighed {v} oz each so they weighed {k}*{v} = <<{k}*{v}={k*v}>>{k*v} oz
+{j} jars of jam weighed {m} oz each so they weighed {j}*{m} = <<{m}*{j}={m*j}>>{m*j} oz
+The perfume is 6 oz, the soap is {k*v} oz and the jam is {m*j} oz for a total of 6+{k*v}+{m*j} = <<6+{k*v}+{m*j}={6+k*v+m*j}>>{6+k*v+m*j} oz
+16 oz is 1 pound, and he had {6+k*v+m*j} oz in products so he had {6+k*v+m*j}/16 = <<{6+k*v+m*j}/16={(6+k*v+m*j)//16}>>{(6+k*v+m*j)//16} pounds of products
+His suitcase weighed {s} pounds, and the chocolate weighed {c} pounds and the remaining products weighed {(6+k*v+m*j)//16} pounds so his suitcase weighed {s}+{c}+{(6+k*v+m*j)//16} = <<{s}+{c}+{(6+k*v+m*j)//16}={s+c+(6+k*v+m*j)//16}>>{s+c+(6+k*v+m*j)//16} pounds
+#### {s+c+(6+k*v+m*j)//16}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

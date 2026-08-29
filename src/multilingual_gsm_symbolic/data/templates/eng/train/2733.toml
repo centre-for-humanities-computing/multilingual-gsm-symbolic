@@ -1,0 +1,47 @@
+question = """
+In a factory, there are 300 employees. 200 of them earn $12 per hour. Of the rest, 40 of them earn $14 per hour. All others earn $17 per hour. What is the cost to employ all these people for one 8-hour long shift?
+"""
+
+answer = """
+The cost of the 200 employees is 200 employees * $12/employee/hour = $<<200*12=2400>>2400 per hour.
+The cost of the 40 employees is 40 employees * $14/employee/hour = $<<40*14=560>>560 per hour.
+The rest means 300 employees - 200 employees - 40 employees = <<300-200-40=60>>60 employees.
+These 60 employees' employment costs are at 60 employees * $17/employee/hour = $<<60*17=1020>>1020 per hour.
+So in total all employees earn $2400/hour + $560/hour + $1020/hour = $3980/hour.
+During an 8-hour shift, this cost would be at 8 hours * $3980/hour = $<<8*3980=31840>>31,840.
+#### 31840
+"""
+
+id_orig = 2374
+id_shuffled = 2733
+
+question_annotated = """
+In a factory, there are {n,300} employees. {n1,200} of them earn ${r1,12} per hour. Of the rest, {n2,40} of them earn ${r2,14} per hour. All others earn ${r3,17} per hour. What is the cost to employ all these people for one 8-hour long shift?
+
+#init:
+- $n = range(300, 1200, 100)
+- $n1 = range(50, 500, 50)
+- $n2 = range(10, 100, 10)
+- $r1 = range(8, 17, 2)
+- $r2 = range(10, 19, 2)
+- $r3 = range(13, 22, 2)
+
+#conditions:
+- n1 + n2 < n
+
+#answer: 8 * (n1 * r1 + n2 * r2 + (n - n1 - n2) * r3)
+"""
+
+answer_annotated = """
+The cost of the {n1} employees is {n1} employees * ${r1}/employee/hour = $<<{n1}*{r1}={n1*r1}>>{n1*r1} per hour.
+The cost of the {n2} employees is {n2} employees * ${r2}/employee/hour = $<<{n2}*{r2}={n2*r2}>>{n2*r2} per hour.
+The rest means {n} employees - {n1} employees - {n2} employees = <<{n}-{n1}-{n2}={n-n1-n2}>>{n-n1-n2} employees.
+These {n-n1-n2} employees' employment costs are at {n-n1-n2} employees * ${r3}/employee/hour = $<<{n-n1-n2}*{r3}={(n-n1-n2)*r3}>>{(n-n1-n2)*r3} per hour.
+So in total all employees earn ${n1*r1}/hour + ${n2*r2}/hour + ${(n-n1-n2)*r3}/hour = ${n1*r1+n2*r2+(n-n1-n2)*r3}/hour.
+During an 8-hour shift, this cost would be at 8 hours * ${n1*r1+n2*r2+(n-n1-n2)*r3}/hour = $<<8*{n1*r1+n2*r2+(n-n1-n2)*r3}={8*(n1*r1+n2*r2+(n-n1-n2)*r3)}>>{8*(n1*r1+n2*r2+(n-n1-n2)*r3)}.
+#### {8*(n1*r1+n2*r2+(n-n1-n2)*r3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

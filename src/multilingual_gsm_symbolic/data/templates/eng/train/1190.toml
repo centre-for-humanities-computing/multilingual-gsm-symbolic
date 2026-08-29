@@ -1,0 +1,42 @@
+question = """
+Janice adds 2 tablespoons of koolaid power and 16 tablespoons of water to a jug. She leaves it out long enough for 4 tablespoons of water to evaporate. Then she quadruples the amount of water in the jug. What percentage of the liquid in the jug is koolaid powder?
+"""
+
+answer = """
+First find how many tablespoons of water are left after the evaporation: 16 tbs - 4 tbs = <<16-4=12>>12 tbs
+Then multiply this number by 4 to find how much water is in the jug after Janice refills it: 12 tbs * 4 = <<12*4=48>>48 tbs
+Now add the 2 tablespoons of koolaid powder to find the total volume of the liquid in the jug: 48 tbs + 2 tbs = <<48+2=50>>50 tbs
+Now divide the volume of the koolaid powder by the total volume and multiply by 100% to find the percentage of the liquid that's koolaid: 2 tbs / 50 tbs * 100% = 4%
+#### 4
+"""
+
+id_orig = 1094
+id_shuffled = 1190
+
+question_annotated = """
+{name,Janice} adds {p,2} tablespoons of koolaid power and {w,16} tablespoons of water to a jug. She leaves it out long enough for {e,4} tablespoons of water to evaporate. Then she quadruples the amount of water in the jug. What percentage of the liquid in the jug is koolaid powder?
+
+#init:
+- name = sample(["Janice", "Karen", "Linda", "Nancy"])
+- $p = range(1, 31)
+- $w = range(16, 116)
+- $e = range(1, 16)
+
+#conditions:
+- w > e
+- is_int(100 * p / (4 * (w - e) + p))
+
+#answer: int(100 * p / (4 * (w - e) + p))
+"""
+
+answer_annotated = """
+First find how many tablespoons of water are left after the evaporation: {w} tbs - {e} tbs = <<{w}-{e}={w-e}>>{w-e} tbs
+Then multiply this number by 4 to find how much water is in the jug after {name} refills it: {w-e} tbs * 4 = <<{w-e}*4={4*(w-e)}>>{4*(w-e)} tbs
+Now add the {p} tablespoons of koolaid powder to find the total volume of the liquid in the jug: {4*(w-e)} tbs + {p} tbs = <<{4*(w-e)}+{p}={4*(w-e)+p}>>{4*(w-e)+p} tbs
+Now divide the volume of the koolaid powder by the total volume and multiply by 100% to find the percentage of the liquid that's koolaid: {p} tbs / {4*(w-e)+p} tbs * 100% = {int(100 * p / (4 * (w - e) + p))}%
+#### {int(100 * p / (4 * (w - e) + p))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

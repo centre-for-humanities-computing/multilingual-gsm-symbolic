@@ -1,0 +1,40 @@
+question = """
+James decides to replace his car.  He sold his $20,000 car for 80% of its value and then was able to haggle to buy a $30,000 sticker price car for 90% of its value.  How much was he out of pocket?
+"""
+
+answer = """
+He sold his car for 20,000*.8=$<<20000*.8=16000>>16,000
+He bought the new car for 30,000*.9=$<<30000*.9=27000>>27,000
+That means he was out of pocket 27,000-16,000=$<<27000-16000=11000>>11,000
+#### 11000
+"""
+
+id_orig = 177
+id_shuffled = 348
+
+question_annotated = """
+{name,James} decides to replace his car.  He sold his ${p_old,20000} car for 80% of its value and then was able to haggle to buy a ${p_new,30000} sticker price car for 90% of its value.  How much was he out of pocket?
+
+#init:
+- name = sample(["James", "Chris", "Oliver", "Noah", "Eric"])
+- $p_old = range(10000, 100001, 500)
+- $p_new = range(10000, 100001, 500)
+
+#conditions:
+- divides(p_old * 80, 100)
+- divides(p_new * 90, 100)
+- p_new * 9 // 10 - p_old * 4 // 5 > 0
+
+#answer: p_new * 9 // 10 - p_old * 4 // 5
+"""
+
+answer_annotated = """
+He sold his car for {p_old}*.8=$<<{p_old}*.8={p_old*4//5}>>{p_old*4//5}
+He bought the new car for {p_new}*.9=$<<{p_new}*.9={p_new*9//10}>>{p_new*9//10}
+That means he was out of pocket {p_new*9//10}-{p_old*4//5}=$<<{p_new*9//10}-{p_old*4//5}={p_new*9//10-p_old*4//5}>>{p_new*9//10-p_old*4//5}
+#### {p_new * 9 // 10 - p_old * 4 // 5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,49 @@
+question = """
+Going into the final game, Duke is so close to breaking the school's record for most points scored in a basketball season. He only needs 17 more points to tie the record. By the end of the game, Duke breaks the record by 5 points. The old record was 257 points. In the final game Duke made 5 free throws (worth one point), and 4 regular baskets (worth two points), and some three-pointers. Normally, he scores 2 three-pointers a game. How many more three-pointers did he score in the final game compared to his normal amount?
+"""
+
+answer = """
+Duke scored 22 points in the final game because 17 + 5 = <<17+5=22>>22
+He scored 5 points of free-throws, because 5 x 1 = <<5*1=5>>5
+He scored 8 points of regular baskets because 4 x 2 = <<4*2=8>>8
+He made 9 points of three-pointers because 22 - 5 - 8 = <<22-5-8=9>>9
+He scored 3 three-pointers in the final game because 9 / 3 = <<9/3=3>>3
+Duke scored 1 more than normal because 3 - 2 = <<3-2=1>>1
+#### 1
+"""
+
+id_orig = 2551
+id_shuffled = 2939
+
+question_annotated = """
+Going into the final game, {name,Duke} is so close to breaking the school's record for most points scored in a basketball season. He only needs {need,17} more points to tie the record. By the end of the game, {name,Duke} breaks the record by {margin,5} points. The old record was {record,257} points. In the final game {name,Duke} made {fts,5} free throws (worth one point), and {baskets,4} regular baskets (worth two points), and some three-pointers. Normally, he scores {normal,2} three-pointers a game. How many more three-pointers did he score in the final game compared to his normal amount?
+
+#init:
+- name = sample(names_male)
+- $need = range(5, 25)
+- $margin = range(1, 11)
+- $record = range(251, 264)
+- $fts = range(1, 7)
+- $baskets = range(1, 7)
+- $normal = range(1, 4)
+
+#conditions:
+- divides(need + margin - fts - 2*baskets, 3)
+- (need + margin - fts - 2*baskets)//3 > normal
+
+#answer: (need + margin - fts - 2*baskets)//3 - normal
+"""
+
+answer_annotated = """
+{name} scored {need + margin} points in the final game because {need} + {margin} = <<{need}+{margin}={need + margin}>>{need + margin}
+He scored {fts} points of free-throws, because {fts} x 1 = <<{fts}*1={fts}>>{fts}
+He scored {2*baskets} points of regular baskets because {baskets} x 2 = <<{baskets}*2={2*baskets}>>{2*baskets}
+He made {need + margin - fts - 2*baskets} points of three-pointers because {need + margin} - {fts} - {2*baskets} = <<{need + margin}-{fts}-{2*baskets}={need + margin - fts - 2*baskets}>>{need + margin - fts - 2*baskets}
+He scored {(need + margin - fts - 2*baskets)//3} three-pointers in the final game because {need + margin - fts - 2*baskets} / 3 = <<{need + margin - fts - 2*baskets}/3={(need + margin - fts - 2*baskets)//3}>>{(need + margin - fts - 2*baskets)//3}
+{name} scored {(need + margin - fts - 2*baskets)//3 - normal} more than normal because {(need + margin - fts - 2*baskets)//3} - {normal} = <<{(need + margin - fts - 2*baskets)//3}-{normal}={(need + margin - fts - 2*baskets)//3 - normal}>>{(need + margin - fts - 2*baskets)//3 - normal}
+#### {(need + margin - fts - 2*baskets)//3 - normal}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

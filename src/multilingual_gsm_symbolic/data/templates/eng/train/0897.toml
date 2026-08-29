@@ -1,0 +1,40 @@
+question = """
+Mark buys a loaf of bread for $4.20 and some cheese for $2.05. He gives the cashier $7.00. If the cashier only has 1 quarter and 1 dime in his till, plus a bunch of nickels, how many nickels does Mark get in his change?
+"""
+
+answer = """
+First subtract the cost of Mark's groceries from the amount he gives the cashier to find how much he gets in change: $7.00 - $4.20 - $2.05 = $<<7-4.2-2.05=0.75>>0.75
+Then subtract the value of a quarter in cents (25) and the value of a dime in cents (10) from the change amount to find how much Mark gets paid in nickels: $0.75 - $0.25 - $0.10 = $<<0.75-0.25-0.10=0.40>>0.40
+Now divide the amount Mark gets in nickels by the value per nickel in cents (5) to find how many nickels Mark gets: $0.40 / $0.05/nickel = <<0.40/0.05=8>>8 nickels
+#### 8
+"""
+
+id_orig = 234
+id_shuffled = 897
+
+question_annotated = """
+{name,Mark} buys a loaf of bread for ${bw,4}.20 and some cheese for ${cw,2}.05. He gives the cashier ${g,7}.00. If the cashier only has 1 quarter and 1 dime in his till, plus a bunch of nickels, how many nickels does {name,Mark} get in his change?
+
+#init:
+- name = sample(names_male)
+- $bw = range(2, 7)
+- $cw = range(1, 6)
+- $g = range(5, 50)
+
+#conditions:
+- g > bw + cw
+- g - bw - cw <= 10
+
+#answer: 20*(g - bw - cw) - 12
+"""
+
+answer_annotated = """
+First subtract the cost of {name}'s groceries from the amount he gives the cashier to find how much he gets in change: ${g}.00 - ${bw}.20 - ${cw}.05 = $<<{g}-{bw}.2-{cw}.05={g-bw-cw-1}.75>>{g-bw-cw-1}.75
+Then subtract the value of a quarter in cents (25) and the value of a dime in cents (10) from the change amount to find how much {name} gets paid in nickels: ${g-bw-cw-1}.75 - $0.25 - $0.10 = $<<{g-bw-cw-1}.75-0.25-0.10={g-bw-cw-1}.40>>{g-bw-cw-1}.40
+Now divide the amount {name} gets in nickels by the value per nickel in cents (5) to find how many nickels {name} gets: ${g-bw-cw-1}.40 / $0.05/nickel = <<{g-bw-cw-1}.40/0.05={20*(g-bw-cw)-12}>>{20*(g-bw-cw)-12} nickels
+#### {20*(g-bw-cw)-12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

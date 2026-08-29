@@ -1,0 +1,45 @@
+question = """
+Silvia wants to buy a new guitar online. The price of the guitar has a suggested retail price of $1000. Guitar Center has a special deal of 15% off but has a shipping fee of $100. Sweetwater has a 10% off deal with free shipping. How much will she save by buying from the cheaper store compared to the other store?
+"""
+
+answer = """
+The discount saved when buying from Guitar Center would be $1000 * 15% = $<<1000*15*.01=150>>150.
+The total cost when buying from Guitar Center would be $1000 - $150 discount + $100 shipping = $950.
+The discount when buying from Sweetwater would be $1000 * 10% = $<<1000*10*.01=100>>100.
+The total cost when buying from Sweetwater would be $1000 - $100 discount + $0 shipping = $<<1000-100-0=900>>900.
+Thus, Silvia would save $950 - $900 = $<<950-900=50>>50 when buying from Sweetwater.
+#### 50
+"""
+
+id_orig = 1799
+id_shuffled = 1998
+
+question_annotated = """
+{name,Silvia} wants to buy a new guitar online. The price of the guitar has a suggested retail price of ${p,1000}. Guitar Center has a special deal of {g,15}% off but has a shipping fee of ${s,100}. Sweetwater has a {w,10}% off deal with free shipping. How much will she save by buying from the cheaper store compared to the other store?
+
+#init:
+- name = sample(names_female)
+- $p = range(100, 1100, 100)
+- $g = range(5, 55, 5)
+- $w = range(5, 50, 5)
+- $s = range(10, 320, 10)
+
+#conditions:
+- g > w
+- s > p*g//100 - p*w//100
+
+#answer: s - p*g//100 + p*w//100
+"""
+
+answer_annotated = """
+The discount saved when buying from Guitar Center would be ${p} * {g}% = $<<{p}*{g}*.01={p*g//100}>>{p*g//100}.
+The total cost when buying from Guitar Center would be ${p} - ${p*g//100} discount + ${s} shipping = ${p - p*g//100 + s}.
+The discount when buying from Sweetwater would be ${p} * {w}% = $<<{p}*{w}*.01={p*w//100}>>{p*w//100}.
+The total cost when buying from Sweetwater would be ${p} - ${p*w//100} discount + $0 shipping = $<<{p}-{p*w//100}-0={p - p*w//100}>>{p - p*w//100}.
+Thus, {name} would save ${p - p*g//100 + s} - ${p - p*w//100} = $<<{p - p*g//100 + s}-{p - p*w//100}={s - p*g//100 + p*w//100}>>{s - p*g//100 + p*w//100} when buying from Sweetwater.
+#### {s - p*g//100 + p*w//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Adam earns $40 daily in his job. 10% of his money is deducted as taxes. How much money will Adam have earned after taxes after 30 days of work?
+"""
+
+answer = """
+The amount of money deducted from Adam's daily pay is $40 / 10 = $<<40/10=4>>4.
+So after deducting 10%, Adam’s daily pay is $40 – $4 = $<<40-4=36>>36.
+This means that in 30 days he earns $36 * 30 = $<<36*30=1080>>1080.
+#### 1,080
+"""
+
+id_orig = 345
+id_shuffled = 398
+
+question_annotated = """
+{name,Adam} earns ${d,40} daily in his job. {t,10}% of his money is deducted as taxes. How much money will {name,Adam} have earned after taxes after {n,30} days of work?
+
+#init:
+- name = sample(names_male)
+- $d = range(20, 201)
+- $t = range(2, 26)
+- $n = range(10, 61)
+
+#conditions:
+- divides(d, t)
+- (d - d//t) * n >= 1000
+- (d - d//t) * n <= 9999
+
+#answer: (d - d//t) * n
+"""
+
+answer_annotated = """
+The amount of money deducted from {name}'s daily pay is ${d} / {t} = $<<{d}/{t}={d//t}>>{d//t}.
+So after deducting {t}%, {name}’s daily pay is ${d} – ${d//t} = $<<{d}-{d//t}={d-d//t}>>{d-d//t}.
+This means that in {n} days he earns ${d-d//t} * {n} = $<<{d-d//t}*{n}={(d-d//t)*n}>>{(d-d//t)*n}.
+#### {(d-d//t)*n//1000},{(d-d//t)*n%1000//100}{(d-d//t)*n%100//10}{(d-d//t)*n%10}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+John writes 3 stories every week.  Each short story is 50 pages.  He also writes a novel that is 1200 pages each year.  Each sheet of paper can hold 2 pages.  Over 12 weeks, how many reams of paper does he need to buy if a ream contains 500 sheets?
+"""
+
+answer = """
+He writes 3*50=<<3*50=150>>150 pages a week
+That means he writes 150*52=<<150*52=7800>>7800 pages of short stories a year
+So he writes 7800+1200=<<7800+1200=9000>>9000 pages a year
+So he needs 9000/2=<<9000/2=4500>>4500 sheets of paper
+That means he needs 4500/500=<<4500/500=9>>9 reams of paper
+#### 3
+"""
+
+id_orig = 786
+id_shuffled = 859
+
+question_annotated = """
+{name,John} writes {s,3} stories every week.  Each short story is {p,50} pages.  He also writes a novel that is {n,1200} pages each year.  Each sheet of paper can hold 2 pages.  Over 12 weeks, how many reams of paper does he need to buy if a ream contains 500 sheets?
+
+#init:
+- name = sample(names_male)
+- $s = range(2, 12)
+- $p = range(25, 225, 25)
+- $n = range(200, 2600, 200)
+
+#conditions:
+- divides(s*p*52 + n, 1000)
+
+#answer: ((s*p*12+n)//2)//500
+"""
+
+answer_annotated = """
+He writes {s}*{p}=<<{s}*{p}={s*p}>>{s*p} pages a week
+That means he writes {s*p}*52=<<{s*p}*52={s*p*52}>>{s*p*52} pages of short stories a year
+So he writes {s*p*52}+{n}=<<{s*p*52}+{n}={s*p*52+n}>>{s*p*52+n} pages a year
+So he needs {s*p*52+n}/2=<<{s*p*52+n}/2={(s*p*52+n)//2}>>{(s*p*52+n)//2} sheets of paper
+That means he needs {(s*p*52+n)//2}/500=<<{(s*p*52+n)//2}/500={(s*p*52+n)//1000}>>{(s*p*52+n)//1000} reams of paper
+#### {((s*p*12+n)//2)//500}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

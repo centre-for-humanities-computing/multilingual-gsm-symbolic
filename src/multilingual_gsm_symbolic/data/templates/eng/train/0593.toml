@@ -1,0 +1,44 @@
+question = """
+There are 25 different layers of rock in a canyon’s strata. Five of the layers are limestone. Half of the rest are sandstone. Four of the remaining are quartz. Half of the rest are shale. The rest are all different kinds of rock. How many kinds of rock make up only one layer in the canyon’s strata?
+"""
+
+answer = """
+There are 25 - 5 = <<25-5=20>>20 layers of rock that are not limestone.
+Half of those 20 are sandstone, so there are 20 / 2 = <<20/2=10>>10 that are not limestone or sandstone.
+Four of those are quartz, so 10 - 4 = <<10-4=6>>6 layers are not limestone, sandstone, or quartz.
+Half of the rest are shale, so 6 / 2 = <<6/2=3>>3 kinds of rock remain that make up only one layer in the strata.
+#### 3
+"""
+
+id_orig = 520
+id_shuffled = 593
+
+question_annotated = """
+There are {t,25} different layers of rock in a canyon’s strata. {lw,Five} of the layers are limestone. Half of the rest are sandstone. {qw,Four} of the remaining are quartz. Half of the rest are shale. The rest are all different kinds of rock. How many kinds of rock make up only one layer in the canyon’s strata?
+
+#init:
+- $t = range(20, 300)
+- lw, l = sample([("Five", 5), ("Six", 6), ("Seven", 7), ("Eight", 8), ("Nine", 9), ("Ten", 10)])
+- qw, q = sample([("Four", 4), ("Five", 5), ("Six", 6)])
+
+#conditions:
+- t > l + 16
+- divides(t - l, 2)
+- (t - l)//2 > q
+- (t - l)//2 - q >= 2
+- divides((t - l)//2 - q, 2)
+
+#answer: ((t - l)//2 - q)//2
+"""
+
+answer_annotated = """
+There are {t} - {l} = <<{t}-{l}={t-l}>>{t-l} layers of rock that are not limestone.
+Half of those {t-l} are sandstone, so there are {t-l} / 2 = <<{t-l}/2={(t-l)//2}>>{(t-l)//2} that are not limestone or sandstone.
+{qw} of those are quartz, so {(t-l)//2} - {q} = <<{(t-l)//2}-{q}={(t-l)//2-q}>>{(t-l)//2-q} layers are not limestone, sandstone, or quartz.
+Half of the rest are shale, so {(t-l)//2-q} / 2 = <<{(t-l)//2-q}/2={((t-l)//2-q)//2}>>{((t-l)//2-q)//2} kinds of rock remain that make up only one layer in the strata.
+#### {((t-l)//2-q)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

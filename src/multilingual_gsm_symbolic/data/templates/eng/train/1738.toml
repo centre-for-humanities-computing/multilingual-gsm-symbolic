@@ -1,0 +1,47 @@
+question = """
+John is a door-to-door salesman.  He visits 50 houses a day.  20% of them buy something from them.  Of those that buy something half buy a $50 set of knives and the other half buy a $150 set of knives.  How much does he sell a week when he works 5 days a week?
+"""
+
+answer = """
+There are 50*.2=<<50*.2=10>>10 houses buying from him per day
+Of those 10/2=<<10/2=5>>5 buy each type of knife set
+So he gets 5*50=$<<5*50=250>>250 per day from the cheap set
+He also gets 5*150=$<<5*150=750>>750 from the expensive set
+So he makes a total of 250+750=$<<250+750=1000>>1000 per day
+That means he makes 1000*5=$<<1000*5=5000>>5000
+#### 5000
+"""
+
+id_orig = 1613
+id_shuffled = 1738
+
+question_annotated = """
+{name,John} is a door-to-door salesman.  He visits {h,50} houses a day.  20% of them buy something from them.  Of those that buy something half buy a ${c,50} set of knives and the other half buy a ${e,150} set of knives.  How much does he sell a week when he works {d,5} days a week?
+
+#init:
+- name = sample(names_male)
+- $h = range(50, 210, 50)
+- $c = range(10, 210, 10)
+- $e = range(30, 320, 10)
+- $d = range(2, 8)
+
+#conditions:
+- e > c
+- divides(h//5, 2)
+
+#answer: (h//10*c + h//10*e)*d
+"""
+
+answer_annotated = """
+There are {h}*.2=<<{h}*.2={h//5}>>{h//5} houses buying from him per day
+Of those {h//5}/2=<<{h//5}/2={h//10}>>{h//10} buy each type of knife set
+So he gets {h//10}*{c}=$<<{h//10}*{c}={h//10*c}>>{h//10*c} per day from the cheap set
+He also gets {h//10}*{e}=$<<{h//10}*{e}={h//10*e}>>{h//10*e} from the expensive set
+So he makes a total of {h//10*c}+{h//10*e}=$<<{h//10*c}+{h//10*e}={h//10*c + h//10*e}>>{h//10*c + h//10*e} per day
+That means he makes {h//10*c + h//10*e}*{d}=$<<{h//10*c + h//10*e}*{d}={(h//10*c + h//10*e)*d}>>{(h//10*c + h//10*e)*d}
+#### {(h//10*c + h//10*e)*d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+A liter of chlorine costs $10 and is now sold at 20% off. A box of soap that costs $16 is now sold at 25% off. How much will you save if you buy 3 liters of chlorine and 5 boxes of soap?
+"""
+
+answer = """
+For each liter of chlorine, I can save $10 x .20 = $<<10*.20=2>>2.
+For each box of soap, I can save $16 x .25 = $<<16*.25=4>>4.
+With the 3 liters of chlorine, I can save $2 x 3 = $<<3*2=6>>6.
+With the 5 boxes of soap, I can save $4 x 5 = $<<4*5=20>>20.
+Therefore, I can save a total of $6 + $20 = $<<6+20=26>>26.
+#### 26
+"""
+
+id_orig = 2888
+id_shuffled = 3450
+
+question_annotated = """
+A liter of chlorine costs ${cp,10} and is now sold at {dc,20}% off. A box of soap that costs ${sp,16} is now sold at {ds,25}% off. How much will you save if you buy {nc,3} liters of chlorine and {ns,5} boxes of soap?
+
+#init:
+- $cp = range(2, 32, 2)
+- $dc = range(10, 100, 5)
+- $sp = range(2, 32, 2)
+- $ds = range(10, 100, 5)
+- $nc = range(2, 6)
+- $ns = range(2, 6)
+
+#conditions:
+- divides(cp * dc, 100)
+- divides(sp * ds, 100)
+
+#answer: nc * cp * dc // 100 + ns * sp * ds // 100
+"""
+
+answer_annotated = """
+For each liter of chlorine, I can save ${cp} x .{dc} = $<<{cp}*.{dc}={cp*dc//100}>>{cp*dc//100}.
+For each box of soap, I can save ${sp} x .{ds} = $<<{sp}*.{ds}={sp*ds//100}>>{sp*ds//100}.
+With the {nc} liters of chlorine, I can save ${cp*dc//100} x {nc} = $<<{nc}*{cp*dc//100}={nc*cp*dc//100}>>{nc*cp*dc//100}.
+With the {ns} boxes of soap, I can save ${sp*ds//100} x {ns} = $<<{sp*ds//100}*{ns}={ns*sp*ds//100}>>{ns*sp*ds//100}.
+Therefore, I can save a total of ${nc*cp*dc//100} + ${ns*sp*ds//100} = $<<{nc*cp*dc//100}+{ns*sp*ds//100}={nc*cp*dc//100 + ns*sp*ds//100}>>{nc*cp*dc//100 + ns*sp*ds//100}.
+#### {nc*cp*dc//100 + ns*sp*ds//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

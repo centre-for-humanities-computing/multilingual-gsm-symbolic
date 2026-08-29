@@ -1,0 +1,46 @@
+question = """
+Andy gets a cavity for every 4 candy canes he eats. He gets 2 candy canes from his parents and 3 candy canes each from 4 teachers. Then he uses his allowance to buy 1/7 as many candy canes as he was given. How many cavities does he get from eating all his candy canes?
+"""
+
+answer = """
+First find how many candy canes Andy gets from his teachers: 3 canes/teacher * 4 teachers = <<3*4=12>>12 canes
+Then add the number of candy canes he gets from his parents: 12 canes + 2 canes = <<12+2=14>>14 canes
+Then divide that number by 7 to find the number of canes he buys: 14 canes / 7 = <<14/7=2>>2 canes
+Then add the number of candy canes he gets from each source to find the total number: 2 canes + 14 canes = <<2+14=16>>16 canes
+Then divide the total number of candy canes by the number of candy canes it takes to get one cavity to find the number of cavities Andy gets: 16 canes / 4 canes/cavity = <<16/4=4>>4 cavities
+#### 16
+"""
+
+id_orig = 3263
+id_shuffled = 3876
+
+question_annotated = """
+{name,Andy} gets a cavity for every {cav,4} candy canes he eats. He gets {p,2} candy canes from his parents and {t,3} candy canes each from {n,4} teachers. Then he uses his allowance to buy 1/{f,7} as many candy canes as he was given. How many cavities does he get from eating all his candy canes?
+
+#init:
+- name = sample(names_male)
+- $cav = range(2, 10)
+- $p = range(2, 20)
+- $t = range(2, 10)
+- $n = range(2, 10)
+- $f = range(2, 10)
+
+#conditions:
+- divides(t * n + p, f)
+- divides(t * n + p + (t * n + p)//f, cav)
+
+#answer: t*n + p + (t*n + p)//f
+"""
+
+answer_annotated = """
+First find how many candy canes {name} gets from his teachers: {t} canes/teacher * {n} teachers = <<{t}*{n}={t*n}>>{t*n} canes
+Then add the number of candy canes he gets from his parents: {t*n} canes + {p} canes = <<{t*n}+{p}={t*n+p}>>{t*n+p} canes
+Then divide that number by {f} to find the number of canes he buys: {t*n+p} canes / {f} = <<{t*n+p}/{f}={(t*n+p)//f}>>{(t*n+p)//f} canes
+Then add the number of candy canes he gets from each source to find the total number: {(t*n+p)//f} canes + {t*n+p} canes = <<{(t*n+p)//f}+{t*n+p}={(t*n+p)//f+t*n+p}>>{(t*n+p)//f+t*n+p} canes
+Then divide the total number of candy canes by the number of candy canes it takes to get one cavity to find the number of cavities {name} gets: {(t*n+p)//f+t*n+p} canes / {cav} canes/cavity = <<{(t*n+p)//f+t*n+p}/{cav}={((t*n+p)//f+t*n+p)//cav}>>{((t*n+p)//f+t*n+p)//cav} cavities
+#### {t*n + p + (t*n + p)//f}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

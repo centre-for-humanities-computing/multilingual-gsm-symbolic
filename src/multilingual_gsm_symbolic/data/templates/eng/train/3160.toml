@@ -1,0 +1,47 @@
+question = """
+Lana and Mike are taking their dog and renting a cabin in the mountains for 2 weeks.  The daily rate is $125.00  There is a $100.00 pet fee.  There is also a 20% service/cleaning fee for the rental.  They need to pay 50% of the entire bill as a security deposit.  How much is their security deposit?
+"""
+
+answer = """
+There are 7 days in a week and they're going for 2 weeks so that's 7*2 = <<7*2=14>>14 days
+The daily rate is $125.00 and they are staying for 14 days so that's 125*14 = $<<125*14=1750.00>>1,750.00
+There is also a $100.00 pet fee on top of their rental fee of $1,750.00 so that's 100+1750 = $<<100+1750=1850.00>>1850.00
+There is a 20% fee on the $1,850.00 so the fee comes to .20*1850 = $370.00
+The rental will costs $1,850.00 and there is $370.00 service/cleaning fee for a total of 1850+370 = $<<1850+370=2220.00>>2,220.00
+They need to pay 50% of the entire bill as a security deposit so that will be .5*2220 = $<<50*.01*2220=1110.00>>1,110.00
+#### 1110
+"""
+
+id_orig = 2685
+id_shuffled = 3160
+
+question_annotated = """
+Lana and Mike are taking their dog and renting a cabin in the mountains for {w,2} weeks.  The daily rate is ${rate,125}.00  There is a ${pet,100}.00 pet fee.  There is also a {pct,20}% service/cleaning fee for the rental.  They need to pay {dep_pct,50}% of the entire bill as a security deposit.  How much is their security deposit?
+
+#init:
+- $w = range(2, 5)
+- $rate = range(50, 205, 25)
+- $pet = range(50, 151, 25)
+- $pct = range(10, 31, 10)
+- $dep_pct = range(10, 51, 10)
+
+#conditions:
+- divides(pct * (pet + 7*w*rate), 100)
+- divides(dep_pct * (pet + 7*w*rate + pct*(pet + 7*w*rate)//100), 100)
+
+#answer: dep_pct * (pet + 7*w*rate + pct*(pet + 7*w*rate)//100) // 100
+"""
+
+answer_annotated = """
+There are 7 days in a week and they're going for {w} weeks so that's 7*{w} = <<7*{w}={7*w}>>{7*w} days
+The daily rate is ${rate}.00 and they are staying for {7*w} days so that's {rate}*{7*w} = $<<{rate}*{7*w}={rate*7*w}.00>>1,750.00
+There is also a ${pet}.00 pet fee on top of their rental fee of $1,750.00 so that's {pet}+{rate*7*w} = $<<{pet}+{rate*7*w}={pet+rate*7*w}.00>>{pet+rate*7*w}.00
+There is a {pct}% fee on the $1,850.00 so the fee comes to .{pct}*{pet+rate*7*w} = ${pct*(pet+rate*7*w)//100}.00
+The rental will costs $1,850.00 and there is ${pct*(pet+rate*7*w)//100}.00 service/cleaning fee for a total of {pet+rate*7*w}+{pct*(pet+rate*7*w)//100} = $<<{pet+rate*7*w}+{pct*(pet+rate*7*w)//100}={pet+rate*7*w+pct*(pet+rate*7*w)//100}.00>>2,220.00
+They need to pay {dep_pct}% of the entire bill as a security deposit so that will be .{dep_pct//10}*{pet+rate*7*w+pct*(pet+rate*7*w)//100} = $<<{dep_pct}*.01*{pet+rate*7*w+pct*(pet+rate*7*w)//100}={dep_pct*(pet+rate*7*w+pct*(pet+rate*7*w)//100)//100}.00>>1,110.00
+#### {dep_pct*(pet+rate*7*w+pct*(pet+rate*7*w)//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

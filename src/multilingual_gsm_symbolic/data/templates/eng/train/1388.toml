@@ -1,0 +1,39 @@
+question = """
+Sam bought a heavy safe with a combination lock. There were four rows with twenty gold bars per row arranged in the safe. If each gold bar is worth $20,000, calculate the total worth of the gold bars in the safe.
+"""
+
+answer = """
+If there were four rows of twenty gold bars arranged in the safe, the total number of bars in the safe is 4*20 = <<4*20=80>>80 bars.
+Since each gold bar is worth $20,000, the 80 bars are worth 80*$20,000 = $<<80*20000=1600000>>1,600,000
+#### 1600000
+"""
+
+id_orig = 1281
+id_shuffled = 1388
+
+question_annotated = """
+{name,Sam} bought a heavy safe with a combination lock. There were {rows_txt,four} rows with {bars_txt,twenty} gold bars per row arranged in the safe. If each gold bar is worth ${p,20},000, calculate the total worth of the gold bars in the safe.
+
+#init:
+- name = sample(names_male)
+- rows_txt, r = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9)])
+- bars_txt, b = sample([("ten", 10), ("eleven", 11), ("twelve", 12), ("thirteen", 13), ("fourteen", 14), ("fifteen", 15), ("sixteen", 16), ("seventeen", 17), ("eighteen", 18), ("nineteen", 19), ("twenty", 20)])
+- $p = range(5, 55, 5)
+
+#conditions:
+- r * b * p >= 1000
+- r * b * p < 1000000
+- r * b * p % 1000 >= 100
+
+#answer: r * b * p * 1000
+"""
+
+answer_annotated = """
+If there were {rows_txt} rows of {bars_txt} gold bars arranged in the safe, the total number of bars in the safe is {r}*{b} = <<{r}*{b}={r*b}>>{r*b} bars.
+Since each gold bar is worth ${p},000, the {r*b} bars are worth {r*b}*${p},000 = $<<{r*b}*{p*1000}={r*b*p*1000}>>{(r*b*p)//1000},{r*b*p%1000},000
+#### {r*b*p*1000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

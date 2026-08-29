@@ -1,0 +1,41 @@
+question = """
+Out of the 150 students, 60% are girls and the rest are boys. Only 1/3 of the boys joined varsity clubs. How many of the boys did not join varsity clubs?
+"""
+
+answer = """
+Out of the 150 students, 100% - 60% = 40% are boys.
+So, there are 150 x 40/100 = <<150*40/100=60>>60 boys.
+Out of the 60 boys, 60 x 1/3 = <<60*1/3=20>>20 joined varsity clubs.
+Therefore, 60 - 20 = <<60-20=40>>40 boys did not join varsity clubs.
+#### 40
+"""
+
+id_orig = 3375
+id_shuffled = 4000
+
+question_annotated = """
+Out of the {total,150} students, {g,60}% are girls and the rest are boys. Only {frac_txt,1/3} of the boys joined varsity clubs. How many of the boys did not join varsity clubs?
+
+#init:
+- $total = range(50, 2050, 50)
+- $g = range(10, 96, 5)
+- frac_txt, n = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5)])
+
+#conditions:
+- divides(total * (100-g), 100)
+- divides(total * (100-g) // 100, n)
+
+#answer: total*(100-g)//100 - total*(100-g)//100//n
+"""
+
+answer_annotated = """
+Out of the {total} students, 100% - {g}% = {100-g}% are boys.
+So, there are {total} x {100-g}/100 = <<{total}*{100-g}/100={total*(100-g)//100}>>{total*(100-g)//100} boys.
+Out of the {total*(100-g)//100} boys, {total*(100-g)//100} x 1/{n} = <<{total*(100-g)//100}*1/{n}={total*(100-g)//100//n}>>{total*(100-g)//100//n} joined varsity clubs.
+Therefore, {total*(100-g)//100} - {total*(100-g)//100//n} = <<{total*(100-g)//100}-{total*(100-g)//100//n}={total*(100-g)//100 - total*(100-g)//100//n}>>{total*(100-g)//100 - total*(100-g)//100//n} boys did not join varsity clubs.
+#### {total*(100-g)//100 - total*(100-g)//100//n}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

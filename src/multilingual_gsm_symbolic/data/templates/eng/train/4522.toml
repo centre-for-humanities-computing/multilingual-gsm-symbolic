@@ -1,0 +1,47 @@
+question = """
+There were a total of 50 guests in a movie screening of which half of the guests are women, 15 are men, and the rest are children. In the middle of the movie, 1/5 of the men and 4 children left. How many people stayed?
+"""
+
+answer = """
+Being women half of the guests, there were 50/2 = <<50/2=25>>25 women in the movie screening.
+Adding the 15 men to the number of women guests, there were 25 + 15 = <<25+15=40>>40 men and women.
+From a total of 50 guests, 50 - 40 = <<50-40=10>>10 were children.
+Knowing 1/5 of the men left, 15/5 = <<15/5=3>>3 men left.
+Thus, 3 men + 4 children = <<3+4=7>>7 people left in all.
+Therefore, 50 - 7 = <<50-7=43>>43 people stayed.
+#### 43
+"""
+
+id_orig = 3828
+id_shuffled = 4522
+
+question_annotated = """
+There were a total of {total,50} guests in a movie screening of which half of the guests are women, {men,15} are men, and the rest are children. In the middle of the movie, 1/{f,5} of the men and {cleft,4} children left. How many people stayed?
+
+#init:
+- $total = range(20, 212, 2)
+- $men = range(5, 100, 5)
+- $f = range(2, 10)
+- $cleft = range(1, 11)
+
+#conditions:
+- men * 2 < total
+- divides(men, f)
+- cleft <= total // 2 - men
+
+#answer: total - men // f - cleft
+"""
+
+answer_annotated = """
+Being women half of the guests, there were {total}/2 = <<{total}/2={total//2}>>{total//2} women in the movie screening.
+Adding the {men} men to the number of women guests, there were {total//2} + {men} = <<{total//2}+{men}={total//2+men}>>{total//2+men} men and women.
+From a total of {total} guests, {total} - {total//2+men} = <<{total}-{total//2+men}={total-total//2-men}>>{total-total//2-men} were children.
+Knowing 1/{f} of the men left, {men}/{f} = <<{men}/{f}={men//f}>>{men//f} men left.
+Thus, {men//f} men + {cleft} children = <<{men//f}+{cleft}={men//f+cleft}>>{men//f+cleft} people left in all.
+Therefore, {total} - {men//f+cleft} = <<{total}-{men//f+cleft}={total-men//f-cleft}>>{total-men//f-cleft} people stayed.
+#### {total - men // f - cleft}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

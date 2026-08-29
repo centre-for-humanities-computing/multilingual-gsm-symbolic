@@ -1,0 +1,38 @@
+question = """
+Brenda picks 250 peaches. When she sorts through them, only 60% are fresh, and Brenda has to throw 15 away for being too small. How many peaches does Brenda have left?
+"""
+
+answer = """
+First find how many of the peaches are fresh, which is 250 peaches * 60% = <<250*60*.01=150>>150 peaches.
+Then, subtract the number Brenda throws away after the fresh count, which is 150 peaches - 15 peaches = <<150-15=135>>135 peaches.
+#### 135
+"""
+
+id_orig = 765
+id_shuffled = 838
+
+question_annotated = """
+{name,Brenda} picks {total,250} peaches. When she sorts through them, only {pct,60}% are fresh, and {name,Brenda} has to throw {thrown,15} away for being too small. How many peaches does {name,Brenda} have left?
+
+#init:
+- name = sample(names_female)
+- $total = range(10, 260, 2)
+- $pct = range(5, 105, 5)
+- $thrown = range(5, 25)
+
+#conditions:
+- divides(total * pct, 100)
+- thrown < total * pct // 100
+
+#answer: total * pct // 100 - thrown
+"""
+
+answer_annotated = """
+First find how many of the peaches are fresh, which is {total} peaches * {pct}% = <<{total}*{pct}*.01={total*pct//100}>>{total*pct//100} peaches.
+Then, subtract the number {name} throws away after the fresh count, which is {total*pct//100} peaches - {thrown} peaches = <<{total*pct//100}-{thrown}={total*pct//100-thrown}>>{total*pct//100-thrown} peaches.
+#### {total*pct//100-thrown}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

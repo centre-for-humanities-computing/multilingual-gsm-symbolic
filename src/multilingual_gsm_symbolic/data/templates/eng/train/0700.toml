@@ -1,0 +1,38 @@
+question = """
+A chair costs 1/7 of the cost of a table. If a table costs $140, how much will it cost to buy a table and 4 chairs?
+"""
+
+answer = """
+One chair costs $140 x 1/7 = $<<140*1/7=20>>20.
+Four chairs cost $20 x 4 = $<<20*4=80>>80.
+So a table and 4 chairs cost $140 + $80 = $<<140+80=220>>220.
+#### 220
+"""
+
+id_orig = 627
+id_shuffled = 700
+
+question_annotated = """
+A chair costs {frac_txt,1/7} of the cost of a table. If a table costs ${t,140}, how much will it cost to buy a table and {k,4} chairs?
+
+#init:
+- frac_txt, f = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5), ("1/6", 6), ("1/7", 7), ("1/8", 8), ("1/9", 9), ("1/10", 10)])
+- num_word, k = sample([("Two", 2), ("Three", 3), ("Four", 4), ("Five", 5), ("Six", 6)])
+- $t = range(100, 10000, 10)
+
+#conditions:
+- divides(t, f)
+
+#answer: t + t//f*k
+"""
+
+answer_annotated = """
+One chair costs ${t} x {frac_txt} = $<<{t}*{frac_txt}={t//f}>>{t//f}.
+{num_word} chairs cost ${t//f} x {k} = $<<{t//f}*{k}={t//f*k}>>{t//f*k}.
+So a table and {k} chairs cost ${t} + ${t//f*k} = $<<{t}+{t//f*k}={t+t//f*k}>>{t+t//f*k}.
+#### {t+t//f*k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+Connor wanted to order some new books to read.  The website was offering free shipping over $50.00.  They also had a deal that when you buy 4 books; the first two were 25% off.  Book 1 cost 13.00 and Book 2 cost 15.00.  Book 3 & 4 were both $10.00 each.  How much more money did Connor need to spend to receive free shipping?
+"""
+
+answer = """
+Book 1 was $12.50 and book 2 was $15.00 so 13.00 +15.00 = $28.00
+He was buying 4 books, so these 2 were 25% off so 28.00 * .25 = $7.00
+These two books came out to 28-7 = $<<28-7=21.00>>21.00
+Books 3 & 4 were both $10 each so 2*10 = $20.00
+When you add all 4 books together, 21+20 = $<<21+20=41.00>>41.00
+To get free shipping he would need to spend 50-41 = $<<50-41=9.00>>9.00 more on books
+#### 9
+"""
+
+id_orig = 2289
+id_shuffled = 2637
+
+question_annotated = """
+{name,Connor} wanted to order some new books to read.  The website was offering free shipping over ${m,50}.00.  They also had a deal that when you buy 4 books; the first two were 25% off.  Book 1 cost {p1,13}.00 and Book 2 cost {p2,15}.00.  Book 3 & 4 were both ${q,10}.00 each.  How much more money did {name,Connor} need to spend to receive free shipping?
+
+#init:
+- name = sample(names_male)
+- $m = range(15, 75)
+- $p1 = range(4, 24)
+- $p2 = range(4, 24)
+- $q = range(4, 16)
+
+#conditions:
+- divides(p1 + p2, 4)
+- m > (p1 + p2) - (p1 + p2)//4 + 2*q
+
+#answer: m - (p1 + p2 - (p1 + p2)//4) - 2*q
+"""
+
+answer_annotated = """
+Book 1 was $12.50 and book 2 was ${p2}.00 so {p1}.00 +{p2}.00 = ${p1+p2}.00
+He was buying 4 books, so these 2 were 25% off so {p1+p2}.00 * .25 = ${(p1+p2)//4}.00
+These two books came out to {p1+p2}-{(p1+p2)//4} = $<<{p1+p2}-{(p1+p2)//4}={(p1+p2)-(p1+p2)//4}.00>>{(p1+p2)-(p1+p2)//4}.00
+Books 3 & 4 were both ${q} each so 2*{q} = ${2*q}.00
+When you add all 4 books together, {(p1+p2)-(p1+p2)//4}+{2*q} = $<<{(p1+p2)-(p1+p2)//4}+{2*q}={(p1+p2)-(p1+p2)//4+2*q}.00>>{(p1+p2)-(p1+p2)//4+2*q}.00
+To get free shipping he would need to spend {m}-{(p1+p2)-(p1+p2)//4+2*q} = $<<{m}-{(p1+p2)-(p1+p2)//4+2*q}={m-((p1+p2)-(p1+p2)//4+2*q)}.00>>{m-((p1+p2)-(p1+p2)//4+2*q)}.00 more on books
+#### {m-(p1+p2-(p1+p2)//4)-2*q}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

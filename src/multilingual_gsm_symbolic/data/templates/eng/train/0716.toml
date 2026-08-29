@@ -1,0 +1,40 @@
+question = """
+Veronica's flashlight was bright enough to be seen at night from a distance of 1000 feet.  Freddie's flashlight could be seen at night for a distance three times farther than Veronica's flashlight, and Velma's flashlight could be seen at night from a distance 2000 feet less than 5 times farther than Freddie's flashlight.  If Veronica's and Velma's flashlight were placed next to one another and turned on at night, how much farther, in feet, could Velma's flashlight be seen compared to Veronica's?
+"""
+
+answer = """
+Freddie's flashlight could be seen at night for a distance three times farther than Veronica's flashlight, for a total distance of 3*1000=<<3*1000=3000>>3000 feet.
+Five times farther than the distance from which Freddie's flashlight can be seen at night is 5*3000=<<5*3000=15000>>15,000 feet.
+Velma's flashlight could be seen at night from a distance 2000 feet less than 5 times farther than Freddie's flashlight, for a total distance of 15,000-2,000=<<15000-2000=13000>>13,000 feet.
+Compared to Veronica's flashlight, Velma's flashlight could be seen for a distance of 13,000-1,000=<<13000-1000=12000>>12,000 feet farther.
+#### 12,000
+"""
+
+id_orig = 643
+id_shuffled = 716
+
+question_annotated = """
+{name,Veronica}'s flashlight was bright enough to be seen at night from a distance of {v,1000} feet.  Freddie's flashlight could be seen at night for a distance three times farther than {name,Veronica}'s flashlight, and Velma's flashlight could be seen at night from a distance {s,2000} feet less than 5 times farther than Freddie's flashlight.  If {name,Veronica}'s and Velma's flashlight were placed next to one another and turned on at night, how much farther, in feet, could Velma's flashlight be seen compared to {name,Veronica}'s?
+
+#init:
+- name = sample(names_female)
+- $v = range(1000, 21000, 1000)
+- $s = range(1000, 11000, 1000)
+
+#conditions:
+- 14*v > s
+
+#answer: (5*3*v - s) - v
+"""
+
+answer_annotated = """
+Freddie's flashlight could be seen at night for a distance three times farther than {name}'s flashlight, for a total distance of 3*{v}=<<3*{v}={3*v}>>{3*v} feet.
+Five times farther than the distance from which Freddie's flashlight can be seen at night is 5*{3*v}=<<5*{3*v}={5*3*v}>>{5*3*v//1000},000 feet.
+Velma's flashlight could be seen at night from a distance {s} feet less than 5 times farther than Freddie's flashlight, for a total distance of {5*3*v//1000},000-{s//1000},000=<<{5*3*v}-{s}={5*3*v-s}>>{(5*3*v-s)//1000},000 feet.
+Compared to {name}'s flashlight, Velma's flashlight could be seen for a distance of {(5*3*v-s)//1000},000-{v//1000},000=<<{5*3*v-s}-{v}={5*3*v-s-v}>>{(5*3*v-s-v)//1000},000 feet farther.
+#### {(5*3*v-s-v)//1000},000
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

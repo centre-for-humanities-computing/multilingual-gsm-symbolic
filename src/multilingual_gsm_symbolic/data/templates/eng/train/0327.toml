@@ -1,0 +1,43 @@
+question = """
+Bran's tuition fee is $90. He does a part-time job that pays him $15 per month and he has a scholarship that takes care of 30% of his tuition fee. If he needs to pay his tuition fee within 3 months, how much does Bran still need to pay?
+"""
+
+answer = """
+Bran's scholarship pays $90 x 0.30 = $<<90*0.30=27>>27 to his tuition fee.
+So, the total amount he still needs to pay is $90 - $27 = $<<90-27=63>>63.
+And Bran will be able to earn $15 x 3 = $<<15*3=45>>45 after working for 3 months.
+Therefore, the total amount he still needs to pay is $63 - $45 = $<<63-45=18>>18.
+#### 18
+"""
+
+id_orig = 287
+id_shuffled = 327
+
+question_annotated = """
+{name,Bran}'s tuition fee is ${t,90}. He does a part-time job that pays him ${p,15} per month and he has a scholarship that takes care of {s,30}% of his tuition fee. If he needs to pay his tuition fee within {m,3} months, how much does {name,Bran} still need to pay?
+
+#init:
+- name = sample(names_male)
+- $t = range(40, 500, 10)
+- $p = range(5, 55, 5)
+- $s = range(5, 55, 5)
+- $m = range(1, 7)
+
+#conditions:
+- divides(t * s, 100)
+- t - t*s//100 > p * m
+
+#answer: t - t*s//100 - p*m
+"""
+
+answer_annotated = """
+{name}'s scholarship pays ${t} x 0.{s} = $<<{t}*0.{s}={t*s//100}>>{t*s//100} to his tuition fee.
+So, the total amount he still needs to pay is ${t} - ${t*s//100} = $<<{t}-{t*s//100}={t-t*s//100}>>{t-t*s//100}.
+And {name} will be able to earn ${p} x {m} = $<<{p}*{m}={p*m}>>{p*m} after working for {m} months.
+Therefore, the total amount he still needs to pay is ${t-t*s//100} - ${p*m} = $<<{t-t*s//100}-{p*m}={t-t*s//100-p*m}>>{t-t*s//100-p*m}.
+#### {t-t*s//100-p*m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,52 @@
+question = """
+Charlotte is a dog walker and is creating a schedule for all of her clients this week. Each dog is walked separately. On Monday, she needs to walk 4 poodles and 2 Chihuahuas. On Tuesday, she walks the same amount of Chihuahuas but isn't sure how many poodles she should walk. On Wednesday, she walks 4 Labradors. It takes 2 hours to walk a poodle, 1 hour to walk a Chihuahua, and 3 hours to walk a Labrador. If she has time for a total of 32 hours spent in dog-walking this week, how many poodles can Charlotte walk on Tuesday?
+"""
+
+answer = """
+On Monday, she spends 4 poodles * 2 hours = <<4*2=8>>8 hours walking poodles.
+On Monday, she spends 2 Chihuahuas * 1 hour = <<2*1=2>>2 hours walking Chihuahuas.
+On Tuesday, she spends 2 Chihuahuas * 1 hour = <<2*1=2>>2 hours walking Chihuahuas.
+On Wednesday, she spends 4 Labradors * 3 hours = <<4*3=12>>12 hours walking Labradors.
+Over the week, this is a total of 8 + 2 + 2 + 12 = <<8+2+2+12=24>>24 hours spent dog-walking.
+This means she still has 32 maximum hours – 24 used hours = <<32-24=8>>8 hours available for dog-walking.
+Therefore, she can walk 8 hours / 2 hours per poodle = <<8/2=4>>4 poodles on Tuesday.
+#### 4
+"""
+
+id_orig = 1894
+id_shuffled = 2128
+
+question_annotated = """
+{name,Charlotte} is a dog walker and is creating a schedule for all of her clients this week. Each dog is walked separately. On Monday, she needs to walk {p,4} poodles and {c,2} Chihuahuas. On Tuesday, she walks the same amount of Chihuahuas but isn't sure how many poodles she should walk. On Wednesday, she walks {l,4} Labradors. It takes {hp,2} hours to walk a poodle, {hc,1} hour to walk a Chihuahua, and {hl,3} hours to walk a Labrador. If she has time for a total of {t,32} hours spent in dog-walking this week, how many poodles can {name,Charlotte} walk on Tuesday?
+
+#init:
+- name = sample(names_female)
+- $p = range(2, 7)
+- $c = range(1, 4)
+- $l = range(2, 7)
+- $hp = range(2, 4)
+- $hc = range(1, 2)
+- $hl = range(2, 5)
+- $t = range(12, 52)
+
+#conditions:
+- t - p*hp - 2*c*hc - l*hl > 0
+- divides(t - p*hp - 2*c*hc - l*hl, hp)
+
+#answer: (t - p*hp - 2*c*hc - l*hl)//hp
+"""
+
+answer_annotated = """
+On Monday, she spends {p} poodles * {hp} hours = <<{p}*{hp}={p*hp}>>{p*hp} hours walking poodles.
+On Monday, she spends {c} Chihuahuas * {hc} hour = <<{c}*{hc}={c*hc}>>{c*hc} hours walking Chihuahuas.
+On Tuesday, she spends {c} Chihuahuas * {hc} hour = <<{c}*{hc}={c*hc}>>{c*hc} hours walking Chihuahuas.
+On Wednesday, she spends {l} Labradors * {hl} hours = <<{l}*{hl}={l*hl}>>{l*hl} hours walking Labradors.
+Over the week, this is a total of {p*hp} + {c*hc} + {c*hc} + {l*hl} = <<{p*hp}+{c*hc}+{c*hc}+{l*hl}={p*hp+c*hc+c*hc+l*hl}>>{p*hp+c*hc+c*hc+l*hl} hours spent dog-walking.
+This means she still has {t} maximum hours – {p*hp+c*hc+c*hc+l*hl} used hours = <<{t}-{p*hp+c*hc+c*hc+l*hl}={t-p*hp-c*hc-c*hc-l*hl}>>{t-p*hp-c*hc-c*hc-l*hl} hours available for dog-walking.
+Therefore, she can walk {t-p*hp-c*hc-c*hc-l*hl} hours / {hp} hours per poodle = <<{t-p*hp-c*hc-c*hc-l*hl}/{hp}={(t-p*hp-c*hc-c*hc-l*hl)//hp}>>{(t-p*hp-c*hc-c*hc-l*hl)//hp} poodles on Tuesday.
+#### {(t-p*hp-c*hc-c*hc-l*hl)//hp}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

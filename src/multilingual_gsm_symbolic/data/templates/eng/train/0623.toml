@@ -1,0 +1,39 @@
+question = """
+Randy had $3,000. Smith gave him another $200. Randy then gave Sally $1,200 and kept the rest. What was the value, in dollars, of the rest?
+"""
+
+answer = """
+After Smith gave him $200, Randy had 3000+200=<<3000+200=3200>>3200 dollars.
+The value of the rest of the money is 3200-1200=<<3200-1200=2000>>2000 dollars.
+#### 2000
+"""
+
+id_orig = 550
+id_shuffled = 623
+
+question_annotated = """
+{name,Randy} had ${amt_txt,3,000}. {giver,Smith} gave him another ${b,200}. {name,Randy} then gave {friend,Sally} ${give_txt,1,200} and kept the rest. What was the value, in dollars, of the rest?
+
+#init:
+- name = sample(names_male)
+- giver = sample(names)
+- friend = sample(names_female)
+- amt_txt, amt = sample([("2,000", 2000), ("3,000", 3000), ("4,000", 4000), ("5,000", 5000)])
+- $b = range(100, 1000, 50)
+- give_txt, give_amt = sample([("400", 400), ("600", 600), ("800", 800), ("1,000", 1000), ("1,200", 1200), ("1,400", 1400)])
+
+#conditions:
+- give_amt < amt + b
+
+#answer: amt + b - give_amt
+"""
+
+answer_annotated = """
+After {giver} gave him ${b}, {name} had {amt}+{b}=<<{amt}+{b}={amt+b}>>{amt+b} dollars.
+The value of the rest of the money is {amt+b}-{give_amt}=<<{amt+b}-{give_amt}={amt+b-give_amt}>>{amt+b-give_amt} dollars.
+#### {amt+b-give_amt}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

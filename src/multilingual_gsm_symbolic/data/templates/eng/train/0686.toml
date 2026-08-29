@@ -1,0 +1,39 @@
+question = """
+John ends up damaging his hearing aids.  He needs to replace both of them.  They cost $2500 each.  Insurance covers 80% of the cost.  How much does he personally have to pay?
+"""
+
+answer = """
+The cost of the hearing aids is $2500 * 2 = $<<2500*2=5000>>5000
+So insurance covers $5000 * .8 = $<<5000*.8=4000>>4000
+That means it cost him $5000 - $4000 = $<<5000-4000=1000>>1000
+#### 1000
+"""
+
+id_orig = 613
+id_shuffled = 686
+
+question_annotated = """
+{name,John} ends up damaging his hearing aids.  He needs to replace both of them.  They cost ${c,2500} each.  Insurance covers {p,80}% of the cost.  How much does he personally have to pay?
+
+#init:
+- name = sample(names_male)
+- $c = range(500, 5000, 50)
+- $p = range(10, 100, 10)
+
+#conditions:
+- divides(2*c*p, 100)
+- divides(2*c*(100-p), 100)
+
+#answer: 2*c - 2*c*p//100
+"""
+
+answer_annotated = """
+The cost of the hearing aids is ${c} * 2 = $<<{c}*2={2*c}>>{2*c}
+So insurance covers ${2*c} * .{p//10} = $<<{2*c}*.{p//10}={2*c*p//100}>>{2*c*p//100}
+That means it cost him ${2*c} - ${2*c*p//100} = $<<{2*c}-{2*c*p//100}={2*c-2*c*p//100}>>{2*c-2*c*p//100}
+#### {2*c - 2*c*p//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

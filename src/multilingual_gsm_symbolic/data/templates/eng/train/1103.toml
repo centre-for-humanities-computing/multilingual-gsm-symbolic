@@ -1,0 +1,49 @@
+question = """
+Rajesh walked 10 kilometers less than 4 times the distance that Hiro walked. Together they walked 25 kilometers. How many kilometers did Rajesh walk?
+"""
+
+answer = """
+Let H = distance Hiro walked
+4H - 10 = distance Rajesh walked
+H + 4H - 10 = 25
+5H - 10 = 25
+5H = 35
+Hiro walked 7 km so Rajesh walked 4(7) - 10 = <<7*4-10=18>>18 km
+Rajesh walked <<18=18>>18 kilometers.
+#### 18
+"""
+
+id_orig = 1007
+id_shuffled = 1103
+
+question_annotated = """
+{name1,Rajesh} walked {b,10} kilometers less than {m,4} times the distance that {name2,Hiro} walked. Together they walked {t,25} kilometers. How many kilometers did {name1,Rajesh} walk?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_male)
+- $b = range(2, 52)
+- $m = range(2, 10)
+- $t = range(20, 120)
+
+#conditions:
+- divides(t + b, m + 1)
+- m * ((t + b) // (m + 1)) - b > 0
+
+#answer: m * ((t + b) // (m + 1)) - b
+"""
+
+answer_annotated = """
+Let H = distance {name2} walked
+{m}H - {b} = distance {name1} walked
+H + {m}H - {b} = {t}
+{m+1}H - {b} = {t}
+{m+1}H = {t+b}
+{name2} walked {(t+b)//(m+1)} km so {name1} walked {m}({(t+b)//(m+1)}) - {b} = <<{(t+b)//(m+1)}*{m}-{b}={m*((t+b)//(m+1))-b}>>{m*((t+b)//(m+1))-b} km
+{name1} walked <<{m*((t+b)//(m+1))-b}={m*((t+b)//(m+1))-b}>>{m*((t+b)//(m+1))-b} kilometers.
+#### {m * ((t + b) // (m + 1)) - b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Stan can type 50 words per minute. He needs to write a 5-page paper. Each page will contain 400 words. Each hour that he types he needs to drink 15 ounces of water. How much water does he need to drink while writing his paper?
+"""
+
+answer = """
+Stan needs to write 2,000 words because 5 x 400 = <<5*400=2000>>2,000
+This will take him 40 minutes because 2,000 / 50 = <<2000/50=40>>40
+He drinks 1/4 an ounce per minute because 15 / 60 = 1/4
+He will drink 10 ounces of water while writing the paper because 40 x (1/4) = <<40*(1/4)=10>>10
+#### 10
+"""
+
+id_orig = 2010
+id_shuffled = 2328
+
+question_annotated = """
+{name,Stan} can type {s,50} words per minute. He needs to write a {p,5}-page paper. Each page will contain {w,400} words. Each hour that he types he needs to drink {r,15} ounces of water. How much water does he need to drink while writing his paper?
+
+#init:
+- name = sample(names_male)
+- $s = range(10, 210, 10)
+- $p = range(2, 13)
+- $w = range(100, 1100, 100)
+- $r = range(2, 31)
+
+#conditions:
+- divides(p*w, s)
+- p*w >= 1000
+- divides(60, r)
+- divides(p*w//s, 60//r)
+
+#answer: (p*w)//s//(60//r)
+"""
+
+answer_annotated = """
+{name} needs to write {p*w//1000},000 words because {p} x {w} = <<{p}*{w}={p*w}>>{p*w//1000},000
+This will take him {p*w//s} minutes because {p*w//1000},000 / {s} = <<{p*w}/{s}={p*w//s}>>{p*w//s}
+He drinks 1/{60//r} an ounce per minute because {r} / 60 = 1/{60//r}
+He will drink {(p*w)//s//(60//r)} ounces of water while writing the paper because {p*w//s} x (1/{60//r}) = <<{p*w//s}*(1/{60//r})={(p*w)//s//(60//r)}>>{(p*w)//s//(60//r)}
+#### {(p*w)//s//(60//r)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,42 @@
+question = """
+Megan went to the store and bought a dozen eggs. When she got home, her neighbor gave her another dozen eggs from her chickens. Megan used 2 eggs to make an omelet for dinner and 4 eggs to bake a cake. When Megan's aunt came over for a visit, Megan gave her half of her remaining eggs. How many eggs per meal would Megan have if she plans to divide what she has left equally for her next 3 meals?
+"""
+
+answer = """
+Megan has 12 + 12 = <<12+12=24>>24 eggs
+After making her omelet and cake, she was left with 24 - 2 - 4 = <<24-2-4=18>>18 eggs
+After giving half to her aunt, she was left with 18/2 = <<18/2=9>>9
+Megan would have 9/3 = <<9/3=3>>3 eggs per meal for the next three meals.
+#### 3
+"""
+
+id_orig = 2614
+id_shuffled = 3031
+
+question_annotated = """
+{name,Megan} went to the store and bought a dozen eggs. When she got home, her neighbor gave her another dozen eggs from her chickens. {name,Megan} used {o,2} eggs to make an omelet for dinner and {c,4} eggs to bake a cake. When {name,Megan}'s aunt came over for a visit, {name,Megan} gave her half of her remaining eggs. How many eggs per meal would {name,Megan} have if she plans to divide what she has left equally for her next {m,3} meals?
+
+#init:
+- name = sample(names_female)
+- $o = range(1, 16)
+- $c = range(1, 16)
+- $m = range(2, 13)
+
+#conditions:
+- o + c < 24
+- divides(24 - o - c, 2 * m)
+
+#answer: (24 - o - c) // 2 // m
+"""
+
+answer_annotated = """
+{name} has 12 + 12 = <<12+12=24>>24 eggs
+After making her omelet and cake, she was left with 24 - {o} - {c} = <<24-{o}-{c}={24-o-c}>>{24-o-c} eggs
+After giving half to her aunt, she was left with {24-o-c}/2 = <<{24-o-c}/2={(24-o-c)//2}>>{(24-o-c)//2}
+{name} would have {(24-o-c)//2}/{m} = <<{(24-o-c)//2}/{m}={(24-o-c)//2/m}>>{(24-o-c)//2/m} eggs per meal for the next three meals.
+#### {(24-o-c)//2/m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

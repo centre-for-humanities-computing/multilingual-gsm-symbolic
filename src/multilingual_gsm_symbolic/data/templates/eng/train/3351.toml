@@ -1,0 +1,43 @@
+question = """
+Elvis is releasing a new album with 10 songs, but he doesn't want to waste too much time on writing. He spends 5 hours in the studio, where he writes, records, and edits his songs. Each song takes 12 minutes to record, then it takes 30 minutes to edit all of his songs.   How many minutes did it take Elvis to write each song, if each song took the same amount of time to write?
+"""
+
+answer = """
+5 hours in the studio is the same as 5 * 60 = <<5*60=300>>300 minutes.
+To record all of his songs, Elvis takes 12 * 10 = <<12*10=120>>120 minutes.
+After editing and recording 300 – 120 – 30 = <<300-120-30=150>>150 minutes are left to write all of his songs.
+Songwriting therefore took 150 / 10 = <<150/10=15>>15 minutes per song.
+#### 15
+"""
+
+id_orig = 2817
+id_shuffled = 3351
+
+question_annotated = """
+{name,Elvis} is releasing a new album with {s,10} songs, but he doesn't want to waste too much time on writing. He spends {h,5} hours in the studio, where he writes, records, and edits his songs. Each song takes {r,12} minutes to record, then it takes {e,30} minutes to edit all of his songs.   How many minutes did it take {name,Elvis} to write each song, if each song took the same amount of time to write?
+
+#init:
+- name = sample(names_male)
+- $h = range(1, 13)
+- $s = range(2, 32)
+- $r = range(1, 21)
+- $e = range(5, 65, 5)
+
+#conditions:
+- h * 60 > r * s + e
+- divides(h * 60 - r * s - e, s)
+
+#answer: (h * 60 - r * s - e)//s
+"""
+
+answer_annotated = """
+{h} hours in the studio is the same as {h} * 60 = <<{h}*60={h*60}>>{h*60} minutes.
+To record all of his songs, {name} takes {r} * {s} = <<{r}*{s}={r*s}>>{r*s} minutes.
+After editing and recording {h*60} – {r*s} – {e} = <<{h*60}-{r*s}-{e}={h*60-r*s-e}>>{h*60-r*s-e} minutes are left to write all of his songs.
+Songwriting therefore took {h*60-r*s-e} / {s} = <<{h*60-r*s-e}/{s}={(h*60-r*s-e)//s}>>{(h*60-r*s-e)//s} minutes per song.
+#### {(h*60-r*s-e)//s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

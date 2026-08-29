@@ -1,0 +1,49 @@
+question = """
+Brad’s zip code consists of five numbers that add up to 10. The first and second numbers are the same. The third number is zero. The fourth number is double the first number. The fourth and fifth numbers add up to 8. What is Brad’s zip code?
+"""
+
+answer = """
+The five numbers add up to 10, so the first three numbers add up to 10 - 8 = <<10-8=2>>2.
+The third number is 0, so the first two numbers add up to 2 - 0 = <<2-0=2>>2.
+The first and second numbers are equal, so they are both 2 / 2 = <<2/2=1>>1.
+The fourth number is double the first number, so it is 2 * 1 = <<1*2=2>>2.
+The fifth number is 8 - 2 = <<8-2=6>>6.
+Thus, Brad’s zip code is 11,026.
+#### 11026
+"""
+
+id_orig = 1403
+id_shuffled = 1510
+
+question_annotated = """
+{name,Brad}’s zip code consists of five numbers that add up to {total,10}. The first and second numbers are the same. The third number is {c_txt,zero}. The fourth number is double the first number. The fourth and fifth numbers add up to {s,8}. What is {name,Brad}’s zip code?
+
+#init:
+- name = sample(names_male)
+- $total = range(2, 30)
+- $s = range(1, 19)
+- c_txt, c = sample([("zero", 0), ("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9)])
+
+#conditions:
+- divides(total - s - c, 2)
+- (total - s - c)//2 >= 1
+- (total - s - c)//2 <= 4
+- s - 2*((total - s - c)//2) >= 0
+- s - 2*((total - s - c)//2) <= 9
+
+#answer: ((total - s - c)//2)*11000 + c*100 + (2*((total - s - c)//2))*10 + (s - 2*((total - s - c)//2))
+"""
+
+answer_annotated = """
+The five numbers add up to {total}, so the first three numbers add up to {total} - {s} = <<{total}-{s}={total-s}>>{total-s}.
+The third number is {c}, so the first two numbers add up to {total-s} - {c} = <<{total-s}-{c}={total-s-c}>>{total-s-c}.
+The first and second numbers are equal, so they are both {total-s-c} / 2 = <<{total-s-c}/2={(total-s-c)//2}>>{(total-s-c)//2}.
+The fourth number is double the first number, so it is 2 * {(total-s-c)//2} = <<{(total-s-c)//2}*2={2*((total-s-c)//2)}>>{2*((total-s-c)//2)}.
+The fifth number is {s} - {2*((total-s-c)//2)} = <<{s}-{2*((total-s-c)//2)}={s-2*((total-s-c)//2)}>>{s-2*((total-s-c)//2)}.
+Thus, {name}’s zip code is {(total-s-c)//2}{(total-s-c)//2},{c}{2*((total-s-c)//2)}{s-2*((total-s-c)//2)}.
+#### {((total - s - c)//2)*11000 + c*100 + (2*((total - s - c)//2))*10 + (s - 2*((total - s - c)//2))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

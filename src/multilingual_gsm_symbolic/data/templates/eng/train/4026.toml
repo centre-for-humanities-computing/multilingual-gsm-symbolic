@@ -1,0 +1,42 @@
+question = """
+Kelly booked a three week vacation to visit relatives.  The first day, she spent traveling.  The next 5 days she spent at her Grandparents' house.  The next day, she spent traveling.  Then, she spends the next 5 days at her brother's house.  Then she spent two days traveling to her sister's house, spent several days at her sister's house, and then spent two more days traveling home.  How many days did she spend at her sister's house?
+"""
+
+answer = """
+Three weeks is 7*3=<<7*3=21>>21 days.
+She traveled one day to her grandparents' house, one day to her brother's house, two days to her sister's house, and two days back home for a total of 1+1+2+2=<<1+1+2+2=6>>6 days.
+She spent 5 days at her grandparents' house and 5 days at her brother's house, for a total of 5+5=<<5+5=10>>10 days.
+Thus, of the 21 vacation days, the number of days remaining to spend with her sister was 21-6-10=<<21-6-10=5>>5 days.
+#### 5
+"""
+
+id_orig = 3391
+id_shuffled = 4026
+
+question_annotated = """
+{name,Kelly} booked a three week vacation to visit relatives.  The first day, she spent traveling.  The next {g,5} days she spent at her Grandparents' house.  The next day, she spent traveling.  Then, she spends the next {b,5} days at her brother's house.  Then she spent {t3_txt,two} days traveling to her sister's house, spent several days at her sister's house, and then spent {t4_txt,two} more days traveling home.  How many days did she spend at her sister's house?
+
+#init:
+- name = sample(names_female)
+- $g = range(2, 13)
+- $b = range(2, 13)
+- t3_txt, t3 = sample([("one", 1), ("two", 2), ("three", 3)])
+- t4_txt, t4 = sample([("one", 1), ("two", 2), ("three", 3)])
+
+#conditions:
+- 2 + t3 + t4 + g + b < 21
+
+#answer: 21 - 2 - t3 - t4 - g - b
+"""
+
+answer_annotated = """
+Three weeks is 7*3=<<7*3=21>>21 days.
+She traveled one day to her grandparents' house, one day to her brother's house, {t3_txt} days to her sister's house, and {t4_txt} days back home for a total of 1+1+{t3}+{t4}=<<1+1+{t3}+{t4}={2+t3+t4}>>{2+t3+t4} days.
+She spent {g} days at her grandparents' house and {b} days at her brother's house, for a total of {g}+{b}=<<{g}+{b}={g+b}>>{g+b} days.
+Thus, of the 21 vacation days, the number of days remaining to spend with her sister was 21-{2+t3+t4}-{g+b}=<<21-{2+t3+t4}-{g+b}={21-2-t3-t4-g-b}>>{21-2-t3-t4-g-b} days.
+#### {21-2-t3-t4-g-b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

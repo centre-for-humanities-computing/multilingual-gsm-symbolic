@@ -1,0 +1,42 @@
+question = """
+Eugene built a model house out of toothpicks and a deck of playing cards.  For every card, he used 75 toothpicks.  The deck of playing cards had 52 cards, and Eugene used all but 16 of the cards to build his house.  If a box of toothpicks contains 450 toothpicks, how many boxes of toothpicks did Eugene use to create his model house?
+"""
+
+answer = """
+If Eugene used all but 16 of the 52 cards, then he used 52-16=<<52-16=36>>36 cards.
+If for every card he used 75 toothpicks, then a box of toothpicks would have enough toothpicks for 450/75=<<450/75=6>>6 cards.
+Since one box has enough toothpicks for 6 cards, then for 36 cards he would need 36/6=<<36/6=6>>6 boxes of toothpicks.
+#### 6
+"""
+
+id_orig = 853
+id_shuffled = 949
+
+question_annotated = """
+{name,Eugene} built a model house out of toothpicks and a deck of playing cards.  For every card, he used {tp,75} toothpicks.  The deck of playing cards had {deck,52} cards, and {name,Eugene} used all but {unused,16} of the cards to build his house.  If a box of toothpicks contains {box,450} toothpicks, how many boxes of toothpicks did {name,Eugene} use to create his model house?
+
+#init:
+- name = sample(names_male)
+- $tp = range(25, 150, 25)
+- $deck = range(20, 130, 2)
+- $unused = range(2, 22, 2)
+- $box = range(150, 900, 150)
+
+#conditions:
+- deck > unused
+- divides(box, tp)
+- divides(deck - unused, box // tp)
+
+#answer: (deck - unused) // (box // tp)
+"""
+
+answer_annotated = """
+If {name} used all but {unused} of the {deck} cards, then he used {deck}-{unused}=<<{deck}-{unused}={deck-unused}>>{deck-unused} cards.
+If for every card he used {tp} toothpicks, then a box of toothpicks would have enough toothpicks for {box}/{tp}=<<{box}/{tp}={box//tp}>>{box//tp} cards.
+Since one box has enough toothpicks for {box//tp} cards, then for {deck-unused} cards he would need {deck-unused}/{box//tp}=<<{deck-unused}/{box//tp}={(deck-unused)//(box//tp)}>>{(deck-unused)//(box//tp)} boxes of toothpicks.
+#### {(deck-unused)//(box//tp)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

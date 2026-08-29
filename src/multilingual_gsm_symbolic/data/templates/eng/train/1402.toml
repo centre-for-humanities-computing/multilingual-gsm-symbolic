@@ -1,0 +1,42 @@
+question = """
+Lilia has 15 peaches. She sold 10 peaches to her friends for $2 each, while 4 other peaches were sold to her relatives for $1.25 each, and she left the other one for herself. How much did she earn after selling 14 peaches?
+"""
+
+answer = """
+Lilia earned 10 x $2 = $<<10*2=20>>20 for selling the peaches to her friends.
+She also earned 4 x $1.25 = $<<4*1.25=5>>5 for selling the peaches to her relatives.
+Therefore, Lilia earned $20 + $5 = $<<20+5=25>>25 for selling 14 peaches.
+#### 25
+"""
+
+id_orig = 1295
+id_shuffled = 1402
+
+question_annotated = """
+{name,Lilia} has {total,15} peaches. She sold {f,10} peaches to her friends for $2 each, while {r,4} other peaches were sold to her relatives for $1.25 each, and she left the other one for herself. How much did she earn after selling {fsold,14} peaches?
+
+#init:
+- name = sample(names_female)
+- $total = range(10, 70)
+- $f = range(2, 30)
+- $r = range(4, 33, 4)
+- $fsold = range(5, 65)
+
+#conditions:
+- total - f - r == 1
+- fsold == f + r
+- divides(r, 4)
+
+#answer: int(f*2 + r*1.25)
+"""
+
+answer_annotated = """
+{name} earned {f} x $2 = $<<{f}*2={f*2}>>{f*2} for selling the peaches to her friends.
+She also earned {r} x $1.25 = $<<{r}*1.25={int(r*1.25)}>>{int(r*1.25)} for selling the peaches to her relatives.
+Therefore, {name} earned ${f*2} + ${int(r*1.25)} = $<<{f*2}+{int(r*1.25)}={int(f*2 + r*1.25)}>>{int(f*2 + r*1.25)} for selling {fsold} peaches.
+#### {int(f*2 + r*1.25)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

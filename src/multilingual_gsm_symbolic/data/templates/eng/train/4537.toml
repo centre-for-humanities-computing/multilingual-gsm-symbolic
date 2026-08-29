@@ -1,0 +1,41 @@
+question = """
+Nancy bought a pie sliced it into 8 pieces. She gave 1/2 to Joe and Darcy, and she gave 1/4 to Carl. How many slices were left?
+"""
+
+answer = """
+The total number of slices she gave to Joe and Darcy is 1/2 x 8 = <<1/2*8=4>>4.
+The total slice she gave to Carl is 1/4 x 8 = <<1/4*8=2>>2.
+Therefore, the total slices left is 8 - 4 - 2 = <<8-4-2=2>>2.
+#### 2
+"""
+
+id_orig = 3843
+id_shuffled = 4537
+
+question_annotated = """
+{name,Nancy} bought a pie sliced it into {n,8} pieces. She gave {f1,1/2} to Joe and Darcy, and she gave {f2,1/4} to Carl. How many slices were left?
+
+#init:
+- name = sample(names_female)
+- $n = range(8, 208, 4)
+- f1, p1, q1 = sample([("1/2", 1, 2), ("1/3", 1, 3), ("1/4", 1, 4), ("1/5", 1, 5)])
+- f2, p2, q2 = sample([("1/2", 1, 2), ("1/3", 1, 3), ("1/4", 1, 4), ("1/5", 1, 5)])
+
+#conditions:
+- divides(n*p1, q1)
+- divides(n*p2, q2)
+- n - (n*p1)//q1 - (n*p2)//q2 > 0
+
+#answer: n - (n*p1)//q1 - (n*p2)//q2
+"""
+
+answer_annotated = """
+The total number of slices she gave to Joe and Darcy is {f1} x {n} = <<{p1}/{q1}*{n}={(n*p1)//q1}>>{(n*p1)//q1}.
+The total slice she gave to Carl is {f2} x {n} = <<{p2}/{q2}*{n}={(n*p2)//q2}>>{(n*p2)//q2}.
+Therefore, the total slices left is {n} - {(n*p1)//q1} - {(n*p2)//q2} = <<{n}-{(n*p1)//q1}-{(n*p2)//q2}={n - (n*p1)//q1 - (n*p2)//q2}>>{n - (n*p1)//q1 - (n*p2)//q2}.
+#### {n - (n*p1)//q1 - (n*p2)//q2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

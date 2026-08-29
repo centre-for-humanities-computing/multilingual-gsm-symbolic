@@ -1,0 +1,41 @@
+question = """
+Frank's laundry detergent is double concentrated and will wash 80 loads of laundry.  His detergent is usually $25.00 a bottle but they're having a sale.  If he buys 2 bottles, both bottles will drop to $20.00 a bottle.  How much does he spend, in cents, per load of laundry, if he buys 2 bottles of detergent?
+"""
+
+answer = """
+If he buys 2 bottles, the price drops to $20.00 per bottle so they cost 2*20 = $<<2*20=40.00>>40.00
+He can get 80 loads of laundry per bottle and he bought 2 bottles so that's 80*2 = <<80*2=160>>160 loads of laundry
+The detergent cost $40.00 and he will be able to wash 160 loads of laundry so each load costs 40/160 = $<<40/160=0.25>>0.25
+#### 25
+"""
+
+id_orig = 2969
+id_shuffled = 3543
+
+question_annotated = """
+{name,Frank}'s laundry detergent is double concentrated and will wash {loads,80} loads of laundry.  His detergent is usually ${u,25}.00 a bottle but they're having a sale.  If he buys {b,2} bottles, both bottles will drop to ${s,20}.00 a bottle.  How much does he spend, in cents, per load of laundry, if he buys {b,2} bottles of detergent?
+
+#init:
+- name = sample(names_male)
+- $loads = range(40, 241, 4)
+- $u = range(20, 65, 5)
+- $b = range(2, 6)
+- $s = range(5, 26)
+
+#conditions:
+- s < u
+- divides(s * 100, loads)
+
+#answer: s * 100 // loads
+"""
+
+answer_annotated = """
+If he buys {b} bottles, the price drops to ${s}.00 per bottle so they cost {b}*{s} = $<<{b}*{s}={b*s}.00>>{b*s}.00
+He can get {loads} loads of laundry per bottle and he bought {b} bottles so that's {loads}*{b} = <<{loads}*{b}={loads*b}>>{loads*b} loads of laundry
+The detergent cost ${b*s}.00 and he will be able to wash {loads*b} loads of laundry so each load costs {b*s}/{loads*b} = $<<{b*s}/{loads*b}={b*s/(loads*b)}>>{b*s/(loads*b)}
+#### {s * 100 // loads}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

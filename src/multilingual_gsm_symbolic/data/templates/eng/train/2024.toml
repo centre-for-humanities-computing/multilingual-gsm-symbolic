@@ -1,0 +1,41 @@
+question = """
+Tom's cat needs an expensive surgery.  He has had pet insurance for 24 months that cost $20 per month.  The procedure cost $5000 but the insurance covers all but 20% of this.  How much money did he save by having insurance?
+"""
+
+answer = """
+The insurance cost 24*20=$<<24*20=480>>480
+With insurance he pays 5000*.2=$<<5000*.2=1000>>1000 for the procedure
+So he paid 1000+480=$<<1000+480=1480>>1480
+So he saved 5000-1480=$<<5000-1480=3520>>3520
+#### 3520
+"""
+
+id_orig = 1825
+id_shuffled = 2024
+
+question_annotated = """
+{name,Tom}'s cat needs an expensive surgery.  He has had pet insurance for {m,24} months that cost ${c,20} per month.  The procedure cost ${p,5000} but the insurance covers all but 20% of this.  How much money did he save by having insurance?
+
+#init:
+- name = sample(names_male)
+- $m = range(12, 37)
+- $c = range(10, 31)
+- $p = range(1000, 10001, 500)
+
+#conditions:
+- p - (m*c + p//5) > 0
+
+#answer: p - (p//5 + m*c)
+"""
+
+answer_annotated = """
+The insurance cost {m}*{c}=$<<{m}*{c}={m*c}>>{m*c}
+With insurance he pays {p}*.2=$<<{p}*.2={p//5}>>{p//5} for the procedure
+So he paid {p//5}+{m*c}=$<<{p//5}+{m*c}={p//5+m*c}>>{p//5+m*c}
+So he saved {p}-{p//5+m*c}=$<<{p}-{p//5+m*c}={p-(p//5+m*c)}>>{p-(p//5+m*c)}
+#### {p-(p//5+m*c)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

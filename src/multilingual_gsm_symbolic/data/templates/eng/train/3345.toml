@@ -1,0 +1,45 @@
+question = """
+Brenda raises mice, and her adult mice recently had three litters of 8 each. She gave a sixth of the baby mice to her friend Robbie to keep as pets. She sold three times the number of babies she gave Robbie to a pet store. Half of the remaining mice were sold to snake owners as feeder mice. How many baby mice did Brenda have left?
+"""
+
+answer = """
+Brenda’s mice had 3 * 8 = <<3*8=24>>24 baby mice.
+She gave Robbie 24 / 6 = <<24/6=4>>4 mice.
+Thus, she sold 3 * 4 = <<3*4=12>>12 mice to the pet store.
+She had 24 - 12 - 4 = <<24-12-4=8>>8 mice remaining.
+She sold 8 / 2 = <<8/2=4>>4 as feeder mice.
+Thus, Brenda had 8 - 4 = <<8-4=4>>4 mice left.
+#### 4
+"""
+
+id_orig = 2811
+id_shuffled = 3345
+
+question_annotated = """
+{name,Brenda} raises mice, and her adult mice recently had {litters_txt,three} litters of {per,8} each. She gave a sixth of the baby mice to her friend {friend,Robbie} to keep as pets. She sold three times the number of babies she gave {friend,Robbie} to a pet store. Half of the remaining mice were sold to snake owners as feeder mice. How many baby mice did {name,Brenda} have left?
+
+#init:
+- name = sample(names_female)
+- friend = sample(names_male)
+- litters_txt, litters = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10)])
+- $per = range(4, 40)
+
+#conditions:
+- divides(litters * per, 6)
+
+#answer: litters * per // 6
+"""
+
+answer_annotated = """
+{name}’s mice had {litters} * {per} = <<{litters}*{per}={litters*per}>>{litters*per} baby mice.
+She gave {friend} {litters*per} / 6 = <<{litters*per}/6={litters*per//6}>>{litters*per//6} mice.
+Thus, she sold 3 * {litters*per//6} = <<3*{litters*per//6}={3*(litters*per//6)}>>{3*(litters*per//6)} mice to the pet store.
+She had {litters*per} - {3*(litters*per//6)} - {litters*per//6} = <<{litters*per}-{3*(litters*per//6)}-{litters*per//6}={litters*per - 3*(litters*per//6) - litters*per//6}>>{litters*per - 3*(litters*per//6) - litters*per//6} mice remaining.
+She sold {litters*per - 3*(litters*per//6) - litters*per//6} / 2 = <<{litters*per - 3*(litters*per//6) - litters*per//6}/2={(litters*per - 3*(litters*per//6) - litters*per//6)//2}>>{(litters*per - 3*(litters*per//6) - litters*per//6)//2} as feeder mice.
+Thus, {name} had {litters*per - 3*(litters*per//6) - litters*per//6} - {(litters*per - 3*(litters*per//6) - litters*per//6)//2} = <<{litters*per - 3*(litters*per//6) - litters*per//6}-{(litters*per - 3*(litters*per//6) - litters*per//6)//2}={(litters*per - 3*(litters*per//6) - litters*per//6)//2}>>{(litters*per - 3*(litters*per//6) - litters*per//6)//2} mice left.
+#### {litters*per//6}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

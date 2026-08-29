@@ -1,0 +1,42 @@
+question = """
+Ben bought a lawnmower for his garden. He paid $100 for it. After six months, the value of the mower dropped by about 25%. Over the next year, the value of the mower dropped another 20% in value. How much is Ben's lawnmower worth after this time?
+"""
+
+answer = """
+The first value drop of the lawnmower was 25/100 * 100 = $<<25/100*100=25>>25.
+So the lawnmower was worth 100 - 25 = $<<100-25=75>>75.
+Over the next year, the value dropped another 20%, which is 20/100 * 75 = $<<20/100*75=15>>15.
+So after all this time, Ben's lawnmower is worth 75 - 15 = $<<75-15=60>>60.
+#### 60
+"""
+
+id_orig = 2178
+id_shuffled = 2516
+
+question_annotated = """
+{name,Ben} bought a lawnmower for his garden. He paid ${price,100} for it. After six months, the value of the mower dropped by about {p1,25}%. Over the next year, the value of the mower dropped another {p2,20}% in value. How much is {name,Ben}'s lawnmower worth after this time?
+
+#init:
+- name = sample(names_male)
+- $price = range(100, 2100, 100)
+- $p1 = range(5, 51, 5)
+- $p2 = range(5, 51, 5)
+
+#conditions:
+- divides(price, 100)
+- divides((price - price*p1//100) * p2, 100)
+
+#answer: (price - price*p1//100) - p2*(price - price*p1//100)//100
+"""
+
+answer_annotated = """
+The first value drop of the lawnmower was {p1}/100 * {price} = $<<{p1}/100*{price}={p1*price//100}>>{p1*price//100}.
+So the lawnmower was worth {price} - {p1*price//100} = $<<{price}-{p1*price//100}={price - p1*price//100}>>{price - p1*price//100}.
+Over the next year, the value dropped another {p2}%, which is {p2}/100 * {price - p1*price//100} = $<<{p2}/100*{price - p1*price//100}={p2*(price - p1*price//100)//100}>>{p2*(price - p1*price//100)//100}.
+So after all this time, {name}'s lawnmower is worth {price - p1*price//100} - {p2*(price - p1*price//100)//100} = $<<{price - p1*price//100}-{p2*(price - p1*price//100)//100}={(price - price*p1//100) - p2*(price - price*p1//100)//100}>>{(price - price*p1//100) - p2*(price - price*p1//100)//100}.
+#### {(price - price*p1//100) - p2*(price - price*p1//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

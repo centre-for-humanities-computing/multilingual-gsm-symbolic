@@ -1,0 +1,55 @@
+question = """
+Jonsey is awake for 2/3 of the day and spends 1/2 her time awake playing outside and the rest inside. Her brother, Riley, is awake for 3/4 of the day and spends 1/3 of his day outside and the rest inside. How much time, on average, do they spend inside?
+"""
+
+answer = """
+Jonsey is awake for 16 hours because 24 x (2/3) = <<24*(2/3)=16>>16
+Jonsey spends 1/2 her day inside because 1 - (1/2) = 1/2
+Jonsey spend 8 hours inside because 16 x (1/2) = <<16*(1/2)=8>>8
+Riley is awake for 18 hours because 24 x (3/4) = <<24*(3/4)=18>>18
+Riley spends 2/3 of his day inside because 1 - (1/3) = 2/3
+Riley spends 12 hours inside because 18 x (2/3) = <<18*(2/3)=12>>12
+In total they spend 20 hours inside because 8 + 12 = <<8+12=20>>20
+On average, they spend 10 hours inside because 20 / 2 = <<20/2=10>>10
+#### 10
+"""
+
+id_orig = 3930
+id_shuffled = 4669
+
+question_annotated = """
+{name,Jonsey} is awake for {jf,2/3} of the day and spends {jo,1/2} her time awake playing outside and the rest inside. Her brother, {brother,Riley}, is awake for {rf,3/4} of the day and spends {ro,1/3} of his day outside and the rest inside. How much time, on average, do they spend inside?
+
+#init:
+- name = sample(names_female)
+- brother = sample(names_male)
+- jf, jn, jdd = sample([("1/2", 1, 2), ("2/3", 2, 3), ("3/4", 3, 4), ("5/6", 5, 6), ("3/8", 3, 8), ("5/8", 5, 8), ("7/8", 7, 8), ("5/12", 5, 12), ("7/12", 7, 12)])
+- jo, jk, jl, ji = sample([("1/2", 1, 2, "1/2"), ("1/3", 1, 3, "2/3"), ("2/3", 2, 3, "1/3"), ("1/4", 1, 4, "3/4"), ("3/4", 3, 4, "1/4"), ("2/5", 2, 5, "3/5"), ("3/5", 3, 5, "2/5"), ("1/6", 1, 6, "5/6"), ("5/6", 5, 6, "1/6")])
+- rf, rn, rdd = sample([("1/2", 1, 2), ("2/3", 2, 3), ("3/4", 3, 4), ("5/6", 5, 6), ("3/8", 3, 8), ("5/8", 5, 8), ("7/8", 7, 8), ("5/12", 5, 12), ("7/12", 7, 12)])
+- ro, rk, rl, ri = sample([("1/3", 1, 3, "2/3"), ("2/3", 2, 3, "1/3"), ("1/4", 1, 4, "3/4"), ("3/4", 3, 4, "1/4"), ("1/5", 1, 5, "4/5"), ("2/5", 2, 5, "3/5"), ("3/5", 3, 5, "2/5"), ("1/6", 1, 6, "5/6")])
+
+#conditions:
+- divides(24*jn, jdd)
+- divides(24*jn*(jl-jk), jdd*jl)
+- divides(24*rn, rdd)
+- divides(24*rn*(rl-rk), rdd*rl)
+- divides(24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl, 2)
+
+#answer: (24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl)//2
+"""
+
+answer_annotated = """
+{name} is awake for {24*jn//jdd} hours because 24 x ({jf}) = <<24*({jf})={24*jn//jdd}>>{24*jn//jdd}
+{name} spends {ji} her day inside because 1 - ({jo}) = {ji}
+{name} spend {24*jn//jdd*(jl-jk)//jl} hours inside because {24*jn//jdd} x ({ji}) = <<{24*jn//jdd}*({ji})={24*jn//jdd*(jl-jk)//jl}>>{24*jn//jdd*(jl-jk)//jl}
+{brother} is awake for {24*rn//rdd} hours because 24 x ({rf}) = <<24*({rf})={24*rn//rdd}>>{24*rn//rdd}
+{brother} spends {ri} of his day inside because 1 - ({ro}) = {ri}
+{brother} spends {24*rn//rdd*(rl-rk)//rl} hours inside because {24*rn//rdd} x ({ri}) = <<{24*rn//rdd}*({ri})={24*rn//rdd*(rl-rk)//rl}>>{24*rn//rdd*(rl-rk)//rl}
+In total they spend {24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl} hours inside because {24*jn//jdd*(jl-jk)//jl} + {24*rn//rdd*(rl-rk)//rl} = <<{24*jn//jdd*(jl-jk)//jl}+{24*rn//rdd*(rl-rk)//rl}={24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl}>>{24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl}
+On average, they spend {(24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl)//2} hours inside because {24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl} / 2 = <<{24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl}/2={(24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl)//2}>>{(24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl)//2}
+#### {(24*jn//jdd*(jl-jk)//jl + 24*rn//rdd*(rl-rk)//rl)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

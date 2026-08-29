@@ -1,0 +1,43 @@
+question = """
+Mike decides to buy a new camera.  He wants to buy a top-of-the-line camera but he decides to wait for the new model to come out.  The new model costs 30% more than the current model.  The old camera cost $4000.  He gets $200 off a $400 lens he bought.  How much did he pay for the camera and lens?
+"""
+
+answer = """
+The new camera cost 4000*.3=$<<4000*.3=1200>>1200 more than the old camera.
+So the camera cost 4000+1200=$<<4000+1200=5200>>5200
+The lens cost 400-200=$<<400-200=200>>200
+So the total cost was 5200+200=$<<5200+200=5400>>5400
+#### 5400
+"""
+
+id_orig = 3582
+id_shuffled = 4240
+
+question_annotated = """
+{name,Mike} decides to buy a new camera.  He wants to buy a top-of-the-line camera but he decides to wait for the new model to come out.  The new model costs {p,30}% more than the current model.  The old camera cost ${c,4000}.  He gets ${off,200} off a ${l,400} lens he bought.  How much did he pay for the camera and lens?
+
+#init:
+- name = sample(["Mike", "Tom", "Alex"])
+- $p = range(10, 60, 10)
+- $c = range(1000, 6000, 500)
+- $l = range(300, 800, 100)
+- $off = range(100, 700, 100)
+
+#conditions:
+- off < l
+- divides(c * p, 100)
+
+#answer: c + c*p//100 + l - off
+"""
+
+answer_annotated = """
+The new camera cost {c}*.3=$<<{c}*.{p//10}={c*p//100}>>{c*p//100} more than the old camera.
+So the camera cost {c}+{c*p//100}=$<<{c}+{c*p//100}={c+c*p//100}>>{c+c*p//100}
+The lens cost {l}-{off}=$<<{l}-{off}={l-off}>>{l-off}
+So the total cost was {c+c*p//100}+{l-off}=$<<{c+c*p//100}+{l-off}={c+c*p//100+l-off}>>{c+c*p//100+l-off}
+#### {c+c*p//100+l-off}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,40 @@
+question = """
+Penny has $20. Penny buys 4 pairs of socks for $2 a pair and a hat for $7. How much money does Penny have left?
+"""
+
+answer = """
+Penny buys 4 pairs of socks for $2 x 4 = $<<4*2=8>>8.
+In total, Penny spent $8 + $7 = $<<8+7=15>>15 on 4 pairs of socks and a hat.
+Penny has $20 -$15 = $<<20-15=5>>5 left after buying 4 pairs of socks and a hat.
+#### 5
+"""
+
+id_orig = 1235
+id_shuffled = 1342
+
+question_annotated = """
+{name,Penny} has ${total,20}. {name,Penny} buys {pairs,4} pairs of socks for ${price,2} a pair and a hat for ${hat,7}. How much money does {name,Penny} have left?
+
+#init:
+- name = sample(names_female)
+- $total = range(20, 220, 10)
+- $pairs = range(1, 11)
+- $price = range(1, 21)
+- $hat = range(1, 31)
+
+#conditions:
+- total > pairs * price + hat
+
+#answer: total - pairs*price - hat
+"""
+
+answer_annotated = """
+{name} buys {pairs} pairs of socks for ${price} x {pairs} = $<<{pairs}*{price}={pairs*price}>>{pairs*price}.
+In total, {name} spent ${pairs*price} + ${hat} = $<<{pairs*price}+{hat}={pairs*price+hat}>>{pairs*price+hat} on {pairs} pairs of socks and a hat.
+{name} has ${total} -${pairs*price+hat} = $<<{total}-{pairs*price+hat}={total-pairs*price-hat}>>{total-pairs*price-hat} left after buying {pairs} pairs of socks and a hat.
+#### {total-pairs*price-hat}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

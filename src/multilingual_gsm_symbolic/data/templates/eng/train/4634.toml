@@ -1,0 +1,40 @@
+question = """
+Cindy can run at 3 miles per hour and walk at 1 mile per hour. If she runs for half a mile and then walks for half a mile, how many minutes will it take her to travel the full mile?
+"""
+
+answer = """
+It will take her 0.5 miles / 3 mph * (60 minutes / 1 hour) = <<0.5/3*60=10>>10 minutes to run half a mile.
+It will take her 0.5 miles / 1 mph * (60 minutes / 1 hour) = <<0.5/1*60=30>>30 minutes to walk half a mile.
+Her total time is 10 + 30 = <<10+30=40>>40 minutes.
+#### 40
+"""
+
+id_orig = 3927
+id_shuffled = 4634
+
+question_annotated = """
+{name,Cindy} can run at {r,3} miles per hour and walk at {w,1} mile per hour. If she runs for {ds,half a mile} and then walks for {ds,half a mile}, how many minutes will it take her to travel the full {dt,mile}?
+
+#init:
+- name = sample(names)
+- ds, dv, dt = sample([("half a mile", 0.5, "mile"), ("a quarter of a mile", 0.25, "half mile"), ("three quarters of a mile", 0.75, "one and a half miles")])
+- $r = range(1, 46)
+- $w = range(1, 46)
+
+#conditions:
+- is_int(dv*60/r)
+- is_int(dv*60/w)
+
+#answer: int(dv*60/r) + int(dv*60/w)
+"""
+
+answer_annotated = """
+It will take her {dv} miles / {r} mph * (60 minutes / 1 hour) = <<{dv}/{r}*60={int(dv*60/r)}>>{int(dv*60/r)} minutes to run {ds}.
+It will take her {dv} miles / {w} mph * (60 minutes / 1 hour) = <<{dv}/{w}*60={int(dv*60/w)}>>{int(dv*60/w)} minutes to walk {ds}.
+Her total time is {int(dv*60/r)} + {int(dv*60/w)} = <<{int(dv*60/r)}+{int(dv*60/w)}={int(dv*60/r)+int(dv*60/w)}>>{int(dv*60/r)+int(dv*60/w)} minutes.
+#### {int(dv*60/r)+int(dv*60/w)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

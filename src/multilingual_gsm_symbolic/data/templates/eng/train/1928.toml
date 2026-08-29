@@ -1,0 +1,41 @@
+question = """
+Sheila, Purity, and Rose want to rent a house. Sheila has offered to pay five times Purity’s share of the rent. Rose can only afford thrice what Purity pays. If Rose’s share is $1,800, what is the total house rent?
+"""
+
+answer = """
+Purity will pay a third of Rose's share, which translates to 1800/3 = <<1800/3=600>>600 dollars.
+Sheila has offered to pay 5 * 600 = <<5*600=3000>>3000 dollars
+Combining everyone’s share of the rent will give a total of 600 + 3000 + 1800 = <<600+3000+1800=5400>>5400 dollars
+#### 5400
+"""
+
+id_orig = 1657
+id_shuffled = 1928
+
+question_annotated = """
+{n1,Sheila}, {n2,Purity}, and {n3,Rose} want to rent a house. {n1,Sheila} has offered to pay {s_txt,five times} {n2,Purity}’s share of the rent. {n3,Rose} can only afford {r_txt,thrice} what {n2,Purity} pays. If {n3,Rose}’s share is $1,800, what is the total house rent?
+
+#init:
+- n1 = sample(["Sheila", "Sophie", "Andrea", "Abby"])
+- n2 = sample(["Purity", "Emma", "Claire", "Anna"])
+- n3 = sample(["Rose", "Ashley", "Laura", "Lily"])
+- rose = sample([1800])
+- r_txt, r, r_word = sample([("twice", 2, "half"), ("thrice", 3, "third"), ("four times", 4, "quarter"), ("five times", 5, "fifth"), ("six times", 6, "sixth"), ("seven times", 7, "seventh"), ("eight times", 8, "eighth"), ("nine times", 9, "ninth"), ("ten times", 10, "tenth"), ("eleven times", 11, "eleventh"), ("twelve times", 12, "twelfth"), ("thirteen times", 13, "thirteenth"), ("fourteen times", 14, "fourteenth"), ("fifteen times", 15, "fifteenth")])
+- s_txt, s = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5), ("six times", 6), ("seven times", 7), ("eight times", 8), ("nine times", 9), ("ten times", 10), ("eleven times", 11), ("twelve times", 12), ("thirteen times", 13), ("fourteen times", 14), ("fifteen times", 15)])
+
+#conditions:
+- divides(rose, r)
+
+#answer: rose//r + s*(rose//r) + rose
+"""
+
+answer_annotated = """
+{n2} will pay a {r_word} of {n3}'s share, which translates to {rose}/{r} = <<{rose}/{r}={rose//r}>>{rose//r} dollars.
+{n1} has offered to pay {s} * {rose//r} = <<{s}*{rose//r}={s*(rose//r)}>>{s*(rose//r)} dollars
+Combining everyone’s share of the rent will give a total of {rose//r} + {s*(rose//r)} + {rose} = <<{rose//r}+{s*(rose//r)}+{rose}={rose//r + s*(rose//r) + rose}>>{rose//r + s*(rose//r) + rose} dollars
+#### {rose//r + s*(rose//r) + rose}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Bill has played 200 games of poker and won 63% of them. If he plays 100 more games and loses 43 of them, what is his new win percentage?
+"""
+
+answer = """
+First find the total number of games Bill has won: 200 games * 63% = <<200*63*.01=126>>126 games
+Then find how many of the next 100 games he wins by subtracting the number he loses from the total: 100 games - 43 games = <<100-43=57>>57 games
+Then add his new wins to his old wins to find his total wins: 57 games + 126 games = <<57+126=183>>183 games
+Then add the old total number of games to the new total number of games to find the overall total number of games: 200 games + 100 games = <<200+100=300>>300 games
+Then divide the total number of games Bill won by the overall total number of games and multiply by 100% to find the percentage of games he won: 183 games / 300 games * 100% = 61%
+#### 61
+"""
+
+id_orig = 3298
+id_shuffled = 3923
+
+question_annotated = """
+{name,Bill} has played {g0,200} games of poker and won {rate,63}% of them. If he plays {g1,100} more games and loses {lost,43} of them, what is his new win percentage?
+
+#init:
+- name = sample(names_male)
+- $g0 = range(100, 300, 50)
+- $rate = range(10, 90)
+- $g1 = range(50, 200, 50)
+- $lost = range(1, 60, 7)
+
+#conditions:
+- divides(g0 * rate, 100)
+- lost < g1
+- divides(g0*rate + (g1 - lost)*100, g0 + g1)
+
+#answer: int((g0*rate//100 + g1 - lost)*100/(g0+g1))
+"""
+
+answer_annotated = """
+First find the total number of games {name} has won: {g0} games * {rate}% = <<{g0}*{rate}*.01={g0*rate//100}>>{g0*rate//100} games
+Then find how many of the next {g1} games he wins by subtracting the number he loses from the total: {g1} games - {lost} games = <<{g1}-{lost}={g1-lost}>>{g1-lost} games
+Then add his new wins to his old wins to find his total wins: {g1-lost} games + {g0*rate//100} games = <<{g1-lost}+{g0*rate//100}={g1-lost+g0*rate//100}>>{g1-lost+g0*rate//100} games
+Then add the old total number of games to the new total number of games to find the overall total number of games: {g0} games + {g1} games = <<{g0}+{g1}={g0+g1}>>{g0+g1} games
+Then divide the total number of games {name} won by the overall total number of games and multiply by 100% to find the percentage of games he won: {g1-lost+g0*rate//100} games / {g0+g1} games * 100% = {int((g0*rate//100+g1-lost)*100/(g0+g1))}%
+#### {int((g0*rate//100+g1-lost)*100/(g0+g1))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

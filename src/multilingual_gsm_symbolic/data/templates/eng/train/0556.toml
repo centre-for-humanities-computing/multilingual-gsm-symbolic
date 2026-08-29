@@ -1,0 +1,46 @@
+question = """
+Andy started out the year weighing 156 pounds. He then grew 3 inches and gained 36 pounds. Andy wasn't happy with his weight and decided to exercise. Over the next 3 months, he lost an eighth of his weight every month. How much less does Andy weigh now than at the beginning of the year?
+"""
+
+answer = """
+Andy weighed 156 + 36 = <<156+36=192>>192 pounds after growing taller.
+An eighth of his weight is 1/8 x 192 = <<1/8*192=24>>24 pounds.
+Over the next 3 months, Andy lost 24 x 3 = <<24*3=72>>72 pounds.
+He now weighs 192 - 72 = <<192-72=120>>120 pounds.
+Andy weighs 156 - 120 = <<156-120=36>>36 pounds less than at the beginning of the year.
+#### 36
+"""
+
+id_orig = 483
+id_shuffled = 556
+
+question_annotated = """
+{name,Andy} started out the year weighing {w,156} pounds. He then grew {inch,3} inches and gained {g,36} pounds. {name,Andy} wasn't happy with his weight and decided to exercise. Over the next {m,3} months, he lost an eighth of his weight every month. How much less does {name,Andy} weigh now than at the beginning of the year?
+
+#init:
+- name = sample(names_male)
+- $w = range(100, 400, 2)
+- $g = range(4, 60, 2)
+- $inch = range(2, 10)
+- $m = range(2, 7)
+
+#conditions:
+- divides(w + g, 8)
+- (w + g)//8 * m > g
+- w - ((w + g)//8 * m - g) > 0
+
+#answer: w - (w + g - (w + g)//8 * m)
+"""
+
+answer_annotated = """
+{name} weighed {w} + {g} = <<{w}+{g}={w+g}>>{w+g} pounds after growing taller.
+An eighth of his weight is 1/8 x {w+g} = <<1/8*{w+g}={(w+g)//8}>>{(w+g)//8} pounds.
+Over the next {m} months, {name} lost {(w+g)//8} x {m} = <<{(w+g)//8}*{m}={(w+g)//8*m}>>{(w+g)//8*m} pounds.
+He now weighs {w+g} - {(w+g)//8*m} = <<{w+g}-{(w+g)//8*m}={w+g-(w+g)//8*m}>>{w+g-(w+g)//8*m} pounds.
+{name} weighs {w} - {w+g-(w+g)//8*m} = <<{w}-{w+g-(w+g)//8*m}={w-(w+g-(w+g)//8*m)}>>{w-(w+g-(w+g)//8*m)} pounds less than at the beginning of the year.
+#### {w-(w+g-(w+g)//8*m)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

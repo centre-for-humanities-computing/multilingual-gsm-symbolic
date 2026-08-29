@@ -1,0 +1,43 @@
+question = """
+Lionel walked 4 miles. Esther walked 975 yards and Niklaus walked 1287 feet. How many combined feet did the friends walk?
+"""
+
+answer = """
+Lionel = 4 * 5280 = <<4*5280=21120>>21,120 feet
+Esther = 975 * 3 = <<975*3=2925>>2925 feet
+Together = 21,120 + 2925 + 1287 = <<21120+2925+1287=25332>>25,332 feet
+Together the friends walked 25,332 feet.
+#### 25332
+"""
+
+id_orig = 2838
+id_shuffled = 3386
+
+question_annotated = """
+{name1,Lionel} walked {m,4} miles. {name2,Esther} walked {yd,975} yards and {name3,Niklaus} walked {ft,1287} feet. How many combined feet did the friends walk?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_female)
+- name3 = sample(names_male)
+- $m = range(2, 8)
+- $yd = range(900, 1125, 25)
+- $ft = range(1000, 1500)
+
+#conditions:
+- (m*5280 + yd*3 + ft) % 1000 >= 100
+
+#answer: m*5280 + yd*3 + ft
+"""
+
+answer_annotated = """
+{name1} = {m} * 5280 = <<{m}*5280={m*5280}>>{m*5280//1000},{m*5280%1000} feet
+{name2} = {yd} * 3 = <<{yd}*3={yd*3}>>{yd*3} feet
+Together = {m*5280//1000},{m*5280%1000} + {yd*3} + {ft} = <<{m*5280}+{yd*3}+{ft}={m*5280+yd*3+ft}>>{(m*5280+yd*3+ft)//1000},{(m*5280+yd*3+ft)%1000} feet
+Together the friends walked {(m*5280+yd*3+ft)//1000},{(m*5280+yd*3+ft)%1000} feet.
+#### {m*5280 + yd*3 + ft}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

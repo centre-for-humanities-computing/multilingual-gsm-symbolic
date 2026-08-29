@@ -1,0 +1,42 @@
+question = """
+Madeline needs $1200 to pay rent, $400 for groceries, $200 for medical expenses, and $60 for utilities. She also wants to save $200 in case of an emergency. She makes $15 per hour at her job. How many hours will Madeline need to work this month?
+"""
+
+answer = """
+Madeline needs 1200+400+200+60+200 = $<<1200+400+200+60+200=2060>>2060 to pay all of her bills.
+She will need to work $2060/15 per hour = 137.33 hours.
+She will need to work 138 hours to pay all of her bills
+#### 138
+"""
+
+id_orig = 1756
+id_shuffled = 1940
+
+question_annotated = """
+{name,Madeline} needs ${rent,1200} to pay rent, ${groceries,400} for groceries, ${medical,200} for medical expenses, and ${utilities,60} for utilities. She also wants to save ${savings,200} in case of an emergency. She makes ${rate,15} per hour at her job. How many hours will {name,Madeline} need to work this month?
+
+#init:
+- name = sample(names_female)
+- $rent = range(800, 1700, 100)
+- $groceries = range(200, 610, 100)
+- $medical = range(100, 510, 100)
+- $utilities = range(40, 110, 20)
+- $savings = range(100, 510, 100)
+- $rate = range(12, 22)
+
+#conditions:
+- not divides(rent + groceries + medical + utilities + savings, rate)
+
+#answer: (rent + groceries + medical + utilities + savings + rate - 1) // rate
+"""
+
+answer_annotated = """
+{name} needs {rent}+{groceries}+{medical}+{utilities}+{savings} = $<<{rent}+{groceries}+{medical}+{utilities}+{savings}={rent+groceries+medical+utilities+savings}>>{rent+groceries+medical+utilities+savings} to pay all of her bills.
+She will need to work ${rent+groceries+medical+utilities+savings}/{rate} per hour = {round((rent+groceries+medical+utilities+savings)/rate*100)/100} hours.
+She will need to work {(rent+groceries+medical+utilities+savings+rate-1)//rate} hours to pay all of her bills
+#### {(rent+groceries+medical+utilities+savings+rate-1)//rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Mr. Smith takes his wife, his parents, and his 3 children to a seafood buffet.  The price for the adult buffet is $30.  The price for the children’s buffet is $15.  Senior citizens get a 10% discount.  How much does Mr. Smith spend on the buffet for his entire family?
+"""
+
+answer = """
+The buffet cost for Mr. Smith and his wife is $30 x 2 = $<<30*2=60>>60.
+The buffet cost for his children is $15 x 3 = $<<15*3=45>>45.
+The buffet cost for 1 senior citizen is $30 x 90% = $<<30*90*.01=27>>27.
+B
+uffet cost for the grandparents is $27 x 2 = $<<27*2=54>>54.
+Buffet cost for the entire family is $60 + $45 + $54 = $<<60+45+54=159>>159
+#### 159
+"""
+
+id_orig = 2372
+id_shuffled = 2731
+
+question_annotated = """
+Mr. {name,Smith} takes his wife, his parents, and his {k,3} children to a seafood buffet.  The price for the adult buffet is ${p,30}.  The price for the children’s buffet is ${c,15}.  Senior citizens get a {d,10}% discount.  How much does Mr. {name,Smith} spend on the buffet for his entire family?
+
+#init:
+- name = sample(names_male)
+- $p = range(20, 60)
+- $c = range(5, 25)
+- $k = range(2, 8)
+- $d = range(5, 21, 5)
+
+#conditions:
+- divides(p * (100 - d), 100)
+
+#answer: p*2 + c*k + p*(100 - d)//100*2
+"""
+
+answer_annotated = """
+The buffet cost for Mr. {name} and his wife is ${p} x 2 = $<<{p}*2={p*2}>>{p*2}.
+The buffet cost for his children is ${c} x {k} = $<<{c}*{k}={c*k}>>{c*k}.
+The buffet cost for 1 senior citizen is ${p} x {100-d}% = $<<{p}*{100-d}*.01={p*(100-d)//100}>>{p*(100-d)//100}.
+B
+uffet cost for the grandparents is ${p*(100-d)//100} x 2 = $<<{p*(100-d)//100}*2={p*(100-d)//100*2}>>{p*(100-d)//100*2}.
+Buffet cost for the entire family is ${p*2} + ${c*k} + ${p*(100-d)//100*2} = $<<{p*2}+{c*k}+{p*(100-d)//100*2}={p*2+c*k+p*(100-d)//100*2}>>{p*2+c*k+p*(100-d)//100*2}
+#### {p*2+c*k+p*(100-d)//100*2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

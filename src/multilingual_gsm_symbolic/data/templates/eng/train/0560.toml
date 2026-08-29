@@ -1,0 +1,46 @@
+question = """
+Jonah bought 6 pineapples for $3 each. Each pineapple could be cut into 12 pineapple rings. He sold 4 pineapple rings for $5 each. How much profit did Jonah make?
+"""
+
+answer = """
+Jonah spent 6 x $3 = $<<6*3=18>>18
+He made a total of 6 x 12 = <<6*12=72>>72 pineapple rings.
+He sold 72/4 = <<72/4=18>>18 sets of pineapple rings.
+He made 18 x $5 = $<<18*5=90>>90
+His profit was $90 - $18 = $<<90-18=72>>72
+#### 72
+"""
+
+id_orig = 487
+id_shuffled = 560
+
+question_annotated = """
+{name,Jonah} bought {p,6} pineapples for ${c,3} each. Each pineapple could be cut into {r,12} pineapple rings. He sold {s,4} pineapple rings for ${sp,5} each. How much profit did {name,Jonah} make?
+
+#init:
+- name = sample(names_male)
+- $p = range(2, 13)
+- $c = range(1, 10)
+- $r = range(6, 25, 3)
+- $s = range(2, 11)
+- $sp = range(4, 21)
+
+#conditions:
+- divides(p * r, s)
+- p * r // s * sp - p * c > 0
+
+#answer: p * r // s * sp - p * c
+"""
+
+answer_annotated = """
+{name} spent {p} x ${c} = $<<{p}*{c}={p*c}>>{p*c}
+He made a total of {p} x {r} = <<{p}*{r}={p*r}>>{p*r} pineapple rings.
+He sold {p*r}/{s} = <<{p*r}/{s}={p*r//s}>>{p*r//s} sets of pineapple rings.
+He made {p*r//s} x ${sp} = $<<{p*r//s}*{sp}={p*r//s*sp}>>{p*r//s*sp}
+His profit was ${p*r//s*sp} - ${p*c} = $<<{p*r//s*sp}-{p*c}={p*r//s*sp-p*c}>>{p*r//s*sp-p*c}
+#### {p * r // s * sp - p * c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

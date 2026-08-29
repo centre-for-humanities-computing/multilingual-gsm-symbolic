@@ -1,0 +1,49 @@
+question = """
+Thomas has been saving $40 in the bank every month for six years. His friend Joseph has been saving 2/5 times less money per month. How much money are they having in their savings account altogether?
+"""
+
+answer = """
+Thomas has been saving for six years, and since each year has 12 months, he has been making savings for 6*12 = <<6*12=72>>72 months.
+Since Thomas has been saving $40 in the bank every month for six years, he has saved 72*$40 = $<<72*40=2880>>2880
+Joseph has been saving 2/5 times less money per month than Thomas, meaning he has been saving 2/5*$40 = $<<2/5*40=16>>16 less per month.
+The total amount of money that Joseph has been saving per month is $40-$16 = $<<40-16=24>>24
+In six years, Joseph has saved $24*72 = $<<24*72=1728>>1728
+Together, they have saved a total of $2880+$1728 = $<<2880+1728=4608>>4608
+#### 4608
+"""
+
+id_orig = 3916
+id_shuffled = 4623
+
+question_annotated = """
+{name,Thomas} has been saving ${a,40} in the bank every month for {yrs_txt,six} years. His friend {friend,Joseph} has been saving {fn,2}/{fd,5} times less money per month. How much money are they having in their savings account altogether?
+
+#init:
+- name = sample(["Thomas", "Chris", "Oliver", "Noah"])
+- friend = sample(["Joseph", "Eric", "Jason", "Carl"])
+- yrs_txt, yrs = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $a = range(20, 220, 10)
+- $fn = range(1, 5)
+- $fd = range(2, 11)
+
+#conditions:
+- fn < fd
+- divides(fn * a, fd)
+- name != friend
+
+#answer: yrs*12*a + (a - fn*a//fd)*yrs*12
+"""
+
+answer_annotated = """
+{name} has been saving for {yrs_txt} years, and since each year has 12 months, he has been making savings for {yrs}*12 = <<{yrs}*12={yrs*12}>>{yrs*12} months.
+Since {name} has been saving ${a} in the bank every month for {yrs_txt} years, he has saved {yrs*12}*${a} = $<<{yrs*12}*{a}={yrs*12*a}>>{yrs*12*a}
+{friend} has been saving {fn}/{fd} times less money per month than {name}, meaning he has been saving {fn}/{fd}*${a} = $<<{fn}/{fd}*{a}={fn*a//fd}>>{fn*a//fd} less per month.
+The total amount of money that {friend} has been saving per month is ${a}-${fn*a//fd} = $<<{a}-{fn*a//fd}={a-fn*a//fd}>>{a-fn*a//fd}
+In {yrs_txt} years, {friend} has saved ${a-fn*a//fd}*{yrs*12} = $<<{a-fn*a//fd}*{yrs*12}={(a-fn*a//fd)*(yrs*12)}>>{(a-fn*a//fd)*(yrs*12)}
+Together, they have saved a total of ${yrs*12*a}+${(a-fn*a//fd)*(yrs*12)} = $<<{yrs*12*a}+{(a-fn*a//fd)*(yrs*12)}={yrs*12*a+(a-fn*a//fd)*(yrs*12)}>>{yrs*12*a+(a-fn*a//fd)*(yrs*12)}
+#### {yrs*12*a+(a-fn*a//fd)*(yrs*12)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

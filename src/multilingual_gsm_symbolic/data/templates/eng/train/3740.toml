@@ -1,0 +1,43 @@
+question = """
+John eats 3 meals a day.  Breakfast is 500 calories.  His lunch contains 25% more calories than that.  His dinner is twice as many calories as lunch.  He also has 3 shakes that are each 300 calories.  How many calories does he get in a day?
+"""
+
+answer = """
+Lunch is 500 * .25 = <<500*.25=125>>125 more calories than breakfast
+That means it is 500 + 125 = <<500+125=625>>625 calories
+So dinner is 625 * 2 = <<625*2=1250>>1250 calories
+The shakes are 3 * 300 = <<3*300=900>>900 calories
+So in total he eats 500 + 625 + 1250 + 900 = <<500+625+1250+900=3275>>3275 calories
+#### 3275
+"""
+
+id_orig = 3141
+id_shuffled = 3740
+
+question_annotated = """
+{name,John} eats 3 meals a day.  Breakfast is {bf,500} calories.  His lunch contains 25% more calories than that.  His dinner is twice as many calories as lunch.  He also has {s,3} shakes that are each {sc,300} calories.  How many calories does he get in a day?
+
+#init:
+- name = sample(names_male)
+- $bf = range(400, 1000, 4)
+- $s = range(2, 7)
+- $sc = range(200, 600, 50)
+
+#conditions:
+- divides(bf, 4)
+
+#answer: bf + (bf + bf//4) * 3 + s * sc
+"""
+
+answer_annotated = """
+Lunch is {bf} * .25 = <<{bf}*.25={bf//4}>>{bf//4} more calories than breakfast
+That means it is {bf} + {bf//4} = <<{bf}+{bf//4}={bf+bf//4}>>{bf+bf//4} calories
+So dinner is {bf+bf//4} * 2 = <<{bf+bf//4}*2={(bf+bf//4)*2}>>{(bf+bf//4)*2} calories
+The shakes are {s} * {sc} = <<{s}*{sc}={s*sc}>>{s*sc} calories
+So in total he eats {bf} + {bf+bf//4} + {(bf+bf//4)*2} + {s*sc} = <<{bf}+{bf+bf//4}+{(bf+bf//4)*2}+{s*sc}={bf+(bf+bf//4)*3+s*sc}>>{bf+(bf+bf//4)*3+s*sc} calories
+#### {bf + (bf + bf//4) * 3 + s * sc}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

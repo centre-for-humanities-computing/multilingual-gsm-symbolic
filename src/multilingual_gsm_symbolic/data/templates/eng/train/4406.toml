@@ -1,0 +1,50 @@
+question = """
+Jackson is making dinner. He makes a salad out of lettuce (50 calories), carrots (twice the calories of the lettuce) and dressing (210 calories). He also makes a pizza with 600 calories for the crust, 1/3 the crust's calories for the pepperoni, and 400 calories for the cheese. If Jackson eats 1/4 of the salad and 1/5 of the pizza, how many calories does he eat?
+"""
+
+answer = """
+First find the number of calories in the carrots: 50 calories * 2 = <<50*2=100>>100 calories
+Then find the total calories in the salad: 100 calories + 50 calories + 210 calories = <<100+50+210=360>>360 calories
+Then find the number of calories in the pepperoni: 1/3 * 600 calories = <<1/3*600=200>>200 calories
+Now find the total number of calories in the pizza: 200 calories + 600 calories + 400 calories = <<200+600+400=1200>>1200 calories
+Now find how many calories are in Jackson's portion of the salad: 360 calories * 1/4 = <<360*1/4=90>>90 calories
+Now find how many calories are in Jackson's portion of the pizza: 1200 calories * 1/5 = <<1200*1/5=240>>240 calories
+Now find the total calories Jackson ate: 90 calories + 240 calories = <<90+240=330>>330 calories
+#### 330
+"""
+
+id_orig = 3736
+id_shuffled = 4406
+
+question_annotated = """
+{name,Jackson} is making dinner. He makes a salad out of lettuce ({l,50} calories), carrots (twice the calories of the lettuce) and dressing ({d,210} calories). He also makes a pizza with {c,600} calories for the crust, 1/3 the crust's calories for the pepperoni, and {ch,400} calories for the cheese. If {name,Jackson} eats 1/4 of the salad and 1/5 of the pizza, how many calories does he eat?
+
+#init:
+- name = sample(names_male)
+- $l = range(10, 500, 10)
+- $d = range(10, 400, 10)
+- $c = range(300, 900, 100)
+- $ch = range(100, 700, 100)
+
+#conditions:
+- divides(c, 3)
+- divides(3*l + d, 4)
+- divides(c//3 + c + ch, 5)
+
+#answer: (3*l + d)//4 + (c//3 + c + ch)//5
+"""
+
+answer_annotated = """
+First find the number of calories in the carrots: {l} calories * 2 = <<{l}*2={2*l}>>{2*l} calories
+Then find the total calories in the salad: {2*l} calories + {l} calories + {d} calories = <<{2*l}+{l}+{d}={3*l+d}>>{3*l+d} calories
+Then find the number of calories in the pepperoni: 1/3 * {c} calories = <<1/3*{c}={c//3}>>{c//3} calories
+Now find the total number of calories in the pizza: {c//3} calories + {c} calories + {ch} calories = <<{c//3}+{c}+{ch}={c//3+c+ch}>>{c//3+c+ch} calories
+Now find how many calories are in {name}'s portion of the salad: {3*l+d} calories * 1/4 = <<{3*l+d}*1/4={(3*l+d)//4}>>{(3*l+d)//4} calories
+Now find how many calories are in {name}'s portion of the pizza: {c//3+c+ch} calories * 1/5 = <<{c//3+c+ch}*1/5={(c//3+c+ch)//5}>>{(c//3+c+ch)//5} calories
+Now find the total calories {name} ate: {(3*l+d)//4} calories + {(c//3+c+ch)//5} calories = <<{(3*l+d)//4}+{(c//3+c+ch)//5}={(3*l+d)//4+(c//3+c+ch)//5}>>{(3*l+d)//4+(c//3+c+ch)//5} calories
+#### {(3*l+d)//4+(c//3+c+ch)//5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

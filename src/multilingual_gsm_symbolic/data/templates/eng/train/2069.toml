@@ -1,0 +1,51 @@
+question = """
+The teacher told the class that if they averaged at least 75% on their final exam, they could have a pizza party. Everyone took the exam on Monday, except for William, who was allowed to take it on Tuesday. If there are 30 people in the class, and the average before he took the test was a 74%, what score does he have to get to make sure they get to have a pizza party?
+"""
+
+answer = """
+Let x be the score that William needs to achieve.
+Since there are 30 people in the class, there are 30 - 1 = <<30-1=29>>29 people without him.
+Since their average was a 74%, this means that (29 * 74 + x) / 30 >= 75.
+Thus, 29 * 74 + x >= 30 * 75
+Thus, 29 * 74 + x >= 2250
+Thus, 2146 + x >= 2250
+Thus, x >= 2250 - 2146
+Thus, x >= 104
+#### 104
+"""
+
+id_orig = 1776
+id_shuffled = 2069
+
+question_annotated = """
+The teacher told the class that if they averaged at least {avg,75}% on their final exam, they could have a pizza party. Everyone took the exam on Monday, except for {name,William}, who was allowed to take it on Tuesday. If there are {n,30} people in the class, and the average before he took the test was a {prior,74}%, what score does he have to get to make sure they get to have a pizza party?
+
+#init:
+- name = sample(names_male)
+- $n = range(10, 60)
+- $prior = range(40, 95)
+- $avg = range(70, 101)
+
+#conditions:
+- avg > prior
+- n*avg - (n-1)*prior > 0
+- n*avg - (n-1)*prior <= 100
+
+#answer: n*avg - (n-1)*prior
+"""
+
+answer_annotated = """
+Let x be the score that {name} needs to achieve.
+Since there are {n} people in the class, there are {n} - 1 = <<{n}-1={n-1}>>{n-1} people without him.
+Since their average was a {prior}%, this means that ({n-1} * {prior} + x) / {n} >= {avg}.
+Thus, {n-1} * {prior} + x >= {n} * {avg}
+Thus, {n-1} * {prior} + x >= {n*avg}
+Thus, {(n-1)*prior} + x >= {n*avg}
+Thus, x >= {n*avg} - {(n-1)*prior}
+Thus, x >= {n*avg - (n-1)*prior}
+#### {n*avg - (n-1)*prior}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

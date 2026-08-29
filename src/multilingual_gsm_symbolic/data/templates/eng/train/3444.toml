@@ -1,0 +1,45 @@
+question = """
+Dexter and Jay are using a gallon of white paint to paint the walls. Dexter used 3/8 of the gallon of paint while Jay used 5/8 of a gallon of paint. If a gallon is equal to 4 liters, how many liters of paint were left from Dexter and Jay combined?
+"""
+
+answer = """
+Dexter used 4 x 3/8 = 3/2 liters of paint.
+Jay used 4 x 5/8 = 5/2 liters of paint.
+Together, they used 3/2 + 5/2 = <<3/2+5/2=4>>4 liters of paint.
+Since each of them used a gallon of paint, then they both used 2 x 4 = <<2*4=8>>8 liters of paint together.
+Therefore, 8 - 4 = <<8-4=4>>4 liters of paint were left.
+#### 4
+"""
+
+id_orig = 2882
+id_shuffled = 3444
+
+question_annotated = """
+{name1,Dexter} and {name2,Jay} are using a gallon of white paint to paint the walls. {name1,Dexter} used {d,3}/8 of the gallon of paint while {name2,Jay} used {j,5}/8 of a gallon of paint. If a gallon is equal to {L,4} liters, how many liters of paint were left from {name1,Dexter} and {name2,Jay} combined?
+
+#init:
+- name1 = sample(["Dexter", "Chris", "Oliver", "Noah"])
+- name2 = sample(["Jay", "Eric", "Jason", "Carl"])
+- $d = range(1, 9)
+- $j = range(1, 9)
+- $L = range(2, 30)
+
+#conditions:
+- d + j < 16
+- divides(L*(d+j), 8)
+
+#answer: 2*L - L*(d+j)//8
+"""
+
+answer_annotated = """
+{name1} used {L} x {d}/8 = {str(Fraction(L*d/8))} liters of paint.
+{name2} used {L} x {j}/8 = {str(Fraction(L*j/8))} liters of paint.
+Together, they used {str(Fraction(L*d/8))} + {str(Fraction(L*j/8))} = <<{str(Fraction(L*d/8))}+{str(Fraction(L*j/8))}={L*(d+j)//8}>>{L*(d+j)//8} liters of paint.
+Since each of them used a gallon of paint, then they both used 2 x {L} = <<2*{L}={2*L}>>{2*L} liters of paint together.
+Therefore, {2*L} - {L*(d+j)//8} = <<{2*L}-{L*(d+j)//8}={2*L-L*(d+j)//8}>>{2*L-L*(d+j)//8} liters of paint were left.
+#### {2*L - L*(d+j)//8}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

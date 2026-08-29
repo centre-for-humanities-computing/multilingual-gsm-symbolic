@@ -1,0 +1,45 @@
+question = """
+Jimmy is setting up a garden. He has three plots: one plot for green beans, one plot for carrots, and one plot for corn. Each corn plant produces 5 times as many servings of veggies as each carrot, and each green bean plant produces half as many servings as each corn plant. If each carrot produces 4 servings of vegetables, and each plot has 9 plants, how many servings of vegetables is Jimmy growing?
+"""
+
+answer = """
+First, find how many servings one corn plant produces by multiplying the number of carrot servings by 5: 4 servings * 5 = <<4*5=20>>20 servings
+Then find how many servings one green bean plant produces by dividing the number of corn servings by two: 20 servings / 2 = <<20/2=10>>10 servings
+Now multiply the number of servings per carrot plant by the number of carrot plants: 4 servings/plant * 9 plants = <<4*9=36>>36 servings
+Do the same for corn: 20 servings/plant * 9 plants = <<20*9=180>>180 servings
+And do the same for green beans: 10 servings/plant * 9 plants = <<10*9=90>>90 servings
+Now add up the servings for all three types of plant: 36 servings + 180 servings + 90 servings = <<36+180+90=306>>306 servings
+#### 306
+"""
+
+id_orig = 2724
+id_shuffled = 3191
+
+question_annotated = """
+{name,Jimmy} is setting up a garden. He has three plots: one plot for green beans, one plot for carrots, and one plot for corn. Each corn plant produces {c,5} times as many servings of veggies as each carrot, and each green bean plant produces half as many servings as each corn plant. If each carrot produces {s,4} servings of vegetables, and each plot has {p,9} plants, how many servings of vegetables is {name,Jimmy} growing?
+
+#init:
+- name = sample(names_male)
+- $c = range(2, 11)
+- $s = range(2, 100)
+- $p = range(2, 51)
+
+#conditions:
+- divides(s * c, 2)
+
+#answer: s*p + s*c*p + (s*c//2)*p
+"""
+
+answer_annotated = """
+First, find how many servings one corn plant produces by multiplying the number of carrot servings by {c}: {s} servings * {c} = <<{s}*{c}={s*c}>>{s*c} servings
+Then find how many servings one green bean plant produces by dividing the number of corn servings by two: {s*c} servings / 2 = <<{s*c}/2={s*c//2}>>{s*c//2} servings
+Now multiply the number of servings per carrot plant by the number of carrot plants: {s} servings/plant * {p} plants = <<{s}*{p}={s*p}>>{s*p} servings
+Do the same for corn: {s*c} servings/plant * {p} plants = <<{s*c}*{p}={s*c*p}>>{s*c*p} servings
+And do the same for green beans: {s*c//2} servings/plant * {p} plants = <<{s*c//2}*{p}={(s*c//2)*p}>>{(s*c//2)*p} servings
+Now add up the servings for all three types of plant: {s*p} servings + {s*c*p} servings + {(s*c//2)*p} servings = <<{s*p}+{s*c*p}+{(s*c//2)*p}={s*p+s*c*p+(s*c//2)*p}>>{s*p+s*c*p+(s*c//2)*p} servings
+#### {s*p+s*c*p+(s*c//2)*p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,42 @@
+question = """
+Daisy’s milk cow provides 16 cups of milk per day.  75% of the milk is consumed by Daisy’s kids.  Daisy uses 50% of the remaining milk to cook with.  How much milk is left over?
+"""
+
+answer = """
+The cow provides 16 cups of milk per day and the kids consume 75% so they drink 16*.75 = <<16*.75=12>>12 cups of milk
+The cow provides 16 cups of milk and the kids drink 12 cups leaving 16-12 = <<16-12=4>>4 cups of milk
+Daisy uses 50% of the remaining 4 cups of milk to cook with so she uses .50*4 = <<50*.01*4=2>>2 cups of milk
+She had 4 cups of milk and used 2 cups to cook with so that leaves 4-2 = <<4-2=2>>2 cups of milk
+#### 2
+"""
+
+id_orig = 2060
+id_shuffled = 2378
+
+question_annotated = """
+{name,Daisy}’s milk cow provides {m,16} cups of milk per day.  {p1,75}% of the milk is consumed by {name,Daisy}’s kids.  {name,Daisy} uses {p2,50}% of the remaining milk to cook with.  How much milk is left over?
+
+#init:
+- name = sample(names_female)
+- $m = range(4, 404, 4)
+- $p1 = range(25, 95, 25)
+- $p2 = range(25, 95, 25)
+
+#conditions:
+- divides(m * p1, 100)
+- divides(p2 * (m - m * p1 // 100), 100)
+
+#answer: m - m*p1//100 - p2*(m - m*p1//100)//100
+"""
+
+answer_annotated = """
+The cow provides {m} cups of milk per day and the kids consume {p1}% so they drink {m}*.{p1} = <<{m}*.{p1}={m*p1//100}>>{m*p1//100} cups of milk
+The cow provides {m} cups of milk and the kids drink {m*p1//100} cups leaving {m}-{m*p1//100} = <<{m}-{m*p1//100}={m - m*p1//100}>>{m - m*p1//100} cups of milk
+{name} uses {p2}% of the remaining {m - m*p1//100} cups of milk to cook with so she uses .{p2}*{m - m*p1//100} = <<{p2}*.01*{m - m*p1//100}={p2*(m - m*p1//100)//100}>>{p2*(m - m*p1//100)//100} cups of milk
+She had {m - m*p1//100} cups of milk and used {p2*(m - m*p1//100)//100} cups to cook with so that leaves {m - m*p1//100}-{p2*(m - m*p1//100)//100} = <<{m - m*p1//100}-{p2*(m - m*p1//100)//100}={m - m*p1//100 - p2*(m - m*p1//100)//100}>>{m - m*p1//100 - p2*(m - m*p1//100)//100} cups of milk
+#### {m - m*p1//100 - p2*(m - m*p1//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

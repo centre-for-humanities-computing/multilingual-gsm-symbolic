@@ -1,0 +1,40 @@
+question = """
+On a farm, on average every 6 cows produce 108 liters of milk per week. In five weeks the cows produced 2160 liters of milk. How many cows are on the farm?
+"""
+
+answer = """
+Per week, one cow produces 108 liters / 6 cows = <<108/6=18>>18 liters/cow.
+The cows produced 2160 liters of milk over 5 weeks. So we have 2160 liters / 18 liters/cow = <<2160/18=120>>120 cows.
+Further, we have to divide 120 cows / 5 weeks = <<120/5=24>>24 cows.
+#### 24
+"""
+
+id_orig = 848
+id_shuffled = 944
+
+question_annotated = """
+On a farm, on average every {cows,6} cows produce {liters,108} liters of milk per week. In {wtxt,five} weeks the cows produced {total,2160} liters of milk. How many cows are on the farm?
+
+#init:
+- wtxt, w = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- $cows = range(2, 13)
+- $liters = range(12, 240, 12)
+- $total = range(400, 3001, 20)
+
+#conditions:
+- divides(liters, cows)
+- divides(total, liters//cows * w)
+
+#answer: total//(liters//cows)//w
+"""
+
+answer_annotated = """
+Per week, one cow produces {liters} liters / {cows} cows = <<{liters}/{cows}={liters//cows}>>{liters//cows} liters/cow.
+The cows produced {total} liters of milk over {w} weeks. So we have {total} liters / {liters//cows} liters/cow = <<{total}/{liters//cows}={total//(liters//cows)}>>{total//(liters//cows)} cows.
+Further, we have to divide {total//(liters//cows)} cows / {w} weeks = <<{total//(liters//cows)}/{w}={total//(liters//cows)//w}>>{total//(liters//cows)//w} cows.
+#### {total//(liters//cows)//w}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

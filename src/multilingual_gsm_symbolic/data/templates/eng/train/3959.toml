@@ -1,0 +1,53 @@
+question = """
+On his farm, Mr. Mathews has goats and sheep in the ratio of 5:7. He decides to sell half of the goats at $40 each and 2/3 of the sheep at $30 each. How much money does he make from the sale of the animals if the total number of sheep and goats on the farm is 360?
+"""
+
+answer = """
+The total ratio of goats and sheep on the farm is 5+7 = <<5+7=12>>12
+The fraction that represents goats from the total ratio is 5/12, and since there are 360 goats and sheep on the farm, the number of goats is 5/12*360= <<5/12*360=150>>150
+The number of sheep on Mr. Mathews's farm is 360-150 = <<360-150=210>>210.
+Mr. Mathews sold 1/2*150 = <<1/2*150=75>>75 goats.
+If each goat went for $40, the total amount of money Mr. Mathews made from the sale of his goats is 75*$40 = $<<75*40=3000>>3000
+He also sold 2/3*210 = <<2/3*210=140>>140 of the total sheep on his farm.
+The income from the sale of the sheep is 140*$30=$<<140*30=4200>>4200
+From the sale of goats and sheep, Mr. Mathews made $4200+$3000 = $8600
+#### 7200
+"""
+
+id_orig = 3334
+id_shuffled = 3959
+
+question_annotated = """
+On his farm, Mr. {name,Mathews} has goats and sheep in the ratio of {gr,5}:{sr,7}. He decides to sell half of the goats at ${gp,40} each and 2/3 of the sheep at ${sp,30} each. How much money does he make from the sale of the animals if the total number of sheep and goats on the farm is {t,360}?
+
+#init:
+- name = sample(names_male)
+- $gr = range(1, 9)
+- $sr = range(1, 9)
+- $t = range(60, 661, 60)
+- $gp = range(10, 60, 5)
+- $sp = range(10, 60, 5)
+
+#conditions:
+- divides(gr*t, gr+sr)
+- divides(gr*t//(gr+sr), 2)
+- divides(t - gr*t//(gr+sr), 3)
+
+#answer: gr*t//(gr+sr)//2*gp + 2*(t-gr*t//(gr+sr))//3*sp
+"""
+
+answer_annotated = """
+The total ratio of goats and sheep on the farm is {gr}+{sr} = <<{gr}+{sr}={gr+sr}>>{gr+sr}
+The fraction that represents goats from the total ratio is {gr}/{gr+sr}, and since there are {t} goats and sheep on the farm, the number of goats is {gr}/{gr+sr}*{t}= <<{gr}/{gr+sr}*{t}={gr*t//(gr+sr)}>>{gr*t//(gr+sr)}
+The number of sheep on Mr. {name}'s farm is {t}-{gr*t//(gr+sr)} = <<{t}-{gr*t//(gr+sr)}={t-gr*t//(gr+sr)}>>{t-gr*t//(gr+sr)}.
+Mr. {name} sold 1/2*{gr*t//(gr+sr)} = <<1/2*{gr*t//(gr+sr)}={gr*t//(gr+sr)//2}>>{gr*t//(gr+sr)//2} goats.
+If each goat went for ${gp}, the total amount of money Mr. {name} made from the sale of his goats is {gr*t//(gr+sr)//2}*${gp} = $<<{gr*t//(gr+sr)//2}*{gp}={gr*t//(gr+sr)//2*gp}>>{gr*t//(gr+sr)//2*gp}
+He also sold 2/3*{t-gr*t//(gr+sr)} = <<2/3*{t-gr*t//(gr+sr)}={2*(t-gr*t//(gr+sr))//3}>>{2*(t-gr*t//(gr+sr))//3} of the total sheep on his farm.
+The income from the sale of the sheep is {2*(t-gr*t//(gr+sr))//3}*${sp}=$<<{2*(t-gr*t//(gr+sr))//3}*{sp}={2*(t-gr*t//(gr+sr))//3*sp}>>{2*(t-gr*t//(gr+sr))//3*sp}
+From the sale of goats and sheep, Mr. {name} made ${2*(t-gr*t//(gr+sr))//3*sp}+${gr*t//(gr+sr)//2*gp} = $8600
+#### {gr*t//(gr+sr)//2*gp + 2*(t-gr*t//(gr+sr))//3*sp}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

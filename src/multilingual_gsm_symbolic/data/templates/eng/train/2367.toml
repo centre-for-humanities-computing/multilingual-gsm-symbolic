@@ -1,0 +1,45 @@
+question = """
+Mark and his sister Chris both leave their house for school at the same time.  Mark travels at the same speed as Chris, who walks 3 miles per hour. After walking 3 miles Mark has to turn around and go home because he forgot his lunch. If the distance from their house to the school is 9 miles, how much longer does Mark spend walking than Chris?
+"""
+
+answer = """
+First find the total number of miles Mark walks to get his lunch by multiplying the distance he walks back to the house by 2: 3 miles * 2 = <<3*2=6>>6 miles
+Then find the total distance Mark walks by adding that distance to the distance between the house and the school: 6 miles + 9 miles = <<6+9=15>>15 miles
+Now divide the total distance Mark walks by his speed to find how many hours he spends walking: 15 miles / 3 miles/hour = <<15/3=5>>5 hours
+Now divide the total distance Chris walks by her speed to find the total time she spends walking: 9 miles / 3 miles/hour = <<9/3=3>>3 hours
+Now subtract the time Chris spends walking from the time Mark spends walking to find the difference: 5 hours - 3 hours = <<5-3=2>>2
+#### 2
+"""
+
+id_orig = 2049
+id_shuffled = 2367
+
+question_annotated = """
+{name,Mark} and his sister {sister,Chris} both leave their house for school at the same time.  {name,Mark} travels at the same speed as {sister,Chris}, who walks {speed,3} miles per hour. After walking {walk,3} miles {name,Mark} has to turn around and go home because he forgot his lunch. If the distance from their house to the school is {dist,9} miles, how much longer does {name,Mark} spend walking than {sister,Chris}?
+
+#init:
+- name = sample(names_male)
+- sister = sample(names_female)
+- $speed = range(2, 13)
+- $walk = range(1, 51)
+- $dist = range(2, 101)
+
+#conditions:
+- divides(dist, speed)
+- divides(2*walk + dist, speed)
+
+#answer: 2*walk//speed
+"""
+
+answer_annotated = """
+First find the total number of miles {name} walks to get his lunch by multiplying the distance he walks back to the house by 2: {walk} miles * 2 = <<{walk}*2={2*walk}>>{2*walk} miles
+Then find the total distance {name} walks by adding that distance to the distance between the house and the school: {2*walk} miles + {dist} miles = <<{2*walk}+{dist}={2*walk+dist}>>{2*walk+dist} miles
+Now divide the total distance {name} walks by his speed to find how many hours he spends walking: {2*walk+dist} miles / {speed} miles/hour = <<{2*walk+dist}/{speed}={(2*walk+dist)//speed}>>{(2*walk+dist)//speed} hours
+Now divide the total distance {sister} walks by her speed to find the total time she spends walking: {dist} miles / {speed} miles/hour = <<{dist}/{speed}={dist//speed}>>{dist//speed} hours
+Now subtract the time {sister} spends walking from the time {name} spends walking to find the difference: {(2*walk+dist)//speed} hours - {dist//speed} hours = <<{(2*walk+dist)//speed}-{dist//speed}={(2*walk+dist)//speed-dist//speed}>>{(2*walk+dist)//speed-dist//speed}
+#### {2*walk//speed}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,42 @@
+question = """
+Roman the Tavernmaster has $20 worth of gold coins. He sells 3 gold coins to Dorothy. After she pays him, he has $12. How many gold coins does Roman have left?
+"""
+
+answer = """
+Dorothy paid $12 for 3 gold coins so each gold coin is worth $12/3 = $<<12/3=4>>4
+The Tavern master originally had $20 worth of gold coins which is $20/$4 = <<20/4=5>>5 gold coins
+He gave 3 out of 5 gold coins to Dorothy so he now has 5-3 = <<5-3=2>>2 gold coins left
+#### 2
+"""
+
+id_orig = 1107
+id_shuffled = 1203
+
+question_annotated = """
+{name,Roman} the Tavernmaster has ${v,20} worth of gold coins. He sells {k,3} gold coins to {buyer,Dorothy}. After she pays him, he has ${p,12}. How many gold coins does {name,Roman} have left?
+
+#init:
+- name = sample(names_male)
+- buyer = sample(names_female)
+- $v = range(2, 102)
+- $k = range(2, 7)
+- $p = range(2, 102)
+
+#conditions:
+- divides(p, k)
+- divides(v, p//k)
+- v//(p//k) > k
+
+#answer: v//(p//k) - k
+"""
+
+answer_annotated = """
+{buyer} paid ${p} for {k} gold coins so each gold coin is worth ${p}/{k} = $<<{p}/{k}={p//k}>>{p//k}
+The Tavern master originally had ${v} worth of gold coins which is ${v}/${p//k} = <<{v}/{p//k}={v//(p//k)}>>{v//(p//k)} gold coins
+He gave {k} out of {v//(p//k)} gold coins to {buyer} so he now has {v//(p//k)}-{k} = <<{v//(p//k)}-{k}={v//(p//k)-k}>>{v//(p//k)-k} gold coins left
+#### {v//(p//k)-k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

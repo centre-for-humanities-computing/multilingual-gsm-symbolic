@@ -1,0 +1,45 @@
+question = """
+Leo and Ryan together have $48. Ryan owns 2/3 of the amount. Leo remembered that Ryan owed him $10 but he also owed Ryan $7. After the debts had been settled, how much money does Leo have?
+"""
+
+answer = """
+Ryan owns $48 x 2/3 = $<<48*2/3=32>>32 of the $48.
+While Leo owns $48 - $32 = $<<48-32=16>>16 of the $48.
+Leo had $16 + $10 = $<<16+10=26>>26 after Ryan paid him $10.
+But since he owed Ryan $7, then Leo has $26 - $7 = $<<26-7=19>>19.
+#### 19
+"""
+
+id_orig = 3397
+id_shuffled = 4032
+
+question_annotated = """
+{name1,Leo} and {name2,Ryan} together have ${total,48}. {name2,Ryan} owns {frac_txt,2/3} of the amount. {name1,Leo} remembered that {name2,Ryan} owed him ${debt1,10} but he also owed {name2,Ryan} ${debt2,7}. After the debts had been settled, how much money does {name1,Leo} have?
+
+#init:
+- name1 = sample(["Leo", "Chris", "Noah", "Eric"])
+- name2 = sample(["Ryan", "Oliver", "Jason", "Tyler"])
+- frac_txt, num, den = sample([("1/2", 1, 2), ("2/3", 2, 3), ("3/4", 3, 4), ("3/5", 3, 5), ("4/5", 4, 5)])
+- $total = range(6, 202)
+- $debt1 = range(5, 30)
+- $debt2 = range(2, 14)
+
+#conditions:
+- name1 != name2
+- divides(total * num, den)
+- total - total*num//den + debt1 > debt2
+
+#answer: total - total*num//den + debt1 - debt2
+"""
+
+answer_annotated = """
+{name2} owns ${total} x {num}/{den} = $<<{total}*{num}/{den}={total*num//den}>>{total*num//den} of the ${total}.
+While {name1} owns ${total} - ${total*num//den} = $<<{total}-{total*num//den}={total-total*num//den}>>{total-total*num//den} of the ${total}.
+{name1} had ${total-total*num//den} + ${debt1} = $<<{total-total*num//den}+{debt1}={total-total*num//den+debt1}>>{total-total*num//den+debt1} after {name2} paid him ${debt1}.
+But since he owed {name2} ${debt2}, then {name1} has ${total-total*num//den+debt1} - ${debt2} = $<<{total-total*num//den+debt1}-{debt2}={total-total*num//den+debt1-debt2}>>{total-total*num//den+debt1-debt2}.
+#### {total-total*num//den+debt1-debt2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

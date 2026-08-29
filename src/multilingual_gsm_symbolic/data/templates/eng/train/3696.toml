@@ -1,0 +1,42 @@
+question = """
+John decides to get a new apartment with a roommate.  His former rent was $2 per square foot for a 750 square foot apartment.  His new apartment cost $2800 per month, which he splits evenly with the roommate.  How much money does he save a year?
+"""
+
+answer = """
+His old apartment cost 750*$2=$<<750*2=1500>>1500 a month
+His new apartment cost $2800/2=$<<2800/2=1400>>1400 a month
+So he saves $1500-$1400=$<<1500-1400=100>>100 a month
+That means he saves $100*12=$<<100*12=1200>>1200 a year
+#### 1200
+"""
+
+id_orig = 3111
+id_shuffled = 3696
+
+question_annotated = """
+{name,John} decides to get a new apartment with a roommate.  His former rent was ${r,2} per square foot for a {s,750} square foot apartment.  His new apartment cost ${c,2800} per month, which he splits evenly with the roommate.  How much money does he save a year?
+
+#init:
+- name = sample(names_male)
+- $r = range(1, 10)
+- $s = range(300, 1300, 50)
+- $c = range(2000, 5200, 100)
+
+#conditions:
+- divides(c, 2)
+- s * r * 2 > c
+
+#answer: (s * r - c // 2) * 12
+"""
+
+answer_annotated = """
+His old apartment cost {s}*${r}=$<<{s}*{r}={s*r}>>{s*r} a month
+His new apartment cost ${c}/2=$<<{c}/2={c//2}>>{c//2} a month
+So he saves ${s*r}-${c//2}=$<<{s*r}-{c//2}={s*r-c//2}>>{s*r-c//2} a month
+That means he saves ${s*r-c//2}*12=$<<{s*r-c//2}*12={(s*r-c//2)*12}>>{(s*r-c//2)*12} a year
+#### {(s * r - c // 2) * 12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Stephen ordered 2 large pizzas, both cut into 12 slices.  He ate 25% of the pizza.  His friend Pete ate 50% of the remaining pizza.  How many slices are left over?
+"""
+
+answer = """
+He ordered 2 pizzas, each cut into 12 slices so that’s 2*12 = <<2*12=24>>24 slices
+Stephen ate 25% of the pizza so he ate .25*24 = <<25*.01*24=6>>6 slices
+That leaves 24-6 = <<24-6=18>>18 slices
+18 slices are left and Pete eats 50% of 18 slices so he eats 18*.50 = <<18*50*.01=9>>9 slices
+If there were 18 slices and Pete ate 9 slices then there are 18-9 = <<18-9=9>>9 slices left over
+#### 9
+"""
+
+id_orig = 2702
+id_shuffled = 3213
+
+question_annotated = """
+{n,Stephen} ordered {p,2} large pizzas, both cut into {s,12} slices.  He ate {q,25}% of the pizza.  His friend {f,Pete} ate {r,50}% of the remaining pizza.  How many slices are left over?
+
+#init:
+- n = sample(names_male)
+- f = sample(names_male)
+- $p = range(2, 11)
+- $s = range(6, 21)
+- $q = range(25, 100, 25)
+- $r = range(25, 100, 25)
+
+#conditions:
+- divides(p * s * q, 100)
+- divides(p * s * (100 - q) // 100 * r, 100)
+
+#answer: p*s*(100-q)*(100-r)//10000
+"""
+
+answer_annotated = """
+He ordered {p} pizzas, each cut into {s} slices so that’s {p}*{s} = <<{p}*{s}={p*s}>>{p*s} slices
+{n} ate {q}% of the pizza so he ate .{q}*{p*s} = <<{q}*.01*{p*s}={p*s*q//100}>>{p*s*q//100} slices
+That leaves {p*s}-{p*s*q//100} = <<{p*s}-{p*s*q//100}={p*s-p*s*q//100}>>{p*s-p*s*q//100} slices
+{p*s*(100-q)//100} slices are left and {f} eats {r}% of {p*s*(100-q)//100} slices so he eats {p*s*(100-q)//100}*.{r} = <<{p*s*(100-q)//100}*{r}*.01={p*s*(100-q)//100*r//100}>>{p*s*(100-q)//100*r//100} slices
+If there were {p*s*(100-q)//100} slices and {f} ate {p*s*(100-q)//100*r//100} slices then there are {p*s*(100-q)//100}-{p*s*(100-q)//100*r//100} = <<{p*s*(100-q)//100}-{p*s*(100-q)//100*r//100}={p*s*(100-q)//100-p*s*(100-q)//100*r//100}>>{p*s*(100-q)//100-p*s*(100-q)//100*r//100} slices left over
+#### {p*s*(100-q)*(100-r)//10000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

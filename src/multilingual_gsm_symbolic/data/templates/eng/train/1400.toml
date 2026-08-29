@@ -1,0 +1,47 @@
+question = """
+Jimmy and Irene go shopping for clothes on a Tuesday, where senior citizens get a 10% discount on their purchases.  Jimmy picks out 3 shorts from the $15 rack.  Irene grabs 5 shirts from the $17 rack.  How much money do they give to the cashier?
+"""
+
+answer = """
+Jimmy’s shorts cost 3 x $15 = $<<3*15=45>>45.
+Irene’s shirts cost 5 x $17 = $<<5*17=85>>85.
+Total cost for the clothes is $45 + $85 = $<<45+85=130>>130.
+10% discount on the clothes is $130 x 10% = $<<130*10*.01=13>>13.
+They give the cashier $130 - $13 = $<<130-13=117>>117.
+#### 117
+"""
+
+id_orig = 1293
+id_shuffled = 1400
+
+question_annotated = """
+{name1,Jimmy} and {name2,Irene} go shopping for clothes on a {wd,Tuesday}, where senior citizens get a {r,10}% discount on their purchases.  {name1,Jimmy} picks out {j,3} shorts from the ${p,15} rack.  {name2,Irene} grabs {i,5} shirts from the ${q,17} rack.  How much money do they give to the cashier?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_female)
+- wd = sample(weekdays)
+- $j = range(2, 8)
+- $p = range(5, 26)
+- $i = range(2, 8)
+- $q = range(5, 26)
+- $r = range(5, 21, 5)
+
+#conditions:
+- divides((j*p+i*q)*r, 100)
+
+#answer: j*p+i*q-(j*p+i*q)*r//100
+"""
+
+answer_annotated = """
+{name1}’s shorts cost {j} x ${p} = $<<{j}*{p}={j*p}>>{j*p}.
+{name2}’s shirts cost {i} x ${q} = $<<{i}*{q}={i*q}>>{i*q}.
+Total cost for the clothes is ${j*p} + ${i*q} = $<<{j*p}+{i*q}={j*p+i*q}>>{j*p+i*q}.
+{r}% discount on the clothes is ${j*p+i*q} x {r}% = $<<{j*p+i*q}*{r}*.01={(j*p+i*q)*r//100}>>{(j*p+i*q)*r//100}.
+They give the cashier ${j*p+i*q} - ${(j*p+i*q)*r//100} = $<<{j*p+i*q}-{(j*p+i*q)*r//100}={j*p+i*q-(j*p+i*q)*r//100}>>{j*p+i*q-(j*p+i*q)*r//100}.
+#### {j*p+i*q-(j*p+i*q)*r//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+Lisa makes breakfast for her family every morning, Monday through Friday. She makes 2 eggs for each of her 4 children and 3 eggs for her husband. Then, she makes 2 eggs for herself. How many eggs does Lisa cook for her family for breakfast in a year?
+"""
+
+answer = """
+Lisa makes 2 eggs/child x 4 children = 8 eggs for her children.
+She makes 3 eggs for her husband + 2 for herself + 8 for her children = <<3+2+8=13>>13 eggs.
+Lisa makes breakfast 5 days a week for 52 weeks a year, so 5 * 52 = <<5*52=260>>260 breakfasts.
+So Lisa makes 13 eggs/breakfast x 260 breakfasts = <<13*260=3380>>3,380 eggs.
+#### 3,380
+"""
+
+id_orig = 1827
+id_shuffled = 2026
+
+question_annotated = """
+{name,Lisa} makes breakfast for her family every morning, Monday through Friday. She makes {e,2} eggs for each of her {k,4} children and {h,3} eggs for her husband. Then, she makes {f,2} eggs for herself. How many eggs does {name,Lisa} cook for her family for breakfast in a year?
+
+#init:
+- name = sample(names_female)
+- $e = range(1, 6)
+- $k = range(2, 11)
+- $h = range(1, 7)
+- $f = range(1, 6)
+
+#conditions:
+- (h + f + e*k) * 260 >= 1100
+- (h + f + e*k) * 260 % 1000 >= 100
+
+#answer: (h + f + e*k) * 260
+"""
+
+answer_annotated = """
+{name} makes {e} eggs/child x {k} children = {e*k} eggs for her children.
+She makes {h} eggs for her husband + {f} for herself + {e*k} for her children = <<{h}+{f}+{e*k}={h+f+e*k}>>{h+f+e*k} eggs.
+{name} makes breakfast 5 days a week for 52 weeks a year, so 5 * 52 = <<5*52=260>>260 breakfasts.
+So {name} makes {h+f+e*k} eggs/breakfast x 260 breakfasts = <<{h+f+e*k}*260={(h+f+e*k)*260}>>{(h+f+e*k)*260//1000},{(h+f+e*k)*260%1000} eggs.
+#### {(h+f+e*k) * 260//1000},{(h+f+e*k)*260%1000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

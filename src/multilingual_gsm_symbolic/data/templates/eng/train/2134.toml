@@ -1,0 +1,41 @@
+question = """
+Peyton Manning throws a football 20 yards when the temperature is 50 degrees Fahrenheit, but the ball moves twice as far when the temperature is 80 degrees Fahrenheit. Last Saturday, the temperature was 50 degrees Fahrenheit, and he threw the ball twenty times. On Sunday, the temperature rose to 80 degrees Fahrenheit, and he threw the ball 30 times. Calculate the total number of yards he threw the ball in the two days.
+"""
+
+answer = """
+On Saturday, he threw the ball 20 times, and since the temperature was 50 degrees, he could throw only 20 yards, totaling 20*20 = <<20*20=400>>400 yards.
+On Sunday, the temperature favored him, and he threw the ball twice the distance he could throw on Saturday, which is 2*20 = <<2*20=40>>40 yards.
+If he threw the ball 30 times, he threw for 30*40 = <<30*40=1200>>1200 yards.
+In the two days, he threw 1200+400 = <<1200+400=1600>>1600 yards.
+#### 1600
+"""
+
+id_orig = 1900
+id_shuffled = 2134
+
+question_annotated = """
+{name,Peyton Manning} throws a football {d,20} yards when the temperature is {tc,50} degrees Fahrenheit, but the ball moves {mult_txt,twice} as far when the temperature is {tw,80} degrees Fahrenheit. Last Saturday, the temperature was {tc,50} degrees Fahrenheit, and he threw the ball {sat_txt,twenty} times. On Sunday, the temperature rose to {tw,80} degrees Fahrenheit, and he threw the ball {sun,30} times. Calculate the total number of yards he threw the ball in the two days.
+
+#init:
+- name = sample(names_male)
+- mult_txt, mult_val = sample([("twice", 2), ("thrice", 3), ("four times", 4)])
+- sat_txt, sat_val = sample([("twenty", 20), ("thirty", 30), ("forty", 40)])
+- $d = range(10, 60, 2)
+- $tc = range(30, 61, 5)
+- $tw = range(65, 101, 5)
+- $sun = range(20, 46, 5)
+
+#answer: sun * mult_val * d + sat_val * d
+"""
+
+answer_annotated = """
+On Saturday, he threw the ball {sat_val} times, and since the temperature was {tc} degrees, he could throw only {d} yards, totaling {sat_val}*{d} = <<{sat_val}*{d}={sat_val*d}>>{sat_val*d} yards.
+On Sunday, the temperature favored him, and he threw the ball {mult_txt} the distance he could throw on Saturday, which is {mult_val}*{d} = <<{mult_val}*{d}={mult_val*d}>>{mult_val*d} yards.
+If he threw the ball {sun} times, he threw for {sun}*{mult_val*d} = <<{sun}*{mult_val*d}={sun*mult_val*d}>>{sun*mult_val*d} yards.
+In the two days, he threw {sun*mult_val*d}+{sat_val*d} = <<{sun*mult_val*d}+{sat_val*d}={sun*mult_val*d+sat_val*d}>>{sun*mult_val*d+sat_val*d} yards.
+#### {sun*mult_val*d+sat_val*d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

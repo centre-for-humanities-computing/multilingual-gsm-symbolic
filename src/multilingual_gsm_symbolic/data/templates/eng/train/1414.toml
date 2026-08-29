@@ -1,0 +1,45 @@
+question = """
+Sarah's age is equal to three times Mark's age minus 4. Mark is four years older than Billy. Billy is half Ana's age. If Ana will be 15 in 3 years, how old is Sarah?
+"""
+
+answer = """
+First figure out how old Ana is right now by subtracting 3 from 15: 15 - 3 = <<15-3=12>>12
+Next, figure out how old Billy is by dividing Ana's age by 2: 12 / 2 = <<6=6>>6
+Now figure out how old Mark is by adding 4 to Billy's age: 6 + 4 = <<6+4=10>>10
+Now, to figure out Sarah's age, first multiply Mark's age by 3: 10 * 3 = <<10*3=30>>30
+Finally, subtract 4 from triple Mark's age to find Sarah's age: 30 - 4 = <<30-4=26>>26
+#### 26
+"""
+
+id_orig = 1307
+id_shuffled = 1414
+
+question_annotated = """
+{s_name,Sarah}'s age is equal to three times {m_name,Mark}'s age minus 4. {m_name,Mark} is four years older than {b_name,Billy}. {b_name,Billy} is half {a_name,Ana}'s age. If {a_name,Ana} will be {f,15} in {y,3} years, how old is {s_name,Sarah}?
+
+#init:
+- s_name = sample(["Sarah", "Emma", "Sophie"])
+- m_name = sample(["Mark", "Chris"])
+- b_name = sample(["Billy", "Noah"])
+- a_name = sample(["Ana", "Abby"])
+- $f = range(12, 122)
+- $y = range(2, 7)
+
+#conditions:
+- divides(f - y, 2)
+
+#answer: ((f - y) // 2 + 4) * 3 - 4
+"""
+
+answer_annotated = """
+First figure out how old {a_name} is right now by subtracting {y} from {f}: {f} - {y} = <<{f}-{y}={f-y}>>{f-y}
+Next, figure out how old {b_name} is by dividing {a_name}'s age by 2: {f-y} / 2 = <<{(f - y) // 2}={(f - y) // 2}>>{(f - y) // 2}
+Now figure out how old {m_name} is by adding 4 to {b_name}'s age: {(f - y) // 2} + 4 = <<{(f - y) // 2}+4={(f - y) // 2 + 4}>>{(f - y) // 2 + 4}
+Now, to figure out {s_name}'s age, first multiply {m_name}'s age by 3: {(f - y) // 2 + 4} * 3 = <<{(f - y) // 2 + 4}*3={((f - y) // 2 + 4) * 3}>>{((f - y) // 2 + 4) * 3}
+Finally, subtract 4 from triple {m_name}'s age to find {s_name}'s age: {((f - y) // 2 + 4) * 3} - 4 = <<{((f - y) // 2 + 4) * 3}-4={((f - y) // 2 + 4) * 3 - 4}>>{((f - y) // 2 + 4) * 3 - 4}
+#### {((f - y) // 2 + 4) * 3 - 4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

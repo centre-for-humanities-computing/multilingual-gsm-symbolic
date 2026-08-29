@@ -1,0 +1,46 @@
+question = """
+John assembles computers and sells prebuilt computers as a business. The parts for the computer cost $800.  He sells the computers for 1.4 times the value of the components.  He manages to build 60 computers a month.  He has to pay $5000 a month in rent and another $3000 in non-rent extra expenses a month.  How much profit does he make a month?
+"""
+
+answer = """
+He sells each computer for 1.4*800=$<<1.4*800=1120>>1120
+That means he makes a profit of 1120-800=$<<1120-800=320>>320 per computer
+So he makes 320*60=$<<320*60=19200>>19,200 from selling computers
+He has extra expenses of 5000+3000=$<<5000+3000=8000>>8000 a month
+So his profit is 19,200-8000=$<<19200-8000=11200>>11,200
+#### 11200
+"""
+
+id_orig = 2392
+id_shuffled = 2751
+
+question_annotated = """
+{name,John} assembles computers and sells prebuilt computers as a business. The parts for the computer cost ${cost,800}.  He sells the computers for 1.4 times the value of the components.  He manages to build {count,60} computers a month.  He has to pay ${rent,5000} a month in rent and another ${other,3000} in non-rent extra expenses a month.  How much profit does he make a month?
+
+#init:
+- name = sample(names_male)
+- $cost = range(100, 1000, 50)
+- $count = range(10, 110, 10)
+- $rent = range(1000, 6000, 250)
+- $other = range(1000, 6000, 250)
+
+#conditions:
+- divides(cost, 5)
+- is_int(1.4 * cost)
+- (14*cost//10 - cost) * count > rent + other
+
+#answer: (14*cost//10 - cost) * count - (rent + other)
+"""
+
+answer_annotated = """
+He sells each computer for 1.4*{cost}=$<<1.4*{cost}={14*cost//10}>>{14*cost//10}
+That means he makes a profit of {14*cost//10}-{cost}=$<<{14*cost//10}-{cost}={14*cost//10-cost}>>{14*cost//10-cost} per computer
+So he makes {14*cost//10-cost}*{count}=$<<{14*cost//10-cost}*{count}={(14*cost//10-cost)*count}>>{(14*cost//10-cost)*count} from selling computers
+He has extra expenses of {rent}+{other}=$<<{rent}+{other}={rent+other}>>{rent+other} a month
+So his profit is {(14*cost//10-cost)*count}-{rent+other}=$<<{(14*cost//10-cost)*count}-{rent+other}={(14*cost//10-cost)*count-(rent+other)}>>{(14*cost//10-cost)*count-(rent+other)}
+#### {(14*cost//10-cost)*count-(rent+other)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Janet has 60 less than four times as many siblings as Masud. Carlos has 3/4 times as many siblings as Masud. If Masud has 60 siblings, how many more siblings does Janet have more than Carlos?
+"""
+
+answer = """
+If Masud has 60 siblings, and Carlos has 3/4 times as many siblings as Masud, Carlos has 3/4*60=<<60*3/4=45>>45 siblings.
+Four times as many siblings as Masud has is 4*60=<<4*60=240>>240
+Janet has 60 less than four times as many siblings as Masud, a total of 240-60=<<240-60=180>>180 siblings.
+The number of siblings Janet have more than Carlos is 180-45=<<180-45=135>>135
+#### 135
+"""
+
+id_orig = 3777
+id_shuffled = 4459
+
+question_annotated = """
+{jname,Janet} has {off,60} less than four times as many siblings as {mname,Masud}. {cname,Carlos} has {fn,3}/{fd,4} times as many siblings as {mname,Masud}. If {mname,Masud} has {ms,60} siblings, how many more siblings does {jname,Janet} have more than {cname,Carlos}?
+
+#init:
+- jname = sample(names_female)
+- mname = sample(names_male)
+- cname = sample(names_male)
+- $ms = range(20, 210, 20)
+- $fn = range(1, 7)
+- $fd = range(2, 13)
+- $off = range(4, 104, 4)
+
+#conditions:
+- fn < fd
+- divides(fn*ms, fd)
+- 4*ms - off - ms*fn//fd > 0
+
+#answer: 4*ms - off - ms*fn//fd
+"""
+
+answer_annotated = """
+If {mname} has {ms} siblings, and {cname} has {fn}/{fd} times as many siblings as {mname}, {cname} has {fn}/{fd}*{ms}=<<{ms}*{fn}/{fd}={ms*fn//fd}>>{ms*fn//fd} siblings.
+Four times as many siblings as {mname} has is 4*{ms}=<<4*{ms}={4*ms}>>{4*ms}
+{jname} has {off} less than four times as many siblings as {mname}, a total of {4*ms}-{off}=<<{4*ms}-{off}={4*ms-off}>>{4*ms-off} siblings.
+The number of siblings {jname} have more than {cname} is {4*ms-off}-{ms*fn//fd}=<<{4*ms-off}-{ms*fn//fd}={4*ms-off-ms*fn//fd}>>{4*ms-off-ms*fn//fd}
+#### {4*ms-off-ms*fn//fd}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

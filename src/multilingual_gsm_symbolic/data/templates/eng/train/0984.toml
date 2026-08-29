@@ -1,0 +1,52 @@
+question = """
+Teddy has 7 dogs and 8 cats. Ben has 9 more dogs than Teddy, and Dave has 13 more cats and 5 less dogs than Teddy. How many pets do all of them have combined?
+"""
+
+answer = """
+Teddy has 7+8 = <<7+8=15>>15 pets in total.
+Ben has 9+7 = <<9+7=16>>16 dogs, which means he has 16 pets in total.
+Dave has 13+8 = <<13+8=21>>21 cats.
+Dave has 7-5 = <<7-5=2>>2 dogs.
+Dave has 21+2 = <<21+2=23>>23 pets in total.
+Combined, they have 15+16+23 = <<15+16+23=54>>54 pets in total.
+#### 54
+"""
+
+id_orig = 888
+id_shuffled = 984
+
+question_annotated = """
+{teddy,Teddy} has {a,7} dogs and {b,8} cats. {ben,Ben} has {m,9} more dogs than {teddy,Teddy}, and {dave,Dave} has {c,13} more cats and {k,5} less dogs than {teddy,Teddy}. How many pets do all of them have combined?
+
+#init:
+- teddy = sample(["Teddy", "Chris", "Oliver", "Noah"])
+- ben = sample(["Ben", "Eric", "Jason", "Carl"])
+- dave = sample(["Dave", "William", "Tyler", "Lucas"])
+- $a = range(6, 16)
+- $b = range(2, 12)
+- $m = range(1, 11)
+- $c = range(1, 16)
+- $k = range(1, 7)
+
+#conditions:
+- k < a
+- teddy != ben
+- teddy != dave
+- ben != dave
+
+#answer: (a+b)+(a+m)+(b+c+a-k)
+"""
+
+answer_annotated = """
+{teddy} has {a}+{b} = <<{a}+{b}={a+b}>>{a+b} pets in total.
+{ben} has {m}+{a} = <<{m}+{a}={a+m}>>{a+m} dogs, which means he has {a+m} pets in total.
+{dave} has {c}+{b} = <<{c}+{b}={b+c}>>{b+c} cats.
+{dave} has {a}-{k} = <<{a}-{k}={a-k}>>{a-k} dogs.
+{dave} has {b+c}+{a-k} = <<{b+c}+{a-k}={b+c+a-k}>>{b+c+a-k} pets in total.
+Combined, they have {a+b}+{a+m}+{b+c+a-k} = <<{a+b}+{a+m}+{b+c+a-k}={(a+b)+(a+m)+(b+c+a-k)}>>{(a+b)+(a+m)+(b+c+a-k)} pets in total.
+#### {(a+b)+(a+m)+(b+c+a-k)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

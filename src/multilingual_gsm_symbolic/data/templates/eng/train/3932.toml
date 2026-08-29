@@ -1,0 +1,47 @@
+question = """
+Natasha has 3 times as much money as Carla, and Carla has twice as much money as Cosima. If Natasha has $60, and the three decide to buy goods worth the total amount they have and sell the goods at 7/5 of the buying price, how much profit would they make?
+"""
+
+answer = """
+If Natasha has $60, which is 3 times as much money as Carla, Carla has $60/3=$<<60/3=20>>20
+Together, Carla and Natasha have $20+$60=$<<20+60=80>>80
+Carla has twice as much money as Cosima, meaning Cosima has $20/2=$10
+Combined, the three have $10+$80=$<<10+80=90>>90
+If they buy goods with the amount they have and sell at 7/5 of the buying price, the total amount of money they will get from selling the goods is 7/5*90=$<<7/5*90=126>>126
+If they earn $126 from the sale of the goods they bought with the money they had, their profit is $126-$90=$<<126-90=36>>36
+#### 36
+"""
+
+id_orig = 3307
+id_shuffled = 3932
+
+question_annotated = """
+Natasha has {k,3} times as much money as Carla, and Carla has {mt,twice} as much money as Cosima. If Natasha has ${n,60}, and the three decide to buy goods worth the total amount they have and sell the goods at {fn,7}/{fd,5} of the buying price, how much profit would they make?
+
+#init:
+- mt, m = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- fn, fd = sample([(7, 5), (9, 5), (11, 5), (13, 5), (7, 4), (9, 4), (11, 4)])
+- $k = range(2, 6)
+- $n = range(60, 1260, 60)
+
+#conditions:
+- is_int(n / k)
+- is_int(n / (k * m))
+- is_int((n + n//k + n//(k*m)) * fn / fd)
+
+#answer: (n + n//k + n//(k*m)) * (fn - fd) // fd
+"""
+
+answer_annotated = """
+If Natasha has ${n}, which is {k} times as much money as Carla, Carla has ${n}/{k}=$<<{n}/{k}={n//k}>>{n//k}
+Together, Carla and Natasha have ${n//k}+${n}=$<<{n//k}+{n}={n//k+n}>>{n//k+n}
+Carla has {mt} as much money as Cosima, meaning Cosima has ${n//k}/{m}=${n//k//m}
+Combined, the three have ${n//k//m}+${n//k+n}=$<<{n//k//m}+{n//k+n}={n//k//m+n//k+n}>>{n//k//m+n//k+n}
+If they buy goods with the amount they have and sell at {fn}/{fd} of the buying price, the total amount of money they will get from selling the goods is {fn}/{fd}*{n+n//k+n//k//m}=$<<{fn}/{fd}*{n+n//k+n//k//m}={(n+n//k+n//k//m)*fn//fd}>>{(n+n//k+n//k//m)*fn//fd}
+If they earn ${(n+n//k+n//k//m)*fn//fd} from the sale of the goods they bought with the money they had, their profit is ${(n+n//k+n//k//m)*fn//fd}-${n+n//k+n//k//m}=$<<{(n+n//k+n//k//m)*fn//fd}-{n+n//k+n//k//m}={(n+n//k+n//k//m)*(fn-fd)//fd}>>{(n+n//k+n//k//m)*(fn-fd)//fd}
+#### {(n+n//k+n//k//m)*(fn-fd)//fd}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

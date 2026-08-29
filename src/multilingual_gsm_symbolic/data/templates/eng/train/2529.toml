@@ -1,0 +1,45 @@
+question = """
+There were 15 males and 10 more girls at the party. Each attendee received 2 cans of soft drinks. If Mary bought several boxes of soft drinks where a box contains 8 cans and is priced at $5 for each box, how much did Mary spend on soft drinks?
+"""
+
+answer = """
+There were 10 + 15 = <<10+15=25>>25 girls in the party.
+So, there were a total of 15 + 25 = <<15+25=40>>40 attendees.
+40 x 2 = <<40*2=80>>80 cans of soft drinks are needed.
+So, Mary bought 80/8 = <<80/8=10>>10 boxes of soft drinks.
+Therefore, Mary spent 10 x $5 = $<<10*5=50>>50 on soft drinks.
+#### 50
+"""
+
+id_orig = 2191
+id_shuffled = 2529
+
+question_annotated = """
+There were {m,15} males and {g,10} more girls at the party. Each attendee received {c,2} cans of soft drinks. If {name,Mary} bought several boxes of soft drinks where a box contains {bs,8} cans and is priced at ${p,5} for each box, how much did {name,Mary} spend on soft drinks?
+
+#init:
+- name = sample(names_female)
+- $m = range(5, 45)
+- $g = range(1, 21)
+- $c = range(1, 4)
+- $bs = range(4, 18)
+- $p = range(1, 11)
+
+#conditions:
+- divides((m + m + g) * c, bs)
+
+#answer: (m + m + g) * c // bs * p
+"""
+
+answer_annotated = """
+There were {g} + {m} = <<{g}+{m}={g+m}>>{g+m} girls in the party.
+So, there were a total of {m} + {g+m} = <<{m}+{g+m}={m+g+m}>>{m+g+m} attendees.
+{m+g+m} x {c} = <<{m+g+m}*{c}={(m+g+m)*c}>>{(m+g+m)*c} cans of soft drinks are needed.
+So, {name} bought {(m+g+m)*c}/{bs} = <<{(m+g+m)*c}/{bs}={(m+g+m)*c//bs}>>{(m+g+m)*c//bs} boxes of soft drinks.
+Therefore, {name} spent {(m+g+m)*c//bs} x ${p} = $<<{(m+g+m)*c//bs}*{p}={(m+g+m)*c//bs*p}>>{(m+g+m)*c//bs*p} on soft drinks.
+#### {(m+g+m)*c//bs*p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

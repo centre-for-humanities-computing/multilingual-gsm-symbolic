@@ -1,0 +1,42 @@
+question = """
+Roger bought a house for $100,000.  He was able to pay 20% down, and his parents paid off an additional 30% of the remaining balance.  How much money does Roger still owe on his house?
+"""
+
+answer = """
+100,000(.20)=20,000$ down payment
+100,000-20,000=$<<100000-20000=80000>>80,000 remaining
+80,000(.30)=24,000
+80,000-24,000=<<80000-24000=56000>>56,000$
+#### 56000
+"""
+
+id_orig = 1919
+id_shuffled = 2153
+
+question_annotated = """
+{name,Roger} bought a house for ${q,100},000.  He was able to pay {d,20}% down, and his parents paid off an additional {r,30}% of the remaining balance.  How much money does {name,Roger} still owe on his house?
+
+#init:
+- name = sample(names_male)
+- $q = range(100, 1000, 100)
+- $d = range(10, 100, 10)
+- $r = range(10, 100, 10)
+
+#conditions:
+- divides(q * d, 100)
+- divides(q * (100 - d) * r, 10000)
+
+#answer: q * (100 - d) * (100 - r) // 10
+"""
+
+answer_annotated = """
+{q},000(.{d})={q*d//100},000$ down payment
+{q},000-{q*d//100},000=$<<{q*1000}-{q*10*d}={q*10*(100-d)}>>{q*(100-d)//100},000 remaining
+{q*(100-d)//100},000(.{r})={q*(100-d)*r//10000},000
+{q*(100-d)//100},000-{q*(100-d)*r//10000},000=<<{q*10*(100-d)}-{q*(100-d)*r//10}={q*(100-d)*(100-r)//10}>>{q*(100-d)*(100-r)//10000},000$
+#### {q*(100-d)*(100-r)//10}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

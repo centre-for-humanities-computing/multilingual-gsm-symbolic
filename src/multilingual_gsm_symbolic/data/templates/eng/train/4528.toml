@@ -1,0 +1,46 @@
+question = """
+Macy and Piper went to the batting cages. Each token gets you 15 pitches. Macy used 11 tokens and Piper used 17. Macy hit the ball 50 times. Piper hit the ball 55 times. How many pitches did Macy and Piper miss altogether?
+"""
+
+answer = """
+Macy used 11 tokens which are worth 15 pitches each, so 11 tokens x 15 pitches = <<11*15=165>>165 pitches.
+Piper used 17 tokens x 15 pitches = <<17*15=255>>255 pitches.
+Together, Macy and Piper received 165 + 255 = <<165+255=420>>420 pitches.
+Macy hit the ball 50 times + Piper’s 55 hits = <<50+55=105>>105 total hits.
+Of the 420 pitches – 105 total hits = <<420-105=315>>315 misses.
+#### 315
+"""
+
+id_orig = 3834
+id_shuffled = 4528
+
+question_annotated = """
+{macy,Macy} and {piper,Piper} went to the batting cages. Each token gets you {t,15} pitches. {macy,Macy} used {mt,11} tokens and {piper,Piper} used {pt,17}. {macy,Macy} hit the ball {mh,50} times. {piper,Piper} hit the ball {ph,55} times. How many pitches did {macy,Macy} and {piper,Piper} miss altogether?
+
+#init:
+- macy = sample(names_female)
+- piper = sample(names_male)
+- $t = range(10, 20)
+- $mt = range(5, 16)
+- $pt = range(10, 21)
+- $mh = range(10, 51, 10)
+- $ph = range(15, 66, 10)
+
+#conditions:
+- t * (mt + pt) - mh - ph > 0
+
+#answer: t * (mt + pt) - mh - ph
+"""
+
+answer_annotated = """
+{macy} used {mt} tokens which are worth {t} pitches each, so {mt} tokens x {t} pitches = <<{mt}*{t}={mt*t}>>{mt*t} pitches.
+{piper} used {pt} tokens x {t} pitches = <<{pt}*{t}={pt*t}>>{pt*t} pitches.
+Together, {macy} and {piper} received {mt*t} + {pt*t} = <<{mt*t}+{pt*t}={mt*t+pt*t}>>{mt*t+pt*t} pitches.
+{macy} hit the ball {mh} times + {piper}’s {ph} hits = <<{mh}+{ph}={mh+ph}>>{mh+ph} total hits.
+Of the {mt*t+pt*t} pitches – {mh+ph} total hits = <<{mt*t+pt*t}-{mh+ph}={mt*t+pt*t-mh-ph}>>{mt*t+pt*t-mh-ph} misses.
+#### {t * (mt + pt) - mh - ph}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

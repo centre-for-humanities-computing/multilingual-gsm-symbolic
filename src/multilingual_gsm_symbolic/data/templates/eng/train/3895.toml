@@ -1,0 +1,44 @@
+question = """
+It’s February 2021.  Mark was born in January 1976.  Graham is 3 years younger than Mark, and Graham’s sister, Janice, is 1/2 the age of Graham.  How old is Janice?
+"""
+
+answer = """
+It’s 2021 and Mark was born in 1976 so Mark is 2021-1976 = <<2021-1976=45>>45 years old
+Graham is 3 years younger than Mark who is 45 so Graham is 45-3 = 42 years old
+Janice is 1/2 the age of Graham who is 42 so Janice is 42/2 = <<42/2=21>>21 years old
+#### 21
+"""
+
+id_orig = 3282
+id_shuffled = 3895
+
+question_annotated = """
+It’s February {yr, 2021}.  {m, Mark} was born in January {by, 1976}.  {g, Graham} is {d, 3} years younger than {m, Mark}, and {g, Graham}’s sister, {j, Janice}, is {fr, 1/2} the age of {g, Graham}.  How old is {j, Janice}?
+
+#init:
+- $yr = range(2001, 2051)
+- $by = range(1951, 1999)
+- $d = range(1, 11)
+- fr, fd = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5)])
+- m = sample(names_male)
+- g = sample(names_male)
+- j = sample(names_female)
+
+#conditions:
+- by < yr
+- yr - by - d >= fd
+- divides(yr - by - d, fd)
+
+#answer: (yr - by - d)//fd
+"""
+
+answer_annotated = """
+It’s {yr} and {m} was born in {by} so {m} is {yr}-{by} = <<{yr}-{by}={yr-by}>>{yr-by} years old
+{g} is {d} years younger than {m} who is {yr-by} so {g} is {yr-by}-{d} = {yr-by-d} years old
+{j} is {fr} the age of {g} who is {yr-by-d} so {j} is {yr-by-d}/{fd} = <<{yr-by-d}/{fd}={(yr-by-d)//fd}>>{(yr-by-d)//fd} years old
+#### {(yr-by-d)//fd}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

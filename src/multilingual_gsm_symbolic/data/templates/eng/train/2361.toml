@@ -1,0 +1,44 @@
+question = """
+William read 6 books last month and Brad read thrice as many books as William did. This month, in an effort to catch up, Williams read twice as much as Brad, who read 8 books. Who has read more across the two months, and by how much?
+"""
+
+answer = """
+Last month Brad read thrice 6 books for a total of 3*6 = <<3*6=18>>18 books
+This month Williams read twice 8 books for a total of 2*8 = <<2*8=16>>16 books
+Across the 2 months Brad has read 18+8 = <<18+8=26>>26 books
+Across the 2 months William has read 6+16 = <<6+16=22>>22 books
+Brad has read 26-22 = <<26-22=4>>4 more books
+#### 4
+"""
+
+id_orig = 2043
+id_shuffled = 2361
+
+question_annotated = """
+{name1,William} read {a,6} books last month and {name2,Brad} read {mult_txt,thrice} as many books as {name1,William} did. This month, in an effort to catch up, Williams read twice as much as {name2,Brad}, who read {b,8} books. Who has read more across the two months, and by how much?
+
+#init:
+- name1 = sample(["William", "Oliver", "Harry", "Jack", "Leo"])
+- name2 = sample(["Brad", "Ethan", "Louis", "Owen", "Max"])
+- mult_txt, mult = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $a = range(2, 60)
+- $b = range(2, 60)
+
+#conditions:
+- a * (mult - 1) > b
+
+#answer: a * (mult - 1) - b
+"""
+
+answer_annotated = """
+Last month {name2} read {mult_txt} {a} books for a total of {mult}*{a} = <<{mult}*{a}={mult*a}>>{mult*a} books
+This month Williams read twice {b} books for a total of 2*{b} = <<2*{b}={2*b}>>{2*b} books
+Across the 2 months {name2} has read {mult*a}+{b} = <<{mult*a}+{b}={mult*a+b}>>{mult*a+b} books
+Across the 2 months {name1} has read {a}+{2*b} = <<{a}+{2*b}={a+2*b}>>{a+2*b} books
+{name2} has read {mult*a+b}-{a+2*b} = <<{mult*a+b}-{a+2*b}={a*(mult-1)-b}>>{a*(mult-1)-b} more books
+#### {a*(mult-1)-b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

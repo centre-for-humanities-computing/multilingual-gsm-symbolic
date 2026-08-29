@@ -1,0 +1,40 @@
+question = """
+Betty is 60 years old, and she is the oldest person in the family. Her daughter is 40 percent younger than she is, and her granddaughter is one-third her mother's age. How old is the granddaughter?
+"""
+
+answer = """
+Betty's daughter is 40/100 * 60 = <<40/100*60=24>>24 years younger than she is.
+That means her daughter is 60 - 24 = <<60-24=36>>36 years old.
+So the granddaughter is 1/3 * 36 = <<1/3*36=12>>12 years old.
+#### 12
+"""
+
+id_orig = 561
+id_shuffled = 634
+
+question_annotated = """
+{name,Betty} is {a,60} years old, and she is the oldest person in the family. Her daughter is {p,40} percent younger than she is, and her granddaughter is one-third her mother's age. How old is the granddaughter?
+
+#init:
+- name = sample(names_female)
+- $a = range(30, 230, 2)
+- $p = range(10, 91, 5)
+
+#conditions:
+- divides(p * a, 100)
+- divides(a * (100 - p), 300)
+- p < 100
+
+#answer: (a - p*a//100)//3
+"""
+
+answer_annotated = """
+{name}'s daughter is {p}/100 * {a} = <<{p}/100*{a}={p*a//100}>>{p*a//100} years younger than she is.
+That means her daughter is {a} - {p*a//100} = <<{a}-{p*a//100}={a-p*a//100}>>{a-p*a//100} years old.
+So the granddaughter is 1/3 * {a-p*a//100} = <<1/3*{a-p*a//100}={(a-p*a//100)//3}>>{(a-p*a//100)//3} years old.
+#### {(a-p*a//100)//3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

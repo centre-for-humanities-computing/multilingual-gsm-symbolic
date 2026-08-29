@@ -1,0 +1,43 @@
+question = """
+Kristy, a sales representative earns a basic salary of $7.50 per hour plus a 16% commission on everything she sells. This month, she worked for 160 hours and sold $25,000 worth of items. Her monthly budget for food, clothing, rent, transportation, bills and savings is 95% of her total monthly earnings and the rest will be put towards insurance. How much did she allocate to insurance?
+"""
+
+answer = """
+Kristy earns a basic salary of $7.50 x 160 = $<<7.5*160=1200>>1200.
+Her total commission is $25,000 x 16/100 = $<<25000*16/100=4000>>4000.
+Thus, her total earning is $1200 + $4000 = $<<1200+4000=5200>>5200.
+Her monthly budget aside from the insurance is $5200 x 95/100 = $<<5200*95/100=4940>>4940.
+Therefore, she allocated $5200 - $4940 = $<<5200-4940=260>>260 on insurance.
+#### 260
+"""
+
+id_orig = 1498
+id_shuffled = 1623
+
+question_annotated = """
+{name,Kristy}, a sales representative earns a basic salary of $7.50 per hour plus a {pct,16}% commission on everything she sells. This month, she worked for {hrs,160} hours and sold $25,000 worth of items. Her monthly budget for food, clothing, rent, transportation, bills and savings is {bpct,95}% of her total monthly earnings and the rest will be put towards insurance. How much did she allocate to insurance?
+
+#init:
+- name = sample(names_female)
+- $hrs = range(80, 280, 2)
+- $pct = range(5, 26)
+- $bpct = range(60, 100)
+
+#conditions:
+- divides((round(7.5*hrs) + 25000*pct//100) * bpct, 100)
+
+#answer: round(7.5*hrs) + 25000*pct//100 - (round(7.5*hrs) + 25000*pct//100)*bpct//100
+"""
+
+answer_annotated = """
+{name} earns a basic salary of $7.50 x {hrs} = $<<7.5*{hrs}={round(7.5*hrs)}>>{round(7.5*hrs)}.
+Her total commission is $25,000 x {pct}/100 = $<<25000*{pct}/100={25000*pct//100}>>{25000*pct//100}.
+Thus, her total earning is ${round(7.5*hrs)} + ${25000*pct//100} = $<<{round(7.5*hrs)}+{25000*pct//100}={round(7.5*hrs) + 25000*pct//100}>>{round(7.5*hrs) + 25000*pct//100}.
+Her monthly budget aside from the insurance is ${round(7.5*hrs) + 25000*pct//100} x {bpct}/100 = $<<{round(7.5*hrs) + 25000*pct//100}*{bpct}/100={(round(7.5*hrs) + 25000*pct//100)*bpct//100}>>{(round(7.5*hrs) + 25000*pct//100)*bpct//100}.
+Therefore, she allocated ${round(7.5*hrs) + 25000*pct//100} - ${(round(7.5*hrs) + 25000*pct//100)*bpct//100} = $<<{round(7.5*hrs) + 25000*pct//100}-{(round(7.5*hrs) + 25000*pct//100)*bpct//100}={(round(7.5*hrs) + 25000*pct//100) - (round(7.5*hrs) + 25000*pct//100)*bpct//100}>>{(round(7.5*hrs) + 25000*pct//100) - (round(7.5*hrs) + 25000*pct//100)*bpct//100} on insurance.
+#### {(round(7.5*hrs) + 25000*pct//100) - (round(7.5*hrs) + 25000*pct//100)*bpct//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

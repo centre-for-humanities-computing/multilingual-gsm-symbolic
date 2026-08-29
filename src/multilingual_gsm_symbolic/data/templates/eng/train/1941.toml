@@ -1,0 +1,44 @@
+question = """
+Arthur knows that he needs to finish 800 pages of reading over the summer. He has read 80% of a 500-page book and 1/5 of a 1000 page book. How many more pages does he need to reach to meet his goal?
+"""
+
+answer = """
+He read 400 pages from the 500 page book because 500 x .8 = <<500*.8=400>>400
+He read 200 pages from the 1000 page book because 1000 x (1/5) = <<1000*(1/5)=200>>200
+He has read 600 pages in total.
+He needs to read 200 more pages to reach 800 pages because 800 - 600 = <<800-600=200>>200
+#### 200
+"""
+
+id_orig = 1757
+id_shuffled = 1941
+
+question_annotated = """
+{name,Arthur} knows that he needs to finish {goal,800} pages of reading over the summer. He has read {pct,80}% of a {p1,500}-page book and 1/5 of a {p2,1000} page book. How many more pages does he need to reach to meet his goal?
+
+#init:
+- name = sample(names_male)
+- $goal = range(300, 1300, 100)
+- $pct = range(10, 100, 10)
+- $p1 = range(100, 1100, 100)
+- $p2 = range(100, 2100, 100)
+
+#conditions:
+- is_int(p1 * pct / 100)
+- is_int(p2 / 5)
+- goal - (p1*pct//100 + p2//5) > 0
+
+#answer: goal - (p1*pct//100 + p2//5)
+"""
+
+answer_annotated = """
+He read {p1*pct//100} pages from the {p1} page book because {p1} x .{pct//10} = <<{p1}*.{pct//10}={p1*pct//100}>>{p1*pct//100}
+He read {p2//5} pages from the {p2} page book because {p2} x (1/5) = <<{p2}*(1/5)={p2//5}>>{p2//5}
+He has read {p1*pct//100 + p2//5} pages in total.
+He needs to read {goal - (p1*pct//100 + p2//5)} more pages to reach {goal} pages because {goal} - {p1*pct//100 + p2//5} = <<{goal}-{p1*pct//100 + p2//5}={goal - (p1*pct//100 + p2//5)}>>{goal - (p1*pct//100 + p2//5)}
+#### {goal - (p1*pct//100 + p2//5)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

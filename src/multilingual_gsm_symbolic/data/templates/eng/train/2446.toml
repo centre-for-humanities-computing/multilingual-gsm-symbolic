@@ -1,0 +1,44 @@
+question = """
+Two friends are racing three miles. The first one runs it in 21 minutes. The second one runs it in 24 minutes. If they keep up the same pace, how long combined will it take for them to run 5 miles each?
+"""
+
+answer = """
+The first one runs a mile in 7 minutes because 21 / 3 = <<21/3=7>>7
+The second runs a mile in 8 minutes because 24 / 3 = <<24/3=8>>8
+The first one would finish 5 miles in 35 minutes because 5 x 7 = <<5*7=35>>35
+The second one would finish in 40 minutes because 5 x 8 = <<5*8=40>>40
+It will take 75 minutes in total because 35 + 40 = <<35+40=75>>75
+#### 75
+"""
+
+id_orig = 2117
+id_shuffled = 2446
+
+question_annotated = """
+Two friends are racing {dist_txt,three} miles. The first one runs it in {t1,21} minutes. The second one runs it in {t2,24} minutes. If they keep up the same pace, how long combined will it take for them to run {m,5} miles each?
+
+#init:
+- dist_txt, dist_val = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- $t1 = range(10, 100)
+- $t2 = range(10, 100)
+- $m = range(2, 12)
+
+#conditions:
+- divides(t1, dist_val)
+- divides(t2, dist_val)
+
+#answer: m*(t1 + t2)//dist_val
+"""
+
+answer_annotated = """
+The first one runs a mile in {t1//dist_val} minutes because {t1} / {dist_val} = <<{t1}/{dist_val}={t1//dist_val}>>{t1//dist_val}
+The second runs a mile in {t2//dist_val} minutes because {t2} / {dist_val} = <<{t2}/{dist_val}={t2//dist_val}>>{t2//dist_val}
+The first one would finish {m} miles in {m*t1//dist_val} minutes because {m} x {t1//dist_val} = <<{m}*{t1//dist_val}={m*t1//dist_val}>>{m*t1//dist_val}
+The second one would finish in {m*t2//dist_val} minutes because {m} x {t2//dist_val} = <<{m}*{t2//dist_val}={m*t2//dist_val}>>{m*t2//dist_val}
+It will take {m*(t1 + t2)//dist_val} minutes in total because {m*t1//dist_val} + {m*t2//dist_val} = <<{m*t1//dist_val}+{m*t2//dist_val}={m*(t1 + t2)//dist_val}>>{m*(t1 + t2)//dist_val}
+#### {m*(t1 + t2)//dist_val}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

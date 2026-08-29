@@ -1,0 +1,51 @@
+question = """
+Ned opens a left-handed store.  He sells left-handed mice.  They cost 30% more than normal mice.  He sells 25 a day and his store is open every day except Sunday, Thursday, and Friday.  If normal mice cost $120 how much money does he make a week?
+"""
+
+answer = """
+The left-hand mice cost 120*.3=$<<120*.3=36>>36 more than right-handed ones
+So they cost 120+36=$<<120+36=156>>156
+So he makes 156*25=$<<156*25=3900>>3900 a day
+The store is open 7-3=<<7-3=4>>4 days a week
+So in a week, he makes 3900*4=$<<3900*4=15600>>15,600
+#### 15600
+"""
+
+id_orig = 1955
+id_shuffled = 2259
+
+question_annotated = """
+{name,Ned} opens a left-handed store.  He sells left-handed mice.  They cost {pct,30}% more than normal mice.  He sells {sold,25} a day and his store is open every day except {day1,Sunday}, {day2,Thursday}, and {day3,Friday}.  If normal mice cost ${p,120} how much money does he make a week?
+
+#init:
+- name = sample(names_male)
+- pct = sample([10, 20, 30, 40, 50, 60, 90])
+- day1 = sample(weekdays)
+- day2 = sample(weekdays)
+- day3 = sample(weekdays)
+- $p = range(20, 220, 10)
+- $sold = range(5, 60, 5)
+
+#conditions:
+- divides(p*pct, 100)
+- (p + p*pct//100) * sold * 4 >= 1000
+- (p + p*pct//100) * sold * 4 % 1000 >= 100
+- day1 != day2
+- day2 != day3
+- day1 != day3
+
+#answer: (p + p*pct//100) * sold * 4
+"""
+
+answer_annotated = """
+The left-hand mice cost {p}*.{pct//10}=$<<{p}*.{pct//10}={p*pct//100}>>{p*pct//100} more than right-handed ones
+So they cost {p}+{p*pct//100}=$<<{p}+{p*pct//100}={p+p*pct//100}>>{p+p*pct//100}
+So he makes {p+p*pct//100}*{sold}=$<<{p+p*pct//100}*{sold}={(p+p*pct//100)*sold}>>{(p+p*pct//100)*sold} a day
+The store is open 7-3=<<7-3=4>>4 days a week
+So in a week, he makes {(p+p*pct//100)*sold}*4=$<<{(p+p*pct//100)*sold}*4={(p+p*pct//100)*sold*4}>>{(p+p*pct//100)*sold*4//1000},{((p+p*pct//100)*sold*4)%1000}
+#### {(p+p*pct//100)*sold*4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

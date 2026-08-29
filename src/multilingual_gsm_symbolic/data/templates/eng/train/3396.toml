@@ -1,0 +1,43 @@
+question = """
+Jason and Jeremy want to paint their wall white and agreed to split the cost of the paint. A gallon of paint costs $45 and can cover up to 400 square feet. How much will each of them contribute to the cost of the paint if their walls have a total area of 1600 square feet and will need a second coat?
+"""
+
+answer = """
+They need 1600 square feet / 400 square feet/gallon = <<1600/400=4>>4 gallons of paint for their walls.
+Since they will do a second coating, then they would need 4 gallons x 2 = <<4*2=8>>8 gallons in all.
+Eight gallons of paint will cost $45/gallon x 8 gallons = $<<45*8=360>>360.
+Thus, Jason and Jeremy will each contribute $360/2 = $<<360/2=180>>180.
+#### 180
+"""
+
+id_orig = 2848
+id_shuffled = 3396
+
+question_annotated = """
+{name,Jason} and Jeremy want to paint their wall white and agreed to split the cost of the paint. A gallon of paint costs ${c,45} and can cover up to {cov,400} square feet. How much will each of them contribute to the cost of the paint if their walls have a total area of {area,1600} square feet and will need a second coat?
+
+#init:
+- name = sample(names_male)
+- gw, gallons_total = sample([("Two", 2), ("Four", 4), ("Six", 6), ("Eight", 8), ("Ten", 10), ("Twelve", 12)])
+- $c = range(20, 100, 5)
+- $cov = range(200, 1200, 100)
+- $area = range(400, 5200, 200)
+
+#conditions:
+- divides(area, cov)
+- gallons_total == area // cov * 2
+
+#answer: c * gallons_total // 2
+"""
+
+answer_annotated = """
+They need {area} square feet / {cov} square feet/gallon = <<{area}/{cov}={area//cov}>>{area//cov} gallons of paint for their walls.
+Since they will do a second coating, then they would need {area//cov} gallons x 2 = <<{area//cov}*2={gallons_total}>>{gallons_total} gallons in all.
+{gw} gallons of paint will cost ${c}/gallon x {gallons_total} gallons = $<<{c}*{gallons_total}={c*gallons_total}>>{c*gallons_total}.
+Thus, {name} and Jeremy will each contribute ${c*gallons_total}/2 = $<<{c*gallons_total}/2={c*gallons_total//2}>>{c*gallons_total//2}.
+#### {c * gallons_total // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

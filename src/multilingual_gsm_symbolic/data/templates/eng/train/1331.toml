@@ -1,0 +1,45 @@
+question = """
+Jim starts with $80 in his investment portfolio. After 1 year it grows by 15%. He then adds another $28 to his portfolio. After 1 more year the combined portfolio grows by 10%. What is his final portfolio worth after 2 years from when he started?
+"""
+
+answer = """
+After 1 year Jim has gained $80 * 0.15 = $<<80*0.15=12>>12
+Therefore, after 1 year his portfolio has grown to $80 + $12 = $<<80+12=92>>92
+He then adds $28 to this total, so his new portfolio total is $92 + $28 = $<<92+28=120>>120 at the beginning of year 2
+Next, this total grows by 10%, so he gains $120 * 0.10 = $<<120*0.10=12>>12 across year 2
+Thus, after year 2, his portfolio is worth $120 + $12 = $<<120+12=132>>132
+#### 132
+"""
+
+id_orig = 1224
+id_shuffled = 1331
+
+question_annotated = """
+{name,Jim} starts with ${s,80} in his investment portfolio. After 1 year it grows by {r1,15}%. He then adds another ${b,28} to his portfolio. After 1 more year the combined portfolio grows by {r2,10}%. What is his final portfolio worth after 2 years from when he started?
+
+#init:
+- name = sample(names_male)
+- $s = range(20, 220, 20)
+- $r1 = range(10, 55, 5)
+- $b = range(21, 99)
+- $r2 = range(10, 35, 5)
+
+#conditions:
+- divides(s*r1, 100)
+- divides((s + s*r1/100 + b) * r2, 100)
+
+#answer: s + s*r1//100 + b + (s + s*r1//100 + b) * r2 // 100
+"""
+
+answer_annotated = """
+After 1 year {name} has gained ${s} * 0.{r1} = $<<{s}*0.{r1}={s*r1//100}>>{s*r1//100}
+Therefore, after 1 year his portfolio has grown to ${s} + ${s*r1//100} = $<<{s}+{s*r1//100}={s+s*r1//100}>>{s+s*r1//100}
+He then adds ${b} to this total, so his new portfolio total is ${s+s*r1//100} + ${b} = $<<{s+s*r1//100}+{b}={s+s*r1//100+b}>>{s+s*r1//100+b} at the beginning of year 2
+Next, this total grows by {r2}%, so he gains ${s+s*r1//100+b} * 0.{r2} = $<<{s+s*r1//100+b}*0.{r2}={(s+s*r1//100+b)*r2//100}>>{(s+s*r1//100+b)*r2//100} across year 2
+Thus, after year 2, his portfolio is worth ${s+s*r1//100+b} + ${(s+s*r1//100+b)*r2//100} = $<<{s+s*r1//100+b}+{(s+s*r1//100+b)*r2//100}={s+s*r1//100+b+(s+s*r1//100+b)*r2//100}>>{s+s*r1//100+b+(s+s*r1//100+b)*r2//100}
+#### {s+s*r1//100+b+(s+s*r1//100+b)*r2//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

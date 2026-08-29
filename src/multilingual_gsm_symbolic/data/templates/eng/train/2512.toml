@@ -1,0 +1,42 @@
+question = """
+Axel bought an aquarium that was marked down 50% from an original price of $120. But he also paid additional sales tax equal to 5% of the reduced price. What was the total cost of the aquarium?
+"""
+
+answer = """
+The aquarium was bought for $120 x 50/100 = $<<120*50/100=60>>60 less.
+So the marked down price of the aquarium was $120 - $60 = $<<120-60=60>>60.
+Axel paid $60 x 5/100 = $<<60*5/100=3>>3 additional for the sales tax.
+Therefore, the total cost of the aquarium was $60 + $3 = $<<60+3=63>>63.
+#### 63
+"""
+
+id_orig = 2174
+id_shuffled = 2512
+
+question_annotated = """
+{name,Axel} bought an aquarium that was marked down {d,50}% from an original price of ${p,120}. But he also paid additional sales tax equal to {t,5}% of the reduced price. What was the total cost of the aquarium?
+
+#init:
+- name = sample(names_male)
+- $p = range(100, 1100, 20)
+- $d = range(10, 100, 10)
+- $t = range(5, 20, 5)
+
+#conditions:
+- divides(p*d, 100)
+- divides((p - p*d//100)*t, 100)
+
+#answer: p*d//100 + p*d//100*t//100
+"""
+
+answer_annotated = """
+The aquarium was bought for ${p} x {d}/100 = $<<{p}*{d}/100={p*d//100}>>{p*d//100} less.
+So the marked down price of the aquarium was ${p} - ${p*d//100} = $<<{p}-{p*d//100}={p-p*d//100}>>{p-p*d//100}.
+{name} paid ${p*d//100} x {t}/100 = $<<{p*d//100}*{t}/100={p*d//100*t//100}>>{p*d//100*t//100} additional for the sales tax.
+Therefore, the total cost of the aquarium was ${p*d//100} + ${p*d//100*t//100} = $<<{p*d//100}+{p*d//100*t//100}={p*d//100+p*d//100*t//100}>>{p*d//100+p*d//100*t//100}.
+#### {p*d//100+p*d//100*t//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

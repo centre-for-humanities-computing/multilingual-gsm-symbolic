@@ -1,0 +1,47 @@
+question = """
+Josie and her family went on a safari and had an exciting time watching different animals grazing and playing together. She decided to count each animal she saw and calculated their total number. She counted 80 antelopes, 34 more rabbits than antelopes, 42 fewer hyenas than the total number of antelopes and rabbits combined, 50 more wild dogs than hyenas, and the number of leopards was half the number of rabbits. What the total number of animals that Josie counted?
+"""
+
+answer = """
+The number of rabbits was 80+34 = <<80+34=114>>114
+The total number of rabbits and antelopes is 114+80 = <<114+80=194>>194
+The number of hyenas was 42 fewer than the combined number of antelopes and rabbits, which is 194-42 = 152
+The number of wild dogs was 50 more than the number of hyenas, that is 152+50= 202
+The number of leopards is 1/2*114 = <<1/2*114=57>>57
+The total number of animals Josie saw is 57+202+152+114+80 = <<57+202+152+114+80=605>>605
+#### 605
+"""
+
+id_orig = 1902
+id_shuffled = 2136
+
+question_annotated = """
+{name,Josie} and her family went on a safari and had an exciting time watching different animals grazing and playing together. She decided to count each animal she saw and calculated their total number. She counted {a,80} antelopes, {b,34} more rabbits than antelopes, {c,42} fewer hyenas than the total number of antelopes and rabbits combined, {d,50} more wild dogs than hyenas, and the number of leopards was half the number of rabbits. What the total number of animals that {name,Josie} counted?
+
+#init:
+- name = sample(names_female)
+- $a = range(20, 121, 10)
+- $b = range(4, 35, 2)
+- $c = range(2, 45, 2)
+- $d = range(10, 55, 2)
+
+#conditions:
+- c < a + b
+- divides(a + b, 2)
+
+#answer: 6*a + (a + b)//2 + 3*b - 2*c + d
+"""
+
+answer_annotated = """
+The number of rabbits was {a}+{b} = <<{a}+{b}={a+b}>>{a+b}
+The total number of rabbits and antelopes is {a+b}+{a} = <<{a+b}+{a}={2*a+b}>>{2*a+b}
+The number of hyenas was {c} fewer than the combined number of antelopes and rabbits, which is {2*a+b}-{c} = {2*a+b-c}
+The number of wild dogs was {d} more than the number of hyenas, that is {2*a+b-c}+{d}= {2*a+b-c+d}
+The number of leopards is 1/2*{a+b} = <<1/2*{a+b}={(a+b)//2}>>{(a+b)//2}
+The total number of animals {name} saw is {(a+b)//2}+{2*a+b-c+d}+{2*a+b-c}+{a+b}+{a} = <<{(a+b)//2}+{2*a+b-c+d}+{2*a+b-c}+{a+b}+{a}={6*a + (a+b)//2 + 3*b - 2*c + d}>>{6*a + (a+b)//2 + 3*b - 2*c + d}
+#### {6*a + (a+b)//2 + 3*b - 2*c + d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

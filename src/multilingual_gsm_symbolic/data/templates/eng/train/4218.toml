@@ -1,0 +1,41 @@
+question = """
+Rosie pays for a $.44 piece of candy with a $1 bill. If the cashier gives her the smallest number of coins possible as change, how many coins will Rosie get as change?
+"""
+
+answer = """
+Rosie will get $1-$.44=$<<1-.44=.56>>.56 in change.
+She will get 2 quarters to account for $.50 of the change. She will also get 1 nickel to account for $.05 of the change. Then, she will get 1 penny, to account for the last $.01 of the change.
+She will get 2+1+1 = <<2+1+1=4>>4 coins total.
+#### 4
+"""
+
+id_orig = 3506
+id_shuffled = 4218
+
+question_annotated = """
+{name,Rosie} pays for a $.{p,44} piece of candy with a ${b,1} bill. If the cashier gives her the smallest number of coins possible as change, how many coins will {name,Rosie} get as change?
+
+#init:
+- name = sample(names_female)
+- $b = range(1, 21)
+- $p = range(5, 100)
+
+#conditions:
+- (100*b - p) >= 25
+- (100*b - p) % 25 >= 5
+- (100*b - p) % 25 < 10
+- (100*b - p) % 5 > 0
+
+#answer: (100*b - p)//25 + (100*b - p)%25//5 + (100*b - p)%5
+"""
+
+answer_annotated = """
+{name} will get ${b}-$.{p}=$<<{b}-.{p}=.{100*b - p}>>.{100*b - p} in change.
+She will get {(100*b - p)//25} quarters to account for $.{(100*b - p)//25*25} of the change. She will also get {(100*b - p)%25//5} nickel to account for $.0{(100*b - p)%25//5*5} of the change. Then, she will get {(100*b - p)%5} penny, to account for the last $.0{(100*b - p)%5} of the change.
+She will get {(100*b - p)//25}+{(100*b - p)%25//5}+{(100*b - p)%5} = <<{(100*b - p)//25}+{(100*b - p)%25//5}+{(100*b - p)%5}={(100*b - p)//25 + (100*b - p)%25//5 + (100*b - p)%5}>>{(100*b - p)//25 + (100*b - p)%25//5 + (100*b - p)%5} coins total.
+#### {(100*b - p)//25 + (100*b - p)%25//5 + (100*b - p)%5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

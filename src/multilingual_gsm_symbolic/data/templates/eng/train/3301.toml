@@ -1,0 +1,46 @@
+question = """
+Jude bought three chairs for his house, all at the same price. He also bought a table that costs $50 and two sets of plates at $20 for each set. After giving the cashier $130, Jude got a $4 change. How much did each of the chairs cost?
+"""
+
+answer = """
+The two sets of plates amount to $20 x 2 = $<<20*2=40>>40.
+So the table and the two sets of plates amount to $50 + $40 = $<<50+40=90>>90 in all.
+Since Jude received a $4 change, then he paid a total of $130 - $4 = $<<130-4=126>>126 for the chairs, tables, and plates.
+Thus, the three chairs cost $126 - $90 = $<<126-90=36>>36.
+Therefore, each chair cost $36/3 = $<<36/3=12>>12.
+#### 12
+"""
+
+id_orig = 2783
+id_shuffled = 3301
+
+question_annotated = """
+{name,Jude} bought {c_txt,three} chairs for his house, all at the same price. He also bought a table that costs ${t,50} and two sets of plates at ${p,20} for each set. After giving the cashier ${g,130}, {name,Jude} got a ${ch,4} change. How much did each of the chairs cost?
+
+#init:
+- name = sample(names_male)
+- c_txt, c_val = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $t = range(20, 110, 10)
+- $p = range(5, 55, 5)
+- $ch = range(1, 11)
+- $g = range(100, 310, 10)
+
+#conditions:
+- g > t + p*2 + ch
+- divides(g - ch - t - p*2, c_val)
+
+#answer: (g - ch - t - p*2)//c_val
+"""
+
+answer_annotated = """
+The two sets of plates amount to ${p} x 2 = $<<{p}*2={p*2}>>{p*2}.
+So the table and the two sets of plates amount to ${t} + ${p*2} = $<<{t}+{p*2}={t+p*2}>>{t+p*2} in all.
+Since {name} received a ${ch} change, then he paid a total of ${g} - ${ch} = $<<{g}-{ch}={g-ch}>>{g-ch} for the chairs, tables, and plates.
+Thus, the {c_txt} chairs cost ${g-ch} - ${t+p*2} = $<<{g-ch}-{t+p*2}={(g-ch-t-p*2)}>>{(g-ch-t-p*2)}.
+Therefore, each chair cost ${(g-ch-t-p*2)}/{c_val} = $<<{(g-ch-t-p*2)}/{c_val}={(g-ch-t-p*2)//c_val}>>{(g-ch-t-p*2)//c_val}.
+#### {(g-ch-t-p*2)//c_val}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

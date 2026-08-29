@@ -1,0 +1,41 @@
+question = """
+Chad saves 40% of the money he earns/receives in a year.  This year, he made $600 mowing yards and received $250.00 for his birthday/holidays.  He also made $150.00 by selling some old video games and another $150.00 doing odd jobs.  How much will he save?
+"""
+
+answer = """
+He made $600.00 mowing yards, $250.00 for his birthday, $150.00 selling items and $150.00 doing odd jobs so he made 600+250+150+150 = $<<600+250+150+150=1150.00>>1,150.00
+He made $1,150.00 and will save 40% so he saves 1150*.40 = $<<1150*.40=460.00>>460.00
+#### 460
+"""
+
+id_orig = 456
+id_shuffled = 529
+
+question_annotated = """
+{name,Chad} saves {rate,40}% of the money he earns/receives in a year.  This year, he made ${a,600} mowing yards and received ${b,250}.00 for his birthday/holidays.  He also made ${c,150}.00 by selling some old video games and another ${d,150}.00 doing odd jobs.  How much will he save?
+
+#init:
+- name = sample(names_male)
+- $rate = range(10, 91, 10)
+- $a = range(100, 900, 50)
+- $b = range(100, 350, 50)
+- $c = range(50, 300, 50)
+- $d = range(50, 300, 50)
+
+#conditions:
+- a + b + c + d >= 1000
+- (a + b + c + d) % 1000 >= 100
+- is_int((a + b + c + d) * rate / 100)
+
+#answer: (a + b + c + d) * rate // 100
+"""
+
+answer_annotated = """
+He made ${a}.00 mowing yards, ${b}.00 for his birthday, ${c}.00 selling items and ${d}.00 doing odd jobs so he made {a}+{b}+{c}+{d} = $<<{a}+{b}+{c}+{d}={a+b+c+d}.00>>{(a+b+c+d)//1000},{(a+b+c+d)%1000}.00
+He made ${(a+b+c+d)//1000},{(a+b+c+d)%1000}.00 and will save {rate}% so he saves {a+b+c+d}*.{rate} = $<<{a+b+c+d}*.{rate}={(a+b+c+d)*rate//100}.00>>{(a+b+c+d)*rate//100}.00
+#### {(a+b+c+d)*rate//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Jason is planning a parking garage that will have 12 floors. Every 3rd floor has a gate where drivers have to show ID, which takes two minutes. To get from one floor to the next, drivers have to drive 800 feet at 10 feet/second. How long, in seconds, does it take to get to the bottom of the garage from the top?
+"""
+
+answer = """
+First find the total number of gates someone has to pass through: 12 floors / 3 floors/gate = <<12/3=4>>4 gates
+Then find the total time someone spends waiting at the gates: 4 gates * 2 minutes/gate = <<4*2=8>>8 minutes
+Then convert that time to seconds: 8 minutes * 60 seconds/minute = <<8*60=480>>480 seconds
+Then find the time to drive through one floor in seconds: 800 feet / 10 feet/second = <<800/10=80>>80 seconds
+Then multiply the time per floor by the number of floors to find the total driving time: 80 seconds/floor * 12 floors = 960 seconds
+Then add the total driving time to the total time waiting at the gates to find the total time to get to the bottom: 960 seconds + 480 seconds = <<960+480=1440>>1440 seconds
+#### 1440
+"""
+
+id_orig = 3703
+id_shuffled = 4373
+
+question_annotated = """
+{name,Jason} is planning a parking garage that will have {floors,12} floors. Every 3rd floor has a gate where drivers have to show ID, which takes two minutes. To get from one floor to the next, drivers have to drive {dist,800} feet at {speed,10} feet/second. How long, in seconds, does it take to get to the bottom of the garage from the top?
+
+#init:
+- name = sample(names_male)
+- $floors = range(6, 123, 3)
+- $dist = range(200, 1450, 50)
+- $speed = range(2, 22, 2)
+
+#conditions:
+- divides(dist, speed)
+
+#answer: dist//speed*floors + floors//3*120
+"""
+
+answer_annotated = """
+First find the total number of gates someone has to pass through: {floors} floors / 3 floors/gate = <<{floors}/3={floors//3}>>{floors//3} gates
+Then find the total time someone spends waiting at the gates: {floors//3} gates * 2 minutes/gate = <<{floors//3}*2={floors//3*2}>>{floors//3*2} minutes
+Then convert that time to seconds: {floors//3*2} minutes * 60 seconds/minute = <<{floors//3*2}*60={floors//3*120}>>{floors//3*120} seconds
+Then find the time to drive through one floor in seconds: {dist} feet / {speed} feet/second = <<{dist}/{speed}={dist//speed}>>{dist//speed} seconds
+Then multiply the time per floor by the number of floors to find the total driving time: {dist//speed} seconds/floor * {floors} floors = {dist//speed*floors} seconds
+Then add the total driving time to the total time waiting at the gates to find the total time to get to the bottom: {dist//speed*floors} seconds + {floors//3*120} seconds = <<{dist//speed*floors}+{floors//3*120}={dist//speed*floors+floors//3*120}>>{dist//speed*floors+floors//3*120} seconds
+#### {dist//speed*floors+floors//3*120}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

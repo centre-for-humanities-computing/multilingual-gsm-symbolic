@@ -1,0 +1,41 @@
+question = """
+Ashley and her family went to the movies on Saturday. Children’s tickets cost $4.25 and adult tickets cost $3.25 more. They were given a $2 discount for buying more than 3 tickets. How much did they spend if they bought two adult tickets and four children’s tickets?
+"""
+
+answer = """
+The adult tickets cost $4.25 + $3.25 = $<<4.25+3.25=7.50>>7.50.
+So two adult tickets cost $7.50 x 2 = $<<7.5*2=15>>15.
+Four children's tickets cost $4.25 x 4 = $<<4*4.25=17>>17.
+So the total cost of all the tickets amounted to $15 + $17 = $<<15+17=32>>32.
+The family had a discount, so they paid a total of $32 - $2 = $<<32-2=30>>30.
+#### 30
+"""
+
+id_orig = 2306
+id_shuffled = 2654
+
+question_annotated = """
+{name,Ashley} and her family went to the movies on {day,Saturday}. Children’s tickets cost $4.25 and adult tickets cost $3.25 more. They were given a ${disc,2} discount for buying more than 3 tickets. How much did they spend if they bought {na_txt,two} adult tickets and {nc_txt,four} children’s tickets?
+
+#init:
+- name = sample(names_female)
+- day = sample(weekdays)
+- na_txt, na = sample([("two", 2), ("four", 4), ("six", 6), ("eight", 8), ("ten", 10)])
+- nc_txt, nc = sample([("four", 4), ("eight", 8), ("twelve", 12), ("sixteen", 16), ("twenty", 20)])
+- $disc = range(1, 11)
+
+#answer: int(7.5*na) + int(4.25*nc) - disc
+"""
+
+answer_annotated = """
+The adult tickets cost $4.25 + $3.25 = $<<4.25+3.25=7.50>>7.50.
+So {na_txt} adult tickets cost $7.50 x {na} = $<<7.5*{na}={int(7.5*na)}>>{int(7.5*na)}.
+Four children's tickets cost $4.25 x {nc} = $<<{nc}*4.25={int(nc*4.25)}>>{int(nc*4.25)}.
+So the total cost of all the tickets amounted to ${int(7.5*na)} + ${int(nc*4.25)} = $<<{int(7.5*na)}+{int(nc*4.25)}={int(7.5*na)+int(nc*4.25)}>>{int(7.5*na)+int(nc*4.25)}.
+The family had a discount, so they paid a total of ${int(7.5*na)+int(nc*4.25)} - ${disc} = $<<{int(7.5*na)+int(nc*4.25)}-{disc}={int(7.5*na)+int(nc*4.25)-disc}>>{int(7.5*na)+int(nc*4.25)-disc}.
+#### {int(7.5*na)+int(nc*4.25)-disc}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

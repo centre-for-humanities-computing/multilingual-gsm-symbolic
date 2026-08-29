@@ -1,0 +1,40 @@
+question = """
+Justin bought some jerseys. He bought four long-sleeved ones that cost $15 each, and some striped ones that cost $10 each. How many striped jerseys did Justin buy if he spent a total of $80?
+"""
+
+answer = """
+Four long-sleeved jerseys cost $15 x 4 = $<<15*4=60>>60.
+So the striped jerseys amount to $80 - $60 = $<<80-60=20>>20.
+Hence, Justin bought $20/$10= <<20/10=2>>2 striped jerseys.
+#### 2
+"""
+
+id_orig = 1013
+id_shuffled = 1109
+
+question_annotated = """
+{name,Justin} bought some jerseys. He bought four long-sleeved ones that cost ${p,15} each, and some striped ones that cost ${c,10} each. How many striped jerseys did {name,Justin} buy if he spent a total of ${t,80}?
+
+#init:
+- name = sample(names_male)
+- $p = range(5, 31)
+- $c = range(2, 21)
+- $t = range(40, 240)
+
+#conditions:
+- t - 4*p >= c
+- divides(t - 4*p, c)
+
+#answer: (t - 4*p) // c
+"""
+
+answer_annotated = """
+Four long-sleeved jerseys cost ${p} x 4 = $<<{p}*4={p*4}>>{p*4}.
+So the striped jerseys amount to ${t} - ${p*4} = $<<{t}-{p*4}={t-p*4}>>{t-p*4}.
+Hence, {name} bought ${t-p*4}/${c}= <<{t-p*4}/{c}={(t-p*4)//c}>>{(t-p*4)//c} striped jerseys.
+#### {(t - 4*p) // c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

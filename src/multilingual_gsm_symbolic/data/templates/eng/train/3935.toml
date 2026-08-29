@@ -1,0 +1,40 @@
+question = """
+Aubriella is pouring water into a 50-gallon fish tank at the rate of 1 gallon every 20 seconds. How many more gallons will she have to pour into the tank to fill the tank if she poured water into the fish tank for 6 minutes?
+"""
+
+answer = """
+When she poured water into the gallon for 6 minutes, the total time in seconds she took is 6 minutes * 60 seconds/minute = <<6*60=360>>360 seconds.
+If in 20 seconds she poured 1 gallon of water into the tank, in 360 seconds, she poured 360 seconds / 20 seconds/gallon = <<360/20/1=18>>18 gallons of water into the tank.
+Aubriella will have to pour 50 gallons - 18 gallons = <<50-18=32>>32 more gallons into the tank to fill the tank.
+#### 32
+"""
+
+id_orig = 3310
+id_shuffled = 3935
+
+question_annotated = """
+{name,Aubriella} is pouring water into a {cap,50}-gallon fish tank at the rate of 1 gallon every {sec,20} seconds. How many more gallons will she have to pour into the tank to fill the tank if she poured water into the fish tank for {mins,6} minutes?
+
+#init:
+- name = sample(names_female)
+- $cap = range(20, 220, 2)
+- $sec = range(2, 62, 2)
+- $mins = range(1, 31)
+
+#conditions:
+- divides(mins * 60, sec)
+- cap > mins * 60 // sec
+
+#answer: cap - mins * 60 // sec
+"""
+
+answer_annotated = """
+When she poured water into the gallon for {mins} minutes, the total time in seconds she took is {mins} minutes * 60 seconds/minute = <<{mins}*60={mins*60}>>{mins*60} seconds.
+If in {sec} seconds she poured 1 gallon of water into the tank, in {mins*60} seconds, she poured {mins*60} seconds / {sec} seconds/gallon = <<{mins*60}/{sec}/1={mins*60//sec}>>{mins*60//sec} gallons of water into the tank.
+{name} will have to pour {cap} gallons - {mins*60//sec} gallons = <<{cap}-{mins*60//sec}={cap-mins*60//sec}>>{cap-mins*60//sec} more gallons into the tank to fill the tank.
+#### {cap - mins * 60 // sec}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

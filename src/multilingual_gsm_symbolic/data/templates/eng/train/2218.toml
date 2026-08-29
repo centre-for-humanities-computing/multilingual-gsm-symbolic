@@ -1,0 +1,45 @@
+question = """
+Reese had a sum of money in her savings account. The company she used to work with was not doing well which is why she lost her job. So she spent 20% of her savings for her expenses in February, 40% of it in March, and $1500 in April. How much did she have in her savings account if she still has $2900 after spending those amounts?
+"""
+
+answer = """
+The total percentage of money that Reese spent in February and March is 20% + 40% = 60%.
+This means the April expenses and the money left in her account make up 100% - 60% = 40% of her savings.
+Reese had $2900 + $1500 = $<<2900+1500=4400>>4400 for the April expenses and the money left in her account.
+So, $4400 is equal to 40% which means every 1% is equal to $4400/40 = $<<4400/40=110>>110.
+Therefore, Reese originally had $110 x 100 = $<<110*100=11000>>11,000 in her savings account.
+#### 11000
+"""
+
+id_orig = 1935
+id_shuffled = 2218
+
+question_annotated = """
+{name,Reese} had a sum of money in her savings account. The company she used to work with was not doing well which is why she lost her job. So she spent {feb,20}% of her savings for her expenses in February, {mar,40}% of it in March, and ${april,1500} in April. How much did she have in her savings account if she still has ${left,2900} after spending those amounts?
+
+#init:
+- name = sample(names_female)
+- $feb = range(5, 50, 5)
+- $mar = range(5, 50, 5)
+- $april = range(500, 2100, 100)
+- $left = range(1000, 3000, 100)
+
+#conditions:
+- feb + mar < 100
+- divides(left + april, 100 - feb - mar)
+
+#answer: (left + april) // (100 - feb - mar) * 100
+"""
+
+answer_annotated = """
+The total percentage of money that {name} spent in February and March is {feb}% + {mar}% = {feb+mar}%.
+This means the April expenses and the money left in her account make up 100% - {feb+mar}% = {100-feb-mar}% of her savings.
+{name} had ${left} + ${april} = $<<{left}+{april}={left+april}>>{left+april} for the April expenses and the money left in her account.
+So, ${left+april} is equal to {100-feb-mar}% which means every 1% is equal to ${left+april}/{100-feb-mar} = $<<{left+april}/{100-feb-mar}={(left+april)//(100-feb-mar)}>>{(left+april)//(100-feb-mar)}.
+Therefore, {name} originally had ${(left+april)//(100-feb-mar)} x 100 = $<<{(left+april)//(100-feb-mar)}*100={(left+april)//(100-feb-mar)*100}>>{(left+april)//(100-feb-mar)*100} in her savings account.
+#### {(left+april)//(100-feb-mar)*100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

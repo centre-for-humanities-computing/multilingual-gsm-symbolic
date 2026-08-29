@@ -1,0 +1,47 @@
+question = """
+A parking garage near Nora's house is 4 stories tall. There are 100 spots per level. There are 58 open parking spots on the first level. There are 2 more open parking spots on the second level than on the first level, and there are 5 more open parking spots on the third level than on the second level. There are 31 open parking spots on the fourth level. How many full parking spots are there in all?
+"""
+
+answer = """
+There are 4 levels * 100 spots = <<4*100=400>>400 possible parking spots.
+The second level has 58 open spots + 2 = <<58+2=60>>60 open spots.
+The third level has 60 open spots + 5 = <<60+5=65>>65 open spots.
+Total open spots are 58 + 60 + 65 + 31 = <<58+60+65+31=214>>214 open spots.
+If there are 400 possible spots – 214 open spots = <<400-214=186>>186 full spots.
+#### 186
+"""
+
+id_orig = 674
+id_shuffled = 747
+
+question_annotated = """
+A parking garage near {name,Nora}'s house is {stories,4} stories tall. There are {per_level,100} spots per level. There are {a,58} open parking spots on the first level. There are {b,2} more open parking spots on the second level than on the first level, and there are {c,5} more open parking spots on the third level than on the second level. There are {d,31} open parking spots on the fourth level. How many full parking spots are there in all?
+
+#init:
+- name = sample(names_female)
+- $stories = range(3, 6)
+- $per_level = range(80, 201, 20)
+- $a = range(30, 90, 4)
+- $b = range(2, 6)
+- $c = range(3, 7)
+- $d = range(25, 40, 2)
+
+#conditions:
+- a + b + c < per_level
+- stories * per_level > 3*a + 2*b + c + d
+
+#answer: stories * per_level - 3*a - 2*b - c - d
+"""
+
+answer_annotated = """
+There are {stories} levels * {per_level} spots = <<{stories}*{per_level}={stories*per_level}>>{stories*per_level} possible parking spots.
+The second level has {a} open spots + {b} = <<{a}+{b}={a+b}>>{a+b} open spots.
+The third level has {a+b} open spots + {c} = <<{a+b}+{c}={a+b+c}>>{a+b+c} open spots.
+Total open spots are {a} + {a+b} + {a+b+c} + {d} = <<{a}+{a+b}+{a+b+c}+{d}={3*a+2*b+c+d}>>{3*a+2*b+c+d} open spots.
+If there are {stories*per_level} possible spots – {3*a+2*b+c+d} open spots = <<{stories*per_level}-{3*a+2*b+c+d}={stories*per_level-3*a-2*b-c-d}>>{stories*per_level-3*a-2*b-c-d} full spots.
+#### {stories*per_level-3*a-2*b-c-d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

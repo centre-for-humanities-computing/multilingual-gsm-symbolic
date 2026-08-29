@@ -1,0 +1,40 @@
+question = """
+Tonya has $150.00 on her credit card.  If she leaves any balance on her card at the end of the month, she is charged 20% interest.  If she makes a $50.00 payment on her card, what will be the new balance?
+"""
+
+answer = """
+Her card has a $150.00 balance and she makes a $50.00 payment so the new balance is 150-50 = $<<150-50=100.00>>100.00
+She didn't pay it off so she is charged 20% interest on her $100.00 balance so the interest is .20*100 = $20.00
+Her balance was $100.00 and she was charged $20.00 in interest so her new balance is 100+20 = $<<100+20=120.00>>120.00
+#### 120
+"""
+
+id_orig = 1719
+id_shuffled = 1866
+
+question_annotated = """
+{name,Tonya} has ${b,150}.00 on her credit card.  If she leaves any balance on her card at the end of the month, she is charged {r,20}% interest.  If she makes a ${p,50}.00 payment on her card, what will be the new balance?
+
+#init:
+- name = sample(names_female)
+- $b = range(100, 2100, 50)
+- $p = range(10, 110, 10)
+- $r = range(10, 110, 10)
+
+#conditions:
+- b > p
+- divides(r * (b - p), 100)
+
+#answer: b - p + r * (b - p) // 100
+"""
+
+answer_annotated = """
+Her card has a ${b}.00 balance and she makes a ${p}.00 payment so the new balance is {b}-{p} = $<<{b}-{p}={b-p}.00>>{b-p}.00
+She didn't pay it off so she is charged {r}% interest on her ${b-p}.00 balance so the interest is .{r}*{b-p} = ${r*(b-p)//100}.00
+Her balance was ${b-p}.00 and she was charged ${r*(b-p)//100}.00 in interest so her new balance is {b-p}+{r*(b-p)//100} = $<<{b-p}+{r*(b-p)//100}={b-p+r*(b-p)//100}.00>>{b-p+r*(b-p)//100}.00
+#### {b - p + r * (b - p) // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

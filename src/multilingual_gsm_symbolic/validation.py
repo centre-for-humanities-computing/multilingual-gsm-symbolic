@@ -70,7 +70,17 @@ def validate_formatting_matches_original(
     annotated_question: AnnotatedQuestion,
     replacements: dict[str, Any],
     source: str | Path | None = None,
+    fidelity: str = "surface",
 ) -> None:
+    """Check that rendering the template at its defaults reproduces the stored text.
+
+    fidelity="surface": both question and answer must match the stored originals.
+    fidelity="answer": the question must match; a mismatching answer is accepted by
+    rebasing the stored answer onto the rendered template output ("og answer based
+    on the template"). This mutates ``annotated_question.answer`` in place.
+    """
+    if fidelity not in {"surface", "answer"}:
+        raise ValueError(f"Unknown fidelity mode: {fidelity}")
     source_name = Path(source).name if source is not None else f"template {annotated_question.id_shuffled}"
     default_assignments = annotated_question._get_full_default_assignments(replacements)
 
@@ -83,10 +93,12 @@ def validate_formatting_matches_original(
             f"{_format_text_diff(annotated_question.question, formatted_question, label='question')}"
         )
     if _normalize_whitespace(formatted_answer) != _normalize_whitespace(annotated_question.answer):
-        raise AssertionError(
-            f"Formatted answer doesn't match original for {source_name}\n"
-            f"{_format_text_diff(annotated_question.answer, formatted_answer, label='answer')}"
-        )
+        if fidelity == "surface":
+            raise AssertionError(
+                f"Formatted answer doesn't match original for {source_name}\n"
+                f"{_format_text_diff(annotated_question.answer, formatted_answer, label='answer')}"
+            )
+        annotated_question.answer = formatted_answer
 
 
 def validate_default_assignments(
@@ -226,10 +238,11 @@ def validate_template_against_pytest_checks(
     annotated_question: AnnotatedQuestion,
     replacements: dict[str, Any],
     source: str | Path | None = None,
+    fidelity: str = "surface",
 ) -> None:
     """Run the per-template checks that pytest applies to active templates."""
     validate_default_assignments(annotated_question, replacements, source=source)
     validate_minimum_numeric_combinations(annotated_question, replacements, source=source)
     validate_maximum_numeric_combinations(annotated_question, replacements, source=source)
     validate_chevron_arithmetic(annotated_question, source=source)
-    validate_formatting_matches_original(annotated_question, replacements, source=source)
+    validate_formatting_matches_original(annotated_question, replacements, source=source, fidelity=fidelity)

@@ -1,0 +1,41 @@
+question = """
+Twenty gallons of tea were poured into 80 containers. Geraldo drank 3.5 containers. How many pints of tea did Geraldo drink?
+"""
+
+answer = """
+20 gallons = 160 pints
+160/80 = <<160/80=2>>2 pints
+3.5 * 2 pints = <<3.5*2=7>>7 pints
+Geraldo drank 7 pints of tea.
+#### 7
+"""
+
+id_orig = 1057
+id_shuffled = 1153
+
+question_annotated = """
+Twenty gallons of tea were poured into {c,80} containers. {name,Geraldo} drank {d_txt,3.5} containers. How many pints of tea did {name,Geraldo} drink?
+
+#init:
+- name = sample(names_male)
+- $c = range(2, 200)
+- d_txt, dh = sample([("0.5", 1), ("1.5", 3), ("2.5", 5), ("3.5", 7), ("4.5", 9), ("5.5", 11), ("6.5", 13), ("7.5", 15), ("8.5", 17), ("9.5", 19), ("10.5", 21), ("11.5", 23), ("12.5", 25), ("13.5", 27), ("14.5", 29)])
+
+#conditions:
+- divides(160, c)
+- divides(160//c, 2)
+
+#answer: dh * (160//c) // 2
+"""
+
+answer_annotated = """
+20 gallons = 160 pints
+160/{c} = <<160/{c}={160//c}>>{160//c} pints
+{d_txt} * {160//c} pints = <<{d_txt}*{160//c}={dh*(160//c)//2}>>{dh*(160//c)//2} pints
+{name} drank {dh*(160//c)//2} pints of tea.
+#### {dh*(160//c)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

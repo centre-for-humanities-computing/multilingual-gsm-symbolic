@@ -1,0 +1,38 @@
+question = """
+Mr. Lalande inherited 20,000 euros from his old aunt Adeline. He is very happy because he will be able to afford the car of his dreams, a superb car worth 18,000 €. He goes to the dealership and tries the car. He decides to take it, but instead of paying for everything right away, he chooses to pay in several installments. He pays 3,000 euros to be able to leave with the car and the seller offers to let him pay the rest in 6 monthly installments. How much does Mr. Lalande have to pay every month?
+"""
+
+answer = """
+Let’s first calculate what remains to be paid to Mr. Lalande once he leaves the store 18,000 - 3000 = <<18000-3000=15000>>19,000£
+Let’s split this sum into 6 month installments: 19,000 / 6 = <<19000/6=3166>>3166£
+#### 3166
+"""
+
+id_orig = 3354
+id_shuffled = 3979
+
+question_annotated = """
+Mr. Lalande inherited 20,000 euros from his old aunt Adeline. He is very happy because he will be able to afford the car of his dreams, a superb car worth {w_txt,18,000} €. He goes to the dealership and tries the car. He decides to take it, but instead of paying for everything right away, he chooses to pay in several installments. He pays {d_txt,3,000} euros to be able to leave with the car and the seller offers to let him pay the rest in {m,6} monthly installments. How much does Mr. Lalande have to pay every month?
+
+#init:
+- w_txt, w = sample([("18,000", 18000), ("20,000", 20000), ("22,000", 22000), ("24,000", 24000), ("26,000", 26000)])
+- d_txt, d = sample([("3,000", 3000), ("4,000", 4000), ("5,000", 5000)])
+- r_txt, r = sample([("13,000", 13000), ("14,000", 14000), ("15,000", 15000), ("16,000", 16000), ("17,000", 17000), ("18,000", 18000), ("19,000", 19000), ("20,000", 20000), ("21,000", 21000), ("22,000", 22000), ("23,000", 23000)])
+- $m = range(2, 31)
+
+#conditions:
+- w - d == r
+- divides(r, m)
+
+#answer: r // m
+"""
+
+answer_annotated = """
+Let’s first calculate what remains to be paid to Mr. Lalande once he leaves the store {w_txt} - {d} = <<{w}-{d}={w-d}>>{r_txt}£
+Let’s split this sum into {m} month installments: {r_txt} / {m} = <<{r}/{m}={r//m}>>{r//m}£
+#### {r//m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

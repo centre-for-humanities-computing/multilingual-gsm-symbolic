@@ -1,0 +1,44 @@
+question = """
+Four people in a law firm are planning a party. Mary will buy a platter of pasta for $20 and a loaf of bread for $2. Elle and Andrea will split the cost for buying 4 cans of soda which cost $1.50 each, and chicken wings for $10. Joe will buy a cake that costs $5. How much more will Mary spend than the rest of the firm put together?
+"""
+
+answer = """
+Mary will spend $20 + $2 = $<<20+2=22>>22.
+Elle and Andrea will spend $1.5 x 4 = $<<1.5*4=6>>6 for the soda.
+Elle and Andrea will spend $6 + $10 = $<<6+10=16>>16 for the soda and chicken wings.
+Elle, Andrea, and Joe together will spend $16 + $5 = $<<16+5=21>>21.
+So, Mary will spend $22 - $21 = $<<22-21=1>>1 more than all of them combined.
+#### 1
+"""
+
+id_orig = 3610
+id_shuffled = 4268
+
+question_annotated = """
+Four people in a law firm are planning a party. Mary will buy a platter of pasta for ${p,20} and a loaf of bread for ${b,2}. Elle and Andrea will split the cost for buying {n,4} cans of soda which cost $1.50 each, and chicken wings for ${w,10}. Joe will buy a cake that costs ${k,5}. How much more will Mary spend than the rest of the firm put together?
+
+#init:
+- $p = range(10, 42, 2)
+- $b = range(1, 6)
+- $n = range(2, 14, 2)
+- $w = range(5, 26, 5)
+- $k = range(3, 9)
+
+#conditions:
+- p + b > int(1.5*n) + w + k
+
+#answer: p + b - int(1.5*n) - w - k
+"""
+
+answer_annotated = """
+Mary will spend ${p} + ${b} = $<<{p}+{b}={p+b}>>{p+b}.
+Elle and Andrea will spend $1.5 x {n} = $<<1.5*{n}={int(1.5*n)}>>{int(1.5*n)} for the soda.
+Elle and Andrea will spend ${int(1.5*n)} + ${w} = $<<{int(1.5*n)}+{w}={int(1.5*n)+w}>>{int(1.5*n)+w} for the soda and chicken wings.
+Elle, Andrea, and Joe together will spend ${int(1.5*n)+w} + ${k} = $<<{int(1.5*n)+w}+{k}={int(1.5*n)+w+k}>>{int(1.5*n)+w+k}.
+So, Mary will spend ${p+b} - ${int(1.5*n)+w+k} = $<<{p+b}-{int(1.5*n)+w+k}={p+b-int(1.5*n)-w-k}>>{p+b-int(1.5*n)-w-k} more than all of them combined.
+#### {p+b-int(1.5*n)-w-k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

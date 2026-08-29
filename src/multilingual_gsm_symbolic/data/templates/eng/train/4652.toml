@@ -1,0 +1,41 @@
+question = """
+Nelly wants to buy pizza for herself and her 14 friends. Each pizza costs $12 and can feed 3 people. If Nelly earns $4 a night babysitting the neighbors' kids, how many nights will she have to babysit to afford the pizza?
+"""
+
+answer = """
+She needs to buy 15 / 3 = <<15/3=5>>5 pizzas.
+The pizzas cost 5 * $12 = $<<5*12=60>>60 total.
+It will take her $60 / $4 = <<60/4=15>>15 nights worth of babysitting to afford the pizza.
+#### 15
+"""
+
+id_orig = 3945
+id_shuffled = 4652
+
+question_annotated = """
+{name,Nelly} wants to buy pizza for herself and her {f,14} friends. Each pizza costs ${p,12} and can feed {k,3} people. If {name,Nelly} earns ${r,4} a night babysitting the neighbors' kids, how many nights will she have to babysit to afford the pizza?
+
+#init:
+- name = sample(names_female)
+- $f = range(2, 62)
+- $p = range(4, 24)
+- $k = range(2, 12)
+- $r = range(1, 30)
+
+#conditions:
+- divides(f + 1, k)
+- divides((f + 1) // k * p, r)
+
+#answer: (f + 1) // k * p // r
+"""
+
+answer_annotated = """
+She needs to buy {f + 1} / {k} = <<{f + 1}/{k}={(f + 1) // k}>>{(f + 1) // k} pizzas.
+The pizzas cost {(f + 1) // k} * ${p} = $<<{(f + 1) // k}*{p}={(f + 1) // k * p}>>{(f + 1) // k * p} total.
+It will take her ${(f + 1) // k * p} / ${r} = <<{(f + 1) // k * p}/{r}={(f + 1) // k * p // r}>>{(f + 1) // k * p // r} nights worth of babysitting to afford the pizza.
+#### {(f + 1) // k * p // r}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

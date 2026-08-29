@@ -1,0 +1,50 @@
+question = """
+John repairs 5 cars.  3 of the cars take 40 minutes each to repair.  The remaining ones take 50% longer each to repair.  He makes $20 per hour repairing cars.  How much money does he make?
+"""
+
+answer = """
+The 3 cars take 3*40=<<3*40=120>>120 minutes to make
+He repairs 5-3=<<5-3=2>>2 more cars
+They each take 40*.5=<<40*.5=20>>20 minutes longer per car
+So they each take 40+20=<<40+20=60>>60 minutes
+So he repaired cars for 120+2*60=<<120+2*60=240>>240 minutes
+That is 240/60=<<240/60=4>>4 hours
+So he made 4*20=$<<4*20=80>>80
+#### 80
+"""
+
+id_orig = 2794
+id_shuffled = 3328
+
+question_annotated = """
+{name,John} repairs {n,5} cars.  {k,3} of the cars take {t,40} minutes each to repair.  The remaining ones take 50% longer each to repair.  He makes ${rate,20} per hour repairing cars.  How much money does he make?
+
+#init:
+- name = sample(names_male)
+- $n = range(4, 12)
+- $k = range(1, 10)
+- $t = range(2, 102, 2)
+- $rate = range(5, 105, 5)
+
+#conditions:
+- n > k
+- divides(t, 2)
+- divides(k*t + (n-k)*(t+t//2), 60)
+
+#answer: (k*t+(n-k)*(t+t//2))//60*rate
+"""
+
+answer_annotated = """
+The {k} cars take {k}*{t}=<<{k}*{t}={k*t}>>{k*t} minutes to make
+He repairs {n}-{k}=<<{n}-{k}={n-k}>>{n-k} more cars
+They each take {t}*.5=<<{t}*.5={t//2}>>{t//2} minutes longer per car
+So they each take {t}+{t//2}=<<{t}+{t//2}={t+t//2}>>{t+t//2} minutes
+So he repaired cars for {k*t}+{n-k}*{t+t//2}=<<{k*t}+{n-k}*{t+t//2}={k*t+(n-k)*(t+t//2)}>>{k*t+(n-k)*(t+t//2)} minutes
+That is {k*t+(n-k)*(t+t//2)}/60=<<{k*t+(n-k)*(t+t//2)}/60={(k*t+(n-k)*(t+t//2))//60}>>{(k*t+(n-k)*(t+t//2))//60} hours
+So he made {(k*t+(n-k)*(t+t//2))//60}*{rate}=$<<{(k*t+(n-k)*(t+t//2))//60}*{rate}={(k*t+(n-k)*(t+t//2))//60*rate}>>{(k*t+(n-k)*(t+t//2))//60*rate}
+#### {(k*t+(n-k)*(t+t//2))//60*rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

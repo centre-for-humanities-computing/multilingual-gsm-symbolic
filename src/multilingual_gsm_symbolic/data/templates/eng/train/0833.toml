@@ -1,0 +1,50 @@
+question = """
+Susan wants to throw a party for her mom. She is planning on having 30 guests. For dinner she is making a recipe that makes 2 servings each. Each batch of the recipe calls for 4 potatoes and 1 teaspoon of salt. A potato costs $.10 and a container of salt costs $2 at the supermarket. If each container of salt has 5 teaspoons, how much money will Susan spend on food?
+"""
+
+answer = """
+Susan needs to make 30/2=<<30/2=15>>15 batches of the recipe.
+Therefore, she will need 15*4=<<15*4=60>>60 potatoes.
+She will also need 1*15=<<1*15=15>>15 teaspoons of salt.
+Thus she will have to buy 15/5 =<<15/5=3>>3 containers of salt.
+Therefore, she will spend 60*$.1=$6 on potatoes and 3*$2=$6 on salt.
+Thus, she will spend $6+$6=$<<6+6=12>>12 on food.
+#### 12
+"""
+
+id_orig = 760
+id_shuffled = 833
+
+question_annotated = """
+{name,Susan} wants to throw a party for her mom. She is planning on having {g,30} guests. For dinner she is making a recipe that makes {s,2} servings each. Each batch of the recipe calls for {p,4} potatoes and {k,1} teaspoon of salt. A potato costs $.10 and a container of salt costs ${sc,2} at the supermarket. If each container of salt has {j,5} teaspoons, how much money will {name,Susan} spend on food?
+
+#init:
+- name = sample(names_female)
+- $g = range(20, 122, 2)
+- $s = range(2, 7)
+- $p = range(2, 9)
+- $k = range(1, 4)
+- $j = range(2, 13)
+- $sc = range(1, 6)
+
+#conditions:
+- divides(g, s)
+- divides(g//s * p, 10)
+- divides(g//s * k, j)
+
+#answer: g//s*p//10 + g//s*k//j*sc
+"""
+
+answer_annotated = """
+{name} needs to make {g}/{s}=<<{g}/{s}={g//s}>>{g//s} batches of the recipe.
+Therefore, she will need {g//s}*{p}=<<{g//s}*{p}={g//s*p}>>{g//s*p} potatoes.
+She will also need {k}*{g//s}=<<{k}*{g//s}={g//s*k}>>{g//s*k} teaspoons of salt.
+Thus she will have to buy {g//s*k}/{j} =<<{g//s*k}/{j}={g//s*k//j}>>{g//s*k//j} containers of salt.
+Therefore, she will spend {g//s*p}*$.1=${g//s*p//10} on potatoes and {g//s*k//j}*${sc}=${g//s*k//j*sc} on salt.
+Thus, she will spend ${g//s*p//10}+${g//s*k//j*sc}=$<<{g//s*p//10}+{g//s*k//j*sc}={g//s*p//10 + g//s*k//j*sc}>>{g//s*p//10 + g//s*k//j*sc} on food.
+#### {g//s*p//10 + g//s*k//j*sc}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

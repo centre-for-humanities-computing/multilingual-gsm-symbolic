@@ -1,0 +1,40 @@
+question = """
+A store is comparing their profits throughout the year. They had profits of $1,500 in the first quarter of the year, $3,000 in the third quarter, and $2,000 in the fourth quarter. If their annual profits are $8,000, how much profit, in dollars, did they make in the second quarter?
+"""
+
+answer = """
+In the three quarters we have figures for, the store made a total of $1500 + $3000 + $2000 = $<<1500+3000+2000=6500>>6,500.
+Subtracting this from their annual profit shows that they made $8000 – $6500 = $<<8000-6500=1500>>1,500 profit in the second quarter.
+#### 1500
+"""
+
+id_orig = 3758
+id_shuffled = 4440
+
+question_annotated = """
+A store is comparing their profits throughout the year. They had profits of ${q1_txt,1,500} in the first quarter of the year, ${q3_txt,3,000} in the third quarter, and ${q4_txt,2,000} in the fourth quarter. If their annual profits are ${total_txt,8,000}, how much profit, in dollars, did they make in the second quarter?
+
+#init:
+- q1_txt, q1 = sample([("1,000", 1000), ("1,500", 1500), ("2,000", 2000), ("2,500", 2500), ("3,000", 3000)])
+- q3_txt, q3 = sample([("1,000", 1000), ("1,500", 1500), ("2,000", 2000), ("2,500", 2500), ("3,000", 3000)])
+- q4_txt, q4 = sample([("1,000", 1000), ("1,500", 1500), ("2,000", 2000), ("2,500", 2500), ("3,000", 3000)])
+- total_txt, total = sample([("6,000", 6000), ("6,500", 6500), ("7,000", 7000), ("7,500", 7500), ("8,000", 8000), ("8,500", 8500), ("9,000", 9000), ("9,500", 9500), ("10,000", 10000), ("10,500", 10500), ("11,000", 11000), ("11,500", 11500), ("12,000", 12000)])
+
+#conditions:
+- q1 + q3 + q4 < total
+- total - q1 - q3 - q4 >= 1000
+- (q1 + q3 + q4) - 1000*((q1 + q3 + q4)//1000) >= 100
+- (total - q1 - q3 - q4) - 1000*((total - q1 - q3 - q4)//1000) >= 100
+
+#answer: total - q1 - q3 - q4
+"""
+
+answer_annotated = """
+In the three quarters we have figures for, the store made a total of ${q1} + ${q3} + ${q4} = $<<{q1}+{q3}+{q4}={q1+q3+q4}>>{(q1+q3+q4)//1000},{q1+q3+q4-1000*((q1+q3+q4)//1000)}.
+Subtracting this from their annual profit shows that they made ${total} – ${q1+q3+q4} = $<<{total}-{q1+q3+q4}={total-q1-q3-q4}>>{(total-q1-q3-q4)//1000},{total-q1-q3-q4-1000*((total-q1-q3-q4)//1000)} profit in the second quarter.
+#### {total-q1-q3-q4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

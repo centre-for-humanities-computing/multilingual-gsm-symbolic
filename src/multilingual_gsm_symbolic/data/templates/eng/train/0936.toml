@@ -1,0 +1,49 @@
+question = """
+There are 4 puppies and 3 dogs at a camp. Each dog eats twice as much food as a puppy, but each puppy eats three times as often as a dog. If a dog eats 4 pounds of food three times a day, what would be the total amount of food the dogs and puppies eat in a day?
+"""
+
+answer = """
+Eating three times a day, a dog eats 3*4=<<3*4=12>>12 pounds of food.
+Since there are 3 dogs at the camp, the total amount of food they eat is 3*12=<<3*12=36>>36 pounds of food in a day.
+If each dog eats twice as much food as a puppy, a puppy will eat 4/2=<<4/2=2>>2 pounds of food in one meal.
+Each puppy eats three times as often as a dog, and if a dog eats three times in a day, a puppy will eat 3*3= <<3*3=9>>9 times in a day.
+Since a puppy eats 2 pounds of food a day, the total amount of food a puppy will eat in a day is 9*2=<<9*2=18>>18 pounds of food.
+Four puppies in the camp eat 18*4=<<18*4=72>>72 pounds of food every day.
+Together, the dogs and the puppies eat 72+36=<<72+36=108>>108 pounds of food in a day.
+#### 108
+"""
+
+id_orig = 840
+id_shuffled = 936
+
+question_annotated = """
+There are {p,4} puppies and {d,3} dogs at a camp. Each dog eats {k_txt,twice} as much food as a puppy, but each puppy eats {r_txt,three} times as often as a dog. If a dog eats {f,4} pounds of food {m_txt,three} times a day, what would be the total amount of food the dogs and puppies eat in a day?
+
+#init:
+- p_word, p = sample([("Two", 2), ("Three", 3), ("Four", 4), ("Five", 5)])
+- $d = range(2, 8)
+- $f = range(2, 61)
+- m_txt, m = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- r_txt, r = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- k_txt, k = sample(multi_times)
+
+#conditions:
+- divides(f, k)
+
+#answer: p*r*m*(f//k) + d*m*f
+"""
+
+answer_annotated = """
+Eating {m_txt} times a day, a dog eats {m}*{f}=<<{m}*{f}={m*f}>>{m*f} pounds of food.
+Since there are {d} dogs at the camp, the total amount of food they eat is {d}*{m*f}=<<{d}*{m*f}={d*m*f}>>{d*m*f} pounds of food in a day.
+If each dog eats {k_txt} as much food as a puppy, a puppy will eat {f}/{k}=<<{f}/{k}={f//k}>>{f//k} pounds of food in one meal.
+Each puppy eats {r_txt} times as often as a dog, and if a dog eats {m_txt} times in a day, a puppy will eat {r}*{m}= <<{r}*{m}={r*m}>>{r*m} times in a day.
+Since a puppy eats {f//k} pounds of food a day, the total amount of food a puppy will eat in a day is {r*m}*{f//k}=<<{r*m}*{f//k}={r*m*(f//k)}>>{r*m*(f//k)} pounds of food.
+{p_word} puppies in the camp eat {r*m*(f//k)}*{p}=<<{r*m*(f//k)}*{p}={r*m*(f//k)*p}>>{r*m*(f//k)*p} pounds of food every day.
+Together, the dogs and the puppies eat {r*m*(f//k)*p}+{d*m*f}=<<{r*m*(f//k)*p}+{d*m*f}={r*m*(f//k)*p+d*m*f}>>{r*m*(f//k)*p+d*m*f} pounds of food in a day.
+#### {p*r*m*(f//k) + d*m*f}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Emma's bank account has $100 in it. Each day of the week, she spends $8. At the end of the week, she goes to the bank and asks for as many $5 bills as her account can give her. She leaves the rest in the account. How many dollars remain in the account?
+"""
+
+answer = """
+She spend $56 because 7 x 8 = <<7*8=56>>56
+She has $44 left in the bank because 100 - 56 = <<100-56=44>>44
+She can get 8 five dollar bills because 44 / 5 = <<44/5=8.8>>8.8
+This is equal to $40 because 8 x 5 = <<8*5=40>>40
+She has $4 left in the account because 44 - 40 = <<44-40=4>>4
+#### 4
+"""
+
+id_orig = 2437
+id_shuffled = 2810
+
+question_annotated = """
+{name,Emma}'s bank account has ${bal,100} in it. Each day of the week, she spends ${s,8}. At the end of the week, she goes to the bank and asks for as many ${f,5} bills as her account can give her. She leaves the rest in the account. How many dollars remain in the account?
+
+#init:
+- name = sample(names_female)
+- $bal = range(50, 210)
+- $s = range(2, 20)
+- $f = range(2, 11)
+
+#conditions:
+- bal - 7 * s > 0
+- bal - 7 * s >= f
+- not divides(bal - 7 * s, f)
+
+#answer: (bal - 7 * s) % f
+"""
+
+answer_annotated = """
+She spend ${7*s} because 7 x {s} = <<7*{s}={7*s}>>{7*s}
+She has ${bal - 7*s} left in the bank because {bal} - {7*s} = <<{bal}-{7*s}={bal - 7*s}>>{bal - 7*s}
+She can get {(bal - 7*s)//f} five dollar bills because {bal - 7*s} / {f} = <<{bal - 7*s}/{f}={(bal - 7*s)/f}>>{(bal - 7*s)/f}
+This is equal to ${(bal - 7*s)//f*f} because {(bal - 7*s)//f} x {f} = <<{(bal - 7*s)//f}*{f}={(bal - 7*s)//f*f}>>{(bal - 7*s)//f*f}
+She has ${(bal - 7*s)%f} left in the account because {bal - 7*s} - {(bal - 7*s)//f*f} = <<{bal - 7*s}-{(bal - 7*s)//f*f}={(bal - 7*s)%f}>>{(bal - 7*s)%f}
+#### {(bal - 7*s)%f}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

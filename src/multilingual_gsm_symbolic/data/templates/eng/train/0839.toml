@@ -1,0 +1,42 @@
+question = """
+Megan is delivering meals on wheels. Out of her 30 clients, 7 need vegan meals, 8 need kosher meals, and three people need meals that are both vegan and kosher. How many meals does Megan deliver that are neither kosher nor vegan?
+"""
+
+answer = """
+First, add the number of kosher meals to the number of vegan meals: 7 meals + 8 meals = <<7+8=15>>15 meals
+Then subtract the three meals that are both kosher and vegan since they got counted twice: 15 meals - 3 meals = <<15-3=12>>12 meals
+Finally, subtract that number from the total number of meals to find the number of meals that are neither kosher nor vegan: 30 meals - 12 meals = <<30-12=18>>18 meals
+#### 18
+"""
+
+id_orig = 766
+id_shuffled = 839
+
+question_annotated = """
+{name,Megan} is delivering meals on wheels. Out of her {total,30} clients, {v,7} need vegan meals, {k,8} need kosher meals, and {b_txt,three} people need meals that are both vegan and kosher. How many meals does {name,Megan} deliver that are neither kosher nor vegan?
+
+#init:
+- name = sample(names_female)
+- $total = range(20, 35)
+- $v = range(2, 12)
+- $k = range(2, 12)
+- b_txt, b = sample([("one", 1), ("two", 2), ("three", 3)])
+
+#conditions:
+- v >= b
+- k >= b
+- total - v - k + b > 0
+
+#answer: total - v - k + b
+"""
+
+answer_annotated = """
+First, add the number of kosher meals to the number of vegan meals: {v} meals + {k} meals = <<{v}+{k}={v+k}>>{v+k} meals
+Then subtract the {b_txt} meals that are both kosher and vegan since they got counted twice: {v+k} meals - {b} meals = <<{v+k}-{b}={v+k-b}>>{v+k-b} meals
+Finally, subtract that number from the total number of meals to find the number of meals that are neither kosher nor vegan: {total} meals - {v+k-b} meals = <<{total}-{v+k-b}={total-(v+k-b)}>>{total-(v+k-b)} meals
+#### {total-v-k+b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

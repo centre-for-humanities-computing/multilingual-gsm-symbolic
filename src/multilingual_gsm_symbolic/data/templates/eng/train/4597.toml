@@ -1,0 +1,40 @@
+question = """
+For the first hour of work, Manolo can make face-masks at the rate of one every four minutes. Thereafter, he can make face-masks at the rate of one every six minutes. How many face-masks does Manola make in a four-hour shift?
+"""
+
+answer = """
+He makes 60/4=<<60/4=15>>15 in the first hour
+He makes 60/6=<<60/6=10>>10 in each subsequent hour
+There are 4-1=<<4-1=3>>3 more hours in his shift
+He makes 15+10*3=<<15+10*3=45>>45.
+#### 45
+"""
+
+id_orig = 3903
+id_shuffled = 4597
+
+question_annotated = """
+For the first hour of work, Manolo can make face-masks at the rate of one every {m1,four} minutes. Thereafter, he can make face-masks at the rate of one every {m2,six} minutes. How many face-masks does Manola make in a {h_txt,four}-hour shift?
+
+#init:
+- m1, v1 = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("ten", 10), ("twelve", 12)])
+- m2, v2 = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("ten", 10), ("twelve", 12)])
+- h_txt, hours = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+
+#conditions:
+- hours > 1
+
+#answer: 60 // v1 + (hours - 1) * (60 // v2)
+"""
+
+answer_annotated = """
+He makes 60/{v1}=<<60/{v1}={60//v1}>>{60//v1} in the first hour
+He makes 60/{v2}=<<60/{v2}={60//v2}>>{60//v2} in each subsequent hour
+There are {hours}-1=<<{hours}-1={hours-1}>>{hours-1} more hours in his shift
+He makes {60//v1}+{60//v2}*{hours-1}=<<{60//v1}+{60//v2}*{hours-1}={60 // v1 + (hours - 1) * (60 // v2)}>>{60 // v1 + (hours - 1) * (60 // v2)}.
+#### {60 // v1 + (hours - 1) * (60 // v2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

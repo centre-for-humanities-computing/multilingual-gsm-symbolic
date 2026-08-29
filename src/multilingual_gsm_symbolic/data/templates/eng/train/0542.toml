@@ -1,0 +1,42 @@
+question = """
+Jackson wants to impress his girlfriend by filling her hot tub with champagne. The hot tub holds 40 gallons of liquid. Each bottle of champagne holds 1 quart. (There are 4 quarts per gallon). If each bottle of champagne costs $50, but Jackson gets a 20% volume discount, how much does he spend on champagne?
+"""
+
+answer = """
+First find the number of quarts the hot tub holds by multiplying the number of gallons it holds by 4: 40 gallons * 4 quarts/gallon = <<40*4=160>>160 quarts
+Then multiply the number of quarts of champagne Jackson buy by the normal price per bottle to find the cost before the discount: 160 quarts * $50/quart = $<<160*50=8000>>8000
+Then multiply that number by 20% to find the amount of the discount: $8000 * .2 = $<<8000*.2=1600>>1600
+Finally, subtract the discount from the total cost to find the final amount Jackson pays: $8000 - $1600 = $<<8000-1600=6400>>6400
+#### 6400
+"""
+
+id_orig = 469
+id_shuffled = 542
+
+question_annotated = """
+{name,Jackson} wants to impress his girlfriend by filling her hot tub with champagne. The hot tub holds {g,40} gallons of liquid. Each bottle of champagne holds 1 quart. (There are {qpg,4} quarts per gallon). If each bottle of champagne costs ${price,50}, but {name,Jackson} gets a {disc,20}% volume discount, how much does he spend on champagne?
+
+#init:
+- name = sample(names_male)
+- $g = range(10, 120, 2)
+- $qpg = range(2, 7)
+- $price = range(10, 60, 5)
+- $disc = range(10, 100, 10)
+
+#conditions:
+- divides(g*qpg*price*disc, 100)
+
+#answer: g*qpg*price - g*qpg*price*disc//100
+"""
+
+answer_annotated = """
+First find the number of quarts the hot tub holds by multiplying the number of gallons it holds by {qpg}: {g} gallons * {qpg} quarts/gallon = <<{g}*{qpg}={g*qpg}>>{g*qpg} quarts
+Then multiply the number of quarts of champagne {name} buy by the normal price per bottle to find the cost before the discount: {g*qpg} quarts * ${price}/quart = $<<{g*qpg}*{price}={g*qpg*price}>>{g*qpg*price}
+Then multiply that number by {disc}% to find the amount of the discount: ${g*qpg*price} * .{disc//10} = $<<{g*qpg*price}*.{disc//10}={g*qpg*price*disc//100}>>{g*qpg*price*disc//100}
+Finally, subtract the discount from the total cost to find the final amount {name} pays: ${g*qpg*price} - ${g*qpg*price*disc//100} = $<<{g*qpg*price}-{g*qpg*price*disc//100}={g*qpg*price-g*qpg*price*disc//100}>>{g*qpg*price-g*qpg*price*disc//100}
+#### {g*qpg*price - g*qpg*price*disc//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+Brad's car broke down on an isolated road.  At the time, Brad was traveling with Jim and Marcus.  So, the three decided to push the car back into town, which was 10 miles away.  For the first three miles, Brad steered as Jim and Marcus pushed at a speed of 6 miles per hour.  Then, for the next 3 miles, Jim steered, as Brad and Marcus pushed at a speed of 3 miles per hour.  For the last four miles, Marcus steered as Brad and Jim pushed at a speed of 8 miles per hour.  How long did it take, in hours, to push the car back to town?
+"""
+
+answer = """
+Three miles at 6 miles per hour is 3/6=1/2 hours.
+Then, 3 miles at 3 miles per hour is 3/3=<<3/3=1>>1 hour.
+The last 4 miles at 8 miles per hour is 4/8=1/2 hour.
+In total, it took them 1/2 + 1 + 1/2 = <<1/2+1+1/2=2>>2 hours to push the car back to town.
+#### 2
+"""
+
+id_orig = 3323
+id_shuffled = 3948
+
+question_annotated = """
+{name,Brad}'s car broke down on an isolated road.  At the time, {name,Brad} was traveling with Jim and Marcus.  So, the three decided to push the car back into town, which was {total,10} miles away.  For the first three miles, {name,Brad} steered as Jim and Marcus pushed at a speed of 6 miles per hour.  Then, for the next {d2,3} miles, Jim steered, as {name,Brad} and Marcus pushed at a speed of {s2,3} miles per hour.  For the last four miles, Marcus steered as {name,Brad} and Jim pushed at a speed of 8 miles per hour.  How long did it take, in hours, to push the car back to town?
+
+#init:
+- name = sample(names_male)
+- $d2 = range(2, 122)
+- $s2 = range(2, 122)
+- $total = range(9, 130)
+
+#conditions:
+- total == d2 + 7
+- divides(d2, s2)
+- s2 <= d2
+
+#answer: 1 + d2//s2
+"""
+
+answer_annotated = """
+Three miles at 6 miles per hour is 3/6=1/2 hours.
+Then, {d2} miles at {s2} miles per hour is {d2}/{s2}=<<{d2}/{s2}={d2//s2}>>{d2//s2} hour.
+The last 4 miles at 8 miles per hour is 4/8=1/2 hour.
+In total, it took them 1/2 + {d2//s2} + 1/2 = <<1/2+{d2//s2}+1/2={1 + d2//s2}>>{1 + d2//s2} hours to push the car back to town.
+#### {1 + d2//s2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

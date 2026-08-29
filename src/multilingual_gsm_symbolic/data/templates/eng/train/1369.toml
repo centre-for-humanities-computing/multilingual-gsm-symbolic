@@ -1,0 +1,41 @@
+question = """
+4.5 gallons of coffee were divided among 18 thermoses. Genevieve drank 3 thermoses. How many pints of coffee did Genevieve drink?
+"""
+
+answer = """
+4.5 gallons = 4.5 * 8 pints = <<4.5*8=36>>36 pints
+36/18 = <<36/18=2>>2 pints
+Genevieve drank 2*3=<<2*3=6>>6 pints of coffee.
+#### 6
+"""
+
+id_orig = 1262
+id_shuffled = 1369
+
+question_annotated = """
+{g,4.5} gallons of coffee were divided among {t,18} thermoses. {name,Genevieve} drank {d,3} thermoses. How many pints of coffee did {name,Genevieve} drink?
+
+#init:
+- name = sample(names_female)
+- $g = arange(1, 12, 0.5)
+- $t = range(4, 60)
+- $d = range(1, 9)
+
+#conditions:
+- divides(int(g*8), t)
+- int(g*8) >= t
+- d < t
+
+#answer: int(g*8)//t*d
+"""
+
+answer_annotated = """
+{g} gallons = {g} * 8 pints = <<{g}*8={int(g*8)}>>{int(g*8)} pints
+{int(g*8)}/{t} = <<{int(g*8)}/{t}={int(g*8)//t}>>{int(g*8)//t} pints
+{name} drank {int(g*8)//t}*{d}=<<{int(g*8)//t}*{d}={int(g*8)//t*d}>>{int(g*8)//t*d} pints of coffee.
+#### {int(g*8)//t*d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Emily wants to know how much it rained last week. She sees that it rained 2 inches on Monday morning and 1 more inch later that day. It rained twice that much on Tuesday. It did not rain on Wednesday but on Thursday it rained 1 inch. The biggest storm was on Friday when the total was equal to Monday through Thursday combined. What was the daily average rain total for the week?
+"""
+
+answer = """
+The total rain was 2 inches + 1 inches = <<2+1=3>>3 inches on Monday.
+The total rain was 2 * 3 inches = <<2*3=6>>6 inches on Tuesday.
+The total rain was 0 inches + 1 inch = <<0+1=1>>1 inch across Wednesday and Thursday.
+The total rain was 3 inches + 6 inches + 1 inch = <<3+6+1=10>>10 inches on Friday.
+There were 3 inches + 6 inches + 1 inch + 10 inches = <<3+6+1+10=20>>20 inches total last week.
+20 inches/5 days = <<20/5=4>>4 inches average daily rain.
+#### 4
+"""
+
+id_orig = 486
+id_shuffled = 559
+
+question_annotated = """
+{name,Emily} wants to know how much it rained last week. She sees that it rained {m,2} inches on Monday morning and {k,1} more inch later that day. It rained {mult,twice} that much on Tuesday. It did not rain on Wednesday but on Thursday it rained {th,1} inch. The biggest storm was on Friday when the total was equal to Monday through Thursday combined. What was the daily average rain total for the week?
+
+#init:
+- name = sample(names_female)
+- mult, mult_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $m = range(2, 30)
+- $k = range(1, 20)
+- $th = range(1, 20)
+
+#conditions:
+- divides(2*(m + k + mult_val*(m + k) + th), 5)
+
+#answer: 2*(m + k + mult_val*(m + k) + th)//5
+"""
+
+answer_annotated = """
+The total rain was {m} inches + {k} inches = <<{m}+{k}={m+k}>>{m+k} inches on Monday.
+The total rain was {mult_val} * {m+k} inches = <<{mult_val}*{m+k}={mult_val*(m+k)}>>{mult_val*(m+k)} inches on Tuesday.
+The total rain was 0 inches + {th} inch = <<0+{th}={th}>>{th} inch across Wednesday and Thursday.
+The total rain was {m+k} inches + {mult_val*(m+k)} inches + {th} inch = <<{m+k}+{mult_val*(m+k)}+{th}={m+k+mult_val*(m+k)+th}>>{m+k+mult_val*(m+k)+th} inches on Friday.
+There were {m+k} inches + {mult_val*(m+k)} inches + {th} inch + {m+k+mult_val*(m+k)+th} inches = <<{m+k}+{mult_val*(m+k)}+{th}+{m+k+mult_val*(m+k)+th}={2*(m+k+mult_val*(m+k)+th)}>>{2*(m+k+mult_val*(m+k)+th)} inches total last week.
+{2*(m+k+mult_val*(m+k)+th)} inches/5 days = <<{2*(m+k+mult_val*(m+k)+th)}/5={2*(m+k+mult_val*(m+k)+th)//5}>>{2*(m+k+mult_val*(m+k)+th)//5} inches average daily rain.
+#### {2*(m+k+mult_val*(m+k)+th)//5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

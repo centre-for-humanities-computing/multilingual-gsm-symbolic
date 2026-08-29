@@ -1,0 +1,50 @@
+question = """
+Bucky earns money each weekend catching and selling fish. He wants to save up for a new video game, which costs $60. Last weekend he earned $35. He can earn $5 from trout and $4 from blue-gill. He caught five fish this Sunday. If 60% were trout, and the rest were blue-gill, how much more does he need to save before he can buy the game?
+"""
+
+answer = """
+He is $25 short for the game because 60 - 35 = <<60-35=25>>25
+He caught 3 trout because 5 x .6 = <<5*.6=3>>3
+He caught 2 blue-gill because 5 - 3 = <<5-3=2>>2
+He earned $15 from the trout because 3 x 5 = <<3*5=15>>15
+He earned $8 from the blue-gill because 2 x 4 = <<2*4=8>>8
+He earned $23 total because 15 + 8 = <<15+8=23>>23
+He is $2 short because 25 - 23 = <<25-23=2>>2
+#### 2
+"""
+
+id_orig = 578
+id_shuffled = 651
+
+question_annotated = """
+{name,Bucky} earns money each weekend catching and selling fish. He wants to save up for a new video game, which costs ${c,60}. Last weekend he earned ${e,35}. He can earn ${t,5} from trout and ${g,4} from blue-gill. He caught {n_txt,five} fish this Sunday. If {p,60}% were trout, and the rest were blue-gill, how much more does he need to save before he can buy the game?
+
+#init:
+- name = sample(names_male)
+- n_txt, n = sample([("five", 5), ("ten", 10), ("fifteen", 15), ("twenty", 20)])
+- $c = range(30, 130, 10)
+- $e = range(10, 55, 5)
+- $t = range(2, 12)
+- $g = range(2, 8)
+- $p = range(20, 90, 20)
+
+#conditions:
+- c - e > n*p//100*t + (n - n*p//100)*g
+
+#answer: c - e - (n*p//100*t + (n - n*p//100)*g)
+"""
+
+answer_annotated = """
+He is ${c-e} short for the game because {c} - {e} = <<{c}-{e}={c-e}>>{c-e}
+He caught {n*p//100} trout because {n} x .{p//10} = <<{n}*.{p//10}={n*p//100}>>{n*p//100}
+He caught {n-n*p//100} blue-gill because {n} - {n*p//100} = <<{n}-{n*p//100}={n-n*p//100}>>{n-n*p//100}
+He earned ${n*p//100*t} from the trout because {n*p//100} x {t} = <<{n*p//100}*{t}={n*p//100*t}>>{n*p//100*t}
+He earned ${(n-n*p//100)*g} from the blue-gill because {n-n*p//100} x {g} = <<{n-n*p//100}*{g}={(n-n*p//100)*g}>>{(n-n*p//100)*g}
+He earned ${n*p//100*t+(n-n*p//100)*g} total because {n*p//100*t} + {(n-n*p//100)*g} = <<{n*p//100*t}+{(n-n*p//100)*g}={n*p//100*t+(n-n*p//100)*g}>>{n*p//100*t+(n-n*p//100)*g}
+He is ${c-e-(n*p//100*t+(n-n*p//100)*g)} short because {c-e} - {n*p//100*t+(n-n*p//100)*g} = <<{c-e}-{n*p//100*t+(n-n*p//100)*g}={c-e-(n*p//100*t+(n-n*p//100)*g)}>>{c-e-(n*p//100*t+(n-n*p//100)*g)}
+#### {c-e-(n*p//100*t+(n-n*p//100)*g)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

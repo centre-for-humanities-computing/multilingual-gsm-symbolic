@@ -1,0 +1,44 @@
+question = """
+Jenny wants to read 3 books in the next 10 days. She can read 100 words per hour. If the first book has 200 words, the second book has 400 words, and the third book has 300 words, how many minutes per day, on average, should she spend reading?
+"""
+
+answer = """
+She wants to read 200+400+300=<<200+400+300=900>>900 pages total.
+She needs to spend 900/100 = <<900/100=9>>9 hours reading in the next three weeks.
+In minutes, she will need to spend 9*60 = <<9*60=540>>540 minutes.
+Thus, she should spend 540 minutes/10 days = <<540/10=54>>54 minutes per day reading.
+#### 54
+"""
+
+id_orig = 1445
+id_shuffled = 1552
+
+question_annotated = """
+{name,Jenny} wants to read 3 books in the next {days,10} days. She can read {rate,100} words per hour. If the first book has {b1,200} words, the second book has {b2,400} words, and the third book has {b3,300} words, how many minutes per day, on average, should she spend reading?
+
+#init:
+- name = sample(names_female)
+- $b1 = range(100, 500, 50)
+- $b2 = range(100, 500, 50)
+- $b3 = range(100, 500, 50)
+- $rate = range(100, 201, 100)
+- $days = range(4, 13, 2)
+
+#conditions:
+- divides(b1 + b2 + b3, rate)
+- divides((b1 + b2 + b3) // rate * 60, days)
+
+#answer: (b1 + b2 + b3) // rate * 60 // days
+"""
+
+answer_annotated = """
+She wants to read {b1}+{b2}+{b3}=<<{b1}+{b2}+{b3}={b1+b2+b3}>>{b1+b2+b3} pages total.
+She needs to spend {b1+b2+b3}/{rate} = <<{b1+b2+b3}/{rate}={(b1+b2+b3)//rate}>>{(b1+b2+b3)//rate} hours reading in the next three weeks.
+In minutes, she will need to spend {(b1+b2+b3)//rate}*60 = <<{(b1+b2+b3)//rate}*60={(b1+b2+b3)//rate*60}>>{(b1+b2+b3)//rate*60} minutes.
+Thus, she should spend {(b1+b2+b3)//rate*60} minutes/{days} days = <<{(b1+b2+b3)//rate*60}/{days}={(b1+b2+b3)//rate*60//days}>>{(b1+b2+b3)//rate*60//days} minutes per day reading.
+#### {(b1+b2+b3)//rate*60//days}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

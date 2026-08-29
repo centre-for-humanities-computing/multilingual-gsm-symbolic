@@ -1,0 +1,43 @@
+question = """
+Karen had the giant box of crayons, containing twice as many crayons as were in Beatrice's box. But Beatrice's box contained twice as many crayons as were in Gilbert's box of crayons. And Gilbert had four times as many crayons as were in Judah's box of crayons. If Karen's box contained 128 crayons, how many crayons were in Judah's box?
+"""
+
+answer = """
+If Karen's 128 crayons were twice as many as were in Beatrice's box, there were 128/2=<<128/2=64>>64 crayons in Beatrice's box.
+And since Beatrice's box contained twice as many crayons as were in Gilbert's box of crayons, then Gilbert had 64/2=<<64/2=32>>32 crayons.
+And since Gilbert had four times as many crayons as Judah, then Judah had 32/4=<<32/4=8>>8 crayons.
+#### 8
+"""
+
+id_orig = 1282
+id_shuffled = 1389
+
+question_annotated = """
+{n1,Karen} had the giant box of crayons, containing {m1_txt,twice} as many crayons as were in {n2,Beatrice}'s box. But {n2,Beatrice}'s box contained {m2_txt,twice} as many crayons as were in {n3,Gilbert}'s box of crayons. And {n3,Gilbert} had {m3_txt,four times} as many crayons as were in {n4,Judah}'s box of crayons. If {n1,Karen}'s box contained {k,128} crayons, how many crayons were in {n4,Judah}'s box?
+
+#init:
+- n1 = sample(names_female)
+- n2 = sample(names_female)
+- n3 = sample(names_male)
+- n4 = sample(names_male)
+- m1_txt, m1_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- m2_txt, m2_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- m3_txt, m3_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $k = range(128, 2048)
+
+#conditions:
+- divides(k, m1_val * m2_val * m3_val)
+
+#answer: k // (m1_val * m2_val * m3_val)
+"""
+
+answer_annotated = """
+If {n1}'s {k} crayons were {m1_txt} as many as were in {n2}'s box, there were {k}/{m1_val}=<<{k}/{m1_val}={k//m1_val}>>{k//m1_val} crayons in {n2}'s box.
+And since {n2}'s box contained {m2_txt} as many crayons as were in {n3}'s box of crayons, then {n3} had {k//m1_val}/{m2_val}=<<{k//m1_val}/{m2_val}={k//m1_val//m2_val}>>{k//m1_val//m2_val} crayons.
+And since {n3} had {m3_txt} as many crayons as {n4}, then {n4} had {k//m1_val//m2_val}/{m3_val}=<<{k//m1_val//m2_val}/{m3_val}={k//m1_val//m2_val//m3_val}>>{k//m1_val//m2_val//m3_val} crayons.
+#### {k // (m1_val * m2_val * m3_val)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

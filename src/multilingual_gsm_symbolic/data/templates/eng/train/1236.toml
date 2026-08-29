@@ -1,0 +1,46 @@
+question = """
+A basketball team played 40 games and won 70% of the games. It still had 10 games to play. How many games can they lose to win 60% of their games?
+"""
+
+answer = """
+The team has won 40 x 70/100 = <<40*70/100=28>>28 games out of 40.
+There a total of 40 + 10 = <<40+10=50>>50 games to be played.
+The team has to win a total of is 50 x 60/100 = <<50*60/100=30>>30 games.
+So, it still needs to win 30 - 28 = <<30-28=2>>2 more games.
+Hence, they can still lose 10 - 2 = <<10-2=8>>8 games.
+#### 8
+"""
+
+id_orig = 1140
+id_shuffled = 1236
+
+question_annotated = """
+A basketball team played {g,40} games and won {w,70}% of the games. It still had {r,10} games to play. How many games can they lose to win {t,60}% of their games?
+
+#init:
+- $g = range(20, 220, 10)
+- $w = range(10, 100, 5)
+- $r = range(2, 22)
+- $t = range(10, 100, 5)
+
+#conditions:
+- divides(g * w, 100)
+- divides((g + r) * t, 100)
+- (g + r) * t // 100 - g * w // 100 > 0
+- (g + r) * t // 100 - g * w // 100 < r
+
+#answer: r - ((g + r) * t // 100 - g * w // 100)
+"""
+
+answer_annotated = """
+The team has won {g} x {w}/100 = <<{g}*{w}/100={g*w//100}>>{g*w//100} games out of {g}.
+There a total of {g} + {r} = <<{g}+{r}={g+r}>>{g+r} games to be played.
+The team has to win a total of is {g+r} x {t}/100 = <<{g+r}*{t}/100={(g+r)*t//100}>>{(g+r)*t//100} games.
+So, it still needs to win {(g+r)*t//100} - {g*w//100} = <<{(g+r)*t//100}-{g*w//100}={(g+r)*t//100-g*w//100}>>{(g+r)*t//100-g*w//100} more games.
+Hence, they can still lose {r} - {(g+r)*t//100-g*w//100} = <<{r}-{(g+r)*t//100-g*w//100}={r-((g+r)*t//100-g*w//100)}>>{r-((g+r)*t//100-g*w//100)} games.
+#### {r-((g+r)*t//100-g*w//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

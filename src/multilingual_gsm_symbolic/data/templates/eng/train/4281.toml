@@ -1,0 +1,48 @@
+question = """
+Mark is a lawyer who works at the county courthouse every day. It takes him 5 minutes to find parking and 3 minutes to walk into the courthouse. 2 days of the week it takes him 30 minutes to get through the metal detector and the other 3 days are less crowded so he gets through in 10 minutes. How long does he spend on all these activities in a week with 5 work days?
+"""
+
+answer = """
+First find how long Mark spends on parking and walking each day: 5 minutes + 3 minutes = <<5+3=8>>8 minutes
+Then multiply that number by his number of workdays to find the total walking and parking time: 8 minutes/day * 5 days/week = <<8*5=40>>40 minutes/week
+Then multiply the number of long-wait days by the time of each long wait: 2 days/week * 30 minutes/day = <<2*30=60>>60 minutes/week
+Then multiply the number of short-wait days by the time of each short wait: 3 days/week * 10 minutes/day = <<3*10=30>>30 minutes/week
+Then add the length of time Mark spends on each activity to find the total time spent: 30 minutes/week + 60 minutes/week + 40 minutes/week = <<30+60+40=130>>130 minutes/week
+#### 130
+"""
+
+id_orig = 3623
+id_shuffled = 4281
+
+question_annotated = """
+{name,Mark} is a lawyer who works at the county courthouse every day. It takes him {p,5} minutes to find parking and {w,3} minutes to walk into the courthouse. {d1,2} days of the week it takes him {t1,30} minutes to get through the metal detector and the other {d2,3} days are less crowded so he gets through in {t2,10} minutes. How long does he spend on all these activities in a week with {total,5} work days?
+
+#init:
+- name = sample(names_male)
+- $p = range(2, 8)
+- $w = range(2, 8)
+- $d1 = range(1, 4)
+- $t1 = range(20, 41, 10)
+- $d2 = range(1, 6)
+- $t2 = range(5, 16, 5)
+- $total = range(4, 9)
+
+#conditions:
+- d1 + d2 == total
+- t2 < t1
+
+#answer: (p + w) * total + d1 * t1 + d2 * t2
+"""
+
+answer_annotated = """
+First find how long {name} spends on parking and walking each day: {p} minutes + {w} minutes = <<{p}+{w}={p+w}>>{p+w} minutes
+Then multiply that number by his number of workdays to find the total walking and parking time: {p+w} minutes/day * {total} days/week = <<{p+w}*{total}={(p+w)*total}>>{(p+w)*total} minutes/week
+Then multiply the number of long-wait days by the time of each long wait: {d1} days/week * {t1} minutes/day = <<{d1}*{t1}={d1*t1}>>{d1*t1} minutes/week
+Then multiply the number of short-wait days by the time of each short wait: {d2} days/week * {t2} minutes/day = <<{d2}*{t2}={d2*t2}>>{d2*t2} minutes/week
+Then add the length of time {name} spends on each activity to find the total time spent: {d2*t2} minutes/week + {d1*t1} minutes/week + {(p+w)*total} minutes/week = <<{d2*t2}+{d1*t1}+{(p+w)*total}={d2*t2+d1*t1+(p+w)*total}>>{d2*t2+d1*t1+(p+w)*total} minutes/week
+#### {(p+w)*total + d1*t1 + d2*t2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

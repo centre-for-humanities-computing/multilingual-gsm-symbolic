@@ -1,0 +1,45 @@
+question = """
+A garden is filled with 105 flowers of various colors. There are twice as many red flowers as orange. There are five fewer yellow flowers than red. If there are 10 orange flowers, how many pink and purple flowers are there if they have the same amount and there are no other colors?
+"""
+
+answer = """
+The number of red flowers is twice as many as orange so 2 * 10 orange = <<2*10=20>>20 red flowers
+The number of yellow flowers is 5 less than red so 20 red - 5 = <<20-5=15>>15 yellow flowers
+The number of red, orange and yellow flowers is 20 red + 10 orange + 15 yellow = <<20+10+15=45>>45 flowers
+The number of pink and purple flowers total is 105 flowers total - 45 flowers that are not pink or purple = <<105-45=60>>60 flowers
+The number of pink and purple flowers each is 60 flowers / 2 = <<60/2=30>>30 flowers each
+#### 30
+"""
+
+id_orig = 1699
+id_shuffled = 1824
+
+question_annotated = """
+A garden is filled with {total,105} flowers of various colors. There are {mult_txt,twice} as many red flowers as orange. There are {f_word,five} fewer yellow flowers than red. If there are {o,10} orange flowers, how many pink and purple flowers are there if they have the same amount and there are no other colors?
+
+#init:
+- mult_txt, m = sample(multi_times)
+- f_word, f = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $o = range(2, 32)
+- $total = range(30, 110)
+
+#conditions:
+- m * o - f > 0
+- total - (2 * m * o + o - f) > 0
+- divides(total - (2 * m * o + o - f), 2)
+
+#answer: (total - (2 * m * o + o - f)) // 2
+"""
+
+answer_annotated = """
+The number of red flowers is {mult_txt} as many as orange so {m} * {o} orange = <<{m}*{o}={m*o}>>{m*o} red flowers
+The number of yellow flowers is {f} less than red so {m*o} red - {f} = <<{m*o}-{f}={m*o-f}>>{m*o-f} yellow flowers
+The number of red, orange and yellow flowers is {m*o} red + {o} orange + {m*o-f} yellow = <<{m*o}+{o}+{m*o-f}={m*o+o+(m*o-f)}>>{m*o+o+(m*o-f)} flowers
+The number of pink and purple flowers total is {total} flowers total - {m*o+o+(m*o-f)} flowers that are not pink or purple = <<{total}-{m*o+o+(m*o-f)}={total-(m*o+o+(m*o-f))}>>{total-(m*o+o+(m*o-f))} flowers
+The number of pink and purple flowers each is {total-(m*o+o+(m*o-f))} flowers / 2 = <<{total-(m*o+o+(m*o-f))}/2={(total-(m*o+o+(m*o-f)))//2}>>{(total-(m*o+o+(m*o-f)))//2} flowers each
+#### {(total - (2 * m * o + o - f)) // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

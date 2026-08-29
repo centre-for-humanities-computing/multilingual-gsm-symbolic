@@ -1,0 +1,47 @@
+question = """
+John has a very inefficient toilet that uses 5 gallons of water per flush and his household flushed 15 times per day.  He replaced it with a toilet that uses 80% less water per flush.  How much water did John save in June?
+"""
+
+answer = """
+He used to use 5*15=<<5*15=75>>75 gallons of water per day.
+This means he used 75*30=<<75*30=2250>>2250 gallons a month.
+His new toilet uses 5*.8=<<5*.8=4>>4 gallons less water per flush.
+So, it only uses 5-4=<<5-4=1>>1 gallon per flush.
+That means he uses 1*15=<<1*15=15>>15 gallons per day.
+All in all, it accounts for a total usage of 15*30=<<15*30=450>>450 gallons.
+So, he saved 2250-450=<<2250-450=1800>>1800 gallons per month.
+#### 1800
+"""
+
+id_orig = 3272
+id_shuffled = 3885
+
+question_annotated = """
+{name,John} has a very inefficient toilet that uses {g,5} gallons of water per flush and his household flushed {f,15} times per day.  He replaced it with a toilet that uses {p,80}% less water per flush.  How much water did {name,John} save in June?
+
+#init:
+- name = sample(names_male)
+- $g = range(2, 102)
+- $f = range(5, 31)
+- $p = range(10, 100, 10)
+
+#conditions:
+- divides(g * p, 100)
+
+#answer: g*f*30 - (g - g*p//100)*f*30
+"""
+
+answer_annotated = """
+He used to use {g}*{f}=<<{g}*{f}={g*f}>>{g*f} gallons of water per day.
+This means he used {g*f}*30=<<{g*f}*30={g*f*30}>>{g*f*30} gallons a month.
+His new toilet uses {g}*.{p//10}=<<{g}*.{p//10}={g*p//100}>>{g*p//100} gallons less water per flush.
+So, it only uses {g}-{g*p//100}=<<{g}-{g*p//100}={g-g*p//100}>>{g-g*p//100} gallon per flush.
+That means he uses {g-g*p//100}*{f}=<<{g-g*p//100}*{f}={(g-g*p//100)*f}>>{(g-g*p//100)*f} gallons per day.
+All in all, it accounts for a total usage of {(g-g*p//100)*f}*30=<<{(g-g*p//100)*f}*30={(g-g*p//100)*f*30}>>{(g-g*p//100)*f*30} gallons.
+So, he saved {g*f*30}-{(g-g*p//100)*f*30}=<<{g*f*30}-{(g-g*p//100)*f*30}={g*f*30-(g-g*p//100)*f*30}>>{g*f*30-(g-g*p//100)*f*30} gallons per month.
+#### {g*f*30 - (g-g*p//100)*f*30}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

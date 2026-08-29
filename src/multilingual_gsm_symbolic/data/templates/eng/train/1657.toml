@@ -1,0 +1,41 @@
+question = """
+A fixer uses 30% of the nails in a container to repair the kitchen. He also used 70% of the remaining nails in the container to repair the fence. If there were 400 nails in the container, how many nails are remaining?
+"""
+
+answer = """
+The fixer used 30/100*400 = <<30/100*400=120>>120 nails to fix the kitchen.
+The number of nails remaining in the container after he fixes the kitchen is 400-120 = <<400-120=280>>280
+He also uses 70/100*280 = <<70/100*280=196>>196 of the nails remaining in the container to fix the fence.
+The total number of nails which the fixer hasn't used is 280-196 = <<280-196=84>>84
+#### 84
+"""
+
+id_orig = 1532
+id_shuffled = 1657
+
+question_annotated = """
+A fixer uses {p1,30}% of the nails in a container to repair the kitchen. He also used {p2,70}% of the remaining nails in the container to repair the fence. If there were {n,400} nails in the container, how many nails are remaining?
+
+#init:
+- $p1 = range(10, 51, 5)
+- $p2 = range(10, 91, 10)
+- $n = range(200, 1101, 100)
+
+#conditions:
+- is_int(p1 * n / 100)
+- is_int(p2 * (n - p1 * n // 100) / 100)
+
+#answer: n - p1*n//100 - p2*(n - p1*n//100)//100
+"""
+
+answer_annotated = """
+The fixer used {p1}/100*{n} = <<{p1}/100*{n}={p1*n//100}>>{p1*n//100} nails to fix the kitchen.
+The number of nails remaining in the container after he fixes the kitchen is {n}-{p1*n//100} = <<{n}-{p1*n//100}={n - p1*n//100}>>{n - p1*n//100}
+He also uses {p2}/100*{n - p1*n//100} = <<{p2}/100*{n - p1*n//100}={p2*(n - p1*n//100)//100}>>{p2*(n - p1*n//100)//100} of the nails remaining in the container to fix the fence.
+The total number of nails which the fixer hasn't used is {n - p1*n//100}-{p2*(n - p1*n//100)//100} = <<{n - p1*n//100}-{p2*(n - p1*n//100)//100}={n - p1*n//100 - p2*(n - p1*n//100)//100}>>{n - p1*n//100 - p2*(n - p1*n//100)//100}
+#### {n - p1*n//100 - p2*(n - p1*n//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

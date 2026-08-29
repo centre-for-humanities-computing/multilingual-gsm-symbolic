@@ -1,0 +1,49 @@
+question = """
+Tom takes medication to help him sleep.  He takes 2 pills every day before bed.  He needs to go to the doctor every 6 months to get a new prescription and a visit to the doctor costs $400.  The medication costs $5 per pill, but insurance covers 80% of that cost.  How much does he pay a year for everything?
+"""
+
+answer = """
+He sees the doctor 12/6=<<12/6=2>>2 times a year
+So he pays 400*2=$<<400*2=800>>800 for doctor visits
+The cost of the pill is 5*2=$<<5*2=10>>10 per night
+But insurance covers 10*.8=$<<10*.8=8>>8
+So he pays 10-8=$<<10-8=2>>2 per night
+So he pays 2*365=$<<2*365=730>>730 a year
+SSo his total cost is 800+730=$<<800+730=1530>>1530 a year
+#### 1530
+"""
+
+id_orig = 3220
+id_shuffled = 3833
+
+question_annotated = """
+{name,Tom} takes medication to help him sleep.  He takes {p,2} pills every day before bed.  He needs to go to the doctor every {m,6} months to get a new prescription and a visit to the doctor costs ${c,400}.  The medication costs ${k,5} per pill, but insurance covers 80% of that cost.  How much does he pay a year for everything?
+
+#init:
+- name = sample(names_male)
+- $p = range(1, 7)
+- $m = range(1, 13)
+- $c = range(100, 1000, 100)
+- $k = range(1, 51)
+
+#conditions:
+- divides(12, m)
+- divides(k*p, 5)
+
+#answer: c*(12//m) + (k*p - k*p*4//5)*365
+"""
+
+answer_annotated = """
+He sees the doctor 12/{m}=<<12/{m}={12//m}>>{12//m} times a year
+So he pays {c}*{12//m}=$<<{c}*{12//m}={c*12//m}>>{c*12//m} for doctor visits
+The cost of the pill is {k}*{p}=$<<{k}*{p}={k*p}>>{k*p} per night
+But insurance covers {k*p}*.8=$<<{k*p}*.8={k*p*4//5}>>{k*p*4//5}
+So he pays {k*p}-{k*p*4//5}=$<<{k*p}-{k*p*4//5}={k*p-k*p*4//5}>>{k*p-k*p*4//5} per night
+So he pays {k*p-k*p*4//5}*365=$<<{k*p-k*p*4//5}*365={(k*p-k*p*4//5)*365}>>{(k*p-k*p*4//5)*365} a year
+SSo his total cost is {c*12//m}+{(k*p-k*p*4//5)*365}=$<<{c*12//m}+{(k*p-k*p*4//5)*365}={c*12//m+(k*p-k*p*4//5)*365}>>{c*12//m+(k*p-k*p*4//5)*365} a year
+#### {c*(12//m)+(k*p-k*p*4//5)*365}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

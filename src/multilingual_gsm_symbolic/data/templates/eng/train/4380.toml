@@ -1,0 +1,43 @@
+question = """
+4 students participated in a 200m race. If the average completion time of the last three students was 35 seconds, and the average completion time of all four runners was 30 seconds, how long (in seconds) did it take the student who came first to finish the race?
+"""
+
+answer = """
+The last 3 students had an average completion time of 35 seconds so the sum of their completion times was 3*35 = <<3*35=105>>105 seconds
+All 4 students (now including the student who came first) had an average completion time of 30 seconds, meaning the sum of their completion times is 4*30 = <<4*30=120>>120 seconds
+The student who came first spent 120-105 = <<120-105=15>>15 seconds in the race
+#### 15
+"""
+
+id_orig = 3710
+id_shuffled = 4380
+
+question_annotated = """
+{n,4} students participated in a {d,200}m race. If the average completion time of the last {k_word,three} students was {t_last,35} seconds, and the average completion time of all {n_word,four} runners was {t_all,30} seconds, how long (in seconds) did it take the student who came first to finish the race?
+
+#init:
+- n_word, n = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7)])
+- k_word, k = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $d = range(100, 1100, 100)
+- $t_last = range(25, 80, 5)
+- $t_all = range(20, 60, 2)
+
+#conditions:
+- k < n
+- t_last > t_all
+- t_all * n > t_last * k
+- t_all * n - t_last * k < t_last
+
+#answer: n*t_all - k*t_last
+"""
+
+answer_annotated = """
+The last {k} students had an average completion time of {t_last} seconds so the sum of their completion times was {k}*{t_last} = <<{k}*{t_last}={k*t_last}>>{k*t_last} seconds
+All {n} students (now including the student who came first) had an average completion time of {t_all} seconds, meaning the sum of their completion times is {n}*{t_all} = <<{n}*{t_all}={n*t_all}>>{n*t_all} seconds
+The student who came first spent {n*t_all}-{k*t_last} = <<{n*t_all}-{k*t_last}={n*t_all-k*t_last}>>{n*t_all-k*t_last} seconds in the race
+#### {n*t_all-k*t_last}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

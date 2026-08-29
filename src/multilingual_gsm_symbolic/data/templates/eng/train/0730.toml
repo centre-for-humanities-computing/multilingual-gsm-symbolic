@@ -1,0 +1,42 @@
+question = """
+Pete has to take a 10-minute walk down to the train station and then board a 1hr 20-minute train to LA. When should he leave if he cannot get to LA later than 0900 hours? (24-hr time)
+"""
+
+answer = """
+There are 60 minutes in an hour so 1 hour 20 minutes = (60+20) minutes = 80 minutes
+He will spend a total of 80+10 = <<80+10=90>>90 minutes
+90 minutes is = (60/60) hours and 30 minutes = 1 hour 30 minutes = 0130 in 24-hr time
+He has to leave 0130 hours earlier than 0900 i.e. 0900-0130 = 0730 hours
+#### 730
+"""
+
+id_orig = 657
+id_shuffled = 730
+
+question_annotated = """
+{name,Pete} has to take a {w,10}-minute walk down to the train station and then board a {hr,1}hr {m,20}-minute train to LA. When should he leave if he cannot get to LA later than 0900 hours? (24-hr time)
+
+#init:
+- name = sample(names_male)
+- $w = range(5, 30)
+- $hr = range(1, 3)
+- $m = range(5, 60, 5)
+
+#conditions:
+- m > 0
+- hr*60 + m + w <= 480
+
+#answer: (540-(hr*60+m+w))//60*100 + (540-(hr*60+m+w))%60
+"""
+
+answer_annotated = """
+There are 60 minutes in an hour so {hr} hour {m} minutes = ({hr*60}+{m}) minutes = {hr*60+m} minutes
+He will spend a total of {hr*60+m}+{w} = <<{hr*60+m}+{w}={hr*60+m+w}>>{hr*60+m+w} minutes
+{hr*60+m+w} minutes is = ({(hr*60+m+w)//60*60}/60) hours and {(hr*60+m+w)%60} minutes = {(hr*60+m+w)//60} hour {(hr*60+m+w)%60} minutes = 0{(hr*60+m+w)//60*100+(hr*60+m+w)%60} in 24-hr time
+He has to leave 0{(hr*60+m+w)//60*100+(hr*60+m+w)%60} hours earlier than 0900 i.e. 0900-0{(hr*60+m+w)//60*100+(hr*60+m+w)%60} = 0{(540-(hr*60+m+w))//60*100+(540-(hr*60+m+w))%60} hours
+#### {(540-(hr*60+m+w))//60*100 + (540-(hr*60+m+w))%60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

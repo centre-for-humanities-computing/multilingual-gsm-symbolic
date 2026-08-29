@@ -1,0 +1,48 @@
+question = """
+Martha buys 1 latte for $4.00 every morning, 5 days a week.  3 days a week, she buys an iced coffee for $2.00.  Her goal for the entire year is to cut her coffee spending by 25%.  How much will she save?
+"""
+
+answer = """
+She buys a $4.00 latte in the morning for 5 days so that’s 4*5 = $<<4*5=20.00>>20.00
+She buys a $2.00 iced coffee 3 days a week so that’s 2*3 = $<<2*3=6.00>>6.00
+In one week she spends $20.00 on lattes and $6.00 on iced coffee for a total of 20+6 = $<<20+6=26.00>>26.00
+After 1 year, 52 weeks, she spends 52*26 = $<<52*26=1352.00>>1,352.00
+She wants to cut her coffee spending by 25% so that will save her .25*1352 = $<<.25*1352=338.00>>338.00
+#### 338
+"""
+
+id_orig = 3260
+id_shuffled = 3873
+
+question_annotated = """
+{name,Martha} buys 1 latte for ${lp,4}.00 every morning, {ld,5} days a week.  {cd,3} days a week, she buys an iced coffee for ${cp,2}.00.  Her goal for the entire year is to cut her coffee spending by {pct,25}%.  How much will she save?
+
+#init:
+- name = sample(names_female)
+- $lp = range(2, 11)
+- $ld = range(2, 8)
+- $cp = range(1, 7)
+- $cd = range(2, 6)
+- $pct = range(10, 100)
+
+#conditions:
+- 52*(lp*ld+cp*cd) >= 1000
+- (52*(lp*ld+cp*cd))%1000 >= 100
+- divides(pct*52*(lp*ld+cp*cd), 100)
+- pct*52*(lp*ld+cp*cd)//100 < 1000
+
+#answer: pct*52*(lp*ld+cp*cd)//100
+"""
+
+answer_annotated = """
+She buys a ${lp}.00 latte in the morning for {ld} days so that’s {lp}*{ld} = $<<{lp}*{ld}={lp*ld}.00>>{lp*ld}.00
+She buys a ${cp}.00 iced coffee {cd} days a week so that’s {cp}*{cd} = $<<{cp}*{cd}={cp*cd}.00>>{cp*cd}.00
+In one week she spends ${lp*ld}.00 on lattes and ${cp*cd}.00 on iced coffee for a total of {lp*ld}+{cp*cd} = $<<{lp*ld}+{cp*cd}={lp*ld+cp*cd}.00>>{lp*ld+cp*cd}.00
+After 1 year, 52 weeks, she spends 52*{lp*ld+cp*cd} = $<<52*{lp*ld+cp*cd}={52*(lp*ld+cp*cd)}.00>>{52*(lp*ld+cp*cd)//1000},{52*(lp*ld+cp*cd)%1000}.00
+She wants to cut her coffee spending by {pct}% so that will save her .{pct}*{52*(lp*ld+cp*cd)} = $<<.{pct}*{52*(lp*ld+cp*cd)}={pct*52*(lp*ld+cp*cd)//100}.00>>{pct*52*(lp*ld+cp*cd)//100}.00
+#### {pct*52*(lp*ld+cp*cd)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

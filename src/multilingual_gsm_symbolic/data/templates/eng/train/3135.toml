@@ -1,0 +1,52 @@
+question = """
+A state fair charges $5 for a ticket. Two-thirds of the people who buy a ticket will buy deep-fried fair food for $8, one quarter will go on a ride for $4, and one eighth will spend $15 on a souvenir. The fair made $2520 from tickets. How many dollars did they make in all?
+"""
+
+answer = """
+The fair made $2520 from tickets, so they had 2520 / 5 = <<2520/5=504>>504 people attend the fair.
+Two-thirds of those people will buy food, so 504 * 2 / 3 = <<504*2/3=336>>336 people will buy food.
+The fair will make 336 * 8 = $<<336*8=2688>>2688 from food.
+A quarter of the people will go on a ride, so 504 / 4 = <<504/4=126>>126 people will go on a ride.
+The fair will make 126 * 4 = $<<126*4=504>>504 from rides.
+An eighth of the people will buy a souvenir, so 504 / 8 = <<504/8=63>>63 people will buy souvenirs.
+The fair will make 63 * 15 = $<<63*15=945>>945 from souvenirs.
+In all, the fair will make 2520 + 2688 + 504 + 945 = $<<2520+2688+504+945=6657>>6657.
+#### 6657
+"""
+
+id_orig = 2684
+id_shuffled = 3135
+
+question_annotated = """
+A state fair charges ${t,5} for a ticket. Two-thirds of the people who buy a ticket will buy deep-fried fair food for ${f,8}, one quarter will go on a ride for ${r,4}, and one eighth will spend ${s,15} on a souvenir. The fair made ${m,2520} from tickets. How many dollars did they make in all?
+
+#init:
+- $t = range(1, 21)
+- $f = range(2, 12, 2)
+- $r = range(2, 10, 2)
+- $s = range(5, 25, 5)
+- $m = range(120, 3000, 120)
+
+#conditions:
+- divides(m, t)
+- divides(m // t, 3)
+- divides(m // t, 8)
+
+#answer: m + m//t*2//3*f + m//t//4*r + m//t//8*s
+"""
+
+answer_annotated = """
+The fair made ${m} from tickets, so they had {m} / {t} = <<{m}/{t}={m//t}>>{m//t} people attend the fair.
+Two-thirds of those people will buy food, so {m//t} * 2 / 3 = <<{m//t}*2/3={m//t*2//3}>>{m//t*2//3} people will buy food.
+The fair will make {m//t*2//3} * {f} = $<<{m//t*2//3}*{f}={m//t*2//3*f}>>{m//t*2//3*f} from food.
+A quarter of the people will go on a ride, so {m//t} / 4 = <<{m//t}/4={m//t//4}>>{m//t//4} people will go on a ride.
+The fair will make {m//t//4} * {r} = $<<{m//t//4}*{r}={m//t//4*r}>>{m//t//4*r} from rides.
+An eighth of the people will buy a souvenir, so {m//t} / 8 = <<{m//t}/8={m//t//8}>>{m//t//8} people will buy souvenirs.
+The fair will make {m//t//8} * {s} = $<<{m//t//8}*{s}={m//t//8*s}>>{m//t//8*s} from souvenirs.
+In all, the fair will make {m} + {m//t*2//3*f} + {m//t//4*r} + {m//t//8*s} = $<<{m}+{m//t*2//3*f}+{m//t//4*r}+{m//t//8*s}={m+m//t*2//3*f+m//t//4*r+m//t//8*s}>>{m+m//t*2//3*f+m//t//4*r+m//t//8*s}.
+#### {m+m//t*2//3*f+m//t//4*r+m//t//8*s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

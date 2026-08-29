@@ -1,0 +1,45 @@
+question = """
+There are 248 pages in a book. Joanna can read 16 pages per hour. On Monday, she reads for 3 hours. On Tuesday, she reads for 6.5 hours. How many more hours does she need to read to finish the book?
+"""
+
+answer = """
+On Monday, Joanna reads 3*16=<<3*16=48>>48 pages.
+On Tuesday, Joanna reads 6.5 * 16 =<<6.5*16=104>>104 pages.
+So far, she has read 48 +104 =<<48+104=152>>152 pages.
+Thus, she has 248-152 = <<248-152=96>>96 pages left.
+She will need to read for 96/16 = <<96/16=6>>6 hours to finish the book.
+#### 6
+"""
+
+id_orig = 2486
+id_shuffled = 2859
+
+question_annotated = """
+There are {p,248} pages in a book. {name,Joanna} can read {r,16} pages per hour. On Monday, she reads for {m,3} hours. On Tuesday, she reads for {txt_t,6.5} hours. How many more hours does she need to read to finish the book?
+
+#init:
+- name = sample(names_female)
+- $p = range(120, 320, 4)
+- $r = range(4, 31, 2)
+- $m = range(1, 6)
+- txt_t, h = sample([("0.5", 1), ("1", 2), ("1.5", 3), ("2", 4), ("2.5", 5), ("3", 6), ("3.5", 7), ("4", 8), ("4.5", 9), ("5", 10), ("5.5", 11), ("6", 12), ("6.5", 13), ("7", 14), ("7.5", 15), ("8", 16)])
+
+#conditions:
+- p - m*r - h*r//2 > 0
+- divides(p - m*r - h*r//2, r)
+
+#answer: (p - m*r - h*r//2)//r
+"""
+
+answer_annotated = """
+On Monday, {name} reads {m}*{r}=<<{m}*{r}={m*r}>>{m*r} pages.
+On Tuesday, {name} reads {txt_t} * {r} =<<{txt_t}*{r}={h*r//2}>>{h*r//2} pages.
+So far, she has read {m*r} +{h*r//2} =<<{m*r}+{h*r//2}={m*r+h*r//2}>>{m*r+h*r//2} pages.
+Thus, she has {p}-{m*r+h*r//2} = <<{p}-{m*r+h*r//2}={p-m*r-h*r//2}>>{p-m*r-h*r//2} pages left.
+She will need to read for {p-m*r-h*r//2}/{r} = <<{p-m*r-h*r//2}/{r}={(p-m*r-h*r//2)//r}>>{(p-m*r-h*r//2)//r} hours to finish the book.
+#### {(p - m*r - h*r//2)//r}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,51 @@
+question = """
+A printing press is printing brochures. The press prints 20 single-page spreads, and twice as many double-page spreads. For each 4 pages printed for the spreads, the press prints a block of 4 ads, each of which take up a quarter of a page. The brochures can be arranged in any order as long as they are made up of 5 pages each. How many brochures is the printing press creating?
+"""
+
+answer = """
+There are a total of 20 single-page spreads * 2 = <<20*2=40>>40 double-page spreads.
+As these are made up of 2 pages each, there are 40 double-page spreads * 2 pages = <<40*2=80>>80 pages in the double-page spreads.
+In total, there are 20 single-pages + 80 double-pages = <<20+80=100>>100 pages in the spreads.
+A block of ads is printed every 4 pages, so there will be 100 pages / 4 pages/block = <<100/4=25>>25 blocks of ads.
+This is a total of 25 blocks * 4 ads = <<25*4=100>>100 ads.
+As each ad takes up a quarter of a page, this must create an additional 100 ads * 0.25 = <<100*0.25=25>>25 pages.
+Therefore, the press has printed 100 pages from the spreads + 25 pages of ads = <<100+25=125>>125 pages.
+Since brochures are made up of 5 pages each, this creates a total of 125 pages / 5 = <<125/5=25>>25 brochures.
+#### 25
+"""
+
+id_orig = 1120
+id_shuffled = 1216
+
+question_annotated = """
+A printing press is printing brochures. The press prints {s,20} single-page spreads, and twice as many double-page spreads. For each {p,4} pages printed for the spreads, the press prints a block of {k,4} ads, each of which take up a quarter of a page. The brochures can be arranged in any order as long as they are made up of {b,5} pages each. How many brochures is the printing press creating?
+
+#init:
+- $s = range(2, 202)
+- $p = range(2, 7)
+- $k = range(2, 7)
+- $b = range(3, 13)
+
+#conditions:
+- divides(s * 5, p)
+- divides(s * 5 // p * k, 4)
+- divides(s * 5 + s * 5 // p * k // 4, b)
+
+#answer: (s * 5 + s * 5 // p * k // 4) // b
+"""
+
+answer_annotated = """
+There are a total of {s} single-page spreads * 2 = <<{s}*2={s*2}>>{s*2} double-page spreads.
+As these are made up of 2 pages each, there are {s*2} double-page spreads * 2 pages = <<{s*2}*2={s*4}>>{s*4} pages in the double-page spreads.
+In total, there are {s} single-pages + {s*4} double-pages = <<{s}+{s*4}={s*5}>>{s*5} pages in the spreads.
+A block of ads is printed every {p} pages, so there will be {s*5} pages / {p} pages/block = <<{s*5}/{p}={s*5//p}>>{s*5//p} blocks of ads.
+This is a total of {s*5//p} blocks * {k} ads = <<{s*5//p}*{k}={s*5//p*k}>>{s*5//p*k} ads.
+As each ad takes up a quarter of a page, this must create an additional {s*5//p*k} ads * 0.25 = <<{s*5//p*k}*0.25={s*5//p*k//4}>>{s*5//p*k//4} pages.
+Therefore, the press has printed {s*5} pages from the spreads + {s*5//p*k//4} pages of ads = <<{s*5}+{s*5//p*k//4}={s*5 + s*5//p*k//4}>>{s*5 + s*5//p*k//4} pages.
+Since brochures are made up of {b} pages each, this creates a total of {s*5 + s*5//p*k//4} pages / {b} = <<{s*5 + s*5//p*k//4}/{b}={(s * 5 + s * 5 // p * k // 4) // b}>>{(s * 5 + s * 5 // p * k // 4) // b} brochures.
+#### {(s * 5 + s * 5 // p * k // 4) // b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

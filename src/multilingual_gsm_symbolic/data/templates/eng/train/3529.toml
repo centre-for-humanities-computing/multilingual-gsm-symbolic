@@ -1,0 +1,42 @@
+question = """
+Dave weighs 175 pounds and can bench press three times his body weight.  Craig can only bench press 20% of the amount Dave can.  Mark is new and can bench press 50 pounds less than Craig.  How much can Mark bench press?
+"""
+
+answer = """
+Dave weighs 175 pounds and can bench press three times his body weight, so he can bench press 175*3 = <<175*3=525>>525 pounds
+Craig can only bench press 20% of Dave's 525 pounds, so Craig can bench press .20*525 = <<20*.01*525=105>>105 pounds
+Craig bench presses 105 pounds and Mark does 50 pounds less than Craig, so Mark can only press 105-50 = <<105-50=55>>55 pounds
+#### 55
+"""
+
+id_orig = 2967
+id_shuffled = 3529
+
+question_annotated = """
+{dave,Dave} weighs {w,175} pounds and can bench press three times his body weight.  {craig,Craig} can only bench press {pct,20}% of the amount {dave,Dave} can.  {mark,Mark} is new and can bench press {less,50} pounds less than {craig,Craig}.  How much can {mark,Mark} bench press?
+
+#init:
+- dave = sample(names_male)
+- craig = sample(names_male)
+- mark = sample(names_male)
+- $w = range(115, 305, 5)
+- $pct = range(5, 65, 5)
+- $less = range(15, 100, 5)
+
+#conditions:
+- divides(w * 3 * pct, 100)
+- w * 3 * pct // 100 > less
+
+#answer: w * 3 * pct // 100 - less
+"""
+
+answer_annotated = """
+{dave} weighs {w} pounds and can bench press three times his body weight, so he can bench press {w}*3 = <<{w}*3={w*3}>>{w*3} pounds
+{craig} can only bench press {pct}% of {dave}'s {w*3} pounds, so {craig} can bench press .{pct}*{w*3} = <<{pct}*.01*{w*3}={w*3*pct//100}>>{w*3*pct//100} pounds
+{craig} bench presses {w*3*pct//100} pounds and {mark} does {less} pounds less than {craig}, so {mark} can only press {w*3*pct//100}-{less} = <<{w*3*pct//100}-{less}={w*3*pct//100-less}>>{w*3*pct//100-less} pounds
+#### {w * 3 * pct // 100 - less}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

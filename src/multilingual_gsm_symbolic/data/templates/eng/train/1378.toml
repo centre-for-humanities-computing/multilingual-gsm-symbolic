@@ -1,0 +1,46 @@
+question = """
+Dorothy is 15 years old and wants to go to a museum with her family. Her family consists of her, her younger brother, her parents, and her grandfather. The regular ticket cost is $10. People 18 years old or younger have a discount of 30%. How much money will Dorothy have after this trip, when she currently has $70?
+"""
+
+answer = """
+The discount per one ticket is 10 * 30/100 = $<<10*30/100=3>>3.
+So Dorothy's and her brother's tickets are cheaper by 2 * 3 = $<<2*3=6>>6.
+Her family consists of 5 people, so the ticket cost stands at 5 * 10 = $<<5*10=50>>50.
+Including the discount will lower the price to 50 - 6 = $<<50-6=44>>44 in total.
+Dorothy will be left with 70 - 44 = $<<70-44=26>>26.
+#### 26
+"""
+
+id_orig = 1271
+id_shuffled = 1378
+
+question_annotated = """
+{name,Dorothy} is {age,15} years old and wants to go to a museum with her family. Her family consists of her, her younger brother, her parents, and her grandfather. The regular ticket cost is ${c,10}. People 18 years old or younger have a discount of {d,30}%. How much money will {name,Dorothy} have after this trip, when she currently has ${m,70}?
+
+#init:
+- name = sample(names_female)
+- $age = range(6, 19)
+- $c = range(10, 110, 10)
+- $d = range(10, 60, 10)
+- $m = range(50, 310, 10)
+
+#conditions:
+- age <= 18
+- divides(c * d, 100)
+- m > 5 * c - 2 * c * d // 100
+
+#answer: m - (5 * c - 2 * c * d // 100)
+"""
+
+answer_annotated = """
+The discount per one ticket is {c} * {d}/100 = $<<{c}*{d}/100={c*d//100}>>{c*d//100}.
+So {name}'s and her brother's tickets are cheaper by 2 * {c*d//100} = $<<2*{c*d//100}={2*c*d//100}>>{2*c*d//100}.
+Her family consists of 5 people, so the ticket cost stands at 5 * {c} = $<<5*{c}={5*c}>>{5*c}.
+Including the discount will lower the price to {5*c} - {2*c*d//100} = $<<{5*c}-{2*c*d//100}={5*c - 2*c*d//100}>>{5*c - 2*c*d//100} in total.
+{name} will be left with {m} - {5*c - 2*c*d//100} = $<<{m}-{5*c - 2*c*d//100}={m - (5*c - 2*c*d//100)}>>{m - (5*c - 2*c*d//100)}.
+#### {m - (5*c - 2*c*d//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

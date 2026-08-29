@@ -1,0 +1,41 @@
+question = """
+240 sixth-grade students were asked about the number of novels they read per month. 1/6 of students read three or more novels, 35% of students read two novels, 5/12 of students read one novel, and the rest of the students do not read anything. Calculate the number of students who do not read novels.
+"""
+
+answer = """
+1/6 * 240 students = <<1/6*240=40>>40 students. So 40 students read three or more novels.
+35/100 * 240 students = <<35/100*240=84>>84 students. So 84 students read two novels.
+5/12 * 240 students = <<5/12*240=100>>100 students. So 100 students read a novel.
+240 students – (40 students + 84 students + 100 students) = 240 students – 224 students = <<240-(40+84+100)=16>>16 students. So 16 students don't read novels.
+#### 16
+"""
+
+id_orig = 301
+id_shuffled = 341
+
+question_annotated = """
+{t,240} {g,sixth}-grade students were asked about the number of novels they read per month. {f1,1/6} of students read three or more novels, {p,35}% of students read two novels, 5/12 of students read one novel, and the rest of the students do not read anything. Calculate the number of students who do not read novels.
+
+#init:
+- $t = range(120, 2420, 60)
+- f1, d1 = sample([("1/6", 6), ("1/3", 3), ("1/4", 4), ("1/2", 2), ("1/12", 12)])
+- $p = range(5, 96, 5)
+- g = sample(["fifth", "sixth", "seventh", "eighth"])
+
+#conditions:
+- t - (t//d1 + p*t//100 + 5*t//12) > 0
+
+#answer: t - (t//d1 + p*t//100 + 5*t//12)
+"""
+
+answer_annotated = """
+{f1} * {t} students = <<{f1}*{t}={t//d1}>>{t//d1} students. So {t//d1} students read three or more novels.
+{p}/100 * {t} students = <<{p}/100*{t}={p*t//100}>>{p*t//100} students. So {p*t//100} students read two novels.
+5/12 * {t} students = <<5/12*{t}={5*t//12}>>{5*t//12} students. So {5*t//12} students read a novel.
+{t} students – ({t//d1} students + {p*t//100} students + {5*t//12} students) = {t} students – {t//d1 + p*t//100 + 5*t//12} students = <<{t}-({t//d1}+{p*t//100}+{5*t//12})={t-(t//d1 + p*t//100 + 5*t//12)}>>{t-(t//d1 + p*t//100 + 5*t//12)} students. So {t-(t//d1 + p*t//100 + 5*t//12)} students don't read novels.
+#### {t - (t//d1 + p*t//100 + 5*t//12)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

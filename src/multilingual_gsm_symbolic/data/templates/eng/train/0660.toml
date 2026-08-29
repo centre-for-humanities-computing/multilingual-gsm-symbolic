@@ -1,0 +1,39 @@
+question = """
+Jeff spends three times as many hours on the weekend catching up with his Facebook pals as he does working. Monday through Friday, however, he spends four times as many hours working as he does catching up. If he spends 3 hours every day catching up, how many hours does he spend working in an entire week?
+"""
+
+answer = """
+On the weekend, Jeff works 3 / 3 = <<3/3=1>>1 hour each day.
+On the weekdays, he spends 4 * 3 = <<4*3=12>>12 hours working each day.
+Thus, he spends 2 * 1 + 5 * 12 = <<2*1+5*12=62>>62 hours working each week.
+#### 62
+"""
+
+id_orig = 587
+id_shuffled = 660
+
+question_annotated = """
+{name,Jeff} spends {wm_txt,three times} as many hours on the weekend catching up with his Facebook pals as he does working. Monday through Friday, however, he spends {dm_txt,four times} as many hours working as he does catching up. If he spends {cu,3} hours every day catching up, how many hours does he spend working in an entire week?
+
+#init:
+- name = sample(names_male)
+- wm_txt, wm = sample([("three times", 3), ("four times", 4), ("five times", 5)])
+- dm_txt, dm = sample([("twice", 2), ("three times", 3), ("four times", 4), ("five times", 5)])
+- $cu = range(2, 50)
+
+#conditions:
+- divides(cu, wm)
+
+#answer: 2 * (cu // wm) + 5 * dm * cu
+"""
+
+answer_annotated = """
+On the weekend, {name} works {cu} / {wm} = <<{cu}/{wm}={cu//wm}>>{cu//wm} hour each day.
+On the weekdays, he spends {dm} * {cu} = <<{dm}*{cu}={dm*cu}>>{dm*cu} hours working each day.
+Thus, he spends 2 * {cu//wm} + 5 * {dm*cu} = <<2*{cu//wm}+5*{dm*cu}={2*(cu//wm)+5*dm*cu}>>{2*(cu//wm)+5*dm*cu} hours working each week.
+#### {2*(cu//wm)+5*dm*cu}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

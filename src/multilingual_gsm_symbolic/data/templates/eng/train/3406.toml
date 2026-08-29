@@ -1,0 +1,47 @@
+question = """
+My mother celebrated her birthday with a total of 60 guests. Half of the guests are women, 15 are men, and the rest are children. In the middle of the celebration, 1/3 of the men and 5 children left. How many people stayed and enjoyed the birthday celebration?
+"""
+
+answer = """
+There were 60 guests / 2 = <<60/2=30>>30 women at my mother's birthday celebration.
+There were 30 women + 15 men = <<30+15=45>>45 men and women.
+So, 60 people - 45 men and women = <<60-45=15>>15 were children.
+Then, 15 men / 3 = <<15/3=5>>5 men left.
+Thus, 5 men + 5 children = 10 people left.
+Therefore, 60 people - 10 people = <<60-10=50>>50 people stayed and enjoyed the birthday celebration.
+#### 50
+"""
+
+id_orig = 2858
+id_shuffled = 3406
+
+question_annotated = """
+My mother celebrated her birthday with a total of {total,60} guests. Half of the guests are women, {men,15} are men, and the rest are children. In the middle of the celebration, {frac_txt,1/3} of the men and {c_left,5} children left. How many people stayed and enjoyed the birthday celebration?
+
+#init:
+- frac_txt, den = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5)])
+- $total = range(20, 210, 2)
+- $men = range(3, 90, 3)
+- $c_left = range(1, 10)
+
+#conditions:
+- divides(men, den)
+- total//2 + men < total
+- total - total//2 - men > c_left
+
+#answer: total - (men//den + c_left)
+"""
+
+answer_annotated = """
+There were {total} guests / 2 = <<{total}/2={total//2}>>{total//2} women at my mother's birthday celebration.
+There were {total//2} women + {men} men = <<{total//2}+{men}={total//2+men}>>{total//2+men} men and women.
+So, {total} people - {total//2+men} men and women = <<{total}-{total//2+men}={total-(total//2+men)}>>{total-(total//2+men)} were children.
+Then, {men} men / {den} = <<{men}/{den}={men//den}>>{men//den} men left.
+Thus, {men//den} men + {c_left} children = {men//den+c_left} people left.
+Therefore, {total} people - {men//den+c_left} people = <<{total}-{men//den+c_left}={total-(men//den+c_left)}>>{total-(men//den+c_left)} people stayed and enjoyed the birthday celebration.
+#### {total - (men//den + c_left)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

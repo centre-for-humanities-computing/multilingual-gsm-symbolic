@@ -1,0 +1,58 @@
+question = """
+At the burger hut, you can buy a burger for $5, french fries for $3, and a soft drink for $3.  If you order a special burger meal, you get all 3 of these food items for $9.50. A kid’s burger is $3, a kid’s french fries are $2, and a kid's juice box is $2.  They also have a kids meal of all 3 kids' food items for $5. Mr. Parker buys 2 burger meals for his wife and himself.  He also buys 2 burger meals and 2 kid's meals for his 4 children.  How much money does Mr. Parker save by buying the 6 meals versus buying the individual food items?
+"""
+
+answer = """
+To buy regular food items individually, they cost $5 + $3 + $3 = $<<5+3+3=11>>11.
+To buy kids food items individually, they cost $3 + $2 + $2 = $<<3+2+2=7>>7.
+If you buy the special burger meal, you save $11 - $9.50 = $<<11-9.5=1.50>>1.50.
+If you buy the kid's meal, you save $7 - $5 = $<<7-5=2>>2.
+Mr. Parker buys 4 special burger meals, bringing his discount to 4 x $1.50 = $<<4*1.50=6>>6.
+He buys 2 kid's meals, bringing his discount to 2 x $2 = $<<2*2=4>>4.
+The total savings for Mr. Parker is $6 + $4 = $<<6+4=10>>10.
+#### 10
+"""
+
+id_orig = 3445
+id_shuffled = 4080
+
+question_annotated = """
+At the burger hut, you can buy a burger for ${b,5}, french fries for ${f,3}, and a soft drink for ${dr,3}.  If you order a special burger meal, you get all 3 of these food items for $9.50. A kid’s burger is ${kb,3}, a kid’s french fries are ${kf,2}, and a kid's juice box is ${kj,2}.  They also have a kids meal of all 3 kids' food items for $5. Mr. {name,Parker} buys {nb1,2} burger meals for his wife and himself.  He also buys {nb2,2} burger meals and {nk,2} kid's meals for his {c,4} children.  How much money does Mr. {name,Parker} save by buying the {tm,6} meals versus buying the individual food items?
+
+#init:
+- name = sample(["Parker", "Smith", "Johnson", "Brown", "Wilson", "Miller"])
+- $b = range(4, 9)
+- $f = range(2, 7)
+- $dr = range(2, 6)
+- $kb = range(2, 7)
+- $kf = range(2, 6)
+- $kj = range(2, 6)
+- $nb1 = range(1, 3)
+- $nb2 = range(1, 3)
+- $nk = range(1, 4)
+- $c = range(2, 7)
+- $tm = range(3, 8)
+
+#conditions:
+- b + f + dr > 9
+- divides(nb1 + nb2, 2)
+- nb2 + nk == c
+- tm == nb1 + nb2 + nk
+
+#answer: (nb1 + nb2)//2*(2*(b + f + dr) - 19) + nk*(kb + kf + kj - 5)
+"""
+
+answer_annotated = """
+To buy regular food items individually, they cost ${b} + ${f} + ${dr} = $<<{b}+{f}+{dr}={b+f+dr}>>{b+f+dr}.
+To buy kids food items individually, they cost ${kb} + ${kf} + ${kj} = $<<{kb}+{kf}+{kj}={kb+kf+kj}>>{kb+kf+kj}.
+If you buy the special burger meal, you save ${b+f+dr} - $9.50 = $<<{b+f+dr}-9.5={b+f+dr-10}.50>>{b+f+dr-10}.50.
+If you buy the kid's meal, you save ${kb+kf+kj} - $5 = $<<{kb+kf+kj}-5={kb+kf+kj-5}>>{kb+kf+kj-5}.
+Mr. {name} buys {nb1+nb2} special burger meals, bringing his discount to {nb1+nb2} x ${b+f+dr-10}.50 = $<<{nb1+nb2}*{b+f+dr-10}.50={(nb1+nb2)//2*(2*(b+f+dr)-19)}>>{(nb1+nb2)//2*(2*(b+f+dr)-19)}.
+He buys {nk} kid's meals, bringing his discount to {nk} x ${kb+kf+kj-5} = $<<{nk}*{kb+kf+kj-5}={nk*(kb+kf+kj-5)}>>{nk*(kb+kf+kj-5)}.
+The total savings for Mr. {name} is ${(nb1+nb2)//2*(2*(b+f+dr)-19)} + ${nk*(kb+kf+kj-5)} = $<<{(nb1+nb2)//2*(2*(b+f+dr)-19)}+{nk*(kb+kf+kj-5)}={(nb1+nb2)//2*(2*(b+f+dr)-19)+nk*(kb+kf+kj-5)}>>{(nb1+nb2)//2*(2*(b+f+dr)-19)+nk*(kb+kf+kj-5)}.
+#### {(nb1+nb2)//2*(2*(b+f+dr)-19)+nk*(kb+kf+kj-5)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

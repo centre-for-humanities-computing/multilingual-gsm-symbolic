@@ -1,0 +1,45 @@
+question = """
+Jon's laundry machine can do 5 pounds of laundry at a time.  4 shirts weigh 1 pound and 2 pairs of pants weigh 1 pound.  If he needs to wash 20 shirts and 20 pants, how many loads of laundry does he have to do?
+"""
+
+answer = """
+The shirts weigh 20/4=<<20/4=5>>5 pounds
+The pants weigh 20/2=<<20/2=10>>10 pounds
+So he needs to do 10+5=<<10+5=15>>15 pounds of laundry
+So that would take 15/5=<<15/5=3>>3 loads of laundry
+#### 3
+"""
+
+id_orig = 3010
+id_shuffled = 3584
+
+question_annotated = """
+{name,Jon}'s laundry machine can do {cap,5} pounds of laundry at a time.  {s,4} shirts weigh 1 pound and {p,2} pairs of pants weigh 1 pound.  If he needs to wash {ns,20} shirts and {np,20} pants, how many loads of laundry does he have to do?
+
+#init:
+- name = sample(names_male)
+- $cap = range(3, 13)
+- $s = range(2, 7)
+- $p = range(2, 7)
+- $ns = range(2, 42)
+- $np = range(2, 42)
+
+#conditions:
+- divides(ns, s)
+- divides(np, p)
+- divides(ns//s + np//p, cap)
+
+#answer: (ns//s + np//p)//cap
+"""
+
+answer_annotated = """
+The shirts weigh {ns}/{s}=<<{ns}/{s}={ns//s}>>{ns//s} pounds
+The pants weigh {np}/{p}=<<{np}/{p}={np//p}>>{np//p} pounds
+So he needs to do {np//p}+{ns//s}=<<{np//p}+{ns//s}={np//p+ns//s}>>{np//p+ns//s} pounds of laundry
+So that would take {np//p+ns//s}/{cap}=<<{np//p+ns//s}/{cap}={(np//p+ns//s)//cap}>>{(np//p+ns//s)//cap} loads of laundry
+#### {(np//p+ns//s)//cap}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

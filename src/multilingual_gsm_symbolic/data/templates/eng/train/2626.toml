@@ -1,0 +1,53 @@
+question = """
+Johnny is a dog walker. He can walk 3 dogs at once. He gets paid $15 for a 30-minute walk and $20 for a 60-minute walk. Johnny works for 4 hours per day. If he always walks the maximum number of dogs possible and 6 dogs have 60-minute walks per day, how much money does he make in a week where he works 5 days?
+"""
+
+answer = """
+Johnny spends 6/3=2 hours walking the 6 dogs who have 60-minute walks.
+He makes $20*6=$<<20*6=120>>120 for these walks.
+Thus, he has 4-2=2 hours=120 minutes left to walk the other dogs.
+He can walk 3*(120/30)=<<3*(120/30)=12>>12 dogs in this time.
+Thus, he will make $15*12=$<<12*15=180>>180 on these walks.
+In total per day, he makes $120+$180=$<<120+180=300>>300 per day.
+Thus, during the week, he makes $300*5=$<<300*5=1500>>1500.
+#### 1500
+"""
+
+id_orig = 2278
+id_shuffled = 2626
+
+question_annotated = """
+{name,Johnny} is a dog walker. He can walk {cap,3} dogs at once. He gets paid ${pay_short,15} for a {dur_short,30}-minute walk and ${pay_long,20} for a 60-minute walk. {name,Johnny} works for {hours,4} hours per day. If he always walks the maximum number of dogs possible and {nlong,6} dogs have 60-minute walks per day, how much money does he make in a week where he works {days,5} days?
+
+#init:
+- name = sample(names_male)
+- $cap = range(2, 6)
+- $nlong = range(2, 22, 2)
+- $hours = range(2, 9)
+- $dur_short = range(10, 51, 10)
+- $pay_short = range(5, 26, 5)
+- $pay_long = range(15, 36, 5)
+- $days = range(4, 7)
+
+#conditions:
+- divides(nlong, cap)
+- hours > nlong//cap
+- divides((hours - nlong//cap) * 60, dur_short)
+
+#answer: (pay_long*nlong + pay_short*cap*((hours-nlong//cap)*60)//dur_short) * days
+"""
+
+answer_annotated = """
+{name} spends {nlong}/{cap}={nlong//cap} hours walking the {nlong} dogs who have 60-minute walks.
+He makes ${pay_long}*{nlong}=$<<{pay_long}*{nlong}={pay_long*nlong}>>{pay_long*nlong} for these walks.
+Thus, he has {hours}-{nlong//cap}={hours-nlong//cap} hours={(hours-nlong//cap)*60} minutes left to walk the other dogs.
+He can walk {cap}*({(hours-nlong//cap)*60}/{dur_short})=<<{cap}*({(hours-nlong//cap)*60}/{dur_short})={cap*((hours-nlong//cap)*60)//dur_short}>>{cap*((hours-nlong//cap)*60)//dur_short} dogs in this time.
+Thus, he will make ${pay_short}*{cap*((hours-nlong//cap)*60)//dur_short}=$<<{cap*((hours-nlong//cap)*60)//dur_short}*{pay_short}={pay_short*cap*((hours-nlong//cap)*60)//dur_short}>>{pay_short*cap*((hours-nlong//cap)*60)//dur_short} on these walks.
+In total per day, he makes ${pay_long*nlong}+${pay_short*cap*((hours-nlong//cap)*60)//dur_short}=$<<{pay_long*nlong}+{pay_short*cap*((hours-nlong//cap)*60)//dur_short}={pay_long*nlong + pay_short*cap*((hours-nlong//cap)*60)//dur_short}>>{pay_long*nlong + pay_short*cap*((hours-nlong//cap)*60)//dur_short} per day.
+Thus, during the week, he makes ${(pay_long*nlong + pay_short*cap*((hours-nlong//cap)*60)//dur_short)}*{days}=$<<{(pay_long*nlong + pay_short*cap*((hours-nlong//cap)*60)//dur_short)}*{days}={(pay_long*nlong + pay_short*cap*((hours-nlong//cap)*60)//dur_short) * days}>>{(pay_long*nlong + pay_short*cap*((hours-nlong//cap)*60)//dur_short) * days}.
+#### {(pay_long*nlong + pay_short*cap*((hours-nlong//cap)*60)//dur_short) * days}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

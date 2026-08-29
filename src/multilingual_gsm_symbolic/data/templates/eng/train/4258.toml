@@ -1,0 +1,43 @@
+question = """
+Pat's stick is 30 inches long. He covers 7 inches of the stick in dirt. The portion that is not covered in dirt is half as long as Sarah’s stick. Jane’s stick is two feet shorter than Sarah’s stick. How many inches long is Jane’s stick?
+"""
+
+answer = """
+30-7 = <<30-7=23>>23 inches of Pat’s stick is not covered in dirt.
+Sarah’s stick is 23*2 = <<23*2=46>>46 inches long.
+Jane’s stick is 12*2 = <<12*2=24>>24 inches shorter than Sarah’s stick.
+Jane’s stick is 46-24 = <<46-24=22>>22 inches long.
+#### 22
+"""
+
+id_orig = 3600
+id_shuffled = 4258
+
+question_annotated = """
+{name_p,Pat}'s stick is {a,30} inches long. He covers {b,7} inches of the stick in dirt. The portion that is not covered in dirt is half as long as {name_s,Sarah}’s stick. {name_j,Jane}’s stick is {ftxt,two} feet shorter than {name_s,Sarah}’s stick. How many inches long is {name_j,Jane}’s stick?
+
+#init:
+- name_p = sample(names_male)
+- name_s = sample(names_female)
+- name_j = sample(names_female)
+- $a = range(20, 220)
+- $b = range(1, 40)
+- ftxt, f = sample([("two", 2), ("three", 3), ("four", 4)])
+
+#conditions:
+- a > b + 12 * f
+
+#answer: (a - b) * 2 - 12 * f
+"""
+
+answer_annotated = """
+{a}-{b} = <<{a}-{b}={a-b}>>{a-b} inches of {name_p}’s stick is not covered in dirt.
+{name_s}’s stick is {a-b}*2 = <<{a-b}*2={(a-b)*2}>>{(a-b)*2} inches long.
+{name_j}’s stick is 12*{f} = <<12*{f}={12*f}>>{12*f} inches shorter than {name_s}’s stick.
+{name_j}’s stick is {(a-b)*2}-{12*f} = <<{(a-b)*2}-{12*f}={(a-b)*2-12*f}>>{(a-b)*2-12*f} inches long.
+#### {(a-b)*2-12*f}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,42 @@
+question = """
+John gets lost on his way home.  His normal trip is 150 miles and would take him 3 hours.  He ends up driving 50 miles out of the way and has to get back on track.  How long did the trip take if he kept the same speed?
+"""
+
+answer = """
+His speed is 150/3=<<150/3=50>>50 mph
+He was detoured 50*2=<<50*2=100>>100 miles
+So that adds 100/50=<<100/50=2>>2 hours
+So the total trip was 3+2=<<3+2=5>>5 hours
+#### 5
+"""
+
+id_orig = 1755
+id_shuffled = 1902
+
+question_annotated = """
+{name,John} gets lost on his way home.  His normal trip is {norm,150} miles and would take him {t,3} hours.  He ends up driving {d,50} miles out of the way and has to get back on track.  How long did the trip take if he kept the same speed?
+
+#init:
+- name = sample(names_male)
+- $norm = range(20, 420, 10)
+- $t = range(1, 7)
+- $d = range(5, 105, 5)
+
+#conditions:
+- is_int(norm/t)
+- is_int(2*d*t/norm)
+
+#answer: t + 2*d*t//norm
+"""
+
+answer_annotated = """
+His speed is {norm}/{t}=<<{norm}/{t}={norm//t}>>{norm//t} mph
+He was detoured {d}*2=<<{d}*2={d*2}>>{d*2} miles
+So that adds {d*2}/{norm//t}=<<{d*2}/{norm//t}={2*d*t//norm}>>{2*d*t//norm} hours
+So the total trip was {t}+{2*d*t//norm}=<<{t}+{2*d*t//norm}={t+2*d*t//norm}>>{t+2*d*t//norm} hours
+#### {t + 2*d*t//norm}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

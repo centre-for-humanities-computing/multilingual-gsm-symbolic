@@ -1,0 +1,42 @@
+question = """
+A shady restaurant is charging customers gratuities after taxes without them being aware. If my total bill was $140, the sales tax in my city is 10%, I ordered a NY Striploin for $80, and I ordered a glass of wine for $10, how much did they charge me for gratuities?
+"""
+
+answer = """
+The total bill before taxes or gratuities was $80 for the steak + $10 for the wine = $80+$10 = $<<80+10=90>>90
+If the tax is 10%, then the taxes paid were $90 * 10% = $<<90*10*.01=9>>9
+That means that the total bill before gratuities was $90 + $9 = $<<90+9=99>>99
+If the final bill was $140, then you were charged $140-$99 = $<<140-99=41>>41 for gratuities
+#### 41
+"""
+
+id_orig = 322
+id_shuffled = 375
+
+question_annotated = """
+A shady restaurant is charging customers gratuities after taxes without them being aware. If my total bill was ${total,140}, the sales tax in my city is {tax,10}%, I ordered a NY Striploin for ${steak,80}, and I ordered a glass of wine for ${wine,10}, how much did they charge me for gratuities?
+
+#init:
+- $total = range(100, 500, 10)
+- $steak = range(10, 110, 5)
+- $wine = range(2, 12)
+- $tax = range(5, 26, 5)
+
+#conditions:
+- divides((steak + wine) * tax, 100)
+- total * 100 - (steak + wine) * (100 + tax) >= 100
+
+#answer: total - (steak + wine + (steak + wine) * tax // 100)
+"""
+
+answer_annotated = """
+The total bill before taxes or gratuities was ${steak} for the steak + ${wine} for the wine = ${steak}+${wine} = $<<{steak}+{wine}={steak + wine}>>{steak + wine}
+If the tax is {tax}%, then the taxes paid were ${steak + wine} * {tax}% = $<<{steak + wine}*{tax}*.01={(steak + wine) * tax // 100}>>{(steak + wine) * tax // 100}
+That means that the total bill before gratuities was ${steak + wine} + ${(steak + wine) * tax // 100} = $<<{steak + wine}+{(steak + wine) * tax // 100}={steak + wine + (steak + wine) * tax // 100}>>{steak + wine + (steak + wine) * tax // 100}
+If the final bill was ${total}, then you were charged ${total}-${steak + wine + (steak + wine) * tax // 100} = $<<{total}-{steak + wine + (steak + wine) * tax // 100}={total - (steak + wine + (steak + wine) * tax // 100)}>>{total - (steak + wine + (steak + wine) * tax // 100)} for gratuities
+#### {total - (steak + wine + (steak + wine) * tax // 100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

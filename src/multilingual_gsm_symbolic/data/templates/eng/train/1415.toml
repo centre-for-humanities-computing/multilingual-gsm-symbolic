@@ -1,0 +1,46 @@
+question = """
+Jake is watching a new show, and is worried about how much time he has spent watching it. He spent half the day on Monday watching his show, 4 hours on Tuesday watching his show, a quarter of the day on Wednesday watching his show, and he spent half as much time watching the show on Thursday as he had done in total throughout the previous few days. On Friday, he finally finished watching it. If the entire show is 52 hours long, how many hours did Jake watch on Friday?
+"""
+
+answer = """
+On Monday, Jake watched 24 hours / 2 = <<24/2=12>>12 hours.
+On Wednesday, he watched 24 hours / 4 = <<24/4=6>>6 hours.
+So from Monday to Wednesday, he watched a total of 12 Monday hours + 4 Tuesday hours + 6 Wednesday hours = <<12+4+6=22>>22 hours.
+He watched half of this on Thursday, which is 22 hours / 2 = <<22/2=11>>11 hours.
+So from Monday to Thursday, he watched 22 + 11 = <<22+11=33>>33 hours.
+To finish the show on Friday, he must have therefore watched 52 – 33 = <<52-33=19>>19 hours.
+#### 19
+"""
+
+id_orig = 1308
+id_shuffled = 1415
+
+question_annotated = """
+{name,Jake} is watching a new show, and is worried about how much time he has spent watching it. He spent half the day on Monday watching his show, {t,4} hours on Tuesday watching his show, {wed_txt,a quarter} of the day on Wednesday watching his show, and he spent half as much time watching the show on Thursday as he had done in total throughout the previous few days. On Friday, he finally finished watching it. If the entire show is {s,52} hours long, how many hours did {name,Jake} watch on Friday?
+
+#init:
+- name = sample(names_male)
+- wed_txt, wed_den = sample([("half", 2), ("a third", 3), ("a quarter", 4), ("a sixth", 6), ("an eighth", 8), ("a twelfth", 12)])
+- $t = range(1, 25)
+- $s = range(30, 140)
+
+#conditions:
+- divides(12 + t + 24//wed_den, 2)
+- s > 3*(12 + t + 24//wed_den)//2
+
+#answer: s - 3*(12 + t + 24//wed_den)//2
+"""
+
+answer_annotated = """
+On Monday, {name} watched 24 hours / 2 = <<24/2=12>>12 hours.
+On Wednesday, he watched 24 hours / {wed_den} = <<24/{wed_den}={24//wed_den}>>{24//wed_den} hours.
+So from Monday to Wednesday, he watched a total of 12 Monday hours + {t} Tuesday hours + {24//wed_den} Wednesday hours = <<12+{t}+{24//wed_den}={12+t+24//wed_den}>>{12+t+24//wed_den} hours.
+He watched half of this on Thursday, which is {12+t+24//wed_den} hours / 2 = <<{12+t+24//wed_den}/2={(12+t+24//wed_den)//2}>>{(12+t+24//wed_den)//2} hours.
+So from Monday to Thursday, he watched {12+t+24//wed_den} + {(12+t+24//wed_den)//2} = <<{12+t+24//wed_den}+{(12+t+24//wed_den)//2}={3*(12+t+24//wed_den)//2}>>{3*(12+t+24//wed_den)//2} hours.
+To finish the show on Friday, he must have therefore watched {s} – {3*(12+t+24//wed_den)//2} = <<{s}-{3*(12+t+24//wed_den)//2}={s-3*(12+t+24//wed_den)//2}>>{s-3*(12+t+24//wed_den)//2} hours.
+#### {s - 3*(12 + t + 24//wed_den)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

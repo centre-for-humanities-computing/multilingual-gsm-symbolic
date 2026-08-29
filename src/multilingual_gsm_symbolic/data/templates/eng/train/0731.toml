@@ -1,0 +1,46 @@
+question = """
+Sara is checking out two different stores to buy a computer. The first store offers a device for $950 with a 6% discount. The second sells the same computer for €920 with a 5% discount. What is the difference in price between the two stores?
+"""
+
+answer = """
+The amount of discount in the first store 950 x 6/100 = $<<950*6/100=57>>57.
+So, the device costs 950 - 57 = $<<950-57=893>>893 in the first store.
+The amount of discount in the second store is 920 x 5/100 = $<<920*5/100=46>>46.
+So, the device costs 920 - 46 = $<<920-46=874>>874 in the second store.
+The difference in price is 893 - 874 = $<<893-874=19>>19.
+#### 19
+"""
+
+id_orig = 658
+id_shuffled = 731
+
+question_annotated = """
+{name,Sara} is checking out two different stores to buy a computer. The first store offers a device for ${p1,950} with a {r1,6}% discount. The second sells the same computer for €{p2,920} with a {r2,5}% discount. What is the difference in price between the two stores?
+
+#init:
+- name = sample(names_female)
+- $p1 = range(450, 1450, 50)
+- $r1 = range(5, 25)
+- $p2 = range(280, 1120, 40)
+- $r2 = range(5, 25)
+
+#conditions:
+- divides(p1*r1, 100)
+- divides(p2*r2, 100)
+- p1 - p1*r1//100 > p2 - p2*r2//100
+
+#answer: p1 - p1*r1//100 - (p2 - p2*r2//100)
+"""
+
+answer_annotated = """
+The amount of discount in the first store {p1} x {r1}/100 = $<<{p1}*{r1}/100={p1*r1//100}>>{p1*r1//100}.
+So, the device costs {p1} - {p1*r1//100} = $<<{p1}-{p1*r1//100}={p1-p1*r1//100}>>{p1-p1*r1//100} in the first store.
+The amount of discount in the second store is {p2} x {r2}/100 = $<<{p2}*{r2}/100={p2*r2//100}>>{p2*r2//100}.
+So, the device costs {p2} - {p2*r2//100} = $<<{p2}-{p2*r2//100}={p2-p2*r2//100}>>{p2-p2*r2//100} in the second store.
+The difference in price is {p1-p1*r1//100} - {p2-p2*r2//100} = $<<{p1-p1*r1//100}-{p2-p2*r2//100}={p1-p1*r1//100-(p2-p2*r2//100)}>>{p1-p1*r1//100-(p2-p2*r2//100)}.
+#### {p1-p1*r1//100-(p2-p2*r2//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

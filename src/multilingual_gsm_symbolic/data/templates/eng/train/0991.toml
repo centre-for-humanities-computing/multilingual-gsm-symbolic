@@ -1,0 +1,40 @@
+question = """
+Henrietta is repainting her house. The walls in the living room take up 600 square feet. She has three bedrooms. The walls in each bedroom take up 400 square feet. If one gallon of paint can cover 600 square feet, how many gallons of paint does Henrietta need to paint her house?
+"""
+
+answer = """
+The total square footage from the three bedrooms is 3 * 400 = <<3*400=1200>>1200 square feet.
+The total square footage of the house is 1200 + 600 = <<1200+600=1800>>1800 square feet
+Henrietta needs 1800 / 600 = <<1800/600=3>>3 gallons of paint
+#### 3
+"""
+
+id_orig = 895
+id_shuffled = 991
+
+question_annotated = """
+{name,Henrietta} is repainting her house. The walls in the living room take up {living,600} square feet. She has {nb_txt,three} bedrooms. The walls in each bedroom take up {bed,400} square feet. If one gallon of paint can cover {cov,600} square feet, how many gallons of paint does {name,Henrietta} need to paint her house?
+
+#init:
+- name = sample(names_female)
+- nb_txt, nb = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $living = range(300, 900, 50)
+- $bed = range(200, 700, 25)
+- $cov = range(200, 800, 25)
+
+#conditions:
+- is_int((living + nb * bed) / cov)
+
+#answer: (living + nb * bed) // cov
+"""
+
+answer_annotated = """
+The total square footage from the {nb_txt} bedrooms is {nb} * {bed} = <<{nb}*{bed}={nb*bed}>>{nb*bed} square feet.
+The total square footage of the house is {nb*bed} + {living} = <<{nb*bed}+{living}={nb*bed+living}>>{nb*bed+living} square feet
+{name} needs {nb*bed+living} / {cov} = <<{nb*bed+living}/{cov}={(nb*bed+living)//cov}>>{(nb*bed+living)//cov} gallons of paint
+#### {(nb*bed+living)//cov}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

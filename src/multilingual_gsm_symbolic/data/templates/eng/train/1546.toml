@@ -1,0 +1,39 @@
+question = """
+Gemma ordered four pizzas at $10 each, and she gave a $5 tip to the delivery person. How much change did she get back if she gives one fifty-dollar bill?
+"""
+
+answer = """
+The cost of the four pizzas is 4 x $10 = $<<4*10=40>>40.
+The total cost, including the tip, is $40 + $5= $<<40+5=45>>45.
+Therefore, Gemma gets a change of $50 - $45 = $<<50-45=5>>5.
+#### 5
+"""
+
+id_orig = 1439
+id_shuffled = 1546
+
+question_annotated = """
+{name,Gemma} ordered four pizzas at ${p,10} each, and she gave a ${t,5} tip to the delivery person. How much change did she get back if she gives one {bill_word,fifty}-dollar bill?
+
+#init:
+- name = sample(names_female)
+- $p = range(5, 21)
+- $t = range(1, 50)
+- bill_word, bill = sample([("thirty", 30), ("forty", 40), ("fifty", 50), ("sixty", 60), ("seventy", 70), ("eighty", 80), ("ninety", 90)])
+
+#conditions:
+- bill > 4 * p + t
+
+#answer: bill - 4*p - t
+"""
+
+answer_annotated = """
+The cost of the four pizzas is 4 x ${p} = $<<4*{p}={4*p}>>{4*p}.
+The total cost, including the tip, is ${4*p} + ${t}= $<<{4*p}+{t}={4*p+t}>>{4*p+t}.
+Therefore, {name} gets a change of ${bill} - ${4*p+t} = $<<{bill}-{4*p+t}={bill-(4*p+t)}>>{bill-(4*p+t)}.
+#### {bill - 4*p - t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

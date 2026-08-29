@@ -1,0 +1,47 @@
+question = """
+The Arevalo family went out to dinner. The smoky salmon costs $40, the black burger costs $15, and the chicken katsu costs $25. If the bill includes a 10% service charge and 5% tip, how much change will Mr. Arevalo receive from his $100?
+"""
+
+answer = """
+The total amount spent on food is $40 + $15 + $25 = $<<40+15+25=80>>80.
+The service charge is $80 x 10/100 = $<<80*10/100=8>>8.
+The tip is $80 x 5/100 = $<<80*5/100=4>>4.
+So, Mr. Arevalo had to pay $80 + $8 + $4 = $<<80+8+4=92>>92 in all.
+Therefore, his change will only be $100 - $92 = $<<100-92=8>>8.
+#### 8
+"""
+
+id_orig = 1500
+id_shuffled = 1625
+
+question_annotated = """
+The Arevalo family went out to dinner. The smoky salmon costs ${a,40}, the black burger costs ${b,15}, and the chicken katsu costs ${c,25}. If the bill includes a {s,10}% service charge and {t,5}% tip, how much change will Mr. Arevalo receive from his ${m,100}?
+
+#init:
+- $a = range(10, 50, 5)
+- $b = range(5, 30, 5)
+- $c = range(10, 40, 5)
+- $s = range(5, 25, 5)
+- $t = range(5, 25, 5)
+- $m = range(90, 140, 10)
+
+#conditions:
+- is_int((a+b+c)*s/100)
+- is_int((a+b+c)*t/100)
+- m > a+b+c
+
+#answer: m - (a+b+c + (a+b+c)*s//100 + (a+b+c)*t//100)
+"""
+
+answer_annotated = """
+The total amount spent on food is ${a} + ${b} + ${c} = $<<{a}+{b}+{c}={a+b+c}>>{a+b+c}.
+The service charge is ${a+b+c} x {s}/100 = $<<{a+b+c}*{s}/100={(a+b+c)*s//100}>>{(a+b+c)*s//100}.
+The tip is ${a+b+c} x {t}/100 = $<<{a+b+c}*{t}/100={(a+b+c)*t//100}>>{(a+b+c)*t//100}.
+So, Mr. Arevalo had to pay ${a+b+c} + ${(a+b+c)*s//100} + ${(a+b+c)*t//100} = $<<{a+b+c}+{(a+b+c)*s//100}+{(a+b+c)*t//100}={a+b+c+(a+b+c)*s//100+(a+b+c)*t//100}>>{a+b+c+(a+b+c)*s//100+(a+b+c)*t//100} in all.
+Therefore, his change will only be ${m} - ${a+b+c+(a+b+c)*s//100+(a+b+c)*t//100} = $<<{m}-{a+b+c+(a+b+c)*s//100+(a+b+c)*t//100}={m-(a+b+c+(a+b+c)*s//100+(a+b+c)*t//100)}>>{m-(a+b+c+(a+b+c)*s//100+(a+b+c)*t//100)}.
+#### {m-(a+b+c+(a+b+c)*s//100+(a+b+c)*t//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

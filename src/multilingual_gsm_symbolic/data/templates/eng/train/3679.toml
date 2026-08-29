@@ -1,0 +1,45 @@
+question = """
+Gina can paint six cups an hour with roses and 7 cups an hour with lilies. Her Etsy store gets an order for 6 rose cups and 14 lily cups. If Gina gets paid $90 total for the order, how much does she make per hour?
+"""
+
+answer = """
+First find the total time to paint the rose cups: 6 cups / 6 cups/hour = <<6/6=1>>1 hour
+Then find the total time to paint the lily cups: 14 cups / 7 cups/hour = <<14/7=2>>2 hours
+Then add the painting time for each type of cup to find the total painting time: 1 hour + 2 hours = <<1+2=3>>3 hours
+Then divide Gina's total earnings by the number of hours she works to find her hourly wage: $90 / 3 hours = $<<90/3=30>>30/hour
+#### 30
+"""
+
+id_orig = 3094
+id_shuffled = 3679
+
+question_annotated = """
+{name,Gina} can paint {r_txt,six} cups an hour with roses and {l,7} cups an hour with lilies. Her Etsy store gets an order for {a,6} rose cups and {b,14} lily cups. If {name,Gina} gets paid ${p,90} total for the order, how much does she make per hour?
+
+#init:
+- name = sample(names_female)
+- r_txt, r = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $l = range(2, 16)
+- $a = range(2, 40)
+- $b = range(4, 60)
+- $p = range(10, 200, 5)
+
+#conditions:
+- divides(a, r)
+- divides(b, l)
+- divides(p, a//r + b//l)
+
+#answer: p // (a//r + b//l)
+"""
+
+answer_annotated = """
+First find the total time to paint the rose cups: {a} cups / {r} cups/hour = <<{a}/{r}={a//r}>>{a//r} hour
+Then find the total time to paint the lily cups: {b} cups / {l} cups/hour = <<{b}/{l}={b//l}>>{b//l} hours
+Then add the painting time for each type of cup to find the total painting time: {a//r} hour + {b//l} hours = <<{a//r}+{b//l}={a//r+b//l}>>{a//r+b//l} hours
+Then divide {name}'s total earnings by the number of hours she works to find her hourly wage: ${p} / {a//r+b//l} hours = $<<{p}/{a//r+b//l}={p//(a//r+b//l)}>>{p//(a//r+b//l)}/hour
+#### {p//(a//r+b//l)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

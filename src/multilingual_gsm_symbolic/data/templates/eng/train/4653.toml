@@ -1,0 +1,43 @@
+question = """
+Mother made 2 dozen brownies and placed them on the kitchen counter to cool.  Father smelled the brownies, came into the kitchen and ate 8 of them. Then, their daughter, Mooney, wandered into the kitchen and ate 4 of the brownies. The next morning, Mother made another two dozen brownies and added them to those remaining from the day before.  After that, how many brownies were on the counter?
+"""
+
+answer = """
+Two dozen brownies is 2 * 12 = <<2*12=24>>24 brownies.
+After Father ate his 8, there were 24 - 8 = <<24-8=16>>16 brownies remaining on the counter.
+After Mooney ate her 4, there were 16 - 4 = <<16-4=12>>12 brownies remaining on the counter.
+Mother made a second batch of two-dozen brownies, or 2 * 12 = <<2*12=24>>24 brownies.
+After Mother added the second two-dozen, there were 12 + 24 = <<12+24=36>>36 brownies on the kitchen counter.
+#### 36
+"""
+
+id_orig = 3946
+id_shuffled = 4653
+
+question_annotated = """
+Mother made {d,2} dozen brownies and placed them on the kitchen counter to cool.  Father smelled the brownies, came into the kitchen and ate {f,8} of them. Then, their daughter, {name,Mooney}, wandered into the kitchen and ate {m,4} of the brownies. The next morning, Mother made another two dozen brownies and added them to those remaining from the day before.  After that, how many brownies were on the counter?
+
+#init:
+- name = sample(names_female)
+- $d = range(2, 3)
+- $f = range(1, 24)
+- $m = range(1, 24)
+
+#conditions:
+- f + m < d * 12
+
+#answer: d*12 - f - m + d*12
+"""
+
+answer_annotated = """
+Two dozen brownies is {d} * 12 = <<{d}*12={d*12}>>{d*12} brownies.
+After Father ate his {f}, there were {d*12} - {f} = <<{d*12}-{f}={d*12-f}>>{d*12-f} brownies remaining on the counter.
+After {name} ate her {m}, there were {d*12-f} - {m} = <<{d*12-f}-{m}={d*12-f-m}>>{d*12-f-m} brownies remaining on the counter.
+Mother made a second batch of two-dozen brownies, or {d} * 12 = <<{d}*12={d*12}>>{d*12} brownies.
+After Mother added the second two-dozen, there were {d*12-f-m} + {d*12} = <<{d*12-f-m}+{d*12}={d*12-f-m+d*12}>>{d*12-f-m+d*12} brownies on the kitchen counter.
+#### {d*12 - f - m + d*12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

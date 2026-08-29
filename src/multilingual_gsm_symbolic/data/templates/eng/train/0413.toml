@@ -1,0 +1,40 @@
+question = """
+Sonja makes her own peanut butter with peanuts and oil in a blender. She uses a ratio of two ounces of oil to smooth out every eight ounces of peanuts. Her last batch of peanut butter weighed 20 ounces. How many ounces of oil did she use?
+"""
+
+answer = """
+Sonja uses 2 ounces of oil for 8 ounces of peanuts to make 2 + 8 = 10 ounces of peanut butter.
+Her last batch weighed 20 ounces, so she made 20 / 10 = <<20/10=2>>2 times her ratio.
+Thus, she used 2 * 2 = <<2*2=4>>4 ounces of oil.
+#### 4
+"""
+
+id_orig = 360
+id_shuffled = 413
+
+question_annotated = """
+{name,Sonja} makes her own peanut butter with peanuts and oil in a blender. She uses a ratio of {oil_txt,two} ounces of oil to smooth out every {pea_txt,eight} ounces of peanuts. Her last batch of peanut butter weighed {w,20} ounces. How many ounces of oil did she use?
+
+#init:
+- name = sample(names_female)
+- oil_txt, oil = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- pea_txt, p = sample([("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10)])
+- $w = range(20, 220, 2)
+
+#conditions:
+- divides(w, oil + p)
+- w > oil + p
+
+#answer: w // (oil + p) * oil
+"""
+
+answer_annotated = """
+{name} uses {oil} ounces of oil for {p} ounces of peanuts to make {oil} + {p} = {oil+p} ounces of peanut butter.
+Her last batch weighed {w} ounces, so she made {w} / {oil+p} = <<{w}/{oil+p}={w//(oil+p)}>>{w//(oil+p)} times her ratio.
+Thus, she used {w//(oil+p)} * {oil} = <<{w//(oil+p)}*{oil}={w//(oil+p)*oil}>>{w//(oil+p)*oil} ounces of oil.
+#### {w // (oil + p) * oil}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

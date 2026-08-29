@@ -1,0 +1,42 @@
+question = """
+Whenever Katie and her family eat donuts, they need some coffee to dunk them in. She notices that for each donut they need 2 ounces of coffee. Every pot of coffee she makes contains 12 ounces and costs $3 to make. If her family finishes 3 dozen donuts, how much do they spend on coffee?
+"""
+
+answer = """
+He family eats 36 donuts because 3 x 12 = <<3*12=36>>36
+They need 72 ounces of coffee for these because 2 x 36 = <<2*36=72>>72
+This is equal to six pots of coffee because 72 / 12 = <<72/12=6>>6
+This will cost $18 to make because 6 x 3 = <<6*3=18>>18
+#### 18
+"""
+
+id_orig = 2530
+id_shuffled = 2918
+
+question_annotated = """
+Whenever {name,Katie} and her family eat donuts, they need some coffee to dunk them in. She notices that for each donut they need {oz,2} ounces of coffee. Every pot of coffee she makes contains {psize,12} ounces and costs ${cost,3} to make. If her family finishes {dz,3} dozen donuts, how much do they spend on coffee?
+
+#init:
+- name = sample(names_female)
+- $dz = range(2, 22)
+- $oz = range(1, 5)
+- $psize = range(4, 300)
+- $cost = range(1, 11)
+
+#conditions:
+- oz * 12 * dz == psize * 6
+
+#answer: oz * 12 * dz // psize * cost
+"""
+
+answer_annotated = """
+He family eats {dz*12} donuts because {dz} x 12 = <<{dz}*12={dz*12}>>{dz*12}
+They need {oz*dz*12} ounces of coffee for these because {oz} x {dz*12} = <<{oz}*{dz*12}={oz*dz*12}>>{oz*dz*12}
+This is equal to six pots of coffee because {oz*dz*12} / {psize} = <<{oz*dz*12}/{psize}={oz*dz*12//psize}>>{oz*dz*12//psize}
+This will cost ${oz*dz*12//psize*cost} to make because {oz*dz*12//psize} x {cost} = <<{oz*dz*12//psize}*{cost}={oz*dz*12//psize*cost}>>{oz*dz*12//psize*cost}
+#### {oz*dz*12//psize*cost}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

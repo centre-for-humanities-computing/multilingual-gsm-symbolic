@@ -1,0 +1,45 @@
+question = """
+There are three machines in a factory. Machine A can put caps on 12 bottles in 1 minute. Machine B can put caps to 2 fewer bottles than Machine A. Machine C can put caps to 5 more bottles than Machine B. How many bottles can those three machines put caps on in 10 minutes?
+"""
+
+answer = """
+Machine A can put caps on 12 x 10 = <<12*10=120>>120 bottles in 10 minutes.
+Machine B can put caps on 12 - 2 = <<12-2=10>>10 bottles in 1 minute.
+So in 10 minutes, machine B can put caps on 10 x 10 = <<10*10=100>>100 bottles.
+Machine c can put caps on 10 + 5 = <<10+5=15>>15 bottles in 1 minute.
+So in 10 minutes, machine C can put caps on 15 x 10 = <<15*10=150>>150 bottles.
+Therefore, the three machines can put caps on 120 + 100 + 150 = <<120+100+150=370>>370 bottles in 10 minutes.
+#### 370
+"""
+
+id_orig = 3700
+id_shuffled = 4370
+
+question_annotated = """
+There are three machines in a factory. Machine A can put caps on {a,12} bottles in 1 minute. Machine B can put caps to {d,2} fewer bottles than Machine A. Machine C can put caps to {e,5} more bottles than Machine B. How many bottles can those three machines put caps on in {t,10} minutes?
+
+#init:
+- $a = range(10, 40)
+- $d = range(2, 10)
+- $e = range(2, 12)
+- $t = range(2, 21)
+
+#conditions:
+- a > d
+
+#answer: (a + a - d + a - d + e) * t
+"""
+
+answer_annotated = """
+Machine A can put caps on {a} x {t} = <<{a}*{t}={a*t}>>{a*t} bottles in {t} minutes.
+Machine B can put caps on {a} - {d} = <<{a}-{d}={a-d}>>{a-d} bottles in 1 minute.
+So in {t} minutes, machine B can put caps on {a-d} x {t} = <<{a-d}*{t}={(a-d)*t}>>{(a-d)*t} bottles.
+Machine c can put caps on {a-d} + {e} = <<{a-d}+{e}={a-d+e}>>{a-d+e} bottles in 1 minute.
+So in {t} minutes, machine C can put caps on {a-d+e} x {t} = <<{a-d+e}*{t}={(a-d+e)*t}>>{(a-d+e)*t} bottles.
+Therefore, the three machines can put caps on {a*t} + {(a-d)*t} + {(a-d+e)*t} = <<{a*t}+{(a-d)*t}+{(a-d+e)*t}={(a+a-d+a-d+e)*t}>>{(a+a-d+a-d+e)*t} bottles in {t} minutes.
+#### {(a+a-d+a-d+e)*t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

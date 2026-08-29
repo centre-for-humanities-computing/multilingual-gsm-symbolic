@@ -1,0 +1,38 @@
+question = """
+Claire is scheduling her day. She has four hours to clean and two hours to cook, then divides the rest of her working day equally between crafting and tailoring. She then sleeps eight hours. If all of this takes place within one day, how many hours did Claire spend crafting?
+"""
+
+answer = """
+We know Claire has spent a total of 24 hours in a day - 4 hours cleaning - 2 hours cooking - 8 hours sleeping = 10 hours crafting and tailoring.
+Since she split her time equally, she must have spent 10 hours * 0.5 = <<10*0.5=5>>5 hours crafting.
+#### 5
+"""
+
+id_orig = 3071
+id_shuffled = 3656
+
+question_annotated = """
+{name,Claire} is scheduling her day. She has {clean_txt,four} hours to clean and {cook_txt,two} hours to cook, then divides the rest of her working day equally between crafting and tailoring. She then sleeps {sleep_txt,eight} hours. If all of this takes place within one day, how many hours did {name,Claire} spend crafting?
+
+#init:
+- name = sample(names_female)
+- clean_txt, clean = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- cook_txt, cook = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- sleep_txt, sleep = sample([("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+
+#conditions:
+- clean + cook + sleep < 24
+- is_int((24 - clean - cook - sleep) / 2)
+
+#answer: (24 - clean - cook - sleep) // 2
+"""
+
+answer_annotated = """
+We know {name} has spent a total of 24 hours in a day - {clean} hours cleaning - {cook} hours cooking - {sleep} hours sleeping = {24-clean-cook-sleep} hours crafting and tailoring.
+Since she split her time equally, she must have spent {24-clean-cook-sleep} hours * 0.5 = <<{24-clean-cook-sleep}*0.5={(24-clean-cook-sleep)//2}>>{(24-clean-cook-sleep)//2} hours crafting.
+#### {(24-clean-cook-sleep)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

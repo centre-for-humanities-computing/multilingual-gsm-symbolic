@@ -1,0 +1,44 @@
+question = """
+Frank goes to the store to buy some food. He buys 5 chocolate bars and 2 bags of chips. He hands the cashier $20 and gets $4 back as change. If the chocolate bars each cost $2, how much did each bag of chips cost?
+"""
+
+answer = """
+His entire purchase cost $20 - $4 = $<<20-4=16>>16.
+The chocolate bars cost 5 * $2 = $<<5*2=10>>10.
+The bags of chips cost a total of $16 - $10 = $<<16-10=6>>6.
+Each bag of chips cost $6 / 2 = $<<6/2=3>>3.
+#### 3
+"""
+
+id_orig = 1950
+id_shuffled = 2254
+
+question_annotated = """
+{name,Frank} goes to the store to buy some food. He buys {bars,5} chocolate bars and {bags,2} bags of chips. He hands the cashier ${paid,20} and gets ${change,4} back as change. If the chocolate bars each cost ${price,2}, how much did each bag of chips cost?
+
+#init:
+- name = sample(names_male)
+- $bars = range(2, 7)
+- $bags = range(2, 6)
+- $price = range(1, 8)
+- $paid = range(10, 61, 5)
+- $change = range(1, 15)
+
+#conditions:
+- paid > change + bars*price
+- divides(paid - change - bars*price, bags)
+
+#answer: (paid - change - bars*price)//bags
+"""
+
+answer_annotated = """
+His entire purchase cost ${paid} - ${change} = $<<{paid}-{change}={paid-change}>>{paid-change}.
+The chocolate bars cost {bars} * ${price} = $<<{bars}*{price}={bars*price}>>{bars*price}.
+The bags of chips cost a total of ${paid-change} - ${bars*price} = $<<{paid-change}-{bars*price}={paid-change-bars*price}>>{paid-change-bars*price}.
+Each bag of chips cost ${paid-change-bars*price} / {bags} = $<<{paid-change-bars*price}/{bags}={(paid-change-bars*price)//bags}>>{(paid-change-bars*price)//bags}.
+#### {(paid-change-bars*price)//bags}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

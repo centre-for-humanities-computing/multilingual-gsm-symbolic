@@ -1,0 +1,46 @@
+question = """
+In the first round of bowling, Patrick knocked down a total of 70 pins and Richard knocked down 15 more pins than Patrick. In the second round, Patrick knocked down twice as many pins as Richard in the first round and Richard knocked down 3 less than Patrick. How many more pins in total did Richard knock down than Patrick?
+"""
+
+answer = """
+In the first round, Richard knocked down 70 + 15 = <<70+15=85>>85 pins.
+In the second round, Patrick knocked down 85 x 2 = <<85*2=170>>170 pins.
+In the second round, Richard knocked down 170 - 3 = <<170-3=167>>167 pins.
+In total, Patrick knocked down 70 + 170 = <<70+170=240>>240 pins
+In total, Richard knocked down 85 + 167 = <<85+167=252>>252 pins
+Richard knocked down 252 - 240 = <<252-240=12>>12 pins more than Patrick.
+#### 12
+"""
+
+id_orig = 2120
+id_shuffled = 2449
+
+question_annotated = """
+In the first round of bowling, {p,Patrick} knocked down a total of {pins,70} pins and {r,Richard} knocked down {more,15} more pins than {p,Patrick}. In the second round, {p,Patrick} knocked down twice as many pins as {r,Richard} in the first round and {r,Richard} knocked down {less,3} less than {p,Patrick}. How many more pins in total did {r,Richard} knock down than {p,Patrick}?
+
+#init:
+- p = sample(["Patrick", "Chris", "Oliver", "Noah", "Eric"])
+- r = sample(["Richard", "Jason", "Carl", "William", "Tyler"])
+- $pins = range(10, 210, 2)
+- $more = range(4, 60)
+- $less = range(1, 10)
+
+#conditions:
+- more > less
+
+#answer: more - less
+"""
+
+answer_annotated = """
+In the first round, {r} knocked down {pins} + {more} = <<{pins}+{more}={pins+more}>>{pins+more} pins.
+In the second round, {p} knocked down {pins+more} x 2 = <<{pins+more}*2={(pins+more)*2}>>{(pins+more)*2} pins.
+In the second round, {r} knocked down {(pins+more)*2} - {less} = <<{(pins+more)*2}-{less}={(pins+more)*2-less}>>{(pins+more)*2-less} pins.
+In total, {p} knocked down {pins} + {(pins+more)*2} = <<{pins}+{(pins+more)*2}={pins+(pins+more)*2}>>{pins+(pins+more)*2} pins
+In total, {r} knocked down {pins+more} + {(pins+more)*2-less} = <<{pins+more}+{(pins+more)*2-less}={pins+more+(pins+more)*2-less}>>{pins+more+(pins+more)*2-less} pins
+{r} knocked down {pins+more+(pins+more)*2-less} - {pins+(pins+more)*2} = <<{pins+more+(pins+more)*2-less}-{pins+(pins+more)*2}={more-less}>>{more-less} pins more than {p}.
+#### {more-less}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

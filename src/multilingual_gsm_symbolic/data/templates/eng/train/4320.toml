@@ -1,0 +1,40 @@
+question = """
+Martin went to a store to buy a new television set. He decided to spend no more than $1,000 and the sales clerk offered him the TV for $100 less and an additional 20% off. How much lower was the price of the television than the amount Martin decided to spend?
+"""
+
+answer = """
+The seller has offered him the TV for 1000 - 100 = $<<1000-100=900>>900.
+The discount on the television was 900 * 20/100 = $<<900*20/100=180>>180.
+The final price of the television is therefore 900 - 180 = $<<900-180=720>>720.
+Martin was able to save 1000 - 720 = $<<1000-720=280>>280.
+#### 280
+"""
+
+id_orig = 3650
+id_shuffled = 4320
+
+question_annotated = """
+{name,Martin} went to a store to buy a new television set. He decided to spend no more than $1,000 and the sales clerk offered him the TV for ${d,100} less and an additional {p,20}% off. How much lower was the price of the television than the amount {name,Martin} decided to spend?
+
+#init:
+- name = sample(["Martin", "Chris", "Oliver", "Noah", "Eric"])
+- $d = range(10, 310, 5)
+- $p = range(5, 55, 5)
+
+#conditions:
+- divides((1000 - d) * p, 100)
+
+#answer: d + (1000 - d) * p // 100
+"""
+
+answer_annotated = """
+The seller has offered him the TV for 1000 - {d} = $<<1000-{d}={1000-d}>>{1000-d}.
+The discount on the television was {1000-d} * {p}/100 = $<<{1000-d}*{p}/100={(1000-d)*p//100}>>{(1000-d)*p//100}.
+The final price of the television is therefore {1000-d} - {(1000-d)*p//100} = $<<{1000-d}-{(1000-d)*p//100}={(1000-d)-((1000-d)*p//100)}>>{(1000-d)-((1000-d)*p//100)}.
+{name} was able to save 1000 - {(1000-d)-((1000-d)*p//100)} = $<<1000-{(1000-d)-((1000-d)*p//100)}={d+(1000-d)*p//100}>>{d+(1000-d)*p//100}.
+#### {d+(1000-d)*p//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

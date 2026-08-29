@@ -1,0 +1,37 @@
+question = """
+Porter is a painter who creates beautiful paintings of wild animals.  Most recently, he painted a mural of a pack of wolves standing on a snowy-white mountainside underneath a full moon.  He put the painting up for auction and it sold for $1000 less than five times more than he had made on his previous painting.  If he received $44,000 for the sale of his most recent painting, how much, in dollars, did he make for selling his previous painting?
+"""
+
+answer = """
+If $44,000 is $1000 less than five times more than he had made on his previous painting, then $44,000+$1000 = $45,000 is five times what he made on his previous painting.
+If $45,000 is five times what he made for his previous painting, then he made $45,000/5 = $<<45000/5=9000>>9,000 for selling his previous painting.
+#### 9,000
+"""
+
+id_orig = 3311
+id_shuffled = 3936
+
+question_annotated = """
+{name,Porter} is a painter who creates beautiful paintings of wild animals.  Most recently, he painted a mural of a pack of wolves standing on a snowy-white mountainside underneath a full moon.  He put the painting up for auction and it sold for ${less,1000} less than {times_txt,five times} more than he had made on his previous painting.  If he received ${tk,44},000 for the sale of his most recent painting, how much, in dollars, did he make for selling his previous painting?
+
+#init:
+- name = sample(names_male)
+- times_txt, k = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $less = range(1000, 11000, 1000)
+- $tk = range(20, 202, 2)
+
+#conditions:
+- is_int((tk*1000 + less)/(k*1000))
+
+#answer: (tk*1000 + less)//k
+"""
+
+answer_annotated = """
+If ${tk},000 is ${less} less than {times_txt} more than he had made on his previous painting, then ${tk},000+${less} = ${(tk*1000 + less)//1000},000 is {times_txt} what he made on his previous painting.
+If ${(tk*1000 + less)//1000},000 is {times_txt} what he made for his previous painting, then he made ${(tk*1000 + less)//1000},000/{k} = $<<{tk*1000 + less}/{k}={(tk*1000 + less)//k}>>{(tk*1000 + less)//(k*1000)},000 for selling his previous painting.
+#### {(tk*1000 + less)//(k*1000)},000
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

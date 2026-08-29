@@ -1,0 +1,49 @@
+question = """
+The basketball team sold 50 cupcakes for $2 each and 40 cookies for $0.5 each. Then the money from their sales was used to buy two basketballs that cost $40 each. The rest of the money was used to buy 20 bottles of energy drinks. How much does a bottle of energy drink cost?
+"""
+
+answer = """
+The basketball team earned 50 x $2 = $<<50*2=100>>100 from selling cupcakes.
+They also earned 40 x 0.5 = $<<40*0.5=20>>20 from selling cookies.
+So their total earnings was $100 + $20 = $<<100+20=120>>120.
+The two basketballs cost $40 x 2 = $<<40*2=80>>80.
+Thus, $120 - $80 = $<<120-80=40>>40 was used to buy the 20 bottles of energy drinks.
+Therefore, each bottle of energy drink costs $40/20 = $<<40/20=2>>2.
+#### 2
+"""
+
+id_orig = 2132
+id_shuffled = 2461
+
+question_annotated = """
+The basketball team sold {cup,50} cupcakes for ${pcup,2} each and {cook,40} cookies for ${pcook,0.5} each. Then the money from their sales was used to buy {balls_txt,two} basketballs that cost ${pball,40} each. The rest of the money was used to buy {bott,20} bottles of energy drinks. How much does a bottle of energy drink cost?
+
+#init:
+- $cup = range(10, 60, 10)
+- $pcup = range(1, 6)
+- $cook = range(20, 70, 10)
+- $pcook = sample([0.5])
+- balls_txt, balls = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- $pball = range(20, 90, 10)
+- $bott = range(10, 60, 10)
+
+#conditions:
+- cup * pcup + cook * pcook > balls * pball
+- is_int((cup * pcup + cook * pcook - balls * pball) / bott)
+
+#answer: int((cup * pcup + cook * pcook - balls * pball) / bott)
+"""
+
+answer_annotated = """
+The basketball team earned {cup} x ${pcup} = $<<{cup}*{pcup}={cup*pcup}>>{cup*pcup} from selling cupcakes.
+They also earned {cook} x {pcook} = $<<{cook}*{pcook}={int(cook*pcook)}>>{int(cook*pcook)} from selling cookies.
+So their total earnings was ${cup*pcup} + ${int(cook*pcook)} = $<<{cup*pcup}+{int(cook*pcook)}={int(cup*pcup + cook*pcook)}>>{int(cup*pcup + cook*pcook)}.
+The {balls_txt} basketballs cost ${pball} x {balls} = $<<{pball}*{balls}={pball*balls}>>{pball*balls}.
+Thus, ${int(cup*pcup + cook*pcook)} - ${pball*balls} = $<<{int(cup*pcup + cook*pcook)}-{pball*balls}={int(cup*pcup + cook*pcook - pball*balls)}>>{int(cup*pcup + cook*pcook - pball*balls)} was used to buy the {bott} bottles of energy drinks.
+Therefore, each bottle of energy drink costs ${int(cup*pcup + cook*pcook - pball*balls)}/{bott} = $<<{int(cup*pcup + cook*pcook - pball*balls)}/{bott}={int((cup*pcup + cook*pcook - pball*balls)/bott)}>>{int((cup*pcup + cook*pcook - pball*balls)/bott)}.
+#### {int((cup*pcup + cook*pcook - pball*balls)/bott)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,50 @@
+question = """
+Toby, the Alaskan Malamute, can pull a sled at a speed of 20 miles per hour if the sled is unloaded, but he pulls the same sled at a speed of 10 miles per hour if the sled is fully loaded.  If Toby takes a continuous 4-part journey, first pulling the loaded sled for 180 miles, then pulling the unloaded sled for 120 miles, then pulling the loaded sled 80 miles, and finally, pulling the unloaded sled another 140 miles, how many hours in total will Toby spend pulling the sled?
+"""
+
+answer = """
+Pulling a loaded sled at 10 mph for 180 miles takes 180/10=<<180/10=18>>18 hours
+Pulling an unloaded sled at 20 mph for 120 miles takes 120/20=<<120/20=6>>6 hours
+Pulling a loaded sled at 10 mph for 80 miles takes 80/10=<<80/10=8>>8 hours
+Pulling an unloaded sled at 20 mph for 140 miles takes 140/20=<<140/20=7>>7 hours
+In total, Toby will have pulled the sled for 18+6+8+7=<<18+6+8+7=39>>39 hours
+#### 39
+"""
+
+id_orig = 2177
+id_shuffled = 2515
+
+question_annotated = """
+{name,Toby}, the Alaskan Malamute, can pull a sled at a speed of {v_u,20} miles per hour if the sled is unloaded, but he pulls the same sled at a speed of {v_l,10} miles per hour if the sled is fully loaded.  If {name,Toby} takes a continuous 4-part journey, first pulling the loaded sled for {d1,180} miles, then pulling the unloaded sled for {d2,120} miles, then pulling the loaded sled {d3,80} miles, and finally, pulling the unloaded sled another {d4,140} miles, how many hours in total will {name,Toby} spend pulling the sled?
+
+#init:
+- name = sample(names_male)
+- $v_u = sample([15, 20])
+- $v_l = sample([5, 10])
+- $d1 = range(100, 201, 20)
+- $d2 = range(60, 161, 20)
+- $d3 = range(60, 161, 20)
+- $d4 = range(80, 181, 20)
+
+#conditions:
+- v_l < v_u
+- divides(d1, v_l)
+- divides(d2, v_u)
+- divides(d3, v_l)
+- divides(d4, v_u)
+
+#answer: d1//v_l + d2//v_u + d3//v_l + d4//v_u
+"""
+
+answer_annotated = """
+Pulling a loaded sled at {v_l} mph for {d1} miles takes {d1}/{v_l}=<<{d1}/{v_l}={d1//v_l}>>{d1//v_l} hours
+Pulling an unloaded sled at {v_u} mph for {d2} miles takes {d2}/{v_u}=<<{d2}/{v_u}={d2//v_u}>>{d2//v_u} hours
+Pulling a loaded sled at {v_l} mph for {d3} miles takes {d3}/{v_l}=<<{d3}/{v_l}={d3//v_l}>>{d3//v_l} hours
+Pulling an unloaded sled at {v_u} mph for {d4} miles takes {d4}/{v_u}=<<{d4}/{v_u}={d4//v_u}>>{d4//v_u} hours
+In total, {name} will have pulled the sled for {d1//v_l}+{d2//v_u}+{d3//v_l}+{d4//v_u}=<<{d1//v_l}+{d2//v_u}+{d3//v_l}+{d4//v_u}={d1//v_l+d2//v_u+d3//v_l+d4//v_u}>>{d1//v_l+d2//v_u+d3//v_l+d4//v_u} hours
+#### {d1//v_l + d2//v_u + d3//v_l + d4//v_u}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

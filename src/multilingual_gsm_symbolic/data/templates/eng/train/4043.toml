@@ -1,0 +1,51 @@
+question = """
+The price of electricity went up by 25%.  John's old computer used 800 watts and his new computer uses 50% more.  If the old price of electricity was 12 cents per kilowatt-hour, how much does his computer cost, in dollars, to run for 50 hours?
+"""
+
+answer = """
+His new computer uses 800*.5=<<800*.5=400>>400 watts more than his old computer
+So it users 800+400=<<800+400=1200>>1200 watts
+That is 1200/1000=<<1200/1000=1.2>>1.2 kw
+Electricity cost 12*.25=<<12*.25=3>>3 cents more than it used to
+So it now cost 12+3=<<12+3=15>>15 cents per kwh
+He used 1.2*50=<<1.2*50=60>>60 kwh
+So he paid 15*60=<<900=900>>900 cents per kwh
+So he paid 900/100=$<<900/100=9>>9
+#### 9
+"""
+
+id_orig = 3408
+id_shuffled = 4043
+
+question_annotated = """
+The price of electricity went up by 25%.  {name,John}'s old computer used {w,800} watts and his new computer uses 50% more.  If the old price of electricity was {p,12} cents per kilowatt-hour, how much does his computer cost, in dollars, to run for {h,50} hours?
+
+#init:
+- name = sample(names_male)
+- $w = range(200, 2000, 200)
+- $p = range(4, 124, 4)
+- $h = range(50, 51)
+
+#conditions:
+- divides((w + w//2) * h, 1000)
+- divides(p * 25, 100)
+- divides((p + p*25//100) * ((w + w//2) * h // 1000), 100)
+
+#answer: (p + p*25//100) * ((w + w//2) * h // 1000) // 100
+"""
+
+answer_annotated = """
+His new computer uses {w}*.5=<<{w}*.5={w//2}>>{w//2} watts more than his old computer
+So it users {w}+{w//2}=<<{w}+{w//2}={w+w//2}>>{w+w//2} watts
+That is {w+w//2}/1000=<<{w+w//2}/1000={(w+w//2)/1000}>>{(w+w//2)/1000} kw
+Electricity cost {p}*.25=<<{p}*.25={p*25//100}>>{p*25//100} cents more than it used to
+So it now cost {p}+{p*25//100}=<<{p}+{p*25//100}={p+p*25//100}>>{p+p*25//100} cents per kwh
+He used {(w+w//2)/1000}*{h}=<<{(w+w//2)/1000}*{h}={int((w+w//2)*h/1000)}>>{int((w+w//2)*h/1000)} kwh
+So he paid {p+p*25//100}*{int((w+w//2)*h/1000)}=<<{(p + p*25//100) * ((w + w//2) * h // 1000)}={(p + p*25//100) * ((w + w//2) * h // 1000)}>>{(p + p*25//100) * ((w + w//2) * h // 1000)} cents per kwh
+So he paid {(p + p*25//100) * ((w + w//2) * h // 1000)}/100=$<<{(p + p*25//100) * ((w + w//2) * h // 1000)}/100={(p + p*25//100) * ((w + w//2) * h // 1000) // 100}>>{(p + p*25//100) * ((w + w//2) * h // 1000) // 100}
+#### {(p + p*25//100) * ((w + w//2) * h // 1000) // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

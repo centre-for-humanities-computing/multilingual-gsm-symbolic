@@ -1,0 +1,48 @@
+question = """
+Haily wants to go to the salon and do her nails, cut her hair and do a facial cleaning. She doesn't want to spend much, so she called 3 salons to get their prices: Gustran Salon, Barbara's Shop, and The Fancy Salon. At Gustran Salon, the haircut is $45, the facial cleaning is $22 and the nails are $30. At Barbara's shop, the nails are $40, the haircut is $30 and the facial cleaning is $28. And, at the Fancy Salon, the facial cleaning is $30, the haircut is $34 and the nails are $20. How much would Haily spend at the cheapest salon?
+"""
+
+answer = """
+So first, we should add the prices of all salons. At Gustran Salon, the total price is: $45 + $22 + $30 = $<<45+22+30=97>>97
+The total price at Barbara's shop is: $40 + $30 + $28 = $<<40+30+28=98>>98
+The total price at The Fancy Salon is: $30 + $34 + $20 = $<<30+34+20=84>>84
+At Gustran salon she would spend $97, at Barbara's Shop she would spend $98, and at The Fancy Salon she would spend $84, so she would spend $84 at the cheapest salon.
+#### 84
+"""
+
+id_orig = 3634
+id_shuffled = 4292
+
+question_annotated = """
+{name,Haily} wants to go to the salon and do her nails, cut her hair and do a facial cleaning. She doesn't want to spend much, so she called 3 salons to get their prices: Gustran Salon, Barbara's Shop, and The Fancy Salon. At Gustran Salon, the haircut is ${gh,45}, the facial cleaning is ${gf,22} and the nails are ${gn,30}. At Barbara's shop, the nails are ${bn,40}, the haircut is ${bh,30} and the facial cleaning is ${bf,28}. And, at the Fancy Salon, the facial cleaning is ${ff,30}, the haircut is ${fh,34} and the nails are ${fn,20}. How much would {name,Haily} spend at the cheapest salon?
+
+#init:
+- name = sample(names_female)
+- $gh = sample([15, 25, 35, 45])
+- $gf = sample([12, 22, 32, 42])
+- $gn = range(10, 50, 10)
+- $bn = range(10, 50, 10)
+- $bh = range(10, 50, 10)
+- $bf = sample([8, 18, 28, 38])
+- $ff = range(10, 50, 10)
+- $fh = sample([14, 24, 34, 44])
+- $fn = range(10, 50, 10)
+
+#conditions:
+- gh + gf + gn > ff + fh + fn
+- bn + bh + bf > ff + fh + fn
+
+#answer: ff + fh + fn
+"""
+
+answer_annotated = """
+So first, we should add the prices of all salons. At Gustran Salon, the total price is: ${gh} + ${gf} + ${gn} = $<<{gh}+{gf}+{gn}={gh+gf+gn}>>{gh+gf+gn}
+The total price at Barbara's shop is: ${bn} + ${bh} + ${bf} = $<<{bn}+{bh}+{bf}={bn+bh+bf}>>{bn+bh+bf}
+The total price at The Fancy Salon is: ${ff} + ${fh} + ${fn} = $<<{ff}+{fh}+{fn}={ff+fh+fn}>>{ff+fh+fn}
+At Gustran salon she would spend ${gh+gf+gn}, at Barbara's Shop she would spend ${bn+bh+bf}, and at The Fancy Salon she would spend ${ff+fh+fn}, so she would spend ${ff+fh+fn} at the cheapest salon.
+#### {ff+fh+fn}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Tara is saving up to buy a new clarinet. She already has $10 saved. The clarinet costs $90. She plans to sell her old books to make the money. She sells each book of hers for $5. However, when she is halfway towards her goal, she loses all her savings and has to start over. How many books does she sell in total by the time she reaches her goal?
+"""
+
+answer = """
+Halfway towards her goal is $45 because 90 / 2 = <<90/2=45>>45
+She sells $35 worth of books before she loses the money because 45 - 10 = <<45-10=35>>35
+She sells 7 books before losing her money because 35 / 7 = <<35/7=5>>5
+She then sells 18 books because 90 / 5 = <<90/5=18>>18
+She sells 25 books in total because 18 + 7 = <<18+7=25>>25
+#### 25
+"""
+
+id_orig = 2000
+id_shuffled = 2318
+
+question_annotated = """
+{name,Tara} is saving up to buy a new clarinet. She already has ${s,10} saved. The clarinet costs ${c,90}. She plans to sell her old books to make the money. She sells each book of hers for ${p,5}. However, when she is halfway towards her goal, she loses all her savings and has to start over. How many books does she sell in total by the time she reaches her goal?
+
+#init:
+- name = sample(names_female)
+- $s = range(2, 62, 2)
+- $c = range(40, 240, 2)
+- $p = range(2, 12)
+
+#conditions:
+- divides(c, 2)
+- divides(c, p)
+- c//2 - s >= p
+- divides(c//2 - s, p)
+
+#answer: c//p + (c//2 - s)//p
+"""
+
+answer_annotated = """
+Halfway towards her goal is ${c//2} because {c} / 2 = <<{c}/2={c//2}>>{c//2}
+She sells ${c//2 - s} worth of books before she loses the money because {c//2} - {s} = <<{c//2}-{s}={c//2 - s}>>{c//2 - s}
+She sells {(c//2 - s)//p} books before losing her money because {c//2 - s} / {(c//2 - s)//p} = <<{c//2 - s}/{(c//2 - s)//p}={p}>>{p}
+She then sells {c//p} books because {c} / {p} = <<{c}/{p}={c//p}>>{c//p}
+She sells {c//p + (c//2 - s)//p} books in total because {c//p} + {(c//2 - s)//p} = <<{c//p}+{(c//2 - s)//p}={c//p + (c//2 - s)//p}>>{c//p + (c//2 - s)//p}
+#### {c//p + (c//2 - s)//p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

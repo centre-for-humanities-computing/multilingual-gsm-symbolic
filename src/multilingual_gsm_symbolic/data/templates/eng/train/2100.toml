@@ -1,0 +1,41 @@
+question = """
+Carolyn wants to embroider her new jeans. She can sew 4 stitches/minute. A flower takes 60 stitches to embroider, a unicorn takes 180 stitches, and Godzilla takes 800 stitches. If Carolyn wants to embroider Godzilla crushing 3 unicorns and 50 flowers, how many minutes does she need to spend embroidering?
+"""
+
+answer = """
+First find the total stitches in all the flowers by multiplying the number of stitches per flower by the number of flowers: 50 flowers * 60 stitches/flower = <<50*60=3000>>3000 stitches
+Then do the same for the total number of stitches in the unicorns: 3 unicorns * 180 stitches/unicorn = <<3*180=540>>540 stitches
+Then add the number of stitches for all the flowers, unicorns, and Godzilla to find the total number of stitches: 800 stitches + 540 stitches + 3000 stitches = <<800+540+3000=4340>>4340 stitches
+Finally, divide the total number of stitches by the number of stitches Carolyn can make per hour to find how many hours she spends embroidering: 4340 stitches / 4 stitches/minute = <<4340/4=1085>>1085 minutes
+#### 1085
+"""
+
+id_orig = 1866
+id_shuffled = 2100
+
+question_annotated = """
+{name,Carolyn} wants to embroider her new jeans. She can sew {rate,4} stitches/minute. A flower takes 60 stitches to embroider, a unicorn takes 180 stitches, and Godzilla takes 800 stitches. If {name,Carolyn} wants to embroider Godzilla crushing {nu,3} unicorns and {nf,50} flowers, how many minutes does she need to spend embroidering?
+
+#init:
+- name = sample(names_female)
+- $rate = range(2, 22)
+- $nu = range(2, 12)
+- $nf = range(2, 102)
+
+#conditions:
+- divides(800 + nu*180 + nf*60, rate)
+
+#answer: (800 + nu*180 + nf*60)//rate
+"""
+
+answer_annotated = """
+First find the total stitches in all the flowers by multiplying the number of stitches per flower by the number of flowers: {nf} flowers * 60 stitches/flower = <<{nf}*60={nf*60}>>{nf*60} stitches
+Then do the same for the total number of stitches in the unicorns: {nu} unicorns * 180 stitches/unicorn = <<{nu}*180={nu*180}>>{nu*180} stitches
+Then add the number of stitches for all the flowers, unicorns, and Godzilla to find the total number of stitches: 800 stitches + {nu*180} stitches + {nf*60} stitches = <<800+{nu*180}+{nf*60}={800+nu*180+nf*60}>>{800+nu*180+nf*60} stitches
+Finally, divide the total number of stitches by the number of stitches {name} can make per hour to find how many hours she spends embroidering: {800+nu*180+nf*60} stitches / {rate} stitches/minute = <<{800+nu*180+nf*60}/{rate}={(800+nu*180+nf*60)//rate}>>{(800+nu*180+nf*60)//rate} minutes
+#### {(800+nu*180+nf*60)//rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

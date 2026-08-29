@@ -1,0 +1,45 @@
+question = """
+Tim host a show and they film multiple episodes per day.  Each episode is 20 minutes long and it takes 50% longer than that to film each episode.  Each week they show 5 episodes.  How many hours would it take to film 4 weeks of episodes?
+"""
+
+answer = """
+Each episode takes 20*.5=<<20*.5=10>>10 minutes longer to film than it is
+So it takes 20+10=<<20+10=30>>30 minutes
+They are filming 5*4=<<5*4=20>>20 episodes
+So it takes 20*30=<<20*30=600>>600 minutes
+This is equivalent to 600 / 60 = <<600/60=10>>10 hours
+#### 10
+"""
+
+id_orig = 2853
+id_shuffled = 3401
+
+question_annotated = """
+{name,Tim} host a show and they film multiple episodes per day.  Each episode is {ep_len,20} minutes long and it takes {pct,50}% longer than that to film each episode.  Each week they show {eps_wk,5} episodes.  How many hours would it take to film {wks,4} weeks of episodes?
+
+#init:
+- name = sample(names_male)
+- $ep_len = range(10, 62, 2)
+- $pct = range(10, 100, 10)
+- $eps_wk = range(3, 8)
+- $wks = range(2, 6)
+
+#conditions:
+- divides(ep_len * pct, 100)
+- divides(eps_wk * wks * (ep_len + ep_len * pct // 100), 60)
+
+#answer: eps_wk * wks * (ep_len + ep_len * pct // 100) // 60
+"""
+
+answer_annotated = """
+Each episode takes {ep_len}*.{pct//10}=<<{ep_len}*.{pct//10}={ep_len*pct//100}>>{ep_len*pct//100} minutes longer to film than it is
+So it takes {ep_len}+{ep_len*pct//100}=<<{ep_len}+{ep_len*pct//100}={ep_len+ep_len*pct//100}>>{ep_len+ep_len*pct//100} minutes
+They are filming {eps_wk}*{wks}=<<{eps_wk}*{wks}={eps_wk*wks}>>{eps_wk*wks} episodes
+So it takes {eps_wk*wks}*{ep_len+ep_len*pct//100}=<<{eps_wk*wks}*{ep_len+ep_len*pct//100}={eps_wk*wks*(ep_len+ep_len*pct//100)}>>{eps_wk*wks*(ep_len+ep_len*pct//100)} minutes
+This is equivalent to {eps_wk*wks*(ep_len+ep_len*pct//100)} / 60 = <<{eps_wk*wks*(ep_len+ep_len*pct//100)}/60={eps_wk*wks*(ep_len+ep_len*pct//100)//60}>>{eps_wk*wks*(ep_len+ep_len*pct//100)//60} hours
+#### {eps_wk*wks*(ep_len+ep_len*pct//100)//60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

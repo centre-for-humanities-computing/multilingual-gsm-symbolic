@@ -1,0 +1,47 @@
+question = """
+Dolly wants to ride the Ferris wheel twice, the roller coaster three times, and the log ride seven times. The Ferris wheel costs 2 tickets, the roller coaster costs 5 tickets and the log ride costs 1 ticket. Dolly has 20 tickets. How many more tickets should Dolly buy?
+"""
+
+answer = """
+It costs 2 rides x 2 tickets/ride = <<2*2=4>>4 tickets to ride the Ferris wheel twice.
+It costs 3 rides x 5 tickets/ride = <<3*5=15>>15 tickets to ride the roller coaster three times.
+It costs 7 rides x 1 ticket/ride = <<7*1=7>>7 tickets to ride the roller coaster seven times.
+In total Dolly needs 4 tickets + 15 tickets + 7 tickets = <<4+15+7=26>>26 tickets.
+Dolly needs to buy 26 tickets - 20 tickets = <<26-20=6>>6 more tickets.
+#### 6
+"""
+
+id_orig = 2841
+id_shuffled = 3389
+
+question_annotated = """
+{name,Dolly} wants to ride the Ferris wheel {fw_txt,twice}, the roller coaster {rc_txt,three} times, and the log ride {lr_txt,seven} times. The Ferris wheel costs {cf,2} tickets, the roller coaster costs {cc,5} tickets and the log ride costs {lc,1} ticket. {name,Dolly} has {t,20} tickets. How many more tickets should {name,Dolly} buy?
+
+#init:
+- name = sample(["Dolly", "Emma", "Sophie", "Abby"])
+- fw_txt, fw = sample([("twice", 2), ("thrice", 3), ("four times", 4)])
+- $cf = range(1, 4)
+- rc_txt, rc = sample([("three", 3), ("four", 4), ("five", 5)])
+- $cc = range(3, 8)
+- lr_txt, lr = sample([("seven", 7), ("eight", 8), ("nine", 9)])
+- $lc = range(1, 4)
+- $t = range(10, 61, 5)
+
+#conditions:
+- fw*cf + rc*cc + lr*lc > t
+
+#answer: fw*cf + rc*cc + lr*lc - t
+"""
+
+answer_annotated = """
+It costs {fw} rides x {cf} tickets/ride = <<{fw}*{cf}={fw*cf}>>{fw*cf} tickets to ride the Ferris wheel {fw_txt}.
+It costs {rc} rides x {cc} tickets/ride = <<{rc}*{cc}={rc*cc}>>{rc*cc} tickets to ride the roller coaster {rc_txt} times.
+It costs {lr} rides x {lc} ticket/ride = <<{lr}*{lc}={lr*lc}>>{lr*lc} tickets to ride the roller coaster {lr_txt} times.
+In total {name} needs {fw*cf} tickets + {rc*cc} tickets + {lr*lc} tickets = <<{fw*cf}+{rc*cc}+{lr*lc}={fw*cf+rc*cc+lr*lc}>>{fw*cf+rc*cc+lr*lc} tickets.
+{name} needs to buy {fw*cf+rc*cc+lr*lc} tickets - {t} tickets = <<{fw*cf+rc*cc+lr*lc}-{t}={fw*cf+rc*cc+lr*lc-t}>>{fw*cf+rc*cc+lr*lc-t} more tickets.
+#### {fw*cf + rc*cc + lr*lc - t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

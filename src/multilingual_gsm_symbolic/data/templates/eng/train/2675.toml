@@ -1,0 +1,43 @@
+question = """
+John needs to get a new seeing-eye dog.  The adoption fee cost $150 for an untrained dog.  It then takes 12 weeks of training which costs $250 a week.  After the training, she needs certification which costs $3000 but her insurance covers 90% of that.  What is her out-of-pocket cost?
+"""
+
+answer = """
+The training cost 250*12=$<<250*12=3000>>3000
+The insurance pays for 3000*.9=$<<3000*.9=2700>>2700 for certification
+That means she needs to pay 3000-2700=$<<3000-2700=300>>300
+So her total cost was 150+300+3000=$<<150+300+3000=3450>>3450
+#### 3450
+"""
+
+id_orig = 2327
+id_shuffled = 2675
+
+question_annotated = """
+{name,John} needs to get a new seeing-eye dog.  The adoption fee cost ${f,150} for an untrained dog.  It then takes {k,12} weeks of training which costs ${w,250} a week.  After the training, she needs certification which costs ${c,3000} but her insurance covers {p,90}% of that.  What is her out-of-pocket cost?
+
+#init:
+- name = sample(names_male)
+- $f = range(120, 220, 20)
+- $k = range(2, 14)
+- $w = range(40, 240, 20)
+- $c = range(2000, 5000, 500)
+- $p = range(50, 100, 10)
+
+#conditions:
+- divides(c * p, 100)
+
+#answer: f + w*k + c - c*p//100
+"""
+
+answer_annotated = """
+The training cost {w}*{k}=$<<{w}*{k}={w*k}>>{w*k}
+The insurance pays for {c}*.{p//10}=$<<{c}*.{p//10}={c*p//100}>>{c*p//100} for certification
+That means she needs to pay {c}-{c*p//100}=$<<{c}-{c*p//100}={c-c*p//100}>>{c-c*p//100}
+So her total cost was {f}+{c-c*p//100}+{c}=$<<{f}+{c-c*p//100}+{c}={f+w*k+c-c*p//100}>>{f+w*k+c-c*p//100}
+#### {f + w*k + c - c*p//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

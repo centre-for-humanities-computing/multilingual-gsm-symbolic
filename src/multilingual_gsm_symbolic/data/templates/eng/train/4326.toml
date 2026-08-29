@@ -1,0 +1,42 @@
+question = """
+A hand-crank pencil sharpener can sharpen one pencil every forty-five seconds. An electric version can sharpen one in twenty seconds. How many more pencils can the electric sharpener sharpen than the hand-crank sharpener in six minutes?
+"""
+
+answer = """
+A minute is 60 seconds, so 6 minutes is 6 * 60 = <<6*60=360>>360 seconds.
+A hand-crank sharpener can sharpen 360 / 45 = <<360/45=8>>8 pencils in 6 minutes.
+An electric sharpener can sharpen 360 / 20 = <<360/20=18>>18 pencils in 6 minutes.
+Therefore, an electric sharpener can sharpen 18 - 8 = <<18-8=10>>10 more pencils than a hand-crank in 6 minutes.
+#### 10
+"""
+
+id_orig = 3656
+id_shuffled = 4326
+
+question_annotated = """
+A hand-crank pencil sharpener can sharpen one pencil every {c_txt,forty-five} seconds. An electric version can sharpen one in {e_txt,twenty} seconds. How many more pencils can the electric sharpener sharpen than the hand-crank sharpener in {m_txt,six} minutes?
+
+#init:
+- c_txt, c = sample([("thirty", 30), ("thirty-six", 36), ("forty", 40), ("forty-five", 45), ("forty-eight", 48), ("fifty", 50), ("sixty", 60)])
+- e_txt, e = sample([("twelve", 12), ("fifteen", 15), ("sixteen", 16), ("twenty", 20), ("twenty-four", 24), ("twenty-five", 25), ("thirty", 30)])
+- m_txt, m = sample([("two", 2), ("four", 4), ("six", 6), ("eight", 8), ("ten", 10), ("twelve", 12), ("fourteen", 14), ("sixteen", 16), ("eighteen", 18), ("twenty", 20), ("twenty-two", 22), ("twenty-four", 24), ("twenty-six", 26), ("twenty-eight", 28), ("thirty", 30)])
+
+#conditions:
+- divides(m * 60, c)
+- divides(m * 60, e)
+- e < c
+
+#answer: m*60//e - m*60//c
+"""
+
+answer_annotated = """
+A minute is 60 seconds, so {m} minutes is {m} * 60 = <<{m}*60={m*60}>>{m*60} seconds.
+A hand-crank sharpener can sharpen {m*60} / {c} = <<{m*60}/{c}={m*60//c}>>{m*60//c} pencils in {m} minutes.
+An electric sharpener can sharpen {m*60} / {e} = <<{m*60}/{e}={m*60//e}>>{m*60//e} pencils in {m} minutes.
+Therefore, an electric sharpener can sharpen {m*60//e} - {m*60//c} = <<{m*60//e}-{m*60//c}={m*60//e-m*60//c}>>{m*60//e-m*60//c} more pencils than a hand-crank in {m} minutes.
+#### {m*60//e - m*60//c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

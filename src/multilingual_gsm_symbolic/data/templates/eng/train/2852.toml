@@ -1,0 +1,41 @@
+question = """
+The grocery store sells chips for $2 per packet and corn chips for $1.5 per packet. John would like to buy 15 packets of chips, and with the rest of the money he has left, buy as many packets of corn chips as he can. How many packets of corn chips could John buy if he has $45 for his entire purchase?
+"""
+
+answer = """
+John wants to buy 15 packets of chips, which will cost him 15 * 2 = $<<15*2=30>>30.
+So John would have 45 - 30 = $<<45-30=15>>15 left for the corn chips.
+John could buy for the rest of the money 15 / 1.5 = <<15/1.5=10>>10 packets of corn chips.
+#### 10
+"""
+
+id_orig = 2479
+id_shuffled = 2852
+
+question_annotated = """
+The grocery store sells chips for ${c,2} per packet and corn chips for ${d,1.5} per packet. {name,John} would like to buy {a,15} packets of chips, and with the rest of the money he has left, buy as many packets of corn chips as he can. How many packets of corn chips could {name,John} buy if he has ${m,45} for his entire purchase?
+
+#init:
+- name = sample(names_male)
+- $c = range(1, 6)
+- $d = sample([1.5, 2, 2.5, 3])
+- $a = range(5, 45)
+- $m = range(20, 200)
+
+#conditions:
+- m - a*c > 0
+- is_int((m - a*c)/d)
+
+#answer: int((m - a*c)/d)
+"""
+
+answer_annotated = """
+{name} wants to buy {a} packets of chips, which will cost him {a} * {c} = $<<{a}*{c}={a*c}>>{a*c}.
+So {name} would have {m} - {a*c} = $<<{m}-{a*c}={m-a*c}>>{m-a*c} left for the corn chips.
+{name} could buy for the rest of the money {m-a*c} / {d} = <<{m-a*c}/{d}={int((m-a*c)/d)}>>{int((m-a*c)/d)} packets of corn chips.
+#### {int((m-a*c)/d)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+Jan buys 1000 feet of cable.  She splits it up into 25-foot sections.  She gives 1/4 of that to a friend.  She then puts half of the rest in storage. How much does she keep on hand?
+"""
+
+answer = """
+She gets 1000/25=<<1000/25=40>>40 sections
+She gives away 40/4=<<40/4=10>>10 sections
+So she keeps 40-10=<<40-10=30>>30 sections
+She keeps 30/2=<<30/2=15>>15 sections on hand
+#### 15
+"""
+
+id_orig = 229
+id_shuffled = 254
+
+question_annotated = """
+{name,Jan} buys {f,1000} feet of cable.  She splits it up into {s,25}-foot sections.  She gives {fd,1/4} of that to a friend.  She then puts half of the rest in storage. How much does she keep on hand?
+
+#init:
+- name = sample(names_female)
+- fd, d = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5)])
+- $f = range(400, 2000, 20)
+- $s = range(10, 110, 5)
+
+#conditions:
+- divides(f, s)
+- divides(f//s, d)
+- is_int((f//s - f//s//d)/2)
+
+#answer: ((f//s) - (f//s//d))//2
+"""
+
+answer_annotated = """
+She gets {f}/{s}=<<{f}/{s}={f//s}>>{f//s} sections
+She gives away {f//s}/{d}=<<{f//s}/{d}={f//s//d}>>{f//s//d} sections
+So she keeps {f//s}-{f//s//d}=<<{f//s}-{f//s//d}={f//s-f//s//d}>>{f//s-f//s//d} sections
+She keeps {f//s-f//s//d}/2=<<{f//s-f//s//d}/2={(f//s-f//s//d)//2}>>{(f//s-f//s//d)//2} sections on hand
+#### {((f//s)-(f//s//d))//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

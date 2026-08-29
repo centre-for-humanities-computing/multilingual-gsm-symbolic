@@ -1,0 +1,47 @@
+question = """
+Fern is checking IDs to get into an R-rated movie. She denied 20% of the 120 kids from Riverside High, 70% of the 90 kids from West Side High, and half the 50 kids from Mountaintop High. How many kids got into the movie?
+"""
+
+answer = """
+First find how many kids from Riverside High are rejected: 20% * 120 kids = <<20*.01*120=24>>24 kids
+Then find how many kids from West Side High are rejected: 70% * 90 kids = <<70*.01*90=63>>63 kids
+Then find how many kids from Mountaintop High are rejected: 50 kids / 2 = <<50/2=25>>25 kids
+Then add the number of kids from each school to find the total number of kids: 120 kids + 90 kids + 50 kids = <<120+90+50=260>>260 kids
+Then subtract all the kids who were rejected from the total number of kids to find the number who got in: 260 kids - 24 kids - 63 kids - 25 kids = <<260-24-63-25=148>>148 kids
+#### 148
+"""
+
+id_orig = 140
+id_shuffled = 158
+
+question_annotated = """
+{name,Fern} is checking IDs to get into an R-rated movie. She denied {p1,20}% of the {n1,120} kids from Riverside High, {p2,70}% of the {n2,90} kids from West Side High, and half the {n3,50} kids from Mountaintop High. How many kids got into the movie?
+
+#init:
+- name = sample(names_female)
+- $p1 = range(10, 100, 10)
+- $n1 = range(40, 240, 40)
+- $p2 = range(10, 100, 10)
+- $n2 = range(30, 210, 30)
+- $n3 = range(10, 110, 10)
+
+#conditions:
+- divides(p1*n1, 100)
+- divides(p2*n2, 100)
+- n1 + n2 + n3 - p1*n1//100 - p2*n2//100 - n3//2 > 0
+
+#answer: n1 + n2 + n3 - p1*n1//100 - p2*n2//100 - n3//2
+"""
+
+answer_annotated = """
+First find how many kids from Riverside High are rejected: {p1}% * {n1} kids = <<{p1}*.01*{n1}={p1*n1//100}>>{p1*n1//100} kids
+Then find how many kids from West Side High are rejected: {p2}% * {n2} kids = <<{p2}*.01*{n2}={p2*n2//100}>>{p2*n2//100} kids
+Then find how many kids from Mountaintop High are rejected: {n3} kids / 2 = <<{n3}/2={n3//2}>>{n3//2} kids
+Then add the number of kids from each school to find the total number of kids: {n1} kids + {n2} kids + {n3} kids = <<{n1}+{n2}+{n3}={n1+n2+n3}>>{n1+n2+n3} kids
+Then subtract all the kids who were rejected from the total number of kids to find the number who got in: {n1+n2+n3} kids - {p1*n1//100} kids - {p2*n2//100} kids - {n3//2} kids = <<{n1+n2+n3}-{p1*n1//100}-{p2*n2//100}-{n3//2}={n1+n2+n3-p1*n1//100-p2*n2//100-n3//2}>>{n1+n2+n3-p1*n1//100-p2*n2//100-n3//2} kids
+#### {n1+n2+n3-p1*n1//100-p2*n2//100-n3//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

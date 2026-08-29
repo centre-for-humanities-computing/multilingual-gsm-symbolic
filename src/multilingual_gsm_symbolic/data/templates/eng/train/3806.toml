@@ -1,0 +1,44 @@
+question = """
+On a Sunday morning, Josephine sold milk in the farm stall. The buyers brought their containers. She filled three containers with two liters each, two containers with 0.75 liters each, and five containers with 0.5 liters each. How many liters of milk did Josephine sell in total?
+"""
+
+answer = """
+Josephine filled a total of 2 x 3 = <<2*3=6>>6 liters from the three containers with two liters each.
+She filled a total of 0.75 x 2 = <<0.75*2=1.5>>1.5 liters from the two containers with 0.75 liters each.
+She filled a total of 0.5 x 5 = <<0.5*5=2.5>>2.5 liters from the five containers with 0.5 liters each.
+Therefore, she sold a total of 6 + 1.5 + 2.5 = <<6+1.5+2.5=10>>10 liters of milk.
+#### 10
+"""
+
+id_orig = 3207
+id_shuffled = 3806
+
+question_annotated = """
+On a {day,Sunday} morning, {name,Josephine} sold milk in the farm stall. The buyers brought their containers. She filled {n1_txt,three} containers with two liters each, {n2_txt,two} containers with 0.75 liters each, and {n3_txt,five} containers with 0.5 liters each. How many liters of milk did {name,Josephine} sell in total?
+
+#init:
+- name = sample(names_female)
+- day = sample(weekdays)
+- n1_txt, n1 = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9)])
+- n2_txt, n2 = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10)])
+- n3_txt, n3 = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11)])
+
+#conditions:
+- not divides(3 * n2, 4)
+- not divides(n3, 2)
+- divides(3 * n2 + 2 * n3, 4)
+
+#answer: int(2*n1 + 0.75*n2 + 0.5*n3)
+"""
+
+answer_annotated = """
+{name} filled a total of 2 x {n1} = <<2*{n1}={2*n1}>>{2*n1} liters from the {n1_txt} containers with two liters each.
+She filled a total of 0.75 x {n2} = <<0.75*{n2}={0.75*n2}>>{0.75*n2} liters from the {n2_txt} containers with 0.75 liters each.
+She filled a total of 0.5 x {n3} = <<0.5*{n3}={0.5*n3}>>{0.5*n3} liters from the {n3_txt} containers with 0.5 liters each.
+Therefore, she sold a total of {2*n1} + {0.75*n2} + {0.5*n3} = <<{2*n1}+{0.75*n2}+{0.5*n3}={int(2*n1 + 0.75*n2 + 0.5*n3)}>>{int(2*n1 + 0.75*n2 + 0.5*n3)} liters of milk.
+#### {int(2*n1 + 0.75*n2 + 0.5*n3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

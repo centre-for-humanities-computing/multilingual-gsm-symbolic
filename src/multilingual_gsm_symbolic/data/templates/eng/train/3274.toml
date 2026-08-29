@@ -1,0 +1,46 @@
+question = """
+John has to pay taxes.  He earned $100,000 for the year.  He has $30,000 in deductions.  The first $20,000 of taxable income is taxed at 10%.  The rest is taxed at 20%.  How much does he pay in taxes?
+"""
+
+answer = """
+His taxable income is 100,000-30,000=$<<100000-30000=70000>>70,000
+So he pays 20,000*.1=$<<20000*.1=2000>>2000 tax at the lower rate
+He has to pay 70,000-20,000=$<<70000-20000=50000>>50,000 at the higher rate
+The taxes for that is 50,000*.2=$<<50000*.2=10000>>10,000
+So his total tax bill is 10,000+2,000=$<<10000+2000=12000>>12,000
+#### 12000
+"""
+
+id_orig = 2693
+id_shuffled = 3274
+
+question_annotated = """
+{name,John} has to pay taxes.  He earned ${a,100},000 for the year.  He has ${b,30},000 in deductions.  The first ${c,20},000 of taxable income is taxed at {p1,10}%.  The rest is taxed at {q2,20}%.  How much does he pay in taxes?
+
+#init:
+- name = sample(names_male)
+- $a = range(100, 600, 50)
+- $b = range(10, 100, 10)
+- $c = range(10, 100, 10)
+- $p1 = range(10, 60, 10)
+- $q2 = range(20, 100, 10)
+
+#conditions:
+- b < a
+- c < a - b
+
+#answer: c*10*p1 + (a-b-c)*10*q2
+"""
+
+answer_annotated = """
+His taxable income is {a},000-{b},000=$<<{a*1000}-{b*1000}={(a-b)*1000}>>{a-b},000
+So he pays {c},000*.{p1//10}=$<<{c*1000}*.{p1//10}={c*10*p1}>>{c*10*p1} tax at the lower rate
+He has to pay {a-b},000-{c},000=$<<{(a-b)*1000}-{c*1000}={(a-b-c)*1000}>>{a-b-c},000 at the higher rate
+The taxes for that is {a-b-c},000*.{q2//10}=$<<{(a-b-c)*1000}*.{q2//10}={(a-b-c)*10*q2}>>{(a-b-c)*q2//100},000
+So his total tax bill is {(a-b-c)*q2//100},000+{c*p1//100},000=$<<{(a-b-c)*10*q2}+{c*10*p1}={(a-b-c)*10*q2+c*10*p1}>>{(a-b-c)*q2//100+c*p1//100},000
+#### {c*10*p1+(a-b-c)*10*q2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

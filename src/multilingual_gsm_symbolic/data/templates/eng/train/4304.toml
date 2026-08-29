@@ -1,0 +1,42 @@
+question = """
+Barney's grocery store sold out all of its items at the beginning of the pandemic, so they ordered extra items to restock the shelves. However, they ended up ordering far too much and have to keep the leftover items in the storeroom. If they ordered 4458 items, sold another 1561 items that day, and have 575 items in the storeroom, how many items do they have left in the whole store?
+"""
+
+answer = """
+Barney's grocery store started with 0 items + 4458 they ordered = <<0+4458=4458>>4458 items total.
+That day they sold 1561 items, so 4458 total - 1561 sold = <<4458-1561=2897>>2897 items.
+If there are 575 items in the storeroom, then there are 575 + 2897 = <<575+2897=3472>>3472 items in the whole store.
+#### 3,472
+"""
+
+id_orig = 3646
+id_shuffled = 4304
+
+question_annotated = """
+{name,Barney}'s grocery store sold out all of its items at the beginning of the pandemic, so they ordered extra items to restock the shelves. However, they ended up ordering far too much and have to keep the leftover items in the storeroom. If they ordered {o,4458} items, sold another {s,1561} items that day, and have {r,575} items in the storeroom, how many items do they have left in the whole store?
+
+#init:
+- name = sample(names_male)
+- $o = range(2458, 6458, 200)
+- $s = range(361, 2161, 200)
+- $r = range(75, 1075, 250)
+
+#conditions:
+- o > s
+- r + o - s >= 1000
+- r + o - s < 10000
+- (r + o - s) % 1000 >= 100
+
+#answer: str((r + o - s)//1000) + "," + str((r + o - s)%1000)
+"""
+
+answer_annotated = """
+{name}'s grocery store started with 0 items + {o} they ordered = <<0+{o}={o}>>{o} items total.
+That day they sold {s} items, so {o} total - {s} sold = <<{o}-{s}={o-s}>>{o-s} items.
+If there are {r} items in the storeroom, then there are {r} + {o-s} = <<{r}+{o-s}={r+o-s}>>{r+o-s} items in the whole store.
+#### {str((r + o - s)//1000) + "," + str((r + o - s)%1000)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

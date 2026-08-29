@@ -1,0 +1,40 @@
+question = """
+Page collects fancy shoes and has 80 pairs in her closet.  She decides to donate 30% of her collection that she no longer wears.  After dropping off her donation, she treats herself and buys 6 more pairs to add to her collection.  How many shoes does she have now?
+"""
+
+answer = """
+She donates 30% of her 80 pairs of shoes so that’s .30*80 = <<30*.01*80=24>>24 pair of shoes she donates
+She had 80 shoes in her collection and donates 24 so that leaves 80-24 = <<80-24=56>>56 pairs of shoes
+She now has 56 pairs of shoes and buys 6 more pairs so her collection is now 56+6 = <<56+6=62>>62 pairs of shoes
+#### 62
+"""
+
+id_orig = 2069
+id_shuffled = 2387
+
+question_annotated = """
+{name,Page} collects fancy shoes and has {p,80} pairs in her closet.  She decides to donate {r,30}% of her collection that she no longer wears.  After dropping off her donation, she treats herself and buys {b,6} more pairs to add to her collection.  How many shoes does she have now?
+
+#init:
+- name = sample(names_female)
+- $p = range(10, 310)
+- $r = range(5, 85, 5)
+- $b = range(2, 32)
+
+#conditions:
+- divides(r*p, 100)
+- int(r*.01*p) == r*p//100
+
+#answer: p - r*p//100 + b
+"""
+
+answer_annotated = """
+She donates {r}% of her {p} pairs of shoes so that’s .{r}*{p} = <<{r}*.01*{p}={r*p//100}>>{r*p//100} pair of shoes she donates
+She had {p} shoes in her collection and donates {r*p//100} so that leaves {p}-{r*p//100} = <<{p}-{r*p//100}={p-r*p//100}>>{p-r*p//100} pairs of shoes
+She now has {p-r*p//100} pairs of shoes and buys {b} more pairs so her collection is now {p-r*p//100}+{b} = <<{p-r*p//100}+{b}={p-r*p//100+b}>>{p-r*p//100+b} pairs of shoes
+#### {p-r*p//100+b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

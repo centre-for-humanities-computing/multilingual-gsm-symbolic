@@ -1,0 +1,46 @@
+question = """
+James is trying to avoid eating too much sodium. He's making a recipe that calls for 2 teaspoons of salt and 8 oz of parmesan cheese. Salt has 50 mg of sodium per teaspoon and parmesan has 25 mg of sodium per oz. If he can't reduce the salt, how many fewer ounces of parmesan cheese does he need to use to reduce the total amount of sodium by 1/3rd?
+"""
+
+answer = """
+First find how much sodium the parmesan has in total by multiply the amount of sodium per ounce by the number of oz: 25 mg/oz * 8 oz = <<25*8=200>>200 mg
+Then use the same process to find how much sodium is in the salt: 50 mg/tsp * 2 tsp = <<50*2=100>>100 mg
+Then find the total sodium in the recipe by adding the sodium from the cheese and the salt: 100 mg + 200 mg = <<100+200=300>>300 mg
+Then multiply the total amount of sodium by 1/3 to find how much less sodium James wants: 300 mg * 1/3 = <<300*1/3=100>>100 mg
+Then divide this amount by the amount of sodium per ounce of cheese to find how many fewer ounces of cheese he needs: 100 mg / 25 mg/oz = <<100/25=4>>4 oz
+#### 4
+"""
+
+id_orig = 2852
+id_shuffled = 3400
+
+question_annotated = """
+{name,James} is trying to avoid eating too much sodium. He's making a recipe that calls for {tsp,2} teaspoons of salt and {oz,8} oz of parmesan cheese. Salt has {ss,50} mg of sodium per teaspoon and parmesan has {ps,25} mg of sodium per oz. If he can't reduce the salt, how many fewer ounces of parmesan cheese does he need to use to reduce the total amount of sodium by 1/3rd?
+
+#init:
+- name = sample(names_male)
+- $tsp = range(2, 10)
+- $oz = range(2, 50)
+- $ss = range(10, 100, 5)
+- $ps = range(5, 55, 5)
+
+#conditions:
+- divides(ss*tsp + ps*oz, 3)
+- divides((ss*tsp + ps*oz)//3, ps)
+- (ss*tsp + ps*oz)//3//ps < oz
+
+#answer: (ss*tsp + ps*oz)//3//ps
+"""
+
+answer_annotated = """
+First find how much sodium the parmesan has in total by multiply the amount of sodium per ounce by the number of oz: {ps} mg/oz * {oz} oz = <<{ps}*{oz}={ps*oz}>>{ps*oz} mg
+Then use the same process to find how much sodium is in the salt: {ss} mg/tsp * {tsp} tsp = <<{ss}*{tsp}={ss*tsp}>>{ss*tsp} mg
+Then find the total sodium in the recipe by adding the sodium from the cheese and the salt: {ss*tsp} mg + {ps*oz} mg = <<{ss*tsp}+{ps*oz}={ss*tsp+ps*oz}>>{ss*tsp+ps*oz} mg
+Then multiply the total amount of sodium by 1/3 to find how much less sodium {name} wants: {(ss*tsp+ps*oz)} mg * 1/3 = <<{(ss*tsp+ps*oz)}*1/3={(ss*tsp+ps*oz)//3}>>{(ss*tsp+ps*oz)//3} mg
+Then divide this amount by the amount of sodium per ounce of cheese to find how many fewer ounces of cheese he needs: {(ss*tsp+ps*oz)//3} mg / {ps} mg/oz = <<{(ss*tsp+ps*oz)//3}/{ps}={(ss*tsp+ps*oz)//3//ps}>>{(ss*tsp+ps*oz)//3//ps} oz
+#### {(ss*tsp+ps*oz)//3//ps}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

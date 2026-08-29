@@ -1,0 +1,41 @@
+question = """
+Samira is the assistant coach of a soccer team playing against one of the best teams in their league. She has four dozen water bottles filled with water in a box. In the first break of the match, the 11 players on the field each take two bottles of water from Samira's box, and at the end of the game, take one more bottle each. How many bottles of water are remaining in Samira's box?
+"""
+
+answer = """
+If the box has four dozen bottles of water, there are 4*12 = <<4*12=48>>48 bottles of water in the box
+After the first half, the 11 players take 11*2 = <<11*2=22>>22 bottles of water from the box.
+If they take 11 more bottles of water at the end of the game, the number increases to 22+11 = 33 bottles of water taken
+Without the bottles taken, there are 48-33 =<<48-33=15>>15 bottles of water remaining in the box
+#### 15
+"""
+
+id_orig = 3528
+id_shuffled = 4175
+
+question_annotated = """
+{name,Samira} is the assistant coach of a soccer team playing against one of the best teams in their league. She has {txt,four} dozen water bottles filled with water in a box. In the first break of the match, the {p,11} players on the field each take {tk,two} bottles of water from {name,Samira}'s box, and at the end of the game, take one more bottle each. How many bottles of water are remaining in {name,Samira}'s box?
+
+#init:
+- name = sample(names_female)
+- txt, dz = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $p = range(6, 20)
+- tk, k = sample([("one", 1), ("two", 2), ("three", 3)])
+
+#conditions:
+- p * (k + 1) < dz * 12
+
+#answer: dz*12 - p*(k+1)
+"""
+
+answer_annotated = """
+If the box has {txt} dozen bottles of water, there are {dz}*12 = <<{dz}*12={dz*12}>>{dz*12} bottles of water in the box
+After the first half, the {p} players take {p}*{k} = <<{p}*{k}={p*k}>>{p*k} bottles of water from the box.
+If they take {p} more bottles of water at the end of the game, the number increases to {p*k}+{p} = {p*k+p} bottles of water taken
+Without the bottles taken, there are {dz*12}-{p*k+p} =<<{dz*12}-{p*k+p}={dz*12-(p*k+p)}>>{dz*12-(p*k+p)} bottles of water remaining in the box
+#### {dz*12 - p*(k+1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

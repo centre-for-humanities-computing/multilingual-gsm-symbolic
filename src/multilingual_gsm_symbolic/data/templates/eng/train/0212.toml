@@ -1,0 +1,46 @@
+question = """
+Madeline has 5 boxes with 24 crayons in each. She noticed that 5/8 of the crayons in the 2 boxes were not yet used. In the 2 other boxes, only 2/3 of the crayons were used while the last box was not entirely used. How many unused crayons did Madeline have?
+"""
+
+answer = """
+Two boxes of crayons have 24 x 5/8 = <<24*5/8=15>>15 unused crayons from each box.
+So, a total of 15 x 2 = <<15*2=30>>30 unused crayons are in the two boxes.
+For the other 2 boxes, there are 24 x 2/3 = <<24*2/3=16>>16 used crayons from each box.
+Hence, there are 24 - 16 = <<24-16=8>>8 unused crayons.
+So, a total of 8 x 2 = <<8*2=16>>16 unused crayons are in the other two boxes.
+Therefore, Madeline has a total of 30 + 16 + 24 = <<30+16+24=70>>70 unused crayons.
+#### 70
+"""
+
+id_orig = 187
+id_shuffled = 212
+
+question_annotated = """
+{name,Madeline} has 5 boxes with {c,24} crayons in each. She noticed that {f1_txt,5/8} of the crayons in the 2 boxes were not yet used. In the 2 other boxes, only {f2_txt,2/3} of the crayons were used while the last box was not entirely used. How many unused crayons did {name,Madeline} have?
+
+#init:
+- name = sample(names_female)
+- $c = range(10, 210)
+- f1_txt, n1, d1 = sample([("1/2", 1, 2), ("3/8", 3, 8), ("5/8", 5, 8), ("1/4", 1, 4), ("3/4", 3, 4)])
+- f2_txt, n2, d2 = sample([("1/3", 1, 3), ("2/3", 2, 3), ("1/4", 1, 4), ("1/6", 1, 6), ("5/6", 5, 6)])
+
+#conditions:
+- divides(c*n1, d1)
+- divides(c*n2, d2)
+
+#answer: c*n1//d1*2 + (c - c*n2//d2)*2 + c
+"""
+
+answer_annotated = """
+Two boxes of crayons have {c} x {f1_txt} = <<{c}*{n1}/{d1}={c*n1//d1}>>{c*n1//d1} unused crayons from each box.
+So, a total of {c*n1//d1} x 2 = <<{c*n1//d1}*2={c*n1//d1*2}>>{c*n1//d1*2} unused crayons are in the two boxes.
+For the other 2 boxes, there are {c} x {f2_txt} = <<{c}*{n2}/{d2}={c*n2//d2}>>{c*n2//d2} used crayons from each box.
+Hence, there are {c} - {c*n2//d2} = <<{c}-{c*n2//d2}={c-c*n2//d2}>>{c-c*n2//d2} unused crayons.
+So, a total of {c-c*n2//d2} x 2 = <<{c-c*n2//d2}*2={(c-c*n2//d2)*2}>>{(c-c*n2//d2)*2} unused crayons are in the other two boxes.
+Therefore, {name} has a total of {c*n1//d1*2} + {(c-c*n2//d2)*2} + {c} = <<{c*n1//d1*2}+{(c-c*n2//d2)*2}+{c}={c*n1//d1*2+(c-c*n2//d2)*2+c}>>{c*n1//d1*2+(c-c*n2//d2)*2+c} unused crayons.
+#### {c*n1//d1*2 + (c - c*n2//d2)*2 + c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

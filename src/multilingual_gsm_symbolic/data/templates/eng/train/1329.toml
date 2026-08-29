@@ -1,0 +1,44 @@
+question = """
+Wendy is a fruit vendor, and she sells an apple at $1.50 each and one orange at $1.  In the morning, she was able to sell an average of 40 apples and 30 oranges. In the afternoon, she was able to sell 50 apples and 40 oranges. How much are her total sales for the day?
+"""
+
+answer = """
+There were an average of 40 + 50 = <<40+50=90>>90 apples.
+And, there were 30 + 40 = <<30+40=70>>70 oranges.
+Thus, Wendy gained 90 x $1.50 = $<<90*1.5=135>>135 for selling apples.
+And, she gained an additional 70 x $1 = $<<70*1=70>>70 for selling oranges.
+Therefore, her total sales for the day is $135 + 70 = $<<135+70=205>>205.
+#### 205
+"""
+
+id_orig = 1222
+id_shuffled = 1329
+
+question_annotated = """
+{name,Wendy} is a fruit vendor, and she sells an apple at $1.50 each and one orange at $1.  In the morning, she was able to sell an average of {am,40} apples and {om,30} oranges. In the afternoon, she was able to sell {aa,50} apples and {oa,40} oranges. How much are her total sales for the day?
+
+#init:
+- name = sample(["Wendy", "Maria", "Anna"])
+- $am = range(36, 45)
+- $om = range(26, 35)
+- $aa = range(46, 55)
+- $oa = range(36, 45)
+
+#conditions:
+- divides(am + aa, 2)
+
+#answer: (am + aa)*3//2 + om + oa
+"""
+
+answer_annotated = """
+There were an average of {am} + {aa} = <<{am}+{aa}={am+aa}>>{am+aa} apples.
+And, there were {om} + {oa} = <<{om}+{oa}={om+oa}>>{om+oa} oranges.
+Thus, {name} gained {am+aa} x $1.50 = $<<{am+aa}*1.5={(am+aa)*3//2}>>{(am+aa)*3//2} for selling apples.
+And, she gained an additional {om+oa} x $1 = $<<{om+oa}*1={om+oa}>>{om+oa} for selling oranges.
+Therefore, her total sales for the day is ${(am+aa)*3//2} + {om+oa} = $<<{(am+aa)*3//2}+{om+oa}={(am+aa)*3//2+om+oa}>>{(am+aa)*3//2+om+oa}.
+#### {(am+aa)*3//2 + om+oa}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

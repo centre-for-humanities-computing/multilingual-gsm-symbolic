@@ -1,0 +1,43 @@
+question = """
+Zoe made a total of $8,000 cleaning pools and babysitting. She babysat Julie three times as often as she babysat Zachary. The number of times she babysat Zachary was 1/5 the number of times she babysat Chloe. If Zoe made $600 babysitting Zachary, how much did she earn from pool cleaning?
+"""
+
+answer = """
+From babysitting Julie, Zoe made 3 * 600 = <<3*600=1800>>1800 dollars, since she made $600 babysitting Zachary and she babysat Julie three times as often
+Since she babysat Zachary 1/5 as often as she babysat Chloe, she made an additional 5 * 600 = <<5*600=3000>>3000 dollars from babysitting Chloe.
+All together, the babysitting sessions made Zoe 600 + 1800 + 3000 = <<600+1800+3000=5400>>5400 dollars
+Subtracting babysitting payments from the total gives 8000 - 5400 = <<8000-5400=2600>>2600 dollars
+Zoe therefore made 2600 dollars cleaning pools.
+#### 2600
+"""
+
+id_orig = 2750
+id_shuffled = 3234
+
+question_annotated = """
+{name,Zoe} made a total of $8,000 cleaning pools and babysitting. She babysat Julie {jt,three times} as often as she babysat Zachary. The number of times she babysat Zachary was {ft,1/5} the number of times she babysat Chloe. If {name,Zoe} made ${z,600} babysitting Zachary, how much did she earn from pool cleaning?
+
+#init:
+- name = sample(names_female)
+- jt, j = sample([("two times", 2), ("three times", 3), ("four times", 4), ("five times", 5)])
+- ft, f = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5), ("1/6", 6)])
+- $z = range(100, 2000, 50)
+
+#conditions:
+- z * (1 + j + f) < 8000
+
+#answer: 8000 - z - j*z - f*z
+"""
+
+answer_annotated = """
+From babysitting Julie, {name} made {j} * {z} = <<{j}*{z}={j*z}>>{j*z} dollars, since she made ${z} babysitting Zachary and she babysat Julie {jt} as often
+Since she babysat Zachary {ft} as often as she babysat Chloe, she made an additional {f} * {z} = <<{f}*{z}={f*z}>>{f*z} dollars from babysitting Chloe.
+All together, the babysitting sessions made {name} {z} + {j*z} + {f*z} = <<{z}+{j*z}+{f*z}={z+j*z+f*z}>>{z+j*z+f*z} dollars
+Subtracting babysitting payments from the total gives 8000 - {z+j*z+f*z} = <<8000-{z+j*z+f*z}={8000-z-j*z-f*z}>>{8000-z-j*z-f*z} dollars
+{name} therefore made {8000-z-j*z-f*z} dollars cleaning pools.
+#### {8000-z-j*z-f*z}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

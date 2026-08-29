@@ -1,0 +1,41 @@
+question = """
+A retailer sells any shirt for the same price and any pair of pants for the same price, but the price of shirts and pants are not the same. Say you bought 2 shirts and 3 pairs of pants for $120 in total, then you realized you didn't need the extra pants. What's the price of 1 shirt at this place if when you returned all 3 pairs of pants you were refunded 25% of what you originally paid?
+"""
+
+answer = """
+If I paid $120 and I was refunded 25% for all the 3 pants, then that means I received 25%*120=$<<120*25*.01=30>>30
+This means the total price of the 2 shirts was 120-30 = <<120-30=90>>90
+The price of one shirt is thus 90/2 = <<90/2=45>>45
+#### 45
+"""
+
+id_orig = 3742
+id_shuffled = 4424
+
+question_annotated = """
+A retailer sells any shirt for the same price and any pair of pants for the same price, but the price of shirts and pants are not the same. Say you bought {s,2} shirts and {p,3} pairs of pants for ${t,120} in total, then you realized you didn't need the extra pants. What's the price of 1 shirt at this place if when you returned all {p,3} pairs of pants you were refunded {r,25}% of what you originally paid?
+
+#init:
+- $s = range(2, 10)
+- $p = range(2, 12)
+- $t = range(20, 1020, 10)
+- $r = range(5, 55, 5)
+
+#conditions:
+- divides(t*r, 100)
+- divides(t - t*r//100, s)
+- t - t*r//100 > 0
+
+#answer: (t - t*r//100) // s
+"""
+
+answer_annotated = """
+If I paid ${t} and I was refunded {r}% for all the {p} pants, then that means I received {r}%*{t}=$<<{t}*{r}*.01={t*r//100}>>{t*r//100}
+This means the total price of the {s} shirts was {t}-{t*r//100} = <<{t}-{t*r//100}={t-t*r//100}>>{t-t*r//100}
+The price of one shirt is thus {t-t*r//100}/{s} = <<{t-t*r//100}/{s}={(t-t*r//100)//s}>>{(t-t*r//100)//s}
+#### {(t-t*r//100)//s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

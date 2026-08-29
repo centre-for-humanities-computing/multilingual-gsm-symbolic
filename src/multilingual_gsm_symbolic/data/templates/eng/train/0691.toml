@@ -1,0 +1,42 @@
+question = """
+40% of the mosquitos in Jack's area are infected with malaria. 20% of the mosquitos are infected with Zika virus. Without a vaccine, the chances of getting infected with either virus after getting bitten by an infected mosquito are 50%. Jack is taking an experimental malaria vaccine that reduces the chances of getting infected after getting bitten by 50%. If Jack gets bitten by a random mosquito, what is the percentage chance he catches either Zika virus or malaria?
+"""
+
+answer = """
+First find Jack's chances of getting bitten by an infected mosquito: 40% + 20% = 60%
+The chance of being infected by a mosquito with after being bitten: 60% * 50% = 30%
+Then find the chances of getting ill after receiving the vaccine: 30% * 50% = 15%
+#### 15
+"""
+
+id_orig = 618
+id_shuffled = 691
+
+question_annotated = """
+{m,40}% of the mosquitos in {name,Jack}'s area are infected with malaria. {z,20}% of the mosquitos are infected with Zika virus. Without a vaccine, the chances of getting infected with either virus after getting bitten by an infected mosquito are {c,50}%. {name,Jack} is taking an experimental malaria vaccine that reduces the chances of getting infected after getting bitten by {r,50}%. If {name,Jack} gets bitten by a random mosquito, what is the percentage chance he catches either Zika virus or malaria?
+
+#init:
+- name = sample(names_male)
+- $m = range(10, 100, 2)
+- $z = range(2, 100, 2)
+- $c = range(10, 100, 10)
+- $r = range(10, 100, 10)
+
+#conditions:
+- m + z <= 100
+- divides((m + z) * c, 100)
+- divides((m + z) * c * r, 10000)
+
+#answer: (m + z) * c * r // 10000
+"""
+
+answer_annotated = """
+First find {name}'s chances of getting bitten by an infected mosquito: {m}% + {z}% = {m+z}%
+The chance of being infected by a mosquito with after being bitten: {m+z}% * {c}% = {(m+z)*c//100}%
+Then find the chances of getting ill after receiving the vaccine: {(m+z)*c//100}% * {r}% = {(m+z)*c*r//10000}%
+#### {(m+z)*c*r//10000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

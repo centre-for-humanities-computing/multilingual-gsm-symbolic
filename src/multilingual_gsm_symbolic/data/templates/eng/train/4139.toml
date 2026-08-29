@@ -1,0 +1,47 @@
+question = """
+Samuel has $5, $10, and $20 bills which amount to $150 in his wallet. His $10-bills amount to $50, and he has 4 $20-bills. How many bills does Samuel have in his wallet?
+"""
+
+answer = """
+His $20 bills amount to 4 x $20 = $<<4*20=80>>80.
+So the total amount of the $10 and $20 bills is $80 + $50 = $<<80+50=130>>130.
+Hence, the remaining $5 bills amount to $150 - $130 = $20.
+This means that there are $20/$5 = <<20/5=4>>4 $5 bills.
+There are also $50/$10 = 5 $10 bills.
+Therefore, Samuel has 4 + 4 + 5 = <<4+4+5=13>>13 bills in his wallet.
+#### 13
+"""
+
+id_orig = 3492
+id_shuffled = 4139
+
+question_annotated = """
+{name,Samuel} has $5, $10, and $20 bills which amount to ${total,150} in his wallet. His $10-bills amount to ${amt10,50}, and he has {n20,4} $20-bills. How many bills does {name,Samuel} have in his wallet?
+
+#init:
+- name = sample(names_male)
+- $total = range(100, 1000, 5)
+- $amt10 = range(20, 210, 10)
+- $n20 = range(2, 12)
+
+#conditions:
+- divides(amt10, 10)
+- total - amt10 - n20 * 20 > 0
+- divides(total - amt10 - n20 * 20, 5)
+
+#answer: n20 + (total - amt10 - n20 * 20)//5 + amt10//10
+"""
+
+answer_annotated = """
+His $20 bills amount to {n20} x $20 = $<<{n20}*20={n20*20}>>{n20*20}.
+So the total amount of the $10 and $20 bills is ${n20*20} + ${amt10} = $<<{n20*20}+{amt10}={n20*20+amt10}>>{n20*20+amt10}.
+Hence, the remaining $5 bills amount to ${total} - ${n20*20+amt10} = ${total-(n20*20+amt10)}.
+This means that there are ${total-(n20*20+amt10)}/$5 = <<{total-(n20*20+amt10)}/5={(total-(n20*20+amt10))//5}>>{(total-(n20*20+amt10))//5} $5 bills.
+There are also ${amt10}/$10 = {amt10//10} $10 bills.
+Therefore, {name} has {n20} + {(total-(n20*20+amt10))//5} + {amt10//10} = <<{n20}+{(total-(n20*20+amt10))//5}+{amt10//10}={n20+(total-(n20*20+amt10))//5+amt10//10}>>{n20+(total-(n20*20+amt10))//5+amt10//10} bills in his wallet.
+#### {n20+(total-(n20*20+amt10))//5+amt10//10}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

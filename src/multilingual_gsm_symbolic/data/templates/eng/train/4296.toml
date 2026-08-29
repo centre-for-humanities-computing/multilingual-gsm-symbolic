@@ -1,0 +1,46 @@
+question = """
+To support the school outreach program, Einstein wants to raise $500 by selling snacks. One box of pizza sells for $12, a pack of potato fries sells for $0.30, and a can of soda at $2. Einstein sold 15 boxes of pizzas, 40 packs of potato fries, and 25 cans of soda. How much more money does Einstein need to raise to reach his goal?
+"""
+
+answer = """
+Einstein collected 15 x $12 = $<<15*12=180>>180 for selling pizzas.
+He collected 40 x $0.30 = $<<40*0.30=12>>12 for the 40 packs of potato fries.
+He collected 25 x $2 = $<<25*2=50>>50 for the 25 cans of soda.
+Thus, the total amount section Einstein collected was $180 + $12 +$50 = $<<180+12+50=242>>242.
+Therefore, Einstein needs $500 - $242 = $<<500-242=258>>258 more to reach the goal.
+#### 258
+"""
+
+id_orig = 3638
+id_shuffled = 4296
+
+question_annotated = """
+To support the school outreach program, {name,Einstein} wants to raise ${goal,500} by selling snacks. One box of pizza sells for ${pp,12}, a pack of potato fries sells for $0.30, and a can of soda at ${sp,2}. {name,Einstein} sold {np,15} boxes of pizzas, {nf,40} packs of potato fries, and {ns,25} cans of soda. How much more money does {name,Einstein} need to raise to reach his goal?
+
+#init:
+- name = sample(names_male)
+- $goal = range(300, 801, 50)
+- $pp = range(8, 17)
+- $sp = range(1, 6)
+- $np = range(10, 26, 5)
+- $nf = range(20, 61, 10)
+- $ns = range(10, 36, 5)
+
+#conditions:
+- goal > np*pp + nf*3//10 + ns*sp
+
+#answer: goal - (np*pp + nf*3//10 + ns*sp)
+"""
+
+answer_annotated = """
+{name} collected {np} x ${pp} = $<<{np}*{pp}={np*pp}>>{np*pp} for selling pizzas.
+He collected {nf} x $0.30 = $<<{nf}*0.30={nf*3//10}>>{nf*3//10} for the {nf} packs of potato fries.
+He collected {ns} x ${sp} = $<<{ns}*{sp}={ns*sp}>>{ns*sp} for the {ns} cans of soda.
+Thus, the total amount section {name} collected was ${np*pp} + ${nf*3//10} +${ns*sp} = $<<{np*pp}+{nf*3//10}+{ns*sp}={np*pp+nf*3//10+ns*sp}>>{np*pp+nf*3//10+ns*sp}.
+Therefore, {name} needs ${goal} - ${np*pp+nf*3//10+ns*sp} = $<<{goal}-{np*pp+nf*3//10+ns*sp}={goal-np*pp-nf*3//10-ns*sp}>>{goal-np*pp-nf*3//10-ns*sp} more to reach the goal.
+#### {goal - (np*pp + nf*3//10 + ns*sp)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

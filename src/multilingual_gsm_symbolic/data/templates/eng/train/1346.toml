@@ -1,0 +1,40 @@
+question = """
+Tom decides to get a new floor for his room.  It cost $50 to remove the floor.  The new floor costs $1.25 per square foot and Tom's room is 8*7 feet.  How much did it cost to replace the floor?
+"""
+
+answer = """
+The room is 8*7=<<8*7=56>>56 square feet
+So the new carpet cost 56*1.25=$<<56*1.25=70>>70
+So the total cost was 50+70=$<<50+70=120>>120
+#### 120
+"""
+
+id_orig = 1239
+id_shuffled = 1346
+
+question_annotated = """
+{name,Tom} decides to get a new floor for his room.  It cost ${c,50} to remove the floor.  The new floor costs ${p,1.25} per square foot and {name,Tom}'s room is {x,8}*{y,7} feet.  How much did it cost to replace the floor?
+
+#init:
+- name = sample(names_male)
+- $c = range(10, 210, 10)
+- $x = range(4, 20)
+- $y = range(4, 20)
+- p = sample([0.25, 0.5, 0.75, 1.25, 1.5, 1.75, 2.25, 2.5, 2.75])
+
+#conditions:
+- divides(x*y, 4)
+
+#answer: c + int(x*y*p)
+"""
+
+answer_annotated = """
+The room is {x}*{y}=<<{x}*{y}={x*y}>>{x*y} square feet
+So the new carpet cost {x*y}*{p}=$<<{x*y}*{p}={int(x*y*p)}>>{int(x*y*p)}
+So the total cost was {c}+{int(x*y*p)}=$<<{c}+{int(x*y*p)}={c+int(x*y*p)}>>{int(c+x*y*p)}
+#### {c + int(x*y*p)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

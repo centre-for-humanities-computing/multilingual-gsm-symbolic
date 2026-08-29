@@ -1,0 +1,40 @@
+question = """
+Kim's dad would buy her 2 candy bars a week.  She would eat 1 candy bar every 4 weeks, saving the rest.  After 16 weeks, how many candy bars did Kim have saved?
+"""
+
+answer = """
+Kim got 2 candy bars a week for 16 weeks so she got 2*16 = <<2*16=32>>32 candy bars
+She would only eat 1 candy bar every 4 weeks so in 16 weeks she only ate 16/4 = <<16/4=4>>4 candy bars
+She saved 32 candy bars and only ate 4 so she still has 32-4 = <<32-4=28>>28 candy bars
+#### 28
+"""
+
+id_orig = 1042
+id_shuffled = 1138
+
+question_annotated = """
+{name,Kim}'s dad would buy her {b,2} candy bars a week.  She would eat 1 candy bar every {w,4} weeks, saving the rest.  After {t,16} weeks, how many candy bars did {name,Kim} have saved?
+
+#init:
+- name = sample(names_female)
+- $b = range(2, 10)
+- $w = range(2, 30)
+- $t = range(4, 200)
+
+#conditions:
+- divides(t, w)
+- b*t - t//w > 0
+
+#answer: b*t - t//w
+"""
+
+answer_annotated = """
+{name} got {b} candy bars a week for {t} weeks so she got {b}*{t} = <<{b}*{t}={b*t}>>{b*t} candy bars
+She would only eat 1 candy bar every {w} weeks so in {t} weeks she only ate {t}/{w} = <<{t}/{w}={t//w}>>{t//w} candy bars
+She saved {b*t} candy bars and only ate {t//w} so she still has {b*t}-{t//w} = <<{b*t}-{t//w}={b*t-t//w}>>{b*t-t//w} candy bars
+#### {b*t-t//w}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

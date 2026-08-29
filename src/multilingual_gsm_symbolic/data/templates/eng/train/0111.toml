@@ -1,0 +1,40 @@
+question = """
+Paul went to a shop to buy some groceries. He bought some bread for $2, butter for $3, and juice for two times the price of the bread. He had $15 for his shopping. How much money did Paul have left?
+"""
+
+answer = """
+The price of the juice was 2 * 2 = $<<2*2=4>>4.
+So in total he paid for his shopping 2 + 3 + 4 = $<<2+3+4=9>>9.
+That means he had 15 - 9 = $<<15-9=6>>6 left.
+#### 6
+"""
+
+id_orig = 111
+id_shuffled = 111
+
+question_annotated = """
+{name,Paul} went to a shop to buy some groceries. He bought some bread for ${b,2}, butter for ${u,3}, and juice for {m,two times} the price of the bread. He had ${t,15} for his shopping. How much money did {name,Paul} have left?
+
+#init:
+- name = sample(names_male)
+- $b = range(1, 21)
+- $u = range(1, 21)
+- $t = range(10, 61)
+- m, m_val = sample([("two times", 2), ("three times", 3), ("four times", 4)])
+
+#conditions:
+- t > b + u + m_val*b
+
+#answer: t - b - u - m_val*b
+"""
+
+answer_annotated = """
+The price of the juice was {m_val} * {b} = $<<{m_val}*{b}={m_val*b}>>{m_val*b}.
+So in total he paid for his shopping {b} + {u} + {m_val*b} = $<<{b}+{u}+{m_val*b}={b+u+m_val*b}>>{b+u+m_val*b}.
+That means he had {t} - {b+u+m_val*b} = $<<{t}-{b+u+m_val*b}={t-(b+u+m_val*b)}>>{t-(b+u+m_val*b)} left.
+#### {t - b - u - m_val*b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

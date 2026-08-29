@@ -1,0 +1,48 @@
+question = """
+The math teacher would be happy if the class average test score was at least 85. There are 10 students in the class, 5 of which scored a 92 on the test and 4 of which scored an 80. What would the last student have to score to at least make the teacher happy?
+"""
+
+answer = """
+5 students scored a combined total of 92 * 5 = <<92*5=460>>460
+4 additional students scored a combined total of 80 * 4 = <<80*4=320>>320
+9 students therefore scored a combined total of 460 + 320 = <<460+320=780>>780
+We know the total combined score for 10 students must be at least 85 average * 10 students = <<85*10=850>>850
+Therefore, the last student must score at least an 850 - 780 = <<850-780=70>>70
+#### 70
+"""
+
+id_orig = 3137
+id_shuffled = 3736
+
+question_annotated = """
+The math teacher would be happy if the class average test score was at least {avg,85}. There are {total,10} students in the class, {n_hi,5} of which scored a {hi,92} on the test and {n_lo,4} of which scored an {lo,80}. What would the last student have to score to at least make the teacher happy?
+
+#init:
+- $avg = range(61, 90, 2)
+- $hi = range(64, 96, 2)
+- $lo = range(40, 90, 2)
+- $total = range(5, 16)
+- $n_hi = range(2, 8)
+- $n_lo = range(2, 8)
+
+#conditions:
+- n_hi + n_lo + 1 == total
+- lo < avg
+- avg < hi
+- avg * total - hi * n_hi - lo * n_lo > 0
+
+#answer: avg * total - hi * n_hi - lo * n_lo
+"""
+
+answer_annotated = """
+{n_hi} students scored a combined total of {hi} * {n_hi} = <<{hi}*{n_hi}={hi*n_hi}>>{hi*n_hi}
+{n_lo} additional students scored a combined total of {lo} * {n_lo} = <<{lo}*{n_lo}={lo*n_lo}>>{lo*n_lo}
+{n_hi+n_lo} students therefore scored a combined total of {hi*n_hi} + {lo*n_lo} = <<{hi*n_hi}+{lo*n_lo}={hi*n_hi+lo*n_lo}>>{hi*n_hi+lo*n_lo}
+We know the total combined score for {total} students must be at least {avg} average * {total} students = <<{avg}*{total}={avg*total}>>{avg*total}
+Therefore, the last student must score at least an {avg*total} - {hi*n_hi+lo*n_lo} = <<{avg*total}-{hi*n_hi+lo*n_lo}={avg*total-hi*n_hi-lo*n_lo}>>{avg*total-hi*n_hi-lo*n_lo}
+#### {avg * total - hi * n_hi - lo * n_lo}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

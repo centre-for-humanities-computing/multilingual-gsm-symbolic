@@ -1,0 +1,44 @@
+question = """
+Tommy's mother lets him ride his bike 2 blocks north of his block, 3 blocks east, 2 blocks west, and 2 blocks south. His friend's father lets his friend ride his bike 80 square blocks. How many times greater is the area his friend can ride in compared to Tommy?
+"""
+
+answer = """
+Tommy's area is 5 blocks wide because 3 + 2 = <<3+2=5>>5
+His area is 4 blocks tall because 2 + 2 = <<2+2=4>>4
+The total area is 20 square blocks because 5 x 4 = <<5*4=20>>20
+His friend's area is 4 times bigger because 80 / 20 = <<80/20=4>>4
+#### 4
+"""
+
+id_orig = 2371
+id_shuffled = 2730
+
+question_annotated = """
+{name,Tommy}'s mother lets him ride his bike {n,2} blocks north of his block, {e,3} blocks east, {w,2} blocks west, and {s,2} blocks south. His friend's father lets his friend ride his bike {f,80} square blocks. How many times greater is the area his friend can ride in compared to {name,Tommy}?
+
+#init:
+- name = sample(names_male)
+- $n = range(1, 6)
+- $e = range(1, 6)
+- $w = range(1, 6)
+- $s = range(1, 6)
+- $f = range(40, 2040, 20)
+
+#conditions:
+- divides(f, (e+w)*(n+s))
+- f > (e+w)*(n+s)
+
+#answer: f//((e+w)*(n+s))
+"""
+
+answer_annotated = """
+{name}'s area is {e+w} blocks wide because {e} + {w} = <<{e}+{w}={e+w}>>{e+w}
+His area is {n+s} blocks tall because {n} + {s} = <<{n}+{s}={n+s}>>{n+s}
+The total area is {(e+w)*(n+s)} square blocks because {e+w} x {n+s} = <<{e+w}*{n+s}={(e+w)*(n+s)}>>{(e+w)*(n+s)}
+His friend's area is {f//((e+w)*(n+s))} times bigger because {f} / {(e+w)*(n+s)} = <<{f}/{(e+w)*(n+s)}={f//((e+w)*(n+s))}>>{f//((e+w)*(n+s))}
+#### {f//((e+w)*(n+s))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+A church has 120 members. 40% are adults. The rest are children. How many children more children are there than adults?
+"""
+
+answer = """
+There are 48 adults because 120 x .4 = <<120*.4=48>>48
+60% of members are children because 100 - 40 = <<100-40=60>>60
+There are 72 children because 120 x .6 = <<120*.6=72>>72
+There are 24 more children than adults because 72 - 48 = <<72-48=24>>24
+#### 24
+"""
+
+id_orig = 215
+id_shuffled = 240
+
+question_annotated = """
+A church has {m,120} members. {p,40}% are adults. The rest are children. How many children more children are there than adults?
+
+#init:
+- $m = range(100, 400, 5)
+- $p = range(20, 50, 10)
+
+#conditions:
+- is_int(m * p / 100)
+- is_int(m * (100 - p) / 100)
+- p < 50
+
+#answer: m * (100 - 2 * p) // 100
+"""
+
+answer_annotated = """
+There are {m*p//100} adults because {m} x .{p//10} = <<{m}*.{p//10}={m*p//100}>>{m*p//100}
+{100-p}% of members are children because 100 - {p} = <<100-{p}={100-p}>>{100-p}
+There are {m*(100-p)//100} children because {m} x .{(100-p)//10} = <<{m}*.{(100-p)//10}={m*(100-p)//100}>>{m*(100-p)//100}
+There are {m*(100-2*p)//100} more children than adults because {m*(100-p)//100} - {m*p//100} = <<{m*(100-p)//100}-{m*p//100}={m*(100-2*p)//100}>>{m*(100-2*p)//100}
+#### {m * (100 - 2 * p) // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

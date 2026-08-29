@@ -1,0 +1,47 @@
+question = """
+Ali, Nada, and John have a total of $67 in their wallets. Ali has $5 less than Nada and John has 4 times more than Nada. How much money does John have?
+"""
+
+answer = """
+Let's say that N is what Nada has, J is what John has, and A is what Ali has. We know that A = N - 5 and J = 4N.
+We also know that: N + A + J = $67
+We can substitute the equations from step 1 into the equations from step 2 to get: N + 4N + (N-5) = $67
+Combining like terms gets us 6N - 5 = $67
+So, N=($67+5)/6 = $12
+Substituting $12 back into the equation J = 4 N, we find John has 4 x 12 = $<<4*12=48>>48
+#### 48
+"""
+
+id_orig = 2097
+id_shuffled = 2426
+
+question_annotated = """
+{name_a,Ali}, {name_b,Nada}, and {name_c,John} have a total of ${t,67} in their wallets. {name_a,Ali} has ${d,5} less than {name_b,Nada} and {name_c,John} has {m,4} times more than {name_b,Nada}. How much money does {name_c,John} have?
+
+#init:
+- name_a = sample(["Ali", "Chris", "Oliver", "Noah", "Eric"])
+- name_b = sample(["Nada", "Sophie", "Andrea", "Abby", "Emma"])
+- name_c = sample(["John", "Jason", "Carl", "William", "Tyler"])
+- $t = range(50, 400)
+- $d = range(2, 30)
+- $m = range(2, 10)
+
+#conditions:
+- divides(t + d, m + 2)
+
+#answer: m * ((t + d) // (m + 2))
+"""
+
+answer_annotated = """
+Let's say that N is what {name_b} has, J is what {name_c} has, and A is what {name_a} has. We know that A = N - {d} and J = {m}N.
+We also know that: N + A + J = ${t}
+We can substitute the equations from step 1 into the equations from step 2 to get: N + {m}N + (N-{d}) = ${t}
+Combining like terms gets us {m+2}N - {d} = ${t}
+So, N=(${t}+{d})/{m+2} = ${(t+d)//(m+2)}
+Substituting ${(t+d)//(m+2)} back into the equation J = {m} N, we find {name_c} has {m} x {(t+d)//(m+2)} = $<<{m}*{(t+d)//(m+2)}={(t+d)//(m+2)*m}>>{(t+d)//(m+2)*m}
+#### {(t+d)//(m+2)*m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

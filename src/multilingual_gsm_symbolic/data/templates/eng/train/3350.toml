@@ -1,0 +1,43 @@
+question = """
+A frog lays 800 eggs a year.  10 percent dry up, and 70 percent are eaten.  1/4 of the remaining eggs end up hatching, how many frogs hatch out of the 800?
+"""
+
+answer = """
+Dried up:800(.10)=80 eggs
+800(.70)=560 eggs
+Total left:800-80-560=<<800-80-560=160>>160 eggs
+160/4=<<160/4=40>>40 eggs survive to hatch
+#### 40
+"""
+
+id_orig = 2816
+id_shuffled = 3350
+
+question_annotated = """
+A frog lays {total,800} eggs a year.  {p_dry,10} percent dry up, and {p_eaten,70} percent are eaten.  1/4 of the remaining eggs end up hatching, how many frogs hatch out of the {total,800}?
+
+#init:
+- $total = range(400, 1200, 20)
+- $p_dry = range(5, 30, 5)
+- $p_eaten = range(10, 80, 5)
+
+#conditions:
+- divides(total * p_dry, 100)
+- divides(total * p_eaten, 100)
+- total - total * p_dry // 100 - total * p_eaten // 100 > 0
+- divides(total - total * p_dry // 100 - total * p_eaten // 100, 4)
+
+#answer: (total - total * p_dry // 100 - total * p_eaten // 100) // 4
+"""
+
+answer_annotated = """
+Dried up:{total}(.{p_dry})={total * p_dry // 100} eggs
+{total}(.{p_eaten})={total * p_eaten // 100} eggs
+Total left:{total}-{total * p_dry // 100}-{total * p_eaten // 100}=<<{total}-{total * p_dry // 100}-{total * p_eaten // 100}={total - total * p_dry // 100 - total * p_eaten // 100}>>{total - total * p_dry // 100 - total * p_eaten // 100} eggs
+{total - total * p_dry // 100 - total * p_eaten // 100}/4=<<{total - total * p_dry // 100 - total * p_eaten // 100}/4={(total - total * p_dry // 100 - total * p_eaten // 100) // 4}>>{(total - total * p_dry // 100 - total * p_eaten // 100) // 4} eggs survive to hatch
+#### {(total - total * p_dry // 100 - total * p_eaten // 100) // 4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

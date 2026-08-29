@@ -1,0 +1,42 @@
+question = """
+On each of 7 Mondays, it rained 1.5 centimeters. On each of 9 Tuesdays it rained 2.5 centimeters. How many more centimeters did it rain on Tuesdays than Mondays?
+"""
+
+answer = """
+Mondays: 7 * 1.5 = <<7*1.5=10.5>>10.5
+Tuesdays: 9 * 2.5 = <<9*2.5=22.5>>22.5
+22.5 - 10.5 = <<22.5-10.5=12>>12 cm
+It rained 12 centimeters more on Tuesdays than on Mondays.
+#### 12
+"""
+
+id_orig = 1690
+id_shuffled = 1845
+
+question_annotated = """
+On each of {m,7} Mondays, it rained {rm,1.5} centimeters. On each of {t,9} Tuesdays it rained {rt,2.5} centimeters. How many more centimeters did it rain on Tuesdays than Mondays?
+
+#init:
+- $m = range(2, 15)
+- $t = range(2, 20)
+- $rm = sample([0.5, 1.5, 2.5, 3.5])
+- $rt = sample([0.5, 1.5, 2.5, 3.5, 4.5])
+
+#conditions:
+- t * rt > m * rm
+- (t * rt - m * rm) % 1 == 0
+
+#answer: int(t * rt - m * rm)
+"""
+
+answer_annotated = """
+Mondays: {m} * {rm} = <<{m}*{rm}={m*rm}>>{m*rm}
+Tuesdays: {t} * {rt} = <<{t}*{rt}={t*rt}>>{t*rt}
+{t*rt} - {m*rm} = <<{t*rt}-{m*rm}={int(t*rt-m*rm)}>>{int(t*rt-m*rm)} cm
+It rained {int(t*rt-m*rm)} centimeters more on Tuesdays than on Mondays.
+#### {int(t*rt-m*rm)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

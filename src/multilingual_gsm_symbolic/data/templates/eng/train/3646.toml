@@ -1,0 +1,45 @@
+question = """
+Mikaela earns $10 an hour  tutoring. For the first month, she tutored for 35 hours and in the second month, she tutored 5 hours more than the first month. She spent 4/5 of her total earnings on her personal needs and saved the rest of the money. How much did she save?
+"""
+
+answer = """
+Mikaela spent 35 + 5 = <<35+5=40>>40 hours in the second month.
+So, she tutored a total of 35 + 40 = <<35+40=75>>75 hours for the first two months.
+Thus, her total earning was 75 x $10 = $<<75*10=750>>750.
+And, her total expenses was 4/5 x $750 = $<<4/5*750=600>>600.
+Therefore, she saved an amount of $750 - $600 = $<<750-600=150>>150.
+#### 150
+"""
+
+id_orig = 3061
+id_shuffled = 3646
+
+question_annotated = """
+{name,Mikaela} earns ${rate,10} an hour  tutoring. For the first month, she tutored for {h1,35} hours and in the second month, she tutored {extra,5} hours more than the first month. She spent {p,4}/{q,5} of her total earnings on her personal needs and saved the rest of the money. How much did she save?
+
+#init:
+- name = sample(names_female)
+- $h1 = range(20, 120)
+- $extra = range(5, 25, 5)
+- $rate = range(5, 55, 5)
+- $p = range(1, 5)
+- $q = range(5, 11)
+
+#conditions:
+- divides(p*(2*h1+extra)*rate, q)
+
+#answer: (2*h1+extra)*rate - p*(2*h1+extra)*rate//q
+"""
+
+answer_annotated = """
+{name} spent {h1} + {extra} = <<{h1}+{extra}={h1+extra}>>{h1+extra} hours in the second month.
+So, she tutored a total of {h1} + {h1+extra} = <<{h1}+{h1+extra}={2*h1+extra}>>{2*h1+extra} hours for the first two months.
+Thus, her total earning was {2*h1+extra} x ${rate} = $<<{2*h1+extra}*{rate}={(2*h1+extra)*rate}>>{(2*h1+extra)*rate}.
+And, her total expenses was {p}/{q} x ${(2*h1+extra)*rate} = $<<{p}/{q}*{(2*h1+extra)*rate}={p*(2*h1+extra)*rate//q}>>{p*(2*h1+extra)*rate//q}.
+Therefore, she saved an amount of ${(2*h1+extra)*rate} - ${p*(2*h1+extra)*rate//q} = $<<{(2*h1+extra)*rate}-{p*(2*h1+extra)*rate//q}={(2*h1+extra)*rate-p*(2*h1+extra)*rate//q}>>{(2*h1+extra)*rate-p*(2*h1+extra)*rate//q}.
+#### {(2*h1+extra)*rate-p*(2*h1+extra)*rate//q}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

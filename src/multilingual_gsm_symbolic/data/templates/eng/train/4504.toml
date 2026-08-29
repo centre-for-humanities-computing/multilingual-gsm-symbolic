@@ -1,0 +1,51 @@
+question = """
+Alec is running for Class President. He thinks that if he can get three-quarters of the class to vote for him then there is no chance anyone else can beat him. Half of the class have already said they will vote for him but out of the remaining students, only 5 have said they are thinking about voting for him. He surveys the students who are thinking about voting for someone else, and changes his flyers to reflect the issues these students are concerned about. This results in a fifth of these students saying they'll vote for him. If Alec's class has 60 students and everyone who said they will vote for him does so, how many more votes does Alec need to reach his goal number of votes?
+"""
+
+answer = """
+To calculate Alec's goal number of votes, we need to know that 60 students / 4 = <<60/4=15>>15 students is equal to one-quarter of the class students.
+Alec's goal is therefore 15 students * 3 quarters = <<15*3=45>>45 votes.
+Half of the class said they will vote for him, so there are already 60 students / 2 = <<60/2=30>>30 votes.
+Another 5 students are thinking about voting for him which leaves a total so far of 30 + 5 = <<30+5=35>>35 votes.
+This means there are 60 students - 35 voting for Alec = <<60-35=25>>25 students not voting for Alec.
+A fifth of these decided to vote, so this is a further 25 students / 5 = <<25/5=5>>5 votes.
+Alec is therefore receiving a total of 35 + 5 = <<35+5=40>>40 votes.
+So he has missed his goal by 45 goal votes - 40 actual votes = <<45-40=5>>5 votes.
+#### 5
+"""
+
+id_orig = 3822
+id_shuffled = 4504
+
+question_annotated = """
+{name,Alec} is running for Class President. He thinks that if he can get three-quarters of the class to vote for him then there is no chance anyone else can beat him. Half of the class have already said they will vote for him but out of the remaining students, only {k,5} have said they are thinking about voting for him. He surveys the students who are thinking about voting for someone else, and changes his flyers to reflect the issues these students are concerned about. This results in a fifth of these students saying they'll vote for him. If {name,Alec}'s class has {n,60} students and everyone who said they will vote for him does so, how many more votes does {name,Alec} need to reach his goal number of votes?
+
+#init:
+- name = sample(names_male)
+- $n = range(12, 412, 4)
+- $k = range(1, 101)
+
+#conditions:
+- divides(n, 4)
+- k < n // 2
+- divides(n // 2 - k, 5)
+- n // 4 * 3 - (n // 2 + k + (n // 2 - k) // 5) > 0
+
+#answer: n//4*3 - (n//2 + k + (n//2 - k)//5)
+"""
+
+answer_annotated = """
+To calculate {name}'s goal number of votes, we need to know that {n} students / 4 = <<{n}/4={n//4}>>{n//4} students is equal to one-quarter of the class students.
+{name}'s goal is therefore {n//4} students * 3 quarters = <<{n//4}*3={n//4*3}>>{n//4*3} votes.
+Half of the class said they will vote for him, so there are already {n} students / 2 = <<{n}/2={n//2}>>{n//2} votes.
+Another {k} students are thinking about voting for him which leaves a total so far of {n//2} + {k} = <<{n//2}+{k}={n//2+k}>>{n//2+k} votes.
+This means there are {n} students - {n//2+k} voting for {name} = <<{n}-{n//2+k}={n-n//2-k}>>{n-n//2-k} students not voting for {name}.
+A fifth of these decided to vote, so this is a further {n-n//2-k} students / 5 = <<{n-n//2-k}/5={(n-n//2-k)//5}>>{(n-n//2-k)//5} votes.
+{name} is therefore receiving a total of {n//2+k} + {(n-n//2-k)//5} = <<{n//2+k}+{(n-n//2-k)//5}={n//2+k+(n-n//2-k)//5}>>{n//2+k+(n-n//2-k)//5} votes.
+So he has missed his goal by {n//4*3} goal votes - {n//2+k+(n-n//2-k)//5} actual votes = <<{n//4*3}-{n//2+k+(n-n//2-k)//5}={n//4*3-(n//2+k+(n-n//2-k)//5)}>>{n//4*3-(n//2+k+(n-n//2-k)//5)} votes.
+#### {n//4*3-(n//2+k+(n-n//2-k)//5)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

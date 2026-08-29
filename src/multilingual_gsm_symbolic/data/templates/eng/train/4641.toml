@@ -1,0 +1,39 @@
+question = """
+Janet goes to the gym for 5 hours a week.  She goes Monday, Tuesday, Wednesday, and Friday.  She spends an hour and a half each day on Monday and Wednesday.  If she spends the same amount of time at the gym on Tuesday and Friday how many hours is she at the gym on Friday?
+"""
+
+answer = """
+Between Monday and Wednesday, she spends 1.5 hours + 1.5 hours = <<1.5+1.5=3>>3 hours.
+That means she has 5 hours - 3 hours = <<5-3=2>>2 hours left for Tuesday and Wednesday
+She spends 2 hours / 2=<<2/2=1>>1 hour on Friday
+#### 1
+"""
+
+id_orig = 3934
+id_shuffled = 4641
+
+question_annotated = """
+{name,Janet} goes to the gym for {t,5} hours a week.  She goes Monday, Tuesday, Wednesday, and Friday.  She spends {h_txt,an hour and a half} each day on Monday and Wednesday.  If she spends the same amount of time at the gym on Tuesday and Friday how many hours is she at the gym on Friday?
+
+#init:
+- name = sample(names_female)
+- h_txt, h = sample([("an hour", 1), ("an hour and a half", 1.5), ("half an hour", 0.5), ("two hours", 2)])
+- $t = range(2, 101)
+
+#conditions:
+- t > 2 * h
+- is_int((t - 2 * h) / 2)
+
+#answer: int((t - 2 * h) / 2)
+"""
+
+answer_annotated = """
+Between Monday and Wednesday, she spends {h} hours + {h} hours = <<{h}+{h}={int(h+h)}>>{int(h+h)} hours.
+That means she has {t} hours - {int(h+h)} hours = <<{t}-{int(h+h)}={int(t-2*h)}>>{int(t-2*h)} hours left for Tuesday and Wednesday
+She spends {int(t-2*h)} hours / 2=<<{int(t-2*h)}/2={int(int(t-2*h)/2)}>>{int(int(t-2*h)/2)} hour on Friday
+#### {int((t - 2 * h) / 2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

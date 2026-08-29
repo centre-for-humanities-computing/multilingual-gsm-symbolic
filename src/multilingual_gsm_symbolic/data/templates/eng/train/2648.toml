@@ -1,0 +1,46 @@
+question = """
+Josh works 8 hours a day, 5 days a week, 4 weeks a month. Carl is an intern and works 2 hours less than Josh every day. Josh gets $9 an hour and Carl, half that. How much does the company pay for the 2 together in one month?
+"""
+
+answer = """
+Josh works 8 hours/day * 5 days/week * 4 weeks/month = <<8*5*4=160>>160 hours a month.
+He earns 160 hours/month * $9/month = $<<160*9=1440>>1440 per month.
+Carl works less because he is an intern: 6 hours/day * 5 days/week * 4 weeks/month = <<6*5*4=120>>120 hours per month.
+Carl earns 120 hours * $4.5/hour = $<<120*4.5=540>>540 per month.
+The company pays for the 2 together: $1440 + $540 = $<<1440+540=1980>>1980.
+#### 1980
+"""
+
+id_orig = 2300
+id_shuffled = 2648
+
+question_annotated = """
+{name,Josh} works {h,8} hours a day, {dw,5} days a week, {wm,4} weeks a month. {carl,Carl} is an intern and works {less,2} hours less than {name,Josh} every day. {name,Josh} gets ${r,9} an hour and {carl,Carl}, half that. How much does the company pay for the 2 together in one month?
+
+#init:
+- name = sample(names_male)
+- carl = sample(names_male)
+- $h = range(5, 13)
+- $dw = range(4, 7)
+- $wm = range(3, 6)
+- $less = range(1, 4)
+- $r = range(5, 41, 2)
+
+#conditions:
+- divides((h - less) * dw * wm * r, 2)
+
+#answer: h*dw*wm*r + (h - less)*dw*wm*r/2
+"""
+
+answer_annotated = """
+{name} works {h} hours/day * {dw} days/week * {wm} weeks/month = <<{h}*{dw}*{wm}={h*dw*wm}>>{h*dw*wm} hours a month.
+He earns {h*dw*wm} hours/month * ${r}/month = $<<{h*dw*wm}*{r}={h*dw*wm*r}>>{h*dw*wm*r} per month.
+{carl} works less because he is an intern: {h - less} hours/day * {dw} days/week * {wm} weeks/month = <<{h - less}*{dw}*{wm}={(h - less)*dw*wm}>>{(h - less)*dw*wm} hours per month.
+{carl} earns {(h - less)*dw*wm} hours * ${r/2}/hour = $<<{(h - less)*dw*wm}*{r/2}={int((h - less)*dw*wm*r/2)}>>{int((h - less)*dw*wm*r/2)} per month.
+The company pays for the 2 together: ${h*dw*wm*r} + ${int((h - less)*dw*wm*r/2)} = $<<{h*dw*wm*r}+{int((h - less)*dw*wm*r/2)}={h*dw*wm*r + int((h - less)*dw*wm*r/2)}>>{h*dw*wm*r + int((h - less)*dw*wm*r/2)}.
+#### {h*dw*wm*r + int((h - less)*dw*wm*r/2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

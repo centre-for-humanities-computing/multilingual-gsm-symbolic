@@ -1,0 +1,40 @@
+question = """
+Every week, Lucas makes 4 pieces of chocolate candy for each of his students on Monday. He made 40 pieces of chocolate candy last Monday. This upcoming Monday, 3 of Lucas' students will not be coming to class. How many pieces of chocolate candy will Lucas make for his class on Monday?
+"""
+
+answer = """
+Since Lucas makes 4 pieces of chocolate per student, he has 40 / 4 = <<40/4=10>>10 students.
+This upcoming Monday, there will be 10 - 3 = <<10-3=7>>7 students.
+Lucas will make 4 * 7 = <<4*7=28>>28 pieces of chocolate candy.
+#### 28
+"""
+
+id_orig = 2391
+id_shuffled = 2750
+
+question_annotated = """
+Every week, {name,Lucas} makes {per,4} pieces of chocolate candy for each of his students on Monday. He made {total,40} pieces of chocolate candy last Monday. This upcoming Monday, {absent,3} of {name,Lucas}' students will not be coming to class. How many pieces of chocolate candy will {name,Lucas} make for his class on Monday?
+
+#init:
+- name = sample(names_male)
+- $per = range(2, 21)
+- $total = range(20, 400, 5)
+- $absent = range(1, 30)
+
+#conditions:
+- divides(total, per)
+- total//per > absent
+
+#answer: per * (total//per - absent)
+"""
+
+answer_annotated = """
+Since {name} makes {per} pieces of chocolate per student, he has {total} / {per} = <<{total}/{per}={total//per}>>{total//per} students.
+This upcoming Monday, there will be {total//per} - {absent} = <<{total//per}-{absent}={total//per-absent}>>{total//per-absent} students.
+{name} will make {per} * {total//per-absent} = <<{per}*{total//per-absent}={per*(total//per-absent)}>>{per*(total//per-absent)} pieces of chocolate candy.
+#### {per*(total//per-absent)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

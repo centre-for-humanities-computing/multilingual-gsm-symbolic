@@ -1,0 +1,41 @@
+question = """
+Benny bought  2 soft drinks for$ 4 each and 5 candy bars. He spent a total of 28 dollars. How much did each candy bar cost?
+"""
+
+answer = """
+Benny spent 2 * $4 = $<<2*4=8>>8 on soft drinks.
+Benny spent a total of $28 - $8 on soft drinks = $<<28-8=20>>20 on candy bars.
+Benny spent $20 / 5 candy bars = $<<20/5=4>>4 for each candy bar.
+#### 4
+"""
+
+id_orig = 203
+id_shuffled = 228
+
+question_annotated = """
+{name,Benny} bought  {n,2} soft drinks for$ {p,4} each and {c,5} candy bars. He spent a total of {t,28} dollars. How much did each candy bar cost?
+
+#init:
+- name = sample(names_male)
+- $n = range(2, 10)
+- $p = range(1, 10)
+- $c = range(2, 12)
+- $t = range(10, 200)
+
+#conditions:
+- t > n * p
+- divides(t - n*p, c)
+
+#answer: (t - n*p)//c
+"""
+
+answer_annotated = """
+{name} spent {n} * ${p} = $<<{n}*{p}={n*p}>>{n*p} on soft drinks.
+{name} spent a total of ${t} - ${n*p} on soft drinks = $<<{t}-{n*p}={t-n*p}>>{t-n*p} on candy bars.
+{name} spent ${t-n*p} / {c} candy bars = $<<{t-n*p}/{c}={(t-n*p)//c}>>{(t-n*p)//c} for each candy bar.
+#### {(t - n*p)//c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

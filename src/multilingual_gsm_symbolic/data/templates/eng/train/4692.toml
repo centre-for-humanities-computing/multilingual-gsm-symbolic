@@ -1,0 +1,39 @@
+question = """
+Carla adds a can of chilis, two cans of beans, and 50% more tomatoes than beans to a normal batch of chili. If she makes a quadruple batch, how many cans of food does she need?
+"""
+
+answer = """
+First find the number of cans of tomatoes in a normal batch of chili: 2 cans * 150% = <<2*150*.01=3>>3 cans
+Then add the number of cans of each type of food to find the total number of cans per batch: 3 cans + 2 cans + 1 can = <<3+2+1=6>>6 cans
+Then multiply the number of cans per batch by the number of batches to find the total number of cans: 6 cans/batch * 4 batches = <<6*4=24>>24 cans
+#### 24
+"""
+
+id_orig = 3970
+id_shuffled = 4692
+
+question_annotated = """
+{name,Carla} adds a can of chilis, {num_b,two} cans of beans, and {p,50}% more tomatoes than beans to a normal batch of chili. If she makes a {batch_txt,quadruple} batch, how many cans of food does she need?
+
+#init:
+- name = sample(names_female)
+- num_b, b = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- $p = range(5, 305, 5)
+- batch_txt, n = sample([("double", 2), ("triple", 3), ("quadruple", 4), ("quintuple", 5)])
+
+#conditions:
+- divides(b * (100 + p), 100)
+
+#answer: (b*(100+p)//100 + b + 1) * n
+"""
+
+answer_annotated = """
+First find the number of cans of tomatoes in a normal batch of chili: {b} cans * {100+p}% = <<{b}*{100+p}*.01={b*(100+p)//100}>>{b*(100+p)//100} cans
+Then add the number of cans of each type of food to find the total number of cans per batch: {b*(100+p)//100} cans + {b} cans + 1 can = <<{b*(100+p)//100}+{b}+1={b*(100+p)//100+b+1}>>{b*(100+p)//100+b+1} cans
+Then multiply the number of cans per batch by the number of batches to find the total number of cans: {b*(100+p)//100+b+1} cans/batch * {n} batches = <<{b*(100+p)//100+b+1}*{n}={(b*(100+p)//100+b+1)*n}>>{(b*(100+p)//100+b+1)*n} cans
+#### {(b*(100+p)//100+b+1)*n}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

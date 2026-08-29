@@ -1,0 +1,46 @@
+question = """
+A swimming pool is being emptied through a drain at the bottom of the pool and filled by a hose at the top. The drain can empty the pool in 4 hours and the hose can fill the pool in 6 hours. The pool holds 120 liters of water. If the pool starts filled with water, how much water will be left after 3 hours?
+"""
+
+answer = """
+It takes the drain 4 hours to empty the pool, so it drains at a rate of 120 liters / 4 hours = <<120/4=30>>30 liters/hour.
+After 3 hours, the drain will have removed 3 * 30 = <<3*30=90>>90 liters of water from the pool.
+It takes the hose 6 hours to fill the pool, so it fills at a rate of 120 liters / 6 hours = <<120/6=20>>20 liters/hour.
+After 3 hours, the hose will have added 3 * 20 = <<3*20=60>>60 liters of water to the pool.
+After 3 hours, there will be 120 liters + 60 liters – 90 liters = <<120+60-90=90>>90 liters of water left in the pool.
+#### 90
+"""
+
+id_orig = 3553
+id_shuffled = 4200
+
+question_annotated = """
+A swimming pool is being emptied through a drain at the bottom of the pool and filled by a hose at the top. The drain can empty the pool in {d,4} hours and the hose can fill the pool in {f,6} hours. The pool holds {v,120} liters of water. If the pool starts filled with water, how much water will be left after {t,3} hours?
+
+#init:
+- $d = range(2, 13)
+- $f = range(2, 13)
+- $v = range(60, 630, 30)
+- $t = range(1, 7)
+
+#conditions:
+- d < f
+- divides(v, d)
+- divides(v, f)
+- t * (v//d - v//f) < v
+
+#answer: v + t*(v//f) - t*(v//d)
+"""
+
+answer_annotated = """
+It takes the drain {d} hours to empty the pool, so it drains at a rate of {v} liters / {d} hours = <<{v}/{d}={v//d}>>{v//d} liters/hour.
+After {t} hours, the drain will have removed {t} * {v//d} = <<{t}*{v//d}={t*(v//d)}>>{t*(v//d)} liters of water from the pool.
+It takes the hose {f} hours to fill the pool, so it fills at a rate of {v} liters / {f} hours = <<{v}/{f}={v//f}>>{v//f} liters/hour.
+After {t} hours, the hose will have added {t} * {v//f} = <<{t}*{v//f}={t*(v//f)}>>{t*(v//f)} liters of water to the pool.
+After {t} hours, there will be {v} liters + {t*(v//f)} liters – {t*(v//d)} liters = <<{v}+{t*(v//f)}-{t*(v//d)}={v+t*(v//f)-t*(v//d)}>>{v+t*(v//f)-t*(v//d)} liters of water left in the pool.
+#### {v + t*(v//f) - t*(v//d)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

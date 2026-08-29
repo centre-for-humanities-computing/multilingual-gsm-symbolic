@@ -1,0 +1,46 @@
+question = """
+Martin owns a farm with hens. 10 hens do lay 80 eggs in 10 days. Martin decided to buy 15 more hens. How many eggs will all hens lay in 15 days?
+"""
+
+answer = """
+If 10 hens lay 80 eggs, then 1 hen lays 80 / 10 = <<80/10=8>>8 eggs in 10 days.
+That means one hen is laying 8 / 2 = <<8/2=4>>4 eggs in 5 days.
+So in 15 days, 1 hen will lay 3 times more eggs, so 4 * 3 = 12 eggs.
+All hens in total will then lay 25 * 12 = <<25*12=300>>300 eggs in 15 days.
+#### 300
+"""
+
+id_orig = 1487
+id_shuffled = 1618
+
+question_annotated = """
+Martin owns a farm with hens. {h,10} hens do lay {e,80} eggs in {d,10} days. Martin decided to buy {b,15} more hens. How many eggs will all hens lay in {T,15} days?
+
+#init:
+- $h = range(4, 11)
+- $e = range(20, 301)
+- $d = range(2, 22, 2)
+- $b = range(5, 26, 5)
+- $T = range(2, 42)
+
+#conditions:
+- divides(e, h)
+- divides(e // h, 2)
+- divides(d, 2)
+- divides(T * 2, d)
+- T >= d
+
+#answer: (h + b) * (e // h // 2) * (T // (d // 2))
+"""
+
+answer_annotated = """
+If {h} hens lay {e} eggs, then 1 hen lays {e} / {h} = <<{e}/{h}={e//h}>>{e//h} eggs in {d} days.
+That means one hen is laying {e//h} / 2 = <<{e//h}/2={e//h//2}>>{e//h//2} eggs in {d//2} days.
+So in {T} days, 1 hen will lay {T // (d // 2)} times more eggs, so {e // h // 2} * {T // (d // 2)} = {e // h // 2 * (T // (d // 2))} eggs.
+All hens in total will then lay {h + b} * {e // h // 2 * (T // (d // 2))} = <<{h + b}*{e // h // 2 * (T // (d // 2))}={(h + b) * (e // h // 2) * (T // (d // 2))}>>{(h + b) * (e // h // 2) * (T // (d // 2))} eggs in {T} days.
+#### {(h + b) * (e // h // 2) * (T // (d // 2))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

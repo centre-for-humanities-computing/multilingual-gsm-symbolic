@@ -1,0 +1,50 @@
+question = """
+Barbeck has two times as many guitars as Steve, but Davey has three times as many guitars as Barbeck. If there are 27 guitars altogether, how many guitars does Davey have?
+"""
+
+answer = """
+Let x = the number of guitars Steve has.
+Barbeck has 2x guitars, and Davey has 3 * 2x = 6x guitars.
+2x + 6x + x = 27
+9x = 27
+x = 27 / 9 = <<27/9=3>>3 so Steve has 3 guitars.
+Barbeck has 2 * 3 = <<2*3=6>>6 guitars.
+And Davey has 3 * 6 = <<3*6=18>>18 guitars.
+#### 18
+"""
+
+id_orig = 2979
+id_shuffled = 3553
+
+question_annotated = """
+{bname,Barbeck} has {bt_txt,two} times as many guitars as {sname,Steve}, but {dname,Davey} has {dt_txt,three} times as many guitars as {bname,Barbeck}. If there are {T,27} guitars altogether, how many guitars does {dname,Davey} have?
+
+#init:
+- bname = sample(["Barbeck", "Adam", "Ben"])
+- sname = sample(["Steve", "Pete", "Carl"])
+- dname = sample(["Davey", "Eric", "Noah"])
+- bt_txt, bt = sample([("two", 2), ("three", 3)])
+- dt_txt, dt = sample([("three", 3), ("four", 4)])
+- $T = range(27, 400)
+
+#conditions:
+- T >= 1 + bt + bt * dt
+- divides(T, 1 + bt + bt * dt)
+
+#answer: dt * bt * (T // (1 + bt + bt * dt))
+"""
+
+answer_annotated = """
+Let x = the number of guitars {sname} has.
+{bname} has {bt}x guitars, and {dname} has {dt} * {bt}x = {dt*bt}x guitars.
+{bt}x + {dt*bt}x + x = {T}
+{1+bt+bt*dt}x = {T}
+x = {T} / {1+bt+bt*dt} = <<{T}/{1+bt+bt*dt}={T//(1+bt+bt*dt)}>>{T//(1+bt+bt*dt)} so {sname} has {T//(1+bt+bt*dt)} guitars.
+{bname} has {bt} * {T//(1+bt+bt*dt)} = <<{bt}*{T//(1+bt+bt*dt)}={bt*T//(1+bt+bt*dt)}>>{bt*T//(1+bt+bt*dt)} guitars.
+And {dname} has {dt} * {bt*T//(1+bt+bt*dt)} = <<{dt}*{bt*T//(1+bt+bt*dt)}={dt*bt*T//(1+bt+bt*dt)}>>{dt*bt*T//(1+bt+bt*dt)} guitars.
+#### {dt * bt * (T // (1 + bt + bt * dt))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

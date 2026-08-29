@@ -1,0 +1,45 @@
+question = """
+Maddie wants to see how much her mom spends on coffee each week. She makes herself 2 cups of coffee per day. Each cup has 1.5 ounces of coffee beans. A bag of coffee costs $8 and contains 10.5 ounces of beans. She uses 1/2 a gallon of milk per week. A gallon of milk costs $4. She doesn't add any sugar to the coffee. How much does she spend on her coffee per week?
+"""
+
+answer = """
+She uses 3 ounces of beans per day because 2 x 1.5 = <<2*1.5=3>>3
+She uses 21 ounces of beans per week because 7 x 3 = <<7*3=21>>21
+She buys 2 bags of beans per week because 21 / 10.5 = <<21/10.5=2>>2
+She spends $16 on the beans per week because 2 x 8 = <<16=16>>16
+She spends $2 on the milk per week because 4 x (1/2) = <<4*(1/2)=2>>2
+She spends $18 per week on her coffee because 16 + 2 = <<16+2=18>>18
+#### 18
+"""
+
+id_orig = 817
+id_shuffled = 913
+
+question_annotated = """
+{name,Maddie} wants to see how much her mom spends on coffee each week. She makes herself {cups,2} cups of coffee per day. Each cup has 1.5 ounces of coffee beans. A bag of coffee costs ${bag_cost,8} and contains 10.5 ounces of beans. She uses 1/2 a gallon of milk per week. A gallon of milk costs ${milk_cost,4}. She doesn't add any sugar to the coffee. How much does she spend on her coffee per week?
+
+#init:
+- name = sample(names_female)
+- $cups = range(2, 12, 2)
+- $bag_cost = range(5, 15)
+- $milk_cost = range(2, 14, 2)
+
+#conditions:
+- divides(milk_cost, 2)
+
+#answer: cups * bag_cost + milk_cost // 2
+"""
+
+answer_annotated = """
+She uses {cups*3//2} ounces of beans per day because {cups} x 1.5 = <<{cups}*1.5={cups*3//2}>>{cups*3//2}
+She uses {7*cups*3//2} ounces of beans per week because 7 x {cups*3//2} = <<7*{cups*3//2}={7*cups*3//2}>>{7*cups*3//2}
+She buys {cups} bags of beans per week because {7*cups*3//2} / 10.5 = <<{7*cups*3//2}/10.5={cups}>>{cups}
+She spends ${cups*bag_cost} on the beans per week because {cups} x {bag_cost} = <<{cups*bag_cost}={cups*bag_cost}>>{cups*bag_cost}
+She spends ${milk_cost//2} on the milk per week because {milk_cost} x (1/2) = <<{milk_cost}*(1/2)={milk_cost//2}>>{milk_cost//2}
+She spends ${cups*bag_cost+milk_cost//2} per week on her coffee because {cups*bag_cost} + {milk_cost//2} = <<{cups*bag_cost}+{milk_cost//2}={cups*bag_cost+milk_cost//2}>>{cups*bag_cost+milk_cost//2}
+#### {cups*bag_cost+milk_cost//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

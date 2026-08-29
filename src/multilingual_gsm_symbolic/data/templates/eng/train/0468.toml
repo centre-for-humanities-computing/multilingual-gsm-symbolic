@@ -1,0 +1,48 @@
+question = """
+Joseph and his friends watched two movies in his house. The first movie is 1 hour and 30 minutes long while the second movie is 30 minutes longer than the first. Before the movies, they spent 10 minutes making popcorn and twice as long making fries. How long, in hours, did it take Joseph and his friends to cook and watch the movies?
+"""
+
+answer = """
+The first movie was 60 + 30 = <<60+30=90>>90 minutes long since an hour has 60 minutes.
+The second movie was 90 + 30 = <<90+30=120>>120 minutes long.
+It took them a total of 90 + 120 = <<90+120=210>>210 minutes to watch the two movies.
+It took them 10 x 2 = <<10*2=20>>20 minutes to cook the fries.
+Thus, it took them a total of 10 + 20 = <<10+20=30>>30 minutes to cook.
+So, they spent 210 + 30 = <<210+30=240>>240 minutes watching the movies and cooking.
+In hours, this is equal to 240/60 = <<240/60=4>>4 hours.
+#### 4
+"""
+
+id_orig = 406
+id_shuffled = 468
+
+question_annotated = """
+{name,Joseph} and his friends watched two movies in his house. The first movie is 1 hour and {m,30} minutes long while the second movie is {e,30} minutes longer than the first. Before the movies, they spent {p,10} minutes making popcorn and {mult,twice} as long making fries. How long, in hours, did it take {name,Joseph} and his friends to cook and watch the movies?
+
+#init:
+- name = sample(names_male)
+- mult, mult_val = sample(multi_times)
+- $m = range(1, 60)
+- $e = range(1, 100)
+- $p = range(1, 61)
+
+#conditions:
+- divides(120 + 2*m + e + p + p*mult_val, 60)
+
+#answer: (120 + 2*m + e + p + p*mult_val)//60
+"""
+
+answer_annotated = """
+The first movie was 60 + {m} = <<60+{m}={60+m}>>{60+m} minutes long since an hour has 60 minutes.
+The second movie was {60+m} + {e} = <<{60+m}+{e}={60+m+e}>>{60+m+e} minutes long.
+It took them a total of {60+m} + {60+m+e} = <<{60+m}+{60+m+e}={120+2*m+e}>>{120+2*m+e} minutes to watch the two movies.
+It took them {p} x {mult_val} = <<{p}*{mult_val}={p*mult_val}>>{p*mult_val} minutes to cook the fries.
+Thus, it took them a total of {p} + {p*mult_val} = <<{p}+{p*mult_val}={p+p*mult_val}>>{p+p*mult_val} minutes to cook.
+So, they spent {120+2*m+e} + {p+p*mult_val} = <<{120+2*m+e}+{p+p*mult_val}={120+2*m+e+p+p*mult_val}>>{120+2*m+e+p+p*mult_val} minutes watching the movies and cooking.
+In hours, this is equal to {120+2*m+e+p+p*mult_val}/60 = <<{120+2*m+e+p+p*mult_val}/60={(120+2*m+e+p+p*mult_val)//60}>>{(120+2*m+e+p+p*mult_val)//60} hours.
+#### {(120+2*m+e+p+p*mult_val)//60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

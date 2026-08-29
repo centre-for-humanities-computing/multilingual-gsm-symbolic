@@ -1,0 +1,38 @@
+question = """
+Joe sells ham and cheese sandwiches for $1.50. If a slice of bread costs $0.15, a slice of ham costs $0.25 and a slice of cheese costs $0.35, how many cents does a sandwich with one slice of each protein cost Joe to make?
+"""
+
+answer = """
+First find the cost of two slices of bread: $0.15/slice * 2 slices = $<<0.15*2=0.30>>0.30
+Then add the cost of one slice each of ham and cheese: $0.30 + $0.25 + $0.35 = $<<0.30+0.25+0.35=0.90>>0.90
+#### 90
+"""
+
+id_orig = 1617
+id_shuffled = 1742
+
+question_annotated = """
+{name,Joe} sells ham and cheese sandwiches for $1.50. If a slice of bread costs $0.{b,15}, a slice of ham costs $0.{h,25} and a slice of cheese costs $0.{c,35}, how many cents does a sandwich with one slice of each protein cost {name,Joe} to make?
+
+#init:
+- name = sample(names_male)
+- $b = range(10, 100, 5)
+- $h = range(10, 100, 5)
+- $c = range(10, 100, 5)
+
+#conditions:
+- (2*b) % 100 >= 10
+- (2*b + h + c) % 100 >= 10
+
+#answer: 2*b + h + c
+"""
+
+answer_annotated = """
+First find the cost of two slices of bread: $0.{b}/slice * 2 slices = $<<0.{b}*2={2*b//100}.{2*b%100}>>{2*b//100}.{2*b%100}
+Then add the cost of one slice each of ham and cheese: ${2*b//100}.{2*b%100} + $0.{h} + $0.{c} = $<<{2*b//100}.{2*b%100}+0.{h}+0.{c}={(2*b+h+c)//100}.{(2*b+h+c)%100}>>{(2*b+h+c)//100}.{(2*b+h+c)%100}
+#### {2*b+h+c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

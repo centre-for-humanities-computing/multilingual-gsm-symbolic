@@ -1,0 +1,45 @@
+question = """
+Jimmy is going to sell pizzas at the carnival to make some money. The carnival only gave him 7 hours to do so. He bought a 22kg sack of flour to make his pizzas and he takes 10 min to make each pizza for the customers. At the end of the 7 hours, he saw some flour was left. Knowing that each pizza needs 0.5kg of flour to make, how many pizzas can he make to bring home with the flour left?
+"""
+
+answer = """
+Each hour Jimmy makes 60min ÷ 10min/pizza = <<60/10=6>>6 Pizzas
+The number of total pizzas made equals 7 hours x 6 pizzas/hour = <<7*6=42>>42 pizzas
+The amount of total flour used equals 42 pizzas x 0.5 kg/pizza = <<42*0.5=21>>21 kg
+The amount of flour left equals 22 kg - 21 kg = <<22-21=1>>1 kg
+The number of pizzas Jimmy can make is 1kg ÷ 0.5kg/pizza = <<1/0.5=2>>2 pizzas
+#### 2
+"""
+
+id_orig = 267
+id_shuffled = 292
+
+question_annotated = """
+{name,Jimmy} is going to sell pizzas at the carnival to make some money. The carnival only gave him {h,7} hours to do so. He bought a {f,22}kg sack of flour to make his pizzas and he takes {t,10} min to make each pizza for the customers. At the end of the {h,7} hours, he saw some flour was left. Knowing that each pizza needs 0.5kg of flour to make, how many pizzas can he make to bring home with the flour left?
+
+#init:
+- name = sample(names_male)
+- $h = range(2, 13)
+- $t = range(2, 31)
+- $f = range(5, 61)
+
+#conditions:
+- divides(60, t)
+- divides(h * (60 // t), 2)
+- h * (60 // t) * 0.5 < f
+
+#answer: 2*f - h * (60 // t)
+"""
+
+answer_annotated = """
+Each hour {name} makes 60min ÷ {t}min/pizza = <<60/{t}={60//t}>>{60//t} Pizzas
+The number of total pizzas made equals {h} hours x {60//t} pizzas/hour = <<{h}*{60//t}={h*(60//t)}>>{h*(60//t)} pizzas
+The amount of total flour used equals {h*(60//t)} pizzas x 0.5 kg/pizza = <<{h*(60//t)}*0.5={int(h*(60//t)*0.5)}>>{int(h*(60//t)*0.5)} kg
+The amount of flour left equals {f} kg - {int(h*(60//t)*0.5)} kg = <<{f}-{int(h*(60//t)*0.5)}={int(f-h*(60//t)*0.5)}>>{int(f-h*(60//t)*0.5)} kg
+The number of pizzas {name} can make is {int(f-h*(60//t)*0.5)}kg ÷ 0.5kg/pizza = <<{int(f-h*(60//t)*0.5)}/0.5={int((f-h*(60//t)*0.5)/0.5)}>>{int((f-h*(60//t)*0.5)/0.5)} pizzas
+#### {2*f - h*(60 // t)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

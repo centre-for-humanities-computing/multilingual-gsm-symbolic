@@ -1,0 +1,43 @@
+question = """
+Sam invested $10,000 and earned 20% interest compounded for 3 years. He then invested more until he had three times as much invested. The next year, he got a 15% return on his investment. How much money does he have now?
+"""
+
+answer = """
+After one year, Sam had $10,000 * 1.2 = $<<10000*1.2=12000>>12,000.
+After two years, he had $12,000 * 1.2 = $<<12000*1.2=14400>>14,400.
+After the third year, he had $14,400 * 1.2 = $<<14400*1.2=17280>>17,280.
+He then invested more money until he had 3 * $17,280 = $<<3*17280=51840>>51,840.
+The first year after that, he had $51,840 * 1.15 = $<<51840*1.15=59616>>59,616.
+#### 59616
+"""
+
+id_orig = 1540
+id_shuffled = 1665
+
+question_annotated = """
+{name,Sam} invested ${p,10000} and earned {r1,20}% interest compounded for 3 years. He then invested more until he had three times as much invested. The next year, he got a {r2,15}% return on his investment. How much money does he have now?
+
+#init:
+- name = sample(names_male)
+- $p = range(1000, 31000, 1000)
+- $r1 = range(10, 60, 10)
+- $r2 = range(5, 55, 5)
+
+#conditions:
+- divides(p*(100+r1)*(100+r1)*(100+r1)*3*(100+r2), 100000000)
+
+#answer: p*(100+r1)//100*(100+r1)//100*(100+r1)//100*3*(100+r2)//100
+"""
+
+answer_annotated = """
+After one year, {name} had ${p} * {(100+r1)/100} = $<<{p}*{(100+r1)/100}={p*(100+r1)//100}>>{p*(100+r1)//100}.
+After two years, he had ${p*(100+r1)//100} * {(100+r1)/100} = $<<{p*(100+r1)//100}*{(100+r1)/100}={p*(100+r1)//100*(100+r1)//100}>>{p*(100+r1)//100*(100+r1)//100}.
+After the third year, he had ${p*(100+r1)//100*(100+r1)//100} * {(100+r1)/100} = $<<{p*(100+r1)//100*(100+r1)//100}*{(100+r1)/100}={p*(100+r1)//100*(100+r1)//100*(100+r1)//100}>>{p*(100+r1)//100*(100+r1)//100*(100+r1)//100}.
+He then invested more money until he had 3 * ${p*(100+r1)//100*(100+r1)//100*(100+r1)//100} = $<<3*{p*(100+r1)//100*(100+r1)//100*(100+r1)//100}={p*(100+r1)//100*(100+r1)//100*(100+r1)//100*3}>>{p*(100+r1)//100*(100+r1)//100*(100+r1)//100*3}.
+The first year after that, he had ${p*(100+r1)//100*(100+r1)//100*(100+r1)//100*3} * {(100+r2)/100} = $<<{p*(100+r1)//100*(100+r1)//100*(100+r1)//100*3}*{(100+r2)/100}={p*(100+r1)//100*(100+r1)//100*(100+r1)//100*3*(100+r2)//100}>>{p*(100+r1)//100*(100+r1)//100*(100+r1)//100*3*(100+r2)//100}.
+#### {p*(100+r1)//100*(100+r1)//100*(100+r1)//100*3*(100+r2)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

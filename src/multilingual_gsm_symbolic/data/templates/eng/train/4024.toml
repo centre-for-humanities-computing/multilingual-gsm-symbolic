@@ -1,0 +1,41 @@
+question = """
+A certain store sells computer accessories and equipment. Due to a fire outbreak in one of the factories, the price of RAM increased by 30%. After two years, the price stabilized and finally fell by 20% from what it has risen. What is the current price of RAM if it was $50 before the fire?
+"""
+
+answer = """
+After the fire outbreak, the price of RAM got increased by 30/100 * 50 = $<<30/100*50=15>>15.
+So before stabilization the price was at 50 + 15 = $<<50+15=65>>65.
+After the stabilization, the price fell by 20% from $65, so it fell by 20/100 * 65 = $<<20/100*65=13>>13.
+That means the RAM is currently at 65 - 13 = $<<65-13=52>>52.
+#### 52
+"""
+
+id_orig = 3389
+id_shuffled = 4024
+
+question_annotated = """
+A certain store sells computer accessories and equipment. Due to a fire outbreak in one of the factories, the price of RAM increased by {pct_up,30}%. After two years, the price stabilized and finally fell by {pct_down,20}% from what it has risen. What is the current price of RAM if it was ${price,50} before the fire?
+
+#init:
+- $price = range(50, 2100, 50)
+- $pct_up = range(10, 51, 10)
+- $pct_down = range(20, 41, 20)
+
+#conditions:
+- divides(pct_up * price, 100)
+- divides(pct_down * (price + pct_up*price//100), 100)
+
+#answer: price + pct_up*price//100 - pct_down*(price + pct_up*price//100)//100
+"""
+
+answer_annotated = """
+After the fire outbreak, the price of RAM got increased by {pct_up}/100 * {price} = $<<{pct_up}/100*{price}={pct_up*price//100}>>{pct_up*price//100}.
+So before stabilization the price was at {price} + {pct_up*price//100} = $<<{price}+{pct_up*price//100}={price+pct_up*price//100}>>{price+pct_up*price//100}.
+After the stabilization, the price fell by {pct_down}% from ${price+pct_up*price//100}, so it fell by {pct_down}/100 * {price+pct_up*price//100} = $<<{pct_down}/100*{price+pct_up*price//100}={pct_down*(price+pct_up*price//100)//100}>>{pct_down*(price+pct_up*price//100)//100}.
+That means the RAM is currently at {price+pct_up*price//100} - {pct_down*(price+pct_up*price//100)//100} = $<<{price+pct_up*price//100}-{pct_down*(price+pct_up*price//100)//100}={price+pct_up*price//100-pct_down*(price+pct_up*price//100)//100}>>{price+pct_up*price//100-pct_down*(price+pct_up*price//100)//100}.
+#### {price+pct_up*price//100-pct_down*(price+pct_up*price//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

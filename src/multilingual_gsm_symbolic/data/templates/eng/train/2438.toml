@@ -1,0 +1,47 @@
+question = """
+A mountain range has 200 active volcanoes. In a particular year, 20% of the volcanoes exploded in the first two months, 40% of the remaining exploded by the half of the year, and at the end of the year, another 50% of the volcanoes that hadn't already erupted also exploded. How many mountains are still intact at the end of the year?
+"""
+
+answer = """
+By the first two months, 20/100*200 = <<20/100*200=40>>40 mountains had erupted.
+The total number of mountains remaining after the first round of explosions is 200-40= <<200-40=160>>160
+When 40% of the remaining mountains exploded, the number of mountains that were still intact decreased by 40/100*160 = <<40/100*160=64>>64
+The number of mountains that hadn't exploded after the second explosions is 160-64 = <<160-64=96>>96
+When 50% of the mountains which were still intact exploded, the number of mountains that hadn't erupted was reduced by 50/100*96 = <<50/100*96=48>>48
+At the end of the year, 96-48 = <<96-48=48>>48 mountains remained intact and hadn't exploded.
+#### 48
+"""
+
+id_orig = 2109
+id_shuffled = 2438
+
+question_annotated = """
+A mountain range has {v,200} active volcanoes. In a particular year, {p1,20}% of the volcanoes exploded in the first two months, {p2,40}% of the remaining exploded by the half of the year, and at the end of the year, another {p3,50}% of the volcanoes that hadn't already erupted also exploded. How many mountains are still intact at the end of the year?
+
+#init:
+- $v = range(200, 2200, 200)
+- $p1 = range(10, 60, 10)
+- $p2 = range(10, 60, 10)
+- $p3 = range(10, 60, 10)
+
+#conditions:
+- divides(v * p1, 100)
+- divides((v - v*p1//100) * p2, 100)
+- divides(((v - v*p1//100) - (v - v*p1//100)*p2//100) * p3, 100)
+
+#answer: (v - v*p1//100) - (v - v*p1//100)*p2//100 - p3*((v - v*p1//100) - (v - v*p1//100)*p2//100)//100
+"""
+
+answer_annotated = """
+By the first two months, {p1}/100*{v} = <<{p1}/100*{v}={v*p1//100}>>{v*p1//100} mountains had erupted.
+The total number of mountains remaining after the first round of explosions is {v}-{v*p1//100}= <<{v}-{v*p1//100}={v-v*p1//100}>>{v-v*p1//100}
+When {p2}% of the remaining mountains exploded, the number of mountains that were still intact decreased by {p2}/100*{v-v*p1//100} = <<{p2}/100*{v-v*p1//100}={(v-v*p1//100)*p2//100}>>{(v-v*p1//100)*p2//100}
+The number of mountains that hadn't exploded after the second explosions is {v-v*p1//100}-{(v-v*p1//100)*p2//100} = <<{v-v*p1//100}-{(v-v*p1//100)*p2//100}={(v-v*p1//100)-(v-v*p1//100)*p2//100}>>{(v-v*p1//100)-(v-v*p1//100)*p2//100}
+When {p3}% of the mountains which were still intact exploded, the number of mountains that hadn't erupted was reduced by {p3}/100*{(v-v*p1//100)-(v-v*p1//100)*p2//100} = <<{p3}/100*{(v-v*p1//100)-(v-v*p1//100)*p2//100}={p3*((v-v*p1//100)-(v-v*p1//100)*p2//100)//100}>>{p3*((v-v*p1//100)-(v-v*p1//100)*p2//100)//100}
+At the end of the year, {(v-v*p1//100)-(v-v*p1//100)*p2//100}-{p3*((v-v*p1//100)-(v-v*p1//100)*p2//100)//100} = <<{(v-v*p1//100)-(v-v*p1//100)*p2//100}-{p3*((v-v*p1//100)-(v-v*p1//100)*p2//100)//100}={(v-v*p1//100)-(v-v*p1//100)*p2//100-p3*((v-v*p1//100)-(v-v*p1//100)*p2//100)//100}>>{(v-v*p1//100)-(v-v*p1//100)*p2//100-p3*((v-v*p1//100)-(v-v*p1//100)*p2//100)//100} mountains remained intact and hadn't exploded.
+#### {(v-v*p1//100)-(v-v*p1//100)*p2//100-p3*((v-v*p1//100)-(v-v*p1//100)*p2//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

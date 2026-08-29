@@ -1,0 +1,41 @@
+question = """
+A watermelon stand sold 46 watermelons. Seventeen customers bought one melon, three customers bought three melons, and the rest bought two melons. How many customers bought two watermelons?
+"""
+
+answer = """
+The customers that bought one watermelon bought 1 * 17 = <<1*17=17>>17 melons.
+The customers that bought three melons bought 3 * 3 = <<3*3=9>>9 melons.
+The stand sold 46 - 17 - 9 = <<46-17-9=20>>20 melons to customers who bought 2 melons.
+Thus, 20 / 2 = <<20/2=10>>10 customers bought two watermelons.
+#### 10
+"""
+
+id_orig = 3370
+id_shuffled = 3995
+
+question_annotated = """
+A watermelon stand sold {total,46} watermelons. {n1w,Seventeen} customers bought one melon, {n3w,three} customers bought three melons, and the rest bought two melons. How many customers bought two watermelons?
+
+#init:
+- total = range(30, 220)
+- n1w, n1 = sample([("One", 1), ("Two", 2), ("Three", 3), ("Four", 4), ("Five", 5), ("Six", 6), ("Seven", 7), ("Eight", 8), ("Nine", 9), ("Ten", 10), ("Eleven", 11), ("Twelve", 12), ("Thirteen", 13), ("Fourteen", 14), ("Fifteen", 15), ("Sixteen", 16), ("Seventeen", 17), ("Eighteen", 18), ("Nineteen", 19), ("Twenty", 20)])
+- n3w, n3 = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10)])
+
+#conditions:
+- total - n1 - 3*n3 >= 2
+- divides(total - n1 - 3*n3, 2)
+
+#answer: (total - n1 - 3*n3)//2
+"""
+
+answer_annotated = """
+The customers that bought one watermelon bought 1 * {n1} = <<1*{n1}={n1}>>{n1} melons.
+The customers that bought three melons bought 3 * {n3} = <<3*{n3}={3*n3}>>{3*n3} melons.
+The stand sold {total} - {n1} - {3*n3} = <<{total}-{n1}-{3*n3}={total-n1-3*n3}>>{total-n1-3*n3} melons to customers who bought 2 melons.
+Thus, {total-n1-3*n3} / 2 = <<{total-n1-3*n3}/2={(total-n1-3*n3)//2}>>{(total-n1-3*n3)//2} customers bought two watermelons.
+#### {(total-n1-3*n3)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

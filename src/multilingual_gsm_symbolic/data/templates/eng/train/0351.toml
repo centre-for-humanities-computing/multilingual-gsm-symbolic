@@ -1,0 +1,43 @@
+question = """
+Mckenna starts her day at 8:00 a.m. She works in her office up to 11:00 a.m. then joins her team of developers at the conference room to talk about projects up to 13:00, from which she works for another two hours and then heads home. How many hours does Mckenna stay at work?
+"""
+
+answer = """
+From 8:00 to 11:00, Mckenna spends 11:00-8:00 = 3 hours at work
+When she joins the developers in the conference room for the meeting, she spends an additional 13:00-11:00 = 2 hours at work.
+So far, she has spent 3+2 = <<3+2=5>>5 hours at work.
+When she works for an additional 2 hours before heading home, her total work hours become 5+2 = <<5+2=7>>7 hours
+#### 7
+"""
+
+id_orig = 243
+id_shuffled = 351
+
+question_annotated = """
+{name,Mckenna} starts her day at {start,8}:00 a.m. She works in her office up to {office,11}:00 a.m. then joins her team of developers at the conference room to talk about projects up to {meet,13}:00, from which she works for another {more_txt,two} hours and then heads home. How many hours does {name,Mckenna} stay at work?
+
+#init:
+- name = sample(names)
+- more_txt, more = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $start = range(6, 12)
+- $office = range(9, 14)
+- $meet = range(10, 24)
+
+#conditions:
+- office > start
+- meet > office
+
+#answer: meet - start + more
+"""
+
+answer_annotated = """
+From {start}:00 to {office}:00, {name} spends {office}:00-{start}:00 = {office-start} hours at work
+When she joins the developers in the conference room for the meeting, she spends an additional {meet}:00-{office}:00 = {meet-office} hours at work.
+So far, she has spent {office-start}+{meet-office} = <<{office-start}+{meet-office}={office-start+meet-office}>>{office-start+meet-office} hours at work.
+When she works for an additional {more} hours before heading home, her total work hours become {office-start+meet-office}+{more} = <<{office-start+meet-office}+{more}={meet-start+more}>>{meet-start+more} hours
+#### {meet-start+more}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

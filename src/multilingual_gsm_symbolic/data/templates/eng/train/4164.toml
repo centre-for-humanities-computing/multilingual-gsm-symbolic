@@ -1,0 +1,44 @@
+question = """
+Hayden eats 1 oz of mixed nuts as an evening snack.  He buys the bulk bag of mixed nuts that cost $25.00 a bag and holds 40 oz of mixed nuts.  There is currently a $5.00 coupon for this item.  How much will each serving of nuts cost, in cents, after the coupon is applied?
+"""
+
+answer = """
+The nuts are $25.00 and he has a $5.00 coupon, so the nuts are on sale for $25-$5 = $<<25-5=20.00>>20.00
+He eats 1 oz of nuts every evening and the bag has 40 oz of nuts, so it has 40/1 = <<40/1=40>>40 1 oz servings
+The nuts cost $20.00 and there are 40 servings per bag, so his snack is $20/40 = $<<20/40=0.50>>0.50 per serving
+#### 50
+"""
+
+id_orig = 3517
+id_shuffled = 4164
+
+question_annotated = """
+{name,Hayden} eats {s,1} oz of mixed nuts as an evening snack.  He buys the bulk bag of mixed nuts that cost ${price,25}.00 a bag and holds {bag,40} oz of mixed nuts.  There is currently a ${coupon,5}.00 coupon for this item.  How much will each serving of nuts cost, in cents, after the coupon is applied?
+
+#init:
+- name = sample(names_male)
+- $s = range(1, 3)
+- $price = range(20, 45)
+- $coupon = range(3, 18)
+- $bag = range(24, 72, 2)
+
+#conditions:
+- coupon < price
+- divides(bag, s)
+- is_int((price - coupon) * 100 / (bag / s))
+- (price - coupon) * 100 / (bag / s) >= 10
+- (price - coupon) * 100 / (bag / s) < 100
+
+#answer: int((price - coupon) * 100 / (bag / s))
+"""
+
+answer_annotated = """
+The nuts are ${price}.00 and he has a ${coupon}.00 coupon, so the nuts are on sale for ${price}-${coupon} = $<<{price}-{coupon}={price-coupon}.00>>{price-coupon}.00
+He eats {s} oz of nuts every evening and the bag has {bag} oz of nuts, so it has {bag}/{s} = <<{bag}/{s}={bag//s}>>{bag//s} {s} oz servings
+The nuts cost ${price-coupon}.00 and there are {bag//s} servings per bag, so his snack is ${price-coupon}/{bag//s} = $<<{price-coupon}/{bag//s}=0.{int((price - coupon) * 100 / (bag // s))}>>0.{int((price - coupon) * 100 / (bag // s))} per serving
+#### {int((price - coupon) * 100 / (bag / s))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

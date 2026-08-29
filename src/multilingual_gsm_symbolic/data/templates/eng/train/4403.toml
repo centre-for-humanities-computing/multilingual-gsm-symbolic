@@ -1,0 +1,44 @@
+question = """
+Last year, Jorge planted corn on all of his 60 acres of property.  Typically, corn grown on good soil yields 400 bushels per acre, but in clay-rich soil, the yield is only half as much per acre as in good soil.  One-third of Jorge's 60 acres of land is clay-rich soil and the rest is good soil.  How many bushels of corn did Jorge's land yield last year?
+"""
+
+answer = """
+Jorge has 60 * (1/3) = <<60*(1/3)=20>>20 acres of clay-rich soil.
+He has 60 - 20 = <<60-20=40>>40 acres of good soil.
+At 400 bushels per acre, his 40 acres of good soil produced 40 * 400 = <<400*40=16000>>16,000 bushels of corn.
+If good soil produces 400 bushels per acre, clay-rich soil produces 400 / 2 = <<400/2=200>>200 bushels per acre.
+At 200 bushels per acre, his 20 acres of clay-rich soil produced 20 * 200 = <<200*20=4000>>4,000 bushels of corn.
+Altogether, his land produced 16,000 + 4,000 = <<16000+4000=20000>>20,000 bushels of corn.
+#### 20000
+"""
+
+id_orig = 3733
+id_shuffled = 4403
+
+question_annotated = """
+Last year, {name,Jorge} planted corn on all of his {a,60} acres of property.  Typically, corn grown on good soil yields {y,400} bushels per acre, but in clay-rich soil, the yield is only half as much per acre as in good soil.  One-third of {name,Jorge}'s {a,60} acres of land is clay-rich soil and the rest is good soil.  How many bushels of corn did {name,Jorge}'s land yield last year?
+
+#init:
+- name = sample(names_male)
+- $a = range(30, 330, 30)
+- $y = range(200, 2400, 200)
+
+#conditions:
+- a > 0
+
+#answer: y*(a-a//3)+(a//3)*(y//2)
+"""
+
+answer_annotated = """
+{name} has {a} * (1/3) = <<{a}*(1/3)={a//3}>>{a//3} acres of clay-rich soil.
+He has {a} - {a//3} = <<{a}-{a//3}={a-a//3}>>{a-a//3} acres of good soil.
+At {y} bushels per acre, his {a-a//3} acres of good soil produced {a-a//3} * {y} = <<{y}*{a-a//3}={y*(a-a//3)}>>{str(y*(a-a//3)//1000)},000 bushels of corn.
+If good soil produces {y} bushels per acre, clay-rich soil produces {y} / 2 = <<{y}/2={y//2}>>{y//2} bushels per acre.
+At {y//2} bushels per acre, his {a//3} acres of clay-rich soil produced {a//3} * {y//2} = <<{y//2}*{a//3}={(a//3)*(y//2)}>>{str((a//3)*(y//2)//1000)},000 bushels of corn.
+Altogether, his land produced {str(y*(a-a//3)//1000)},000 + {str((a//3)*(y//2)//1000)},000 = <<{y*(a-a//3)}+{(a//3)*(y//2)}={y*(a-a//3)+(a//3)*(y//2)}>>{str((y*(a-a//3)+(a//3)*(y//2))//1000)},000 bushels of corn.
+#### {y*(a-a//3)+(a//3)*(y//2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

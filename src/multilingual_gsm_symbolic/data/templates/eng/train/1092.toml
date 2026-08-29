@@ -1,0 +1,50 @@
+question = """
+A club opens up and charges $20 to enter.  James buys 2 rounds for his 5 friends.  He also buys 6 drinks for himself. Drinks cost $6 each.  He decides to eat some food so he orders some fried chicken which costs $14.  He leaves a 30% tip on everything he orders.  How much did he spend for the night?
+"""
+
+answer = """
+He buys 2*5=<<2*5=10>>10 drinks for his friends
+So he orders 10+6=<<10+6=16>>16 total drinks.
+The cost of the drinks was 16*6=$<<16*6=96>>96
+So his order came out to 96+14=$<<96+14=110>>110
+The tip came out to 110*.3=$<<110*.3=33>>33
+So his order cost 110+33=$<<110+33=143>>143
+Adding in the cover charge means it cost 143+20=$<<143+20=163>>163
+#### 163
+"""
+
+id_orig = 996
+id_shuffled = 1092
+
+question_annotated = """
+A club opens up and charges ${cover,20} to enter.  {name,James} buys {r,2} rounds for his {f,5} friends.  He also buys {d,6} drinks for himself. Drinks cost ${c,6} each.  He decides to eat some food so he orders some fried chicken which costs ${food,14}.  He leaves a 30% tip on everything he orders.  How much did he spend for the night?
+
+#init:
+- name = sample(names_male)
+- $cover = range(15, 21, 5)
+- $r = range(1, 5)
+- $f = range(2, 8)
+- $d = range(2, 11, 2)
+- $c = range(2, 9)
+- $food = range(6, 24, 2)
+
+#conditions:
+- divides((r*f+d)*c + food, 10)
+
+#answer: ((r*f+d)*c + food) * 13 // 10 + cover
+"""
+
+answer_annotated = """
+He buys {r}*{f}=<<{r}*{f}={r*f}>>{r*f} drinks for his friends
+So he orders {r*f}+{d}=<<{r*f}+{d}={r*f+d}>>{r*f+d} total drinks.
+The cost of the drinks was {r*f+d}*{c}=$<<{r*f+d}*{c}={(r*f+d)*c}>>{(r*f+d)*c}
+So his order came out to {(r*f+d)*c}+{food}=$<<{(r*f+d)*c}+{food}={(r*f+d)*c+food}>>{(r*f+d)*c+food}
+The tip came out to {(r*f+d)*c+food}*.3=$<<{(r*f+d)*c+food}*.3={((r*f+d)*c+food)*3//10}>>{((r*f+d)*c+food)*3//10}
+So his order cost {(r*f+d)*c+food}+{((r*f+d)*c+food)*3//10}=$<<{(r*f+d)*c+food}+{((r*f+d)*c+food)*3//10}={(r*f+d)*c+food+((r*f+d)*c+food)*3//10}>>{(r*f+d)*c+food+((r*f+d)*c+food)*3//10}
+Adding in the cover charge means it cost {(r*f+d)*c+food+((r*f+d)*c+food)*3//10}+{cover}=$<<{(r*f+d)*c+food+((r*f+d)*c+food)*3//10}+{cover}={(r*f+d)*c+food+((r*f+d)*c+food)*3//10+cover}>>{(r*f+d)*c+food+((r*f+d)*c+food)*3//10+cover}
+#### {((r*f+d)*c+food+((r*f+d)*c+food)*3//10+cover)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

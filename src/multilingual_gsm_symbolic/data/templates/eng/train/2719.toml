@@ -1,0 +1,47 @@
+question = """
+A department store offers a 10% discount for the amount exceeding $100 of the customer's total charge. Jaco bought a pair of shoes for $74; 2 pairs of socks that cost $2 per pair; a bag that costs $42. How much will Jaco pay for those items?
+"""
+
+answer = """
+Two pairs of socks cost $2 x 2 = $<<2*2=4>>4.
+Jaco's total charge is $74 + $4 + $42 = $<<74+4+42=120>>120.
+The amount that exceeds $100 is $120 - $100 = $<<120-100=20>>20.
+So, Jaco has $20 x 10/100 = $<<20*10/100=2>>2 discount.
+Therefore, Jaco will pay $120 - $2 = $<<120-2=118>>118 for those items.
+#### 118
+"""
+
+id_orig = 2360
+id_shuffled = 2719
+
+question_annotated = """
+A department store offers a {r,10}% discount for the amount exceeding ${th,100} of the customer's total charge. {name,Jaco} bought a pair of shoes for ${s,74}; {k,2} pairs of socks that cost ${p,2} per pair; a bag that costs ${b,42}. How much will {name,Jaco} pay for those items?
+
+#init:
+- name = sample(names_male)
+- k_txt, k = sample([("Two", 2), ("Three", 3), ("Four", 4), ("Five", 5)])
+- $s = range(40, 100, 2)
+- $p = range(1, 9)
+- $b = range(10, 44, 2)
+- $th = range(50, 141, 10)
+- $r = range(5, 26, 5)
+
+#conditions:
+- s + k*p + b > th
+- divides((s + k*p + b - th) * r, 100)
+
+#answer: (s + k*p + b) - (s + k*p + b - th) * r // 100
+"""
+
+answer_annotated = """
+{k_txt} pairs of socks cost ${p} x {k} = $<<{p}*{k}={p*k}>>{p*k}.
+{name}'s total charge is ${s} + ${p*k} + ${b} = $<<{s}+{p*k}+{b}={s+p*k+b}>>{s+p*k+b}.
+The amount that exceeds ${th} is ${s+p*k+b} - ${th} = $<<{s+p*k+b}-{th}={s+p*k+b-th}>>{s+p*k+b-th}.
+So, {name} has ${s+p*k+b-th} x {r}/100 = $<<{s+p*k+b-th}*{r}/100={(s+p*k+b-th)*r//100}>>{(s+p*k+b-th)*r//100} discount.
+Therefore, {name} will pay ${s+p*k+b} - ${(s+p*k+b-th)*r//100} = $<<{s+p*k+b}-{(s+p*k+b-th)*r//100}={s+p*k+b-((s+p*k+b-th)*r//100)}>>{s+p*k+b-((s+p*k+b-th)*r//100)} for those items.
+#### {(s + k*p + b) - (s + k*p + b - th) * r // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

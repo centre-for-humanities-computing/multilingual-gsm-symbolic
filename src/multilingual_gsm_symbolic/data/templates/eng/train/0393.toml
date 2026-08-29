@@ -1,0 +1,43 @@
+question = """
+Tom needs to lower a rope down 6 stories.   One story is 10 feet.  The only rope being sold is 20 feet long but you lose 25% when lashing them together.  How many pieces of rope will he need to buy?
+"""
+
+answer = """
+He needs 10*6=<<10*6=60>>60 feet
+He loses 20*.25=<<20*.25=5>>5 feet each time
+So he gets 20-5=<<20-5=15>>15 feet from each piece
+That means he needs 60/15=<<60/15=4>>4 pieces of rope
+#### 4
+"""
+
+id_orig = 340
+id_shuffled = 393
+
+question_annotated = """
+{name,Tom} needs to lower a rope down {n,6} stories.   One story is {f,10} feet.  The only rope being sold is {r,20} feet long but you lose {p,25}% when lashing them together.  How many pieces of rope will he need to buy?
+
+#init:
+- name = sample(names_male)
+- $n = range(2, 32)
+- $f = range(8, 14)
+- $r = range(20, 220, 20)
+- $p = range(25, 100, 25)
+
+#conditions:
+- divides(r*p, 100)
+- divides(f*n, r - r*p//100)
+
+#answer: f*n//(r - r*p//100)
+"""
+
+answer_annotated = """
+He needs {f}*{n}=<<{f}*{n}={f*n}>>{f*n} feet
+He loses {r}*.{p}=<<{r}*.{p}={r*p//100}>>{r*p//100} feet each time
+So he gets {r}-{r*p//100}=<<{r}-{r*p//100}={r-r*p//100}>>{r-r*p//100} feet from each piece
+That means he needs {f*n}/{r-r*p//100}=<<{f*n}/{r-r*p//100}={f*n//(r-r*p//100)}>>{f*n//(r-r*p//100)} pieces of rope
+#### {f*n//(r-r*p//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+Harry wants to build a homemade helium balloon with his son, Kevin, so he and Kevin go to the store with $200. They buy a giant sheet to turn into a balloon for $42, a rope for $18, and a propane tank and burner for $14. They plan to use the rest of the money on helium. The helium is $1.50 per ounce. For every ounce they buy, the balloon can fly 113 feet higher. How many feet up can they fly the balloon?
+"""
+
+answer = """
+They have $126 for helium because 200 - 42 - 18 - 14 = <<200-42-18-14=126>>126.
+They can buy 84 ounces of helium because 126 / 1.5 = <<126/1.5=84>>84
+They can fly 9,492 feet up because 84 x 113 = <<84*113=9492>>9,492
+#### 9,492
+"""
+
+id_orig = 1240
+id_shuffled = 1347
+
+question_annotated = """
+{name,Harry} wants to build a homemade helium balloon with his son, {kid,Kevin}, so he and {kid,Kevin} go to the store with ${m,200}. They buy a giant sheet to turn into a balloon for ${s,42}, a rope for ${r,18}, and a propane tank and burner for ${t,14}. They plan to use the rest of the money on helium. The helium is $1.50 per ounce. For every ounce they buy, the balloon can fly 113 feet higher. How many feet up can they fly the balloon?
+
+#init:
+- name = sample(names_male)
+- kid = sample(names_male)
+- $m = range(150, 300)
+- $s = range(20, 50)
+- $r = range(10, 26, 2)
+- $t = range(10, 22, 2)
+
+#conditions:
+- divides(2*(m-s-r-t), 3)
+- (m-s-r-t)*2//3*113 >= 1000
+- (m-s-r-t)*2//3*113 % 1000 >= 100
+
+#answer: (m-s-r-t)*2//3*113
+"""
+
+answer_annotated = """
+They have ${m-s-r-t} for helium because {m} - {s} - {r} - {t} = <<{m}-{s}-{r}-{t}={m-s-r-t}>>{m-s-r-t}.
+They can buy {(m-s-r-t)*2//3} ounces of helium because {m-s-r-t} / 1.5 = <<{m-s-r-t}/1.5={(m-s-r-t)*2//3}>>{(m-s-r-t)*2//3}
+They can fly {str((m-s-r-t)*2//3*113//1000)+","+str((m-s-r-t)*2//3*113%1000)} feet up because {(m-s-r-t)*2//3} x 113 = <<{(m-s-r-t)*2//3}*113={(m-s-r-t)*2//3*113}>>{str((m-s-r-t)*2//3*113//1000)+","+str((m-s-r-t)*2//3*113%1000)}
+#### {(m-s-r-t)*2//3*113//1000},{(m-s-r-t)*2//3*113%1000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

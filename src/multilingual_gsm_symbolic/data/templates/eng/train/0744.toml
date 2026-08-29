@@ -1,0 +1,42 @@
+question = """
+3/5 of the mangoes on a mango tree are ripe. If Lindsay eats 60% of the ripe mangoes, calculate the number of ripe mangoes remaining if there were 400 mangoes on the tree to start with.
+"""
+
+answer = """
+The number of ripe mangoes from the tree is 3/5*400 = <<3/5*400=240>>240
+If Lindsay eats 60% of the ripe mangoes, she eats 60/100*240 = <<60/100*240=144>>144 mangoes.
+The total number of ripe mangoes remaining is 240-144 =<<240-144=96>>96
+#### 96
+"""
+
+id_orig = 671
+id_shuffled = 744
+
+question_annotated = """
+{fn,3}/{fd,5} of the mangoes on a mango tree are ripe. If {name,Lindsay} eats {pct,60}% of the ripe mangoes, calculate the number of ripe mangoes remaining if there were {total,400} mangoes on the tree to start with.
+
+#init:
+- name = sample(names_female)
+- $fn = range(1, 10)
+- $fd = range(2, 11)
+- $pct = range(5, 100, 5)
+- $total = range(50, 1050, 50)
+
+#conditions:
+- divides(fn * total, fd)
+- divides(pct * fn * total, 100 * fd)
+- pct < 100
+
+#answer: fn*total//fd - pct*(fn*total//fd)//100
+"""
+
+answer_annotated = """
+The number of ripe mangoes from the tree is {fn}/{fd}*{total} = <<{fn}/{fd}*{total}={fn*total//fd}>>{fn*total//fd}
+If {name} eats {pct}% of the ripe mangoes, she eats {pct}/100*{fn*total//fd} = <<{pct}/100*{fn*total//fd}={pct*(fn*total//fd)//100}>>{pct*(fn*total//fd)//100} mangoes.
+The total number of ripe mangoes remaining is {fn*total//fd}-{pct*(fn*total//fd)//100} =<<{fn*total//fd}-{pct*(fn*total//fd)//100}={fn*total//fd-pct*(fn*total//fd)//100}>>{fn*total//fd-pct*(fn*total//fd)//100}
+#### {fn*total//fd-pct*(fn*total//fd)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

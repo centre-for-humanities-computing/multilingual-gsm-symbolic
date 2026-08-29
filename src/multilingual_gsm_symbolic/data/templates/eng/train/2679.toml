@@ -1,0 +1,42 @@
+question = """
+Henri has 8 hours to watch movies and read. He watches one movie that is 3.5 hours and one movie that is 1.5 hours. He then decides to read. If he can read 10 words a minute, how many words does he read before his free time is up?
+"""
+
+answer = """
+He has 3 hours to read because 8 - 3.5 - 1.5 = <<8-3.5-1.5=3>>3
+He has 180 minutes to read because 3 x 60 = <<3*60=180>>180
+He can read 1,800 words because 180 x 10 = <<180*10=1800>>1,800
+#### 1800
+"""
+
+id_orig = 2331
+id_shuffled = 2679
+
+question_annotated = """
+{name,Henri} has {t,8} hours to watch movies and read. He watches one movie that is {m1_txt,3.5} hours and one movie that is {m2_txt,1.5} hours. He then decides to read. If he can read {r,10} words a minute, how many words does he read before his free time is up?
+
+#init:
+- name = sample(names_male)
+- m1_txt, m1v = sample([("1.5", 3), ("2.5", 5), ("3.5", 7), ("4.5", 9), ("5.5", 11), ("6.5", 13)])
+- m2_txt, m2v = sample([("0.5", 1), ("1.5", 3), ("2.5", 5)])
+- $t = range(5, 15)
+- $r = range(5, 35, 5)
+
+#conditions:
+- t*2 > m1v + m2v
+- (2*t - m1v - m2v)*30*r >= 1100
+- (2*t - m1v - m2v)*30*r <= 1999
+
+#answer: (2*t - m1v - m2v)*30*r
+"""
+
+answer_annotated = """
+He has {(2*t - m1v - m2v)//2} hours to read because {t} - {m1_txt} - {m2_txt} = <<{t}-{m1_txt}-{m2_txt}={(2*t - m1v - m2v)//2}>>{(2*t - m1v - m2v)//2}
+He has {(2*t - m1v - m2v)//2*60} minutes to read because {(2*t - m1v - m2v)//2} x 60 = <<{(2*t - m1v - m2v)//2}*60={(2*t - m1v - m2v)//2*60}>>{(2*t - m1v - m2v)//2*60}
+He can read 1,{(2*t - m1v - m2v)*30*r - 1000} words because {(2*t - m1v - m2v)*30} x {r} = <<{(2*t - m1v - m2v)*30}*{r}={(2*t - m1v - m2v)*30*r}>>1,{(2*t - m1v - m2v)*30*r - 1000}
+#### {(2*t - m1v - m2v)*30*r}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

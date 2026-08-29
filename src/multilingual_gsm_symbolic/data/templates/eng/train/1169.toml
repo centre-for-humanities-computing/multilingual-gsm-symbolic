@@ -1,0 +1,43 @@
+question = """
+1,800 fish swim westward, 3,200 swim eastward, and 500 swim north. What is the number of fish left in the sea, if fishers catch 2/5 of the fish that swam eastward and 3/4 of the fish that swam westward?
+"""
+
+answer = """
+When fishers caught 3/4 of the fish that swam westward, their total number reduced by 3/4 * 1800 fish = <<3/4*1800=1350>>1350
+The total number of fish that remained from the total number that swam eastward is 1800 fish - 1350 fish = <<1800-1350=450>>450 fish
+If fishers caught 2/5 of the fish that swam eastward, their total number reduced by 2/5 * 3200 fish = <<2/5*3200=1280>>1280 fish
+3200 fish - 1280 fish = <<3200-1280=1920>>1920 fish remained in the sea from the number that swam westward.
+The total number of fish in the sea after fishers caught some is 500 of the number that went north + 450 of the fish that swam westward + 1920 of the fish that swam eastward = <<500+450+1920=2870>>2870 fish
+#### 2870
+"""
+
+id_orig = 1073
+id_shuffled = 1169
+
+question_annotated = """
+{w_txt,1,800} fish swim westward, {e_txt,3,200} swim eastward, and {n_txt,500} swim north. What is the number of fish left in the sea, if fishers catch 2/5 of the fish that swam eastward and 3/4 of the fish that swam westward?
+
+#init:
+- w_txt, w = sample([("1,200", 1200), ("1,400", 1400), ("1,600", 1600), ("1,800", 1800), ("2,000", 2000), ("2,400", 2400)])
+- e_txt, e = sample([("1,200", 1200), ("2,000", 2000), ("2,400", 2400), ("3,200", 3200), ("4,000", 4000), ("5,000", 5000)])
+- n_txt, n = sample([("300", 300), ("500", 500), ("700", 700), ("900", 900), ("1,100", 1100)])
+
+#conditions:
+- is_int(w*3/4)
+- is_int(e*2/5)
+
+#answer: n + w - w*3//4 + e - e*2//5
+"""
+
+answer_annotated = """
+When fishers caught 3/4 of the fish that swam westward, their total number reduced by 3/4 * {w} fish = <<3/4*{w}={w*3//4}>>{w*3//4}
+The total number of fish that remained from the total number that swam eastward is {w} fish - {w*3//4} fish = <<{w}-{w*3//4}={w-w*3//4}>>{w-w*3//4} fish
+If fishers caught 2/5 of the fish that swam eastward, their total number reduced by 2/5 * {e} fish = <<2/5*{e}={e*2//5}>>{e*2//5} fish
+{e} fish - {e*2//5} fish = <<{e}-{e*2//5}={e-e*2//5}>>{e-e*2//5} fish remained in the sea from the number that swam westward.
+The total number of fish in the sea after fishers caught some is {n} of the number that went north + {w-w*3//4} of the fish that swam westward + {e-e*2//5} of the fish that swam eastward = <<{n}+{w-w*3//4}+{e-e*2//5}={n+w-w*3//4+e-e*2//5}>>{n+w-w*3//4+e-e*2//5} fish
+#### {n + w - w*3//4 + e - e*2//5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

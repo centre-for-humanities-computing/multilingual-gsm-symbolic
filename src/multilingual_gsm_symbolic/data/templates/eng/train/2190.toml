@@ -1,0 +1,45 @@
+question = """
+The water pressure of a sink has a steady flow of 2 cups per 10 minutes for the first 30 minutes. It still flows at 2 cups per 10 minutes for the next 30 minutes after. For the next hour, the water pressure maximizes to 4 cups per 10 minutes and stops. Shawn now has to dump half of the water away. How much water is left?
+"""
+
+answer = """
+For the first 30 minutes, 3*2=<<3*2=6>>6 cups of water came out.
+For the next 30 minutes, 3*2=<<3*2=6>>6 cups of water came out.
+For the next hour, 6*4=<<6*4=24>>24 cups of water came out.
+A total of 6+6+24=<<6+6+24=36>>36 cups of water came out.
+Shawn had to dump water which left 36/2=<<36/2=18>>18 cups of water.
+#### 18
+"""
+
+id_orig = 1930
+id_shuffled = 2190
+
+question_annotated = """
+The water pressure of a sink has a steady flow of {r1,2} cups per 10 minutes for the first {t1,30} minutes. It still flows at {r2,2} cups per 10 minutes for the next {t2,30} minutes after. For the next hour, the water pressure maximizes to {r3,4} cups per 10 minutes and stops. {name,Shawn} now has to dump half of the water away. How much water is left?
+
+#init:
+- name = sample(names_male)
+- $r1 = range(2, 12)
+- $t1 = range(10, 110, 10)
+- $r2 = range(2, 12)
+- $t2 = range(10, 110, 10)
+- $r3 = range(2, 12)
+
+#conditions:
+- divides(t1//10*r1 + t2//10*r2 + 6*r3, 2)
+
+#answer: (t1//10*r1 + t2//10*r2 + 6*r3)//2
+"""
+
+answer_annotated = """
+For the first {t1} minutes, {t1//10}*{r1}=<<{t1//10}*{r1}={t1//10*r1}>>{t1//10*r1} cups of water came out.
+For the next {t2} minutes, {t2//10}*{r2}=<<{t2//10}*{r2}={t2//10*r2}>>{t2//10*r2} cups of water came out.
+For the next hour, {60//10}*{r3}=<<{60//10}*{r3}={60//10*r3}>>{60//10*r3} cups of water came out.
+A total of {t1//10*r1}+{t2//10*r2}+{6*r3}=<<{t1//10*r1}+{t2//10*r2}+{6*r3}={t1//10*r1+t2//10*r2+6*r3}>>{t1//10*r1+t2//10*r2+6*r3} cups of water came out.
+{name} had to dump water which left {t1//10*r1+t2//10*r2+6*r3}/2=<<{t1//10*r1+t2//10*r2+6*r3}/2={(t1//10*r1+t2//10*r2+6*r3)//2}>>{(t1//10*r1+t2//10*r2+6*r3)//2} cups of water.
+#### {(t1//10*r1+t2//10*r2+6*r3)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

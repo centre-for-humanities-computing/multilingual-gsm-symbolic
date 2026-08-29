@@ -1,0 +1,40 @@
+question = """
+MIlle is making snack packs for her kindergarten class. She's going to divide 64 pretzels, four times as many goldfish, and 32 suckers into baggies for the 16 kids in the class. How many items does each baggie have?
+"""
+
+answer = """
+First find the total number of goldfish Millie adds: 64 pretzels * 4 goldfish/pretzel = <<64*4=256>>256 goldfish
+Then add the number of each kind of snack to find the total: 256 goldfish + 64 pretzels + 32 suckers = <<256+64+32=352>>352 snacks
+Then divide the total number of snacks by the number of baggies to find the number of snacks per baggie: 352 snacks / 16 baggies = <<352/16=22>>22 snacks/baggie
+#### 22
+"""
+
+id_orig = 495
+id_shuffled = 568
+
+question_annotated = """
+{name,MIlle} is making snack packs for her kindergarten class. She's going to divide {p,64} pretzels, {m_txt,four times} as many goldfish, and {s,32} suckers into baggies for the {k,16} kids in the class. How many items does each baggie have?
+
+#init:
+- name = sample(names)
+- m_txt, m_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $p = range(10, 110, 2)
+- $s = range(10, 110, 2)
+- $k = range(10, 30)
+
+#conditions:
+- divides(p * (m_val + 1) + s, k)
+
+#answer: (p * (m_val + 1) + s) // k
+"""
+
+answer_annotated = """
+First find the total number of goldfish Millie adds: {p} pretzels * {m_val} goldfish/pretzel = <<{p}*{m_val}={p*m_val}>>{p*m_val} goldfish
+Then add the number of each kind of snack to find the total: {p*m_val} goldfish + {p} pretzels + {s} suckers = <<{p*m_val}+{p}+{s}={p*m_val+p+s}>>{p*m_val+p+s} snacks
+Then divide the total number of snacks by the number of baggies to find the number of snacks per baggie: {p*m_val+p+s} snacks / {k} baggies = <<{p*m_val+p+s}/{k}={(p*m_val+p+s)//k}>>{(p*m_val+p+s)//k} snacks/baggie
+#### {(p * (m_val + 1) + s) // k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

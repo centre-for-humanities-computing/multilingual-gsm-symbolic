@@ -1,0 +1,43 @@
+question = """
+To get to work, Ryan bikes one day a week takes the bus three times a week and gets a ride from a friend once a week. It takes him thirty minutes to bike to work. The bus takes ten minutes longer since it stops at every bus stop for other passengers. His friend driving him is the fastest and cuts two-thirds off his biking time. How many minutes does he spend every week commuting to work?
+"""
+
+answer = """
+The bus to Ryan’s work takes 10 minutes longer than his bike ride, so it takes 10 + 30 = <<10+30=40>>40 minutes.
+Ryan takes the bus 3 times a week, so the bus rides take 40 * 3 = <<40*3=120>>120 minutes a week.
+His friend cuts two-thirds off his biking time, which is 2/3*30 = <<2/3*30=20>>20 minutes a week.
+This means his friend takes 30-20 = <<30-20=10>>10 minutes to drive him.
+Therefore, Ryan spends 120 + 10 + 30 = <<120+10+30=160>>160 minutes every week commuting to work.
+#### 160
+"""
+
+id_orig = 2759
+id_shuffled = 3278
+
+question_annotated = """
+To get to work, {name,Ryan} bikes one day a week takes the bus {days_txt,three} times a week and gets a ride from a friend once a week. It takes him {bike_txt,thirty} minutes to bike to work. The bus takes {extra_txt,ten} minutes longer since it stops at every bus stop for other passengers. His friend driving him is the fastest and cuts two-thirds off his biking time. How many minutes does he spend every week commuting to work?
+
+#init:
+- name = sample(names_male)
+- bike_txt, bike = sample([("fifteen", 15), ("thirty", 30), ("forty-five", 45), ("sixty", 60), ("seventy-five", 75), ("ninety", 90)])
+- extra_txt, extra = sample([("five", 5), ("ten", 10), ("fifteen", 15), ("twenty", 20), ("twenty-five", 25)])
+- days_txt, days = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+
+#conditions:
+- divides(bike, 3)
+
+#answer: (extra + bike) * days + bike // 3 + bike
+"""
+
+answer_annotated = """
+The bus to {name}’s work takes {extra} minutes longer than his bike ride, so it takes {extra} + {bike} = <<{extra}+{bike}={extra+bike}>>{extra+bike} minutes.
+{name} takes the bus {days} times a week, so the bus rides take {extra+bike} * {days} = <<{extra+bike}*{days}={days*(extra+bike)}>>{days*(extra+bike)} minutes a week.
+His friend cuts two-thirds off his biking time, which is 2/3*{bike} = <<2/3*{bike}={2*bike//3}>>{2*bike//3} minutes a week.
+This means his friend takes {bike}-{2*bike//3} = <<{bike}-{2*bike//3}={bike//3}>>{bike//3} minutes to drive him.
+Therefore, {name} spends {days*(extra+bike)} + {bike//3} + {bike} = <<{days*(extra+bike)}+{bike//3}+{bike}={days*(extra+bike)+bike//3+bike}>>{days*(extra+bike)+bike//3+bike} minutes every week commuting to work.
+#### {days*(extra+bike)+bike//3+bike}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+Archie holds the school record for most touchdown passes with 89 in a season of 16 games. Richard is close to breaking the record, having averaged 6 touchdowns a game in the first 14 games. How many touchdowns per game must he average in the final two games to beat Archie's record?
+"""
+
+answer = """
+Richard has scored 84 touchdowns because 14 x 6 = <<14*6=84>>84
+To beat the record he must score 90 touchdowns because 89 + 1 = <<90=90>>90
+He needs 6 more touchdowns to beat the record because 90 - 84 = <<6=6>>6
+He has two games left because 16 - 14 = <<16-14=2>>2
+He needs to average 3 touchdowns a game to beat the record because 6 / 2 = <<6/2=3>>3
+#### 3
+"""
+
+id_orig = 2322
+id_shuffled = 2670
+
+question_annotated = """
+{archie,Archie} holds the school record for most touchdown passes with {record,89} in a season of {season_games,16} games. {name,Richard} is close to breaking the record, having averaged {avg,6} touchdowns a game in the first {games_played,14} games. How many touchdowns per game must he average in the final two games to beat {archie,Archie}'s record?
+
+#init:
+- archie = sample(names_male)
+- name = sample(names_male)
+- $record = range(20, 120)
+- $avg = range(1, 11)
+- $season_games = range(4, 24)
+- $games_played = range(2, 22)
+
+#conditions:
+- games_played == season_games - 2
+- record >= avg * games_played
+- divides(record + 1 - avg * games_played, season_games - games_played)
+
+#answer: (record + 1 - avg * games_played) // (season_games - games_played)
+"""
+
+answer_annotated = """
+{name} has scored {avg * games_played} touchdowns because {games_played} x {avg} = <<{games_played}*{avg}={avg * games_played}>>{avg * games_played}
+To beat the record he must score {record + 1} touchdowns because {record} + 1 = <<{record + 1}={record + 1}>>{record + 1}
+He needs {record + 1 - avg * games_played} more touchdowns to beat the record because {record + 1} - {avg * games_played} = <<{record + 1 - avg * games_played}={record + 1 - avg * games_played}>>{record + 1 - avg * games_played}
+He has two games left because {season_games} - {games_played} = <<{season_games}-{games_played}={season_games - games_played}>>{season_games - games_played}
+He needs to average {(record + 1 - avg * games_played) // (season_games - games_played)} touchdowns a game to beat the record because {record + 1 - avg * games_played} / {season_games - games_played} = <<{record + 1 - avg * games_played}/{season_games - games_played}={(record + 1 - avg * games_played) // (season_games - games_played)}>>{(record + 1 - avg * games_played) // (season_games - games_played)}
+#### {(record + 1 - avg * games_played) // (season_games - games_played)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

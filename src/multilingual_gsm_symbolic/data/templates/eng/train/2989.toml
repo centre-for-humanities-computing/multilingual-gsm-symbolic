@@ -1,0 +1,41 @@
+question = """
+John has 3 bedroom doors and two outside doors to replace.  The outside doors cost $20 each to replace and the bedroom doors are half that cost.  How much does he pay in total?
+"""
+
+answer = """
+The outside doors cost 2*$20=$<<2*20=40>>40
+Each indoor door cost $20/2=$<<20/2=10>>10
+So all the indoor doors cost $10*3=$<<10*3=30>>30
+That means the total cost is $40+$30=$<<40+30=70>>70
+#### 70
+"""
+
+id_orig = 2588
+id_shuffled = 2989
+
+question_annotated = """
+{name,John} has {b,3} bedroom doors and {o_txt,two} outside doors to replace.  The outside doors cost ${p,20} each to replace and the bedroom doors are half that cost.  How much does he pay in total?
+
+#init:
+- name = sample(names_male)
+- o_txt, o = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $b = range(2, 12)
+- $p = range(4, 104, 2)
+
+#conditions:
+- divides(p, 2)
+
+#answer: o*p + p//2*b
+"""
+
+answer_annotated = """
+The outside doors cost {o}*${p}=$<<{o}*{p}={o*p}>>{o*p}
+Each indoor door cost ${p}/2=$<<{p}/2={p//2}>>{p//2}
+So all the indoor doors cost ${p//2}*{b}=$<<{p//2}*{b}={p//2*b}>>{p//2*b}
+That means the total cost is ${o*p}+${p//2*b}=$<<{o*p}+{p//2*b}={o*p+p//2*b}>>{o*p+p//2*b}
+#### {o*p + p//2*b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

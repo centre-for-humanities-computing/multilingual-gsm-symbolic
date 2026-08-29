@@ -1,0 +1,43 @@
+question = """
+John runs a telethon to raise money.  For the first 12 hours, he generates $5000 per hour.  The remaining 14 hours, he generates 20% more per hour.  How much total money does he make?
+"""
+
+answer = """
+He gets 12*5000=$<<12*5000=60000>>60,000 for the first 12 hours
+For the next 14 hours, he gets 5000*.2=$<<5000*.2=1000>>1000 more per hour
+So he gets 5000+1000=$<<5000+1000=6000>>6000 per hour
+So he gets 6000*14=$<<6000*14=84000>>84,000
+So in total, he makes 84,000+60,000=$<<84000+60000=144000>>144,000
+#### 144000
+"""
+
+id_orig = 908
+id_shuffled = 1004
+
+question_annotated = """
+{name,John} runs a telethon to raise money.  For the first {h1,12} hours, he generates ${rate,5000} per hour.  The remaining {h2,14} hours, he generates 20% more per hour.  How much total money does he make?
+
+#init:
+- name = sample(names_male)
+- $h1 = range(10, 25)
+- $h2 = range(2, 60)
+- $rate = range(1000, 8001, 1000)
+
+#conditions:
+- divides((rate + rate//5) * h2, 1000)
+
+#answer: (rate + rate//5) * h2 + h1 * rate
+"""
+
+answer_annotated = """
+He gets {h1}*{rate}=$<<{h1}*{rate}={h1*rate}>>{h1*rate//1000},000 for the first {h1} hours
+For the next {h2} hours, he gets {rate}*.2=$<<{rate}*.2={rate//5}>>{rate//5} more per hour
+So he gets {rate}+{rate//5}=$<<{rate}+{rate//5}={rate+rate//5}>>{rate+rate//5} per hour
+So he gets {rate+rate//5}*{h2}=$<<{rate+rate//5}*{h2}={(rate+rate//5)*h2}>>{(rate+rate//5)*h2//1000},000
+So in total, he makes {(rate+rate//5)*h2//1000},000+{h1*rate//1000},000=$<<{(rate+rate//5)*h2}+{h1*rate}={(rate+rate//5)*h2+h1*rate}>>{((rate+rate//5)*h2+h1*rate)//1000},000
+#### {(rate+rate//5)*h2+h1*rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

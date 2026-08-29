@@ -1,0 +1,44 @@
+question = """
+John hits 70% of his free throws.  For every foul he gets 2 shots.  He gets fouled 5 times a game.  How many free throws does he get if he plays in 80% of the 20 games the team plays?
+"""
+
+answer = """
+John plays in 20*.8=<<20*.8=16>>16 games
+That means he gets fouled 16*5=<<16*5=80>>80 fouls
+So he gets 80*2=<<80*2=160>>160 foul shots
+So he makes 160*.7=<<160*.7=112>>112 free throws
+#### 112
+"""
+
+id_orig = 975
+id_shuffled = 1071
+
+question_annotated = """
+{name,John} hits {h,70}% of his free throws.  For every foul he gets {s,2} shots.  He gets fouled {f,5} times a game.  How many free throws does he get if he plays in {p,80}% of the {g,20} games the team plays?
+
+#init:
+- name = sample(names_male)
+- $h = range(30, 100, 20)
+- $p = range(40, 100, 20)
+- $s = range(2, 6)
+- $f = range(2, 7)
+- $g = range(10, 30, 2)
+
+#conditions:
+- divides(g * p, 100)
+- divides(g * p // 100 * f * s * h, 100)
+
+#answer: g * p // 100 * f * s * h // 100
+"""
+
+answer_annotated = """
+{name} plays in {g}*.{p//10}=<<{g}*.{p//10}={g*p//100}>>{g*p//100} games
+That means he gets fouled {g*p//100}*{f}=<<{g*p//100}*{f}={g*p//100*f}>>{g*p//100*f} fouls
+So he gets {g*p//100*f}*{s}=<<{g*p//100*f}*{s}={g*p//100*f*s}>>{g*p//100*f*s} foul shots
+So he makes {g*p//100*f*s}*.{h//10}=<<{g*p//100*f*s}*.{h//10}={g*p//100*f*s*h//100}>>{g*p//100*f*s*h//100} free throws
+#### {g * p // 100 * f * s * h // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

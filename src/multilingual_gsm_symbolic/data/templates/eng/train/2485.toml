@@ -1,0 +1,39 @@
+question = """
+Billy can spit a watermelon seed 30 inches.  Madison can spit a watermelon seed 20% farther than Billy.  Ryan can spit a watermelon seed 50% shorter than Madison.  How far can Ryan spit a watermelon seed?
+"""
+
+answer = """
+Madison can spit a seed 20% farther than Billy's 30 inches so that's .20*30 = <<20*.01*30=6>>6 inches farther
+Billy spits a seed 30 inches and Madison can spit 6 inches farther for a total of 30+6 = <<30+6=36>>36 inches
+Ryan can spit a seed 50% shorter than Madison's 36 inches for a total of .50*36 = <<50*.01*36=18>>18 inches
+#### 18
+"""
+
+id_orig = 2156
+id_shuffled = 2485
+
+question_annotated = """
+Billy can spit a watermelon seed {x,30} inches.  Madison can spit a watermelon seed {p1,20}% farther than Billy.  Ryan can spit a watermelon seed {p2,50}% shorter than Madison.  How far can Ryan spit a watermelon seed?
+
+#init:
+- $x = range(10, 510, 10)
+- $p1 = range(10, 100, 10)
+- $p2 = range(10, 100, 10)
+
+#conditions:
+- divides(p1 * x, 100)
+- divides(p2 * (x + p1 * x // 100), 100)
+
+#answer: p2 * (x + p1 * x // 100) // 100
+"""
+
+answer_annotated = """
+Madison can spit a seed {p1}% farther than Billy's {x} inches so that's .{p1}*{x} = <<{p1}*.01*{x}={p1*x//100}>>{p1*x//100} inches farther
+Billy spits a seed {x} inches and Madison can spit {p1*x//100} inches farther for a total of {x}+{p1*x//100} = <<{x}+{p1*x//100}={x+p1*x//100}>>{x+p1*x//100} inches
+Ryan can spit a seed {p2}% shorter than Madison's {x+p1*x//100} inches for a total of .{p2}*{x+p1*x//100} = <<{p2}*.01*{x+p1*x//100}={p2*(x+p1*x//100)//100}>>{p2*(x+p1*x//100)//100} inches
+#### {p2*(x+p1*x//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

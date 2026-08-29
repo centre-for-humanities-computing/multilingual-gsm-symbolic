@@ -1,0 +1,51 @@
+question = """
+On Saturday morning, Renata had $10 to spend. She first went and made a $4 donation in exchange for a ticket to the local charity draw. When the draw was done, she was declared the winner of the 5th prize of $90. Excited, she quickly dashed to play slots at one of the casinos in Atlantic City. Unfortunately, she lost $50 at the first slot machine, $10 at the second and $5 at the last one.  Dejected, she decided to take a long walk. She soon grew thirsty and entered the first gas station she saw. She picked a $1 bottle of water and while paying for it, she bought a $1 lottery ticket. To her utter delight, she won an instant prize of $65. How much money did Renata end up having?
+"""
+
+answer = """
+After the charity ticket purchase on Saturday morning, Renata remained with 10 - 4 = <<10-4=6>>6 dollars.
+Adding the prize money give her 6+90 = <<6+90=96>>96 dollars
+At the casino, she lost 50 + 10 + 5 = <<50+10+5=65>>65 dollars
+Thus far, Renata remained with 96 - 65 = <<96-65=31>>31 dollars
+The amount she spent on the bottle of water and lottery ticket is 1 + 1 = <<1+1=2>>2 dollars
+This means that she remained with 31- 2 = <<31-2=29>>29 dollars
+Since she won 65 dollars, Renata’s ended up having 29 + 65 = <<29+65=94>>94 dollars.
+#### 94
+"""
+
+id_orig = 2161
+id_shuffled = 2490
+
+question_annotated = """
+On Saturday morning, {name,Renata} had ${cash,10} to spend. She first went and made a ${donation,4} donation in exchange for a ticket to the local charity draw. When the draw was done, she was declared the winner of the 5th prize of ${prize5,90}. Excited, she quickly dashed to play slots at one of the casinos in Atlantic City. Unfortunately, she lost ${loss1,50} at the first slot machine, ${loss2,10} at the second and ${loss3,5} at the last one.  Dejected, she decided to take a long walk. She soon grew thirsty and entered the first gas station she saw. She picked a $1 bottle of water and while paying for it, she bought a $1 lottery ticket. To her utter delight, she won an instant prize of ${prize_inst,65}. How much money did {name,Renata} end up having?
+
+#init:
+- name = sample(names_female)
+- $cash = range(10, 60, 10)
+- $donation = range(2, 8, 2)
+- $prize5 = range(10, 110, 10)
+- $loss1 = range(10, 60, 20)
+- $loss2 = range(5, 20, 5)
+- $loss3 = range(5, 16, 5)
+- $prize_inst = range(15, 66, 10)
+
+#conditions:
+- cash - donation + prize5 > loss1 + loss2 + loss3 + 2
+
+#answer: cash - donation + prize5 - loss1 - loss2 - loss3 - 2 + prize_inst
+"""
+
+answer_annotated = """
+After the charity ticket purchase on Saturday morning, {name} remained with {cash} - {donation} = <<{cash}-{donation}={cash-donation}>>{cash-donation} dollars.
+Adding the prize money give her {cash-donation}+{prize5} = <<{cash-donation}+{prize5}={cash-donation+prize5}>>{cash-donation+prize5} dollars
+At the casino, she lost {loss1} + {loss2} + {loss3} = <<{loss1}+{loss2}+{loss3}={loss1+loss2+loss3}>>{loss1+loss2+loss3} dollars
+Thus far, {name} remained with {cash-donation+prize5} - {loss1+loss2+loss3} = <<{cash-donation+prize5}-{loss1+loss2+loss3}={cash-donation+prize5-loss1-loss2-loss3}>>{cash-donation+prize5-loss1-loss2-loss3} dollars
+The amount she spent on the bottle of water and lottery ticket is 1 + 1 = <<1+1=2>>2 dollars
+This means that she remained with {cash-donation+prize5-loss1-loss2-loss3}- 2 = <<{cash-donation+prize5-loss1-loss2-loss3}-2={cash-donation+prize5-loss1-loss2-loss3-2}>>{cash-donation+prize5-loss1-loss2-loss3-2} dollars
+Since she won {prize_inst} dollars, {name}’s ended up having {cash-donation+prize5-loss1-loss2-loss3-2} + {prize_inst} = <<{cash-donation+prize5-loss1-loss2-loss3-2}+{prize_inst}={cash-donation+prize5-loss1-loss2-loss3-2+prize_inst}>>{cash-donation+prize5-loss1-loss2-loss3-2+prize_inst} dollars.
+#### {cash - donation + prize5 - loss1 - loss2 - loss3 - 2 + prize_inst}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

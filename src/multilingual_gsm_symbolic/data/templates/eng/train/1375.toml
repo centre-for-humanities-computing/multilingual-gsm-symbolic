@@ -1,0 +1,42 @@
+question = """
+The toothpaste in Anne's family's bathroom contains 105 grams. Anne's dad uses 3 grams at each brushing, her mom uses 2 grams, Anne and her brother use 1 gram each. Each member of the family brushes their teeth three times a day. How many days will it take for the toothpaste to run out?
+"""
+
+answer = """
+Anne and her brother use 1 gram + 1 gram = <<1+1=2>>2 grams.
+Anne's dad uses 3 grams and Anne's mom uses 2 grams so together they use 2 grams + 3 grams + 2 grams = <<3+2+2=7>>7 grams/wash
+Each day, the family uses 7 grams/wash * 3 washes/day = <<7*3=21>>21 grams.
+Using that amount daily, the toothpaste will last 105 grams / 21 grams/day = <<105/21=5>>5 days.
+#### 5
+"""
+
+id_orig = 1268
+id_shuffled = 1375
+
+question_annotated = """
+The toothpaste in {name,Anne}'s family's bathroom contains {t,105} grams. {name,Anne}'s dad uses {d,3} grams at each brushing, her mom uses {m,2} grams, {name,Anne} and her brother use {ab,1} gram each. Each member of the family brushes their teeth three times a day. How many days will it take for the toothpaste to run out?
+
+#init:
+- name = sample(names_female)
+- $t = range(30, 700, 5)
+- $d = range(2, 6)
+- $m = range(1, 5)
+- $ab = range(1, 4)
+
+#conditions:
+- divides(t, (d+m+ab+ab)*3)
+
+#answer: t//((d+m+ab+ab)*3)
+"""
+
+answer_annotated = """
+{name} and her brother use {ab} gram + {ab} gram = <<{ab}+{ab}={ab+ab}>>{ab+ab} grams.
+{name}'s dad uses {d} grams and {name}'s mom uses {m} grams so together they use {ab+ab} grams + {d} grams + {m} grams = <<{d}+{m}+{ab+ab}={d+m+ab+ab}>>{d+m+ab+ab} grams/wash
+Each day, the family uses {d+m+ab+ab} grams/wash * 3 washes/day = <<{d+m+ab+ab}*3={(d+m+ab+ab)*3}>>{(d+m+ab+ab)*3} grams.
+Using that amount daily, the toothpaste will last {t} grams / {(d+m+ab+ab)*3} grams/day = <<{t}/{(d+m+ab+ab)*3}={t//((d+m+ab+ab)*3)}>>{t//((d+m+ab+ab)*3)} days.
+#### {t//((d+m+ab+ab)*3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

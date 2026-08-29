@@ -1,0 +1,51 @@
+question = """
+Selina is selling some of her old clothes to a second-hand store. They will buy her pants for $5 each, her shorts for $3 each, and her shirts for $4 each. She sells 3 pairs of pants, 5 pairs of shorts, and some shirts. After she gets her money, she sees 2 shirts that she likes which cost $10 each and buys them. She leaves the store with $30. How many shirts did she sell to the store?
+"""
+
+answer = """
+The shirts she bought cost her $20 because 2 x 10 = <<2*10=20>>20
+She earned $50 selling her clothes because 20 + 30 = <<20+30=50>>50
+She made $15 off pants because 3 x 5 = <<3*5=15>>15
+She made 15 dollars from shorts because 3 x 5 = <<3*5=15>>15
+She made $20 off shirts because 50 - 15 - 15 = <<50-15-15=20>>20
+She sold 5 shirts because 20 / 4 = <<20/4=5>>5
+#### 5
+"""
+
+id_orig = 1966
+id_shuffled = 2270
+
+question_annotated = """
+{name,Selina} is selling some of her old clothes to a second-hand store. They will buy her pants for ${pp,5} each, her shorts for ${sp,3} each, and her shirts for ${hp,4} each. She sells {pn,3} pairs of pants, {sn,5} pairs of shorts, and some shirts. After she gets her money, she sees {bn,2} shirts that she likes which cost ${bc,10} each and buys them. She leaves the store with ${left,30}. How many shirts did she sell to the store?
+
+#init:
+- name = sample(names_female)
+- $pp = range(4, 7)
+- $sp = range(2, 5)
+- $hp = range(3, 6)
+- $pn = range(2, 5)
+- $sn = range(4, 7)
+- $bn = range(1, 4)
+- $bc = range(5, 11, 5)
+- $left = range(10, 60, 5)
+
+#conditions:
+- divides(bn*bc + left - pn*pp - sp*sn, hp)
+- bn*bc + left - pn*pp - sp*sn > 0
+
+#answer: (bn*bc + left - pn*pp - sp*sn) // hp
+"""
+
+answer_annotated = """
+The shirts she bought cost her ${bn*bc} because {bn} x {bc} = <<{bn}*{bc}={bn*bc}>>{bn*bc}
+She earned ${bn*bc + left} selling her clothes because {bn*bc} + {left} = <<{bn*bc}+{left}={bn*bc + left}>>{bn*bc + left}
+She made ${pn*pp} off pants because {pn} x {pp} = <<{pn}*{pp}={pn*pp}>>{pn*pp}
+She made {sp*sn} dollars from shorts because {sp} x {sn} = <<{sp}*{sn}={sp*sn}>>{sp*sn}
+She made ${bn*bc + left - pn*pp - sp*sn} off shirts because {bn*bc + left} - {pn*pp} - {sp*sn} = <<{bn*bc + left}-{pn*pp}-{sp*sn}={bn*bc + left - pn*pp - sp*sn}>>{bn*bc + left - pn*pp - sp*sn}
+She sold {(bn*bc + left - pn*pp - sp*sn) // hp} shirts because {bn*bc + left - pn*pp - sp*sn} / {hp} = <<{bn*bc + left - pn*pp - sp*sn}/{hp}={(bn*bc + left - pn*pp - sp*sn) // hp}>>{(bn*bc + left - pn*pp - sp*sn) // hp}
+#### {(bn*bc + left - pn*pp - sp*sn) // hp}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

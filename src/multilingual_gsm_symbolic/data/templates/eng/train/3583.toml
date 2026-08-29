@@ -1,0 +1,44 @@
+question = """
+The country of Belize had a 5 lane bridge that had 2000 vehicles passing through it every month. They decided to build a new bridge that had twice the capacity of the old one, and the number of vehicles passing through the new one increased by 60% more than the old bridge. If the bridges work concurrently for a year, calculate the total number of vehicles that pass through the two bridges.
+"""
+
+answer = """
+In a year with 12 months, the total number of vehicles passing through the old bridge is 2000*12 = <<2000*12=24000>>24,000
+The new bridge has a capacity of 60/100*2000 = <<60/100*2000=1200>>1200 more vehicles passing through it in a month than the old one.
+The total number of vehicles passing through the new bridge in a month is 2000+1200 = <<2000+1200=3200>>3200
+There are 3200*12 = <<3200*12=38400>>38,400 vehicles passing through the new bridge in a year.
+Altogether, the two bridges have 38,400+24,000 = <<38400+24000=62400>>62,400 vehicles passing through them in a year.
+#### 62400
+"""
+
+id_orig = 3009
+id_shuffled = 3583
+
+question_annotated = """
+The country of Belize had a {lanes,5} lane bridge that had {v,2000} vehicles passing through it every month. They decided to build a new bridge that had twice the capacity of the old one, and the number of vehicles passing through the new one increased by {pct,60}% more than the old bridge. If the bridges work concurrently for a year, calculate the total number of vehicles that pass through the two bridges.
+
+#init:
+- $lanes = range(2, 9)
+- $v = range(1000, 6001, 250)
+- $pct = range(10, 105, 5)
+
+#conditions:
+- is_int(v * pct / 100)
+- v * 12 % 1000 == 0
+- (v + v * pct // 100) * 12 % 1000 >= 100
+
+#answer: v * 12 + (v + v * pct // 100) * 12
+"""
+
+answer_annotated = """
+In a year with 12 months, the total number of vehicles passing through the old bridge is {v}*12 = <<{v}*12={v*12}>>{v*12//1000},000
+The new bridge has a capacity of {pct}/100*{v} = <<{pct}/100*{v}={v*pct//100}>>{v*pct//100} more vehicles passing through it in a month than the old one.
+The total number of vehicles passing through the new bridge in a month is {v}+{v*pct//100} = <<{v}+{v*pct//100}={v + v*pct//100}>>{v + v*pct//100}
+There are {v + v*pct//100}*12 = <<{v + v*pct//100}*12={(v + v*pct//100)*12}>>{(v + v*pct//100)*12//1000},{(v + v*pct//100)*12%1000} vehicles passing through the new bridge in a year.
+Altogether, the two bridges have {(v + v*pct//100)*12//1000},{(v + v*pct//100)*12%1000}+{v*12//1000},000 = <<{(v + v*pct//100)*12}+{v*12}={(v + v*pct//100)*12 + v*12}>>{((v + v*pct//100)*12 + v*12)//1000},{((v + v*pct//100)*12 + v*12)%1000} vehicles passing through them in a year.
+#### {v * 12 + (v + v * pct // 100) * 12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

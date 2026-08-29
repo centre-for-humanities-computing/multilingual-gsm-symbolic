@@ -1,0 +1,45 @@
+question = """
+Tom decides to renovate a house.  There are 3 bedrooms and each bedroom takes 4 hours to renovate.  The kitchen takes 50% longer than each bedroom.  The living room took twice as much time as everything else combined.  How long did everything take?
+"""
+
+answer = """
+The kitchen took 4 * .5 = <<4*.5=2>>2 hours longer than the bedrooms
+So the kitchen took 4 + 2 = <<4+2=6>>6 hours
+The bedrooms took 3 * 4 = <<3*4=12>>12 hours
+So the kitchen and bedrooms combined took 12 + 6 = <<12+6=18>>18 hours
+The living room took 18 * 2 = <<18*2=36>>36 hours
+So everything took a total of 18 + 36 = <<18+36=54>>54 hours
+#### 54
+"""
+
+id_orig = 547
+id_shuffled = 620
+
+question_annotated = """
+{name,Tom} decides to renovate a house.  There are {n,3} bedrooms and each bedroom takes {b,4} hours to renovate.  The kitchen takes 50% longer than each bedroom.  The living room took {mtxt,twice} as much time as everything else combined.  How long did everything take?
+
+#init:
+- name = sample(names_male)
+- mtxt, mval = sample(multi_times)
+- $n = range(2, 13)
+- $b = range(2, 24)
+
+#conditions:
+- divides(b, 2)
+
+#answer: (n * b + b + b // 2) * (1 + mval)
+"""
+
+answer_annotated = """
+The kitchen took {b} * .5 = <<{b}*.5={b//2}>>{b//2} hours longer than the bedrooms
+So the kitchen took {b} + {b//2} = <<{b}+{b//2}={b+b//2}>>{b+b//2} hours
+The bedrooms took {n} * {b} = <<{n}*{b}={n*b}>>{n*b} hours
+So the kitchen and bedrooms combined took {n*b} + {b+b//2} = <<{n*b}+{b+b//2}={n*b+b+b//2}>>{n*b+b+b//2} hours
+The living room took {n*b+b+b//2} * {mval} = <<{n*b+b+b//2}*{mval}={(n*b+b+b//2)*mval}>>{(n*b+b+b//2)*mval} hours
+So everything took a total of {n*b+b+b//2} + {(n*b+b+b//2)*mval} = <<{n*b+b+b//2}+{(n*b+b+b//2)*mval}={(n*b+b+b//2)+(n*b+b+b//2)*mval}>>{(n*b+b+b//2)+(n*b+b+b//2)*mval} hours
+#### {(n*b+b+b//2)*(1+mval)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

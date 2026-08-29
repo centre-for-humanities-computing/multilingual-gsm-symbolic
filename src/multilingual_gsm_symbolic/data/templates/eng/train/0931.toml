@@ -1,0 +1,42 @@
+question = """
+Lana and her friends go to a theater on the weekend to watch a new play Joan told them was live. When they arrived, Lana saw 100 cars in the front parking lot. She saw two times more vehicles at the back than there were in the front parking lot. If the total number of cars at the end of the play was 700, how many more cars packed into the parking lot during the play?
+"""
+
+answer = """
+The number of cars in the back parking lot was 100*2 = <<100*2=200>>200 times more than those in the front parking lot.
+There were 200+100 = <<200+100=300>>300 cars in the back parking lot.
+A total of 300+100 = <<300+100=400>>400 cars were present before the play began
+The total number of cars that parked in the theater during the play is 700-400 = <<700-400=300>>300 cars
+#### 300
+"""
+
+id_orig = 835
+id_shuffled = 931
+
+question_annotated = """
+{name,Lana} and her friends go to a theater on the weekend to watch a new play {name2,Joan} told them was live. When they arrived, {name,Lana} saw {a,100} cars in the front parking lot. She saw {m_txt,two times} more vehicles at the back than there were in the front parking lot. If the total number of cars at the end of the play was {t,700}, how many more cars packed into the parking lot during the play?
+
+#init:
+- name = sample(names_female)
+- name2 = sample(names_female)
+- m_txt, m_val = sample([("two times", 2), ("three times", 3), ("four times", 4), ("five times", 5)])
+- $a = range(20, 210, 10)
+- $t = range(600, 2600, 25)
+
+#conditions:
+- t > a * (m_val + 2)
+
+#answer: t - a * (m_val + 2)
+"""
+
+answer_annotated = """
+The number of cars in the back parking lot was {a}*{m_val} = <<{a}*{m_val}={a*m_val}>>{a*m_val} times more than those in the front parking lot.
+There were {a*m_val}+{a} = <<{a*m_val}+{a}={a*m_val+a}>>{a*m_val+a} cars in the back parking lot.
+A total of {a*m_val+a}+{a} = <<{a*m_val+a}+{a}={a*m_val+2*a}>>{a*m_val+2*a} cars were present before the play began
+The total number of cars that parked in the theater during the play is {t}-{a*m_val+2*a} = <<{t}-{a*m_val+2*a}={t-(a*m_val+2*a)}>>{t-(a*m_val+2*a)} cars
+#### {t - a * (m_val + 2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

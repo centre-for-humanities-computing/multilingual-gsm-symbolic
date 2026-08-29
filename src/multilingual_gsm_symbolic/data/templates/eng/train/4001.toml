@@ -1,0 +1,41 @@
+question = """
+John used to go to the gym multiple times a weak but because of lockdowns he hasn't been able to go.  He used to lift 700 for squat, 400 for bench, and 800 for deadlift.  For squat he lost 30% of his lift.  He didn't lose any weight on bench because he was able to train that at home and he lost 200 pounds on deadlift.  What is his new total?
+"""
+
+answer = """
+He lost 700*.3=<<700*.3=210>>210 pounds on squat
+So his squat is now 700-210=<<700-210=490>>490 pounds
+His deadlift is 800-200=<<800-200=600>>600 pounds
+So his total is now 490+600+400=<<490+600+400=1490>>1490 pounds
+#### 1490
+"""
+
+id_orig = 3376
+id_shuffled = 4001
+
+question_annotated = """
+{name,John} used to go to the gym multiple times a weak but because of lockdowns he hasn't been able to go.  He used to lift 700 for squat, {b,400} for bench, and {d,800} for deadlift.  For squat he lost 30% of his lift.  He didn't lose any weight on bench because he was able to train that at home and he lost {c,200} pounds on deadlift.  What is his new total?
+
+#init:
+- name = sample(names_male)
+- $b = range(100, 510, 10)
+- $d = range(300, 1210, 10)
+- $c = range(50, 260, 10)
+
+#conditions:
+- d - c > 0
+
+#answer: 490 + d - c + b
+"""
+
+answer_annotated = """
+He lost 700*.3=<<700*.3=210>>210 pounds on squat
+So his squat is now 700-210=<<700-210=490>>490 pounds
+His deadlift is {d}-{c}=<<{d}-{c}={d-c}>>{d-c} pounds
+So his total is now 490+{d-c}+{b}=<<490+{d-c}+{b}={490+d-c+b}>>{490+d-c+b} pounds
+#### {490+d-c+b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

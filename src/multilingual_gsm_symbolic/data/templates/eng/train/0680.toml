@@ -1,0 +1,39 @@
+question = """
+Sandy bought 1 million Safe Moon tokens. She has 4 siblings. She wants to keep half of them to herself and divide the remaining tokens among her siblings. After splitting it up, how many more tokens will she have than any of her siblings?
+"""
+
+answer = """
+She will keep 1,000,000 / 2 = <<1000000/2=500000>>500,000 Safe Moon tokens for herself.
+For the remaining siblings, they will each receive 500,000 / 4 = <<500000/4=125000>>125,000 tokens.
+This means that Sandy will have 500,000 - 125,000 = <<500000-125000=375000>>375,000 tokens more than any of her siblings.
+#### 375000
+"""
+
+id_orig = 607
+id_shuffled = 680
+
+question_annotated = """
+{name,Sandy} bought {tot_txt,1 million} Safe Moon tokens. She has {s,4} siblings. She wants to keep half of them to herself and divide the remaining tokens among her siblings. After splitting it up, how many more tokens will she have than any of her siblings?
+
+#init:
+- name = sample(names_female)
+- tot_txt, total = sample([("1 million", 1000000), ("2 million", 2000000), ("3 million", 3000000), ("4 million", 4000000), ("5 million", 5000000), ("6 million", 6000000), ("7 million", 7000000), ("8 million", 8000000), ("9 million", 9000000), ("10 million", 10000000), ("11 million", 11000000), ("12 million", 12000000)])
+- $s = range(2, 101)
+
+#conditions:
+- divides(total // 2, s)
+- divides(total // 2 // s, 1000)
+
+#answer: total//2 - total//2//s
+"""
+
+answer_annotated = """
+She will keep {total//1000000},000,000 / 2 = <<{total}/2={total//2}>>{total//2//1000},000 Safe Moon tokens for herself.
+For the remaining siblings, they will each receive {total//2//1000},000 / {s} = <<{total//2}/{s}={total//2//s}>>{total//2//s//1000},000 tokens.
+This means that {name} will have {total//2//1000},000 - {total//2//s//1000},000 = <<{total//2}-{total//2//s}={total//2-total//2//s}>>{(total//2-total//2//s)//1000},000 tokens more than any of her siblings.
+#### {total//2-total//2//s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

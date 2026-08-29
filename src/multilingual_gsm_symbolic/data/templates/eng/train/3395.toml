@@ -1,0 +1,48 @@
+question = """
+GiGi took out a big bowl of mushrooms from the refrigerator.  She cut each mushroom into 4 pieces.  Her twins, Kenny and Karla sprinkled mushrooms on their pizzas and baked them in the oven.  Kenny grabbed a handful and sprinkled 38 mushroom pieces on his pizza.  Karla scooped them up with both hands and sprinkled 42 mushroom pieces on her pizza.  On the cutting board, were 8 pieces of mushrooms remaining.  How many mushrooms did GiGi cut up at the beginning?
+"""
+
+answer = """
+Kenny used 38 / 4 = <<38/4=9.5>>9.5 mushrooms on his pizza.
+Karla used 42 / 4 = <<42/4=10.5>>10.5 mushrooms on her pizza.
+Together, the twins used 9.5 + 10.5 = <<9.5+10.5=20>>20 mushrooms.
+There are 8 / 4 = <<8/4=2>>2 mushrooms left on the cutting board.
+GiGi cut up 20 + 2 = <<20+2=22>>22 mushrooms at the beginning.
+#### 22
+"""
+
+id_orig = 2847
+id_shuffled = 3395
+
+question_annotated = """
+{name,GiGi} took out a big bowl of mushrooms from the refrigerator.  She cut each mushroom into {p,4} pieces.  Her twins, {n1,Kenny} and {n2,Karla} sprinkled mushrooms on their pizzas and baked them in the oven.  {n1,Kenny} grabbed a handful and sprinkled {k1,38} mushroom pieces on his pizza.  {n2,Karla} scooped them up with both hands and sprinkled {k2,42} mushroom pieces on her pizza.  On the cutting board, were {r,8} pieces of mushrooms remaining.  How many mushrooms did {name,GiGi} cut up at the beginning?
+
+#init:
+- name = sample(names_female)
+- n1 = sample(names_male)
+- n2 = sample(names_female)
+- $p = range(2, 10, 2)
+- $k1 = range(20, 100)
+- $k2 = range(20, 100)
+- $r = range(4, 60)
+
+#conditions:
+- divides(k1 - p // 2, p)
+- divides(k2 - p // 2, p)
+- divides(r, p)
+
+#answer: (k1 + k2 + r) // p
+"""
+
+answer_annotated = """
+{n1} used {k1} / {p} = <<{k1}/{p}={k1/p}>>{k1/p} mushrooms on his pizza.
+{n2} used {k2} / {p} = <<{k2}/{p}={k2/p}>>{k2/p} mushrooms on her pizza.
+Together, the twins used {k1/p} + {k2/p} = <<{k1/p}+{k2/p}={int(k1/p + k2/p)}>>{int(k1/p + k2/p)} mushrooms.
+There are {r} / {p} = <<{r}/{p}={r//p}>>{r//p} mushrooms left on the cutting board.
+{name} cut up {int(k1/p + k2/p)} + {r//p} = <<{int(k1/p + k2/p)}+{r//p}={(k1 + k2 + r)//p}>>{(k1 + k2 + r)//p} mushrooms at the beginning.
+#### {(k1 + k2 + r)//p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,49 @@
+question = """
+Mark builds an apartment that is 16 by 10 feet.  There are 6 rooms in total.  All the rooms are the same size except the living room which is as big as 3 other rooms.  How big is the living room?
+"""
+
+answer = """
+Total square footage is 16*10=<<16*10=160>>160 square feet
+
+There are 3+3=<<3+3=6>>6 rooms
+6-1=<<6-1=5>>5 of them are the same size
+If x is the size of the normal room then the square footage of all rooms is 5x+3x=8x
+So each room is 160/8=<<160/8=20>>20 square feet
+So the living room is 20*3=<<20*3=60>>60 square feet
+#### 60
+"""
+
+id_orig = 2617
+id_shuffled = 3034
+
+question_annotated = """
+{name,Mark} builds an apartment that is {a,16} by {b,10} feet.  There are {n,6} rooms in total.  All the rooms are the same size except the living room which is as big as {k,3} other rooms.  How big is the living room?
+
+#init:
+- name = sample(names_male)
+- $a = range(10, 60)
+- $b = range(10, 60)
+- $n = range(6, 40, 2)
+- $k = range(2, 20)
+
+#conditions:
+- n == 2 * k
+- divides(a * b, n - 1 + k)
+
+#answer: a * b // (n - 1 + k) * k
+"""
+
+answer_annotated = """
+Total square footage is {a}*{b}=<<{a}*{b}={a*b}>>{a*b} square feet
+
+There are {k}+{k}=<<{k}+{k}={k+k}>>{k+k} rooms
+{n}-1=<<{n}-1={n-1}>>{n-1} of them are the same size
+If x is the size of the normal room then the square footage of all rooms is {n-1}x+{k}x={n-1+k}x
+So each room is {a*b}/{n-1+k}=<<{a*b}/{n-1+k}={a*b//(n-1+k)}>>{a*b//(n-1+k)} square feet
+So the living room is {a*b//(n-1+k)}*{k}=<<{a*b//(n-1+k)}*{k}={a*b//(n-1+k)*k}>>{a*b//(n-1+k)*k} square feet
+#### {a*b//(n-1+k)*k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+There are 120 cards in a box. If 2/5 of the cards are red, exactly 5/9 of the remainder are black, and the rest are green, calculate the number of green cards in the box?
+"""
+
+answer = """
+The number of red cards in the box, 2/5 of the total number, is 2/5*120 = <<2/5*120=48>>48.
+The number of cards that are not red is 120-48 = <<120-48=72>>72.
+If 5/9 of the remaining cards are black, then there are 5/9*72 = <<5/9*72=40>>40 black cards in the box.
+If the remaining cards are green, then there are 72-40 = <<72-40=32>>32 green cards in the box.
+#### 32
+"""
+
+id_orig = 1987
+id_shuffled = 2291
+
+question_annotated = """
+There are {t,120} cards in a box. If {rn,2}/{rd,5} of the cards are red, exactly {bn,5}/{bd,9} of the remainder are black, and the rest are green, calculate the number of green cards in the box?
+
+#init:
+- $t = range(24, 224, 2)
+- $rn = range(1, 4)
+- $rd = range(2, 8)
+- $bn = range(1, 6)
+- $bd = range(2, 10)
+
+#conditions:
+- rn < rd
+- bn < bd
+- divides(rn*t, rd)
+- divides(bn*(t - rn*t//rd), bd)
+
+#answer: t - rn*t//rd - bn*(t - rn*t//rd)//bd
+"""
+
+answer_annotated = """
+The number of red cards in the box, {rn}/{rd} of the total number, is {rn}/{rd}*{t} = <<{rn}/{rd}*{t}={rn*t//rd}>>{rn*t//rd}.
+The number of cards that are not red is {t}-{rn*t//rd} = <<{t}-{rn*t//rd}={t-rn*t//rd}>>{t-rn*t//rd}.
+If {bn}/{bd} of the remaining cards are black, then there are {bn}/{bd}*{t-rn*t//rd} = <<{bn}/{bd}*{t-rn*t//rd}={bn*(t-rn*t//rd)//bd}>>{bn*(t-rn*t//rd)//bd} black cards in the box.
+If the remaining cards are green, then there are {t-rn*t//rd}-{bn*(t-rn*t//rd)//bd} = <<{t-rn*t//rd}-{bn*(t-rn*t//rd)//bd}={t-rn*t//rd-bn*(t-rn*t//rd)//bd}>>{t-rn*t//rd-bn*(t-rn*t//rd)//bd} green cards in the box.
+#### {t - rn*t//rd - bn*(t - rn*t//rd)//bd}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

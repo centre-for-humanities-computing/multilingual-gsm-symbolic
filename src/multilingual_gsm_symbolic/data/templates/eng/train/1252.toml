@@ -1,0 +1,39 @@
+question = """
+A beadshop earns a third of its profit on Monday, a quarter of its profit on Tuesday and the rest of its profit on Wednesday. The shop makes a total profit of $1,200. How much profit, in dollars, was made on Wednesday?
+"""
+
+answer = """
+On Monday, 1200/3=<<1200/3=400>>400 dollars were made.
+On Tuesday, 1200/4=<<1200/4=300>>300 dollars were made.
+On Wednesday, 1200-400-300=<<1200-400-300=500>>500 dollars were made.
+#### 500
+"""
+
+id_orig = 1156
+id_shuffled = 1252
+
+question_annotated = """
+A beadshop earns a {w1,third} of its profit on Monday, a {w2,quarter} of its profit on Tuesday and the rest of its profit on Wednesday. The shop makes a total profit of $1,200. How much profit, in dollars, was made on Wednesday?
+
+#init:
+- w1, v1 = sample([("half", 2), ("third", 3), ("quarter", 4), ("fifth", 5), ("sixth", 6), ("eighth", 8), ("tenth", 10), ("twelfth", 12), ("fifteenth", 15), ("sixteenth", 16), ("twentieth", 20), ("twenty-fourth", 24)])
+- w2, v2 = sample([("half", 2), ("third", 3), ("quarter", 4), ("fifth", 5), ("sixth", 6), ("eighth", 8), ("tenth", 10), ("twelfth", 12), ("fifteenth", 15), ("sixteenth", 16), ("twentieth", 20), ("twenty-fourth", 24)])
+
+#conditions:
+- is_int(1200/v1)
+- is_int(1200/v2)
+- 1200 - 1200//v1 - 1200//v2 > 0
+
+#answer: 1200 - 1200//v1 - 1200//v2
+"""
+
+answer_annotated = """
+On Monday, 1200/{v1}=<<1200/{v1}={1200//v1}>>{1200//v1} dollars were made.
+On Tuesday, 1200/{v2}=<<1200/{v2}={1200//v2}>>{1200//v2} dollars were made.
+On Wednesday, 1200-{1200//v1}-{1200//v2}=<<1200-{1200//v1}-{1200//v2}={1200-1200//v1-1200//v2}>>{1200-1200//v1-1200//v2} dollars were made.
+#### {1200-1200//v1-1200//v2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

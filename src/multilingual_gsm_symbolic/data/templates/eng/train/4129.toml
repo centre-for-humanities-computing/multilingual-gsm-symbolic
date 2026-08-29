@@ -1,0 +1,45 @@
+question = """
+Cersei bought 50 cotton candies. She gave her brother and sister 5 cotton candies each, then gave the remaining one-fourth of them to her cousin. If she ate 12 cotton candies, how many cotton candies are left?
+"""
+
+answer = """
+Cersei gave a total of 5 x 2 = <<5*2=10>>10 cotton candies to her brother and sister.
+So, the total cotton candies left were 50 - 10 = <<50-10=40>>40.
+And she gave 1/4 x 40 = <<1/4*40=10>>10 cotton candies to her cousin.
+So, the total number of cotton candies left was 40 - 10 = <<40-10=30>>30.
+Therefore, the total number of cotton candies left after she ate 12 of them is 30 - 12 = <<30-12=18>>18.
+#### 18
+"""
+
+id_orig = 3482
+id_shuffled = 4129
+
+question_annotated = """
+{name,Cersei} bought {total,50} cotton candies. She gave her brother and sister {each,5} cotton candies each, then gave the remaining one-fourth of them to her cousin. If she ate {eaten,12} cotton candies, how many cotton candies are left?
+
+#init:
+- name = sample(names_female)
+- $total = range(20, 210, 2)
+- $each = range(1, 20)
+- $eaten = range(1, 20)
+
+#conditions:
+- total > 2 * each
+- divides(total - 2 * each, 4)
+- total - 2 * each - (total - 2 * each)//4 - eaten > 0
+
+#answer: total - 2*each - (total - 2*each)//4 - eaten
+"""
+
+answer_annotated = """
+{name} gave a total of {each} x 2 = <<{each}*2={each*2}>>{each*2} cotton candies to her brother and sister.
+So, the total cotton candies left were {total} - {each*2} = <<{total}-{each*2}={total-each*2}>>{total-each*2}.
+And she gave 1/4 x {total-each*2} = <<1/4*{total-each*2}={(total-each*2)//4}>>{(total-each*2)//4} cotton candies to her cousin.
+So, the total number of cotton candies left was {total-each*2} - {(total-each*2)//4} = <<{total-each*2}-{(total-each*2)//4}={(total-each*2)-((total-each*2)//4)}>>{(total-each*2)-((total-each*2)//4)}.
+Therefore, the total number of cotton candies left after she ate {eaten} of them is {(total-each*2)-((total-each*2)//4)} - {eaten} = <<{(total-each*2)-((total-each*2)//4)}-{eaten}={(total-each*2)-((total-each*2)//4)-eaten}>>{(total-each*2)-((total-each*2)//4)-eaten}.
+#### {(total-each*2)-((total-each*2)//4)-eaten}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

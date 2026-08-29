@@ -1,0 +1,43 @@
+question = """
+The file, 90 megabytes in size, downloads at the rate of 5 megabytes per second for its first 60 megabytes, and then 10 megabytes per second thereafter. How long, in seconds, does it take to download entirely?
+"""
+
+answer = """
+The first 60 megabytes take 60/5=<<60/5=12>>12 seconds.
+There are 90-60=<<90-60=30>>30 remaining megabytes.
+The remaining 30 megabytes take 30/10=<<30/10=3>>3 seconds.
+And 12+3=<<12+3=15>>15 seconds.
+#### 15
+"""
+
+id_orig = 47
+id_shuffled = 47
+
+question_annotated = """
+The file, {f,90} megabytes in size, downloads at the rate of {r1,5} megabytes per second for its first {t,60} megabytes, and then {r2,10} megabytes per second thereafter. How long, in seconds, does it take to download entirely?
+
+#init:
+- $f = range(40, 1040, 10)
+- $t = range(10, 400, 10)
+- $r1 = range(2, 12)
+- $r2 = range(2, 22)
+
+#conditions:
+- t < f
+- divides(t, r1)
+- divides(f - t, r2)
+
+#answer: t//r1 + (f-t)//r2
+"""
+
+answer_annotated = """
+The first {t} megabytes take {t}/{r1}=<<{t}/{r1}={t//r1}>>{t//r1} seconds.
+There are {f}-{t}=<<{f}-{t}={f-t}>>{f-t} remaining megabytes.
+The remaining {f-t} megabytes take {f-t}/{r2}=<<{f-t}/{r2}={(f-t)//r2}>>{(f-t)//r2} seconds.
+And {t//r1}+{(f-t)//r2}=<<{t//r1}+{(f-t)//r2}={t//r1+(f-t)//r2}>>{t//r1+(f-t)//r2} seconds.
+#### {t//r1+(f-t)//r2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

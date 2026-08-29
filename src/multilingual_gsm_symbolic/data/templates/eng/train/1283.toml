@@ -1,0 +1,45 @@
+question = """
+A bag of dozen apples costs $14 and Brian has already spent $10 on kiwis and half that much on bananas. What's the maximum number of apples Brian can buy if he left his house with only $50 and needs to pay the $3.50 subway fare each way?
+"""
+
+answer = """
+Brian requires a total of $3.50 + $3.50 = $<<3.5+3.5=7>>7 to pay for the round trip subway fare
+We also know he has spent half (1/2) the amount he spent on kiwis on bananas, so he'll spend (1/2) * $10 = $5 on bananas
+So far in total he has spent $7 for his subway fare + $5 on bananas + $10 on kiwis = $7 + $5 + $10 = $<<7+5+10=22>>22
+If he left his house with only $50, then all he will have left for apples would be $50 - $22 = $<<50-22=28>>28
+If a bag of apples costs $14, then Brian would only be able to buy a maximum of $28/$14 = 2 bags of apples
+If each bag of apples has a dozen (12) apples, then (2) two bags will have 12*2= <<2*12=24>>24 apples
+#### 24
+"""
+
+id_orig = 1187
+id_shuffled = 1283
+
+question_annotated = """
+A bag of dozen apples costs ${bag,14} and {name,Brian} has already spent ${k,10} on kiwis and half that much on bananas. What's the maximum number of apples {name,Brian} can buy if he left his house with only ${m,50} and needs to pay the $3.50 subway fare each way?
+
+#init:
+- name = sample(["Brian", "Adam", "Ethan", "Kevin", "Lucas", "Nathan"])
+- $bag = range(8, 30)
+- $k = range(4, 42, 2)
+- $m = range(20, 130)
+
+#conditions:
+- m - (7 + k//2 + k) == bag * 2
+
+#answer: ((m - (7 + k//2 + k)) // bag) * 12
+"""
+
+answer_annotated = """
+{name} requires a total of $3.50 + $3.50 = $<<3.5+3.5=7>>7 to pay for the round trip subway fare
+We also know he has spent half (1/2) the amount he spent on kiwis on bananas, so he'll spend (1/2) * ${k} = ${k//2} on bananas
+So far in total he has spent $7 for his subway fare + ${k//2} on bananas + ${k} on kiwis = $7 + ${k//2} + ${k} = $<<7+{k//2}+{k}={7+k//2+k}>>{7+k//2+k}
+If he left his house with only ${m}, then all he will have left for apples would be ${m} - ${7+k//2+k} = $<<{m}-{7+k//2+k}={m-(7+k//2+k)}>>{m-(7+k//2+k)}
+If a bag of apples costs ${bag}, then {name} would only be able to buy a maximum of ${m-(7+k//2+k)}/${bag} = {(m-(7+k//2+k))//bag} bags of apples
+If each bag of apples has a dozen (12) apples, then (2) two bags will have 12*2= <<2*12={2*12}>>{2*12} apples
+#### {((m - (7 + k//2 + k)) // bag) * 12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

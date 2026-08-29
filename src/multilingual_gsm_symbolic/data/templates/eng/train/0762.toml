@@ -1,0 +1,42 @@
+question = """
+Trevor needs to go downtown for a restaurant date. An Uber ride downtown costs $3 more than a Lyft ride. A Lyft ride costs $4 more than a taxi ride. The Uber ride costs $22. If Trevor takes a taxi downtown and tips the taxi driver 20% of the original cost of the ride, what is the total cost of the ride downtown?
+"""
+
+answer = """
+The cost of the Lyft ride is $22 - $3 = $<<22-3=19>>19
+The original cost of the taxi ride is $19 - $4 = $<<19-4=15>>15
+Trevor tips the taxi driver $15 * 0.20 = $<<15*0.20=3>>3
+The total cost of the ride downtown is $15 + $3 = $<<15+3=18>>18
+#### 18
+"""
+
+id_orig = 689
+id_shuffled = 762
+
+question_annotated = """
+{name,Trevor} needs to go downtown for a restaurant date. An Uber ride downtown costs ${d1,3} more than a Lyft ride. A Lyft ride costs ${d2,4} more than a taxi ride. The Uber ride costs ${u,22}. If {name,Trevor} takes a taxi downtown and tips the taxi driver 20% of the original cost of the ride, what is the total cost of the ride downtown?
+
+#init:
+- name = sample(names_male)
+- $u = range(10, 100)
+- $d1 = range(1, 10)
+- $d2 = range(1, 10)
+
+#conditions:
+- u > d1 + d2
+- divides(u - d1 - d2, 5)
+
+#answer: (u - d1 - d2) * 6 // 5
+"""
+
+answer_annotated = """
+The cost of the Lyft ride is ${u} - ${d1} = $<<{u}-{d1}={u-d1}>>{u-d1}
+The original cost of the taxi ride is ${u-d1} - ${d2} = $<<{u-d1}-{d2}={u-d1-d2}>>{u-d1-d2}
+{name} tips the taxi driver ${u-d1-d2} * 0.20 = $<<{u-d1-d2}*0.20={(u-d1-d2)//5}>>{(u-d1-d2)//5}
+The total cost of the ride downtown is ${u-d1-d2} + ${(u-d1-d2)//5} = $<<{u-d1-d2}+{(u-d1-d2)//5}={(u-d1-d2)*6//5}>>{(u-d1-d2)*6//5}
+#### {(u-d1-d2)*6//5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,54 @@
+question = """
+Together 3 friends watched 411 short videos. Kelsey watched 43 more than Ekon. Ekon watched 17 less than Uma. How many videos did Kelsey watch?
+"""
+
+answer = """
+Let U = the number of videos Uma watched
+Ekon = U - 17
+Kelsey = (U - 17) + 43 = U + <<(-17)+43=26>>26
+U + U - 17 + U + 26 = 411
+3U + 9 = 411
+3U = 402
+U = <<134=134>>134
+Kelsey = 134 + 26 = <<134+26=160>>160 videos
+Kelsey watched 160 videos.
+#### 160
+"""
+
+id_orig = 3030
+id_shuffled = 3604
+
+question_annotated = """
+Together 3 friends watched {total,411} short videos. {name,Kelsey} watched {more,43} more than {friend,Ekon}. {friend,Ekon} watched {less,17} less than Uma. How many videos did {name,Kelsey} watch?
+
+#init:
+- name = sample(names_female)
+- friend = sample(names_male)
+- $total = range(50, 450)
+- $more = range(20, 65)
+- $less = range(2, 20)
+
+#conditions:
+- more > 2 * less
+- total > more + less
+- divides(total - more + 2 * less, 3)
+
+#answer: (total - more + 2 * less) // 3 + more - less
+"""
+
+answer_annotated = """
+Let U = the number of videos Uma watched
+{friend} = U - {less}
+{name} = (U - {less}) + {more} = U + <<(-{less})+{more}={more-less}>>{more-less}
+U + U - {less} + U + {more-less} = {total}
+3U + {more-2*less} = {total}
+3U = {total-more+2*less}
+U = <<{(total-more+2*less)//3}={(total-more+2*less)//3}>>{(total-more+2*less)//3}
+{name} = {(total-more+2*less)//3} + {more-less} = <<{(total-more+2*less)//3}+{more-less}={(total-more+2*less)//3+more-less}>>{(total-more+2*less)//3+more-less} videos
+{name} watched {(total-more+2*less)//3+more-less} videos.
+#### {(total-more+2*less)//3+more-less}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

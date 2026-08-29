@@ -1,0 +1,43 @@
+question = """
+John took a test with 80 questions.  For the first 40 questions, she got 90% right.  For the next 40 questions, she gets 95% right.  How many total questions does she get right?
+"""
+
+answer = """
+He gets 40*.9=<<40*.9=36>>36 questions right for the first part.
+For the second part, he gets 40*.95=<<40*.95=38>>38 questions right.
+So he gets a total of 36+38=<<36+38=74>>74 questions right.
+#### 74
+"""
+
+id_orig = 3321
+id_shuffled = 3946
+
+question_annotated = """
+{name,John} took a test with {tot,80} questions.  For the first {q1,40} questions, she got {p1,90}% right.  For the next {q2,40} questions, she gets {p2,95}% right.  How many total questions does she get right?
+
+#init:
+- name = sample(names_male)
+- $tot = range(40, 201, 10)
+- $q1 = range(20, 101, 10)
+- $q2 = range(20, 101, 20)
+- $p1 = range(50, 91, 10)
+- $p2 = range(55, 96, 10)
+
+#conditions:
+- tot == q1 + q2
+- divides(q1 * p1, 100)
+- divides(q2 * p2, 100)
+
+#answer: q1 * p1 // 100 + q2 * p2 // 100
+"""
+
+answer_annotated = """
+He gets {q1}*.{p1//10}=<<{q1}*.{p1//10}={q1*p1//100}>>{q1*p1//100} questions right for the first part.
+For the second part, he gets {q2}*.{p2}=<<{q2}*.{p2}={q2*p2//100}>>{q2*p2//100} questions right.
+So he gets a total of {q1*p1//100}+{q2*p2//100}=<<{q1*p1//100}+{q2*p2//100}={q1*p1//100+q2*p2//100}>>{q1*p1//100+q2*p2//100} questions right.
+#### {q1 * p1 // 100 + q2 * p2 // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

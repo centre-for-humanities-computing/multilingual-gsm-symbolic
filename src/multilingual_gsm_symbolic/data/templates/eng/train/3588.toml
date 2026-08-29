@@ -1,0 +1,49 @@
+question = """
+Travis is hired to take 638 bowls from the factory to the home goods store. The home goods store will pay the moving company a $100 fee, plus $3 for every bowl that is delivered safely. Travis must pay the home goods store $4 each for any bowls that are lost or broken. If 12 bowls are lost, 15 bowls are broken, and the rest are delivered safely, how much should Travis be paid?
+"""
+
+answer = """
+Travis has lost or broken 12 + 15 = <<12+15=27>>27 bowls.
+Travis will need to pay the store 27 x $4 = $<<27*4=108>>108 dollars.
+Travis has safely taken 638 - 27 = <<638-27=611>>611 bowls.
+For this, he will be paid 611 x $3 = $<<611*3=1833>>1833 dollars
+In total Travis will be paid $1833 + $100 = $<<1833+100=1933>>1933 dollars.
+Since Travis has to pay the home goods 108 for the broken and lost bowls, he will end up with $1933-$108 = $1825.
+#### 1825
+"""
+
+id_orig = 3014
+id_shuffled = 3588
+
+question_annotated = """
+{name,Travis} is hired to take {total,638} bowls from the factory to the home goods store. The home goods store will pay the moving company a ${fee,100} fee, plus ${pay_safe,3} for every bowl that is delivered safely. {name,Travis} must pay the home goods store ${penalty,4} each for any bowls that are lost or broken. If {lost,12} bowls are lost, {broken,15} bowls are broken, and the rest are delivered safely, how much should {name,Travis} be paid?
+
+#init:
+- name = sample(names_male)
+- $total = range(602, 700, 4)
+- $lost = range(2, 22, 2)
+- $broken = range(5, 26, 2)
+- $pay_safe = range(1, 6)
+- $penalty = range(2, 7)
+- fee = sample([100])
+
+#conditions:
+- lost + broken < total
+- fee + (total - lost - broken) * pay_safe > (lost + broken) * penalty
+
+#answer: fee + (total - lost - broken) * pay_safe - (lost + broken) * penalty
+"""
+
+answer_annotated = """
+{name} has lost or broken {lost} + {broken} = <<{lost}+{broken}={lost+broken}>>{lost+broken} bowls.
+{name} will need to pay the store {lost+broken} x ${penalty} = $<<{lost+broken}*{penalty}={(lost+broken)*penalty}>>{(lost+broken)*penalty} dollars.
+{name} has safely taken {total} - {lost+broken} = <<{total}-{lost+broken}={total-lost-broken}>>{total-lost-broken} bowls.
+For this, he will be paid {total-lost-broken} x ${pay_safe} = $<<{total-lost-broken}*{pay_safe}={(total-lost-broken)*pay_safe}>>{(total-lost-broken)*pay_safe} dollars
+In total {name} will be paid ${(total-lost-broken)*pay_safe} + ${fee} = $<<{(total-lost-broken)*pay_safe}+{fee}={(total-lost-broken)*pay_safe+fee}>>{(total-lost-broken)*pay_safe+fee} dollars.
+Since {name} has to pay the home goods {(lost+broken)*penalty} for the broken and lost bowls, he will end up with ${(total-lost-broken)*pay_safe+fee}-${(lost+broken)*penalty} = ${fee + (total-lost-broken)*pay_safe - (lost+broken)*penalty}.
+#### {fee + (total-lost-broken)*pay_safe - (lost+broken)*penalty}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

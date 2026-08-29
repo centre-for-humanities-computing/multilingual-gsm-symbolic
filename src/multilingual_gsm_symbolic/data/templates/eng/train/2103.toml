@@ -1,0 +1,46 @@
+question = """
+Francie saves up her allowance for several weeks. She receives an allowance of $5 a week for 8 weeks. Then her dad raises her allowance, and she receives $6 a week for 6 weeks. Francie uses half of the money to buy new clothes. With the remaining money, she buys a video game that costs $35. How much money does Francie have remaining after buying the video game?
+"""
+
+answer = """
+When her allowance is $5 a week, Francie gets a total of $5 * 8 = $<<5*8=40>>40
+When her allowance is $6 a week, Francie gets a total of $6 * 6 = $<<6*6=36>>36
+The total amount of money Francie gets is $40 + $36 = $<<40+36=76>>76
+After purchasing new clothes, she has $76 / 2 = $<<76/2=38>>38 remaining
+After buying the video game, Francie has $38 - $35 = $<<38-35=3>>3 remaining
+#### 3
+"""
+
+id_orig = 1869
+id_shuffled = 2103
+
+question_annotated = """
+{name,Francie} saves up her allowance for several weeks. She receives an allowance of ${a1,5} a week for {w1,8} weeks. Then her dad raises her allowance, and she receives ${a2,6} a week for {w2,6} weeks. {name,Francie} uses half of the money to buy new clothes. With the remaining money, she buys a video game that costs ${game,35}. How much money does {name,Francie} have remaining after buying the video game?
+
+#init:
+- name = sample(names_female)
+- $a1 = range(2, 11)
+- $w1 = range(4, 13)
+- $a2 = range(2, 11)
+- $w2 = range(4, 13)
+- $game = range(20, 60, 5)
+
+#conditions:
+- is_int((a1 * w1 + a2 * w2) / 2)
+- a1 * w1 + a2 * w2 > 2 * game
+
+#answer: (a1 * w1 + a2 * w2) // 2 - game
+"""
+
+answer_annotated = """
+When her allowance is ${a1} a week, {name} gets a total of ${a1} * {w1} = $<<{a1}*{w1}={a1*w1}>>{a1*w1}
+When her allowance is ${a2} a week, {name} gets a total of ${a2} * {w2} = $<<{a2}*{w2}={a2*w2}>>{a2*w2}
+The total amount of money {name} gets is ${a1*w1} + ${a2*w2} = $<<{a1*w1}+{a2*w2}={a1*w1+a2*w2}>>{a1*w1+a2*w2}
+After purchasing new clothes, she has ${a1*w1+a2*w2} / 2 = $<<{a1*w1+a2*w2}/2={(a1*w1+a2*w2)//2}>>{(a1*w1+a2*w2)//2} remaining
+After buying the video game, {name} has ${(a1*w1+a2*w2)//2} - ${game} = $<<{(a1*w1+a2*w2)//2}-{game}={(a1*w1+a2*w2)//2-game}>>{(a1*w1+a2*w2)//2-game} remaining
+#### {(a1*w1+a2*w2)//2 - game}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

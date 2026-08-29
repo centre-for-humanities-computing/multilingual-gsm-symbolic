@@ -1,0 +1,47 @@
+question = """
+Mr. Callen bought 10 paintings at $40 each and 8 wooden toys at $20 each from the crafts store to resell at a profit. However, when he sold the items, the selling price of a painting was 10% less and the selling price of a hat 15% less. Calculate the total loss Mr. Callen made from the sale of the items.
+"""
+
+answer = """
+If he sold a painting at a 10% loss, then he made a 10/100*$40 = $<<10/100*40=4>>4 loss on each painting.
+Since he bought 10 paintings, the total loss he made from selling the paintings is 10*$4 = $<<10*4=40>>40
+He also made a loss of 15/100*20 = $<<15/100*20=3>>3 loss from selling each wooden toy.
+Since he bought 8 wooden toys, the total loss he made was 3*8 = $<<8*3=24>>24
+In total, Mr. Callen made a loss of $40+$24 = $<<40+24=64>>64 from the sales of the items.
+#### 64
+"""
+
+id_orig = 720
+id_shuffled = 793
+
+question_annotated = """
+Mr. {name,Callen} bought {n_p,10} paintings at ${p_price,40} each and {n_t,8} wooden toys at ${t_price,20} each from the crafts store to resell at a profit. However, when he sold the items, the selling price of a painting was {lp,10}% less and the selling price of a hat {lt,15}% less. Calculate the total loss Mr. {name,Callen} made from the sale of the items.
+
+#init:
+- name = sample(names_male)
+- $n_p = range(2, 12)
+- $p_price = range(20, 120, 20)
+- $n_t = range(2, 12)
+- $t_price = range(20, 120, 20)
+- $lp = range(10, 35, 5)
+- $lt = range(15, 40, 5)
+
+#conditions:
+- divides(lp * p_price, 100)
+- divides(lt * t_price, 100)
+
+#answer: n_p*lp*p_price//100 + n_t*lt*t_price//100
+"""
+
+answer_annotated = """
+If he sold a painting at a {lp}% loss, then he made a {lp}/100*${p_price} = $<<{lp}/100*{p_price}={lp*p_price//100}>>{lp*p_price//100} loss on each painting.
+since he bought {n_p} paintings, the total loss he made from selling the paintings is {n_p}*${lp*p_price//100} = $<<{n_p}*{lp*p_price//100}={n_p*lp*p_price//100}>>{n_p*lp*p_price//100}
+He also made a loss of {lt}/100*{t_price} = $<<{lt}/100*{t_price}={lt*t_price//100}>>{lt*t_price//100} loss from selling each wooden toy.
+Since he bought {n_t} wooden toys, the total loss he made was {lt*t_price//100}*{n_t} = $<<{n_t}*{lt*t_price//100}={n_t*lt*t_price//100}>>{n_t*lt*t_price//100}
+In total, Mr. {name} made a loss of ${n_p*lp*p_price//100}+${n_t*lt*t_price//100} = $<<{n_p*lp*p_price//100}+{n_t*lt*t_price//100}={n_p*lp*p_price//100+n_t*lt*t_price//100}>>{n_p*lp*p_price//100+n_t*lt*t_price//100} from the sales of the items.
+#### {n_p*lp*p_price//100 + n_t*lt*t_price//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

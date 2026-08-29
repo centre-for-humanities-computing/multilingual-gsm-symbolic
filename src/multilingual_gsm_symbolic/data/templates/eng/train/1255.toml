@@ -1,0 +1,47 @@
+question = """
+Erwan went on shopping. He purchased a pair of shoes at $200 but discounted 30%, and two shirts at $80 each. Upon checkout, the cashier said that there is an additional 5% discount. How much did he spend after all the discounts?
+"""
+
+answer = """
+The total discount of a pair of shoes is $200 x 30/100 = $<<200*30/100=60>>60.
+He spent $200 - $60 = $<<200-60=140>>140 for a pair of shoes.
+The total cost of two shirts is $80 x 2 = $<<80*2=160>>160.
+The initial cost of his purchase is $140 + $160 = $<<140+160=300>>300.
+He got an additional $300 x 5/100 = $<<300*5/100=15>>15 discount upon checkout.
+Therefore, Erwan spent $300 - 15 = $<<300-15=285>>285 after all the discounts.
+#### 285
+"""
+
+id_orig = 1159
+id_shuffled = 1255
+
+question_annotated = """
+{name,Erwan} went on shopping. He purchased a pair of shoes at ${p,200} but discounted {d,30}%, and two shirts at ${s,80} each. Upon checkout, the cashier said that there is an additional {e,5}% discount. How much did he spend after all the discounts?
+
+#init:
+- name = sample(names_male)
+- $p = range(40, 400, 20)
+- $d = range(5, 55, 5)
+- $s = range(10, 110, 10)
+- $e = range(5, 55, 5)
+
+#conditions:
+- divides(p * d, 100)
+- divides((p - p*d//100 + 2*s) * e, 100)
+
+#answer: p - p*d//100 + 2*s - (p - p*d//100 + 2*s)*e//100
+"""
+
+answer_annotated = """
+The total discount of a pair of shoes is ${p} x {d}/100 = $<<{p}*{d}/100={p*d//100}>>{p*d//100}.
+He spent ${p} - ${p*d//100} = $<<{p}-{p*d//100}={p-p*d//100}>>{p-p*d//100} for a pair of shoes.
+The total cost of two shirts is ${s} x 2 = $<<{s}*2={2*s}>>{2*s}.
+The initial cost of his purchase is ${p-p*d//100} + ${2*s} = $<<{p-p*d//100}+{2*s}={p-p*d//100+2*s}>>{p-p*d//100+2*s}.
+He got an additional ${p-p*d//100+2*s} x {e}/100 = $<<{p-p*d//100+2*s}*{e}/100={(p-p*d//100+2*s)*e//100}>>{(p-p*d//100+2*s)*e//100} discount upon checkout.
+Therefore, {name} spent ${p-p*d//100+2*s} - {(p-p*d//100+2*s)*e//100} = $<<{p-p*d//100+2*s}-{(p-p*d//100+2*s)*e//100}={p-p*d//100+2*s-(p-p*d//100+2*s)*e//100}>>{p-p*d//100+2*s-(p-p*d//100+2*s)*e//100} after all the discounts.
+#### {p - p*d//100 + 2*s - (p - p*d//100 + 2*s)*e//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Monika went out for the day and spent some money. She went to the mall and spent $250. Then, she went to the movies and watched 3 movies back to back that each cost $24. Then she stopped by the farmer's market on her way home and got 20 bags of beans at $1.25/bag. How much money did Monika spend throughout her day?
+"""
+
+answer = """
+Monika spent 24*3 = <<24*3=72>>72 dollars at the movies.
+Monika spent 20*1.25 = <<20*1.25=25>>25 dollars at the farmers market.
+Throughout her day, Monika spent 250+72+25 = <<250+72+25=347>>347 dollars.
+#### 347
+"""
+
+id_orig = 369
+id_shuffled = 431
+
+question_annotated = """
+{name,Monika} went out for the day and spent some money. She went to the mall and spent ${mall,250}. Then, she went to the movies and watched {m,3} movies back to back that each cost ${mp,24}. Then she stopped by the farmer's market on her way home and got {bags,20} bags of beans at ${bp,1.25}/bag. How much money did {name,Monika} spend throughout her day?
+
+#init:
+- name = sample(names_female)
+- bp = sample(["1.25"])
+- $mall = range(100, 500, 10)
+- $m = range(2, 6)
+- $mp = range(10, 60, 2)
+- $bags = range(4, 44, 4)
+
+#conditions:
+- divides(bags, 4)
+
+#answer: mall + mp*m + int(bags*float(bp))
+"""
+
+answer_annotated = """
+{name} spent {mp}*{m} = <<{mp}*{m}={mp*m}>>{mp*m} dollars at the movies.
+{name} spent {bags}*{bp} = <<{bags}*{bp}={int(bags*float(bp))}>>{int(bags*float(bp))} dollars at the farmers market.
+Throughout her day, {name} spent {mall}+{mp*m}+{int(bags*float(bp))} = <<{mall}+{mp*m}+{int(bags*float(bp))}={mall+mp*m+int(bags*float(bp))}>>{mall+mp*m+int(bags*float(bp))} dollars.
+#### {mall + mp*m + int(bags*float(bp))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

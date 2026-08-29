@@ -1,0 +1,41 @@
+question = """
+Out of the 120 people who attended the party, 1/3 are men while half are women. The rest are children. How many children attended the party?
+"""
+
+answer = """
+There were 120/3 = <<120/3=40>>40 men at the party.
+There were 120/2 = <<120/2=60>>60 women at the party.
+So, there were 40 + 60 = <<40+60=100>>100 men and women at the party.
+Thus, 120 - 100 = <<120-100=20>>20 were children.
+#### 20
+"""
+
+id_orig = 1192
+id_shuffled = 1288
+
+question_annotated = """
+Out of the {t,120} people who attended the party, {f,1/3} are men while half are women. The rest are children. How many children attended the party?
+
+#init:
+- $t = range(24, 624, 6)
+- f, d = sample([("1/3", 3), ("1/4", 4), ("1/5", 5), ("1/6", 6)])
+
+#conditions:
+- divides(t, 2)
+- divides(t, d)
+- t - t//d - t//2 > 0
+
+#answer: t - t//d - t//2
+"""
+
+answer_annotated = """
+There were {t}/{d} = <<{t}/{d}={t//d}>>{t//d} men at the party.
+There were {t}/2 = <<{t}/2={t//2}>>{t//2} women at the party.
+So, there were {t//d} + {t//2} = <<{t//d}+{t//2}={t//d+t//2}>>{t//d+t//2} men and women at the party.
+Thus, {t} - {t//d+t//2} = <<{t}-{t//d+t//2}={t-t//d-t//2}>>{t-t//d-t//2} were children.
+#### {t - t//d - t//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

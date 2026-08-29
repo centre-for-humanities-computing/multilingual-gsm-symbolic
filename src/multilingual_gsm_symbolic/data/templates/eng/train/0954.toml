@@ -1,0 +1,46 @@
+question = """
+It is recommended that men should consume no more than 150 calories of added sugar per day. Mark took a soft drink in the afternoon that contained 2500 calories, 5% of which was from added sugar. Then he bought some bars of candy which had 25 calories of added sugar each. If he eventually exceeded the recommended intake of added sugar by 100%, how many bars of candy did he take?
+"""
+
+answer = """
+He consumed 2500 calories, 5% of which is added sugar to give 2500*(5/100) = <<2500*(5/100)=125>>125 calories of added sugar.
+He exceeded the recommended intake of 150 calories by 100% for a total consumption of 150+(150(100/100)) = $<<150+(150*100/100)=300>>300
+This means he took in 300-125 = <<300-125=175>>175 calories from candy alone
+Each candy had 25 calories so 175 calories which means he consumed 175/25 = <<175/25=7>>7 bars?
+#### 7
+"""
+
+id_orig = 858
+id_shuffled = 954
+
+question_annotated = """
+It is recommended that men should consume no more than {rec,150} calories of added sugar per day. {name,Mark} took a soft drink in the afternoon that contained {cals,2500} calories, {pct,5}% of which was from added sugar. Then he bought some bars of candy which had {bar,25} calories of added sugar each. If he eventually exceeded the recommended intake of added sugar by {exc,100}%, how many bars of candy did he take?
+
+#init:
+- name = sample(names_male)
+- $rec = range(50, 310, 10)
+- $cals = range(1000, 5100, 100)
+- $pct = range(1, 11)
+- $bar = range(20, 55, 5)
+- $exc = range(25, 201, 25)
+
+#conditions:
+- is_int(cals*pct/100)
+- is_int(rec*exc/100)
+- rec + rec*exc/100 - cals*pct/100 > 0
+- divides(rec + rec*exc/100 - cals*pct/100, bar)
+
+#answer: (rec+rec*exc//100-cals*pct//100)//bar
+"""
+
+answer_annotated = """
+He consumed {cals} calories, {pct}% of which is added sugar to give {cals}*({pct}/100) = <<{cals}*({pct}/100)={cals*pct//100}>>{cals*pct//100} calories of added sugar.
+He exceeded the recommended intake of {rec} calories by {exc}% for a total consumption of {rec}+({rec}({exc}/100)) = $<<{rec}+({rec}*{exc}/100)={rec+rec*exc//100}>>{rec+rec*exc//100}
+This means he took in {rec+rec*exc//100}-{cals*pct//100} = <<{rec+rec*exc//100}-{cals*pct//100}={rec+rec*exc//100-cals*pct//100}>>{rec+rec*exc//100-cals*pct//100} calories from candy alone
+Each candy had {bar} calories so {rec+rec*exc//100-cals*pct//100} calories which means he consumed {rec+rec*exc//100-cals*pct//100}/{bar} = <<{rec+rec*exc//100-cals*pct//100}/{bar}={(rec+rec*exc//100-cals*pct//100)//bar}>>{(rec+rec*exc//100-cals*pct//100)//bar} bars?
+#### {(rec+rec*exc//100-cals*pct//100)//bar}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

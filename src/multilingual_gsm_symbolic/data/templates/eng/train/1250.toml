@@ -1,0 +1,49 @@
+question = """
+Pearl wants to order 5 monogrammed Christmas stockings for each of her 5 grandchildren and her own 4 children.  The stockings are $20.00 each and currently 10% off.  The monogramming will costs $5.00 per stocking.  How much will the stockings costs?
+"""
+
+answer = """
+She has 5 grandchildren 4 children so she needs 5+4 = <<5+4=9>>9 stockings
+The stockings are $20.00 each and currently 10% off so that's 20*.10 = $<<20*.10=2.00>>2.00 off
+The stockings are $20.00 with a $2.00 discount so they are each 20-2 = $<<20-2=18.00>>18.00
+The stockings are now $18.00 and she needs 9 so that's $<<18*9=162>>162.00
+She also wants to monogram each stocking at $5.00 per stocking so that's 9*5 = $<<9*5=45.00>>45.00
+The stockings are $162.00 and the monogramming will cost $45.00 so the stockings will cost 162+45 = $<<162+45=207.00>>207.00
+#### 1035
+"""
+
+id_orig = 1154
+id_shuffled = 1250
+
+question_annotated = """
+{name,Pearl} wants to order {s,5} monogrammed Christmas stockings for each of her {g,5} grandchildren and her own {c,4} children.  The stockings are ${p,20}.00 each and currently {r,10}% off.  The monogramming will costs ${m,5}.00 per stocking.  How much will the stockings costs?
+
+#init:
+- name = sample(names_female)
+- $g = range(2, 12)
+- $c = range(2, 12)
+- $s = range(2, 6)
+- $p = range(10, 60, 10)
+- $r = range(10, 51, 10)
+- $m = range(1, 6)
+
+#conditions:
+- divides(p * r, 100)
+- p * r // 100 < p
+
+#answer: (g + c) * s * (p - p*r//100 + m)
+"""
+
+answer_annotated = """
+She has {g} grandchildren {c} children so she needs {g}+{c} = <<{g}+{c}={g+c}>>{g+c} stockings
+The stockings are ${p}.00 each and currently {r}% off so that's {p}*.{r} = $<<{p}*.{r}={p*r//100}.00>>{p*r//100}.00 off
+The stockings are ${p}.00 with a ${p*r//100}.00 discount so they are each {p}-{p*r//100} = $<<{p}-{p*r//100}={p-p*r//100}.00>>{p-p*r//100}.00
+The stockings are now ${p-p*r//100}.00 and she needs {g+c} so that's $<<{p-p*r//100}*{g+c}={(p-p*r//100)*(g+c)}>>{(p-p*r//100)*(g+c)}.00
+She also wants to monogram each stocking at ${m}.00 per stocking so that's {g+c}*{m} = $<<{g+c}*{m}={(g+c)*m}.00>>{(g+c)*m}.00
+The stockings are ${(p-p*r//100)*(g+c)}.00 and the monogramming will cost ${(g+c)*m}.00 so the stockings will cost {(p-p*r//100)*(g+c)}+{(g+c)*m} = $<<{(p-p*r//100)*(g+c)}+{(g+c)*m}={(p-p*r//100)*(g+c)+(g+c)*m}.00>>{(p-p*r//100)*(g+c)+(g+c)*m}.00
+#### {(g + c) * s * (p - p*r//100 + m)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

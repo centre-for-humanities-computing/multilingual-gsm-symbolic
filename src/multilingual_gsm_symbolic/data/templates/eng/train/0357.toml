@@ -1,0 +1,53 @@
+question = """
+Tommy is making 12 loaves of bread. He needs 4 pounds of flour per loaf. A 10-pound bag of flour costs $10 and a 12-pound bag costs $13. When he is done making his bread, he has no use for flour and so he will throw away whatever is left. How much does he spend on flour if he buys the cheapest flour to get enough?
+"""
+
+answer = """
+He needs 48 pounds of flour because 12 x 4 = <<12*4=48>>48
+He needs 4.8 bags of 10 pound bags because 48 / 10 = <<48/10=4.8>>4.8
+He therefore needs to buy 5 bags of flour because 4 < 4.8 < 5
+He spends $50 if he buys this flour because 5 x 10 = <<5*10=50>>50
+He needs 4 bags of the 12-pound flour because 48 / 12 = <<48/12=4>>4
+He would spend $52 on the 12-pound bags because 4 x 13 = 52
+He spends $50 if he buys the cheapest flour because 50 < 52
+#### 50
+"""
+
+id_orig = 303
+id_shuffled = 357
+
+question_annotated = """
+{name,Tommy} is making {l,12} loaves of bread. He needs {p,4} pounds of flour per loaf. A {s,10}-pound bag of flour costs ${c1,10} and a {b,12}-pound bag costs ${c2,13}. When he is done making his bread, he has no use for flour and so he will throw away whatever is left. How much does he spend on flour if he buys the cheapest flour to get enough?
+
+#init:
+- name = sample(names_male)
+- $l = range(4, 24)
+- $p = range(2, 7)
+- $s = range(3, 23)
+- $b = range(4, 34)
+- $c1 = range(4, 12)
+- $c2 = range(4, 16)
+
+#conditions:
+- b > s
+- divides(l * p, b)
+- not divides(l * p, s)
+- (l * p + s - 1) // s * c1 < l * p // b * c2
+
+#answer: (l * p + s - 1) // s * c1
+"""
+
+answer_annotated = """
+He needs {l*p} pounds of flour because {l} x {p} = <<{l}*{p}={l*p}>>{l*p}
+He needs {l*p/s} bags of {s} pound bags because {l*p} / {s} = <<{l*p}/{s}={l*p/s}>>{l*p/s}
+He therefore needs to buy {(l*p+s-1)//s} bags of flour because {l*p//s} < {l*p/s} < {(l*p+s-1)//s}
+He spends ${(l*p+s-1)//s*c1} if he buys this flour because {(l*p+s-1)//s} x {c1} = <<{(l*p+s-1)//s}*{c1}={(l*p+s-1)//s*c1}>>{(l*p+s-1)//s*c1}
+He needs {l*p//b} bags of the {b}-pound flour because {l*p} / {b} = <<{l*p}/{b}={l*p//b}>>{l*p//b}
+He would spend ${l*p//b*c2} on the {b}-pound bags because {l*p//b} x {c2} = {l*p//b*c2}
+He spends ${(l*p+s-1)//s*c1} if he buys the cheapest flour because {(l*p+s-1)//s*c1} < {l*p//b*c2}
+#### {(l*p+s-1)//s*c1}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

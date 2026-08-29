@@ -1,0 +1,41 @@
+question = """
+Federal guidelines recommend eating at least 2 cups of vegetables per day. From breakfast on Sunday to the end of the day on Thursday, Sarah has eaten 8 cups. How many cups per day does Sarah need to eat of her vegetables in order to meet her daily minimum requirement for the week?
+"""
+
+answer = """
+There are 7 days in a week and 2 cups are recommended per day, bringing the total to 7 days * 2 cups/day =<<7*2=14>>14 cups for the week.
+Out of the 14 total cups needed for the week, Sarah has already eaten 8, for a total of 14 cups - 8 cups = <<14-8=6>>6 cups left to consume for the week.
+Sunday through Thursday equals 5 days that have passed. If there are 7 days in the week then Sarah has 7 days - 5 days = <<7-5=2>>2 days left of the week.
+If she needs to eat 6 more cups in the next 2 days then she will have to eat 6 cups / 2 days = <<6/2=3>>3 cups per day over the next two days.
+#### 3
+"""
+
+id_orig = 598
+id_shuffled = 671
+
+question_annotated = """
+Federal guidelines recommend eating at least {rec,2} cups of vegetables per day. From breakfast on Sunday to the end of the day on Thursday, {name,Sarah} has eaten {eaten,8} cups. How many cups per day does {name,Sarah} need to eat of her vegetables in order to meet her daily minimum requirement for the week?
+
+#init:
+- name = sample(names_female)
+- $rec = range(1, 11)
+- $eaten = range(1, 201)
+
+#conditions:
+- eaten < 7 * rec
+- divides(7 * rec - eaten, 2)
+
+#answer: (7 * rec - eaten) // 2
+"""
+
+answer_annotated = """
+There are 7 days in a week and {rec} cups are recommended per day, bringing the total to 7 days * {rec} cups/day =<<7*{rec}={7*rec}>>{7*rec} cups for the week.
+Out of the {7*rec} total cups needed for the week, {name} has already eaten {eaten}, for a total of {7*rec} cups - {eaten} cups = <<{7*rec}-{eaten}={7*rec-eaten}>>{7*rec-eaten} cups left to consume for the week.
+Sunday through Thursday equals 5 days that have passed. If there are 7 days in the week then {name} has 7 days - 5 days = <<7-5=2>>2 days left of the week.
+If she needs to eat {7*rec-eaten} more cups in the next 2 days then she will have to eat {7*rec-eaten} cups / 2 days = <<{7*rec-eaten}/2={(7*rec-eaten)//2}>>{(7*rec-eaten)//2} cups per day over the next two days.
+#### {(7*rec-eaten)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

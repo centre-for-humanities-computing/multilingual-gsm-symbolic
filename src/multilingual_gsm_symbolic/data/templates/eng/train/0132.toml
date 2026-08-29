@@ -1,0 +1,50 @@
+question = """
+Tina makes $18.00 an hour.  If she works more than 8 hours per shift, she is eligible for overtime, which is paid by your hourly wage + 1/2 your hourly wage.  If she works 10 hours every day for 5 days, how much money does she make?
+"""
+
+answer = """
+She works 8 hours a day for $18 per hour so she makes 8*18 = $<<8*18=144.00>>144.00 per 8-hour shift
+She works 10 hours a day and anything over 8 hours is eligible for overtime, so she gets 10-8 = <<10-8=2>>2 hours of overtime
+Overtime is calculated as time and a half so and she makes $18/hour so her overtime pay is 18*.5 = $<<18*.5=9.00>>9.00
+Her overtime pay is 18+9 = $<<18+9=27.00>>27.00
+Her base pay is $144.00 per 8-hour shift and she works 5 days and makes 5 * $144 = $<<144*5=720.00>>720.00
+Her overtime pay is $27.00 per hour and she works 2 hours of overtime per day and makes 27*2 = $<<27*2=54.00>>54.00 in overtime pay
+2 hours of overtime pay for 5 days means she makes 54*5 = $270.00
+In 5 days her base pay is $720.00 and she makes $270.00 in overtime pay so she makes $720 + $270 = $<<720+270=990.00>>990.00
+#### 990
+"""
+
+id_orig = 9
+id_shuffled = 132
+
+question_annotated = """
+{name,Tina} makes ${w,18}.00 an hour.  If she works more than {h,8} hours per shift, she is eligible for overtime, which is paid by your hourly wage + 1/2 your hourly wage.  If she works {t,10} hours every day for {n,5} days, how much money does she make?
+
+#init:
+- name = sample(names_female)
+- $w = range(10, 60, 2)
+- $h = range(4, 12)
+- $t = range(9, 25)
+- $n = range(2, 8)
+
+#conditions:
+- t > h
+
+#answer: h*w*n + (w + w//2) * (t - h) * n
+"""
+
+answer_annotated = """
+She works {h} hours a day for ${w} per hour so she makes {h}*{w} = $<<{h}*{w}={h*w}.00>>{h*w}.00 per {h}-hour shift
+She works {t} hours a day and anything over {h} hours is eligible for overtime, so she gets {t}-{h} = <<{t}-{h}={t-h}>>{t-h} hours of overtime
+Overtime is calculated as time and a half so and she makes ${w}/hour so her overtime pay is {w}*.5 = $<<{w}*.5={w//2}.00>>{w//2}.00
+Her overtime pay is {w}+{w//2} = $<<{w}+{w//2}={w+w//2}.00>>{w+w//2}.00
+Her base pay is ${h*w}.00 per {h}-hour shift and she works {n} days and makes {n} * ${h*w} = $<<{h*w}*{n}={h*w*n}.00>>{h*w*n}.00
+Her overtime pay is ${w+w//2}.00 per hour and she works {t-h} hours of overtime per day and makes {w+w//2}*{t-h} = $<<{w+w//2}*{t-h}={(w+w//2)*(t-h)}.00>>{(w+w//2)*(t-h)}.00 in overtime pay
+{t-h} hours of overtime pay for {n} days means she makes {(w+w//2)*(t-h)}*{n} = ${(w+w//2)*(t-h)*n}.00
+In {n} days her base pay is ${h*w*n}.00 and she makes ${(w+w//2)*(t-h)*n}.00 in overtime pay so she makes ${h*w*n} + ${(w+w//2)*(t-h)*n} = $<<{h*w*n}+{(w+w//2)*(t-h)*n}={h*w*n+(w+w//2)*(t-h)*n}.00>>{h*w*n+(w+w//2)*(t-h)*n}.00
+#### {h*w*n+(w+w//2)*(t-h)*n}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

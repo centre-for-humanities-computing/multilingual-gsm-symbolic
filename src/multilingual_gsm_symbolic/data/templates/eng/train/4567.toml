@@ -1,0 +1,44 @@
+question = """
+Moses and Tiffany want to see who is faster. But instead of a race, they just start running down the block. Tiffany runs 6 blocks in 3 minutes. Moses runs 12 blocks in 8 minutes. What is the speed (defined as blocks per minute) of the runner with the higher average speed?
+"""
+
+answer = """
+Tiffany runs 2 blocks per minute because 6 / 3 = <<6/3=2>>2
+Moses runs 1.5 blocks per minute because 12 / 8 = <<12/8=1.5>>1.5
+The runner with the highest average speed is Tiffany because 2 > 1.5
+#### 2
+"""
+
+id_orig = 3873
+id_shuffled = 4567
+
+question_annotated = """
+{name_m,Moses} and {name_f,Tiffany} want to see who is faster. But instead of a race, they just start running down the block. {name_f,Tiffany} runs {a,6} blocks in {m,3} minutes. {name_m,Moses} runs {b,12} blocks in {n,8} minutes. What is the speed (defined as blocks per minute) of the runner with the higher average speed?
+
+#init:
+- name_m = sample(names_male)
+- name_f = sample(names_female)
+- $a = range(4, 104, 2)
+- $m = range(2, 7)
+- $b = range(3, 63)
+- $n = range(2, 22)
+
+#conditions:
+- a % m == 0
+- 1000 % n == 0
+- b % n != 0
+- a * n > b * m
+
+#answer: a//m
+"""
+
+answer_annotated = """
+{name_f} runs {a//m} blocks per minute because {a} / {m} = <<{a}/{m}={a//m}>>{a//m}
+{name_m} runs {b/n} blocks per minute because {b} / {n} = <<{b}/{n}={b/n}>>{b/n}
+The runner with the highest average speed is {name_f} because {a//m} > {b/n}
+#### {a//m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

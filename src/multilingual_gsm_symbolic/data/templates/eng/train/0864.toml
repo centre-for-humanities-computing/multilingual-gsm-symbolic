@@ -1,0 +1,48 @@
+question = """
+Of the 90 people on William's bus, 3/5 were Dutch. Of the 1/2 of the Dutch who were also American, 1/3 got window seats. What's the number of Dutch Americans who sat at the windows?
+"""
+
+answer = """
+On the bus, the number of Dutch people was 3/5 of the total number, a total of 3/5*90 = <<3/5*90=54>>54 people.
+Out of the 54 people who were Dutch, 1/2 were Dutch Americans, a total of 1/2*54 = <<1/2*54=27>>27 people.
+If 1/3 of the passengers on the bus identifying as Dutch Americans sat at the windows, their number is 1/3*27 = <<1/3*27=9>>9
+#### 9
+"""
+
+id_orig = 791
+id_shuffled = 864
+
+question_annotated = """
+Of the {total,90} people on {name,William}'s bus, {n1,3}/{d1,5} were Dutch. Of the {n2,1}/{d2,2} of the Dutch who were also American, {n3,1}/{d3,3} got window seats. What's the number of Dutch Americans who sat at the windows?
+
+#init:
+- name = sample(names_male)
+- $total = range(20, 220, 2)
+- $n1 = range(1, 6)
+- $d1 = range(2, 8)
+- $n2 = range(1, 2)
+- $d2 = range(2, 4)
+- $n3 = range(1, 2)
+- $d3 = range(2, 5)
+
+#conditions:
+- n1 < d1
+- n2 < d2
+- n3 < d3
+- divides(total * n1, d1)
+- divides(total * n1 // d1 * n2, d2)
+- divides(total * n1 // d1 * n2 // d2 * n3, d3)
+
+#answer: total*n1//d1*n2//d2*n3//d3
+"""
+
+answer_annotated = """
+On the bus, the number of Dutch people was {n1}/{d1} of the total number, a total of {n1}/{d1}*{total} = <<{n1}/{d1}*{total}={total*n1//d1}>>{total*n1//d1} people.
+Out of the {total*n1//d1} people who were Dutch, {n2}/{d2} were Dutch Americans, a total of {n2}/{d2}*{total*n1//d1} = <<{n2}/{d2}*{total*n1//d1}={total*n1//d1*n2//d2}>>{total*n1//d1*n2//d2} people.
+If {n3}/{d3} of the passengers on the bus identifying as Dutch Americans sat at the windows, their number is {n3}/{d3}*{total*n1//d1*n2//d2} = <<{n3}/{d3}*{total*n1//d1*n2//d2}={total*n1//d1*n2//d2*n3//d3}>>{total*n1//d1*n2//d2*n3//d3}
+#### {total*n1//d1*n2//d2*n3//d3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+To keep himself busy in class, Michael makes rubber-band balls. He makes two sizes, large and small. A small ball uses 50 rubber bands. A large ball requires 300 rubber bands. Michael brought a 5,000 pack to class and already made 22 small balls. How many large balls can he make with the remaining rubber bands?
+"""
+
+answer = """
+Michael has used 1,100 rubber bands because 22 x 50 = <<22*50=1100>>1,100
+Michael has 3,900 rubber bands remaining because 5,000 - 1,100 = 3,900
+Michael can make 13 large balls because 3,900 / 300 = <<3900/300=13>>13
+#### 13
+"""
+
+id_orig = 3251
+id_shuffled = 3864
+
+question_annotated = """
+To keep himself busy in class, {name,Michael} makes rubber-band balls. He makes two sizes, large and small. A small ball uses {b,50} rubber bands. A large ball requires {c,300} rubber bands. {name,Michael} brought a {k,5},000 pack to class and already made {n,22} small balls. How many large balls can he make with the remaining rubber bands?
+
+#init:
+- name = sample(names_male)
+- $b = range(20, 101)
+- $c = range(100, 501, 50)
+- $n = range(2, 51)
+- $k = range(2, 13)
+
+#conditions:
+- divides(n*b, 100)
+- n*b >= 1100
+- n*b <= 1999
+- divides(k*1000 - n*b, c)
+
+#answer: (k*1000-n*b)//c
+"""
+
+answer_annotated = """
+{name} has used {n*b//1000},{n*b%1000} rubber bands because {n} x {b} = <<{n}*{b}={n*b}>>{n*b//1000},{n*b%1000}
+{name} has {(k*1000-n*b)//1000},{(k*1000-n*b)%1000} rubber bands remaining because {k},000 - {n*b//1000},{n*b%1000} = {(k*1000-n*b)//1000},{(k*1000-n*b)%1000}
+{name} can make {(k*1000-n*b)//c} large balls because {(k*1000-n*b)//1000},{(k*1000-n*b)%1000} / {c} = <<{(k*1000-n*b)}/{c}={(k*1000-n*b)//c}>>{(k*1000-n*b)//c}
+#### {(k*1000-n*b)//c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

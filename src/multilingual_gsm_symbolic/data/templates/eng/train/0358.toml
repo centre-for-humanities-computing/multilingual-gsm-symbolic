@@ -1,0 +1,46 @@
+question = """
+Cary is an engineer in charge of designing an irrigation system for three farmers. Farmer Bob grows 3 acres of corn, 9 acres of cotton, and 12 acres of beans. Farmer Brenda grows 6 acres of corn, 7 acres of cotton, and 14 acres of beans. Farmer Bernie grows 2 acres of corn and 12 acres of cotton. If corn takes 20 gallons of water an acre, cotton takes 80 gallons of water an acre, and beans take twice as much water as corn, what percentage of the total water used will go to Farmer Bob's farm?
+"""
+
+answer = """
+First figure out how much water beans take by multiplying the water use for corn by 2: 20 gallons/acre * 2 = <<20*2=40>>40 gallons/acre
+Next, calculate Bob's water use by multiplying each plant's water use per acre by the number of acres he planted, then adding up the total water use for all three crops: 3 * 20 + 9 * 80 + 12 * 40 = <<3*20+9*80+12*40=1260>>1260
+Now do the same thing for Brenda: 6 * 20 + 7 * 80 + 14 * 40 = <<6*20+7*80+14*40=1240>>1240
+And do the same thing for Bernie: 2 * 20 + 12 * 80 = 1000
+Now add up each farmer's water use to find the total water use: 1260 + 1240 + 1000 = <<1260+1240+1000=3500>>3500
+Now divide Bob's water use by the total water use and multiply by 100 to find what percentage of the water he used: 1260 / 3500 * 100 = <<1260/3500*100=36>>36%
+#### 36
+"""
+
+id_orig = 304
+id_shuffled = 358
+
+question_annotated = """
+{name,Cary} is an engineer in charge of designing an irrigation system for three farmers. Farmer Bob grows {a,3} acres of corn, {b,9} acres of cotton, and {c,12} acres of beans. Farmer Brenda grows 6 acres of corn, 7 acres of cotton, and 14 acres of beans. Farmer Bernie grows 2 acres of corn and 12 acres of cotton. If corn takes {w,20} gallons of water an acre, cotton takes 80 gallons of water an acre, and beans take twice as much water as corn, what percentage of the total water used will go to Farmer Bob's farm?
+
+#init:
+- name = sample(names)
+- $a = range(1, 10)
+- $b = range(1, 16)
+- $c = range(1, 16)
+- $w = range(10, 110, 10)
+
+#conditions:
+- is_int((a*w+b*80+c*2*w)*100 / (a*w+b*80+c*2*w+2240))
+
+#answer: (a*w+b*80+c*2*w)*100//(a*w+b*80+c*2*w+2240)
+"""
+
+answer_annotated = """
+First figure out how much water beans take by multiplying the water use for corn by 2: {w} gallons/acre * 2 = <<{w}*2={2*w}>>{2*w} gallons/acre
+Next, calculate Bob's water use by multiplying each plant's water use per acre by the number of acres he planted, then adding up the total water use for all three crops: {a} * {w} + {b} * 80 + {c} * {2*w} = <<{a}*{w}+{b}*80+{c}*{2*w}={a*w+b*80+c*2*w}>>{a*w+b*80+c*2*w}
+Now do the same thing for Brenda: 6 * {w} + 7 * 80 + 14 * {2*w} = <<6*{w}+7*80+14*{2*w}={34*w+560}>>{34*w+560}
+And do the same thing for Bernie: 2 * {w} + 12 * 80 = {2*w+960}
+Now add up each farmer's water use to find the total water use: {a*w+b*80+c*2*w} + 1240 + 1000 = <<{a*w+b*80+c*2*w}+1240+1000={a*w+b*80+c*2*w+2240}>>{a*w+b*80+c*2*w+2240}
+Now divide Bob's water use by the total water use and multiply by 100 to find what percentage of the water he used: {a*w+b*80+c*2*w} / {a*w+b*80+c*2*w+2240} * 100 = <<{a*w+b*80+c*2*w}/{a*w+b*80+c*2*w+2240}*100={(a*w+b*80+c*2*w)*100//(a*w+b*80+c*2*w+2240)}>>{(a*w+b*80+c*2*w)*100//(a*w+b*80+c*2*w+2240)}%
+#### {(a*w+b*80+c*2*w)*100//(a*w+b*80+c*2*w+2240)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

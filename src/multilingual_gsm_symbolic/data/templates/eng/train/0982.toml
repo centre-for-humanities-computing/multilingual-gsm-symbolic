@@ -1,0 +1,47 @@
+question = """
+Jack went to a supermarket with $100 and bought 4 bottles of water. Then his mother called him and asked him to buy twice as many bottles as he already bought. Each bottle cost $2. Finally, he also bought half a pound of cheese and 1 pound of cheese costs $10. How much money does Jack have remaining?
+"""
+
+answer = """
+Jack's mother asked him to buy 2 * 4 = <<2*4=8>>8 bottles of water.
+Thus Jack bought 4 + 8 = <<4+8=12>>12 bottles of water in total.
+Altogether, the bottles of water cost 12 * $2 = $<<12*2=24>>24.
+The cheese cost 1/2 * $10 = $<<10*0.5=5>>5.
+So Jack spent $24 + $5 = $<<24+5=29>>29 on water and cheese.
+Since he started with $100, he now has $100 - $29 = $<<100-29=71>>71 left.
+#### 71
+"""
+
+id_orig = 886
+id_shuffled = 982
+
+question_annotated = """
+{name,Jack} went to a supermarket with ${m,100} and bought {b,4} bottles of water. Then his mother called him and asked him to buy {mult_txt,twice} as many bottles as he already bought. Each bottle cost ${p,2}. Finally, he also bought half a pound of cheese and 1 pound of cheese costs ${c,10}. How much money does {name,Jack} have remaining?
+
+#init:
+- name = sample(names_male)
+- mult_txt, k = sample(multi_times)
+- $m = range(60, 210, 10)
+- $b = range(2, 7)
+- $p = range(1, 4)
+- $c = range(2, 12, 2)
+
+#conditions:
+- (b + k*b) * p + c // 2 < m
+
+#answer: m - (b + k*b) * p - c // 2
+"""
+
+answer_annotated = """
+{name}'s mother asked him to buy {k} * {b} = <<{k}*{b}={k*b}>>{k*b} bottles of water.
+Thus {name} bought {b} + {k*b} = <<{b}+{k*b}={b+k*b}>>{b+k*b} bottles of water in total.
+Altogether, the bottles of water cost {b+k*b} * ${p} = $<<{b+k*b}*{p}={(b+k*b)*p}>>{(b+k*b)*p}.
+The cheese cost 1/2 * ${c} = $<<{c}*0.5={int(c*0.5)}>>{int(c*0.5)}.
+So {name} spent ${(b+k*b)*p} + ${c//2} = $<<{(b+k*b)*p}+{c//2}={(b+k*b)*p+c//2}>>{(b+k*b)*p+c//2} on water and cheese.
+Since he started with ${m}, he now has ${m} - ${(b+k*b)*p+c//2} = $<<{m}-{(b+k*b)*p+c//2}={m-(b+k*b)*p-c//2}>>{m-(b+k*b)*p-c//2} left.
+#### {m - (b + k*b) * p - c // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

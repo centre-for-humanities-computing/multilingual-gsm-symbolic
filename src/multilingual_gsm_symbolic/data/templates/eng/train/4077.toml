@@ -1,0 +1,45 @@
+question = """
+Gary has 6 pounds of flour. He will use 4 pounds of flour to make cakes which require 0.5 pounds of flour each. The remaining 2 pounds of flour will be used to bake cupcakes, which require 1/5 pounds of flour. He plans to sell the cakes for $2.5 each and the cupcakes for $1 each in the school's bake sale. How much will Gary earn?
+"""
+
+answer = """
+Gary can bake 4/0.5 = <<4/0.5=8>>8 cakes from the 4 pounds of flour.
+He can bake 2/ 1/5 = 10 cupcakes from the 2 pounds of flour.
+So, he will earn $2.5 x 8 = $<<2.5*8=20>>20 from the cakes.
+Hence, Gary will earn a total of $20 + $10 = $<<30=30>>30 from baking 8 cakes and 10 cupcakes.
+#### 30
+"""
+
+id_orig = 3442
+id_shuffled = 4077
+
+question_annotated = """
+{name,Gary} has {flour,6} pounds of flour. He will use {cakef,4} pounds of flour to make cakes which require 0.5 pounds of flour each. The remaining {rem,2} pounds of flour will be used to bake cupcakes, which require {cn,1}/{cd,5} pounds of flour. He plans to sell the cakes for $2.5 each and the cupcakes for $1 each in the school's bake sale. How much will {name,Gary} earn?
+
+#init:
+- name = sample(names_male)
+- $flour = range(6, 61)
+- $cakef = range(1, 31)
+- $rem = range(1, 31)
+- $cn = range(1, 4)
+- $cd = range(2, 13)
+
+#conditions:
+- flour == cakef + rem
+- cn < cd
+- divides(rem * cd, cn)
+
+#answer: 5*cakef + rem*cd//cn
+"""
+
+answer_annotated = """
+{name} can bake {cakef}/0.5 = <<{cakef}/0.5={cakef*2}>>{cakef*2} cakes from the {cakef} pounds of flour.
+He can bake {rem}/ {cn}/{cd} = {rem*cd//cn} cupcakes from the {rem} pounds of flour.
+So, he will earn $2.5 x {cakef*2} = $<<2.5*{cakef*2}={5*cakef}>>{5*cakef} from the cakes.
+Hence, {name} will earn a total of ${5*cakef} + ${rem*cd//cn} = $<<{5*cakef + rem*cd//cn}={5*cakef + rem*cd//cn}>>{5*cakef + rem*cd//cn} from baking {cakef*2} cakes and {rem*cd//cn} cupcakes.
+#### {5*cakef + rem*cd//cn}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

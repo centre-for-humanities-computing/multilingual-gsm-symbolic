@@ -1,0 +1,41 @@
+question = """
+Simeon drinks 64 fluid ounces of filtered water every day.  He used to drink this water in 8-ounce-servings.  But now, he drinks his water in 16-ounce servings.  How many fewer servings per day does it now take Simeon to drink his water than it used to?
+"""
+
+answer = """
+In 64 fluid ounces, there are 64/8=<<64/8=8>>8 eight-ounce servings.
+Using 16-ounce servings, Simeon now drinks 64 ounces in 64/16=<<64/16=4>>4 servings.
+Thus, Simeon now drinks his water in 8-4=<<8-4=4>>4 fewer servings per day.
+#### 4
+"""
+
+id_orig = 2417
+id_shuffled = 2776
+
+question_annotated = """
+{name,Simeon} drinks {total,64} fluid ounces of filtered water every day.  He used to drink this water in {old,8}-ounce-servings.  But now, he drinks his water in {new,16}-ounce servings.  How many fewer servings per day does it now take {name,Simeon} to drink his water than it used to?
+
+#init:
+- name = sample(names_male)
+- old_txt, old = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- $new = range(3, 49)
+- $total = range(12, 200, 4)
+
+#conditions:
+- old < new
+- divides(total, old)
+- divides(total, new)
+
+#answer: total//old - total//new
+"""
+
+answer_annotated = """
+In {total} fluid ounces, there are {total}/{old}=<<{total}/{old}={total//old}>>{total//old} {old_txt}-ounce servings.
+Using {new}-ounce servings, {name} now drinks {total} ounces in {total}/{new}=<<{total}/{new}={total//new}>>{total//new} servings.
+Thus, {name} now drinks his water in {total//old}-{total//new}=<<{total//old}-{total//new}={total//old-total//new}>>{total//old-total//new} fewer servings per day.
+#### {total//old - total//new}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

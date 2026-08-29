@@ -1,0 +1,38 @@
+question = """
+Brian is a real estate agent. He makes a 2% commission on each sale. During June, he sold three houses. The houses sold for $157,000, $499,000, and $125,000. What was Brian’s total commission on these three sales?
+"""
+
+answer = """
+Brian sold houses for 157,000 + 499,000 + 125,000 = $<<157000+499000+125000=781000>>781,000 in total.
+Brian's commission was 781,000 * 0.02 = $<<781000*0.02=15620>>15,620
+#### 15,620
+"""
+
+id_orig = 1012
+id_shuffled = 1108
+
+question_annotated = """
+{name,Brian} is a real estate agent. He makes a {rate,2}% commission on each sale. During June, he sold three houses. The houses sold for ${p1,157},000, ${p2,499},000, and ${p3,125},000. What was {name,Brian}’s total commission on these three sales?
+
+#init:
+- name = sample(names_male)
+- $rate = range(1, 10)
+- $p1 = range(117, 197, 10)
+- $p2 = range(439, 599, 20)
+- $p3 = range(105, 185, 10)
+
+#conditions:
+- (p1 + p2 + p3) * rate >= 1000
+
+#answer: (p1 + p2 + p3) * rate * 10
+"""
+
+answer_annotated = """
+{name} sold houses for {p1},000 + {p2},000 + {p3},000 = $<<{p1*1000}+{p2*1000}+{p3*1000}={(p1+p2+p3)*1000}>>{(p1+p2+p3)},000 in total.
+{name}'s commission was {(p1+p2+p3)},000 * 0.0{rate} = $<<{(p1+p2+p3)*1000}*0.0{rate}={(p1+p2+p3)*rate*10}>>{(p1+p2+p3)*rate*10//1000},{(p1+p2+p3)*rate*10%1000}
+#### {(p1+p2+p3)*rate*10//1000},{(p1+p2+p3)*rate*10%1000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

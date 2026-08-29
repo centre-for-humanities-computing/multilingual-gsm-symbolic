@@ -1,0 +1,38 @@
+question = """
+Zoe wants to go on the field trip to Washington DC with her middle school this spring and the cost is $485. Her grandma gave her $250 toward her fees and she must earn the rest by selling candy bars. She makes $1.25 for every candy bar she sells. How many candy bars does Zoe need to sell to earn the money for the trip?
+"""
+
+answer = """
+Since Zoe’s grandma gave her some money toward her trip, she needs to come up with $485 – $250 = $<<485-250=235>>235.
+This means she must sell $235 / $1.25/candy bar = <<235/1.25=188>>188 candy bars.
+#### 188
+"""
+
+id_orig = 2741
+id_shuffled = 3225
+
+question_annotated = """
+{name,Zoe} wants to go on the field trip to Washington DC with her middle school this spring and the cost is ${cost,485}. Her grandma gave her ${given,250} toward her fees and she must earn the rest by selling candy bars. She makes ${price,1.25} for every candy bar she sells. How many candy bars does {name,Zoe} need to sell to earn the money for the trip?
+
+#init:
+- name = sample(names_female)
+- $cost = range(200, 1000, 5)
+- $given = range(50, 400, 5)
+- $price = arange(0.5, 2.51, 0.25)
+
+#conditions:
+- given < cost
+- is_int((cost - given)/price)
+
+#answer: int((cost - given)/price)
+"""
+
+answer_annotated = """
+Since {name}’s grandma gave her some money toward her trip, she needs to come up with ${cost} – ${given} = $<<{cost}-{given}={cost-given}>>{cost-given}.
+This means she must sell ${cost-given} / ${price}/candy bar = <<{cost-given}/{price}={int((cost-given)/price)}>>{int((cost-given)/price)} candy bars.
+#### {int((cost-given)/price)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Hansel makes $30,000 a year and just received a 10% raise.  Gretel makes the same amount as Hansel but received a 15% raise.  How much more money will Gretel make compared to Hansel?
+"""
+
+answer = """
+Hansel makes $30,000 and received a 10% raise so his raise is 30,000*.10 = $3,0.00
+Hansel now makes 30,000+ 3,000 = $<<30000+3000=33000>>33,000 a year
+Gretel makes $30,000 and received a 15% raise so her raise is 30,000*.15 = $4,500.00
+Gretel now makes 30,000+4,500 = $<<30000+4500=34500>>34,500 a year
+If Gretel makes $34,500 a year and Hansel makes $33,000 then Gretel makes 34,500-33,000 = $<<34500-33000=1500>>1,500 more a year than Hansel
+#### 1500
+"""
+
+id_orig = 275
+id_shuffled = 484
+
+question_annotated = """
+{name1,Hansel} makes ${s,30},000 a year and just received a {hp,10}% raise.  {name2,Gretel} makes the same amount as {name1,Hansel} but received a {gp,15}% raise.  How much more money will {name2,Gretel} make compared to {name1,Hansel}?
+
+#init:
+- name1 = sample(["Hansel", "Chris", "Oliver", "Noah", "Eric"])
+- name2 = sample(["Gretel", "Sophie", "Emma", "Abby", "Andrea"])
+- $s = range(12, 200)
+- $hp = range(10, 51)
+- $gp = range(10, 61)
+
+#conditions:
+- divides(hp * s, 100)
+- divides(gp * s - 50, 100)
+- gp > hp
+
+#answer: (gp - hp) * s * 10
+"""
+
+answer_annotated = """
+{name1} makes ${s},000 and received a {hp}% raise so his raise is {s},000*.{hp} = ${hp*s//100},0.00
+{name1} now makes {s},000+ {hp*s//100},000 = $<<{s*1000}+{hp*s*10}={s*1000+hp*s*10}>>{(s*1000+hp*s*10)//1000},000 a year
+{name2} makes ${s},000 and received a {gp}% raise so her raise is {s},000*.{gp} = ${gp*s//100},500.00
+{name2} now makes {s},000+{gp*s//100},500 = $<<{s*1000}+{gp*s*10}={s*1000+gp*s*10}>>{(s*1000+gp*s*10)//1000},500 a year
+If {name2} makes ${(s*1000+gp*s*10)//1000},500 a year and {name1} makes ${(s*1000+hp*s*10)//1000},000 then {name2} makes {(s*1000+gp*s*10)//1000},500-{(s*1000+hp*s*10)//1000},000 = $<<{s*1000+gp*s*10}-{s*1000+hp*s*10}={(s*1000+gp*s*10)-(s*1000+hp*s*10)}>>{(gp - hp) * s * 10 // 1000},500 more a year than {name1}
+#### {(gp - hp) * s * 10}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

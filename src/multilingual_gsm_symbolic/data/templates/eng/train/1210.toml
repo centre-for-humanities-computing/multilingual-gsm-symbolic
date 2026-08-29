@@ -1,0 +1,44 @@
+question = """
+Jeff makes 10 donuts each day for 12 days. Jeff eats one of the donuts each day. Chris then comes over and eats 8 donuts. If 10 donuts fit in each box, how many boxes can Jeff fill with his donuts?
+"""
+
+answer = """
+Jeff makes a total of 10 * 12 = <<10*12=120>>120 donuts.
+Jeff eats 1 * 12 = <<1*12=12>>12 donuts.
+After Chris is done eating, there are 120 - 12 - 8 = <<120-12-8=100>>100 donuts remaining.
+Jeff needs 100 / 10 = <<100/10=10>>10 boxes to store all of his donuts.
+#### 10
+"""
+
+id_orig = 1114
+id_shuffled = 1210
+
+question_annotated = """
+{maker,Jeff} makes {d,10} donuts each day for {days,12} days. {maker,Jeff} eats one of the donuts each day. {eater,Chris} then comes over and eats {c,8} donuts. If {box,10} donuts fit in each box, how many boxes can {maker,Jeff} fill with his donuts?
+
+#init:
+- maker = sample(["Jeff", "Jack"])
+- eater = sample(["Chris", "Dave"])
+- $d = range(3, 13)
+- $days = range(6, 22)
+- $c = range(2, 18)
+- $box = range(5, 15)
+
+#conditions:
+- d*days - days - c > 0
+- divides(d*days - days - c, box)
+
+#answer: (d*days - days - c)//box
+"""
+
+answer_annotated = """
+{maker} makes a total of {d} * {days} = <<{d}*{days}={d*days}>>{d*days} donuts.
+{maker} eats 1 * {days} = <<1*{days}={days}>>{days} donuts.
+After {eater} is done eating, there are {d*days} - {days} - {c} = <<{d*days}-{days}-{c}={d*days-days-c}>>{d*days-days-c} donuts remaining.
+{maker} needs {d*days-days-c} / {box} = <<{d*days-days-c}/{box}={(d*days-days-c)//box}>>{(d*days-days-c)//box} boxes to store all of his donuts.
+#### {(d*days-days-c)//box}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

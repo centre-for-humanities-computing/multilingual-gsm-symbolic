@@ -1,0 +1,39 @@
+question = """
+Three cats sat on a fence, meowing at the moon.  The first cat meowed 3 times per minute.  The second cat meowed twice as frequently as the first cat.  And the third cat meowed at one-third the frequency of the second cat.  What is the combined total number of meows the three cats make in 5 minutes?
+"""
+
+answer = """
+The second cat meowed twice as frequently as the three meows per minute from the first cat, for a total of 2*3=<<2*3=6>>6 meows per minute.
+The third cat meowed at one-third the frequency of the second cat, for a total of 6/3=<<6/3=2>>2 meows per minute.
+Thus, combined, the three cats meow 3+6+2=<<3+6+2=11>>11 times per minute.
+In five minutes, the three cats meow 5*11=<<5*11=55>>55 times.
+#### 55
+"""
+
+id_orig = 127
+id_shuffled = 127
+
+question_annotated = """
+Three cats sat on a fence, meowing at the moon.  The first cat meowed {a,3} times per minute.  The second cat meowed twice as frequently as the first cat.  And the third cat meowed at one-third the frequency of the second cat.  What is the combined total number of meows the three cats make in {m,5} minutes?
+
+#init:
+- a_txt, a = sample([("three", 3), ("six", 6), ("nine", 9), ("twelve", 12), ("fifteen", 15), ("eighteen", 18), ("twenty-one", 21), ("twenty-four", 24), ("twenty-seven", 27), ("thirty", 30)])
+- m_txt, m = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12), ("fifteen", 15), ("twenty", 20)])
+
+#conditions:
+- divides(2 * a, 3)
+
+#answer: m * (a + 2 * a + 2 * a // 3)
+"""
+
+answer_annotated = """
+The second cat meowed twice as frequently as the {a_txt} meows per minute from the first cat, for a total of 2*{a}=<<2*{a}={2*a}>>{2*a} meows per minute.
+The third cat meowed at one-third the frequency of the second cat, for a total of {2*a}/3=<<{2*a}/3={2*a//3}>>{2*a//3} meows per minute.
+Thus, combined, the three cats meow {a}+{2*a}+{2*a//3}=<<{a}+{2*a}+{2*a//3}={a+2*a+2*a//3}>>{a+2*a+2*a//3} times per minute.
+In {m_txt} minutes, the three cats meow {m}*{a+2*a+2*a//3}=<<{m}*{a+2*a+2*a//3}={m*(a+2*a+2*a//3)}>>{m*(a+2*a+2*a//3)} times.
+#### {m * (a + 2 * a + 2 * a // 3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

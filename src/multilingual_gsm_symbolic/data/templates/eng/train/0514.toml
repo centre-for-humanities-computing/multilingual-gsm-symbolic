@@ -1,0 +1,42 @@
+question = """
+Martin is organizing a party, and he invited many of his colleagues. He invited 5 people from his hometown and twice as many people from his school. Martin invited also as many people from his sports club as the sum of people invited from his hometown and his school. The remaining invitations represent 20% of the total previously mentioned. How many people can potentially come to the party Martin is organizing?
+"""
+
+answer = """
+Martin invited 5 * 2 = <<5*2=10>>10 people from his school.
+People from the sports club got 5 + 10 = <<5+10=15>>15 invitations.
+So in total from the sports club, hometown and school, Martin invited 5 + 10 + 15 = <<5+10+15=30>>30 people.
+All other invitations are 20% of the previous total, which means 20/100 * 30 = <<20/100*30=6>>6.
+That means Martin invited to his party 30 + 6 = <<30+6=36>>36 people.
+#### 36
+"""
+
+id_orig = 441
+id_shuffled = 514
+
+question_annotated = """
+{name,Martin} is organizing a party, and he invited many of his colleagues. He invited {h,5} people from his hometown and twice as many people from his school. {name,Martin} invited also as many people from his sports club as the sum of people invited from his hometown and his school. The remaining invitations represent {p,20}% of the total previously mentioned. How many people can potentially come to the party {name,Martin} is organizing?
+
+#init:
+- name = sample(names_male)
+- $h = range(2, 102)
+- $p = range(5, 100, 5)
+
+#conditions:
+- divides(3 * h * p, 50)
+
+#answer: h + h*2 + h + h*2 + int(p*(h + h*2 + h + h*2)/100)
+"""
+
+answer_annotated = """
+{name} invited {h} * 2 = <<{h}*2={h*2}>>{h*2} people from his school.
+People from the sports club got {h} + {h*2} = <<{h}+{h*2}={h+h*2}>>{h+h*2} invitations.
+So in total from the sports club, hometown and school, {name} invited {h} + {h*2} + {h+h*2} = <<{h}+{h*2}+{h+h*2}={h+h*2+h+h*2}>>{h+h*2+h+h*2} people.
+All other invitations are {p}% of the previous total, which means {p}/100 * {h+h*2+h+h*2} = <<{p}/100*{h+h*2+h+h*2}={int(p*(h+h*2+h+h*2)/100)}>>{int(p*(h+h*2+h+h*2)/100)}.
+That means {name} invited to his party {h+h*2+h+h*2} + {int(p*(h+h*2+h+h*2)/100)} = <<{h+h*2+h+h*2}+{int(p*(h+h*2+h+h*2)/100)}={h+h*2+h+h*2+int(p*(h+h*2+h+h*2)/100)}>>{h+h*2+h+h*2+int(p*(h+h*2+h+h*2)/100)} people.
+#### {h+h*2+h+h*2+int(p*(h+h*2+h+h*2)/100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Polly and Peter play chess. Polly takes an average of 28 seconds per move, while Peter takes an average of 40 seconds per move. The match ends after 30 moves. How many minutes did the match last?
+"""
+
+answer = """
+Both Polly and Peter played 30 / 2 =<<30/2=15>>15 moves each one
+With an average of 28 seconds per move, Polly's moves lasted a total of 15 * 28 = <<15*28=420>>420 seconds.
+With an average of 40 seconds per move, Peter's moves lasted a total of 15*40=<<15*40=600>>600 seconds.
+In total, the match lasted 420 + 600 = <<420+600=1020>>1020 seconds.
+In minutes, the match lasted 1020 / 60 = <<1020/60=17>>17 minutes
+#### 17
+"""
+
+id_orig = 2945
+id_shuffled = 3507
+
+question_annotated = """
+{name1,Polly} and {name2,Peter} play chess. {name1,Polly} takes an average of {a,28} seconds per move, while {name2,Peter} takes an average of {b,40} seconds per move. The match ends after {m,30} moves. How many minutes did the match last?
+
+#init:
+- name1 = sample(names_female)
+- name2 = sample(names_male)
+- $a = range(10, 120)
+- $b = range(10, 120)
+- $m = range(10, 61, 2)
+
+#conditions:
+- divides(m, 2)
+- is_int((a + b) * (m // 2) / 60)
+
+#answer: (m//2*a + m//2*b)//60
+"""
+
+answer_annotated = """
+Both {name1} and {name2} played {m} / 2 =<<{m}/2={m//2}>>{m//2} moves each one
+With an average of {a} seconds per move, {name1}'s moves lasted a total of {m//2} * {a} = <<{m//2}*{a}={m//2*a}>>{m//2*a} seconds.
+With an average of {b} seconds per move, {name2}'s moves lasted a total of {m//2}*{b}=<<{m//2}*{b}={m//2*b}>>{m//2*b} seconds.
+In total, the match lasted {m//2*a} + {m//2*b} = <<{m//2*a}+{m//2*b}={m//2*a+m//2*b}>>{m//2*a+m//2*b} seconds.
+In minutes, the match lasted {m//2*a+m//2*b} / 60 = <<{m//2*a+m//2*b}/60={(m//2*a+m//2*b)//60}>>{(m//2*a+m//2*b)//60} minutes
+#### {(m//2*a + m//2*b)//60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

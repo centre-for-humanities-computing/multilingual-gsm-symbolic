@@ -1,0 +1,41 @@
+question = """
+The price of a book was $400. If the book's price is decreased by 15% and then increased by 40%, what is the final price of the book?
+"""
+
+answer = """
+When the price of the book is decreased by 15%, the total price decrease is 15/100*$400=$<<15/100*400=60>>60
+The new price of the book becomes $400-$60 = $<<400-60=340>>340
+The price of the book is then increased by 40/100*340 = $<<40/100*340=136>>136
+The final price of the book is $340+$136 = $<<340+136=476>>476
+#### 476
+"""
+
+id_orig = 2748
+id_shuffled = 3232
+
+question_annotated = """
+The price of a book was ${p,400}. If the book's price is decreased by {dp,15}% and then increased by {ip,40}%, what is the final price of the book?
+
+#init:
+- $p = range(200, 2200, 100)
+- $dp = range(5, 50, 5)
+- $ip = range(5, 60, 5)
+
+#conditions:
+- is_int(p * dp / 100)
+- is_int((p - p * dp / 100) * ip / 100)
+
+#answer: p - p*dp//100 + (p - p*dp//100)*ip//100
+"""
+
+answer_annotated = """
+When the price of the book is decreased by {dp}%, the total price decrease is {dp}/100*${p}=$<<{dp}/100*{p}={p*dp//100}>>{p*dp//100}
+The new price of the book becomes ${p}-${p*dp//100} = $<<{p}-{p*dp//100}={p-p*dp//100}>>{p-p*dp//100}
+The price of the book is then increased by {ip}/100*{p-p*dp//100} = $<<{ip}/100*{p-p*dp//100}={(p-p*dp//100)*ip//100}>>{(p-p*dp//100)*ip//100}
+The final price of the book is ${p-p*dp//100}+${(p-p*dp//100)*ip//100} = $<<{p-p*dp//100}+{(p-p*dp//100)*ip//100}={p-p*dp//100+(p-p*dp//100)*ip//100}>>{p-p*dp//100+(p-p*dp//100)*ip//100}
+#### {p - p*dp//100 + (p - p*dp//100)*ip//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Julio receives a $1 commission for every customer that buys in Edgars Fashion Store. The store sells to 35 customers in the first week, twice as many in the second week, and triple as many as the first week in the third week. If he receives a salary of $500 for the 3 weeks and a bonus of $50, how much in total does he earn for the 3 weeks?
+"""
+
+answer = """
+The number of customers who buy in the second week is 35 customers * 2 = <<35*2=70>>70 customers.
+The number of customers who buy in the third week is 35 customers * 3 = <<35*3=105>>105 customers.
+The total number of customers who buy during the 3 weeks is 35 customers + 70 customers + 105 customers = <<35+70+105=210>>210 customers.
+The total commission he receives is 210 customers * $1/customer = $<<210*1=210>>210
+The total income he earns is $210 + $500 + $50 = $<<210+500+50=760>>760
+#### 760
+"""
+
+id_orig = 1304
+id_shuffled = 1411
+
+question_annotated = """
+{name,Julio} receives a ${c,1} commission for every customer that buys in Edgars Fashion Store. The store sells to {a,35} customers in the first week, {m2w,twice} as many in the second week, and {m3w,triple} as many as the first week in the third week. If he receives a salary of ${s,500} for the 3 weeks and a bonus of ${b,50}, how much in total does he earn for the 3 weeks?
+
+#init:
+- name = sample(names_male)
+- $c = range(1, 6)
+- $a = range(15, 115, 10)
+- m2w, m2v = sample([("twice", 2), ("three times", 3)])
+- m3w, m3v = sample([("triple", 3), ("four times", 4)])
+- $s = range(300, 800, 100)
+- $b = range(10, 60, 10)
+
+#conditions:
+- a > 0
+
+#answer: (a + a*m2v + a*m3v)*c + s + b
+"""
+
+answer_annotated = """
+The number of customers who buy in the second week is {a} customers * {m2v} = <<{a}*{m2v}={a*m2v}>>{a*m2v} customers.
+The number of customers who buy in the third week is {a} customers * {m3v} = <<{a}*{m3v}={a*m3v}>>{a*m3v} customers.
+The total number of customers who buy during the 3 weeks is {a} customers + {a*m2v} customers + {a*m3v} customers = <<{a}+{a*m2v}+{a*m3v}={a+a*m2v+a*m3v}>>{a+a*m2v+a*m3v} customers.
+The total commission he receives is {a+a*m2v+a*m3v} customers * ${c}/customer = $<<{a+a*m2v+a*m3v}*{c}={(a+a*m2v+a*m3v)*c}>>{(a+a*m2v+a*m3v)*c}
+The total income he earns is ${(a+a*m2v+a*m3v)*c} + ${s} + ${b} = $<<{(a+a*m2v+a*m3v)*c}+{s}+{b}={(a+a*m2v+a*m3v)*c+s+b}>>{(a+a*m2v+a*m3v)*c+s+b}
+#### {(a+a*m2v+a*m3v)*c+s+b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

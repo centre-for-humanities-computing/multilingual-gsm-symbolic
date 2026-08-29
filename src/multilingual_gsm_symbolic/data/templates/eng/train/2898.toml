@@ -1,0 +1,43 @@
+question = """
+Lindsey saved $50 in September, she saved $37 in October, and $11 in November. Lindsey's mom said that since Lindsey had saved more than $75,  she would give Lindsey $25.  Then Lindsey spent $87 on a video game. How much money did Lindsey have left?
+"""
+
+answer = """
+Lindsey saved $50 + $37 + $11 = $<<50+37+11=98>>98.
+$98 is greater than $75, so Lindsey is given an addition $25 + her original $98 = $<<98+25=123>>123.
+Lindsey had $123 - $87 video game = $<<123-87=36>>36 remaining.
+#### 36
+"""
+
+id_orig = 2510
+id_shuffled = 2898
+
+question_annotated = """
+{name,Lindsey} saved ${a,50} in September, she saved ${b,37} in October, and ${c,11} in November. {name,Lindsey}'s mom said that since {name,Lindsey} had saved more than ${threshold,75},  she would give {name,Lindsey} ${bonus,25}.  Then {name,Lindsey} spent ${spent,87} on a video game. How much money did {name,Lindsey} have left?
+
+#init:
+- name = sample(names_female)
+- $a = range(50, 61, 2)
+- $b = range(37, 48, 2)
+- $c = range(11, 22, 2)
+- $threshold = range(75, 86, 2)
+- $bonus = range(25, 36, 2)
+- $spent = range(87, 98, 2)
+
+#conditions:
+- a + b + c > threshold
+- a + b + c + bonus - spent > 0
+
+#answer: a + b + c + bonus - spent
+"""
+
+answer_annotated = """
+{name} saved ${a} + ${b} + ${c} = $<<{a}+{b}+{c}={a+b+c}>>{a+b+c}.
+${a+b+c} is greater than ${threshold}, so {name} is given an addition ${bonus} + her original ${a+b+c} = $<<{a+b+c}+{bonus}={a+b+c+bonus}>>{a+b+c+bonus}.
+{name} had ${a+b+c+bonus} - ${spent} video game = $<<{a+b+c+bonus}-{spent}={a+b+c+bonus-spent}>>{a+b+c+bonus-spent} remaining.
+#### {a+b+c+bonus-spent}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

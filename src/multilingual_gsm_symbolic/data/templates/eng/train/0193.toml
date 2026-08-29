@@ -1,0 +1,52 @@
+question = """
+Silvia’s bakery is offering 10% on advanced orders over $50.00.  She orders 2 quiches for $15.00 each, 6 croissants at $3.00 each and 6 buttermilk biscuits for $2.00 each.  How much will her order be with the discount?
+"""
+
+answer = """
+She orders 2 quiches for $15.00 each so they cost 2*15 = $<<2*15=30.00>>30.00
+She orders 6 croissants at $3.00 each so they cost 6*2.5 = $<<6*3=18.00>>18.00
+She orders 6 biscuits at $2.00 each so they cost 6*2 = $<<6*2=12.00>>12.00
+Her advance order is 30+18+12 = $<<30+18+12=60.00>>60.00
+Her advance order is over $50.00 so she can get 10% off so .10*60 = $6.00
+Her order is $60.00 and she gets $6.00 off so her advanced order will cost 60-6=$<<60-6=54.00>>54.00
+#### 54
+"""
+
+id_orig = 168
+id_shuffled = 193
+
+question_annotated = """
+{name,Silvia}’s bakery is offering {rate,10}% on advanced orders over ${threshold,50}.00.  She orders {q,2} quiches for ${pq,15}.00 each, {c,6} croissants at ${pc,3}.00 each and {b,6} buttermilk biscuits for ${pb,2}.00 each.  How much will her order be with the discount?
+
+#init:
+- name = sample(names_female)
+- $q = range(2, 7)
+- $pq = range(10, 26, 5)
+- $c = range(4, 10)
+- $pc = range(2, 6)
+- $b = range(4, 10)
+- $pb = range(2, 5)
+- $rate = range(10, 41, 5)
+- $threshold = range(20, 91, 10)
+
+#conditions:
+- q*pq + c*pc + b*pb > threshold
+- divides(rate * (q*pq + c*pc + b*pb), 100)
+- rate >= 10
+
+#answer: q*pq + c*pc + b*pb - rate*(q*pq + c*pc + b*pb)//100
+"""
+
+answer_annotated = """
+She orders {q} quiches for ${pq}.00 each so they cost {q}*{pq} = $<<{q}*{pq}={q*pq}.00>>{q*pq}.00
+She orders {c} croissants at ${pc}.00 each so they cost {c}*2.5 = $<<{c}*{pc}={c*pc}.00>>{c*pc}.00
+She orders {b} biscuits at ${pb}.00 each so they cost {b}*{pb} = $<<{b}*{pb}={b*pb}.00>>{b*pb}.00
+Her advance order is {q*pq}+{c*pc}+{b*pb} = $<<{q*pq}+{c*pc}+{b*pb}={q*pq+c*pc+b*pb}.00>>{q*pq+c*pc+b*pb}.00
+Her advance order is over ${threshold}.00 so she can get {rate}% off so .{rate}*{q*pq+c*pc+b*pb} = ${rate*(q*pq+c*pc+b*pb)//100}.00
+Her order is ${q*pq+c*pc+b*pb}.00 and she gets ${rate*(q*pq+c*pc+b*pb)//100}.00 off so her advanced order will cost {q*pq+c*pc+b*pb}-{rate*(q*pq+c*pc+b*pb)//100}=$<<{q*pq+c*pc+b*pb}-{rate*(q*pq+c*pc+b*pb)//100}={q*pq+c*pc+b*pb-rate*(q*pq+c*pc+b*pb)//100}.00>>{q*pq+c*pc+b*pb-rate*(q*pq+c*pc+b*pb)//100}.00
+#### {q*pq + c*pc + b*pb - rate*(q*pq + c*pc + b*pb)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

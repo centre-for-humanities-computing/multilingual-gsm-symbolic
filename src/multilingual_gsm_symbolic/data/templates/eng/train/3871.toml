@@ -1,0 +1,51 @@
+question = """
+Mr Castiel prepared 600 boar sausages on the weekend. He ate 2/5 of them on Monday, half of the remaining on Tuesday and saved the rest for Friday. If he ate 3/4 of the remaining boar sausages on Friday, how many sausages are left?
+"""
+
+answer = """
+On Monday, Mr Castiel ate 2/5*600 = <<2/5*600=240>>240 sausages.
+The remaining number of sausages after he ate 240 on Monday is 600-240 = <<600-240=360>>360
+On Tuesday, he ate half of the remaining sausages, a total of 360/2 = <<360/2=180>>180.
+The remaining number of sausages that he saved for Friday after eating 180 on Tuesday is 360-180 = <<360-180=180>>180.
+On Friday, Mr Castiel ate 3/4*180 = <<3/4*180=135>>135 of the sausages he had kept.
+The remaining number of sausages after he ate 135 on Friday is 180-135 = <<180-135=45>>45
+#### 45
+"""
+
+id_orig = 3258
+id_shuffled = 3871
+
+question_annotated = """
+Mr {name,Castiel} prepared {n,600} boar sausages on the weekend. He ate {a,2}/{b,5} of them on Monday, half of the remaining on Tuesday and saved the rest for Friday. If he ate {c,3}/{d,4} of the remaining boar sausages on Friday, how many sausages are left?
+
+#init:
+- name = sample(names_male)
+- $a = range(1, 4)
+- $b = range(2, 8)
+- $c = range(1, 4)
+- $d = range(2, 8)
+- $n = range(40, 1040, 20)
+
+#conditions:
+- a < b
+- c < d
+- is_int(a * n / b)
+- is_int((n - a * n / b) / 2)
+- is_int(c * ((n - a * n / b) / 2) / d)
+
+#answer: (n-a*n//b)//2 - c*((n-a*n//b)//2)//d
+"""
+
+answer_annotated = """
+On Monday, Mr {name} ate {a}/{b}*{n} = <<{a}/{b}*{n}={a*n//b}>>{a*n//b} sausages.
+The remaining number of sausages after he ate {a*n//b} on Monday is {n}-{a*n//b} = <<{n}-{a*n//b}={n-a*n//b}>>{n-a*n//b}
+On Tuesday, he ate half of the remaining sausages, a total of {n-a*n//b}/2 = <<{n-a*n//b}/2={(n-a*n//b)//2}>>{(n-a*n//b)//2}.
+The remaining number of sausages that he saved for Friday after eating {(n-a*n//b)//2} on Tuesday is {n-a*n//b}-{(n-a*n//b)//2} = <<{n-a*n//b}-{(n-a*n//b)//2}={n-a*n//b-(n-a*n//b)//2}>>{n-a*n//b-(n-a*n//b)//2}.
+On Friday, Mr {name} ate {c}/{d}*{(n-a*n//b)//2} = <<{c}/{d}*{(n-a*n//b)//2}={c*((n-a*n//b)//2)//d}>>{c*((n-a*n//b)//2)//d} of the sausages he had kept.
+The remaining number of sausages after he ate {c*((n-a*n//b)//2)//d} on Friday is {(n-a*n//b)//2}-{c*((n-a*n//b)//2)//d} = <<{(n-a*n//b)//2}-{c*((n-a*n//b)//2)//d}={(n-a*n//b)//2-c*((n-a*n//b)//2)//d}>>{(n-a*n//b)//2-c*((n-a*n//b)//2)//d}
+#### {(n-a*n//b)//2-c*((n-a*n//b)//2)//d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

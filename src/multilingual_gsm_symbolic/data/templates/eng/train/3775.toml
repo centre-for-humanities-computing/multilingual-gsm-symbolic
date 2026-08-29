@@ -1,0 +1,48 @@
+question = """
+Cynthia has three children whose ages add up to 35. Matthew is two years older than Rebecca and four years younger than Freddy. How many years old is Freddy?
+"""
+
+answer = """
+Let A be Matthew’s age.
+Rebecca is A - 2 years old.
+Freddy is A + 4 years old.
+Their ages add up to 35, so A + A - 2 + A + 4 = 3A + 2 = 35.
+Therefore, 3A = 35 - 2 = 33.
+Matthew is A = 33 / 3 = <<33/3=11>>11 years old.
+Thus, Freddy is 11 + 4 = <<11+4=15>>15 years old.
+#### 15
+"""
+
+id_orig = 3176
+id_shuffled = 3775
+
+question_annotated = """
+Cynthia has three children whose ages add up to {t,35}. Matthew is {d1_txt,two} years older than Rebecca and {d2_txt,four} years younger than Freddy. How many years old is Freddy?
+
+#init:
+- $t = range(30, 200)
+- d1_txt, d1 = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- d2_txt, d2 = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+
+#conditions:
+- d2 > d1
+- divides(t + d1 - d2, 3)
+- (t + d1 - d2)/3 - d1 > 0
+
+#answer: (t - d2 + d1)//3 + d2
+"""
+
+answer_annotated = """
+Let A be Matthew’s age.
+Rebecca is A - {d1} years old.
+Freddy is A + {d2} years old.
+Their ages add up to {t}, so A + A - {d1} + A + {d2} = 3A + {d2-d1} = {t}.
+Therefore, 3A = {t} - {d2-d1} = {t-d2+d1}.
+Matthew is A = {t-d2+d1} / 3 = <<{t-d2+d1}/3={(t-d2+d1)//3}>>{(t-d2+d1)//3} years old.
+Thus, Freddy is {(t-d2+d1)//3} + {d2} = <<{(t-d2+d1)//3}+{d2}={(t-d2+d1)//3+d2}>>{(t-d2+d1)//3+d2} years old.
+#### {(t-d2+d1)//3+d2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+To make a cherry pie, Veronica needs 3 pounds of pitted cherries.  There are 80 single cherries in one pound of cherries.   It takes 10 minutes to pit 20 cherries.  How many hours will it take Veronica to pit all the cherries?
+"""
+
+answer = """
+There are 80 cherries in a pound and she needs 3 pounds to make a pie so she needs 80*3 = <<80*3=240>>240 cherries
+It takes her 10 minutes to pit a unit of 20 cherries. She has 240/20 = <<240/20=12>>12 units of cherries to pit
+It takes 10 minutes to pit a unit of cherries and she has 12 units so it will take her 10*12 = <<10*12=120>>120 minutes
+60 minutes are in 1 hour and it takes her 120 minutes so that’s 120/60 = <<120/60=2>>2 hours
+#### 2
+"""
+
+id_orig = 591
+id_shuffled = 664
+
+question_annotated = """
+To make a cherry pie, {name,Veronica} needs {pounds,3} pounds of pitted cherries.  There are {pp,80} single cherries in one pound of cherries.   It takes {mins,10} minutes to pit {u,20} cherries.  How many hours will it take {name,Veronica} to pit all the cherries?
+
+#init:
+- name = sample(names_female)
+- $pounds = range(2, 21)
+- $pp = range(20, 220, 10)
+- $u = range(10, 110, 10)
+- $mins = range(10, 130, 10)
+
+#conditions:
+- divides(pp * pounds, u)
+- divides(mins * (pp * pounds // u), 60)
+
+#answer: mins * (pp * pounds // u) // 60
+"""
+
+answer_annotated = """
+There are {pp} cherries in a pound and she needs {pounds} pounds to make a pie so she needs {pp}*{pounds} = <<{pp}*{pounds}={pp*pounds}>>{pp*pounds} cherries
+It takes her {mins} minutes to pit a unit of {u} cherries. She has {pp*pounds}/{u} = <<{pp*pounds}/{u}={pp*pounds//u}>>{pp*pounds//u} units of cherries to pit
+It takes {mins} minutes to pit a unit of cherries and she has {pp*pounds//u} units so it will take her {mins}*{pp*pounds//u} = <<{mins}*{pp*pounds//u}={mins*(pp*pounds//u)}>>{mins*(pp*pounds//u)} minutes
+60 minutes are in 1 hour and it takes her {mins*(pp*pounds//u)} minutes so that’s {mins*(pp*pounds//u)}/60 = <<{mins*(pp*pounds//u)}/60={mins*(pp*pounds//u)//60}>>{mins*(pp*pounds//u)//60} hours
+#### {mins * (pp * pounds // u) // 60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

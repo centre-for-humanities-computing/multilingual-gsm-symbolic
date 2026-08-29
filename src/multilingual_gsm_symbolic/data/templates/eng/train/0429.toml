@@ -1,0 +1,40 @@
+question = """
+Emily makes $1,000,000 per year. If she has 10 employees who make $20,000 per year, how much would her salary be if she took part of her salary to make sure all of her employees make $35,000 per year.
+"""
+
+answer = """
+Each employee needs $35,000-$20,000=$<<35000-20000=15000>>15,000 more per year.
+In total, Emily needs to pay $15,000*10=$<<15000*10=150000>>150,000 extra.
+Emily will need to have a new salary of $1,000,000-$150,000=$<<1000000-150000=850000>>850,000 per year.
+#### 850,000
+"""
+
+id_orig = 367
+id_shuffled = 429
+
+question_annotated = """
+{name,Emily} makes $1,000,000 per year. If she has {n,10} employees who make ${ck,20},000 per year, how much would her salary be if she took part of her salary to make sure all of her employees make ${tk,35},000 per year.
+
+#init:
+- name = sample(names_female)
+- $n = range(8, 16)
+- $ck = range(14, 25, 2)
+- $tk = range(28, 44)
+
+#conditions:
+- tk > ck
+- (tk - ck) * n < 1000
+
+#answer: 1000000 - (tk - ck) * 1000 * n
+"""
+
+answer_annotated = """
+Each employee needs ${tk},000-${ck},000=$<<{tk*1000}-{ck*1000}={tk*1000-ck*1000}>>{tk-ck},000 more per year.
+In total, {name} needs to pay ${(tk-ck)},000*{n}=$<<{(tk-ck)*1000}*{n}={(tk-ck)*1000*n}>>{(tk-ck)*n},000 extra.
+{name} will need to have a new salary of $1,000,000-${(tk-ck)*n},000=$<<1000000-{(tk-ck)*1000*n}={1000000-(tk-ck)*1000*n}>>{1000-(tk-ck)*n},000 per year.
+#### {1000-(tk-ck)*n},000
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

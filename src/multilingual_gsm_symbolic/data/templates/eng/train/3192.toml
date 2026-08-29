@@ -1,0 +1,44 @@
+question = """
+Tenisha had 40 dogs that she kept at home as pets. If 60% of them are female, and 3/4 of the female gives birth to 10 puppies each, calculate the total number of puppies that Tenisha remains with after donating 130 puppies to the church.
+"""
+
+answer = """
+If Tenisha has 40 dogs, the number of female dogs is 60/100*40 = 24
+3/4 of the females give birth, meaning 3/4*24 = <<3/4*24=18>>18 female dogs gives birth to puppies.
+Since each dog that gave birth had 10 puppies, the number of puppies that were born is 18*10 = <<18*10=180>>180
+After donating 130 puppies to the church, Tenisha remained with 180-130 = 50 puppies.
+#### 50
+"""
+
+id_orig = 2725
+id_shuffled = 3192
+
+question_annotated = """
+{name,Tenisha} had {total,40} dogs that she kept at home as pets. If {pct,60}% of them are female, and 3/4 of the female gives birth to {puppies,10} puppies each, calculate the total number of puppies that {name,Tenisha} remains with after donating {donate,130} puppies to the church.
+
+#init:
+- name = sample(names_female)
+- $total = range(20, 120, 2)
+- $pct = range(10, 100, 5)
+- $puppies = range(2, 12, 2)
+- $donate = range(50, 250, 10)
+
+#conditions:
+- divides(pct * total, 100)
+- divides(3 * pct * total, 400)
+- 3*pct*total//400*puppies > donate
+
+#answer: 3*pct*total//400*puppies - donate
+"""
+
+answer_annotated = """
+If {name} has {total} dogs, the number of female dogs is {pct}/100*{total} = {pct*total//100}
+3/4 of the females give birth, meaning 3/4*{pct*total//100} = <<3/4*{pct*total//100}={3*pct*total//400}>>{3*pct*total//400} female dogs gives birth to puppies.
+Since each dog that gave birth had {puppies} puppies, the number of puppies that were born is {3*pct*total//400}*{puppies} = <<{3*pct*total//400}*{puppies}={3*pct*total//400*puppies}>>{3*pct*total//400*puppies}
+After donating {donate} puppies to the church, {name} remained with {3*pct*total//400*puppies}-{donate} = {3*pct*total//400*puppies-donate} puppies.
+#### {3*pct*total//400*puppies-donate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,49 @@
+question = """
+Five coworkers were talking during the lunch break. Roger, the oldest one, said that he has the same amount of experience in years as all four of the others combined and that his retirement should come when he accumulates 50 years of experience. Peter said that when he came to the company his daughter was 7 years old, and now she is 19 years old. Tom then said he has twice as many years of experience as Robert. Robert said that he has 4 years of experience less than Peter but 2 more years of experience than Mike. How many more years does Roger have to work before he retires?
+"""
+
+answer = """
+Peter has 19 – 7 = <<19-7=12>>12 years of experience.
+Robert has 12 – 4 = <<12-4=8>>8 years of experience.
+Mike has 8 – 2 = <<8-2=6>>6 years of experience.
+Tom has 2 * 8 = <<2*8=16>>16 years of experience.
+Roger has 12 + 8 + 6 + 16 = <<12+8+6+16=42>>42 years of experience.
+Roger has to work another 50 – 42 = <<50-42=8>>8 years before he retires.
+#### 8
+"""
+
+id_orig = 3063
+id_shuffled = 3648
+
+question_annotated = """
+Five coworkers were talking during the lunch break. Roger, the oldest one, said that he has the same amount of experience in years as all four of the others combined and that his retirement should come when he accumulates {ret,50} years of experience. Peter said that when he came to the company his daughter was {d0,7} years old, and now she is {d1,19} years old. Tom then said he has twice as many years of experience as Robert. Robert said that he has {less,4} years of experience less than Peter but {more,2} more years of experience than Mike. How many more years does Roger have to work before he retires?
+
+#init:
+- $d0 = range(1, 10)
+- $d1 = range(15, 30)
+- $less = range(1, 8)
+- $more = range(1, 6)
+- $ret = range(45, 80)
+
+#conditions:
+- d1 > d0
+- d1 - d0 > less
+- d1 - d0 - less > more
+- ret > 5*(d1-d0) - 4*less - more
+
+#answer: ret - (5*(d1-d0) - 4*less - more)
+"""
+
+answer_annotated = """
+Peter has {d1} – {d0} = <<{d1}-{d0}={d1-d0}>>{d1-d0} years of experience.
+Robert has {d1-d0} – {less} = <<{d1-d0}-{less}={d1-d0-less}>>{d1-d0-less} years of experience.
+Mike has {d1-d0-less} – {more} = <<{d1-d0-less}-{more}={d1-d0-less-more}>>{d1-d0-less-more} years of experience.
+Tom has 2 * {d1-d0-less} = <<2*{d1-d0-less}={2*(d1-d0-less)}>>{2*(d1-d0-less)} years of experience.
+Roger has {d1-d0} + {d1-d0-less} + {d1-d0-less-more} + {2*(d1-d0-less)} = <<{d1-d0}+{d1-d0-less}+{d1-d0-less-more}+{2*(d1-d0-less)}={5*(d1-d0)-4*less-more}>>{5*(d1-d0)-4*less-more} years of experience.
+Roger has to work another {ret} – {5*(d1-d0)-4*less-more} = <<{ret}-{5*(d1-d0)-4*less-more}={ret - (5*(d1-d0) - 4*less - more)}>>{ret - (5*(d1-d0) - 4*less - more)} years before he retires.
+#### {ret - (5*(d1-d0) - 4*less - more)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

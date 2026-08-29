@@ -1,0 +1,44 @@
+question = """
+Jason joined the military when he turned 18.  It took him 8 years to raise to the rank of chief.  Then 25% longer than that to go from chief to master chief.  He then spent 10 years more in the military before retiring.  How old was he when he retired?
+"""
+
+answer = """
+It took 8*.25=<<8*.25=2>>2 years longer to go from chief to master chief than to get chief
+So it takes him 8+2=<<8+2=10>>10 years to become a master chief
+That means he took 10+8=<<10+8=18>>18 years to reach master chief from enlisting
+So he was in the military for 18+10=<<18+10=28>>28 years
+So he was 28+18=<<28+18=46>>46 when he retired
+#### 46
+"""
+
+id_orig = 3787
+id_shuffled = 4469
+
+question_annotated = """
+{name,Jason} joined the military when he turned {j,18}.  It took him {c,8} years to raise to the rank of chief.  Then {p,25}% longer than that to go from chief to master chief.  He then spent {m,10} years more in the military before retiring.  How old was he when he retired?
+
+#init:
+- name = sample(names_male)
+- $j = range(16, 30)
+- $c = range(4, 21)
+- $p = sample([25, 50, 75])
+- $m = range(2, 20)
+
+#conditions:
+- divides(c * p, 100)
+
+#answer: j + 2*c + c*p//100 + m
+"""
+
+answer_annotated = """
+It took {c}*.{p}=<<{c}*.{p}={c*p//100}>>{c*p//100} years longer to go from chief to master chief than to get chief
+So it takes him {c}+{c*p//100}=<<{c}+{c*p//100}={c+c*p//100}>>{c+c*p//100} years to become a master chief
+That means he took {c+c*p//100}+{c}=<<{c+c*p//100}+{c}={c+c*p//100+c}>>{c+c*p//100+c} years to reach master chief from enlisting
+So he was in the military for {c+c*p//100+c}+{m}=<<{c+c*p//100+c}+{m}={c+c*p//100+c+m}>>{c+c*p//100+c+m} years
+So he was {c+c*p//100+c+m}+{j}=<<{c+c*p//100+c+m}+{j}={c+c*p//100+c+m+j}>>{c+c*p//100+c+m+j} when he retired
+#### {j + 2*c + c*p//100 + m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

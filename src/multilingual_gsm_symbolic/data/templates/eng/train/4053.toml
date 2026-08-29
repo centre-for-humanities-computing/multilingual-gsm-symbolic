@@ -1,0 +1,45 @@
+question = """
+Stella collects stamps. She counted 50 pages in her collector's album. There are 5 rows of 30 stamps in each of the first 10 pages of her album. The rest of the pages each have 50 stamps. How many stamps are in Stella's album?
+"""
+
+answer = """
+There are 30 x 5 = <<30*5=150>>150 stamps on each of the first 10 pages.
+So she has a total of 150 x 10 = <<150*10=1500>>1500 stamps in the first 10 pages.
+There are 50 - 10 = <<50-10=40>>40 pages that have 50 stamps each.
+There is a total of 40 x 50 = <<40*50=2000>>2000 stamps in the remaining 40 pages.
+Therefore, Stella has 2000 + 1500 = <<2000+1500=3500>>3500 stamps in her album.
+#### 3500
+"""
+
+id_orig = 3418
+id_shuffled = 4053
+
+question_annotated = """
+{name,Stella} collects stamps. She counted {pages,50} pages in her collector's album. There are {rows,5} rows of {per_row,30} stamps in each of the first {first,10} pages of her album. The rest of the pages each have {rest,50} stamps. How many stamps are in {name,Stella}'s album?
+
+#init:
+- name = sample(names_female)
+- $pages = range(20, 61, 10)
+- $rows = range(4, 9)
+- $per_row = range(10, 91, 20)
+- $first = range(6, 15, 2)
+- $rest = range(10, 91, 20)
+
+#conditions:
+- pages > first
+
+#answer: (pages - first) * rest + per_row * rows * first
+"""
+
+answer_annotated = """
+There are {per_row} x {rows} = <<{per_row}*{rows}={per_row*rows}>>{per_row*rows} stamps on each of the first {first} pages.
+So she has a total of {per_row*rows} x {first} = <<{per_row*rows}*{first}={per_row*rows*first}>>{per_row*rows*first} stamps in the first {first} pages.
+There are {pages} - {first} = <<{pages}-{first}={pages-first}>>{pages-first} pages that have {rest} stamps each.
+There is a total of {pages-first} x {rest} = <<{pages-first}*{rest}={(pages-first)*rest}>>{(pages-first)*rest} stamps in the remaining {pages-first} pages.
+Therefore, {name} has {(pages-first)*rest} + {per_row*rows*first} = <<{(pages-first)*rest}+{per_row*rows*first}={(pages-first)*rest + per_row*rows*first}>>{(pages-first)*rest + per_row*rows*first} stamps in her album.
+#### {(pages-first)*rest + per_row*rows*first}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Laura is hosting a carwash. She will charge $5 for a car, $6 for a truck, and $7 for an SUV. They raised $100 in total. If they washed 5 SUVs and 5 trucks, how many cars did they wash?
+"""
+
+answer = """
+They earned $30 from trucks because 5 x 6 = <<5*6=30>>30
+They earned $35 from SUVs because 5 x 7 = <<5*7=35>>35
+They earned $35 from cars because 100 - 35 - 30 = <<100-35-30=35>>35
+They washed 7 cars because 35 / 5 = <<35/5=7>>7
+#### 7
+"""
+
+id_orig = 1237
+id_shuffled = 1344
+
+question_annotated = """
+{name,Laura} is hosting a carwash. She will charge ${c,5} for a car, ${t,6} for a truck, and ${s,7} for an SUV. They raised ${tot,100} in total. If they washed {ns,5} SUVs and {nt,5} trucks, how many cars did they wash?
+
+#init:
+- name = sample(names_female)
+- $c = range(2, 10)
+- $t = range(4, 12)
+- $s = range(5, 15)
+- $tot = range(60, 220, 10)
+- $ns = range(2, 8)
+- $nt = range(2, 8)
+
+#conditions:
+- tot - ns*s - nt*t > 0
+- divides(tot - ns*s - nt*t, c)
+
+#answer: (tot - ns*s - nt*t)//c
+"""
+
+answer_annotated = """
+They earned ${nt*t} from trucks because {nt} x {t} = <<{nt}*{t}={nt*t}>>{nt*t}
+They earned ${ns*s} from SUVs because {ns} x {s} = <<{ns}*{s}={ns*s}>>{ns*s}
+They earned ${tot-ns*s-nt*t} from cars because {tot} - {ns*s} - {nt*t} = <<{tot}-{ns*s}-{nt*t}={tot-ns*s-nt*t}>>{tot-ns*s-nt*t}
+They washed {(tot-ns*s-nt*t)//c} cars because {tot-ns*s-nt*t} / {c} = <<{tot-ns*s-nt*t}/{c}={(tot-ns*s-nt*t)//c}>>{(tot-ns*s-nt*t)//c}
+#### {(tot-ns*s-nt*t)//c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

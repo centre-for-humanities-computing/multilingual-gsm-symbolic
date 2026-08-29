@@ -1,0 +1,39 @@
+question = """
+Carter can read half as many pages as Lucy in 1 hour. Lucy can read 20 more pages than Oliver in 1 hour.  Oliver can read 40 pages.  How many pages can Carter read in 1 hour?
+"""
+
+answer = """
+Lucy can read 20 more pages than Oliver who can read 40 pages so Lucy can read 40+20 = <<20+40=60>>60 pages
+Carter can read half as many pages as Lucy who can read 60 pages so he can read 60/2 = <<30=30>>30 pages in 1 hour
+#### 30
+"""
+
+id_orig = 1359
+id_shuffled = 1466
+
+question_annotated = """
+{c_name,Carter} can read half as many pages as {l_name,Lucy} in 1 hour. {l_name,Lucy} can read {m,20} more pages than {o_name,Oliver} in 1 hour.  {o_name,Oliver} can read {p,40} pages.  How many pages can {c_name,Carter} read in 1 hour?
+
+#init:
+- c_name = sample(["Carter", "James", "Leo"])
+- l_name = sample(["Lucy", "Emma", "Anna"])
+- o_name = sample(["Oliver", "Noah", "Erik"])
+- $m = range(2, 50, 2)
+- $p = range(10, 210, 2)
+
+#conditions:
+- c_name != l_name and c_name != o_name and l_name != o_name
+- divides(p + m, 2)
+
+#answer: (p + m) // 2
+"""
+
+answer_annotated = """
+{l_name} can read {m} more pages than {o_name} who can read {p} pages so {l_name} can read {p}+{m} = <<{m}+{p}={p+m}>>{p+m} pages
+{c_name} can read half as many pages as {l_name} who can read {p+m} pages so he can read {p+m}/2 = <<{(p+m)//2}={(p+m)//2}>>{(p+m)//2} pages in 1 hour
+#### {(p + m) // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

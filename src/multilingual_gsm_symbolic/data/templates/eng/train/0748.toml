@@ -1,0 +1,43 @@
+question = """
+Andy is a lawyer who's working on two lawsuits. The first lawsuit has a 30% chance of paying out $5,000,000 upon a win and $0 if he loses it. The second lawsuit has a 50% chance of paying out $1,000,000 if Andy loses and a 50% chance of paying out $2,000,000 if he wins.  Expressed as a percentage, how much more likely is it that Andy loses both lawsuits compared to winning both of them?
+"""
+
+answer = """
+First find the probability that Andy will lose the first lawsuit: 100% - 30% = 70%
+Then multiply that probability by the probability he loses the second lawsuit: 70% * 50% = 35%
+Then multiply the probabilities of Andy winning each lawsuit to find the probability he wins them both: 30% * 50% = 15%
+Then subtract the probability Andy wins both lawsuits from the probability he loses both lawsuits to find the difference: 35% - 15% = 20%
+#### 20
+"""
+
+id_orig = 675
+id_shuffled = 748
+
+question_annotated = """
+{name,Andy} is a lawyer who's working on two lawsuits. The first lawsuit has a {p1,30}% chance of paying out $5,000,000 upon a win and $0 if he loses it. The second lawsuit has a {q,50}% chance of paying out $1,000,000 if {name,Andy} loses and a {r,50}% chance of paying out $2,000,000 if he wins.  Expressed as a percentage, how much more likely is it that {name,Andy} loses both lawsuits compared to winning both of them?
+
+#init:
+- name = sample(names_male)
+- $p1 = range(5, 96)
+- $q = range(5, 96)
+- $r = range(5, 96)
+
+#conditions:
+- q + r == 100
+- q > p1
+- divides(p1 * q, 100)
+
+#answer: (100 - p1) * q // 100 - p1 * r // 100
+"""
+
+answer_annotated = """
+First find the probability that {name} will lose the first lawsuit: 100% - {p1}% = {100-p1}%
+Then multiply that probability by the probability he loses the second lawsuit: {100-p1}% * {q}% = {(100-p1)*q//100}%
+Then multiply the probabilities of {name} winning each lawsuit to find the probability he wins them both: {p1}% * {r}% = {p1*r//100}%
+Then subtract the probability {name} wins both lawsuits from the probability he loses both lawsuits to find the difference: {(100-p1)*q//100}% - {p1*r//100}% = {(100-p1)*q//100 - p1*r//100}%
+#### {(100-p1)*q//100 - p1*r//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

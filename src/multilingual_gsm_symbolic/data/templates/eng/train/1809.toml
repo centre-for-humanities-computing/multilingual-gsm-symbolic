@@ -1,0 +1,41 @@
+question = """
+A convenience store sold 100 bags of chips in a month. In the first week, 15 bags of chips were sold. In the second week, thrice as many bags of chips were sold. There was an equal number of chips sold in the third and fourth week. How many chips was each sold in the third and fourth week?
+"""
+
+answer = """
+In the second week, 15 x 3 = <<15*3=45>>45 bags of chips were sold.
+So there was a total of 45 + 15 = <<45+15=60>>60 bags of chips sold on the first and second week.
+Thus, a total of 100 - 60 = <<100-60=40>>40 bags of chips were sold on the third and fourth week.
+Therefore, 40/2 = <<40/2=20>>20 bags of chips were each sold on the third and fourth week.
+#### 20
+"""
+
+id_orig = 1684
+id_shuffled = 1809
+
+question_annotated = """
+A convenience store sold {total,100} bags of chips in a month. In the first week, {a,15} bags of chips were sold. In the second week, {mult_txt,thrice} as many bags of chips were sold. There was an equal number of chips sold in the third and fourth week. How many chips was each sold in the third and fourth week?
+
+#init:
+- mult_txt, k = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $a = range(2, 50)
+- $total = range(40, 400)
+
+#conditions:
+- total > (1 + k) * a
+- divides(total - (1 + k) * a, 2)
+
+#answer: (total - (1 + k) * a) // 2
+"""
+
+answer_annotated = """
+In the second week, {a} x {k} = <<{a}*{k}={a*k}>>{a*k} bags of chips were sold.
+So there was a total of {a*k} + {a} = <<{a*k}+{a}={a*k+a}>>{a*k+a} bags of chips sold on the first and second week.
+Thus, a total of {total} - {a*k+a} = <<{total}-{a*k+a}={total-a*k-a}>>{total-a*k-a} bags of chips were sold on the third and fourth week.
+Therefore, {total-a*k-a}/2 = <<{total-a*k-a}/2={(total-a*k-a)//2}>>{(total-a*k-a)//2} bags of chips were each sold on the third and fourth week.
+#### {(total-a*k-a)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

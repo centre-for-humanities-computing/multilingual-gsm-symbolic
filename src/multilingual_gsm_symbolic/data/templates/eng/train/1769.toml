@@ -1,0 +1,48 @@
+question = """
+John has taken 10 pictures every day for the past 3 years.  He saves them in raw format so each memory card can store 50 images.  Each memory card costs $60.  How much does he spend on memory cards?
+"""
+
+answer = """
+He takes pictures for 3*365=<<3*365=1095>>1095 days
+So he takes 10*1095=<<10*1095=10950>>10,950 pictures
+That means he needs 10,950/50=<<10950/50=219>>219 memory cards
+So he spends 219*60=$<<219*60=13140>>13,140 on memory cards
+#### 13140
+"""
+
+id_orig = 1644
+id_shuffled = 1769
+
+question_annotated = """
+{name,John} has taken {d,10} pictures every day for the past {y,3} years.  He saves them in raw format so each memory card can store {c,50} images.  Each memory card costs ${p,60}.  How much does he spend on memory cards?
+
+#init:
+- name = sample(names_male)
+- $d = range(2, 41)
+- $y = range(1, 7)
+- $c = range(20, 121)
+- $p = range(10, 101, 5)
+
+#conditions:
+- d*y*365 >= 1000
+- d*y*365 < 1000000
+- d*y*365 % 1000 >= 100
+- divides(d*y*365, c)
+- d*y*365//c*p >= 1000
+- d*y*365//c*p < 1000000
+- d*y*365//c*p % 1000 >= 100
+
+#answer: d*y*365//c*p
+"""
+
+answer_annotated = """
+He takes pictures for {y}*365=<<{y}*365={y*365}>>{y*365} days
+So he takes {d}*{y*365}=<<{d}*{y*365}={d*y*365}>>{d*y*365//1000},{d*y*365%1000} pictures
+That means he needs {d*y*365//1000},{d*y*365%1000}/{c}=<<{d*y*365}/{c}={d*y*365//c}>>{d*y*365//c} memory cards
+So he spends {d*y*365//c}*{p}=$<<{d*y*365//c}*{p}={d*y*365//c*p}>>{d*y*365//c*p//1000},{d*y*365//c*p%1000} on memory cards
+#### {d*y*365//c*p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

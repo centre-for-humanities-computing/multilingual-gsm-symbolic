@@ -1,0 +1,47 @@
+question = """
+Maria's monthly salary is $2000. 20% of her salary goes to paying tax, and 5% goes to insurance. Also, a quarter of the money left after the deductions is spent on utility bills. How much money does Maria have after the deductions and utility bills payment?
+"""
+
+answer = """
+Maria's deduction for tax is 2000 x 20% = $<<2000*20*.01=400>>400.
+Her deduction for insurance is 2000 x 5% = $<<2000*5*.01=100>>100.
+Maria's total deductions is $400 + $100 = $<<400+100=500>>500.
+After the deductions, Maria has only $2000 - $500 = $<<2000-500=1500>>1500 left from her salary.
+Then, Maria pays $1500/4 = $<<1500/4=375>>375 for the utility bills.
+So, Maria has $1500 - $375 = $<<1500-375=1125>>1125 after the deductions and utility bills payment.
+#### 1125
+"""
+
+id_orig = 2102
+id_shuffled = 2431
+
+question_annotated = """
+{name,Maria}'s monthly salary is ${s,2000}. {t,20}% of her salary goes to paying tax, and {i,5}% goes to insurance. Also, a quarter of the money left after the deductions is spent on utility bills. How much money does {name,Maria} have after the deductions and utility bills payment?
+
+#init:
+- name = sample(["Maria", "Sofia", "Elena", "Carmen", "Nadia"])
+- $s = range(1000, 2100, 100)
+- $t = range(5, 30, 5)
+- $i = range(1, 10)
+
+#conditions:
+- divides(s*t, 100)
+- divides(s*i, 100)
+- divides(s - (s*t + s*i)//100, 4)
+
+#answer: s - (s*t + s*i)//100 - (s - (s*t + s*i)//100)//4
+"""
+
+answer_annotated = """
+{name}'s deduction for tax is {s} x {t}% = $<<{s}*{t}*.01={s*t//100}>>{s*t//100}.
+Her deduction for insurance is {s} x {i}% = $<<{s}*{i}*.01={s*i//100}>>{s*i//100}.
+{name}'s total deductions is ${s*t//100} + ${s*i//100} = $<<{s*t//100}+{s*i//100}={s*t//100+s*i//100}>>{s*t//100+s*i//100}.
+After the deductions, {name} has only ${s} - ${s*t//100+s*i//100} = $<<{s}-{s*t//100+s*i//100}={s-(s*t+s*i)//100}>>{s-(s*t+s*i)//100} left from her salary.
+Then, {name} pays ${s-(s*t+s*i)//100}/4 = $<<{s-(s*t+s*i)//100}/4={(s-(s*t+s*i)//100)//4}>>{(s-(s*t+s*i)//100)//4} for the utility bills.
+So, {name} has ${s-(s*t+s*i)//100} - ${(s-(s*t+s*i)//100)//4} = $<<{s-(s*t+s*i)//100}-{(s-(s*t+s*i)//100)//4}={s-(s*t+s*i)//100-(s-(s*t+s*i)//100)//4}>>{s-(s*t+s*i)//100-(s-(s*t+s*i)//100)//4} after the deductions and utility bills payment.
+#### {s - (s*t + s*i)//100 - (s - (s*t + s*i)//100)//4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

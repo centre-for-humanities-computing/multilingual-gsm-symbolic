@@ -1,0 +1,41 @@
+question = """
+It's Yvette's turn to treat herself and her three best friends to a round of ice cream sundaes.  Alicia orders the peanut butter sundae for $7.50.  Brant orders the Royal banana split sundae for $10.00.  Josh orders the death by chocolate sundae for $8.50 and Yvette orders the cherry jubilee sundae for $9.00.  She leaves her waiter a 20% tip.  How much will her final bill be?
+"""
+
+answer = """
+Yvette spent 7.50+10+8.5+9 = $<<7.50+10+8.5+9=35.00>>35.00 on ice cream sundaes
+Her bill comes to $35.00 and she leaves a 20% tip for the waiter so that's 35*.20 = $7.00
+The bill was $35.00 and she added a $7.00 tip for a total of 35+7 = $<<35+7=42.00>>42.00
+#### 42
+"""
+
+id_orig = 754
+id_shuffled = 827
+
+question_annotated = """
+It's {name,Yvette}'s turn to treat herself and her three best friends to a round of ice cream sundaes.  Alicia orders the peanut butter sundae for ${a,7}.50.  Brant orders the Royal banana split sundae for ${b,10}.00.  Josh orders the death by chocolate sundae for ${c,8}.50 and {name,Yvette} orders the cherry jubilee sundae for ${y,9}.00.  She leaves her waiter a {tip,20}% tip.  How much will her final bill be?
+
+#init:
+- name = sample(["Yvette", "Emma", "Sophie", "Abby", "Andrea", "Olivia", "Grace", "Julia", "Clara", "Nora", "Elena", "Maria", "Laura", "Tessa", "Selma", "Iris"])
+- $a = range(5, 10)
+- $b = range(8, 14)
+- $c = range(4, 12)
+- $y = range(7, 13)
+- $tip = range(10, 31, 10)
+
+#conditions:
+- divides((a + c + b + y + 1) * tip, 100)
+
+#answer: a + c + b + y + 1 + (a + c + b + y + 1) * tip // 100
+"""
+
+answer_annotated = """
+{name} spent {a}.50+{b}+{c}.5+{y} = $<<{a}.50+{b}+{c}.5+{y}={a+c+b+y+1}.00>>{a+c+b+y+1}.00 on ice cream sundaes
+Her bill comes to ${a+c+b+y+1}.00 and she leaves a {tip}% tip for the waiter so that's {a+c+b+y+1}*.{tip} = ${(a+c+b+y+1)*tip//100}.00
+The bill was ${a+c+b+y+1}.00 and she added a ${(a+c+b+y+1)*tip//100}.00 tip for a total of {a+c+b+y+1}+{(a+c+b+y+1)*tip//100} = $<<{a+c+b+y+1}+{(a+c+b+y+1)*tip//100}={a+c+b+y+1+(a+c+b+y+1)*tip//100}.00>>{a+c+b+y+1+(a+c+b+y+1)*tip//100}.00
+#### {a+c+b+y+1+(a+c+b+y+1)*tip//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

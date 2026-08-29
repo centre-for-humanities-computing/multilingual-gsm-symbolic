@@ -1,0 +1,42 @@
+question = """
+Ms. Mitsuko told the class that if the average score on their quiz is higher than 75% then they will get a pizza party. There are 25 students in the class. One student is absent and has to take the test the next day. The average score of the students who took the test was 77%. What is the lowest grade the absent student can get for the class to still get a pizza party?
+"""
+
+answer = """
+The total percentage the class needs to get is 18.75 because 25 x .75 = <<25*.75=18.75>>18.75
+The total percentage the class has absent the one student is <<18.48=18.48>>18.48
+The lowest the absent student can get and still have a pizza party is 27% because (18.75-18.48)x 100 = <<(18.75-18.48)*100=27>>27
+#### 27
+"""
+
+id_orig = 2364
+id_shuffled = 2723
+
+question_annotated = """
+Ms. {name,Mitsuko} told the class that if the average score on their quiz is higher than {p,75}% then they will get a pizza party. There are {s,25} students in the class. One student is absent and has to take the test the next day. The average score of the students who took the test was {g,77}%. What is the lowest grade the absent student can get for the class to still get a pizza party?
+
+#init:
+- name = sample(names_female)
+- $p = range(50, 100)
+- $s = range(10, 60)
+- $g = range(50, 100)
+
+#conditions:
+- 0 < s * p - (s - 1) * g
+- s * p - (s - 1) * g <= 100
+- not is_int(s * p / 100)
+- not is_int((s - 1) * g / 100)
+
+#answer: s*p-(s-1)*g
+"""
+
+answer_annotated = """
+The total percentage the class needs to get is {s*p/100} because {s} x .{p} = <<{s}*.{p}={s*p/100}>>{s*p/100}
+The total percentage the class has absent the one student is <<{(s-1)*g/100}={(s-1)*g/100}>>{(s-1)*g/100}
+The lowest the absent student can get and still have a pizza party is {s*p-(s-1)*g}% because ({s*p/100}-{(s-1)*g/100})x 100 = <<({s*p/100}-{(s-1)*g/100})*100={s*p-(s-1)*g}>>{s*p-(s-1)*g}
+#### {s*p-(s-1)*g}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

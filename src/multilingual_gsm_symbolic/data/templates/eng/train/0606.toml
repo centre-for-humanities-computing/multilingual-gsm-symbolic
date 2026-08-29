@@ -1,0 +1,41 @@
+question = """
+There were 100 jelly beans in a bag to be given away on Halloween. Out of the 40 children taking part in the Halloween celebration, 80% were allowed to draw jelly beans from the bag. Each child drew two jelly beans out of the bag. How many jelly beans remained in the bag after the children took their share?
+"""
+
+answer = """
+Out of the 40 children taking part in the Halloween celebration, 80% were allowed to draw jelly beans from the bag, a total of 80/100*40=<<80/100*40=32>>32 children.
+If each of the 32 children drew two jelly beans out of the bag, they drew a total of 32*2=<<32*2=64>>64 jelly beans from the bag.
+The total number of jelly beans that remained is 100-64=<<100-64=36>>36
+#### 36
+"""
+
+id_orig = 533
+id_shuffled = 606
+
+question_annotated = """
+There were {total,100} jelly beans in a bag to be given away on Halloween. Out of the {children,40} children taking part in the Halloween celebration, {pct,80}% were allowed to draw jelly beans from the bag. Each child drew {k_txt,two} jelly beans out of the bag. How many jelly beans remained in the bag after the children took their share?
+
+#init:
+- $total = range(60, 420, 10)
+- $children = range(4, 44)
+- $pct = range(10, 100, 10)
+- k_txt, k = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4)])
+
+#conditions:
+- divides(pct*children, 100)
+- pct*children >= 100
+- total > (pct*children//100)*k
+
+#answer: total-(pct*children//100)*k
+"""
+
+answer_annotated = """
+Out of the {children} children taking part in the Halloween celebration, {pct}% were allowed to draw jelly beans from the bag, a total of {pct}/100*{children}=<<{pct}/100*{children}={pct*children//100}>>{pct*children//100} children.
+If each of the {pct*children//100} children drew {k_txt} jelly beans out of the bag, they drew a total of {pct*children//100}*{k}=<<{pct*children//100}*{k}={(pct*children//100)*k}>>{(pct*children//100)*k} jelly beans from the bag.
+The total number of jelly beans that remained is {total}-{(pct*children//100)*k}=<<{total}-{(pct*children//100)*k}={total-(pct*children//100)*k}>>{total-(pct*children//100)*k}
+#### {total-(pct*children//100)*k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

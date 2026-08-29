@@ -1,0 +1,39 @@
+question = """
+Mike wants to buy a new car. He has chosen a red car for $35,000. To be able to pay this price, he needs to loan part of the money from the bank, at a rate of 15%. How much money in total will Mike need to pay for the car, if he has to take $20,000 from the bank?
+"""
+
+answer = """
+The rate of the loan is 15%, which means Mike needs to give the bank an additional 20,000 * 15/100 = $<<20000*15/100=3000>>3000.
+So the car will cost him 35,000 + 3000 = $<<35000+3000=38000>>38,000.
+#### 38000
+"""
+
+id_orig = 1700
+id_shuffled = 1847
+
+question_annotated = """
+{name,Mike} wants to buy a new car. He has chosen a {color,red} car for ${price,35000}. To be able to pay this price, he needs to loan part of the money from the bank, at a rate of {rate,15}%. How much money in total will {name,Mike} need to pay for the car, if he has to take ${loan,20000} from the bank?
+
+#init:
+- name = sample(names_male)
+- color = sample(colors)
+- $rate = range(2, 22)
+- $loan = range(2000, 42000, 1000)
+- $price = range(22000, 142000, 1000)
+
+#conditions:
+- loan < price
+- divides(loan * rate, 100)
+
+#answer: price + loan * rate // 100
+"""
+
+answer_annotated = """
+The rate of the loan is {rate}%, which means {name} needs to give the bank an additional {loan} * {rate}/100 = $<<{loan}*{rate}/100={loan*rate//100}>>{loan*rate//100}.
+So the car will cost him {price} + {loan*rate//100} = $<<{price}+{loan*rate//100}={price + loan * rate // 100}>>{price + loan * rate // 100}.
+#### {price + loan * rate // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

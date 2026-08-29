@@ -1,0 +1,52 @@
+question = """
+A local farmer is paying 4 kids to help plant rows of corn. Every row of corn contains 70 ears. A bag of corn seeds contains 48 seeds and you need 2 seeds per ear of corn. He pays the kids $1.5 per row. Afterward, the kids are so hungry that they end up spending half their money on dinner. The dinner cost $36 per kid. How many bags of corn seeds did each kid use?
+"""
+
+answer = """
+The dinner cost $144 dollars because 4 x 36 = <<4*36=144>>144
+The kids earned $288 in total because 144 x 2 = <<144*2=288>>288
+They planted 192 rows of corn because 288 / 1.5 = <<288/1.5=192>>192
+They planted 13,440 ears of corn in total because 192 x 70 = <<192*70=13440>>13,440
+They each planted 3,360 ears of corn because 13,440 / 4 = <<13440/4=3360>>3,360
+They each planted 6,720 seeds because 3,360 x 2 = <<3360*2=6720>>6,720
+They each used 140 bags of seeds because 6,720 / 48 = <<6720/48=140>>140
+#### 140
+"""
+
+id_orig = 3126
+id_shuffled = 3711
+
+question_annotated = """
+A local farmer is paying {n,4} kids to help plant rows of corn. Every row of corn contains {e,70} ears. A bag of corn seeds contains {s,48} seeds and you need {k,2} seeds per ear of corn. He pays the kids $1.5 per row. Afterward, the kids are so hungry that they end up spending half their money on dinner. The dinner cost ${d,36} per kid. How many bags of corn seeds did each kid use?
+
+#init:
+- $n = range(2, 9)
+- $d = range(10, 51)
+- $e = range(40, 101)
+- $s = range(24, 73)
+- $k = range(2, 4)
+
+#conditions:
+- divides(d, 3)
+- divides(4*d*e*k, 3*s)
+- (4*n*d*e//3) % 1000 >= 100
+- (4*d*e//3) % 1000 >= 100
+- (4*d*e*k//3) % 1000 >= 100
+
+#answer: 4*d*e*k//(3*s)
+"""
+
+answer_annotated = """
+The dinner cost ${n*d} dollars because {n} x {d} = <<{n}*{d}={n*d}>>{n*d}
+The kids earned ${2*n*d} in total because {n*d} x 2 = <<{n*d}*2={2*n*d}>>{2*n*d}
+They planted {4*n*d//3} rows of corn because {2*n*d} / 1.5 = <<{2*n*d}/1.5={4*n*d//3}>>{4*n*d//3}
+They planted {4*n*d*e//3//1000},{4*n*d*e//3%1000} ears of corn in total because {4*n*d//3} x {e} = <<{4*n*d//3}*{e}={4*n*d*e//3}>>{4*n*d*e//3//1000},{4*n*d*e//3%1000}
+They each planted {4*d*e//3//1000},{4*d*e//3%1000} ears of corn because {4*n*d*e//3//1000},{4*n*d*e//3%1000} / {n} = <<{4*n*d*e//3}/{n}={4*d*e//3}>>{4*d*e//3//1000},{4*d*e//3%1000}
+They each planted {4*d*e*k//3//1000},{4*d*e*k//3%1000} seeds because {4*d*e//3//1000},{4*d*e//3%1000} x {k} = <<{4*d*e//3}*{k}={4*d*e*k//3}>>{4*d*e*k//3//1000},{4*d*e*k//3%1000}
+They each used {4*d*e*k//(3*s)} bags of seeds because {4*d*e*k//3//1000},{4*d*e*k//3%1000} / {s} = <<{4*d*e*k//3}/{s}={4*d*e*k//(3*s)}>>{4*d*e*k//(3*s)}
+#### {4*d*e*k//(3*s)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

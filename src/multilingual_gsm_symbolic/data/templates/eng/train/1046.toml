@@ -1,0 +1,45 @@
+question = """
+Theodore can craft 10 stone statues and 20 wooden statues every month. A stone statue costs $20 and a wooden statue costs $5. He also pays 10 percent of his total earnings in taxes. How much is his total earning every month?
+"""
+
+answer = """
+Theodore's total earnings from the stone statues are 10 x $20 = $<<10*20=200>>200.
+His total earnings from wooden statues are 20 x $5 = $<<20*5=100>>100.
+So his total earnings from the stone and wooden statue are $200 + $100 = $<<200+100=300>>300.
+The amount he pays for the tax is $300 x 10/100 = $<<300*10/100=30>>30.
+Therefore his total monthly earnings are $300 - $30 = $<<300-30=270>>270.
+#### 270
+"""
+
+id_orig = 950
+id_shuffled = 1046
+
+question_annotated = """
+{name,Theodore} can craft {s,10} stone statues and {w,20} wooden statues every month. A stone statue costs ${sp,20} and a wooden statue costs ${wp,5}. He also pays {rate,10} percent of his total earnings in taxes. How much is his total earning every month?
+
+#init:
+- name = sample(names_male)
+- $s = range(2, 18)
+- $w = range(2, 42, 2)
+- $sp = range(5, 45, 5)
+- $wp = range(1, 11)
+- $rate = range(5, 55, 5)
+
+#conditions:
+- divides((s*sp + w*wp)*rate, 100)
+
+#answer: s*sp + w*wp - (s*sp + w*wp)*rate//100
+"""
+
+answer_annotated = """
+{name}'s total earnings from the stone statues are {s} x ${sp} = $<<{s}*{sp}={s*sp}>>{s*sp}.
+His total earnings from wooden statues are {w} x ${wp} = $<<{w}*{wp}={w*wp}>>{w*wp}.
+So his total earnings from the stone and wooden statue are ${s*sp} + ${w*wp} = $<<{s*sp}+{w*wp}={s*sp+w*wp}>>{s*sp+w*wp}.
+The amount he pays for the tax is ${s*sp+w*wp} x {rate}/100 = $<<{s*sp+w*wp}*{rate}/100={(s*sp+w*wp)*rate//100}>>{(s*sp+w*wp)*rate//100}.
+Therefore his total monthly earnings are ${s*sp+w*wp} - ${(s*sp+w*wp)*rate//100} = $<<{s*sp+w*wp}-{(s*sp+w*wp)*rate//100}={s*sp+w*wp-(s*sp+w*wp)*rate//100}>>{s*sp+w*wp-(s*sp+w*wp)*rate//100}.
+#### {s*sp + w*wp - (s*sp + w*wp)*rate//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

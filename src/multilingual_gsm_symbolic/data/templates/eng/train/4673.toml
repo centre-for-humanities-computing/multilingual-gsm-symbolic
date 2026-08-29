@@ -1,0 +1,40 @@
+question = """
+Kelsey turned 25 in 1999.  Her older sister was born 3 years before Kelsey.  It's currently 2021.  How old is Kelsey's older sister?
+"""
+
+answer = """
+Kelsey turned 25 in 1999 so she was born in 1999-25 = <<1974=1974>>1974
+Kelsey's sister is older by 3 years so she was born in 1974-3 = <<1974-3=1971>>1971
+It's currently 2021 and Kelsey's sister was born in 1971 so she is 2021-1971 = <<2021-1971=50>>50 years old
+#### 50
+"""
+
+id_orig = 3951
+id_shuffled = 4673
+
+question_annotated = """
+{name,Kelsey} turned {a,25} in {y,1999}.  Her older sister was born {d,3} years before {name,Kelsey}.  It's currently {c,2021}.  How old is {name,Kelsey}'s older sister?
+
+#init:
+- name = sample(names_female)
+- $a = range(10, 40)
+- $y = range(1980, 2000)
+- $d = range(1, 11)
+- $c = range(2020, 2035)
+
+#conditions:
+- c > y - a + d
+
+#answer: c - (y - a - d)
+"""
+
+answer_annotated = """
+{name} turned {a} in {y} so she was born in {y}-{a} = <<{y-a}={y-a}>>{y-a}
+{name}'s sister is older by {d} years so she was born in {y-a}-{d} = <<{y-a}-{d}={y-a-d}>>{y-a-d}
+It's currently {c} and {name}'s sister was born in {y-a-d} so she is {c}-{y-a-d} = <<{c}-{y-a-d}={c-(y-a-d)}>>{c-(y-a-d)} years old
+#### {c-(y-a-d)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

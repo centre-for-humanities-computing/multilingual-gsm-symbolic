@@ -1,0 +1,50 @@
+question = """
+In Alaska the commercial Cod fishing season runs from January 1 - August 1 lasting exactly 7 months, or 213 days on a non-leap year.  Two fishermen are competing against each other to see who can earn more profit.  The first fisherman plans to catch fish at a steady rate of 3 per day for the entire season.  The second fisherman is a novice who will need to start more slowly. He plans to catch only 1 fish per day during the first 30 days, 2 fish per day during the next 60 days, and then 4 fish per day during the remainder of the season.  At the end of the season, how many more fish will be caught by the fisherman who catches the higher number of fish?
+"""
+
+answer = """
+The first fisherman will catch 3*213 = <<3*213=639>>639 fish during the season.
+The second fisherman catch 1*30 + 2*60 = <<1*30+2*60=150>>150 fish during the first 90 days of the season.
+Then, during the remaining 213 - 90 = 123 days of the season, the second fisherman will can an additional 4*123 = <<4*123=492>>492 fish.
+Thus, the second fisherman will catch a total of 150 + 492 = <<150+492=642>>642 fish.
+Therefore, the second fisherman will catch 642 - 639 = <<642-639=3>>3 more fish than the first fisherman at the end of the season.
+#### 3
+"""
+
+id_orig = 1764
+id_shuffled = 1946
+
+question_annotated = """
+In Alaska the commercial Cod fishing season runs from January 1 - August 1 lasting exactly 7 months, or {days,213} days on a non-leap year.  Two fishermen are competing against each other to see who can earn more profit.  The first fisherman plans to catch fish at a steady rate of {r1,3} per day for the entire season.  The second fisherman is a novice who will need to start more slowly. He plans to catch only {r2,1} fish per day during the first {d1,30} days, {r3,2} fish per day during the next {d2,60} days, and then {r4,4} fish per day during the remainder of the season.  At the end of the season, how many more fish will be caught by the fisherman who catches the higher number of fish?
+
+#init:
+- $days = range(200, 240)
+- $r1 = range(2, 6)
+- $r2 = range(1, 4)
+- $d1 = range(20, 50, 10)
+- $r3 = range(2, 6)
+- $d2 = range(30, 80, 10)
+- $r4 = range(3, 9)
+
+#conditions:
+- days > d1 + d2
+- r2 < r1
+- r2 < r3
+- r3 < r4
+- r2*d1 + r3*d2 + r4*(days - d1 - d2) > r1*days
+
+#answer: r2*d1 + r3*d2 + r4*(days - d1 - d2) - r1*days
+"""
+
+answer_annotated = """
+The first fisherman will catch {r1}*{days} = <<{r1}*{days}={r1*days}>>{r1*days} fish during the season.
+The second fisherman catch {r2}*{d1} + {r3}*{d2} = <<{r2}*{d1}+{r3}*{d2}={r2*d1+r3*d2}>>{r2*d1+r3*d2} fish during the first {d1+d2} days of the season.
+Then, during the remaining {days} - {d1+d2} = {days-d1-d2} days of the season, the second fisherman will can an additional {r4}*{days-d1-d2} = <<{r4}*{days-d1-d2}={r4*(days-d1-d2)}>>{r4*(days-d1-d2)} fish.
+Thus, the second fisherman will catch a total of {r2*d1+r3*d2} + {r4*(days-d1-d2)} = <<{r2*d1+r3*d2}+{r4*(days-d1-d2)}={r2*d1+r3*d2+r4*(days-d1-d2)}>>{r2*d1+r3*d2+r4*(days-d1-d2)} fish.
+Therefore, the second fisherman will catch {r2*d1+r3*d2+r4*(days-d1-d2)} - {r1*days} = <<{r2*d1+r3*d2+r4*(days-d1-d2)}-{r1*days}={r2*d1+r3*d2+r4*(days-d1-d2)-r1*days}>>{r2*d1+r3*d2+r4*(days-d1-d2)-r1*days} more fish than the first fisherman at the end of the season.
+#### {r2*d1 + r3*d2 + r4*(days - d1 - d2) - r1*days}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

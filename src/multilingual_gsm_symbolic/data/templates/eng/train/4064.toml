@@ -1,0 +1,38 @@
+question = """
+From Monday to Friday, Elle practices piano for 30 minutes. On Saturday, she practices piano three times as much as on a weekday. There is no practice on Sunday.  How many hours does Elle spend practicing piano each week?
+"""
+
+answer = """
+From Monday to Friday, Elle practices 0.5 x 5 = <<0.5*5=2.5>>2.5 hours.
+On Saturday, she practices 0.5 x 3 = <<0.5*3=1.5>>1.5 hours.
+Each week, Elle practices piano for 2.5 + 1.5 = <<2.5+1.5=4>>4 hours.
+#### 4
+"""
+
+id_orig = 3429
+id_shuffled = 4064
+
+question_annotated = """
+From Monday to Friday, {name,Elle} practices piano for {m,30} minutes. On Saturday, she practices piano {mt,three times} as much as on a weekday. There is no practice on Sunday.  How many hours does {name,Elle} spend practicing piano each week?
+
+#init:
+- name = sample(names_female)
+- mt, k = sample([("twice", 2), ("three times", 3), ("four times", 4), ("five times", 5), ("six times", 6), ("seven times", 7), ("eight times", 8), ("nine times", 9), ("ten times", 10)])
+- $m = range(12, 594, 6)
+
+#conditions:
+- is_int((5 + k) * m / 60)
+
+#answer: int((5 + k) * m / 60)
+"""
+
+answer_annotated = """
+From Monday to Friday, {name} practices {m/60} x 5 = <<{m/60}*5={m/60*5}>>{m/60*5} hours.
+On Saturday, she practices {m/60} x {k} = <<{m/60}*{k}={m/60*k}>>{m/60*k} hours.
+Each week, {name} practices piano for {m/60*5} + {m/60*k} = <<{m/60*5}+{m/60*k}={int((5 + k) * m / 60)}>>{int((5 + k) * m / 60)} hours.
+#### {int((5 + k) * m / 60)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

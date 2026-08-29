@@ -1,0 +1,37 @@
+question = """
+James decides to use tannerite to blow things up to reveal his baby's gender. The explosion ignites both his neighbors' houses and attracts a police officer, who arrests James on two count of arson, one count of manufacturing explosives, and one count of domestic terrorism. If the arson counts each carry a 6-year sentence, the explosives sentence is twice as long as the total arson sentence, and the domestic terrorism charge's sentence is 20 years, how long might James spend in jail?
+"""
+
+answer = """
+First find the total sentence length for the arson: 6 years/count * 2 counts = 12 years
+Then find the total sentence length for the explosives: 12 years * 2 = <<12*2=24>>24 years
+Then add each sentence to find the total sentence length: 12 years + 24 years + 20 years = <<12+24+20=56>>56 years
+#### 56
+"""
+
+id_orig = 2511
+id_shuffled = 2899
+
+question_annotated = """
+{name,James} decides to use tannerite to blow things up to reveal his baby's gender. The explosion ignites both his neighbors' houses and attracts a police officer, who arrests {name,James} on {k_txt,two} count of arson, one count of manufacturing explosives, and one count of domestic terrorism. If the arson counts each carry a {s,6}-year sentence, the explosives sentence is {mult_txt,twice} as long as the total arson sentence, and the domestic terrorism charge's sentence is {t,20} years, how long might {name,James} spend in jail?
+
+#init:
+- name = sample(names_male)
+- k_txt, k = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- mult_txt, mult_n = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $s = range(4, 21)
+- $t = range(5, 101)
+
+#answer: k*s*mult_n + k*s + t
+"""
+
+answer_annotated = """
+First find the total sentence length for the arson: {s} years/count * {k} counts = {k*s} years
+Then find the total sentence length for the explosives: {k*s} years * {mult_n} = <<{k*s}*{mult_n}={k*s*mult_n}>>{k*s*mult_n} years
+Then add each sentence to find the total sentence length: {k*s} years + {k*s*mult_n} years + {t} years = <<{k*s}+{k*s*mult_n}+{t}={k*s*mult_n+k*s+t}>>{k*s*mult_n+k*s+t} years
+#### {k*s*mult_n+k*s+t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

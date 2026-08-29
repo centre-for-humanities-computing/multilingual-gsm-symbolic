@@ -1,0 +1,44 @@
+question = """
+John decides to fix a racecar.  It cost $20,000 to fix but he gets a 20% discount.  He wins his first race but only keeps 90% of the money.  The prize is $70,000.  How much money did he make from the car?
+"""
+
+answer = """
+He gets a 20,000*20/100=$<<20000*20/100=4000>>4000 discount
+So he paid 20,000-4000=$<<20000-4000=16000>>16,000
+He kept 70,000*90/100=$<<70000*90/100=63000>>63,000
+So he made 63,000-16,000=$<<63000-16000=47000>>47,000
+#### 47000
+"""
+
+id_orig = 2564
+id_shuffled = 2965
+
+question_annotated = """
+{name,John} decides to fix a racecar.  It cost ${c,20000} to fix but he gets a {d,20}% discount.  He wins his first race but only keeps {k,90}% of the money.  The prize is ${p,70000}.  How much money did he make from the car?
+
+#init:
+- name = sample(names_male)
+- $c = range(10000, 100000, 5000)
+- $d = range(5, 55, 5)
+- $k = range(50, 101, 5)
+- $p = range(20000, 120000, 5000)
+
+#conditions:
+- divides(c * d, 100)
+- divides(p * k, 100)
+- p * k // 100 > c - c * d // 100
+
+#answer: p*k//100 - (c - c*d//100)
+"""
+
+answer_annotated = """
+He gets a {c}*{d}/100=$<<{c}*{d}/100={c*d//100}>>{c*d//100} discount
+So he paid {c}-{c*d//100}=$<<{c}-{c*d//100}={c-c*d//100}>>{c-c*d//100}
+He kept {p}*{k}/100=$<<{p}*{k}/100={p*k//100}>>{p*k//100}
+So he made {p*k//100}-{c-c*d//100}=$<<{p*k//100}-{c-c*d//100}={p*k//100-(c-c*d//100)}>>{p*k//100-(c-c*d//100)}
+#### {p*k//100-(c-c*d//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

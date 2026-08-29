@@ -1,0 +1,48 @@
+question = """
+Mark was caught speeding and the judge wants to make an example out of him. The base fine for speeding is $50 but additional penalties apply in this case.  The fine is increased by $2 for every mile per hour Mark was going over the speed limit. He was going 75 miles per hour in a 30 mile per hour zone. The fine is also doubled because he was in a school zone. Finally, the judge makes Mark pay $300 in court costs and he also has to pay his lawyer $80/hour for three hours of work. How much does Mark owe for this speeding ticket?
+"""
+
+answer = """
+First figure out how many miles over the speed limit Mark was going: 75 mph - 30 mph = <<75-30=45>>45 mph
+Now figure out how much the per-mile fine is: $2/mph * 45 mph = $<<2*45=90>>90
+Now add that amount to the base fine: $90 + $50 = $<<90+50=140>>140
+Now double that amount for being in a school zone: $140 * 2 = $<<140*2=280>>280
+Now figure out how much Mark owes his lawyer: $80/hour * 3 hours = $<<80*3=240>>240
+Now add the court costs, lawyer fees and fine: $240 + $300 + $280 = $<<240+300+280=820>>820
+#### 820
+"""
+
+id_orig = 617
+id_shuffled = 690
+
+question_annotated = """
+{name,Mark} was caught speeding and the judge wants to make an example out of him. The base fine for speeding is ${base,50} but additional penalties apply in this case.  The fine is increased by ${per,2} for every mile per hour {name,Mark} was going over the speed limit. He was going {speed,75} miles per hour in a {limit,30} mile per hour zone. The fine is also doubled because he was in a school zone. Finally, the judge makes {name,Mark} pay ${court,300} in court costs and he also has to pay his lawyer $80/hour for {hours_txt,three} hours of work. How much does {name,Mark} owe for this speeding ticket?
+
+#init:
+- name = sample(names_male)
+- hours_txt, hours = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $base = range(10, 110, 10)
+- $per = range(1, 6)
+- $speed = range(40, 101, 5)
+- $limit = range(15, 46, 5)
+- $court = range(100, 310, 100)
+
+#conditions:
+- speed > limit
+
+#answer: 80*hours + court + (per*(speed-limit)+base)*2
+"""
+
+answer_annotated = """
+First figure out how many miles over the speed limit {name} was going: {speed} mph - {limit} mph = <<{speed}-{limit}={speed-limit}>>{speed-limit} mph
+Now figure out how much the per-mile fine is: ${per}/mph * {speed-limit} mph = $<<{per}*{speed-limit}={per*(speed-limit)}>>{per*(speed-limit)}
+Now add that amount to the base fine: ${per*(speed-limit)} + ${base} = $<<{per*(speed-limit)}+{base}={per*(speed-limit)+base}>>{per*(speed-limit)+base}
+Now double that amount for being in a school zone: ${per*(speed-limit)+base} * 2 = $<<{per*(speed-limit)+base}*2={(per*(speed-limit)+base)*2}>>{(per*(speed-limit)+base)*2}
+Now figure out how much {name} owes his lawyer: $80/hour * {hours} hours = $<<80*{hours}={80*hours}>>{80*hours}
+Now add the court costs, lawyer fees and fine: ${80*hours} + ${court} + ${(per*(speed-limit)+base)*2} = $<<{80*hours}+{court}+{(per*(speed-limit)+base)*2}={80*hours+court+(per*(speed-limit)+base)*2}>>{80*hours+court+(per*(speed-limit)+base)*2}
+#### {80*hours+court+(per*(speed-limit)+base)*2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

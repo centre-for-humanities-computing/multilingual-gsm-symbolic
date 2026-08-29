@@ -1,0 +1,41 @@
+question = """
+A hot air balloon with 200 balloons is blowing up. After about half an hour, 1/5 of the total number of balloons in the hot air balloon have blown up. After another hour, twice the number of balloons that had already blown up also blow up. How many balloons in the hot air balloon remain intact?
+"""
+
+answer = """
+After half an hour, the number of balloons that had blown up is 1/5*200 = <<1/5*200=40>>40
+The number of balloons that haven't blown up so far is 200-40 = <<200-40=160>>160
+In the next hour, 2*40 = <<2*40=80>>80 balloons blow up.
+The number of balloons that haven't blown up now is 160-80 = <<160-80=80>>80
+#### 80
+"""
+
+id_orig = 849
+id_shuffled = 945
+
+question_annotated = """
+A hot air balloon with {total,200} balloons is blowing up. After about half an hour, {f,1/5} of the total number of balloons in the hot air balloon have blown up. After another hour, {m_txt,twice} the number of balloons that had already blown up also blow up. How many balloons in the hot air balloon remain intact?
+
+#init:
+- $total = range(20, 1020, 10)
+- f, d = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5), ("1/6", 6), ("1/7", 7), ("1/8", 8), ("1/9", 9), ("1/10", 10)])
+- m_txt, m = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+
+#conditions:
+- divides(total, d)
+- d > m + 1
+
+#answer: total - total//d - m*(total//d)
+"""
+
+answer_annotated = """
+After half an hour, the number of balloons that had blown up is 1/{d}*{total} = <<1/{d}*{total}={total//d}>>{total//d}
+The number of balloons that haven't blown up so far is {total}-{total//d} = <<{total}-{total//d}={total-total//d}>>{total-total//d}
+In the next hour, {m}*{total//d} = <<{m}*{total//d}={m*(total//d)}>>{m*(total//d)} balloons blow up.
+The number of balloons that haven't blown up now is {total-total//d}-{m*(total//d)} = <<{total-total//d}-{m*(total//d)}={total-total//d-m*(total//d)}>>{total-total//d-m*(total//d)}
+#### {total-total//d-m*(total//d)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

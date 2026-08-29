@@ -1,0 +1,44 @@
+question = """
+A lot of people have been sick at Gary's workplace, so he's been working a lot of extra shifts to fill in for people. As a result, he's earned some overtime (where every hour after 40 he earns 1.5 times his normal wage.) His paycheck (before taxes are taken out) came out to $696. If Gary normally earns $12 per hour, how many hours did he work that week?
+"""
+
+answer = """
+Gary earned overtime, so he worked at least 40 hours. For which he was paid 40 hours * $12/hour = $<<40*12=480>>480 at his normal wage.
+This means that $696 - $480 = $<<696-480=216>>216 was earned at his overtime wage.
+His overtime wage is 1.5 his normal wage, or $12 * 1.5 = $<<12*1.5=18>>18 per hour.
+So Gary worked $216 / $18 per hour = <<216/18=12>>12 hours' worth of overtime.
+So in total, Gary worked 40 hours + 12 hours = <<40+12=52>>52 hours that week.
+#### 52
+"""
+
+id_orig = 470
+id_shuffled = 543
+
+question_annotated = """
+A lot of people have been sick at {name,Gary}'s workplace, so he's been working a lot of extra shifts to fill in for people. As a result, he's earned some overtime (where every hour after 40 he earns 1.5 times his normal wage.) His paycheck (before taxes are taken out) came out to ${pay,696}. If {name,Gary} normally earns ${w,12} per hour, how many hours did he work that week?
+
+#init:
+- name = sample(names_male)
+- $w = range(8, 30, 2)
+- $pay = range(500, 3000, 4)
+
+#conditions:
+- pay > 40 * w
+- divides(2 * (pay - 40*w), 3 * w)
+- (pay - 40*w)*2 // (3*w) < 60
+
+#answer: 40 + (pay - 40*w)*2 // (3*w)
+"""
+
+answer_annotated = """
+{name} earned overtime, so he worked at least 40 hours. for which he was paid 40 hours * ${w}/hour = $<<40*{w}={40*w}>>{40*w} at his normal wage.
+This means that ${pay} - ${40*w} = $<<{pay}-{40*w}={pay-40*w}>>{pay-40*w} was earned at his overtime wage.
+His overtime wage is 1.5 his normal wage, or ${w} * 1.5 = $<<{w}*1.5={int(w*1.5)}>>{int(w*1.5)} per hour.
+So {name} worked ${pay-40*w} / ${int(w*1.5)} per hour = <<{pay-40*w}/{int(w*1.5)}={(pay-40*w)*2//(3*w)}>>{(pay-40*w)*2//(3*w)} hours' worth of overtime.
+So in total, {name} worked 40 hours + {(pay-40*w)*2//(3*w)} hours = <<40+{(pay-40*w)*2//(3*w)}={40+(pay-40*w)*2//(3*w)}>>{40+(pay-40*w)*2//(3*w)} hours that week.
+#### {40+(pay-40*w)*2//(3*w)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

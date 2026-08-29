@@ -1,0 +1,48 @@
+question = """
+John has 2 hives of bees.  One of the hives has 1000 bees and produces 500 liters of honey.  The second has 20% fewer bees but each bee produces 40% more honey.  How much honey does he produce?
+"""
+
+answer = """
+The second hive has 20/100*1000 = <<20/100*1000=200>>200 fewer bees.
+This translates to 1000-200 = <<1000-200=800>>800 bees.
+Each bee in the first hive produces 1000/500 = <<1000/500=2>>2 liters
+The second hive has bees each producing 1.4*2 = <<1.4*2=2.8>>2.8 liters
+The total amount of honey produces by the bees in the second hive is 2.8*700 = <<2.8*700=1960>>1960
+The total honey produced is 1960+500 = <<1960+500=2460>>2460 liters
+#### 2460
+"""
+
+id_orig = 1081
+id_shuffled = 1177
+
+question_annotated = """
+{name,John} has 2 hives of bees.  One of the hives has {b,1000} bees and produces {h,500} liters of honey.  The second has {p,20}% fewer bees but each bee produces {q,40}% more honey.  How much honey does he produce?
+
+#init:
+- name = sample(names_male)
+- $b = range(400, 1601, 200)
+- $h = range(100, 501, 25)
+- $p = range(5, 81, 5)
+- $q = range(40, 41)
+
+#conditions:
+- divides(b, h)
+- b - p*b//100 - 100 > 0
+- (100 + q) * (b//h) * (b - p*b//100 - 100) % 100 == 0
+
+#answer: (100 + q) * (b//h) * (b - p*b//100 - 100) // 100 + h
+"""
+
+answer_annotated = """
+The second hive has {p}/100*{b} = <<{p}/100*{b}={p*b//100}>>{p*b//100} fewer bees.
+This translates to {b}-{p*b//100} = <<{b}-{p*b//100}={b-p*b//100}>>{b-p*b//100} bees.
+Each bee in the first hive produces {b}/{h} = <<{b}/{h}={b//h}>>{b//h} liters
+The second hive has bees each producing {1 + q/100}*{b//h} = <<{1 + q/100}*{b//h}={(1 + q/100) * (b//h)}>>{(1 + q/100) * (b//h)} liters
+The total amount of honey produces by the bees in the second hive is {(1 + q/100) * (b//h)}*{b - p*b//100 - 100} = <<{(1 + q/100) * (b//h)}*{b - p*b//100 - 100}={(100 + q) * (b//h) * (b - p*b//100 - 100) // 100}>>{(100 + q) * (b//h) * (b - p*b//100 - 100) // 100}
+The total honey produced is {(100 + q) * (b//h) * (b - p*b//100 - 100) // 100}+{h} = <<{(100 + q) * (b//h) * (b - p*b//100 - 100) // 100}+{h}={(100 + q) * (b//h) * (b - p*b//100 - 100) // 100 + h}>>{(100 + q) * (b//h) * (b - p*b//100 - 100) // 100 + h} liters
+#### {(100 + q) * (b//h) * (b - p*b//100 - 100) // 100 + h}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

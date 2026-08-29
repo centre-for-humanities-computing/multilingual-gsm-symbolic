@@ -1,0 +1,44 @@
+question = """
+Michael is stuck in an elevator that is slowly moving to the bottom floor. The elevator needs to move down 20 floors to reach the bottom. It takes 15 minutes for the elevator to travel down the first half of the floors. The elevator then takes 5 minutes per floor to travel down the next 5 floors. It then takes 16 minutes per floor for the elevator to finish traveling down the final 5 floors. In hours, how long did it take for the elevator to reach the bottom?
+"""
+
+answer = """
+Over 5 of the floors, it takes the elevator 5 floors * 5 minutes per floor = <<5*5=25>>25 minutes to lower.
+Over the final 5 floors, it takes the elevator 5 floors * 16 minutes per floor = <<5*16=80>>80 minutes to lower.
+So in total, the elevator takes 15 minutes in the first half + 25 minutes in the next five floors + 80 minutes in the final five floors = <<15+25+80=120>>120 minutes to lower to the bottom.
+This is the same as 120 minutes / 60 minutes per hour = <<120/60=2>>2 hours.
+#### 2
+"""
+
+id_orig = 2898
+id_shuffled = 3460
+
+question_annotated = """
+{name,Michael} is stuck in an elevator that is slowly moving to the bottom floor. The elevator needs to move down {f,20} floors to reach the bottom. It takes {t,15} minutes for the elevator to travel down the first half of the floors. The elevator then takes {r1,5} minutes per floor to travel down the next {k,5} floors. It then takes {r2,16} minutes per floor for the elevator to finish traveling down the final {k,5} floors. In hours, how long did it take for the elevator to reach the bottom?
+
+#init:
+- name = sample(names_male)
+- $f = range(12, 49, 4)
+- $k = range(3, 13)
+- $t = range(10, 70)
+- $r1 = range(2, 21)
+- $r2 = range(2, 31)
+
+#conditions:
+- f // 2 == 2 * k
+- is_int((t + k * (r1 + r2)) / 60)
+
+#answer: (t + k * (r1 + r2)) // 60
+"""
+
+answer_annotated = """
+Over {k} of the floors, it takes the elevator {k} floors * {r1} minutes per floor = <<{k}*{r1}={k*r1}>>{k*r1} minutes to lower.
+Over the final {k} floors, it takes the elevator {k} floors * {r2} minutes per floor = <<{k}*{r2}={k*r2}>>{k*r2} minutes to lower.
+So in total, the elevator takes {t} minutes in the first half + {k*r1} minutes in the next five floors + {k*r2} minutes in the final five floors = <<{t}+{k*r1}+{k*r2}={t+k*(r1+r2)}>>{t+k*(r1+r2)} minutes to lower to the bottom.
+This is the same as {t+k*(r1+r2)} minutes / 60 minutes per hour = <<{t+k*(r1+r2)}/60={(t+k*(r1+r2))//60}>>{(t+k*(r1+r2))//60} hours.
+#### {(t + k * (r1 + r2)) // 60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

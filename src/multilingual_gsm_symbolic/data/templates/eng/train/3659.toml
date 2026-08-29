@@ -1,0 +1,44 @@
+question = """
+Carter has a jar with 20 green M&Ms and 20 red M&Ms. He eats 12 of the green M&Ms, then his sister comes and eats half the red M&Ms and adds 14 yellow M&Ms. If Carter picks an M&M at random now, what is the percentage chance he'll get a green M&M?
+"""
+
+answer = """
+First find the final number of green M&Ms by subtracting 12 from the starting number: 20 M&Ms - 12 M&Ms = <<20-12=8>>8 green M&Ms
+Then find the final number of red M&Ms by dividing the starting number by half: 20 M&Ms / 2 = <<20/2=10>>10 red M&Ms
+Then find the total number of M&Ms at the end by adding the number of red, green and yellow M&Ms: 8 M&Ms + 10 M&Ms + 14 M&Ms = <<8+10+14=32>>32 M&Ms
+Then divide the number of green M&Ms by the total number of M&Ms and multiply by 100 to find the percentage chance Carter gets a green M&M: 8 M&Ms / 32 M&Ms * 100 = <<8/32*100=25>>25%
+#### 25
+"""
+
+id_orig = 3074
+id_shuffled = 3659
+
+question_annotated = """
+{name,Carter} has a jar with {g,20} green M&Ms and {r,20} red M&Ms. He eats {e,12} of the green M&Ms, then his sister comes and eats half the red M&Ms and adds {y,14} yellow M&Ms. If {name,Carter} picks an M&M at random now, what is the percentage chance he'll get a green M&M?
+
+#init:
+- name = sample(names_male)
+- $g = range(20, 62, 2)
+- $r = range(20, 62, 2)
+- $e = range(2, 30)
+- $y = range(2, 30)
+
+#conditions:
+- e < g
+- is_int(r / 2)
+- is_int((g - e) * 100 / (g - e + r // 2 + y))
+
+#answer: int((g - e) / (g - e + r // 2 + y) * 100)
+"""
+
+answer_annotated = """
+First find the final number of green M&Ms by subtracting {e} from the starting number: {g} M&Ms - {e} M&Ms = <<{g}-{e}={g-e}>>{g-e} green M&Ms
+Then find the final number of red M&Ms by dividing the starting number by half: {r} M&Ms / 2 = <<{r}/2={r//2}>>{r//2} red M&Ms
+Then find the total number of M&Ms at the end by adding the number of red, green and yellow M&Ms: {g-e} M&Ms + {r//2} M&Ms + {y} M&Ms = <<{g-e}+{r//2}+{y}={g-e+r//2+y}>>{g-e+r//2+y} M&Ms
+Then divide the number of green M&Ms by the total number of M&Ms and multiply by 100 to find the percentage chance {name} gets a green M&M: {g-e} M&Ms / {g-e+r//2+y} M&Ms * 100 = <<{g-e}/{g-e+r//2+y}*100={int((g - e) / (g - e + r // 2 + y) * 100)}>>{int((g - e) / (g - e + r // 2 + y) * 100)}%
+#### {int((g - e) / (g - e + r // 2 + y) * 100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

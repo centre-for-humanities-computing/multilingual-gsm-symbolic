@@ -1,0 +1,38 @@
+question = """
+An 18-month magazine subscription is normally $34. The magazine is currently running a promotion for $0.25 off each twice-a-month issue when signing up for the 18-month subscription. How many dollars cheaper is the promotional subscription than the normal one?
+"""
+
+answer = """
+The subscription sends twice monthly issues, so there are 2 * 18 = <<2*18=36>>36 issues.
+Thus, the promotional offer is 36 * 0.25 = $<<36*0.25=9>>9 cheaper than the normal subscription.
+#### 9
+"""
+
+id_orig = 248
+id_shuffled = 273
+
+question_annotated = """
+An {m,18}-month magazine subscription is normally ${p,34}. The magazine is currently running a promotion for ${dtxt,0.25} off each {mt,twice}-a-month issue when signing up for the {m,18}-month subscription. How many dollars cheaper is the promotional subscription than the normal one?
+
+#init:
+- $m = range(6, 49, 6)
+- $p = range(20, 121)
+- mt, k = sample(multi_times)
+- dtxt, c = sample([("0.25", 25), ("0.50", 50), ("0.75", 75), ("1.00", 100)])
+
+#conditions:
+- divides(k * m * c, 100)
+- k * m * c < p * 100
+
+#answer: k * m * c // 100
+"""
+
+answer_annotated = """
+The subscription sends {mt} monthly issues, so there are {k} * {m} = <<{k}*{m}={k*m}>>{k*m} issues.
+Thus, the promotional offer is {k*m} * {dtxt} = $<<{k*m}*{dtxt}={k*m*c//100}>>{k*m*c//100} cheaper than the normal subscription.
+#### {k*m*c//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

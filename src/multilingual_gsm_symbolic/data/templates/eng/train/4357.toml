@@ -1,0 +1,43 @@
+question = """
+Mason has 3 cartons of 200 blueberries. He makes as many muffins as he can with 10 blueberries per muffin. Then he makes 60 cinnamon muffins. What percentage of all the muffins he made have blueberries?
+"""
+
+answer = """
+First find the total number of blueberries Mason has: 200 blueberries/carton * 3 cartons = 600 blueberries
+Then divide the total number of blueberries by the number of blueberries per muffin: 600 blueberries / 10 blueberries/muffin = <<600/10=60>>60 muffins
+Then add that number of muffins to the number of cinnamon muffins to find the total number of muffins: 60 muffins + 60 muffins = <<60+60=120>>120 muffins
+Then divide the number of blueberry muffins by the total number of muffins and multiply by 100% to express the answer as a percentage: 60 muffins / 120 muffins * 100% = 50%
+#### 50
+"""
+
+id_orig = 3687
+id_shuffled = 4357
+
+question_annotated = """
+{name,Mason} has {c,3} cartons of {b,200} blueberries. He makes as many muffins as he can with {p,10} blueberries per muffin. Then he makes {m,60} cinnamon muffins. What percentage of all the muffins he made have blueberries?
+
+#init:
+- name = sample(names_male)
+- $c = range(2, 12)
+- $b = range(100, 600, 100)
+- $p = range(5, 55, 5)
+- $m = range(10, 210, 10)
+
+#conditions:
+- divides(c * b, p)
+- divides(100 * (c * b // p), c * b // p + m)
+
+#answer: (c * b // p) * 100 // (c * b // p + m)
+"""
+
+answer_annotated = """
+First find the total number of blueberries {name} has: {b} blueberries/carton * {c} cartons = {c*b} blueberries
+Then divide the total number of blueberries by the number of blueberries per muffin: {c*b} blueberries / {p} blueberries/muffin = <<{c*b}/{p}={c*b//p}>>{c*b//p} muffins
+Then add that number of muffins to the number of cinnamon muffins to find the total number of muffins: {c*b//p} muffins + {m} muffins = <<{c*b//p}+{m}={c*b//p+m}>>{c*b//p+m} muffins
+Then divide the number of blueberry muffins by the total number of muffins and multiply by 100% to express the answer as a percentage: {c*b//p} muffins / {c*b//p+m} muffins * 100% = {(c * b // p) * 100 // (c * b // p + m)}%
+#### {(c * b // p) * 100 // (c * b // p + m)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

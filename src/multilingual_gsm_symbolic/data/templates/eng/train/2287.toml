@@ -1,0 +1,53 @@
+question = """
+Janet buys 3 pounds of broccoli for $4 a pound, 3 oranges for $0.75 each, a cabbage for $3.75, a pound of bacon for $3, and two pounds of chicken for $3 a pound. What percentage of her grocery budget did she spend on meat, rounded to the nearest percent?
+"""
+
+answer = """
+First find the total cost of the broccoli: 3 pounds * $4/pound = $<<3*4=12>>12
+Then find the total cost of the oranges: 3 oranges * $0.75/orange = $<<3*0.75=2.25>>2.25
+Then find the total cost of the vegetables: $12 + $2.25 + $3.75 = $<<12+2.25+3.75=18>>18
+Then find the total cost of the chicken: $3/pound * 2 pounds = $<<3*2=6>>6
+Then add the cost of the bacon to find the total cost of the meat: $6 + $3 = $<<6+3=9>>9
+Then add the cost of the meat and vegetables to find the total cost of the groceries: $9 + $18 = $<<9+18=27>>27
+Then divide the cost of the meat by the total grocery bill and multiply by 100% to express the answer as a percentage: $9 / $27 * 100% = 33.333%, which rounds down to 33%
+#### 33
+"""
+
+id_orig = 1983
+id_shuffled = 2287
+
+question_annotated = """
+{name,Janet} buys {b,3} pounds of broccoli for ${bp,4} a pound, {o,3} oranges for ${op,0.75} each, a cabbage for ${c,3.75}, a pound of bacon for ${ba,3}, and {chick_txt,two} pounds of chicken for ${cp,3} a pound. What percentage of her grocery budget did she spend on meat, rounded to the nearest percent?
+
+#init:
+- name = sample(names)
+- $b = range(2, 6)
+- $bp = range(2, 8)
+- $o = range(3, 16, 4)
+- op = sample([0.75])
+- c = sample([3.75])
+- $ba = range(2, 7)
+- $cp = range(2, 7)
+- chick_txt, chick_val = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+
+#conditions:
+- is_int(b*bp + o*op + c)
+- (cp*chick_val + ba)*100 % (cp*chick_val + ba + int(b*bp + o*op + c)) * 2 < (cp*chick_val + ba + int(b*bp + o*op + c))
+
+#answer: round((cp*chick_val + ba)/(cp*chick_val + ba + int(b*bp + o*op + c))*100)
+"""
+
+answer_annotated = """
+First find the total cost of the broccoli: {b} pounds * ${bp}/pound = $<<{b}*{bp}={b*bp}>>{b*bp}
+Then find the total cost of the oranges: {o} oranges * ${op}/orange = $<<{o}*{op}={o*op}>>{o*op}
+Then find the total cost of the vegetables: ${b*bp} + ${o*op} + ${c} = $<<{b*bp}+{o*op}+{c}={int(b*bp + o*op + c)}>>{int(b*bp + o*op + c)}
+Then find the total cost of the chicken: ${cp}/pound * {chick_val} pounds = $<<{cp}*{chick_val}={cp*chick_val}>>{cp*chick_val}
+Then add the cost of the bacon to find the total cost of the meat: ${cp*chick_val} + ${ba} = $<<{cp*chick_val}+{ba}={cp*chick_val + ba}>>{cp*chick_val + ba}
+Then add the cost of the meat and vegetables to find the total cost of the groceries: ${cp*chick_val + ba} + ${int(b*bp + o*op + c)} = $<<{cp*chick_val + ba}+{int(b*bp + o*op + c)}={cp*chick_val + ba + int(b*bp + o*op + c)}>>{cp*chick_val + ba + int(b*bp + o*op + c)}
+Then divide the cost of the meat by the total grocery bill and multiply by 100% to express the answer as a percentage: ${cp*chick_val + ba} / ${cp*chick_val + ba + int(b*bp + o*op + c)} * 100% = {round((cp*chick_val + ba)/(cp*chick_val + ba + int(b*bp + o*op + c))*100000)/1000}%, which rounds down to {round((cp*chick_val + ba)/(cp*chick_val + ba + int(b*bp + o*op + c))*100)}%
+#### {round((cp*chick_val + ba)/(cp*chick_val + ba + int(b*bp + o*op + c))*100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

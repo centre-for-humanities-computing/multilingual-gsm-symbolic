@@ -1,0 +1,56 @@
+question = """
+A jar on the family's counter contains change they've been saving a trip to the ice cream shop. There are 123 pennies, 85 nickels, 35 dimes, and a number of quarters. All five family members get a double scoop, which costs $3 each. After the trip, they have 48 cents left over. How many quarters were in the jar?
+"""
+
+answer = """
+The family spent $15 on ice cream because 5 x 3 = <<5*3=15>>15
+They total amount of change they had was $15.48 because 15 + .48 = <<15+.48=15.48>>15.48
+They have $1.23 in pennies because 123 x .01 = <<123*.01=1.23>>1.23
+They have $4.25 in nickels because 85 x .05 = <<85*.05=4.25>>4.25
+They have $3.50 in dimes because 35 x .1 = <<35*.1=3.5>>3.5
+Without the quarters they have a total of $8.98 because 1.23 + 4.25 + 3.5 = <<1.23+4.25+3.5=8.98>>8.98
+They have $6.5 worth of quarters because 15.48-8.98 = <<15.48-8.98=6.5>>6.5
+They have 26 quarters because 6.5 / .25 = <<6.5/.25=26>>26
+#### 26
+"""
+
+id_orig = 3344
+id_shuffled = 3969
+
+question_annotated = """
+A jar on the family's counter contains change they've been saving a trip to the ice cream shop. There are {p,123} pennies, {n,85} nickels, {d,35} dimes, and a number of quarters. All five family members get a double scoop, which costs ${c,3} each. After the trip, they have {l,48} cents left over. How many quarters were in the jar?
+
+#init:
+- $p = range(109, 138, 7)
+- $n = range(63, 108, 2)
+- $d = range(14, 59, 3)
+- $c = range(2, 5)
+- $l = range(12, 87, 4)
+
+#conditions:
+- p % 100 >= 10
+- (5*n) % 100 >= 10
+- (10*d) % 100 >= 10
+- (p + 5*n + 10*d) % 100 >= 10
+- divides(500*c + l - p - 5*n - 10*d, 25)
+- 500*c + l - p - 5*n - 10*d > 0
+- (500*c + l - p - 5*n - 10*d) % 100 > 0
+
+#answer: (500*c + l - p - 5*n - 10*d)//25
+"""
+
+answer_annotated = """
+The family spent ${5*c} on ice cream because 5 x {c} = <<5*{c}={5*c}>>{5*c}
+They total amount of change they had was ${(500*c + l)/100} because {5*c} + .{l} = <<{5*c}+.{l}={(500*c + l)/100}>>{(500*c + l)/100}
+They have ${p/100} in pennies because {p} x .01 = <<{p}*.01={p/100}>>{p/100}
+They have ${5*n/100} in nickels because {n} x .05 = <<{n}*.05={5*n/100}>>{5*n/100}
+They have ${10*d//100}.{d%10}0 in dimes because {d} x .1 = <<{d}*.1={10*d/100}>>{10*d/100}
+Without the quarters they have a total of ${(p + 5*n + 10*d)/100} because {p/100} + {5*n/100} + {10*d/100} = <<{p/100}+{5*n/100}+{10*d/100}={(p + 5*n + 10*d)/100}>>{(p + 5*n + 10*d)/100}
+They have ${(500*c + l - p - 5*n - 10*d)/100} worth of quarters because {(500*c + l)/100}-{(p + 5*n + 10*d)/100} = <<{(500*c + l)/100}-{(p + 5*n + 10*d)/100}={(500*c + l - p - 5*n - 10*d)/100}>>{(500*c + l - p - 5*n - 10*d)/100}
+They have {(500*c + l - p - 5*n - 10*d)//25} quarters because {(500*c + l - p - 5*n - 10*d)/100} / .25 = <<{(500*c + l - p - 5*n - 10*d)/100}/.25={(500*c + l - p - 5*n - 10*d)//25}>>{(500*c + l - p - 5*n - 10*d)//25}
+#### {(500*c + l - p - 5*n - 10*d)//25}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

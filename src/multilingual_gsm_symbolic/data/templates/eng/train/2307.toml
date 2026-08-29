@@ -1,0 +1,48 @@
+question = """
+Ms. Estrella is an entrepreneur with a startup company having 10 employees. The company makes a revenue of $400,000 a month, paying 10% in taxes, 5% of the remaining amount on marketing and ads, 20% of the remaining amount on operational costs, and 15% of the remaining amount on employee wages.  Assuming each employee receives the same wage, calculate the amount of money each employee is paid monthly.
+"""
+
+answer = """
+The company pays a total of 10/100*$400,000 = $<<10/100*400000=40000>>40,000 on taxes
+After taxes, the company revenue is $400,000-40,000 = $<<400000-40000=360000>>360,000
+The costs of marketing and ads campaign are 5/100*$360,000 = $<<5/100*360000=18000>>18,000
+After deducting the costs of marketing and adds campaign, the company remains with = $342,000 in revenue
+Operational costs for the company are 20/100*$342,000 = $<<20/100*342000=68400>>68,400
+After taking out the operational costs, the company remains with $342,000-68,400 = $273,600
+The company also pays employee wages of 15/100*$273,600 =$<<15/100*273600=41040>>41,040
+If the total number of employees is 10, each employee is paid a salary of $41,040/10 = $4104 per month
+#### 4104
+"""
+
+id_orig = 1971
+id_shuffled = 2307
+
+question_annotated = """
+Ms. {name,Estrella} is an entrepreneur with a startup company having {emp,10} employees. The company makes a revenue of ${rev,400000} a month, paying 10% in taxes, 5% of the remaining amount on marketing and ads, 20% of the remaining amount on operational costs, and 15% of the remaining amount on employee wages.  Assuming each employee receives the same wage, calculate the amount of money each employee is paid monthly.
+
+#init:
+- name = sample(names_female)
+- $emp = range(2, 51)
+- $rev = range(100000, 1005000, 5000)
+
+#conditions:
+- divides(513*rev, 5000*emp)
+
+#answer: rev*513//5000//emp
+"""
+
+answer_annotated = """
+The company pays a total of 10/100*${rev} = $<<10/100*{rev}={rev//10}>>{rev//10} on taxes
+After taxes, the company revenue is ${rev}-{rev//10} = $<<{rev}-{rev//10}={rev-rev//10}>>{rev-rev//10}
+The costs of marketing and ads campaign are 5/100*${rev-rev//10} = $<<5/100*{rev-rev//10}={(rev-rev//10)//20}>>{(rev-rev//10)//20}
+After deducting the costs of marketing and adds campaign, the company remains with = ${rev-rev//10-(rev-rev//10)//20} in revenue
+Operational costs for the company are 20/100*${rev-rev//10-(rev-rev//10)//20} = $<<20/100*{rev-rev//10-(rev-rev//10)//20}={(rev-rev//10-(rev-rev//10)//20)//5}>>{(rev-rev//10-(rev-rev//10)//20)//5}
+After taking out the operational costs, the company remains with ${rev-rev//10-(rev-rev//10)//20}-{(rev-rev//10-(rev-rev//10)//20)//5} = ${rev-rev//10-(rev-rev//10)//20-(rev-rev//10-(rev-rev//10)//20)//5}
+The company also pays employee wages of 15/100*${rev-rev//10-(rev-rev//10)//20-(rev-rev//10-(rev-rev//10)//20)//5} =$<<15/100*{rev-rev//10-(rev-rev//10)//20-(rev-rev//10-(rev-rev//10)//20)//5}={rev*513//5000}>>{rev*513//5000}
+If the total number of employees is {emp}, each employee is paid a salary of ${rev*513//5000}/{emp} = ${rev*513//5000//emp} per month
+#### {rev*513//5000//emp}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

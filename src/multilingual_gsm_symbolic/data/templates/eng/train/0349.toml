@@ -1,0 +1,45 @@
+question = """
+Gary bought his first used car for $6,000.  Gary borrowed the money from his dad who said he could pay him back the full amount over 5 years.  Gary decided he would pay his dad back the full amount in 2 years.  How much more is Gary spending per month to pay the loan off in 2 years instead of 5?
+"""
+
+answer = """
+A full year has 12 months. So 2 years is 2*12 = <<2*12=24>>24 months
+The loan amount is $6,000 that he will repay in 24 months so 6000/24 = $<<6000/24=250>>250 per month
+If he paid his dad back in 5 years that 5*12 = <<5*12=60>>60 months
+$6,000 loan spread out over 60 months is 6000/60 = $<<6000/60=100>>100 per month
+To pay it off in 2 years instead of 5, Gary is paying 250-100 = $<<250-100=150>>150 more per month
+#### 150
+"""
+
+id_orig = 199
+id_shuffled = 349
+
+question_annotated = """
+{name,Gary} bought his first used car for {price_txt,$6},000.  {name,Gary} borrowed the money from his dad who said he could pay him back the full amount over {y2,5} years.  {name,Gary} decided he would pay his dad back the full amount in {y1,2} years.  How much more is {name,Gary} spending per month to pay the loan off in {y1,2} years instead of {y2,5}?
+
+#init:
+- name = sample(names_male)
+- (price_txt, price) = sample([["$6", 6000], ["$7", 7000], ["$8", 8000], ["$9", 9000], ["$10", 10000], ["$11", 11000], ["$12", 12000], ["$13", 13000], ["$14", 14000], ["$15", 15000], ["$16", 16000], ["$17", 17000], ["$18", 18000], ["$19", 19000], ["$20", 20000], ["$21", 21000], ["$22", 22000], ["$23", 23000], ["$24", 24000], ["$25", 25000], ["$26", 26000], ["$27", 27000], ["$28", 28000], ["$29", 29000], ["$30", 30000], ["$31", 31000], ["$32", 32000], ["$33", 33000], ["$34", 34000], ["$35", 35000], ["$36", 36000], ["$37", 37000], ["$38", 38000], ["$39", 39000], ["$40", 40000], ["$41", 41000], ["$42", 42000], ["$43", 43000], ["$44", 44000], ["$45", 45000], ["$46", 46000], ["$47", 47000], ["$48", 48000], ["$49", 49000], ["$50", 50000], ["$51", 51000], ["$52", 52000], ["$53", 53000], ["$54", 54000], ["$55", 55000], ["$56", 56000], ["$57", 57000], ["$58", 58000], ["$59", 59000], ["$60", 60000]])
+- $y1 = range(2, 11)
+- $y2 = range(3, 16)
+
+#conditions:
+- y1 < y2
+- divides(price, y1 * 12)
+- divides(price, y2 * 12)
+
+#answer: price // (y1 * 12) - price // (y2 * 12)
+"""
+
+answer_annotated = """
+A full year has 12 months. So {y1} years is {y1}*12 = <<{y1}*12={y1*12}>>{y1*12} months
+The loan amount is {price_txt},000 that he will repay in {y1*12} months so {price}/{y1*12} = $<<{price}/{y1*12}={price//(y1*12)}>>{price//(y1*12)} per month
+If he paid his dad back in {y2} years that {y2}*12 = <<{y2}*12={y2*12}>>{y2*12} months
+{price_txt},000 loan spread out over {y2*12} months is {price}/{y2*12} = $<<{price}/{y2*12}={price//(y2*12)}>>{price//(y2*12)} per month
+To pay it off in {y1} years instead of {y2}, {name} is paying {price//(y1*12)}-{price//(y2*12)} = $<<{price//(y1*12)}-{price//(y2*12)}={price//(y1*12)-price//(y2*12)}>>{price//(y1*12)-price//(y2*12)} more per month
+#### {price// (y1 * 12) - price // (y2 * 12)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

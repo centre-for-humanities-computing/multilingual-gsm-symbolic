@@ -1,0 +1,41 @@
+question = """
+A pumpkin patch allows people to come pick pumpkins to carve in the fall every year. They charge $3 per person for a pumpkin. The remaining pumpkins get turned into cans of pie filling, 3 pumpkins to a can. They grew 83 pumpkins this year and made $96 selling pumpkins for carving. How many cans of pie filling will the pumpkin patch produce?
+"""
+
+answer = """
+The pumpkin patch sold 96 / 3 = <<96/3=32>>32 pumpkins.
+They have 83 - 32 = <<83-32=51>>51 pumpkins left.
+Thus, the pumpkin patch will produce 51 / 3 = <<51/3=17>>17 cans of pie filling.
+#### 17
+"""
+
+id_orig = 3677
+id_shuffled = 4347
+
+question_annotated = """
+A pumpkin patch allows people to come pick pumpkins to carve in the fall every year. They charge ${price,3} per person for a pumpkin. The remaining pumpkins get turned into cans of pie filling, {per_can,3} pumpkins to a can. They grew {total,83} pumpkins this year and made ${money,96} selling pumpkins for carving. How many cans of pie filling will the pumpkin patch produce?
+
+#init:
+- $total = range(60, 160)
+- $money = range(40, 140)
+- $price = range(2, 8)
+- $per_can = range(2, 7)
+
+#conditions:
+- divides(money, price)
+- money // price < total
+- divides(total - money//price, per_can)
+
+#answer: (total - money//price)//per_can
+"""
+
+answer_annotated = """
+The pumpkin patch sold {money} / {price} = <<{money}/{price}={money//price}>>{money//price} pumpkins.
+They have {total} - {money//price} = <<{total}-{money//price}={total-money//price}>>{total-money//price} pumpkins left.
+Thus, the pumpkin patch will produce {total-money//price} / {per_can} = <<{total-money//price}/{per_can}={(total-money//price)//per_can}>>{(total-money//price)//per_can} cans of pie filling.
+#### {(total - money//price)//per_can}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

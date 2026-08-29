@@ -1,0 +1,47 @@
+question = """
+Tim buys 3 loaves of bread.  Each loaf of bread has 20 slices.  He pays for the 3 loaves of bread with 2 $20 bills.  He gets $16 change.  How much does each slice cost, in cents?
+"""
+
+answer = """
+He gave 2*20=$<<2*20=40>>40.
+So the total cost was 40-16=$<<40-16=24>>24.
+That means each slice costs 24/3=$<<24/3=8>>8.
+That means it costs 8*100=<<8*100=800>>800 cents.
+So each slice is 800/20=<<800/20=40>>40 cents.
+#### 40
+"""
+
+id_orig = 3559
+id_shuffled = 4206
+
+question_annotated = """
+{name,Tim} buys {a,3} loaves of bread.  Each loaf of bread has {b,20} slices.  He pays for the {a,3} loaves of bread with {c,2} ${d,20} bills.  He gets ${e,16} change.  How much does each slice cost, in cents?
+
+#init:
+- name = sample(names_male)
+- $a = range(2, 7)
+- $b = range(10, 45, 5)
+- $c = range(1, 4)
+- $d = range(5, 55, 5)
+- $e = range(1, 50)
+
+#conditions:
+- c*d > e
+- divides(c*d - e, a)
+- divides((c*d - e)*100, a*b)
+
+#answer: (c*d - e)//a*100//b
+"""
+
+answer_annotated = """
+He gave {c}*{d}=$<<{c}*{d}={c*d}>>{c*d}.
+So the total cost was {c*d}-{e}=$<<{c*d}-{e}={c*d-e}>>{c*d-e}.
+That means each slice costs {c*d-e}/{a}=$<<{c*d-e}/{a}={(c*d-e)//a}>>{(c*d-e)//a}.
+That means it costs {(c*d-e)//a}*100=<<{(c*d-e)//a}*100={(c*d-e)//a*100}>>{(c*d-e)//a*100} cents.
+So each slice is {(c*d-e)//a*100}/{b}=<<{(c*d-e)//a*100}/{b}={(c*d-e)//a*100//b}>>{(c*d-e)//a*100//b} cents.
+#### {(c*d-e)//a*100//b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

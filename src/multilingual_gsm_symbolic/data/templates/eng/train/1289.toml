@@ -1,0 +1,43 @@
+question = """
+Joe buys 3 oranges, 7 juices, 3 jars of honey, and 4 plants at the market. The fruit costs $4.50 each, the juice was 50 cents each, the jars of honey were $5, and the plants were 2 for $18. How much does Joe spend at the market?
+"""
+
+answer = """
+Joe spends 4.50*3 = <<4.50*3=13.50>>13.50 on oranges.
+Joe spends 7*0.5 = <<7*0.5=3.50>>3.50 on juice.
+Joe spends 3*5 = <<3*5=15>>15 on honey.
+Each plant costs 18/2 = <<18/2=9>>9 dollars.
+Joe spends 9*4 = <<9*4=36>>36 on plants.
+Joe spends a total of 13.50+3.50+15+36 = <<13.50+3.50+15+36=68>>68 dollars at the market.
+#### 68
+"""
+
+id_orig = 1193
+id_shuffled = 1289
+
+question_annotated = """
+{name,Joe} buys 3 oranges, 7 juices, {h,3} jars of honey, and {pl,4} plants at the market. The fruit costs $4.50 each, the juice was 50 cents each, the jars of honey were ${hp,5}, and the plants were 2 for ${pp,18}. How much does {name,Joe} spend at the market?
+
+#init:
+- name = sample(names_male)
+- $h = range(2, 10)
+- $hp = range(2, 14)
+- $pl = range(2, 10)
+- $pp = range(4, 44, 2)
+
+#answer: int(13.5 + 3.5 + h * hp + pp // 2 * pl)
+"""
+
+answer_annotated = """
+{name} spends 4.50*3 = <<4.50*3=13.50>>13.50 on oranges.
+{name} spends 7*0.5 = <<7*0.5=3.50>>3.50 on juice.
+{name} spends {h}*{hp} = <<{h}*{hp}={h*hp}>>{h*hp} on honey.
+Each plant costs {pp}/2 = <<{pp}/2={pp//2}>>{pp//2} dollars.
+{name} spends {pp//2}*{pl} = <<{pp//2}*{pl}={pp//2*pl}>>{pp//2*pl} on plants.
+{name} spends a total of 13.50+3.50+{h*hp}+{pp//2*pl} = <<13.50+3.50+{h*hp}+{pp//2*pl}={int(13.5+3.5+h*hp+pp//2*pl)}>>{int(13.5+3.5+h*hp+pp//2*pl)} dollars at the market.
+#### {int(13.5 + 3.5 + h * hp + pp // 2 * pl)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

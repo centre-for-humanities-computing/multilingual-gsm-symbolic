@@ -1,0 +1,38 @@
+question = """
+Sam, Sid, and Steve brought popsicle sticks for their group activity in their Art class. Sam has thrice as many as Sid, and Sid has twice as many as Steve. If Steve has 12 popsicle sticks, how many popsicle sticks can they use for their Art class activity?
+"""
+
+answer = """
+Sid has 12 x 2 = <<12*2=24>>24 sticks.
+Sam has 24 x 3 = <<24*3=72>>72 sticks.
+Thus, they have 24 + 72 + 12 = <<24+72+12=108>>108 popsicle sticks.
+#### 108
+"""
+
+id_orig = 831
+id_shuffled = 927
+
+question_annotated = """
+Sam, Sid, and Steve brought popsicle sticks for their group activity in their Art class. Sam has {sam_mult_txt,thrice} as many as Sid, and Sid has {sid_mult_txt,twice} as many as Steve. If Steve has {s,12} popsicle sticks, how many popsicle sticks can they use for their Art class activity?
+
+#init:
+- $s = range(2, 40)
+- sam_mult_txt, sam_mult = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- sid_mult_txt, sid_mult = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+
+#conditions:
+- s > 0
+
+#answer: s + s*sid_mult + s*sid_mult*sam_mult
+"""
+
+answer_annotated = """
+Sid has {s} x {sid_mult} = <<{s}*{sid_mult}={s*sid_mult}>>{s*sid_mult} sticks.
+Sam has {s*sid_mult} x {sam_mult} = <<{s*sid_mult}*{sam_mult}={s*sid_mult*sam_mult}>>{s*sid_mult*sam_mult} sticks.
+Thus, they have {s*sid_mult} + {s*sid_mult*sam_mult} + {s} = <<{s*sid_mult}+{s*sid_mult*sam_mult}+{s}={s*sid_mult+s*sid_mult*sam_mult+s}>>{s*sid_mult+s*sid_mult*sam_mult+s} popsicle sticks.
+#### {s + s*sid_mult + s*sid_mult*sam_mult}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

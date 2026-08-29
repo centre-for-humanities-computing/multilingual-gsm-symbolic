@@ -1,0 +1,50 @@
+question = """
+Tony has a terrible toothache and decides to buy some painkillers from the store.  He picks up a bottle of 50 pills and takes them home.  He takes 2 pills each day three times a day for the first 2 days, before cutting this amount in half for the next 3 days.  On the sixth day, he takes a final 2 pills in the morning and ends up feeling better.  How many pills are left in the bottle?
+"""
+
+answer = """
+Tony starts with 50 pills and takes 2 pills each 3 times a day, meaning he takes 2*3=6 pills in total.
+Tony repeats this process for two days in total, meaning over those two days he takes 2*6= <<2*6=12>>12 pills
+Tony then cuts down his pill usage in half, meaning he's now taking 6/2= <<6/2=3>>3 pills a day.
+Since he repeats this process for three days, that means he takes 3*3= <<3*3=9>>9 pills for that period.
+Adding in the two pills Tony took on the final day, that means he took 12+9+2=<<12+9+2=23>>23 pills.
+Since there were 50 pills in the bottle to begin with, this means Tony has 50-23=<<50-23=27>>27 pills remaining.
+#### 27
+"""
+
+id_orig = 247
+id_shuffled = 272
+
+question_annotated = """
+{name,Tony} has a terrible toothache and decides to buy some painkillers from the store.  He picks up a bottle of {T,50} pills and takes them home.  He takes {p,2} pills each day {t_txt,three} times a day for the first {d1,2} days, before cutting this amount in half for the next {d2,3} days.  On the sixth day, he takes a final {f,2} pills in the morning and ends up feeling better.  How many pills are left in the bottle?
+
+#init:
+- name = sample(names_male)
+- $T = range(30, 230, 2)
+- $p = range(1, 6)
+- t, t_txt = sample([(2, "two"), (3, "three"), (4, "four"), (5, "five")])
+- d1, d1_txt = sample([(1, "one"), (2, "two"), (3, "three")])
+- d2, d2_txt = sample([(1, "one"), (2, "two"), (3, "three"), (4, "four")])
+- f, f_txt = sample([(1, "one"), (2, "two"), (3, "three"), (4, "four")])
+
+#conditions:
+- d1 + d2 == 5
+- divides(p * t, 2)
+- T > d1*p*t + d2*p*t//2 + f
+
+#answer: T - d1*p*t - d2*p*t//2 - f
+"""
+
+answer_annotated = """
+{name} starts with {T} pills and takes {p} pills each {t} times a day, meaning he takes {p}*{t}={p*t} pills in total.
+{name} repeats this process for {d1_txt} days in total, meaning over those {d1_txt} days he takes {d1}*{p*t}= <<{d1}*{p*t}={d1*p*t}>>{d1*p*t} pills
+{name} then cuts down his pill usage in half, meaning he's now taking {p*t}/2= <<{p*t}/2={p*t//2}>>{p*t//2} pills a day.
+Since he repeats this process for {d2_txt} days, that means he takes {d2}*{p*t//2}= <<{d2}*{p*t//2}={d2*p*t//2}>>{d2*p*t//2} pills for that period.
+Adding in the {f_txt} pills {name} took on the final day, that means he took {d1*p*t}+{d2*p*t//2}+{f}=<<{d1*p*t}+{d2*p*t//2}+{f}={d1*p*t + d2*p*t//2 + f}>>{d1*p*t + d2*p*t//2 + f} pills.
+Since there were {T} pills in the bottle to begin with, this means {name} has {T}-{d1*p*t + d2*p*t//2 + f}=<<{T}-{d1*p*t + d2*p*t//2 + f}={T - (d1*p*t + d2*p*t//2 + f)}>>{T - (d1*p*t + d2*p*t//2 + f)} pills remaining.
+#### {T - (d1*p*t + d2*p*t//2 + f)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

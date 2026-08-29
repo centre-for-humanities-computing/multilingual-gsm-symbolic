@@ -1,0 +1,42 @@
+question = """
+James runs a TV show and there are 5 main characters and 4 minor characters.  He pays the minor characters $15,000 each episode.  He paid the major characters three times as much.  How much does he pay per episode?
+"""
+
+answer = """
+He pays the minor characters 15,000*4=$<<15000*4=60000>>60,000
+The major characters each get 15,000*3=$<<15000*3=45000>>45,000
+So he pays the main characters 45,000*5=$<<45000*5=225000>>225,000
+So in total he pays 225,000+60,000=$<<225000+60000=285000>>285,000
+#### 285,000
+"""
+
+id_orig = 3312
+id_shuffled = 3937
+
+question_annotated = """
+{name,James} runs a TV show and there are {main,5} main characters and {minor,4} minor characters.  He pays the minor characters ${pk,15},000 each episode.  He paid the major characters three times as much.  How much does he pay per episode?
+
+#init:
+- name = sample(names_male)
+- $main = range(2, 9)
+- $minor = range(2, 10)
+- $pk = range(5, 40)
+
+#conditions:
+- pk * 3 * main < 1000
+- pk * (3 * main + minor) < 1000
+
+#answer: pk * (3 * main + minor) * 1000
+"""
+
+answer_annotated = """
+He pays the minor characters {pk},000*{minor}=$<<{pk*1000}*{minor}={pk*1000*minor}>>{pk*minor},000
+The major characters each get {pk},000*3=$<<{pk*1000}*3={pk*3000}>>{pk*3},000
+So he pays the main characters {pk*3},000*{main}=$<<{pk*3000}*{main}={pk*3000*main}>>{pk*3*main},000
+So in total he pays {pk*3*main},000+{pk*minor},000=$<<{pk*3000*main}+{pk*1000*minor}={pk*(3000*main+1000*minor)}>>{pk*(3*main+minor)},000
+#### {pk*(3*main+minor)},000
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

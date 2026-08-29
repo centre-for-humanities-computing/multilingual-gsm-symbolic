@@ -1,0 +1,51 @@
+question = """
+Hugo can fold a small box in 3 seconds and a medium one in twice that time. Tom can fold both the small and medium boxes in 4 seconds. If Hugo and Tom want to leave as early as possible, how long (in seconds) will it take them to fold 2400 small boxes and 1800 medium boxes?
+"""
+
+answer = """
+If it takes Hugo twice the amount of time to fold a medium box than a small box, then he needs 2*3 = <<6=6>>6 seconds for the medium box
+If Tom can fold either the small or medium box in 4 seconds, then he's faster at folding the medium box than Hugo because 4s < 6s
+If Hugo can fold the small box in 3 seconds, then he's faster at folding the small boxes than Tom because 3s < 4s
+Therefore Hugo should fold all small boxes and Tom should fold all the medium ones before doing the other size where they are slower
+If there are 2400 small boxes and Hugo can fold 1 box in 3 seconds, then it would take him 2400*3 = <<2400*3=7200>>7200 seconds to fold all boxes
+If there are 1800 medium boxes and Tom can fold 1 box in 4 seconds, then it would take him 1800*4 = <<1800*4=7200>>7200 seconds to fold all medium boxes
+Given that they need the same amount of time to fold all boxes, and are doing it simultaneously they will need 7200 seconds to fold all the boxes
+#### 7200
+"""
+
+id_orig = 3515
+id_shuffled = 4162
+
+question_annotated = """
+{name1,Hugo} can fold a small box in {a,3} seconds and a medium one in twice that time. {name2,Tom} can fold both the small and medium boxes in {b,4} seconds. If {name1,Hugo} and {name2,Tom} want to leave as early as possible, how long (in seconds) will it take them to fold {n,2400} small boxes and {m,1800} medium boxes?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_male)
+- $a = range(3, 8)
+- $b = range(4, 14)
+- $n = range(100, 4100, 100)
+- $m = range(100, 4100, 100)
+
+#conditions:
+- a < b
+- b < 2 * a
+- n * a == m * b
+
+#answer: n * a
+"""
+
+answer_annotated = """
+If it takes {name1} twice the amount of time to fold a medium box than a small box, then he needs 2*{a} = <<{2*a}={2*a}>>{2*a} seconds for the medium box
+If {name2} can fold either the small or medium box in {b} seconds, then he's faster at folding the medium box than {name1} because {b}s < {2*a}s
+If {name1} can fold the small box in {a} seconds, then he's faster at folding the small boxes than {name2} because {a}s < {b}s
+Therefore {name1} should fold all small boxes and {name2} should fold all the medium ones before doing the other size where they are slower
+If there are {n} small boxes and {name1} can fold 1 box in {a} seconds, then it would take him {n}*{a} = <<{n}*{a}={n*a}>>{n*a} seconds to fold all boxes
+If there are {m} medium boxes and {name2} can fold 1 box in {b} seconds, then it would take him {m}*{b} = <<{m}*{b}={m*b}>>{m*b} seconds to fold all medium boxes
+Given that they need the same amount of time to fold all boxes, and are doing it simultaneously they will need {n*a} seconds to fold all the boxes
+#### {n*a}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

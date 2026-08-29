@@ -1,0 +1,40 @@
+question = """
+Mike bought a DVD of his favorite movie. He paid $5 for it at the store. A friend of Mike's, Steve, saw this and also decided to buy a DVD of the movie, but it was already sold out. He needed to order it online, which cost him twice as much. And in addition, he needed to pay the shipping costs which were 80% of the price of the film he ordered. How much did Steve pay to get the DVD in total?
+"""
+
+answer = """
+The cost of the movie online was twice what Mike paid, so 2 * 5 = $<<2*5=10>>10.
+The shopping costs were standing at 80/100 * 10 = $<<80/100*10=8>>8.
+So in total Steve paid 10 + 8 = $<<10+8=18>>18.
+#### 18
+"""
+
+id_orig = 1395
+id_shuffled = 1502
+
+question_annotated = """
+{buyer,Mike} bought a DVD of his favorite movie. He paid ${price,5} for it at the store. A friend of {buyer,Mike}'s, {friend,Steve}, saw this and also decided to buy a DVD of the movie, but it was already sold out. He needed to order it online, which cost him {mult_txt,twice} as much. And in addition, he needed to pay the shipping costs which were {pct,80}% of the price of the film he ordered. How much did {friend,Steve} pay to get the DVD in total?
+
+#init:
+- buyer = sample(["Mike", "Chris", "Oliver", "Noah", "Eric", "Jason"])
+- friend = sample(["Steve", "Carl", "William", "Tyler", "Lucas"])
+- mult_txt, mult = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $price = range(2, 32)
+- $pct = range(10, 110, 10)
+
+#conditions:
+- divides(pct*mult*price, 100)
+
+#answer: mult*price + pct*mult*price//100
+"""
+
+answer_annotated = """
+The cost of the movie online was {mult_txt} what {buyer} paid, so {mult} * {price} = $<<{mult}*{price}={mult*price}>>{mult*price}.
+The shopping costs were standing at {pct}/100 * {mult*price} = $<<{pct}/100*{mult*price}={pct*mult*price//100}>>{pct*mult*price//100}.
+So in total {friend} paid {mult*price} + {pct*mult*price//100} = $<<{mult*price}+{pct*mult*price//100}={mult*price+pct*mult*price//100}>>{mult*price+pct*mult*price//100}.
+#### {mult*price+pct*mult*price//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

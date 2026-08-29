@@ -1,0 +1,40 @@
+question = """
+John buys 1/2 gallon jugs of cold brew coffee every 4 days.  How many cups of coffee does he drink a day?
+"""
+
+answer = """
+He drinks 512/8 = <<512/8=64>>64 ounces of coffee every 4 days
+That means he drinks 64/4 = <<64/4=16>>16 ounces of coffee a day
+So he drinks 16/8 = <<16/8=2>>2 cups a day
+#### 2
+"""
+
+id_orig = 910
+id_shuffled = 1006
+
+question_annotated = """
+{name,John} buys {f,1/2} gallon jugs of cold brew coffee every {d,4} days.  How many cups of coffee does he drink a day?
+
+#init:
+- name = sample(names_male)
+- f, j = sample([("1/4", 32), ("1/2", 64), ("3/4", 96), ("3/2", 192), ("5/2", 320), ("9/2", 576)])
+- $bb = range(2, 13)
+- $d = range(2, 73)
+
+#conditions:
+- divides(j, d)
+- divides(j, d * 8)
+
+#answer: j // (d * 8)
+"""
+
+answer_annotated = """
+He drinks {j*bb}/{bb} = <<{j*bb}/{bb}={j}>>{j} ounces of coffee every {d} days
+That means he drinks {j}/{d} = <<{j}/{d}={j//d}>>{j//d} ounces of coffee a day
+So he drinks {j//d}/8 = <<{j//d}/8={j//(d*8)}>>{j//(d*8)} cups a day
+#### {j//(d*8)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

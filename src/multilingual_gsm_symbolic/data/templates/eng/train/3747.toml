@@ -1,0 +1,43 @@
+question = """
+Mr. Zubir bought a pair of pants, a shirt, and a coat. The pair of pants and shirt costs $100. The pants and coat cost $244. The coat costs 5 times as much as the shirt. How much did Mr. Zubir pay for his coat?
+"""
+
+answer = """
+Let X be the coat's price. The shirt's price is X/5. The pants and the shirt cost $100, so the pants price is $100 - X/5.
+The pants and coat costs ($100 - X/5) + X = $244.
+Combining like terms and subtracting $100 from both sides, we get 4/5*X = $144.
+Dividing both sides by 4/5, we get X = $180.
+#### 180
+"""
+
+id_orig = 3148
+id_shuffled = 3747
+
+question_annotated = """
+Mr. {name,Zubir} bought a pair of pants, a shirt, and a coat. The pair of pants and shirt costs ${ps,100}. The pants and coat cost ${pc,244}. The coat costs {m,5} times as much as the shirt. How much did Mr. {name,Zubir} pay for his coat?
+
+#init:
+- name = sample(names_male)
+- $m = range(2, 10)
+- $ps = range(20, 220, 20)
+- $pc = range(104, 404, 20)
+
+#conditions:
+- pc > ps
+- divides(pc - ps, m - 1)
+- ps - (pc - ps) // (m - 1) > 0
+
+#answer: (pc - ps) * m // (m - 1)
+"""
+
+answer_annotated = """
+Let X be the coat's price. The shirt's price is X/{m}. The pants and the shirt cost ${ps}, so the pants price is ${ps} - X/{m}.
+The pants and coat costs (${ps} - X/{m}) + X = ${pc}.
+Combining like terms and subtracting ${ps} from both sides, we get {m-1}/{m}*X = ${pc - ps}.
+Dividing both sides by {m-1}/{m}, we get X = ${(pc - ps) * m // (m - 1)}.
+#### {(pc - ps) * m // (m - 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

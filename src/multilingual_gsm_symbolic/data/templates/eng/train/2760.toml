@@ -1,0 +1,52 @@
+question = """
+A wild tiger escapes the zoo.  He escapes at 1 AM and zookeepers do not notice he is missing until 4 AM.  He runs at a speed of 25 mph.  It takes 2 more hours to find him but after 4 hours of running, the tiger slows his speed to 10 mph.  He then gets chased for half an hour going 50 mph.  How far away from the zoo was he caught?
+"""
+
+answer = """
+He was running for 4-1=<<4-1=3>>3 hours
+So in that time he runs 3*25=<<3*25=75>>75 miles
+Since he slowed down after 4 hours, the time he spent running at 25mph was an additional 4-3=<<4-3=1>>1 hours
+So in the first hour they were finding him, he ran 1*25=<<1*25=25>>25 miles
+In the second hour they were finding him, he ran 1*10=<<1*10=10>>10 miles
+Finally, during the chase, he ran 50*.5=<<50*.5=25>>25 miles
+So he is 75+25+10+25=<<75+25+10+25=135>>135 miles away
+#### 135
+"""
+
+id_orig = 2401
+id_shuffled = 2760
+
+question_annotated = """
+A wild tiger escapes the zoo.  He escapes at {t1,1} AM and zookeepers do not notice he is missing until {t2,4} AM.  He runs at a speed of {s1,25} mph.  It takes {f,2} more hours to find him but after {slow,4} hours of running, the tiger slows his speed to {s2,10} mph.  He then gets chased for half an hour going {cspd,50} mph.  How far away from the zoo was he caught?
+
+#init:
+- $t1 = range(1, 9)
+- $t2 = range(2, 12)
+- $s1 = range(20, 60, 5)
+- $s2 = range(5, 30, 5)
+- $f = range(2, 3)
+- $slow = range(3, 13)
+- $cspd = range(30, 90, 10)
+
+#conditions:
+- t2 > t1
+- slow - t2 + t1 == 1
+- divides(cspd, 2)
+
+#answer: (t2-t1)*s1 + (slow-t2+t1)*s1 + (f-(slow-t2+t1))*s2 + cspd//2
+"""
+
+answer_annotated = """
+He was running for {t2}-{t1}=<<{t2}-{t1}={t2-t1}>>{t2-t1} hours
+So in that time he runs {t2-t1}*{s1}=<<{t2-t1}*{s1}={(t2-t1)*s1}>>{(t2-t1)*s1} miles
+Since he slowed down after {slow} hours, the time he spent running at {s1}mph was an additional {slow}-{t2-t1}=<<{slow}-{t2-t1}={slow-t2+t1}>>{slow-t2+t1} hours
+So in the first hour they were finding him, he ran 1*{s1}=<<1*{s1}={s1}>>{s1} miles
+In the second hour they were finding him, he ran 1*{s2}=<<1*{s2}={s2}>>{s2} miles
+Finally, during the chase, he ran {cspd}*.5=<<{cspd}*.5={cspd//2}>>{cspd//2} miles
+So he is {(t2-t1)*s1}+{s1}+{s2}+{cspd//2}=<<{(t2-t1)*s1}+{s1}+{s2}+{cspd//2}={(t2-t1)*s1+(slow-t2+t1)*s1+(f-(slow-t2+t1))*s2+cspd//2}>>{(t2-t1)*s1+(slow-t2+t1)*s1+(f-(slow-t2+t1))*s2+cspd//2} miles away
+#### {(t2-t1)*s1+(slow-t2+t1)*s1+(f-(slow-t2+t1))*s2+cspd//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

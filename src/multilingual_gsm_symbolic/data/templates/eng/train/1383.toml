@@ -1,0 +1,41 @@
+question = """
+Kaylin is five years younger than Sarah, who is twice as old as Eli, who is nine years older than Freyja. If Freyja is ten years old, how old is Kaylin?
+"""
+
+answer = """
+Since Freyja is ten years old, Eli is 10+9 = <<10+9=19>>19 years old.
+Sarah's age is twice Eli's, then Sarah is 2*19= <<2*19=38>>38 years old.
+Kaylin is five years younger than Sarah, then she is 38-5 = <<38-5=33>>33 years old.
+#### 33
+"""
+
+id_orig = 1276
+id_shuffled = 1383
+
+question_annotated = """
+{name,Kaylin} is {y_txt,five} years younger than Sarah, who is {t_txt,twice} as old as Eli, who is {o_txt,nine} years older than Freyja. If Freyja is {f_txt,ten} years old, how old is {name,Kaylin}?
+
+#init:
+- name = sample(names_female)
+- f_txt, f = sample([("ten", 10), ("eleven", 11), ("twelve", 12), ("thirteen", 13), ("fourteen", 14), ("fifteen", 15), ("sixteen", 16), ("seventeen", 17), ("eighteen", 18), ("nineteen", 19), ("twenty", 20)])
+- o_txt, o = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9)])
+- t_txt, t = sample(multi_times)
+- y_txt, y = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9)])
+
+#conditions:
+- t * (f + o) < 100
+- t * (f + o) > y
+
+#answer: t * (f + o) - y
+"""
+
+answer_annotated = """
+Since Freyja is {f_txt} years old, Eli is {f}+{o} = <<{f}+{o}={f+o}>>{f+o} years old.
+Sarah's age is {t_txt} Eli's, then Sarah is {t}*{f+o}= <<{t}*{f+o}={t*(f+o)}>>{t*(f+o)} years old.
+{name} is {y_txt} years younger than Sarah, then she is {t*(f+o)}-{y} = <<{t*(f+o)}-{y}={t*(f+o)-y}>>{t*(f+o)-y} years old.
+#### {t * (f + o) - y}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

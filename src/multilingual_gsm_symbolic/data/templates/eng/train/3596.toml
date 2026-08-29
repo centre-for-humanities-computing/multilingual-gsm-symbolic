@@ -1,0 +1,40 @@
+question = """
+Tommy's home is worth 25% more than he bought it for. He sells it and buys a new house that costs $500,000. If he had to take a loan for the 75% he can't pay, how much did he buy his first house for?
+"""
+
+answer = """
+He paid 25% of the new home price because 100 - 75 = <<100-75=25>>25
+He paid $125,000 towards the new home because 500,000 x .25 = <<500000*.25=125000>>125,000
+Therefore he paid $100,000 for his first home because 125,000 / 1.25 = <<125000/1.25=100000>>100,000
+#### 100000
+"""
+
+id_orig = 3022
+id_shuffled = 3596
+
+question_annotated = """
+{name,Tommy}'s home is worth {p,25}% more than he bought it for. He sells it and buys a new house that costs ${h,500000}. If he had to take a loan for the {l,75}% he can't pay, how much did he buy his first house for?
+
+#init:
+- name = sample(names_male)
+- $p = range(20, 31)
+- $l = range(70, 81)
+- $h = range(100000, 1010000, 10000)
+
+#conditions:
+- p + l == 100
+- divides(h * p, 100 + p)
+
+#answer: h*p//(100+p)
+"""
+
+answer_annotated = """
+He paid {p}% of the new home price because 100 - {l} = <<100-{l}={100-l}>>{100-l}
+He paid ${h*p//100} towards the new home because {h} x .{p} = <<{h}*.{p}={h*p//100}>>{h*p//100}
+Therefore he paid ${h*p//(100+p)} for his first home because {h*p//100} / 1.{p} = <<{h*p//100}/1.{p}={h*p//(100+p)}>>{h*p//(100+p)}
+#### {h*p//(100+p)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+Daniela goes shopping during a sale. She finds out that the store has 40 percent off on shoes and 20 percent off dresses. If Daniela buys 2 pairs of shoes originally priced at $50 a pair and a dress originally priced at $100, how much money does she spend?
+"""
+
+answer = """
+Two pairs of shoes at $50 a pair costs $50 x 2 = $<<50*2=100>>100.
+The shoes are discounted by 40 percent so she only pays 100 - 40 = <<100-40=60>>60 percent of the original price.
+Therefore the two pairs of shoes cost $100 x 0.60 = $<<100*0.60=60>>60.
+The dress is discounted by 20 percent so she only pays 100 - 20 = <<100-20=80>>80 percent of the original price.
+Therefore the dress costs $100 x 0.80 = $<<100*0.80=80>>80.
+In total Daniela spends $60 + $80 = $<<60+80=140>>140 for two pairs of shoes and a dress.
+#### 140
+"""
+
+id_orig = 386
+id_shuffled = 487
+
+question_annotated = """
+{name,Daniela} goes shopping during a sale. She finds out that the store has {sd,40} percent off on shoes and {dd,20} percent off dresses. If {name,Daniela} buys 2 pairs of shoes originally priced at ${sp,50} a pair and a dress originally priced at ${dp,100}, how much money does she spend?
+
+#init:
+- name = sample(names)
+- $sp = range(5, 105, 5)
+- $dp = range(20, 220, 20)
+- $sd = range(10, 100, 10)
+- $dd = range(10, 100, 10)
+
+#conditions:
+- sd < 100
+- dd < 100
+
+#answer: sp*2*(100-sd)//100 + dp*(100-dd)//100
+"""
+
+answer_annotated = """
+Two pairs of shoes at ${sp} a pair costs ${sp} x 2 = $<<{sp}*2={sp*2}>>{sp*2}.
+The shoes are discounted by {sd} percent so she only pays 100 - {sd} = <<100-{sd}={100-sd}>>{100-sd} percent of the original price.
+Therefore the two pairs of shoes cost ${sp*2} x 0.{(100-sd)//10}0 = $<<{sp*2}*0.{(100-sd)//10}0={sp*2*(100-sd)//100}>>{sp*2*(100-sd)//100}.
+The dress is discounted by {dd} percent so she only pays 100 - {dd} = <<100-{dd}={100-dd}>>{100-dd} percent of the original price.
+Therefore the dress costs ${dp} x 0.{(100-dd)//10}0 = $<<{dp}*0.{(100-dd)//10}0={dp*(100-dd)//100}>>{dp*(100-dd)//100}.
+In total {name} spends ${sp*2*(100-sd)//100} + ${dp*(100-dd)//100} = $<<{sp*2*(100-sd)//100}+{dp*(100-dd)//100}={sp*2*(100-sd)//100 + dp*(100-dd)//100}>>{sp*2*(100-sd)//100 + dp*(100-dd)//100} for two pairs of shoes and a dress.
+#### {sp*2*(100-sd)//100 + dp*(100-dd)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

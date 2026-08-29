@@ -1,0 +1,48 @@
+question = """
+Abel leaves for a vacation destination 1000 miles away driving 50 miles per hour.  An hour later Alice leaves from the same point for the same destination, traveling 40 miles per hour. How much earlier does Abel reach the destination in minutes??
+"""
+
+answer = """
+If Abel needs to travel 1000 miles going 50 miles per hour, this means it will take him 1000/50=<<1000/50=20>>20 hours to get there.
+If Alice needs to travel 1000 miles going 40 miles per hour, this means it will take her 1000/40=<<1000/40=25>>25 hours to get there.
+Since there are 60 minutes in an hour, this means it will take Abel 20*60= <<20*60=1200>>1200 minutes to arrive.
+Similarly, this means it will take Alice 25*60= <<25*60=1500>>1500 minutes to arrive.
+This means Abel arrives 1500-1200= <<1500-1200=300>>300 minutes before Alice if they both leave simultaneously.
+However, since Abel had a head start of 1 hour, which is 60 minutes, this means Abel arrives 300 + 60 = <<300+60=360>>360 minutes ahead of Alice
+#### 360
+"""
+
+id_orig = 1452
+id_shuffled = 1559
+
+question_annotated = """
+{abel,Abel} leaves for a vacation destination {d,1000} miles away driving {sa,50} miles per hour.  An hour later {alice,Alice} leaves from the same point for the same destination, traveling {sb,40} miles per hour. How much earlier does {abel,Abel} reach the destination in minutes??
+
+#init:
+- abel = sample(names_male)
+- alice = sample(names_female)
+- $d = range(100, 10100, 100)
+- $sa = range(5, 110, 5)
+- $sb = range(5, 110, 5)
+
+#conditions:
+- sa > sb
+- divides(d, sa)
+- divides(d, sb)
+
+#answer: d//sb*60 - d//sa*60 + 60
+"""
+
+answer_annotated = """
+If {abel} needs to travel {d} miles going {sa} miles per hour, this means it will take him {d}/{sa}=<<{d}/{sa}={d//sa}>>{d//sa} hours to get there.
+If {alice} needs to travel {d} miles going {sb} miles per hour, this means it will take her {d}/{sb}=<<{d}/{sb}={d//sb}>>{d//sb} hours to get there.
+Since there are 60 minutes in an hour, this means it will take {abel} {d//sa}*60= <<{d//sa}*60={d//sa*60}>>{d//sa*60} minutes to arrive.
+Similarly, this means it will take {alice} {d//sb}*60= <<{d//sb}*60={d//sb*60}>>{d//sb*60} minutes to arrive.
+This means {abel} arrives {d//sb*60}-{d//sa*60}= <<{d//sb*60}-{d//sa*60}={d//sb*60-d//sa*60}>>{d//sb*60-d//sa*60} minutes before {alice} if they both leave simultaneously.
+However, since {abel} had a head start of 1 hour, which is 60 minutes, this means {abel} arrives {d//sb*60-d//sa*60} + 60 = <<{d//sb*60-d//sa*60}+60={d//sb*60-d//sa*60+60}>>{d//sb*60-d//sa*60+60} minutes ahead of {alice}
+#### {d//sb*60 - d//sa*60 + 60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

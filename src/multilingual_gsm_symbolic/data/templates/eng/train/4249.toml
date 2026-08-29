@@ -1,0 +1,42 @@
+question = """
+Pima invested $400 in Ethereum. In the first week, it gained 25% in value. In the second week, it gained an additional 50% on top of the previous gain. How much is her investment worth now?
+"""
+
+answer = """
+For the first week, her investment gain is $400 * 25% = $<<400*25*.01=100>>100.
+This leaves her investment with a value of $400 + $100 = $<<400+100=500>>500.
+For the second week, her investment increased by $500 * 50% = $<<500*50*.01=250>>250.
+Pima's investment in Ethereum is now worth a total of $500 + $250 = $<<500+250=750>>750.
+#### 750
+"""
+
+id_orig = 3591
+id_shuffled = 4249
+
+question_annotated = """
+{name,Pima} invested ${inv,400} in Ethereum. In the first week, it gained {g1,25}% in value. In the second week, it gained an additional {g2,50}% on top of the previous gain. How much is her investment worth now?
+
+#init:
+- name = sample(names_female)
+- $inv = range(100, 2100, 100)
+- $g1 = range(5, 55, 5)
+- $g2 = range(5, 55, 5)
+
+#conditions:
+- divides(inv * g1, 100)
+- divides((inv + inv * g1 // 100) * g2, 100)
+
+#answer: inv + inv*g1//100 + (inv + inv*g1//100)*g2//100
+"""
+
+answer_annotated = """
+For the first week, her investment gain is ${inv} * {g1}% = $<<{inv}*{g1}*.01={inv*g1//100}>>{inv*g1//100}.
+This leaves her investment with a value of ${inv} + ${inv*g1//100} = $<<{inv}+{inv*g1//100}={inv+inv*g1//100}>>{inv+inv*g1//100}.
+For the second week, her investment increased by ${inv+inv*g1//100} * {g2}% = $<<{inv+inv*g1//100}*{g2}*.01={(inv+inv*g1//100)*g2//100}>>{(inv+inv*g1//100)*g2//100}.
+{name}'s investment in Ethereum is now worth a total of ${inv+inv*g1//100} + ${(inv+inv*g1//100)*g2//100} = $<<{inv+inv*g1//100}+{(inv+inv*g1//100)*g2//100}={inv+inv*g1//100+(inv+inv*g1//100)*g2//100}>>{inv+inv*g1//100+(inv+inv*g1//100)*g2//100}.
+#### {inv + inv*g1//100 + (inv + inv*g1//100)*g2//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

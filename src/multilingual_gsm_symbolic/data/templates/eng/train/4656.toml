@@ -1,0 +1,41 @@
+question = """
+Nikka has a 100 stamp collection. Thirty-five percent of her stamps are Chinese, 20% are US stamps, and the rest are Japanese stamps. How many Japanese stamps does Nikka have?
+"""
+
+answer = """
+Nikka has 100 x 35/100 = <<100*35/100=35>>35 Chinese stamps.
+She has 100 x 20/100 = <<100*20/100=20>>20 US stamps.
+So, Nikka has 35 + 20 = <<35+20=55>>55 stamps that are not Japanese.
+Thus, Nikka has 100 - 55 = <<100-55=45>>45 Japanese stamps.
+#### 45
+"""
+
+id_orig = 3949
+id_shuffled = 4656
+
+question_annotated = """
+{name,Nikka} has a {total,100} stamp collection. Thirty-five percent of her stamps are Chinese, {us,20}% are US stamps, and the rest are Japanese stamps. How many Japanese stamps does {name,Nikka} have?
+
+#init:
+- name = sample(["Nikka", "Anna", "Maria", "Elena"])
+- $total = range(20, 520, 10)
+- $us = range(5, 51, 5)
+
+#conditions:
+- divides(total * 35, 100)
+- divides(total * us, 100)
+
+#answer: total - total*35//100 - total*us//100
+"""
+
+answer_annotated = """
+{name} has {total} x 35/100 = <<{total}*35/100={total*35//100}>>{total*35//100} Chinese stamps.
+She has {total} x {us}/100 = <<{total}*{us}/100={total*us//100}>>{total*us//100} US stamps.
+So, {name} has 35 + {us} = <<35+{us}={35+us}>>{35+us} stamps that are not Japanese.
+Thus, {name} has {total} - {35+us} = <<{total}-{35+us}={total-35-us}>>{total-35-us} Japanese stamps.
+#### {total-35-us}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

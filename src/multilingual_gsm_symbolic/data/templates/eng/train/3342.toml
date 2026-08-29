@@ -1,0 +1,40 @@
+question = """
+Rob and Mark plan to meet at the national park. It takes 1 hour for Rob to get to the national park and it takes three times as much time for Mark to get to the national park. If Rob leaves his home at 11 a.m., at what time should Mark leave his home so that they both arrive at the same time?
+"""
+
+answer = """
+It takes 1 hour * 3 = <<1*3=3>>3 hours for Mark to get to the national park.
+The extra time it takes Mark to get to the national park is 3 hours - 1 hour = <<3-1=2>>2 hours
+Mark should leave his home at 11 a.m. - 2 hours = <<11-2=9>>9 a.m.
+#### 9
+"""
+
+id_orig = 2808
+id_shuffled = 3342
+
+question_annotated = """
+{name1,Rob} and {name2,Mark} plan to meet at the national park. It takes {r,1} hour for {name1,Rob} to get to the national park and it takes {mult_txt,three times} as much time for {name2,Mark} to get to the national park. If {name1,Rob} leaves his home at {L,11} a.m., at what time should {name2,Mark} leave his home so that they both arrive at the same time?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_male)
+- mult_txt, mult = sample([("twice", 2), ("three times", 3), ("four times", 4), ("five times", 5)])
+- $r = range(1, 13)
+- $L = range(1, 13)
+
+#conditions:
+- L - r * (mult - 1) >= 1
+
+#answer: L - r * (mult - 1)
+"""
+
+answer_annotated = """
+It takes {r} hour * {mult} = <<{r}*{mult}={r*mult}>>{r*mult} hours for {name2} to get to the national park.
+The extra time it takes {name2} to get to the national park is {r*mult} hours - {r} hour = <<{r*mult}-{r}={r*mult-r}>>{r*mult-r} hours
+{name2} should leave his home at {L} a.m. - {r*mult-r} hours = <<{L}-{r*mult-r}={L-(r*mult-r)}>>{L-(r*mult-r)} a.m.
+#### {L - r * (mult - 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

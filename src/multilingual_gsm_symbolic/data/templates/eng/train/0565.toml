@@ -1,0 +1,40 @@
+question = """
+There are 40 Judges in the state of Rhode Island.  10 percent of Judges are under 30 years old.  60 percent of Judges are 30-50 years old.  The rest of the Judges are over 50 years old.  How many Judges are over 50 years old?
+"""
+
+answer = """
+Under 30: 40(.10)=4
+30-50 years old:40(.60)=24
+Over 50:40-4-24=12 Judges
+#### 12
+"""
+
+id_orig = 492
+id_shuffled = 565
+
+question_annotated = """
+There are {t,40} Judges in the state of Rhode Island.  {p1,10} percent of Judges are under 30 years old.  {p2,60} percent of Judges are 30-50 years old.  The rest of the Judges are over 50 years old.  How many Judges are over 50 years old?
+
+#init:
+- $t = range(20, 210, 5)
+- $p1 = range(5, 35, 5)
+- $p2 = range(10, 75, 10)
+
+#conditions:
+- p1 + p2 < 100
+- divides(t * p1, 100)
+- divides(t * p2, 100)
+
+#answer: t - t*p1//100 - t*p2//100
+"""
+
+answer_annotated = """
+Under 30: {t}(.{p1})={t*p1//100}
+30-50 years old:{t}(.{p2})={t*p2//100}
+Over 50:{t}-{t*p1//100}-{t*p2//100}={t-t*p1//100-t*p2//100} Judges
+#### {t-t*p1//100-t*p2//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

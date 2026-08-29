@@ -1,0 +1,48 @@
+question = """
+Rose had 10 kilograms of rice. She cooked 9/10 kilograms in the morning and 1/4 of the remaining in the evening. How many grams of rice did she have left?
+"""
+
+answer = """
+Rose cooked 10 x 9/10 = <<10*9/10=9>>9 kilograms of rice in the morning.
+She had 10 - 9 = <<10-9=1>>1 kilogram of rice left then.
+One kilogram is equal to 1 x 1000 = <<1*1000=1000>>1000 grams.
+So, Rose cooked 1000 x 1/4 = <<1000*1/4=250>>250 grams of rice in the evening.
+Therefore, she has 1000 - 250 = <<1000-250=750>>750 grams of rice left.
+#### 750
+"""
+
+id_orig = 424
+id_shuffled = 497
+
+question_annotated = """
+{name,Rose} had {a,10} kilograms of rice. She cooked {b,9}/{c,10} kilograms in the morning and {e,1}/{f,4} of the remaining in the evening. How many grams of rice did she have left?
+
+#init:
+- name = sample(names_female)
+- $a = range(2, 22)
+- $b = range(1, 11)
+- $c = range(2, 15)
+- $e = range(1, 5)
+- $f = range(2, 17)
+
+#conditions:
+- b < c
+- e < f
+- is_int(a * b / c)
+- is_int((a - a * b / c) * 1000 * e / f)
+
+#answer: (a - a*b//c) * 1000 - (a - a*b//c) * 1000 * e // f
+"""
+
+answer_annotated = """
+{name} cooked {a} x {b}/{c} = <<{a}*{b}/{c}={a*b//c}>>{a*b//c} kilograms of rice in the morning.
+She had {a} - {a*b//c} = <<{a}-{a*b//c}={a-a*b//c}>>{a-a*b//c} kilogram of rice left then.
+One kilogram is equal to 1 x 1000 = <<1*1000=1000>>1000 grams.
+So, {name} cooked {(a-a*b//c)*1000} x {e}/{f} = <<{(a-a*b//c)*1000}*{e}/{f}={(a-a*b//c)*1000*e//f}>>{(a-a*b//c)*1000*e//f} grams of rice in the evening.
+Therefore, she has {(a-a*b//c)*1000} - {(a-a*b//c)*1000*e//f} = <<{(a-a*b//c)*1000}-{(a-a*b//c)*1000*e//f}={(a-a*b//c)*1000-(a-a*b//c)*1000*e//f}>>{(a-a*b//c)*1000-(a-a*b//c)*1000*e//f} grams of rice left.
+#### {(a-a*b//c)*1000-(a-a*b//c)*1000*e//f}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

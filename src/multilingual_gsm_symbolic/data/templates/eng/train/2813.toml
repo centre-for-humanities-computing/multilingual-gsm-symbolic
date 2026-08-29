@@ -1,0 +1,48 @@
+question = """
+Wally gives 3/4 of his 400 tickets to his two friends Jensen and Finley, who share the tickets in a ratio of 4:11. How many tickets does Finley get?
+"""
+
+answer = """
+Wally gives his friends 3/4*400 = <<3/4*400=300>>300 tickets to share.
+The total ratio that represents the tickets that Jensen and Finley share is 4+11 = <<4+11=15>>15
+From the total ratio, the fraction that represents the share that Finley got is 11/15, and since he shared with Jensen 300 tickets, he got 11/15*300 = <<11/15*300=220>>220 tickets
+#### 220
+"""
+
+id_orig = 2440
+id_shuffled = 2813
+
+question_annotated = """
+{name,Wally} gives {fnum,3}/{fden,4} of his {t,400} tickets to his two friends {f1,Jensen} and {f2,Finley}, who share the tickets in a ratio of {rj,4}:{rf,11}. How many tickets does {f2,Finley} get?
+
+#init:
+- name = sample(["Wally", "Victor", "Simon"])
+- f1 = sample(["Jensen", "Leon", "Omar"])
+- f2 = sample(["Finley", "Hugo", "Ravi"])
+- $t = range(100, 500, 20)
+- $fnum = range(1, 5)
+- $fden = range(2, 9)
+- $rj = range(1, 16)
+- $rf = range(1, 25)
+
+#conditions:
+- fnum < fden
+- divides(t * fnum, fden)
+- divides(rf * t * fnum, fden * (rj + rf))
+- name != f1
+- name != f2
+- f1 != f2
+
+#answer: rf*t*fnum//(fden*(rj+rf))
+"""
+
+answer_annotated = """
+{name} gives his friends {fnum}/{fden}*{t} = <<{fnum}/{fden}*{t}={t*fnum//fden}>>{t*fnum//fden} tickets to share.
+The total ratio that represents the tickets that {f1} and {f2} share is {rj}+{rf} = <<{rj}+{rf}={rj+rf}>>{rj+rf}
+From the total ratio, the fraction that represents the share that {f2} got is {rf}/{rj+rf}, and since he shared with {f1} {t*fnum//fden} tickets, he got {rf}/{rj+rf}*{t*fnum//fden} = <<{rf}/{rj+rf}*{t*fnum//fden}={rf*t*fnum//(fden*(rj+rf))}>>{rf*t*fnum//(fden*(rj+rf))} tickets
+#### {rf*t*fnum//(fden*(rj+rf))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

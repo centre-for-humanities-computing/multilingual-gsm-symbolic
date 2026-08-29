@@ -1,0 +1,41 @@
+question = """
+Erica lives near a lake where most locals sell fish as their main source of income, earning $20 per kg of fish. She goes out fishing today and catches twice as many fish as she caught in total in the past four months. If Erica trawled 80 kg of fish in the past four months, not including today, how much money will she have earned in the past four months including today (assuming she sells all her fish)?
+"""
+
+answer = """
+In the past four months, not including today, Erica has 80 kg * $20/kg = $<<80*20=1600>>1600 worth of fish.
+Today, Erica trawled 80 * 2 = <<80*2=160>>160 kg of fish.
+Thus today's earnings are 160 kg * $20/kg = $<<160*20=3200>>3200.
+Her total earnings are $3200 + $1600 = $<<3200+1600=4800>>4800
+#### 4800
+"""
+
+id_orig = 3020
+id_shuffled = 3594
+
+question_annotated = """
+{name,Erica} lives near a lake where most locals sell fish as their main source of income, earning ${rate,20} per kg of fish. She goes out fishing today and catches {mult_txt,twice} as many fish as she caught in total in the past four months. If {name,Erica} trawled {kg,80} kg of fish in the past four months, not including today, how much money will she have earned in the past four months including today (assuming she sells all her fish)?
+
+#init:
+- name = sample(names_female)
+- mult_txt, mult = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $rate = range(10, 60)
+- $kg = range(40, 240)
+
+#conditions:
+- kg > 0
+
+#answer: kg * rate * (mult + 1)
+"""
+
+answer_annotated = """
+In the past four months, not including today, {name} has {kg} kg * ${rate}/kg = $<<{kg}*{rate}={kg*rate}>>{kg*rate} worth of fish.
+Today, {name} trawled {kg} * {mult} = <<{kg}*{mult}={kg*mult}>>{kg*mult} kg of fish.
+Thus today's earnings are {kg*mult} kg * ${rate}/kg = $<<{kg*mult}*{rate}={kg*mult*rate}>>{kg*mult*rate}.
+Her total earnings are ${kg*mult*rate} + ${kg*rate} = $<<{kg*mult*rate}+{kg*rate}={kg*rate*(mult+1)}>>{kg*rate*(mult+1)}
+#### {kg * rate * (mult + 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

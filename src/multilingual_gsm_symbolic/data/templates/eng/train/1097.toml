@@ -1,0 +1,48 @@
+question = """
+A plant supplier was able to sell 20 pieces of orchids for $50 each and 15 pieces potted Chinese money plant for $25. The money he earned was then used to pay his two workers $40 each and to buy new pots worth $150. How much money was left from the plant supplier's earnings?
+"""
+
+answer = """
+The plant supplier earned $50 x 20 = $<<50*20=1000>>1000 for the orchids.
+He earned $25 x 15 = $<<25*15=375>>375 for the potted Chinese money plants.
+So, his total earnings was $1000 + $375 = $<<1000+375=1375>>1375.
+Then he paid $40 x 2 = $<<40*2=80>>80 to his workers.
+He used a total of $80 + $150 = $<<80+150=230>>230 for the worker's pay and new pots.
+Hence, he was left with $1375 - $230 = $<<1145=1145>>1145 from his earnings.
+#### 1145
+"""
+
+id_orig = 1001
+id_shuffled = 1097
+
+question_annotated = """
+A plant supplier was able to sell {no,20} pieces of orchids for ${po,50} each and {nm,15} pieces potted Chinese money plant for ${pm,25}. The money he earned was then used to pay his {wk_txt,two} workers ${pay,40} each and to buy new pots worth ${pot,150}. How much money was left from the plant supplier's earnings?
+
+#init:
+- $no = range(10, 31)
+- $po = range(10, 60, 10)
+- $nm = range(10, 16)
+- $pm = range(5, 30, 5)
+- $pay = range(20, 60, 20)
+- $pot = range(100, 201, 50)
+- wk_txt, wk_val = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+
+#conditions:
+- po*no + pm*nm > wk_val*pay + pot
+
+#answer: po*no + pm*nm - wk_val*pay - pot
+"""
+
+answer_annotated = """
+The plant supplier earned ${po} x {no} = $<<{po}*{no}={po*no}>>{po*no} for the orchids.
+He earned ${pm} x {nm} = $<<{pm}*{nm}={pm*nm}>>{pm*nm} for the potted Chinese money plants.
+So, his total earnings was ${po*no} + ${pm*nm} = $<<{po*no}+{pm*nm}={po*no+pm*nm}>>{po*no+pm*nm}.
+Then he paid ${pay} x {wk_val} = $<<{pay}*{wk_val}={pay*wk_val}>>{pay*wk_val} to his workers.
+He used a total of ${pay*wk_val} + ${pot} = $<<{pay*wk_val}+{pot}={pay*wk_val+pot}>>{pay*wk_val+pot} for the worker's pay and new pots.
+Hence, he was left with ${po*no+pm*nm} - ${pay*wk_val+pot} = $<<{po*no+pm*nm-wk_val*pay-pot}={po*no+pm*nm-wk_val*pay-pot}>>{po*no+pm*nm-wk_val*pay-pot} from his earnings.
+#### {po*no + pm*nm - wk_val*pay - pot}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

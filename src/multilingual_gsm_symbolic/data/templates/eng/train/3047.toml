@@ -1,0 +1,47 @@
+question = """
+Carter has a 14-hour road trip.  He wants to stop every 2 hours to stretch his legs.  He also wants to make 2 additional stops for food and 3 additional stops for gas.  If each pit stop takes 20 minutes, how many hours will his road trip become?
+"""
+
+answer = """
+He has a 14-hour trip and wants to stop every 2 hours so that's 14/2 = <<14/2=7>>7 pit stops
+He will make 7 pit stops plus 2 more for food and 3 more for gas for a total of 7+2+3 = <<7+2+3=12>>12 pit stops
+Each pit stop will take 20 minutes and he is making 12 stops so that's 20*12 = <<20*12=240>>240 minutes
+60 minutes are in an hour and he's adding 240 minutes to his trip so that's 240/60 = <<240/60=4>>4 more hours
+His trip started as 14 hours and he will add an additional 4 hours in pit stops for a total of a 14+4 = <<14+4=18>>18 hour long trip
+#### 18
+"""
+
+id_orig = 2630
+id_shuffled = 3047
+
+question_annotated = """
+{name,Carter} has a {t,14}-hour road trip.  He wants to stop every {gap,2} hours to stretch his legs.  He also wants to make {f,2} additional stops for food and {g,3} additional stops for gas.  If each pit stop takes {m,20} minutes, how many hours will his road trip become?
+
+#init:
+- name = sample(names_male)
+- $t = range(6, 102, 2)
+- $gap = range(2, 5)
+- $f = range(1, 5)
+- $g = range(1, 5)
+- $m = range(10, 65, 5)
+
+#conditions:
+- gap < t
+- divides(t, gap)
+- divides((t//gap + f + g) * m, 60)
+
+#answer: t + (t//gap + f + g) * m // 60
+"""
+
+answer_annotated = """
+He has a {t}-hour trip and wants to stop every {gap} hours so that's {t}/{gap} = <<{t}/{gap}={t//gap}>>{t//gap} pit stops
+He will make {t//gap} pit stops plus {f} more for food and {g} more for gas for a total of {t//gap}+{f}+{g} = <<{t//gap}+{f}+{g}={t//gap+f+g}>>{t//gap+f+g} pit stops
+Each pit stop will take {m} minutes and he is making {t//gap+f+g} stops so that's {m}*{t//gap+f+g} = <<{m}*{t//gap+f+g}={(t//gap+f+g)*m}>>{(t//gap+f+g)*m} minutes
+60 minutes are in an hour and he's adding {(t//gap+f+g)*m} minutes to his trip so that's {(t//gap+f+g)*m}/60 = <<{(t//gap+f+g)*m}/60={(t//gap+f+g)*m//60}>>{(t//gap+f+g)*m//60} more hours
+His trip started as {t} hours and he will add an additional {(t//gap+f+g)*m//60} hours in pit stops for a total of a {t}+{(t//gap+f+g)*m//60} = <<{t}+{(t//gap+f+g)*m//60}={t+(t//gap+f+g)*m//60}>>{t+(t//gap+f+g)*m//60} hour long trip
+#### {t+(t//gap+f+g)*m//60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

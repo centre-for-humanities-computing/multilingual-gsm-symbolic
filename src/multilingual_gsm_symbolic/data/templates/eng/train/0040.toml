@@ -1,0 +1,47 @@
+question = """
+A concert ticket costs $40. Mr. Benson bought 12 tickets and received a 5% discount for every ticket bought that exceeds 10. How much did Mr. Benson pay in all?
+"""
+
+answer = """
+Mr. Benson had a 5% discount for each of the 12 - 10 = <<12-10=2>>2 tickets.
+So, those two tickets had a $40 x 5/100 = $<<40*5/100=2>>2 discount each.
+Hence, each ticket cost $40 - $2 = $<<40-2=38>>38 each.
+Thus, two discounted tickets amount to $38 x 2 = $<<38*2=76>>76.
+And the other ten tickets amount to $40 x 10 = $<<40*10=400>>400.
+Hence, Mr. Benson paid a total of $400 + $76 = $<<400+76=476>>476.
+#### 476
+"""
+
+id_orig = 40
+id_shuffled = 40
+
+question_annotated = """
+A concert ticket costs ${price,40}. {name,Mr. Benson} bought {k,12} tickets and received a {rate,5}% discount for every ticket bought that exceeds {t,10}. How much did {name,Mr. Benson} pay in all?
+
+#init:
+- name = sample(names_male)
+- $price = range(10, 310)
+- $rate = range(1, 21)
+- $t = range(10, 11)
+- $k = range(12, 13)
+
+#conditions:
+- k - t == 2
+- divides(price * rate, 100)
+
+#answer: price*t + (price - price*rate//100) * 2
+"""
+
+answer_annotated = """
+{name} had a {rate}% discount for each of the {k} - {t} = <<{k}-{t}={k-t}>>{k-t} tickets.
+So, those two tickets had a ${price} x {rate}/100 = $<<{price}*{rate}/100={price*rate//100}>>{price*rate//100} discount each.
+Hence, each ticket cost ${price} - ${price*rate//100} = $<<{price}-{price*rate//100}={price-price*rate//100}>>{price-price*rate//100} each.
+Thus, two discounted tickets amount to ${price-price*rate//100} x 2 = $<<{price-price*rate//100}*2={(price-price*rate//100)*2}>>{(price-price*rate//100)*2}.
+And the other ten tickets amount to ${price} x {t} = $<<{price}*{t}={price*t}>>{price*t}.
+Hence, {name} paid a total of ${price*t} + ${(price-price*rate//100)*2} = $<<{price*t}+{(price-price*rate//100)*2}={price*t+(price-price*rate//100)*2}>>{price*t+(price-price*rate//100)*2}.
+#### {price*t + (price - price*rate//100) * 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

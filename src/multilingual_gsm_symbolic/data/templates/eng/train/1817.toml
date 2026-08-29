@@ -1,0 +1,37 @@
+question = """
+Sue is traveling from New York to San Francisco, 16 hours later after landing in New York from New Orleans. If the journey from New Orleans to New York took 3/4 times as much time as she takes to travel from New York to San Francisco, and she lands in San Francisco 24 hours later after departing from New York, calculate the total time she took to reach San Francisco from New Orleans?
+"""
+
+answer = """
+To travel from New Orleans to New York, Sue took 3/4 * 24 hours = <<3/4*24=18>>18 hours.
+If she stayed in New York for 16 hours, Sue's total time to travel from New Orleans to San Francisco is: 18 hours from New Orleans to New York + 16 hours in New York + 24 hours from New York to San Francisco = <<18+16+24=58>>58 hours.
+#### 58
+"""
+
+id_orig = 1692
+id_shuffled = 1817
+
+question_annotated = """
+{name,Sue} is traveling from New York to San Francisco, {lay,16} hours later after landing in New York from New Orleans. If the journey from New Orleans to New York took {fn,3}/{fd,4} times as much time as she takes to travel from New York to San Francisco, and she lands in San Francisco {t,24} hours later after departing from New York, calculate the total time she took to reach San Francisco from New Orleans?
+
+#init:
+- name = sample(names_female)
+- fn, fd = sample([(1, 2), (1, 3), (2, 3), (3, 4), (3, 5), (4, 5), (2, 5), (5, 6), (3, 8), (5, 8), (7, 8), (5, 12)])
+- $lay = range(2, 50)
+- $t = range(10, 61)
+
+#conditions:
+- divides(fn * t, fd)
+
+#answer: fn*t//fd + lay + t
+"""
+
+answer_annotated = """
+To travel from New Orleans to New York, {name} took {fn}/{fd} * {t} hours = <<{fn}/{fd}*{t}={fn*t//fd}>>{fn*t//fd} hours.
+If she stayed in New York for {lay} hours, {name}'s total time to travel from New Orleans to San Francisco is: {fn*t//fd} hours from New Orleans to New York + {lay} hours in New York + {t} hours from New York to San Francisco = <<{fn*t//fd}+{lay}+{t}={fn*t//fd+lay+t}>>{fn*t//fd+lay+t} hours.
+#### {fn*t//fd + lay + t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

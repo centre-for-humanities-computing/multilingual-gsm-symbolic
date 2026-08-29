@@ -1,0 +1,45 @@
+question = """
+The profit from a business transaction is shared among 2 business partners, Mike and Johnson in the ratio 2:5 respectively. If Johnson got $2500, how much will Mike have after spending some of his share on a shirt that costs $200?
+"""
+
+answer = """
+According to the ratio, for every 5 parts that Johnson gets, Mike gets 2 parts
+Since Johnson got $2500, each part is therefore $2500/5 = $<<2500/5=500>>500
+Mike will get 2*$500 = $<<2*500=1000>>1000
+After buying the shirt he will have $1000-$200 = $<<1000-200=800>>800 left
+#### 800
+"""
+
+id_orig = 16
+id_shuffled = 151
+
+question_annotated = """
+The profit from a business transaction is shared among 2 business partners, {name1,Mike} and {name2,Johnson} in the ratio {a,2}:{b,5} respectively. If {name2,Johnson} got ${j,2500}, how much will {name1,Mike} have after spending some of his share on a shirt that costs ${s,200}?
+
+#init:
+- name1 = sample(["Mike", "John", "Peter"])
+- name2 = sample(["Johnson", "Smith", "Walker"])
+- $a = range(1, 11)
+- $b = range(2, 12)
+- $j = range(1000, 10000, 100)
+- $s = range(50, 500, 50)
+
+#conditions:
+- divides(j, b)
+- a * j // b > s
+- name1 != name2
+
+#answer: a*j//b - s
+"""
+
+answer_annotated = """
+According to the ratio, for every {b} parts that {name2} gets, {name1} gets {a} parts
+Since {name2} got ${j}, each part is therefore ${j}/{b} = $<<{j}/{b}={j//b}>>{j//b}
+{name1} will get {a}*${j//b} = $<<{a}*{j//b}={a*j//b}>>{a*j//b}
+After buying the shirt he will have ${a*j//b}-${s} = $<<{a*j//b}-{s}={a*j//b-s}>>{a*j//b-s} left
+#### {a*j//b - s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

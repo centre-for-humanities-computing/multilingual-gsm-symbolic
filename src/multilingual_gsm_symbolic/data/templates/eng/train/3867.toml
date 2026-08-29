@@ -1,0 +1,41 @@
+question = """
+Deborah has four letters to mail. Standard postage is $1.08 per letter, with an additional charge for international mail. Deborah is mailing two letters internationally, and she is paying $4.60 to mail four letters. How many cents is the additional charge per letter for international shipping?
+"""
+
+answer = """
+A dollar is 100 cents, so standard postage is 108 cents.
+Deborah’s four letters cost 108 * 4 = <<108*4=432>>432 cents for standard postage.
+She paid 460 - 432 = <<460-432=28>>28 cents for international shipping on two letters.
+Thus, the additional international shipping charge is 28 / 2 = <<28/2=14>>14 cents per letter.
+#### 14
+"""
+
+id_orig = 3254
+id_shuffled = 3867
+
+question_annotated = """
+{name,Deborah} has four letters to mail. Standard postage is {postage_txt,$1.08} per letter, with an additional charge for international mail. {name,Deborah} is mailing two letters internationally, and she is paying {paid_txt,$4.60} to mail four letters. How many cents is the additional charge per letter for international shipping?
+
+#init:
+- name = sample(names_female)
+- postage_txt, pc = sample([("$0.55", 55), ("$0.68", 68), ("$0.75", 75), ("$0.82", 82), ("$0.90", 90), ("$1.08", 108), ("$1.15", 115), ("$1.24", 124), ("$1.35", 135), ("$1.42", 142), ("$1.50", 150), ("$1.66", 166), ("$1.75", 175), ("$1.83", 183), ("$1.92", 192)])
+- paid_txt, tc = sample([("$3.20", 320), ("$3.48", 348), ("$3.72", 372), ("$4.10", 410), ("$4.36", 436), ("$4.60", 460), ("$4.88", 488), ("$5.02", 502), ("$5.30", 530), ("$5.56", 556), ("$5.90", 590), ("$6.14", 614), ("$6.48", 648), ("$6.72", 672), ("$7.06", 706), ("$7.38", 738), ("$7.64", 764), ("$8.00", 800), ("$8.26", 826), ("$8.58", 858), ("$8.94", 894), ("$9.22", 922), ("$9.56", 956), ("$9.88", 988), ("$10.24", 1024), ("$10.52", 1052), ("$10.86", 1086), ("$11.18", 1118), ("$11.44", 1144), ("$11.78", 1178), ("$12.04", 1204)])
+
+#conditions:
+- tc > 4 * pc
+- divides(tc - 4 * pc, 2)
+
+#answer: (tc - 4*pc)//2
+"""
+
+answer_annotated = """
+A dollar is 100 cents, so standard postage is {pc} cents.
+{name}’s four letters cost {pc} * 4 = <<{pc}*4={pc*4}>>{pc*4} cents for standard postage.
+She paid {tc} - {pc*4} = <<{tc}-{pc*4}={tc-pc*4}>>{tc-pc*4} cents for international shipping on two letters.
+Thus, the additional international shipping charge is {tc-pc*4} / 2 = <<{tc-pc*4}/2={(tc-pc*4)//2}>>{(tc-pc*4)//2} cents per letter.
+#### {(tc - 4*pc)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

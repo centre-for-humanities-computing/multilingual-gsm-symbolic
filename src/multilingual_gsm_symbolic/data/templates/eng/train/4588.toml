@@ -1,0 +1,48 @@
+question = """
+Tony drives a car that gets 25 miles to the gallon.  He drives 50 miles round trip to work 5 days a week.  His tank holds 10 gallons.  He begins the week with a full tank and when he runs out he fills up at the local gas station for $2 a gallon.  How much money does Tony spend on gas in 4 weeks?
+"""
+
+answer = """
+First, we need to determine how many miles Tony drives in 4 weeks. We do this by performing 50*5=<<50*5=250>>250 miles per week.
+Next, we multiply the weekly total by 4 by performing 4*250= <<4*250=1000>>1000 miles in 4 weeks.
+Now, we need to find out how many times Tony needs to fill up his gas tank. His gas tank holds enough gas to last 25*10=<<25*10=250>>250 miles.
+This means in 4 weeks, he needs to fill up his tank 1000/250= <<1000/250=4>>4 times.
+Since Tony's gas tank holds 10 gallons, this means he needs to pay for 4*10- 40 gallons of gas in a month.
+Since gas costs $2 a gallon, this means Tony spends 40*2=$<<40*2=80>>80 on gas every month,
+#### 80
+"""
+
+id_orig = 3894
+id_shuffled = 4588
+
+question_annotated = """
+{name,Tony} drives a car that gets {mpg,25} miles to the gallon.  He drives {dist,50} miles round trip to work {days,5} days a week.  His tank holds {tank,10} gallons.  He begins the week with a full tank and when he runs out he fills up at the local gas station for ${price,2} a gallon.  How much money does {name,Tony} spend on gas in {w,4} weeks?
+
+#init:
+- name = sample(names_male)
+- $mpg = range(15, 36, 5)
+- $dist = range(10, 70, 10)
+- $days = range(1, 7)
+- $tank = range(8, 17)
+- $price = range(1, 6)
+- $w = range(2, 9)
+
+#conditions:
+- divides(w * dist * days, mpg * tank)
+
+#answer: w*dist*days//(mpg*tank)*tank*price
+"""
+
+answer_annotated = """
+First, we need to determine how many miles {name} drives in {w} weeks. We do this by performing {dist}*{days}=<<{dist}*{days}={dist*days}>>{dist*days} miles per week.
+Next, we multiply the weekly total by {w} by performing {w}*{dist*days}= <<{w}*{dist*days}={w*dist*days}>>{w*dist*days} miles in {w} weeks.
+Now, we need to find out how many times {name} needs to fill up his gas tank. His gas tank holds enough gas to last {mpg}*{tank}=<<{mpg}*{tank}={mpg*tank}>>{mpg*tank} miles.
+This means in {w} weeks, he needs to fill up his tank {w*dist*days}/{mpg*tank}= <<{w*dist*days}/{mpg*tank}={w*dist*days//(mpg*tank)}>>{w*dist*days//(mpg*tank)} times.
+Since {name}'s gas tank holds {tank} gallons, this means he needs to pay for {w*dist*days//(mpg*tank)}*{tank}- {w*dist*days//(mpg*tank)*tank} gallons of gas in a month.
+Since gas costs ${price} a gallon, this means {name} spends {w*dist*days//(mpg*tank)*tank}*{price}=$<<{w*dist*days//(mpg*tank)*tank}*{price}={w*dist*days//(mpg*tank)*tank*price}>>{w*dist*days//(mpg*tank)*tank*price} on gas every month,
+#### {w*dist*days//(mpg*tank)*tank*price}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

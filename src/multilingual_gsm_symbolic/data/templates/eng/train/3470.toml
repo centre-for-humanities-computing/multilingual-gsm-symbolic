@@ -1,0 +1,40 @@
+question = """
+Andrew holds a bake sale to fundraise for charity. The bake sale earns a total of $400. Andrew keeps $100 to cover the cost of ingredients. He donates half of the remaining total to the local homeless shelter, and the other half to the local food bank. Andrew also decides to donate $10 from his own piggy bank to the local homeless shelter. How much money in total does Andrew donate to the homeless shelter?
+"""
+
+answer = """
+After paying off the cost of ingredients, Andrew has $400 - $100 = $<<400-100=300>>300
+Since half of the money goes to the homeless shelter, the shelter receives $300 / 2 = $<<300/2=150>>150
+After contributing some of his own money, Andrew donates $150 + $10 = $<<150+10=160>>160 to the shelter.
+#### 160
+"""
+
+id_orig = 2908
+id_shuffled = 3470
+
+question_annotated = """
+{name,Andrew} holds a bake sale to fundraise for charity. The bake sale earns a total of ${earn,400}. {name,Andrew} keeps ${keep,100} to cover the cost of ingredients. He donates half of the remaining total to the local homeless shelter, and the other half to the local food bank. {name,Andrew} also decides to donate ${extra,10} from his own piggy bank to the local homeless shelter. How much money in total does {name,Andrew} donate to the homeless shelter?
+
+#init:
+- name = sample(names_male)
+- $earn = range(200, 1200, 20)
+- $keep = range(20, 200, 10)
+- $extra = range(5, 105, 5)
+
+#conditions:
+- keep < earn
+- divides(earn - keep, 2)
+
+#answer: (earn - keep) // 2 + extra
+"""
+
+answer_annotated = """
+After paying off the cost of ingredients, {name} has ${earn} - ${keep} = $<<{earn}-{keep}={earn-keep}>>{earn-keep}
+Since half of the money goes to the homeless shelter, the shelter receives ${earn-keep} / 2 = $<<{earn-keep}/2={(earn-keep)//2}>>{(earn-keep)//2}
+After contributing some of his own money, {name} donates ${(earn-keep)//2} + ${extra} = $<<{(earn-keep)//2}+{extra}={(earn-keep)//2+extra}>>{(earn-keep)//2+extra} to the shelter.
+#### {(earn-keep)//2 + extra}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

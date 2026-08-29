@@ -1,0 +1,42 @@
+question = """
+Lyanna set up a food bank to collect food to give to the homeless in her local town. In the first week, 40 pounds of food were donated to the food bank by the people of her local town. In the second week, donations were twice as high as the first week. If she gave out 70% of the donated food to the homeless in the third week, calculate the amount of food remaining in the food bank.
+"""
+
+answer = """
+If 40 pounds of food was donated to the food bank in the first week, the second week, which had twice the amount of food donated as the first week, had 2*40 = 80 pounds of food.
+The total amount of food donated to the food bank after the second week is 40+80 = <<40+80=120>>120 pounds.
+In the third week, she gave to the homeless 70/100*120 = <<70/100*120=84>>84 pounds of food.
+The total amount of food remaining in the food bank after she gave out 70% to the homeless is 120-84 = <<120-84=36>>36 pounds of food.
+#### 36
+"""
+
+id_orig = 3604
+id_shuffled = 4262
+
+question_annotated = """
+{name,Lyanna} set up a food bank to collect food to give to the homeless in her local town. In the first week, {w,40} pounds of food were donated to the food bank by the people of her local town. In the second week, donations were {mult_txt,twice} as high as the first week. If she gave out {p,70}% of the donated food to the homeless in the third week, calculate the amount of food remaining in the food bank.
+
+#init:
+- name = sample(names_female)
+- $w = range(10, 210)
+- $p = range(5, 95)
+- mult_txt, m = sample(multi_times)
+
+#conditions:
+- p < 100
+- divides(p * w * (m + 1), 100)
+
+#answer: w*(m + 1) - p*w*(m + 1)//100
+"""
+
+answer_annotated = """
+If {w} pounds of food was donated to the food bank in the first week, the second week, which had {mult_txt} the amount of food donated as the first week, had {m}*{w} = {m*w} pounds of food.
+The total amount of food donated to the food bank after the second week is {w}+{m*w} = <<{w}+{m*w}={w+m*w}>>{w+m*w} pounds.
+In the third week, she gave to the homeless {p}/100*{w+m*w} = <<{p}/100*{w+m*w}={p*w*(m+1)//100}>>{p*w*(m+1)//100} pounds of food.
+The total amount of food remaining in the food bank after she gave out {p}% to the homeless is {w+m*w}-{p*w*(m+1)//100} = <<{w+m*w}-{p*w*(m+1)//100}={w*(m+1)-p*w*(m+1)//100}>>{w*(m+1)-p*w*(m+1)//100} pounds of food.
+#### {w*(m+1)-p*w*(m+1)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

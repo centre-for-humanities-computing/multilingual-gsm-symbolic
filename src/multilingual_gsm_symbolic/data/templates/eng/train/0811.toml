@@ -1,0 +1,42 @@
+question = """
+Tom Sawyer has tricked his friends into whitewashing Aunt Polly's 100-foot fence. His first friend, Ben, whitewashed 10 feet. His second friend Billy whitewashed a fifth of the remaining fence. A third friend, Johnny, whitewashed a third of the fence that was left after that. How much of the fence still needs to be whitewashed?
+"""
+
+answer = """
+It's a 100-foot fence, and Ben whitewashed 10 feet, so there are 100 - 10 = <<100-10=90>>90 feet left after Ben is done.
+Billy whitewashed a fifth of that, or 90 / 5 = <<90/5=18>>18 feet.
+There is now 90 - 18 = <<90-18=72>>72 feet of fence left.
+Johnny whitewashes a third of that, or 72 / 3 = <<72/3=24>>24 feet.
+That leaves 72 - 24 = <<72-24=48>>48 feet of fence left to be whitewashed.
+#### 48
+"""
+
+id_orig = 738
+id_shuffled = 811
+
+question_annotated = """
+Tom Sawyer has tricked his friends into whitewashing Aunt Polly's {L,100}-foot fence. His first friend, Ben, whitewashed {b1,10} feet. His second friend Billy whitewashed a fifth of the remaining fence. A third friend, Johnny, whitewashed a third of the fence that was left after that. How much of the fence still needs to be whitewashed?
+
+#init:
+- $L = range(100, 2500, 5)
+- $b1 = range(10, 61, 5)
+
+#conditions:
+- divides(L - b1, 5)
+- divides(L - b1 - (L - b1) // 5, 3)
+
+#answer: L - b1 - (L - b1) // 5 - (L - b1 - (L - b1) // 5) // 3
+"""
+
+answer_annotated = """
+It's a {L}-foot fence, and Ben whitewashed {b1} feet, so there are {L} - {b1} = <<{L}-{b1}={L-b1}>>{L-b1} feet left after Ben is done.
+Billy whitewashed a fifth of that, or {L-b1} / 5 = <<{L-b1}/5={(L-b1)//5}>>{(L-b1)//5} feet.
+There is now {L-b1} - {(L-b1)//5} = <<{L-b1}-{(L-b1)//5}={L-b1-(L-b1)//5}>>{L-b1-(L-b1)//5} feet of fence left.
+Johnny whitewashes a third of that, or {L-b1-(L-b1)//5} / 3 = <<{L-b1-(L-b1)//5}/3={(L-b1-(L-b1)//5)//3}>>{(L-b1-(L-b1)//5)//3} feet.
+That leaves {L-b1-(L-b1)//5} - {(L-b1-(L-b1)//5)//3} = <<{L-b1-(L-b1)//5}-{(L-b1-(L-b1)//5)//3}={L-b1-(L-b1)//5-(L-b1-(L-b1)//5)//3}>>{L-b1-(L-b1)//5-(L-b1-(L-b1)//5)//3} feet of fence left to be whitewashed.
+#### {L-b1-(L-b1)//5-(L-b1-(L-b1)//5)//3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

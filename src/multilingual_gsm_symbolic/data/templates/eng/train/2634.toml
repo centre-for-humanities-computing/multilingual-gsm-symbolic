@@ -1,0 +1,38 @@
+question = """
+Marta works on her grandparent's farm to raise money for a new phone. So far, she has collected $240. For every hour she works, she receives $10. Her grandmother often gives her tips, and she has collected $50 in tips in total. How many hours has Marta worked on the farm so far?
+"""
+
+answer = """
+Ignoring tips, Marta earned $240 - $50 = $<<240-50=190>>190.
+Therefore, she has worked 190 / 10 = <<190/10=19>>19 hours.
+#### 19
+"""
+
+id_orig = 2286
+id_shuffled = 2634
+
+question_annotated = """
+{name,Marta} works on her grandparent's farm to raise money for a new phone. So far, she has collected ${total,240}. For every hour she works, she receives ${rate,10}. Her grandmother often gives her tips, and she has collected ${tips,50} in tips in total. How many hours has {name,Marta} worked on the farm so far?
+
+#init:
+- name = sample(names_female)
+- $total = range(100, 1100, 10)
+- $rate = range(5, 25, 5)
+- $tips = range(10, 100, 10)
+
+#conditions:
+- total > tips
+- divides(total - tips, rate)
+
+#answer: (total - tips) // rate
+"""
+
+answer_annotated = """
+Ignoring tips, {name} earned ${total} - ${tips} = $<<{total}-{tips}={total-tips}>>{total-tips}.
+Therefore, she has worked {total-tips} / {rate} = <<{total-tips}/{rate}={(total-tips)//rate}>>{(total-tips)//rate} hours.
+#### {(total - tips) // rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

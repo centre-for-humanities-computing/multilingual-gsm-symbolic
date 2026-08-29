@@ -1,0 +1,50 @@
+question = """
+There is very little car traffic on Happy Street. During the week, most cars pass it on Tuesday - 25. On Monday, 20% less than on Tuesday, and on Wednesday, 2 more cars than on Monday. On Thursday and Friday, it is about 10 cars each day. On the weekend, traffic drops to 5 cars per day. How many cars travel down Happy Street from Monday through Sunday?
+"""
+
+answer = """
+On Monday there are 20/100 * 25 = <<20/100*25=5>>5 cars passing the street less than on Tuesday.
+So on Monday, there are 25 - 5 = <<25-5=20>>20 cars on Happy Street.
+On Wednesday, there are 20 + 2 = <<20+2=22>>22 cars on this street.
+On Thursday and Friday, there is a total of 10 * 2 = <<10*2=20>>20 cars passing.
+On the weekend 5 * 2 = <<5*2=10>>10 cars are passing.
+So from Monday through Sunday, there are 20 + 25 + 22 + 20 + 10 = <<20+25+22+20+10=97>>97 cars traveling down the street.
+#### 97
+"""
+
+id_orig = 107
+id_shuffled = 107
+
+question_annotated = """
+There is very little car traffic on Happy Street. During the week, most cars pass it on Tuesday - {t,25}. On Monday, {p,20}% less than on Tuesday, and on Wednesday, {w,2} more cars than on Monday. On Thursday and Friday, it is about {tf,10} cars each day. On the weekend, traffic drops to {we,5} cars per day. How many cars travel down Happy Street from Monday through Sunday?
+
+#init:
+- $p = range(10, 55, 5)
+- $t = range(5, 105, 5)
+- $w = range(1, 11)
+- $tf = range(5, 25, 5)
+- $we = range(1, 11)
+
+#conditions:
+- divides(p * t, 100)
+- p * t >= 100
+- w < p * t // 100
+- tf < t
+- we < t
+
+#answer: (t - p*t//100) + t + (t - p*t//100 + w) + tf*2 + we*2
+"""
+
+answer_annotated = """
+On Monday there are {p}/100 * {t} = <<{p}/100*{t}={p*t//100}>>{p*t//100} cars passing the street less than on Tuesday.
+So on Monday, there are {t} - {p*t//100} = <<{t}-{p*t//100}={t - p*t//100}>>{t - p*t//100} cars on Happy Street.
+On Wednesday, there are {t - p*t//100} + {w} = <<{t - p*t//100}+{w}={t - p*t//100 + w}>>{t - p*t//100 + w} cars on this street.
+On Thursday and Friday, there is a total of {tf} * 2 = <<{tf}*2={tf*2}>>{tf*2} cars passing.
+On the weekend {we} * 2 = <<{we}*2={we*2}>>{we*2} cars are passing.
+So from Monday through Sunday, there are {t - p*t//100} + {t} + {t - p*t//100 + w} + {tf*2} + {we*2} = <<{t - p*t//100}+{t}+{t - p*t//100 + w}+{tf*2}+{we*2}={(t - p*t//100) + t + (t - p*t//100 + w) + tf*2 + we*2}>>{(t - p*t//100) + t + (t - p*t//100 + w) + tf*2 + we*2} cars traveling down the street.
+#### {(t - p*t//100) + t + (t - p*t//100 + w) + tf*2 + we*2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

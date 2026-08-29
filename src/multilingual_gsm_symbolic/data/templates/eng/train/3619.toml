@@ -1,0 +1,49 @@
+question = """
+For the funfair, the school organizers ordered 30 rolls of tickets. Each roll of tickets has 100 tickets. The 4th graders bought 30% of the tickets while the 5th graders bought 50% of the remaining tickets. Then the 6th graders bought a total of 100 tickets. How many tickets were left unsold?
+"""
+
+answer = """
+There were a total of 30 x 100 = <<30*100=3000>>3000 tickets ordered by the school organizers.
+The 4th graders bought 3000 x 30/100 = <<3000*30/100=900>>900 tickets.
+So, there were 3000 - 900 = <<3000-900=2100>>2100 tickets left for the other two grade levels.
+The 5th graders bought 2100 x 50/100 = <<2100*50/100=1050>>1050 tickets.
+So, 2100 - 1050 = <<2100-1050=1050>>1050 tickets were left then.
+Since 100 tickets were bought by the 6th graders, therefore 1050 - 100 = <<950=950>>950 tickets were left unsold.
+#### 950
+"""
+
+id_orig = 3045
+id_shuffled = 3619
+
+question_annotated = """
+For the funfair, the school organizers ordered {rolls,30} rolls of tickets. Each roll of tickets has {per_roll,100} tickets. The 4th graders bought {p4,30}% of the tickets while the 5th graders bought {p5,50}% of the remaining tickets. Then the 6th graders bought a total of {t6,100} tickets. How many tickets were left unsold?
+
+#init:
+- $rolls = range(10, 60)
+- $per_roll = range(20, 120, 20)
+- $p4 = range(10, 60, 10)
+- $p5 = range(10, 90, 10)
+- $t6 = range(50, 550, 50)
+
+#conditions:
+- divides(rolls * per_roll * p4, 100)
+- divides(rolls * per_roll * (100 - p4), 100)
+- divides(rolls * per_roll * (100 - p4) * p5, 10000)
+- rolls * per_roll * (100 - p4) * (100 - p5) > t6 * 10000
+
+#answer: rolls*per_roll*(100-p4)//100*(100-p5)//100 - t6
+"""
+
+answer_annotated = """
+There were a total of {rolls} x {per_roll} = <<{rolls}*{per_roll}={rolls*per_roll}>>{rolls*per_roll} tickets ordered by the school organizers.
+The 4th graders bought {rolls*per_roll} x {p4}/100 = <<{rolls*per_roll}*{p4}/100={rolls*per_roll*p4//100}>>{rolls*per_roll*p4//100} tickets.
+So, there were {rolls*per_roll} - {rolls*per_roll*p4//100} = <<{rolls*per_roll}-{rolls*per_roll*p4//100}={rolls*per_roll*(100-p4)//100}>>{rolls*per_roll*(100-p4)//100} tickets left for the other two grade levels.
+The 5th graders bought {rolls*per_roll*(100-p4)//100} x {p5}/100 = <<{rolls*per_roll*(100-p4)//100}*{p5}/100={rolls*per_roll*(100-p4)*p5//10000}>>{rolls*per_roll*(100-p4)*p5//10000} tickets.
+So, {rolls*per_roll*(100-p4)//100} - {rolls*per_roll*(100-p4)*p5//10000} = <<{rolls*per_roll*(100-p4)//100}-{rolls*per_roll*(100-p4)*p5//10000}={rolls*per_roll*(100-p4)//100*(100-p5)//100}>>{rolls*per_roll*(100-p4)//100*(100-p5)//100} tickets were left then.
+Since {t6} tickets were bought by the 6th graders, therefore {rolls*per_roll*(100-p4)//100*(100-p5)//100} - {t6} = <<{rolls*per_roll*(100-p4)//100*(100-p5)//100 - t6}={rolls*per_roll*(100-p4)//100*(100-p5)//100 - t6}>>{rolls*per_roll*(100-p4)//100*(100-p5)//100 - t6} tickets were left unsold.
+#### {rolls*per_roll*(100-p4)//100*(100-p5)//100 - t6}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

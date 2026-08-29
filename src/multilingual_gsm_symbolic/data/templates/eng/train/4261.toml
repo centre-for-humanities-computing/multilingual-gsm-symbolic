@@ -1,0 +1,46 @@
+question = """
+Robi and Rudy contributed money to start a business that could earn them profit. Robi contributed $4000, and Rudy contributed 1/4 more money than Robi. If they made a profit of 20 percent of the total amount and decided to share the profits equally, calculate the amount of money each got.
+"""
+
+answer = """
+If Robi contributed $4000, then Rudy contributed 1/4*4000 = $1000 more.
+The total amount of money Rudy contributed is $4000+$1000 = $<<4000+1000=5000>>5000
+Together, the contributed a total of $5000+$4000 = $<<5000+4000=9000>>9000
+They made a 20% profit, a total of 20/100*$9000 = $<<20/100*9000=1800>>1800
+When they decided to share the profit equally, each received $1800/2 = $<<1800/2=900>>900
+#### 900
+"""
+
+id_orig = 3603
+id_shuffled = 4261
+
+question_annotated = """
+{n1,Robi} and {n2,Rudy} contributed money to start a business that could earn them profit. {n1,Robi} contributed ${a,4000}, and {n2,Rudy} contributed 1/{d,4} more money than {n1,Robi}. If they made a profit of {p,20} percent of the total amount and decided to share the profits equally, calculate the amount of money each got.
+
+#init:
+- n1 = sample(["Robi", "Rudy"])
+- n2 = sample(["Robi", "Rudy"])
+- $a = range(200, 4200, 200)
+- $d = range(2, 9)
+- $p = range(10, 60, 10)
+
+#conditions:
+- n1 != n2
+- divides(a, d)
+- divides((2*a + a//d) * p, 200)
+
+#answer: (2*a + a//d) * p // 200
+"""
+
+answer_annotated = """
+If {n1} contributed ${a}, then {n2} contributed 1/{d}*{a} = ${a//d} more.
+The total amount of money {n2} contributed is ${a}+${a//d} = $<<{a}+{a//d}={a+a//d}>>{a+a//d}
+Together, the contributed a total of ${a+a//d}+${a} = $<<{a+a//d}+{a}={2*a+a//d}>>{2*a+a//d}
+They made a {p}% profit, a total of {p}/100*${2*a+a//d} = $<<{p}/100*{2*a+a//d}={(2*a+a//d)*p//100}>>{(2*a+a//d)*p//100}
+When they decided to share the profit equally, each received ${(2*a+a//d)*p//100}/2 = $<<{(2*a+a//d)*p//100}/2={(2*a+a//d)*p//200}>>{(2*a+a//d)*p//200}
+#### {(2*a+a//d)*p//200}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

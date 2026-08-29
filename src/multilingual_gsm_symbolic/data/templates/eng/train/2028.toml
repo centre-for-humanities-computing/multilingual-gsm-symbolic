@@ -1,0 +1,47 @@
+question = """
+Harry needs to buy 5 spellbooks that each cost 5 gold, three potion kits that each cost 20 silver, and one owl that costs 28 gold. There are 9 silver to a gold. How much will Harry pay total, in silvers?
+"""
+
+answer = """
+First find the total cost of the spellbooks by multiplying the price per book by the number of books: 5 books * 5 gold/book = <<5*5=25>>25 gold
+Then add that amount to the cost of the owl: 25 gold + 28 gold = <<25+28=53>>53 gold
+Now multiply that number by the conversion rate between gold and silver: 53 gold * 9 silver/gold = <<53*9=477>>477 silver
+Now find the total cost of the potion kits by multiplying the price per kit by the number of kit: 3 kits * 20 silver/kit = <<3*20=60>>60 silver
+Now add that amount to the cost of the books and owl to find Harry's total spending: 60 silver + 477 silver = <<60+477=537>>537 silver
+#### 537
+"""
+
+id_orig = 1829
+id_shuffled = 2028
+
+question_annotated = """
+{name,Harry} needs to buy {nbooks,5} spellbooks that each cost {bookprice,5} gold, {nkit_txt,three} potion kits that each cost {kitprice,20} silver, and one owl that costs {owlprice,28} gold. There are {rate,9} silver to a gold. How much will {name,Harry} pay total, in silvers?
+
+#init:
+- name = sample(names_male)
+- nkit_txt, nkit = sample([("two", 2), ("three", 3), ("four", 4)])
+- $nbooks = range(2, 8)
+- $bookprice = range(2, 12)
+- $kitprice = range(5, 45, 5)
+- $owlprice = range(10, 60, 5)
+- $rate = range(5, 11)
+
+#conditions:
+- nbooks > 0
+- nkit > 0
+
+#answer: (nbooks*bookprice + owlprice) * rate + nkit*kitprice
+"""
+
+answer_annotated = """
+First find the total cost of the spellbooks by multiplying the price per book by the number of books: {nbooks} books * {bookprice} gold/book = <<{nbooks}*{bookprice}={nbooks*bookprice}>>{nbooks*bookprice} gold
+Then add that amount to the cost of the owl: {nbooks*bookprice} gold + {owlprice} gold = <<{nbooks*bookprice}+{owlprice}={nbooks*bookprice+owlprice}>>{nbooks*bookprice+owlprice} gold
+Now multiply that number by the conversion rate between gold and silver: {nbooks*bookprice+owlprice} gold * {rate} silver/gold = <<{nbooks*bookprice+owlprice}*{rate}={(nbooks*bookprice+owlprice)*rate}>>{(nbooks*bookprice+owlprice)*rate} silver
+Now find the total cost of the potion kits by multiplying the price per kit by the number of kit: {nkit} kits * {kitprice} silver/kit = <<{nkit}*{kitprice}={nkit*kitprice}>>{nkit*kitprice} silver
+Now add that amount to the cost of the books and owl to find {name}'s total spending: {nkit*kitprice} silver + {(nbooks*bookprice+owlprice)*rate} silver = <<{nkit*kitprice}+{(nbooks*bookprice+owlprice)*rate}={nkit*kitprice+(nbooks*bookprice+owlprice)*rate}>>{nkit*kitprice+(nbooks*bookprice+owlprice)*rate} silver
+#### {(nbooks*bookprice + owlprice) * rate + nkit*kitprice}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

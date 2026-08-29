@@ -1,0 +1,43 @@
+question = """
+The dinner bill for 6 friends came to $150. Silas said he would pay for half of the bill and the remaining friends could split the rest of the bill and leave a 10% tip for the whole meal. How many dollars will one of the friends pay?
+"""
+
+answer = """
+Silas paid half = 150/2 = <<150/2=75>>75
+Remaining bill paid by 5 friends = 75 + 10% of 150 = 75 + 15 = 90
+Each person will pay 1/5 which is 90/5 = <<90/5=18>>18
+Each friend will pay $<<18=18>>18.
+#### 18
+"""
+
+id_orig = 1696
+id_shuffled = 1821
+
+question_annotated = """
+The dinner bill for {f,6} friends came to ${b,150}. {name,Silas} said he would pay for half of the bill and the remaining friends could split the rest of the bill and leave a {t,10}% tip for the whole meal. How many dollars will one of the friends pay?
+
+#init:
+- name = sample(names_male)
+- $f = range(3, 13)
+- $b = range(100, 2050, 50)
+- $t = range(1, 21)
+
+#conditions:
+- divides(b, 2)
+- divides(b * t, 100)
+- divides(b//2 + b*t//100, f - 1)
+
+#answer: (b//2 + b*t//100)//(f - 1)
+"""
+
+answer_annotated = """
+{name} paid half = {b}/2 = <<{b}/2={b//2}>>{b//2}
+Remaining bill paid by {f-1} friends = {b//2} + {t}% of {b} = {b//2} + {b*t//100} = {b//2 + b*t//100}
+Each person will pay 1/{f-1} which is {b//2 + b*t//100}/{f-1} = <<{b//2 + b*t//100}/{f-1}={(b//2 + b*t//100)//(f-1)}>>{(b//2 + b*t//100)//(f-1)}
+Each friend will pay $<<{(b//2 + b*t//100)//(f-1)}={(b//2 + b*t//100)//(f-1)}>>{(b//2 + b*t//100)//(f-1)}.
+#### {(b//2 + b*t//100)//(f-1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

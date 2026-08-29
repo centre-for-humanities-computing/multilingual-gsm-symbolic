@@ -1,0 +1,40 @@
+question = """
+One serving of soup has 1 cup of vegetables and 2.5 cups of broth. How many pints of vegetables and broth combined would be needed for 8 servings?
+"""
+
+answer = """
+One serving = 1 + 2.5 = <<1+2.5=3.5>>3.5 cups
+Eight servings = 8 * 3.5 = <<8*3.5=28>>28 cups
+28 cups = 14 pints
+Eight servings would need 14 pints of vegetables and broth.
+#### 14
+"""
+
+id_orig = 3062
+id_shuffled = 3647
+
+question_annotated = """
+One serving of soup has {v,1} cup of vegetables and {b,2.5} cups of broth. How many pints of vegetables and broth combined would be needed for {s,8} servings?
+
+#init:
+- $v = range(1, 6)
+- b = sample(["1.5", "2.5", "3.5", "4.5", "5.5"])
+- $s = range(2, 32)
+
+#conditions:
+- is_int(s * (v + float(b)) / 2)
+
+#answer: round(s * (v + float(b)) / 2)
+"""
+
+answer_annotated = """
+One serving = {v} + {b} = <<{v}+{b}={v+float(b)}>>{v+float(b)} cups
+Eight servings = {s} * {v+float(b)} = <<{s}*{v+float(b)}={round(s*(v+float(b)))}>>{round(s*(v+float(b)))} cups
+{round(s*(v+float(b)))} cups = {round(s*(v+float(b))/2)} pints
+Eight servings would need {round(s*(v+float(b))/2)} pints of vegetables and broth.
+#### {round(s*(v+float(b))/2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

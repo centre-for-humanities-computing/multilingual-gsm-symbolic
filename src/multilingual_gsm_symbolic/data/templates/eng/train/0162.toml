@@ -1,0 +1,44 @@
+question = """
+The owner of a Turkish restaurant wanted to prepare traditional dishes for an upcoming celebration. She ordered ground beef, in four-pound packages, from three different butchers. The following morning, the first butcher delivered 10 packages. A couple of hours later, 7 packages arrived from the second butcher. Finally, the third butcher’s delivery arrived at dusk. If all the ground beef delivered by the three butchers weighed 100 pounds, how many packages did the third butcher deliver?
+"""
+
+answer = """
+Since each package weighed 4 pounds, the first butcher delivered 10 * 4 = <<10*4=40>>40 pounds
+The second butcher's delivery was 7 * 4 = <<7*4=28>>28 pounds
+The first two butchers therefore delivered 40 + 28 = <<40+28=68>>68 pounds
+Subtracting that weight from the total weight of ground beef gives 100 - 68 = <<100-68=32>>32 pounds
+It therefore means the third butcher delivered 32/4 = <<32/4=8>>8 packages.
+#### 8
+"""
+
+id_orig = 144
+id_shuffled = 162
+
+question_annotated = """
+The owner of a Turkish restaurant wanted to prepare traditional dishes for an upcoming celebration. She ordered ground beef, in {wtxt,four}-pound packages, from three different butchers. The following morning, the first butcher delivered {p1,10} packages. A couple of hours later, {p2,7} packages arrived from the second butcher. Finally, the third butcher’s delivery arrived at dusk. If all the ground beef delivered by the three butchers weighed {t,100} pounds, how many packages did the third butcher deliver?
+
+#init:
+- wtxt, w = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $p1 = range(2, 21)
+- $p2 = range(2, 21)
+- $t = range(100, 420, 20)
+
+#conditions:
+- divides(t, w)
+- t > w * (p1 + p2)
+
+#answer: (t - w * (p1 + p2)) // w
+"""
+
+answer_annotated = """
+Since each package weighed {w} pounds, the first butcher delivered {p1} * {w} = <<{p1}*{w}={p1*w}>>{p1*w} pounds
+The second butcher's delivery was {p2} * {w} = <<{p2}*{w}={p2*w}>>{p2*w} pounds
+The first two butchers therefore delivered {p1*w} + {p2*w} = <<{p1*w}+{p2*w}={(p1+p2)*w}>>{(p1+p2)*w} pounds
+Subtracting that weight from the total weight of ground beef gives {t} - {(p1+p2)*w} = <<{t}-{(p1+p2)*w}={t-(p1+p2)*w}>>{t-(p1+p2)*w} pounds
+It therefore means the third butcher delivered {t-(p1+p2)*w}/{w} = <<{t-(p1+p2)*w}/{w}={(t-w*(p1+p2))//w}>>{(t-w*(p1+p2))//w} packages.
+#### {(t-w*(p1+p2))//w}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

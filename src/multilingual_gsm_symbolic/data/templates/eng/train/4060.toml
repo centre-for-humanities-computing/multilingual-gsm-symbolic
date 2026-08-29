@@ -1,0 +1,43 @@
+question = """
+The population of Mojave was 4000 a decade ago. If the town's population has increased three times, and the population analysis firm predicts that it will increase by 40% after five years, how many people will be in Mojave in five years?
+"""
+
+answer = """
+Since the population of Mojave has increased three times the number it was a decade ago, there are 3*4000 = <<3*4000=12000>>12,000 people in Mojave now.
+It's predicted that the population will increase by 40/100*12,000 = <<40/100*12000=4800>>4800 people after five years.
+This means there will be 12,000+4800 = <<12000+4800=16800>>16,800 people living in Mojave in five years.
+#### 16800
+"""
+
+id_orig = 3425
+id_shuffled = 4060
+
+question_annotated = """
+The population of {city,Mojave} was {p,4000} a decade ago. If the town's population has increased {times_txt,three times}, and the population analysis firm predicts that it will increase by {inc,40}% after five years, how many people will be in {city,Mojave} in five years?
+
+#init:
+- city = sample(["Mojave", "Barstow", "Fresno", "Reno", "Flagstaff"])
+- $p = range(2000, 9000, 100)
+- times_txt, k = sample([("three times", 3), ("four times", 4), ("five times", 5)])
+- $inc = range(20, 90, 20)
+
+#conditions:
+- k * p >= 10000
+- k * p * inc < 1000000
+- k * p * (100 + inc) >= 1000000
+- k * p * (100 + inc) < 100000000
+- divides(k * p * inc, 100)
+
+#answer: k * p * (100 + inc) // 100
+"""
+
+answer_annotated = """
+Since the population of {city} has increased {times_txt} the number it was a decade ago, there are {k}*{p} = <<{k}*{p}={k*p}>>{k*p//1000},{k*p%1000//100}{k*p%100//10}{k*p%10} people in {city} now.
+It's predicted that the population will increase by {inc}/100*{k*p//1000},{k*p%1000//100}{k*p%100//10}{k*p%10} = <<{inc}/100*{k*p}={inc*k*p//100}>>{inc*k*p//100} people after five years.
+This means there will be {k*p//1000},{k*p%1000//100}{k*p%100//10}{k*p%10}+{inc*k*p//100} = <<{k*p}+{inc*k*p//100}={k*p*(100+inc)//100}>>{k*p*(100+inc)//100//1000},{k*p*(100+inc)//100%1000//100}{k*p*(100+inc)//100%100//10}{k*p*(100+inc)//100%10} people living in {city} in five years.
+#### {k*p*(100+inc)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

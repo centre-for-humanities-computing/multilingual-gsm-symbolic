@@ -1,0 +1,52 @@
+question = """
+James buys $3000 worth of stuff from Amazon.  He has to return a TV that cost $700 and a bike that cost $500.  He also sells another bike that cost 20% more than the bike he returned for 80% of what he bought it for.  He then buys a toaster for $100.  How much is he out of pocket for everything?
+"""
+
+answer = """
+The items he returned were valued at $700 + $500 = $<<700+500=1200>>1200
+So far he is out 3000-1200 = <<3000-1200=1800>>1800 after recouping 1200.
+An item that is 20% more expensive cost 1 + .2 = 1.2 times as much as the item
+So that means the bike he sold cost $500 * 1.2 = $<<500*1.2=600>>600
+He sold it for $600 * .8 = $<<600*.8=480>>480
+From the bike that he had bought for 600, he was out 600-480 =<<600-480=120>>120
+So far he is out 1800+120 = <<1800+120=1920>>1920
+If he also bought a toaster worth 100, he was out 1920+100 = <<1920+100=2020>>2020
+#### 2020
+"""
+
+id_orig = 778
+id_shuffled = 851
+
+question_annotated = """
+{name,James} buys ${stuff,3000} worth of stuff from Amazon.  He has to return a TV that cost ${tv,700} and a bike that cost ${bike,500}.  He also sells another bike that cost 20% more than the bike he returned for 80% of what he bought it for.  He then buys a toaster for ${toaster,100}.  How much is he out of pocket for everything?
+
+#init:
+- name = sample(names_male)
+- $stuff = range(2500, 4000, 50)
+- $tv = range(200, 900, 50)
+- $bike = range(100, 1000, 25)
+- $toaster = range(50, 350, 50)
+
+#conditions:
+- divides(bike, 25)
+- stuff > tv + bike
+- stuff - tv - bike + bike*6//5 - bike*6//5*4//5 + toaster > 0
+
+#answer: stuff - tv - bike + bike*6//5 - bike*6//5*4//5 + toaster
+"""
+
+answer_annotated = """
+The items he returned were valued at ${tv} + ${bike} = $<<{tv}+{bike}={tv+bike}>>{tv+bike}
+So far he is out {stuff}-{tv+bike} = <<{stuff}-{tv+bike}={stuff-tv-bike}>>{stuff-tv-bike} after recouping {tv+bike}.
+An item that is 20% more expensive cost 1 + .2 = 1.2 times as much as the item
+So that means the bike he sold cost ${bike} * 1.2 = $<<{bike}*1.2={bike*6//5}>>{bike*6//5}
+He sold it for ${bike*6//5} * .8 = $<<{bike*6//5}*.8={bike*6//5*4//5}>>{bike*6//5*4//5}
+From the bike that he had bought for {bike*6//5}, he was out {bike*6//5}-{bike*6//5*4//5} =<<{bike*6//5}-{bike*6//5*4//5}={bike*6//5-bike*6//5*4//5}>>{bike*6//5-bike*6//5*4//5}
+So far he is out {stuff-tv-bike}+{bike*6//5-bike*6//5*4//5} = <<{stuff-tv-bike}+{bike*6//5-bike*6//5*4//5}={stuff-tv-bike+bike*6//5-bike*6//5*4//5}>>{stuff-tv-bike+bike*6//5-bike*6//5*4//5}
+If he also bought a toaster worth {toaster}, he was out {stuff-tv-bike+bike*6//5-bike*6//5*4//5}+{toaster} = <<{stuff-tv-bike+bike*6//5-bike*6//5*4//5}+{toaster}={stuff-tv-bike+bike*6//5-bike*6//5*4//5+toaster}>>{stuff-tv-bike+bike*6//5-bike*6//5*4//5+toaster}
+#### {stuff - tv - bike + bike*6//5 - bike*6//5*4//5 + toaster}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

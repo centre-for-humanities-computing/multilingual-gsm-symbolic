@@ -1,0 +1,38 @@
+question = """
+Quincy just bought a car using a 5 year loan with no interest.  He put $5,0.00 down as a down payment making his monthly payment $250.00.  What is the price of the car?
+"""
+
+answer = """
+1 year has 12 months and his loan is for 5 years so that's 12*5 = <<12*5=60>>60 months
+His car payment is $250.00 a month for 60 months so 250*60 = $<<250*60=15000>>15,000
+He also put a down payment of $5,000 on the car so the total price of the car is $5,000 + $15,000 = $<<5000+15000=20000>>20,000 car price
+#### 20000
+"""
+
+id_orig = 3912
+id_shuffled = 4619
+
+question_annotated = """
+{name,Quincy} just bought a car using a {y,5} year loan with no interest.  He put $5,0.00 down as a down payment making his monthly payment ${m,250}.00.  What is the price of the car?
+
+#init:
+- name = sample(names)
+- $y = range(2, 12)
+- $m = range(250, 3000, 250)
+
+#conditions:
+- divides(12*m*y, 1000)
+
+#answer: 5000 + m*12*y
+"""
+
+answer_annotated = """
+1 year has 12 months and his loan is for {y} years so that's 12*{y} = <<12*{y}={12*y}>>{12*y} months
+His car payment is ${m}.00 a month for {12*y} months so {m}*{12*y} = $<<{m}*{12*y}={m*12*y}>>{m*12*y//1000},000
+He also put a down payment of $5,000 on the car so the total price of the car is $5,000 + ${m*12*y//1000},000 = $<<5000+{m*12*y}={5000+m*12*y}>>{(5000+m*12*y)//1000},000 car price
+#### {5000+m*12*y}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

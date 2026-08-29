@@ -1,0 +1,48 @@
+question = """
+Steve wanted to make a total of $100 within four days, so he took on a berry-picking job in Sweden. The job paid $2 for every pound of lingonberries picked. On Monday he picked 8 pounds. Tuesday’s harvest was triple what he had picked the previous day. On Wednesday he felt very tired and decided to rest. How many pounds of lingonberries did Steve have to pick on Thursday?
+"""
+
+answer = """
+On Monday, Steve was paid 8 * 2 = <<8*2=16>>16 dollars
+Tuesday’s harvest was 3 * 8 = <<3*8=24>>24 pounds
+The 24 pounds Steve picked on Tuesday gave him 24 * 2 = <<24*2=48>>48 dollars
+So, the amount Steve earned from the first two days on the job is 16 +48 = <<16+48=64>>64 dollars
+Since Steve rested on Wednesday, he made 0 dollars, meaning his earnings were 64 + 0 = <<64+0=64>>64 dollars
+The difference between Steve’s earnings and his target is 100 - 64 = <<100-64=36>>36 dollars
+Since he was paid 2 dollars for each pound of lingonberries, Steve needed to pick 36/2 = <<36/2=18>>18 pounds
+#### 18
+"""
+
+id_orig = 572
+id_shuffled = 645
+
+question_annotated = """
+{name,Steve} wanted to make a total of ${total,100} within four days, so he took on a berry-picking job in Sweden. The job paid ${rate,2} for every pound of lingonberries picked. On Monday he picked {mon,8} pounds. Tuesday’s harvest was triple what he had picked the previous day. On Wednesday he felt very tired and decided to rest. How many pounds of lingonberries did {name,Steve} have to pick on Thursday?
+
+#init:
+- name = sample(names_male)
+- $total = range(100, 1000, 10)
+- $rate = range(2, 7)
+- $mon = range(2, 12)
+
+#conditions:
+- total - 4*mon*rate > 0
+- divides(total - 4*mon*rate, rate)
+
+#answer: (total - 4*mon*rate)//rate
+"""
+
+answer_annotated = """
+On Monday, {name} was paid {mon} * {rate} = <<{mon}*{rate}={mon*rate}>>{mon*rate} dollars
+Tuesday’s harvest was 3 * {mon} = <<3*{mon}={3*mon}>>{3*mon} pounds
+The {3*mon} pounds {name} picked on Tuesday gave him {3*mon} * {rate} = <<{3*mon}*{rate}={3*mon*rate}>>{3*mon*rate} dollars
+So, the amount {name} earned from the first two days on the job is {mon*rate} +{3*mon*rate} = <<{mon*rate}+{3*mon*rate}={4*mon*rate}>>{4*mon*rate} dollars
+Since {name} rested on Wednesday, he made 0 dollars, meaning his earnings were {4*mon*rate} + 0 = <<{4*mon*rate}+0={4*mon*rate}>>{4*mon*rate} dollars
+The difference between {name}’s earnings and his target is {total} - {4*mon*rate} = <<{total}-{4*mon*rate}={total-4*mon*rate}>>{total-4*mon*rate} dollars
+Since he was paid {rate} dollars for each pound of lingonberries, {name} needed to pick {total-4*mon*rate}/{rate} = <<{total-4*mon*rate}/{rate}={(total-4*mon*rate)//rate}>>{(total-4*mon*rate)//rate} pounds
+#### {(total - 4*mon*rate)//rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

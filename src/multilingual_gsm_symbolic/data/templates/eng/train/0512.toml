@@ -1,0 +1,50 @@
+question = """
+Timothy has $50 to spend at a souvenir shop. He sees some t-shirts that cost $8 each, key chains that sell 3 pieces for $2, and bags that cost $10 each. Timothy buys 2 t-shirts and 2 bags. How many pieces of key chains can he buy with the amount of money he has left?
+"""
+
+answer = """
+The two t-shirts amount to $8 x 2 = $<<8*2=16>>16.
+The two bags amount to $10 x 2= $<<10*2=20>>20.
+So Timothy spent $16 + $20 = $<<16+20=36>>36 for the shirts and bags.
+He still has $50 - $36 = $<<50-36=14>>14 left to spend for the key chains.
+With the money, he can buy $14/$2 = <<14/2=7>>7 sets of key chains.
+Therefore, he can buy 7 x 3 = <<7*3=21>>21 pieces of key chains.
+#### 21
+"""
+
+id_orig = 439
+id_shuffled = 512
+
+question_annotated = """
+{name,Timothy} has ${m,50} to spend at a souvenir shop. He sees some t-shirts that cost ${ts,8} each, key chains that sell {k,3} pieces for ${kc,2}, and bags that cost ${b,10} each. {name,Timothy} buys {nt,2} t-shirts and {nb,2} bags. How many pieces of key chains can he buy with the amount of money he has left?
+
+#init:
+- name = sample(names_male)
+- $m = range(30, 70)
+- $ts = range(4, 12)
+- $b = range(6, 16)
+- $k = range(2, 6)
+- $kc = range(2, 6)
+- $nt = range(2, 4)
+- $nb = range(2, 4)
+
+#conditions:
+- m - ts*nt - b*nb > 0
+- divides(m - ts*nt - b*nb, kc)
+
+#answer: (m - ts*nt - b*nb)//kc*k
+"""
+
+answer_annotated = """
+The two t-shirts amount to ${ts} x {nt} = $<<{ts}*{nt}={ts*nt}>>{ts*nt}.
+The two bags amount to ${b} x {nb}= $<<{b}*{nb}={b*nb}>>{b*nb}.
+So {name} spent ${ts*nt} + ${b*nb} = $<<{ts*nt}+{b*nb}={ts*nt+b*nb}>>{ts*nt+b*nb} for the shirts and bags.
+He still has ${m} - ${ts*nt+b*nb} = $<<{m}-{ts*nt+b*nb}={m-ts*nt-b*nb}>>{m-ts*nt-b*nb} left to spend for the key chains.
+With the money, he can buy ${m-ts*nt-b*nb}/${kc} = <<{m-ts*nt-b*nb}/{kc}={(m-ts*nt-b*nb)//kc}>>{(m-ts*nt-b*nb)//kc} sets of key chains.
+Therefore, he can buy {(m-ts*nt-b*nb)//kc} x {k} = <<{(m-ts*nt-b*nb)//kc}*{k}={(m-ts*nt-b*nb)//kc*k}>>{(m-ts*nt-b*nb)//kc*k} pieces of key chains.
+#### {(m-ts*nt-b*nb)//kc*k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

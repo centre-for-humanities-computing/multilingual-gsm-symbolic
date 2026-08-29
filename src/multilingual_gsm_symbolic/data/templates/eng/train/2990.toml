@@ -1,0 +1,41 @@
+question = """
+Bob picked 450 apples for his entire family to eat. There are 33 children in his family, and each of them ate 10 apples. If every adult ate 3 apples apiece, how many adults are in his family?
+"""
+
+answer = """
+The 33 children ate a total of 33 * 10 = <<33*10=330>>330 apples.
+There were 450 - 330 = <<450-330=120>>120 apples left for the adults to eat.
+If every adult ate 3 of the 120 apples left, then there were 120 / 3 = <<120/3=40>>40 adults in the family.
+#### 40
+"""
+
+id_orig = 2589
+id_shuffled = 2990
+
+question_annotated = """
+{name,Bob} picked {total,450} apples for his entire family to eat. There are {children,33} children in his family, and each of them ate {per_child,10} apples. If every adult ate {per_adult,3} apples apiece, how many adults are in his family?
+
+#init:
+- name = sample(names_male)
+- $total = range(200, 700, 10)
+- $children = range(2, 42)
+- $per_child = range(1, 16)
+- $per_adult = range(2, 13)
+
+#conditions:
+- total > children * per_child
+- divides(total - children * per_child, per_adult)
+
+#answer: (total - children * per_child) // per_adult
+"""
+
+answer_annotated = """
+The {children} children ate a total of {children} * {per_child} = <<{children}*{per_child}={children*per_child}>>{children*per_child} apples.
+There were {total} - {children*per_child} = <<{total}-{children*per_child}={total-children*per_child}>>{total-children*per_child} apples left for the adults to eat.
+If every adult ate {per_adult} of the {total-children*per_child} apples left, then there were {total-children*per_child} / {per_adult} = <<{total-children*per_child}/{per_adult}={(total-children*per_child)//per_adult}>>{(total-children*per_child)//per_adult} adults in the family.
+#### {(total - children * per_child) // per_adult}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

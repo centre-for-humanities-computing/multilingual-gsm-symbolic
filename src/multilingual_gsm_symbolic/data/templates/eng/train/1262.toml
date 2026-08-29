@@ -1,0 +1,40 @@
+question = """
+A gecko eats 70 crickets every three days.  The first day she eats 30% of the crickets.  The second day she eats 6 less than the first, and the third day she finishes up the remaining crickets.  How many crickets does she eat on the third day?
+"""
+
+answer = """
+Day 1:70(.30)=21 crickets
+Day 2:21-6=<<21-6=15>>15 crickets
+Day 3:70-21-15=<<70-21-15=34>>34 crickets
+#### 34
+"""
+
+id_orig = 1166
+id_shuffled = 1262
+
+question_annotated = """
+A gecko eats {t,70} crickets every three days.  The first day she eats {p,30}% of the crickets.  The second day she eats {d,6} less than the first, and the third day she finishes up the remaining crickets.  How many crickets does she eat on the third day?
+
+#init:
+- $t = range(30, 220, 10)
+- $p = range(5, 100, 5)
+- $d = range(1, 20)
+
+#conditions:
+- divides(t * p, 100)
+- t * p // 100 > d
+- t - t * p // 100 - (t * p // 100 - d) > 0
+
+#answer: t - t*p//100 - (t*p//100 - d)
+"""
+
+answer_annotated = """
+Day 1:{t}(.{p})={t*p//100} crickets
+Day 2:{t*p//100}-{d}=<<{t*p//100}-{d}={t*p//100-d}>>{t*p//100-d} crickets
+Day 3:{t}-{t*p//100}-{t*p//100-d}=<<{t}-{t*p//100}-{t*p//100-d}={t-t*p//100-(t*p//100-d)}>>{t-t*p//100-(t*p//100-d)} crickets
+#### {t-t*p//100-(t*p//100-d)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

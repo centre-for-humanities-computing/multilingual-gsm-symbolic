@@ -1,0 +1,42 @@
+question = """
+Troy had 300 straws. He fed 3/5 of the straws to the adult pigs and an equal number of straws to the piglets. If there were 20 piglets, how many straws did each piglet eat?
+"""
+
+answer = """
+The adult pigs ate 3/5*300 = <<3/5*300=180>>180 straws.
+The total number of straws that the piglets shared is 300-180 = <<300-180=120>>120
+Since there were 20 piglets, each piglet ate 120/20 = <<120/20=6>>6 straws
+#### 6
+"""
+
+id_orig = 902
+id_shuffled = 998
+
+question_annotated = """
+{name,Troy} had {a,300} straws. He fed {num,3}/{den,5} of the straws to the adult pigs and an equal number of straws to the piglets. If there were {p,20} piglets, how many straws did each piglet eat?
+
+#init:
+- name = sample(names_male)
+- $a = range(200, 620, 20)
+- $num = range(1, 5)
+- $den = range(2, 7)
+- $p = range(4, 40)
+
+#conditions:
+- num < den
+- divides(a * num, den)
+- divides(a - a * num // den, p)
+
+#answer: (a - a * num // den) // p
+"""
+
+answer_annotated = """
+The adult pigs ate {num}/{den}*{a} = <<{num}/{den}*{a}={a*num//den}>>{a*num//den} straws.
+The total number of straws that the piglets shared is {a}-{a*num//den} = <<{a}-{a*num//den}={a - a*num//den}>>{a - a*num//den}
+Since there were {p} piglets, each piglet ate {a - a*num//den}/{p} = <<{a - a*num//den}/{p}={(a - a*num//den)//p}>>{(a - a*num//den)//p} straws
+#### {(a - a*num//den)//p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

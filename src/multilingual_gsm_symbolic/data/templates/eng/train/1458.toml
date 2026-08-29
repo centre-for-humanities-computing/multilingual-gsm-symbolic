@@ -1,0 +1,41 @@
+question = """
+Jake sold 10 more stuffed animals than Thor. Quincy sold ten times as many stuffed animals as Thor. If Quincy sold 200 stuffed animals, how many more stuffed animals did Quincy sell than Jake?
+"""
+
+answer = """
+Thor sold 200/10=<<200/10=20>>20 stuffed animals.
+Jake sold 20+10=<<20+10=30>>30 stuffed animals.
+Quincy sold 200-30= <<200-30=170>>170 more stuffed animals than Jake.
+#### 170
+"""
+
+id_orig = 1351
+id_shuffled = 1458
+
+question_annotated = """
+{jake,Jake} sold {more,10} more stuffed animals than {thor,Thor}. {quincy,Quincy} sold ten times as many stuffed animals as {thor,Thor}. If {quincy,Quincy} sold {q,200} stuffed animals, how many more stuffed animals did {quincy,Quincy} sell than {jake,Jake}?
+
+#init:
+- jake = sample(names_male)
+- thor = sample(names_male)
+- quincy = sample(names_male)
+- $more = range(2, 102)
+- $q = range(100, 5100, 10)
+
+#conditions:
+- is_int(q/10)
+- q - q//10 > more
+
+#answer: q - q//10 - more
+"""
+
+answer_annotated = """
+{thor} sold {q}/10=<<{q}/10={q//10}>>{q//10} stuffed animals.
+{jake} sold {q//10}+{more}=<<{q//10}+{more}={q//10+more}>>{q//10+more} stuffed animals.
+{quincy} sold {q}-{q//10+more}= <<{q}-{q//10+more}={q-q//10-more}>>{q-q//10-more} more stuffed animals than {jake}.
+#### {q - q//10 - more}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

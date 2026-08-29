@@ -1,0 +1,46 @@
+question = """
+Susie babysits every day for 3 hours a day at the rate of $10 per hour. She spent 3/10 of the money she earned from last week to buy a make-up set. She then spent 2/5 of her money on her skincare products. How much is left from her earnings last week, in dollars?
+"""
+
+answer = """
+Susie earned $10 x 3 = $<<10*3=30>>30 per day.
+Last week, she earned a total of $30 x 7 = $<<30*7=210>>210.
+She spent $210 x 3/10 = $<<210*3/10=63>>63 on make-up.
+While she spent $210 x 2/5 = $<<210*2/5=84>>84 on her skincare products.
+Thus, she spent a total of $63 + $84 = $<<63+84=147>>147 from her earnings.
+Therefore, Susie is left with $210 - $147 = $<<210-147=63>>63 from her earnings last week.
+#### 63
+"""
+
+id_orig = 2234
+id_shuffled = 2572
+
+question_annotated = """
+{name,Susie} babysits every day for {h,3} hours a day at the rate of ${r,10} per hour. She spent {n1,3}/10 of the money she earned from last week to buy a make-up set. She then spent {n2,2}/5 of her money on her skincare products. How much is left from her earnings last week, in dollars?
+
+#init:
+- name = sample(names_female)
+- $h = range(1, 14)
+- $r = range(10, 110, 10)
+- $n1 = range(1, 9)
+- $n2 = range(1, 5)
+
+#conditions:
+- n1 + 2 * n2 < 10
+
+#answer: h*r*7 - h*r*7*n1//10 - h*r*7*n2//5
+"""
+
+answer_annotated = """
+{name} earned ${r} x {h} = $<<{r}*{h}={r*h}>>{r*h} per day.
+Last week, she earned a total of ${r*h} x 7 = $<<{r*h}*7={r*h*7}>>{r*h*7}.
+She spent ${r*h*7} x {n1}/10 = $<<{r*h*7}*{n1}/10={r*h*7*n1//10}>>{r*h*7*n1//10} on make-up.
+While she spent ${r*h*7} x {n2}/5 = $<<{r*h*7}*{n2}/5={r*h*7*n2//5}>>{r*h*7*n2//5} on her skincare products.
+Thus, she spent a total of ${r*h*7*n1//10} + ${r*h*7*n2//5} = $<<{r*h*7*n1//10}+{r*h*7*n2//5}={r*h*7*n1//10+r*h*7*n2//5}>>{r*h*7*n1//10+r*h*7*n2//5} from her earnings.
+Therefore, {name} is left with ${r*h*7} - ${r*h*7*n1//10+r*h*7*n2//5} = $<<{r*h*7}-{r*h*7*n1//10+r*h*7*n2//5}={r*h*7-r*h*7*n1//10-r*h*7*n2//5}>>{r*h*7-r*h*7*n1//10-r*h*7*n2//5} from her earnings last week.
+#### {h*r*7 - h*r*7*n1//10 - h*r*7*n2//5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

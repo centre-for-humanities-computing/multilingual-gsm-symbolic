@@ -1,0 +1,40 @@
+question = """
+It's Mother's day, so mothers get a 10% discount on the department store. Mothers who have 3 children or more can get an additional 4% off the discounted price. If Mrs. Brown has 4 children and wants to buy a pair of shoes that costs $125, how much will she pay?
+"""
+
+answer = """
+Mrs. Brown has a $125 x 10/100 = $<<125*10/100=12.5>>12.5 discount for her purchase.
+So, the remaining amount she needs to pay is $125 - $12.5 =$<<125-12.5=112.5>>112.5.
+But Mrs. Brown can still avail of the 5% discount, so she has an additional discount of $112.5 x 4/100 = $<<112.5*4/100=4.5>>4.5.
+Therefore, Mrs. brown will only pay $112.5 - $4.5 = $<<112.5-4.5=108>>108.
+#### 108
+"""
+
+id_orig = 3958
+id_shuffled = 4680
+
+question_annotated = """
+It's Mother's day, so mothers get a {d1,10}% discount on the department store. Mothers who have 3 children or more can get an additional {d2,4}% off the discounted price. If Mrs. Brown has 4 children and wants to buy a pair of shoes that costs ${p,125}, how much will she pay?
+
+#init:
+- $p = range(100, 600, 5)
+- $d1 = range(5, 55, 5)
+- $d2 = range(1, 11)
+
+#conditions:
+- divides(p*(100-d1)*(100-d2), 10000)
+
+#answer: round(p*(100-d1)*(100-d2)/10000)
+"""
+
+answer_annotated = """
+Mrs. Brown has a ${p} x {d1}/100 = $<<{p}*{d1}/100={p*d1/100}>>{p*d1/100} discount for her purchase.
+So, the remaining amount she needs to pay is ${p} - ${p*d1/100} =$<<{p}-{p*d1/100}={p-p*d1/100}>>{p-p*d1/100}.
+But Mrs. Brown can still avail of the 5% discount, so she has an additional discount of ${p-p*d1/100} x {d2}/100 = $<<{p-p*d1/100}*{d2}/100={(p-p*d1/100)*d2/100}>>{(p-p*d1/100)*d2/100}.
+Therefore, Mrs. brown will only pay ${p-p*d1/100} - ${(p-p*d1/100)*d2/100} = $<<{p-p*d1/100}-{(p-p*d1/100)*d2/100}={round(p-p*d1/100-(p-p*d1/100)*d2/100)}>>{round(p-p*d1/100-(p-p*d1/100)*d2/100)}.
+#### {round(p*(100-d1)*(100-d2)/10000)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

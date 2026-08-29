@@ -1,0 +1,43 @@
+question = """
+Kim orders a $10 meal and a drink for 2.5.  She gives a 20% tip.  She pays with a $20 bill.  How much does she get in change?
+"""
+
+answer = """
+The dinner cost 10+2.5=$<<10+2.5=12.5>>12.5.
+The tip comes to 12.5*.2=$2.5.
+So the total cost is 12.5+2.5=$<<12.5+2.5=15>>15.
+That means she gets 20-15=$<<20-15=5>>5 in change.
+#### 5
+"""
+
+id_orig = 3838
+id_shuffled = 4532
+
+question_annotated = """
+{name,Kim} orders a ${meal,10} meal and a drink for {drink,2.5}.  She gives a {pct,20}% tip.  She pays with a ${bill,20} bill.  How much does she get in change?
+
+#init:
+- name = sample(names_female)
+- $meal = range(10, 60)
+- $drink = sample([1.5, 2.0, 2.5, 3.0, 3.5, 4.0])
+- $pct = range(10, 51, 10)
+- $bill = range(20, 101)
+
+#conditions:
+- is_int((meal + drink) * (100 + pct) / 100)
+- bill > (meal + drink) * (100 + pct) / 100
+
+#answer: int(bill - (meal + drink) * (100 + pct) / 100)
+"""
+
+answer_annotated = """
+The dinner cost {meal}+{drink}=$<<{meal}+{drink}={meal+drink}>>{meal+drink}.
+The tip comes to {meal+drink}*.{pct//10}=${(meal + drink) * pct / 100}.
+So the total cost is {meal+drink}+{(meal + drink) * pct / 100}=$<<{meal+drink}+{(meal + drink) * pct / 100}={int((meal + drink) * (100 + pct) / 100)}>>{int((meal + drink) * (100 + pct) / 100)}.
+That means she gets {bill}-{int((meal + drink) * (100 + pct) / 100)}=$<<{bill}-{int((meal + drink) * (100 + pct) / 100)}={int(bill - (meal + drink) * (100 + pct) / 100)}>>{int(bill - (meal + drink) * (100 + pct) / 100)} in change.
+#### {int(bill - (meal + drink) * (100 + pct) / 100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

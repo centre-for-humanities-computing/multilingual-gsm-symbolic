@@ -1,0 +1,43 @@
+question = """
+Chad has 100 apples and each apple has different sizes and different price ranges. Each small apple cost $1.5, medium apple cost $2, and big apples cost $3. If Donny bought 6 small and medium apples and also 8 big apples, how much will Donny have to pay for all of it?
+"""
+
+answer = """
+Donny was charged $1.5 x 6 = $<<1.5*6=9>>9 for the small apples.
+He was charged $2 x 6 = $<<2*6=12>>12 for the medium apples.
+And he was also charged $8 x 3 = $<<8*3=24>>24 for the big apples.
+Therefore, Donny has to pay $9 + $12 + $24 = $<<9+12+24=45>>45 for all the apples.
+#### 45
+"""
+
+id_orig = 2554
+id_shuffled = 2955
+
+question_annotated = """
+Chad has 100 apples and each apple has different sizes and different price ranges. Each small apple cost ${p_s,1.5}, medium apple cost ${p_m,2}, and big apples cost ${p_b,3}. If {buyer,Donny} bought {n_sm,6} small and medium apples and also {n_b,8} big apples, how much will {buyer,Donny} have to pay for all of it?
+
+#init:
+- buyer = sample(names_male)
+- p_s = sample([1.5, 2.5, 3.5])
+- p_m = sample([2, 3, 4])
+- p_b = sample([3, 4, 5])
+- $n_sm = range(2, 22, 2)
+- $n_b = range(2, 22, 2)
+
+#conditions:
+- is_int(p_s * n_sm)
+
+#answer: int(p_s*n_sm + p_m*n_sm + n_b*p_b)
+"""
+
+answer_annotated = """
+{buyer} was charged ${p_s} x {n_sm} = $<<{p_s}*{n_sm}={int(p_s*n_sm)}>>{int(p_s*n_sm)} for the small apples.
+He was charged ${p_m} x {n_sm} = $<<{p_m}*{n_sm}={p_m*n_sm}>>{p_m*n_sm} for the medium apples.
+And he was also charged ${n_b} x {p_b} = $<<{n_b}*{p_b}={n_b*p_b}>>{n_b*p_b} for the big apples.
+Therefore, {buyer} has to pay ${int(p_s*n_sm)} + ${p_m*n_sm} + ${n_b*p_b} = $<<{int(p_s*n_sm)}+{p_m*n_sm}+{n_b*p_b}={int(p_s*n_sm)+p_m*n_sm+n_b*p_b}>>{int(p_s*n_sm)+p_m*n_sm+n_b*p_b} for all the apples.
+#### {int(p_s*n_sm + p_m*n_sm + n_b*p_b)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

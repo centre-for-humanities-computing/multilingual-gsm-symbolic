@@ -1,0 +1,45 @@
+question = """
+Tom decides to open a theater.  He knows it will cost $5 per square foot of space that he needs and he needs 12 square feet for every seat in his theater.  He wants a 500 seat theater.  He also realizes construction will cost twice as much as the land.  He has a partner who covers 40% of the cost.  How much does Tom spend?
+"""
+
+answer = """
+He needs 500 * 12 = <<500*12=6000>>6000 square feet
+This means it cost $5 * 6000 = $30,000
+That means construction comes to $30,000 * 2 = $<<30000*2=60000>>60,000
+So the total cost is $60,000 + $30,000 = $<<60000+30000=90000>>90,000
+His partner covers $90,000 * .4 = $<<90000*.4=36000>>36,000
+So he has to pay $90,000 - $36,000 = $<<90000-36000=54000>>54,000
+#### 54000
+"""
+
+id_orig = 1322
+id_shuffled = 1429
+
+question_annotated = """
+{name,Tom} decides to open a theater.  He knows it will cost ${cost,5} per square foot of space that he needs and he needs {sqft,12} square feet for every seat in his theater.  He wants a {seats,500} seat theater.  He also realizes construction will cost twice as much as the land.  He has a partner who covers 40% of the cost.  How much does {name,Tom} spend?
+
+#init:
+- name = sample(names_male)
+- $cost = range(2, 11)
+- $sqft = range(4, 26, 2)
+- $seats = range(100, 1100, 50)
+
+#conditions:
+- divides(seats * sqft * cost, 5)
+
+#answer: seats * sqft * cost * 9 // 5
+"""
+
+answer_annotated = """
+He needs {seats} * {sqft} = <<{seats}*{sqft}={seats*sqft}>>{seats*sqft} square feet
+This means it cost ${cost} * {seats*sqft} = ${seats*sqft*cost}
+That means construction comes to ${seats*sqft*cost} * 2 = $<<{seats*sqft*cost}*2={seats*sqft*cost*2}>>{seats*sqft*cost*2}
+So the total cost is ${seats*sqft*cost*2} + ${seats*sqft*cost} = $<<{seats*sqft*cost*2}+{seats*sqft*cost}={seats*sqft*cost*3}>>{seats*sqft*cost*3}
+His partner covers ${seats*sqft*cost*3} * .4 = $<<{seats*sqft*cost*3}*.4={seats*sqft*cost*6//5}>>{seats*sqft*cost*6//5}
+So he has to pay ${seats*sqft*cost*3} - ${seats*sqft*cost*6//5} = $<<{seats*sqft*cost*3}-{seats*sqft*cost*6//5}={seats*sqft*cost*9//5}>>{seats*sqft*cost*9//5}
+#### {seats * sqft * cost * 9 // 5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

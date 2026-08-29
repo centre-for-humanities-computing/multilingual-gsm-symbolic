@@ -1,0 +1,41 @@
+question = """
+8 jumbo scallops weigh one pound and cost $24.00 a pound.  Nate is pairing 2 scallops with a corn bisque as a light summer dinner.  He’s cooking for 8 people.  How much will the scallops cost?
+"""
+
+answer = """
+He’s cooking for 8 people and wants to serve 2 scallops per person so he needs 8*2 = <<8*2=16>>16 scallops
+8 jumbo scallops come in 1 pound and he needs 16 scallops so he will need 16/8 = <<16/8=2>>2 pounds of scallops
+A pound of scallops weigh $24.00 and he needs 2 pounds so it will cost him 24*2 = $<<24*2=48.00>>48.00 for scallops
+#### 48
+"""
+
+id_orig = 1115
+id_shuffled = 1211
+
+question_annotated = """
+{spp,8} jumbo scallops weigh one pound and cost ${price,24}.00 a pound.  {name,Nate} is pairing {k,2} scallops with a corn bisque as a light summer dinner.  He’s cooking for {n,8} people.  How much will the scallops cost?
+
+#init:
+- name = sample(names_male)
+- $spp = range(4, 17)
+- $price = range(6, 41)
+- $k = range(2, 5)
+- $n = range(2, 25)
+
+#conditions:
+- n * k >= spp
+- divides(n * k, spp)
+
+#answer: price*n*k//spp
+"""
+
+answer_annotated = """
+He’s cooking for {n} people and wants to serve {k} scallops per person so he needs {n}*{k} = <<{n}*{k}={n*k}>>{n*k} scallops
+{spp} jumbo scallops come in 1 pound and he needs {n*k} scallops so he will need {n*k}/{spp} = <<{n*k}/{spp}={n*k//spp}>>{n*k//spp} pounds of scallops
+A pound of scallops weigh ${price}.00 and he needs {n*k//spp} pounds so it will cost him {price}*{n*k//spp} = $<<{price}*{n*k//spp}={price*n*k//spp}.00>>{price*n*k//spp}.00 for scallops
+#### {price*n*k//spp}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

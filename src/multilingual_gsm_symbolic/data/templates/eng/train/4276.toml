@@ -1,0 +1,42 @@
+question = """
+Maurice is getting $2 for every finished task. And for every 10 tasks finished, he receives a $6 bonus. How much money would Maurice make for finishing 30 tasks?
+"""
+
+answer = """
+Starting with the bonus, Maurice would receive it 30 / 10 = <<30/10=3>>3 times.
+This means the bonus money, would make up to 3 * 6 = $<<3*6=18>>18.
+Maurice would do 30 tasks, so for all of them, he would receive 30 * 2 = $<<30*2=60>>60.
+So in total Maurice would make 60 + 18 = $<<60+18=78>>78 for finishing 30 tasks.
+#### 78
+"""
+
+id_orig = 3618
+id_shuffled = 4276
+
+question_annotated = """
+{name,Maurice} is getting ${rate,2} for every finished task. And for every {batch,10} tasks finished, he receives a ${bonus,6} bonus. How much money would {name,Maurice} make for finishing {tasks,30} tasks?
+
+#init:
+- name = sample(names_male)
+- $rate = range(1, 11)
+- $batch = range(5, 25)
+- $bonus = range(1, 21)
+- $tasks = range(10, 110, 10)
+
+#conditions:
+- divides(tasks, batch)
+
+#answer: tasks * rate + tasks // batch * bonus
+"""
+
+answer_annotated = """
+Starting with the bonus, {name} would receive it {tasks} / {batch} = <<{tasks}/{batch}={tasks//batch}>>{tasks//batch} times.
+This means the bonus money, would make up to {tasks//batch} * {bonus} = $<<{tasks//batch}*{bonus}={tasks//batch*bonus}>>{tasks//batch*bonus}.
+{name} would do {tasks} tasks, so for all of them, he would receive {tasks} * {rate} = $<<{tasks}*{rate}={tasks*rate}>>{tasks*rate}.
+So in total {name} would make {tasks*rate} + {tasks//batch*bonus} = $<<{tasks*rate}+{tasks//batch*bonus}={tasks*rate+tasks//batch*bonus}>>{tasks*rate+tasks//batch*bonus} for finishing {tasks} tasks.
+#### {tasks*rate+tasks//batch*bonus}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

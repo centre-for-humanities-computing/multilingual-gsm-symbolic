@@ -1,0 +1,42 @@
+question = """
+It’s exam season and Tristan has several exams to prepare for. On Monday, he studies for 4 hours then studies for twice this long on Tuesday. On Wednesday, Thursday, and Friday he studies for 3 hours each day. He wants to study for a total of 25 hours over the week and divides the remaining amount of study time evenly between Saturday and Sunday. How many hours does Tristan spend studying on Saturday?
+"""
+
+answer = """
+On Tuesday, Tristan studies twice as long as he did on Monday and this amounts to 4 hours * 2 = <<4*2=8>>8 hours.
+So in the first 5 days of the week, he studies for a total of 4 hours Monday + 8 hours Tuesday + 3 hours Wednesday + 3 hours Thursday + 3 hours Friday = 21 hours.
+He therefore has 25 planned hours – 21 used hours = <<25-21=4>>4 hours left to study.
+As he splits his time evenly over 2 days, he spends 4 hours / 2 = <<4/2=2>>2 hours studying on Saturday.
+#### 2
+"""
+
+id_orig = 1616
+id_shuffled = 1741
+
+question_annotated = """
+It’s exam season and {name,Tristan} has several exams to prepare for. On Monday, he studies for {m,4} hours then studies for twice this long on Tuesday. On Wednesday, Thursday, and Friday he studies for {w,3} hours each day. He wants to study for a total of {t,25} hours over the week and divides the remaining amount of study time evenly between Saturday and Sunday. How many hours does {name,Tristan} spend studying on Saturday?
+
+#init:
+- name = sample(names_male)
+- $m = range(1, 13)
+- $w = range(1, 7)
+- $t = range(20, 121)
+
+#conditions:
+- t - (m + 2*m + 3*w) > 0
+- divides(t - (m + 2*m + 3*w), 2)
+
+#answer: (t - (m + 2*m + 3*w)) // 2
+"""
+
+answer_annotated = """
+On Tuesday, {name} studies twice as long as he did on Monday and this amounts to {m} hours * 2 = <<{m}*2={m*2}>>{m*2} hours.
+So in the first 5 days of the week, he studies for a total of {m} hours Monday + {m*2} hours Tuesday + {w} hours Wednesday + {w} hours Thursday + {w} hours Friday = {m + 2*m + 3*w} hours.
+He therefore has {t} planned hours – {m + 2*m + 3*w} used hours = <<{t}-{m + 2*m + 3*w}={t-(m + 2*m + 3*w)}>>{t-(m + 2*m + 3*w)} hours left to study.
+As he splits his time evenly over 2 days, he spends {t-(m + 2*m + 3*w)} hours / 2 = <<{t-(m + 2*m + 3*w)}/2={(t-(m + 2*m + 3*w))//2}>>{(t-(m + 2*m + 3*w))//2} hours studying on Saturday.
+#### {(t - (m + 2*m + 3*w)) // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,50 @@
+question = """
+Lyla, a grocery store owner, bought rice weighing 30 kg less than green beans, which weigh 10 kg more than sugar. While carrying the goods to the store, the bags fell down and 1/3 weight of the rice and 1/5 weight of sugar was lost. If the green beans weighed 60 kgs, then how much did the remaining stock weigh?
+"""
+
+answer = """
+If rice weighed 30 kg less than the green beans, then the total rice weight is 60 kg - 30 kg = 30 kg
+If the green beans weighed 10 kg more than sugar, then the total sugar weight is 60 kg - 10 kg = <<60-10=50>>50 kg
+When 1/3 weight of rice was lost, the weight loss became 1/3*30 = <<1/3*30=10>>10kg
+The weight of rice after the loss is 30 kg - 10 kg = <<30-10=20>>20 kg.
+When 1/5 weight of sugar was lost, the lost weight was 1/5 * 50 kg = <<1/5*50=10>>10 kg
+The weight of sugar after the loss is 50 kg - 10 kg = <<50-10=40>>40 kg.
+The total weight for all the items is 40 kg + 20 kg + 60 kg = <<40+20+60=120>>120 kg
+#### 120
+"""
+
+id_orig = 3451
+id_shuffled = 4086
+
+question_annotated = """
+{name,Lyla}, a grocery store owner, bought rice weighing {rd,30} kg less than green beans, which weigh {sd,10} kg more than sugar. While carrying the goods to the store, the bags fell down and 1/3 weight of the rice and 1/5 weight of sugar was lost. If the green beans weighed {g,60} kgs, then how much did the remaining stock weigh?
+
+#init:
+- name = sample(["Lyla", "Mara", "Tessa"])
+- $g = range(60, 320, 15)
+- $rd = range(6, 66, 6)
+- $sd = range(5, 105, 5)
+
+#conditions:
+- rd < g
+- sd < g
+- divides(g - rd, 3)
+- divides(g - sd, 5)
+
+#answer: g - rd - (g-rd)//3 + g - sd - (g-sd)//5 + g
+"""
+
+answer_annotated = """
+If rice weighed {rd} kg less than the green beans, then the total rice weight is {g} kg - {rd} kg = {g-rd} kg
+If the green beans weighed {sd} kg more than sugar, then the total sugar weight is {g} kg - {sd} kg = <<{g}-{sd}={g-sd}>>{g-sd} kg
+When 1/3 weight of rice was lost, the weight loss became 1/3*{g-rd} = <<1/3*{g-rd}={(g-rd)//3}>>{(g-rd)//3}kg
+The weight of rice after the loss is {g-rd} kg - {(g-rd)//3} kg = <<{g-rd}-{(g-rd)//3}={g-rd-((g-rd)//3)}>>{g-rd-((g-rd)//3)} kg.
+When 1/5 weight of sugar was lost, the lost weight was 1/5 * {g-sd} kg = <<1/5*{g-sd}={(g-sd)//5}>>{(g-sd)//5} kg
+The weight of sugar after the loss is {g-sd} kg - {(g-sd)//5} kg = <<{g-sd}-{(g-sd)//5}={g-sd-((g-sd)//5)}>>{g-sd-((g-sd)//5)} kg.
+The total weight for all the items is {g-sd-((g-sd)//5)} kg + {g-rd-((g-rd)//3)} kg + {g} kg = <<{g-sd-((g-sd)//5)}+{g-rd-((g-rd)//3)}+{g}={g-sd-((g-sd)//5)+g-rd-((g-rd)//3)+g}>>{g-sd-((g-sd)//5)+g-rd-((g-rd)//3)+g} kg
+#### {g-sd-((g-sd)//5)+g-rd-((g-rd)//3)+g}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

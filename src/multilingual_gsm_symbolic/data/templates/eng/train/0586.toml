@@ -1,0 +1,44 @@
+question = """
+Jennifer has ten pears, 20 oranges, and twice as many apples as pears. If she gives her sister two of each fruit, how many fruits does she have left?
+"""
+
+answer = """
+Jennifer has 2*10 = <<2*10=20>>20 apples.
+She has a total of 10+20+20 = <<10+20+20=50>>50 fruits.
+She gives her sister 2 pears+2 oranges+2 apples = <<2+2+2=6>>6 fruits.
+After giving her sister 2 of each fruit, she has 50-6 = <<50-6=44>>44 fruits left.
+#### 44
+"""
+
+id_orig = 513
+id_shuffled = 586
+
+question_annotated = """
+{name,Jennifer} has {p_txt,ten} pears, {o,20} oranges, and {m_txt,twice} as many apples as pears. If she gives her sister {g_txt,two} of each fruit, how many fruits does she have left?
+
+#init:
+- name = sample(names_female)
+- p_txt, p = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12), ("thirteen", 13), ("fourteen", 14), ("fifteen", 15), ("sixteen", 16), ("seventeen", 17), ("eighteen", 18), ("nineteen", 19), ("twenty", 20)])
+- $o = range(2, 102)
+- m_txt, m = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- g_txt, g = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+
+#conditions:
+- p >= g
+- o >= g
+- m * p >= g
+
+#answer: p + o + m * p - 3 * g
+"""
+
+answer_annotated = """
+{name} has {m}*{p} = <<{m}*{p}={m*p}>>{m*p} apples.
+She has a total of {p}+{o}+{m*p} = <<{p}+{o}+{m*p}={p+o+m*p}>>{p+o+m*p} fruits.
+She gives her sister {g} pears+{g} oranges+{g} apples = <<{g}+{g}+{g}={3*g}>>{3*g} fruits.
+After giving her sister {g} of each fruit, she has {p+o+m*p}-{3*g} = <<{p+o+m*p}-{3*g}={p+o+m*p-3*g}>>{p+o+m*p-3*g} fruits left.
+#### {p + o + m * p - 3 * g}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

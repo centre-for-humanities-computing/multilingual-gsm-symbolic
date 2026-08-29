@@ -1,0 +1,47 @@
+question = """
+Zach was a waiter in a fancy restaurant.  His last table for the night was a party for 4 people.  The mom ordered lobster for $25.50, the dad ordered steak for $35.00 their twin boys both ordered a cheeseburger and fries for $13.50 each.  They started their meal with an appetizer that cost 8.50.  Everyone also ordered a dessert that cost $6.00 each.  They wanted to give a 20% tip for Zach on the bill.  What did the final bill total come to?
+"""
+
+answer = """
+The twins ordered a cheeseburger each so 2*13.50 = $<<2*13.50=27.00>>27.00 for both cheeseburgers
+Everyone ordered a dessert so 4*6 = $<<4*6=24.00>>24.00 for dessert
+When you add all the meals together they spent 25.50+35.00+27.00+8.50+24.00 = $<<25.50+35.00+27.00+8.50+24.00=120.00>>120.00
+Zach's tip was 20% so .20*120.00 = $<<20*.01*120=24.00>>24.00
+When you add up the meals $120.00 and Zach's tip of $24.00 then the total cost is 120.00 + 24.00 = $<<120+24.00=144.00>>144.00
+#### 144
+"""
+
+id_orig = 2317
+id_shuffled = 2705
+
+question_annotated = """
+{name,Zach} was a waiter in a fancy restaurant.  His last table for the night was a party for {n,4} people.  The mom ordered lobster for ${a,25}.50, the dad ordered steak for ${b,35}.00 their twin boys both ordered a cheeseburger and fries for ${c,13}.50 each.  They started their meal with an appetizer that cost {d,8}.50.  Everyone also ordered a dessert that cost ${e,6}.00 each.  They wanted to give a {p,20}% tip for {name,Zach} on the bill.  What did the final bill total come to?
+
+#init:
+- name = sample(names_male)
+- $n = range(4, 7)
+- $a = range(15, 36, 5)
+- $b = range(30, 46, 5)
+- $c = range(9, 15)
+- $d = range(5, 12)
+- $e = range(3, 9)
+- $p = range(10, 31, 5)
+
+#conditions:
+- divides((a + b + 2*c + d + n*e + 2) * (100 + p), 100)
+
+#answer: (a + b + 2*c + d + n*e + 2) * (100 + p) // 100
+"""
+
+answer_annotated = """
+The twins ordered a cheeseburger each so 2*{c}.50 = $<<2*{c}.50={2*c+1}.00>>{2*c+1}.00 for both cheeseburgers
+Everyone ordered a dessert so {n}*{e} = $<<{n}*{e}={n*e}.00>>{n*e}.00 for dessert
+When you add all the meals together they spent {a}.50+{b}.00+{2*c+1}.00+{d}.50+{n*e}.00 = $<<{a}.50+{b}.00+{2*c+1}.00+{d}.50+{n*e}.00={a + b + 2*c + d + n*e + 2}.00>>{a + b + 2*c + d + n*e + 2}.00
+{name}'s tip was {p}% so .{p}*{a + b + 2*c + d + n*e + 2}.00 = $<<{p}*.01*{a + b + 2*c + d + n*e + 2}={p*(a + b + 2*c + d + n*e + 2)//100}.00>>{p*(a + b + 2*c + d + n*e + 2)//100}.00
+When you add up the meals ${a + b + 2*c + d + n*e + 2}.00 and {name}'s tip of ${p*(a + b + 2*c + d + n*e + 2)//100}.00 then the total cost is {a + b + 2*c + d + n*e + 2}.00 + {p*(a + b + 2*c + d + n*e + 2)//100}.00 = $<<{a + b + 2*c + d + n*e + 2}+{p*(a + b + 2*c + d + n*e + 2)//100}.00={(a + b + 2*c + d + n*e + 2)*(100 + p)//100}.00>>{(a + b + 2*c + d + n*e + 2)*(100 + p)//100}.00
+#### {(a + b + 2*c + d + n*e + 2)*(100 + p)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

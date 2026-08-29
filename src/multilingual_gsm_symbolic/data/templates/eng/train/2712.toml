@@ -1,0 +1,46 @@
+question = """
+Bret and a team of 3 co-workers were working late so he ordered dinner for everyone.  They decided on Chinese.  Each main meal costs $12.0.  They also ordered 2 appetizers that were $6.00 each.  He includes a 20% tip and an extra $5.00 to make it a rush order.  How much does Bret spend on dinner?
+"""
+
+answer = """
+There are 4 co-workers and each of their meals is $12.00 so 4*12 = $<<4*12=48.00>>48.00
+They order 2 appetizers at $6.00 each so 2*6 = $<<2*6=12.00>>12.00
+The meals costs $48.00 and the appetizers costs $12.00 for a total of 48+12 = $<<48+12=60.00>>60.00
+A 20% tip on the $60.00 order is .20*60 = $<<.20*60=12.00>>12.00
+So the meal is $60.00, the tip is $12.00 and he adds a $5.00 rush for a total of 60+12+5 = $<<60+12+5=77.00>>77.00
+#### 77
+"""
+
+id_orig = 2353
+id_shuffled = 2712
+
+question_annotated = """
+{name,Bret} and a team of {c,3} co-workers were working late so he ordered dinner for everyone.  They decided on Chinese.  Each main meal costs ${m,12}.0.  They also ordered {n,2} appetizers that were ${p,6}.00 each.  He includes a {rate,20}% tip and an extra ${rush,5}.00 to make it a rush order.  How much does {name,Bret} spend on dinner?
+
+#init:
+- name = sample(names_male)
+- $c = range(2, 7)
+- $m = range(5, 21)
+- $n = range(1, 5)
+- $p = range(2, 11)
+- $rate = range(10, 51, 10)
+- $rush = range(1, 11)
+
+#conditions:
+- divides(((c+1)*m + n*p) * rate, 100)
+
+#answer: (c+1)*m + n*p + ((c+1)*m + n*p)*rate//100 + rush
+"""
+
+answer_annotated = """
+There are {c+1} co-workers and each of their meals is ${m}.00 so {c+1}*{m} = $<<{c+1}*{m}={(c+1)*m}.00>>{(c+1)*m}.00
+They order {n} appetizers at ${p}.00 each so {n}*{p} = $<<{n}*{p}={n*p}.00>>{n*p}.00
+The meals costs ${(c+1)*m}.00 and the appetizers costs ${n*p}.00 for a total of {(c+1)*m}+{n*p} = $<<{(c+1)*m}+{n*p}={(c+1)*m + n*p}.00>>{(c+1)*m + n*p}.00
+A {rate}% tip on the ${(c+1)*m + n*p}.00 order is .{rate}*{(c+1)*m + n*p} = $<<.{rate}*{(c+1)*m + n*p}={((c+1)*m + n*p)*rate//100}.00>>{((c+1)*m + n*p)*rate//100}.00
+So the meal is ${(c+1)*m + n*p}.00, the tip is ${((c+1)*m + n*p)*rate//100}.00 and he adds a ${rush}.00 rush for a total of {(c+1)*m + n*p}+{((c+1)*m + n*p)*rate//100}+{rush} = $<<{(c+1)*m + n*p}+{((c+1)*m + n*p)*rate//100}+{rush}={(c+1)*m + n*p + ((c+1)*m + n*p)*rate//100 + rush}.00>>{(c+1)*m + n*p + ((c+1)*m + n*p)*rate//100 + rush}.00
+#### {(c+1)*m + n*p + ((c+1)*m + n*p)*rate//100 + rush}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

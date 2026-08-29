@@ -1,0 +1,38 @@
+question = """
+Clara is climbing to the top of a historical tower with stone stairs. Each level has eight huge steps in the stairs. Every step is made up of three massive blocks of stone. By the time she reaches the top, she has climbed past 96 blocks of stone. How many levels are there in the tower?
+"""
+
+answer = """
+Clara climbed past 96 / 3 = <<96/3=32>>32 steps made up of 3 blocks of stone each.
+At 8 steps per level, there are 32 / 8 = <<32/8=4>>4 levels in the tower.
+#### 4
+"""
+
+id_orig = 3192
+id_shuffled = 3791
+
+question_annotated = """
+{name,Clara} is climbing to the top of a historical tower with stone stairs. Each level has {s_txt,eight} huge steps in the stairs. Every step is made up of {b_txt,three} massive blocks of stone. By the time she reaches the top, she has climbed past {t,96} blocks of stone. How many levels are there in the tower?
+
+#init:
+- name = sample(names_female)
+- s_txt, s_val = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- b_txt, b_val = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- $t = range(96, 9600, 48)
+
+#conditions:
+- divides(t, b_val)
+- divides(t // b_val, s_val)
+
+#answer: t // (b_val * s_val)
+"""
+
+answer_annotated = """
+{name} climbed past {t} / {b_val} = <<{t}/{b_val}={t//b_val}>>{t//b_val} steps made up of {b_val} blocks of stone each.
+At {s_val} steps per level, there are {t//b_val} / {s_val} = <<{t//b_val}/{s_val}={t//b_val//s_val}>>{t//b_val//s_val} levels in the tower.
+#### {t // (b_val * s_val)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

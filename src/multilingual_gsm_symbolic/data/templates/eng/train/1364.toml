@@ -1,0 +1,42 @@
+question = """
+Alice and Bob are each given $2000 to invest. Alice puts all of her money in the stock market and doubles her money. Bob invests in real estate and makes five times more money than he invested. How much more money does Bob have now than Alice?
+"""
+
+answer = """
+When Alice invested her money in the stock market, her money doubled to $2000*2 = $<<2000*2=4000>>4000
+Bob, after investing in real estate, increased his money by 2000*5 = <<2000*5=10000>>10,000
+The total amount of money that Bob made after investing in real estate is $10,000+$2000 = $<<10000+2000=12000>>12,000
+Bob made $12,000-$4000 = $<<12000-4000=8000>>8000 more than Alice after investing his money.
+#### 8000
+"""
+
+id_orig = 1257
+id_shuffled = 1364
+
+question_annotated = """
+{name_f,Alice} and {name_m,Bob} are each given ${a,2000} to invest. {name_f,Alice} puts all of her money in the stock market and doubles her money. {name_m,Bob} invests in real estate and makes {mw,five times} more money than he invested. How much more money does {name_m,Bob} have now than {name_f,Alice}?
+
+#init:
+- name_f = sample(names_female)
+- name_m = sample(names_male)
+- mw, mv = sample([("three times", 3), ("four times", 4), ("five times", 5), ("six times", 6), ("seven times", 7), ("eight times", 8), ("nine times", 9), ("ten times", 10)])
+- $a = range(1000, 102000, 1000)
+
+#conditions:
+- mv > 2
+- divides(a, 1000)
+
+#answer: a*mv - a
+"""
+
+answer_annotated = """
+When {name_f} invested her money in the stock market, her money doubled to ${a}*2 = $<<{a}*2={a*2}>>{a*2}
+{name_m}, after investing in real estate, increased his money by {a}*{mv} = <<{a}*{mv}={a*mv}>>{a*mv//1000},000
+The total amount of money that {name_m} made after investing in real estate is ${a*mv//1000},000+${a} = $<<{a*mv}+{a}={a+a*mv}>>{(a+a*mv)//1000},000
+{name_m} made ${(a+a*mv)//1000},000-${a*2} = $<<{a+a*mv}-{a*2}={a+a*mv-a*2}>>{a+a*mv-a*2} more than {name_f} after investing his money.
+#### {a*mv - a}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

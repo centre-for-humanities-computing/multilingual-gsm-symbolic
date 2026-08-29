@@ -1,0 +1,44 @@
+question = """
+Students at Highridge High earn 2 points for each correct answer during a quiz bowl If a student correctly answers all the questions in a round, the student is awarded an additional 4 point bonus. They played a total of five rounds each consisting of five questions. If James only missed one question, how many points did he get?
+"""
+
+answer = """
+If James only missed one question in all five rounds of five questions, he correctly answered 5 * 5 - 1 = <<5*5-1=24>>24 questions
+Before the bonus, James earned 24 correct answers * 2 points/answer = <<24*2=48>>48 points.
+Since missing one question would only disqualify him from receiving a bonus in one round, he would earn a bonus for 5-1=<<5-1=4>>4 rounds.
+He should expect a bonus of 4 rounds* 4 points/round= <<4*4=16>>16 points.
+Including his bonus, James scored a total of 48 + 16 = <<48+16=64>>64 points.
+#### 66
+"""
+
+id_orig = 356
+id_shuffled = 409
+
+question_annotated = """
+Students at Highridge High earn {p,2} points for each correct answer during a quiz bowl If a student correctly answers all the questions in a round, the student is awarded an additional {b,4} point bonus. They played a total of {r_txt,five} rounds each consisting of {q_txt,five} questions. If {name,James} only missed one question, how many points did he get?
+
+#init:
+- name = sample(names_male)
+- $p = range(2, 12)
+- $b = range(2, 12)
+- r_txt, r_val = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- q_txt, q_val = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+
+#conditions:
+- r_val > 1
+
+#answer: (r_val*q_val - 1)*p + (r_val - 1)*b + 2
+"""
+
+answer_annotated = """
+If {name} only missed one question in all {r_txt} rounds of {q_txt} questions, he correctly answered {r_val} * {q_val} - 1 = <<{r_val}*{q_val}-1={r_val*q_val-1}>>{r_val*q_val-1} questions
+Before the bonus, {name} earned {r_val*q_val-1} correct answers * {p} points/answer = <<{r_val*q_val-1}*{p}={(r_val*q_val-1)*p}>>{(r_val*q_val-1)*p} points.
+Since missing one question would only disqualify him from receiving a bonus in one round, he would earn a bonus for {r_val}-1=<<{r_val}-1={r_val-1}>>{r_val-1} rounds.
+He should expect a bonus of {r_val-1} rounds* {b} points/round= <<{r_val-1}*{b}={(r_val-1)*b}>>{(r_val-1)*b} points.
+Including his bonus, {name} scored a total of {(r_val*q_val-1)*p} + {(r_val-1)*b} = <<{(r_val*q_val-1)*p}+{(r_val-1)*b}={(r_val*q_val-1)*p+(r_val-1)*b}>>{(r_val*q_val-1)*p+(r_val-1)*b} points.
+#### {(r_val*q_val - 1)*p + (r_val - 1)*b + 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

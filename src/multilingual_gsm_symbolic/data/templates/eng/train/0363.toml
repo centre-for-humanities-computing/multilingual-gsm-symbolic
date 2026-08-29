@@ -1,0 +1,50 @@
+question = """
+Janet hires six employees. Four of them are warehouse workers who make $15/hour, and the other two are managers who make $20/hour. Janet has to pay 10% of her workers' salaries in FICA taxes. If everyone works 25 days a month and 8 hours a day, how much does Janet owe total for their wages and taxes for one month?
+"""
+
+answer = """
+First figure out how many hours each worker works per month by multiplying the number of days they work by the number of hours a day they work: 25 days * 8 hours/day = <<25*8=200>>200 hours
+Then calculate how much one warehouse worker makes per month by multiplying their hourly rate by the number of hours they work: 200 hours * $15/hour = $<<200*15=3000>>3000
+Then multiply that number by 4 to find out how much all the warehouse workers make: $3000/worker * 4 workers = $<<3000*4=12000>>12,000
+Now multiply the hours each manager works (also 200) by their hourly wage to find out how much one manager makes per month: 200 hours * $20/hour = $<<200*20=4000>>4,000
+Now multiply one manager's wages by the number of managers (2) to find their total wage amount: $4,000/manager * 2 managers = $<<4000*2=8000>>8,000
+Now add the wages for the managers and the workers to find the total cost of the wages: $8,000 + $12,000 = $<<8000+12000=20000>>20,000
+Now multiply the total wage bill by 10% to find how much the FICA taxes are: $20,000 * .1 = $<<20000*.1=2000>>2,000
+Now add the total wage bill to the total tax amount to find the grand total: $2,000 + $20,000 = $<<2000+20000=22000>>22,000
+#### 22000
+"""
+
+id_orig = 310
+id_shuffled = 363
+
+question_annotated = """
+{name,Janet} hires six employees. Four of them are warehouse workers who make ${ww_rate,15}/hour, and the other two are managers who make ${mgr_rate,20}/hour. {name,Janet} has to pay 10% of her workers' salaries in FICA taxes. If everyone works {days,25} days a month and {hours,8} hours a day, how much does {name,Janet} owe total for their wages and taxes for one month?
+
+#init:
+- name = sample(names_female)
+- $ww_rate = range(10, 31, 5)
+- $mgr_rate = range(15, 36, 5)
+- $days = range(20, 27)
+- $hours = range(6, 11)
+
+#conditions:
+- (days*hours*(ww_rate*4 + mgr_rate*2)) % 10 == 0
+
+#answer: days*hours*(ww_rate*4 + mgr_rate*2) + days*hours*(ww_rate*4 + mgr_rate*2)//10
+"""
+
+answer_annotated = """
+First figure out how many hours each worker works per month by multiplying the number of days they work by the number of hours a day they work: {days} days * {hours} hours/day = <<{days}*{hours}={days*hours}>>{days*hours} hours
+Then calculate how much one warehouse worker makes per month by multiplying their hourly rate by the number of hours they work: {days*hours} hours * ${ww_rate}/hour = $<<{days*hours}*{ww_rate}={days*hours*ww_rate}>>{days*hours*ww_rate}
+Then multiply that number by 4 to find out how much all the warehouse workers make: ${days*hours*ww_rate}/worker * 4 workers = $<<{days*hours*ww_rate}*4={days*hours*ww_rate*4}>>12,000
+Now multiply the hours each manager works (also {days*hours}) by their hourly wage to find out how much one manager makes per month: {days*hours} hours * ${mgr_rate}/hour = $<<{days*hours}*{mgr_rate}={days*hours*mgr_rate}>>4,000
+Now multiply one manager's wages by the number of managers (2) to find their total wage amount: $4,000/manager * 2 managers = $<<{days*hours*mgr_rate}*2={days*hours*mgr_rate*2}>>8,000
+Now add the wages for the managers and the workers to find the total cost of the wages: $8,000 + $12,000 = $<<{days*hours*mgr_rate*2}+{days*hours*ww_rate*4}={days*hours*(mgr_rate*2+ww_rate*4)}>>20,000
+Now multiply the total wage bill by 10% to find how much the FICA taxes are: $20,000 * .1 = $<<{days*hours*(mgr_rate*2+ww_rate*4)}*.1={days*hours*(mgr_rate*2+ww_rate*4)//10}>>2,000
+Now add the total wage bill to the total tax amount to find the grand total: $2,000 + $20,000 = $<<{days*hours*(mgr_rate*2+ww_rate*4)//10}+{days*hours*(mgr_rate*2+ww_rate*4)}={days*hours*(mgr_rate*2+ww_rate*4)//10+days*hours*(mgr_rate*2+ww_rate*4)}>>22,000
+#### {days*hours*(ww_rate*4 + mgr_rate*2) + days*hours*(ww_rate*4 + mgr_rate*2)//10}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

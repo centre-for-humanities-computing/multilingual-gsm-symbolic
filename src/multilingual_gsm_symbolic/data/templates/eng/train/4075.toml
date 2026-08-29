@@ -1,0 +1,43 @@
+question = """
+Mica went to the grocery store and bought 2 kilograms of pasta that costs $1.5; 1/4 kilogram of ground beef costs $8 for 1 kilogram; two jars of pasta sauce costs $2 per jar. Mica also wants to buy a $6 Quesadilla for snacks.  How much money should she have with her to buy all those?
+"""
+
+answer = """
+Two kilograms of pasta cost $1.5 x 2 = $<<1.5*2=3>>3.
+One-fourth kilogram of ground beef cost $8 x 1/4 = $<<8*1/4=2>>2.
+Two jars of pasta sauce cost $2 x 2 = $<<2*2=4>>4.
+The total cost for the pasta, beef, and sauce is $3 + $2 + $4 = $<<3+2+4=9>>9.
+Since Mica also wants to buy Quesadilla, she should have $9 + $6 = $<<9+6=15>>15.
+#### 15
+"""
+
+id_orig = 3440
+id_shuffled = 4075
+
+question_annotated = """
+{name,Mica} went to the grocery store and bought 2 kilograms of pasta that costs $1.5; 1/4 kilogram of ground beef costs ${beef_price,8} for 1 kilogram; two jars of pasta sauce costs ${jar_price,2} per jar. {name,Mica} also wants to buy a ${q,6} Quesadilla for snacks.  How much money should she have with her to buy all those?
+
+#init:
+- name = sample(names_female)
+- $beef_price = range(8, 41, 4)
+- $jar_price = range(2, 12)
+- $q = range(4, 20)
+
+#conditions:
+- divides(beef_price, 4)
+
+#answer: 3 + beef_price//4 + jar_price*2 + q
+"""
+
+answer_annotated = """
+Two kilograms of pasta cost $1.5 x 2 = $<<1.5*2=3>>3.
+One-fourth kilogram of ground beef cost ${beef_price} x 1/4 = $<<{beef_price}*1/4={beef_price//4}>>{beef_price//4}.
+Two jars of pasta sauce cost ${jar_price} x 2 = $<<{jar_price}*2={jar_price*2}>>{jar_price*2}.
+The total cost for the pasta, beef, and sauce is $3 + ${beef_price//4} + ${jar_price*2} = $<<3+{beef_price//4}+{jar_price*2}={3+beef_price//4+jar_price*2}>>{3+beef_price//4+jar_price*2}.
+Since {name} also wants to buy Quesadilla, she should have ${3+beef_price//4+jar_price*2} + ${q} = $<<{3+beef_price//4+jar_price*2}+{q}={3+beef_price//4+jar_price*2+q}>>{3+beef_price//4+jar_price*2+q}.
+#### {3+beef_price//4+jar_price*2+q}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

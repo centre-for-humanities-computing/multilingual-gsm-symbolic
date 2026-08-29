@@ -1,0 +1,43 @@
+question = """
+Mark has a really bad headache.  He takes 2 Tylenol tablets of 500 mg each and he does every 4 hours for 12 hours.  How many grams of Tylenol does he end up taking?
+"""
+
+answer = """
+He takes 12/4=<<12/4=3>>3 doses
+Each dose is 500*2=<<500*2=1000>>1000 mg
+So he takes 3*1000=<<3*1000=3000>>3000 mg
+So he takes 3000/1000=<<3000/1000=3>>3 grams of Tylenol
+#### 3
+"""
+
+id_orig = 2966
+id_shuffled = 3528
+
+question_annotated = """
+{name,Mark} has a really bad headache.  He takes {t,2} Tylenol tablets of {dose,500} mg each and he does every {h,4} hours for {T,12} hours.  How many grams of Tylenol does he end up taking?
+
+#init:
+- name = sample(names_male)
+- $t = range(1, 6)
+- $dose = range(100, 1050, 50)
+- $h = range(2, 13)
+- $T = range(4, 49)
+
+#conditions:
+- divides(T, h)
+- divides(dose * t, 1000)
+
+#answer: T//h * t * dose // 1000
+"""
+
+answer_annotated = """
+He takes {T}/{h}=<<{T}/{h}={T//h}>>{T//h} doses
+Each dose is {dose}*{t}=<<{dose}*{t}={dose*t}>>{dose*t} mg
+So he takes {T//h}*{dose*t}=<<{T//h}*{dose*t}={T//h*t*dose}>>{T//h*t*dose} mg
+So he takes {T//h*t*dose}/1000=<<{T//h*t*dose}/1000={T//h*t*dose//1000}>>{T//h*t*dose//1000} grams of Tylenol
+#### {T//h * t * dose // 1000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

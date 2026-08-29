@@ -1,0 +1,46 @@
+question = """
+Meena bakes 5 dozen cookies for the school’s bake sale.  She sells 2 dozen cookies to her biology teacher, Mr. Stone.  Her friend Brock buys 7 cookies, and her friend Katy buys twice as many as Brock.  How many cookies does Meena have left?
+"""
+
+answer = """
+Meena bakes a total of 5 x 12 = <<5*12=60>>60 cookies.
+Mr. Stone buys 2 x 12 = <<2*12=24>>24 cookies.
+Brock buys 7 cookies, so Katy buys 2 x 7 = <<7*2=14>>14 cookies.
+Meena sells a total of 24 + 7 + 14 = <<24+7+14=45>>45 cookies.
+She has 60 - 45 = <<60-45=15>>15 cookies left.
+#### 15
+"""
+
+id_orig = 1161
+id_shuffled = 1257
+
+question_annotated = """
+{name1,Meena} bakes {d,5} dozen cookies for the school’s bake sale.  She sells {s,2} dozen cookies to her biology teacher, Mr. Stone.  Her friend {name2,Brock} buys {b,7} cookies, and her friend {name3,Katy} buys twice as many as {name2,Brock}.  How many cookies does {name1,Meena} have left?
+
+#init:
+- name1 = sample(names_female)
+- name2 = sample(names_male)
+- name3 = sample(names_female)
+- $d = range(3, 30)
+- $s = range(1, 25)
+- $b = range(1, 40)
+
+#conditions:
+- s < d
+- s * 12 + b * 3 < d * 12
+
+#answer: d * 12 - (s * 12 + b * 3)
+"""
+
+answer_annotated = """
+{name1} bakes a total of {d} x 12 = <<{d}*12={d*12}>>{d*12} cookies.
+Mr. Stone buys {s} x 12 = <<{s}*12={s*12}>>{s*12} cookies.
+{name2} buys {b} cookies, so {name3} buys 2 x {b} = <<{b}*2={b*2}>>{b*2} cookies.
+{name1} sells a total of {s*12} + {b} + {b*2} = <<{s*12}+{b}+{b*2}={s*12+b+b*2}>>{s*12+b+b*2} cookies.
+She has {d*12} - {s*12+b+b*2} = <<{d*12}-{s*12+b+b*2}={d*12-(s*12+b*3)}>>{d*12-(s*12+b*3)} cookies left.
+#### {d*12-(s*12+b*3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

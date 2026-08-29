@@ -1,0 +1,45 @@
+question = """
+Harry is ordering pizza. A large pizza is 14. It costs $2 per topping. He orders 2 large pizzas, each with 3 toppings. He then adds a 25% tip. What is the total cost?
+"""
+
+answer = """
+The toppings on each pizza are $6 because 3 x 2 = <<3*2=6>>6
+The total for each pizza is $20 because 14 + 6 = <<14+6=20>>20
+The pizzas cost $40 because 2 x 20 = <<2*20=40>>40
+The tip is $10 because 40 x .25 = <<40*.25=10>>10
+The total is $50 because 40+ 10 = <<40+10=50>>50
+#### 50
+"""
+
+id_orig = 2320
+id_shuffled = 2668
+
+question_annotated = """
+{name,Harry} is ordering pizza. A large pizza is {p,14}. It costs ${t,2} per topping. He orders {n,2} large pizzas, each with {k,3} toppings. He then adds a {tip,25}% tip. What is the total cost?
+
+#init:
+- name = sample(names_male)
+- $p = range(8, 33)
+- $t = range(1, 6)
+- $n = range(2, 6)
+- $k = range(1, 9)
+- $tip = range(5, 55, 5)
+
+#conditions:
+- divides(n*(p + k*t)*tip, 100)
+
+#answer: n*(p+k*t)*(100+tip)//100
+"""
+
+answer_annotated = """
+The toppings on each pizza are ${k*t} because {k} x {t} = <<{k}*{t}={k*t}>>{k*t}
+The total for each pizza is ${p+k*t} because {p} + {k*t} = <<{p}+{k*t}={p+k*t}>>{p+k*t}
+The pizzas cost ${n*(p+k*t)} because {n} x {p+k*t} = <<{n}*{p+k*t}={n*(p+k*t)}>>{n*(p+k*t)}
+The tip is ${n*(p+k*t)*tip//100} because {n*(p+k*t)} x .{tip} = <<{n*(p+k*t)}*.{tip}={n*(p+k*t)*tip//100}>>{n*(p+k*t)*tip//100}
+The total is ${n*(p+k*t)*(100+tip)//100} because {n*(p+k*t)}+ {n*(p+k*t)*tip//100} = <<{n*(p+k*t)}+{n*(p+k*t)*tip//100}={n*(p+k*t)*(100+tip)//100}>>{n*(p+k*t)*(100+tip)//100}
+#### {n*(p+k*t)*(100+tip)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

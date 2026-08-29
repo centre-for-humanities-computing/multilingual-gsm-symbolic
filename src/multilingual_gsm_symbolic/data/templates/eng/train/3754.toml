@@ -1,0 +1,46 @@
+question = """
+A chocolate box contains 200 bars. Thomas and his 4 friends take 1/4 of the bars and decide to divide them equally between them. One of Thomas's friends doesn't like chocolate bars very much and returns 5 of his bars to the box. Later, his sister Piper comes home and takes 5 fewer bars than those taken in total by Thomas and his friends so she can also share with her friends. What's the total number of bars left in the box?
+"""
+
+answer = """
+Thomas and his friends took 1/4*200 = <<1/4*200=50>>50 bars.
+The total number of bars left in the box was 200-50 = <<200-50=150>>150 bars.
+Since there are five of them sharing, each of them got 50/5 = <<50/5=10>>10 bars.
+After a friend returned 5 bars, there were 150 + 5 = <<150+5=155>>155 bars in the box.
+Piper took five fewer bars, that is 50 - 5 = <<50-5=45>>45 bars.
+The total remaining bars left in the box is 155 - 45 = <<155-45=110>>110 bars.
+#### 110
+"""
+
+id_orig = 3155
+id_shuffled = 3754
+
+question_annotated = """
+A chocolate box contains {bars,200} bars. {name,Thomas} and his 4 friends take 1/4 of the bars and decide to divide them equally between them. One of {name,Thomas}'s friends doesn't like chocolate bars very much and returns {ret,5} of his bars to the box. Later, his sister {name2,Piper} comes home and takes 5 fewer bars than those taken in total by {name,Thomas} and his friends so she can also share with her friends. What's the total number of bars left in the box?
+
+#init:
+- name = sample(names_male)
+- name2 = sample(names_female)
+- $bars = range(200, 2400, 20)
+- $ret = range(2, 12)
+
+#conditions:
+- divides(bars, 20)
+- bars//20 > ret
+
+#answer: bars - 2*(bars//4) + ret + 5
+"""
+
+answer_annotated = """
+{name} and his friends took 1/4*{bars} = <<1/4*{bars}={bars//4}>>{bars//4} bars.
+The total number of bars left in the box was {bars}-{bars//4} = <<{bars}-{bars//4}={bars-bars//4}>>{bars-bars//4} bars.
+Since there are five of them sharing, each of them got {bars//4}/5 = <<{bars//4}/5={bars//20}>>{bars//20} bars.
+After a friend returned {ret} bars, there were {bars-bars//4} + {ret} = <<{bars-bars//4}+{ret}={bars-bars//4+ret}>>{bars-bars//4+ret} bars in the box.
+{name2} took five fewer bars, that is {bars//4} - 5 = <<{bars//4}-5={bars//4-5}>>{bars//4-5} bars.
+The total remaining bars left in the box is {bars-bars//4+ret} - {bars//4-5} = <<{bars-bars//4+ret}-{bars//4-5}={bars-2*(bars//4)+ret+5}>>{bars-2*(bars//4)+ret+5} bars.
+#### {bars - 2*(bars//4) + ret + 5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

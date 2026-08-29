@@ -1,0 +1,44 @@
+question = """
+Charles is jogging while listening to his favorite album. He runs at 6 MPH when he's got music on and 4 MPH when he doesn't. His album is 40 minutes long. How many minutes will it take him to jog 6 miles?
+"""
+
+answer = """
+He runs at .1 miles per minute because 6 / 60 = <<6/60=.1>>.1
+While the album is playing he can run 4 miles because 40 x .1 = <<40*.1=4>>4
+He has to run 2 miles without the album because 6 - 4 = <<6-4=2>>2
+Without music he runs 1/15 miles per minute because 4 / 60 = 1/15
+He will run the remaining 2 miles in 30 minutes because 2/(1/15) = <<2/(1/15)=30>>30
+It will take him 70 minutes in total because 40 + 30 =<<40+30=70>>70
+#### 70
+"""
+
+id_orig = 2421
+id_shuffled = 2808
+
+question_annotated = """
+{name,Charles} is jogging while listening to his favorite album. He runs at 6 MPH when he's got music on and 4 MPH when he doesn't. His album is {album,40} minutes long. How many minutes will it take him to jog {dist,6} miles?
+
+#init:
+- name = sample(names_male)
+- $album = range(10, 110, 10)
+- $dist = range(4, 20)
+
+#conditions:
+- 10 * dist > album
+
+#answer: album + (dist - album//10)*15
+"""
+
+answer_annotated = """
+He runs at .1 miles per minute because 6 / 60 = <<6/60=.1>>.1
+While the album is playing he can run {album//10} miles because {album} x .1 = <<{album}*.1={album//10}>>{album//10}
+He has to run {dist-album//10} miles without the album because {dist} - {album//10} = <<{dist}-{album//10}={dist-album//10}>>{dist-album//10}
+Without music he runs 1/15 miles per minute because 4 / 60 = 1/15
+He will run the remaining {dist-album//10} miles in {(dist-album//10)*15} minutes because {dist-album//10}/(1/15) = <<{dist-album//10}/(1/15)={(dist-album//10)*15}>>{(dist-album//10)*15}
+It will take him {album+(dist-album//10)*15} minutes in total because {album} + {(dist-album//10)*15} =<<{album}+{(dist-album//10)*15}={album+(dist-album//10)*15}>>{album+(dist-album//10)*15}
+#### {album+(dist-album//10)*15}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,44 @@
+question = """
+If 24 out of every 60 individuals like football and out of those that like it, 50% play it, how many people would you expect play football out of a group of 250?
+"""
+
+answer = """
+If 50% of individuals that like football play it, and there are 24 out of 60 individuals that like it, then 24*50% = 12 out of 60 individuals play it
+If 12 individuals play it out of 60 individuals then that means only 12/60 = 1/5 or 20% play it
+If 20% of individuals play football out of a group of 250 people, one would expect 250*20% = <<250*20*.01=50>>50 individuals to play it
+#### 50
+"""
+
+id_orig = 554
+id_shuffled = 627
+
+question_annotated = """
+If {a,24} out of every {b,60} individuals like {sport,football} and out of those that like it, {p,50}% play it, how many people would you expect play {sport,football} out of a group of {g,250}?
+
+#init:
+- sport = sample(sports)
+- $a = range(4, 204, 2)
+- $p = range(10, 101, 10)
+- $b = range(20, 220, 20)
+- $g = range(50, 2550, 50)
+
+#conditions:
+- a < b
+- divides(a*p, 100)
+- divides(b, a*p//100)
+- divides(a*p, b)
+- divides(g*a*p, 100*b)
+
+#answer: g*a*p//100//b
+"""
+
+answer_annotated = """
+If {p}% of individuals that like {sport} play it, and there are {a} out of {b} individuals that like it, then {a}*{p}% = {a*p//100} out of {b} individuals play it
+If {a*p//100} individuals play it out of {b} individuals then that means only {a*p//100}/{b} = 1/{b//(a*p//100)} or {a*p//b}% play it
+If {a*p//b}% of individuals play {sport} out of a group of {g} people, one would expect {g}*{a*p//b}% = <<{g}*{a*p//b}*.01={g*a*p//100//b}>>{g*a*p//100//b} individuals to play it
+#### {g*a*p//100//b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

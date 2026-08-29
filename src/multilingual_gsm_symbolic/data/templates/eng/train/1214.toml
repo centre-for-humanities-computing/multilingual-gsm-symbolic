@@ -1,0 +1,41 @@
+question = """
+Perry, Dana, Charlie, and Phil played golf together every week.  At the end of the season, Perry had won five more games than Dana, but Charlie had won 2 games fewer than Dana.  Phil had won 3 games more than Charlie did.  If Phil won a total of 12 games, how many more games did Perry win than did Phil?
+"""
+
+answer = """
+If Phil had won 3 games more than did Charlie, and Phil won 12 games, then Charlie won 12-3=<<12-3=9>>9 games.
+If Charlie had won 2 games fewer than Dana, and Charlie won 9 games, then Dana won 9+2=<<9+2=11>>11 games.
+If Perry had won five more games than did Dana, and Dana won 11 games, then Perry won 11+5=<<11+5=16>>16 games.
+Thus, Perry won 16-12=<<16-12=4>>4 more games than did Phil.
+#### 4
+"""
+
+id_orig = 1118
+id_shuffled = 1214
+
+question_annotated = """
+Perry, Dana, Charlie, and Phil played golf together every week.  At the end of the season, Perry had won five more games than Dana, but Charlie had won {cf,2} games fewer than Dana.  Phil had won {pm,3} games more than Charlie did.  If Phil won a total of {pt,12} games, how many more games did Perry win than did Phil?
+
+#init:
+- $cf = range(2, 21)
+- $pm = range(2, 21)
+- $pt = range(10, 110)
+
+#conditions:
+- pt > pm
+- cf + 5 > pm
+
+#answer: cf + 5 - pm
+"""
+
+answer_annotated = """
+If Phil had won {pm} games more than did Charlie, and Phil won {pt} games, then Charlie won {pt}-{pm}=<<{pt}-{pm}={pt-pm}>>{pt-pm} games.
+If Charlie had won {cf} games fewer than Dana, and Charlie won {pt-pm} games, then Dana won {pt-pm}+{cf}=<<{pt-pm}+{cf}={pt-pm+cf}>>{pt-pm+cf} games.
+If Perry had won five more games than did Dana, and Dana won {pt-pm+cf} games, then Perry won {pt-pm+cf}+5=<<{pt-pm+cf}+5={pt-pm+cf+5}>>{pt-pm+cf+5} games.
+Thus, Perry won {pt-pm+cf+5}-{pt}=<<{pt-pm+cf+5}-{pt}={cf+5-pm}>>{cf+5-pm} more games than did Phil.
+#### {cf+5-pm}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

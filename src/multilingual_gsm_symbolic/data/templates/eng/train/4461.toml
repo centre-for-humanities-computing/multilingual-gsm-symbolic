@@ -1,0 +1,46 @@
+question = """
+Susan is making jewelry with a repeating pattern that has 3 green beads, 5 purple beads, and twice as many red beads as green beads. If the pattern repeats three times per bracelet and 5 times per necklace, how many beads does she need to make 1 bracelets and 10 necklaces?
+"""
+
+answer = """
+First find the number of red beads per repeat: 3 green * 2 red/green = <<3*2=6>>6 red
+Then add the number of beads of each color to find the total number of bead per repeat: 6 beads + 3 beads + 5 beads = <<6+3+5=14>>14 beads
+Then multiply the number of beads per repeat by the number of repeats per bracelet to find the number of beads per bracelet: 14 beads/repeat * 3 repeats/bracelet = <<14*3=42>>42 beads/bracelet
+Then multiply the number of beads per repeat by the number of repeats per necklace to find the number of beads per necklace: 14 beads/repeat * 5 repeats/necklace = <<14*5=70>>70 beads/necklace
+Then multiply the number of beads per necklace by the number of necklaces to find the total number of beads used in the necklaces: 70 beads/necklace * 10 necklaces = <<70*10=700>>700 beads
+Then add the number of beads used in a bracelet to the number of beads in the necklaces to find the total number of beads used: 700 beads + 42 beads = <<700+42=742>>742 beads
+#### 742
+"""
+
+id_orig = 3779
+id_shuffled = 4461
+
+question_annotated = """
+{name,Susan} is making jewelry with a repeating pattern that has {g,3} green beads, {p,5} purple beads, and {mult_txt,twice} as many red beads as green beads. If the pattern repeats {rb_txt,three} times per bracelet and {rn,5} times per necklace, how many beads does she need to make {nb,1} bracelets and {nn,10} necklaces?
+
+#init:
+- name = sample(names_female)
+- mult_txt, mult = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- rb_txt, rb = sample([("two", 2), ("three", 3), ("four", 4)])
+- $g = range(2, 7)
+- $p = range(3, 6)
+- $rn = range(3, 6)
+- $nb = range(1, 3)
+- $nn = range(5, 25, 5)
+
+#answer: (g*mult+g+p)*rb + (g*mult+g+p)*rn*nn
+"""
+
+answer_annotated = """
+First find the number of red beads per repeat: {g} green * {mult} red/green = <<{g}*{mult}={g*mult}>>{g*mult} red
+Then add the number of beads of each color to find the total number of bead per repeat: {g*mult} beads + {g} beads + {p} beads = <<{g*mult}+{g}+{p}={g*mult+g+p}>>{g*mult+g+p} beads
+Then multiply the number of beads per repeat by the number of repeats per bracelet to find the number of beads per bracelet: {g*mult+g+p} beads/repeat * {rb} repeats/bracelet = <<{g*mult+g+p}*{rb}={(g*mult+g+p)*rb}>>{(g*mult+g+p)*rb} beads/bracelet
+Then multiply the number of beads per repeat by the number of repeats per necklace to find the number of beads per necklace: {g*mult+g+p} beads/repeat * {rn} repeats/necklace = <<{g*mult+g+p}*{rn}={(g*mult+g+p)*rn}>>{(g*mult+g+p)*rn} beads/necklace
+Then multiply the number of beads per necklace by the number of necklaces to find the total number of beads used in the necklaces: {(g*mult+g+p)*rn} beads/necklace * {nn} necklaces = <<{(g*mult+g+p)*rn}*{nn}={(g*mult+g+p)*rn*nn}>>{(g*mult+g+p)*rn*nn} beads
+Then add the number of beads used in a bracelet to the number of beads in the necklaces to find the total number of beads used: {(g*mult+g+p)*rn*nn} beads + {(g*mult+g+p)*rb*nb} beads = <<{(g*mult+g+p)*rn*nn}+{(g*mult+g+p)*rb*nb}={(g*mult+g+p)*rn*nn+(g*mult+g+p)*rb*nb}>>{(g*mult+g+p)*rn*nn+(g*mult+g+p)*rb*nb} beads
+#### {(g*mult+g+p)*rb + (g*mult+g+p)*rn*nn}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

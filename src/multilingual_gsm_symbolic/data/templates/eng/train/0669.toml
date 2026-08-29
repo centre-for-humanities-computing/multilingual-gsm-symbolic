@@ -1,0 +1,48 @@
+question = """
+Bianca worked for 12.5 hours last weekend. Celeste worked for twice that amount of time and McClain worked 8.5 hours less than Celeste. How many minutes did the 3 people work in total?
+"""
+
+answer = """
+Bianca = <<12.5=12.5>>12.5 hours
+Celeste 2 * 12.5 = <<2*12.5=25>>25 hours
+McClain = 25 - 8.5 = <<25-8.5=16.5>>16.5 hours
+Total + 12.5 + 25 + 16.5 = <<+12.5+25+16.5=54>>54 hours
+54 hours * 60 minutes = <<54*60=3240>>3240 minutes.
+Bianca, Celeste and McClain worked a total of 3240 minutes last weekend.
+#### 3240
+"""
+
+id_orig = 596
+id_shuffled = 669
+
+question_annotated = """
+{n1,Bianca} worked for {b,12.5} hours last weekend. {n2,Celeste} worked for {m_txt,twice} that amount of time and {n3,McClain} worked {d,8.5} hours less than {n2,Celeste}. How many minutes did the 3 people work in total?
+
+#init:
+- n1 = sample(names_female)
+- n2 = sample(names_female)
+- n3 = sample(names_male)
+- m_txt, m_val = sample(multi_times)
+- $b = arange(2.5, 30, 0.5)
+- $d = arange(1, 20, 0.5)
+
+#conditions:
+- m_val * b - d > 0
+- is_int((b + m_val * b + (m_val * b - d)) * 60)
+
+#answer: (b + m_val * b + (m_val * b - d)) * 60
+"""
+
+answer_annotated = """
+{n1} = <<{b}={b}>>{b} hours
+{n2} {m_val} * {b} = <<{m_val}*{b}={m_val*b}>>{m_val*b} hours
+{n3} = {m_val*b} - {d} = <<{m_val*b}-{d}={m_val*b-d}>>{m_val*b-d} hours
+Total + {b} + {m_val*b} + {m_val*b-d} = <<+{b}+{m_val*b}+{m_val*b-d}={b+m_val*b+(m_val*b-d)}>>{b+m_val*b+(m_val*b-d)} hours
+{b+m_val*b+(m_val*b-d)} hours * 60 minutes = <<{b+m_val*b+(m_val*b-d)}*60={(b+m_val*b+(m_val*b-d))*60}>>{(b+m_val*b+(m_val*b-d))*60} minutes.
+{n1}, {n2} and {n3} worked a total of {(b+m_val*b+(m_val*b-d))*60} minutes last weekend.
+#### {(b+m_val*b+(m_val*b-d))*60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,40 @@
+question = """
+Eighty-five cans were collected. LaDonna picked up 25 cans. Prikya picked up twice as many times as many cans as LaDonna. Yoki picked up the rest of the cans. How many cans did Yoki pick up?
+"""
+
+answer = """
+LaDonna = <<25=25>>25 cans
+Prikya is twice as many as LaDonna = 2*25 = <<2*25=50>>50
+Yoki picked up the rest 85 - 25 - 50 = <<85-25-50=10>>10
+Yoki picked up 10 cans.
+#### 10
+"""
+
+id_orig = 1944
+id_shuffled = 2248
+
+question_annotated = """
+{total_tw,Eighty-five} cans were collected. LaDonna picked up {l,25} cans. Prikya picked up {mult_tw,twice} as many times as many cans as LaDonna. Yoki picked up the rest of the cans. How many cans did Yoki pick up?
+
+#init:
+- total_tw, total = sample([("Eighty-five", 85), ("Ninety", 90), ("Ninety-five", 95), ("One hundred", 100), ("One hundred ten", 110), ("One hundred twenty", 120), ("One hundred fifty", 150), ("Two hundred", 200)])
+- $l = range(2, 60)
+- mult_tw, k = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+
+#conditions:
+- l * (k + 1) < total
+
+#answer: total - l * (k + 1)
+"""
+
+answer_annotated = """
+LaDonna = <<{l}={l}>>{l} cans
+Prikya is {mult_tw} as many as LaDonna = {k}*{l} = <<{k}*{l}={k*l}>>{k*l}
+Yoki picked up the rest {total} - {l} - {k*l} = <<{total}-{l}-{k*l}={total-l-k*l}>>{total-l-k*l}
+Yoki picked up {total-l-k*l} cans.
+#### {total - l * (k + 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

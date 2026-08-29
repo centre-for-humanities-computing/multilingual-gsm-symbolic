@@ -1,0 +1,46 @@
+question = """
+Frank picked 36 apples. Susan picked 3 times as many apples as Frank. If Susan gave out half of her apples, and Frank sold a third of his, how many in total do they have left?
+"""
+
+answer = """
+Susan picked 3 times as much as 36 which is 3*36 = <<3*36=108>>108 apples
+She gave out half which is 108*(1/2) = <<108*(1/2)=54>>54 apples
+She now has 108-54 = <<108-54=54>>54 apples
+Frank sold a third of 36 which is 36*(1/3) = <<36*(1/3)=12>>12 apples
+Frank now has 36-12 = <<36-12=24>>24 apples
+Altogether they now have 54+24 = <<54+24=78>>78 apples
+#### 78
+"""
+
+id_orig = 2205
+id_shuffled = 2543
+
+question_annotated = """
+{name_m,Frank} picked {f,36} apples. {name_f,Susan} picked {k,3} times as many apples as {name_m,Frank}. If {name_f,Susan} gave out half of her apples, and {name_m,Frank} sold a third of his, how many in total do they have left?
+
+#init:
+- name_m = sample(names_male)
+- name_f = sample(names_female)
+- $f = range(6, 210, 6)
+- $k = range(2, 6)
+
+#conditions:
+- divides(f*k, 2)
+- divides(f, 3)
+
+#answer: f*k - f*k//2 + f - f//3
+"""
+
+answer_annotated = """
+{name_f} picked {k} times as much as {f} which is {k}*{f} = <<{k}*{f}={f*k}>>{f*k} apples
+She gave out half which is {f*k}*(1/2) = <<{f*k}*(1/2)={f*k//2}>>{f*k//2} apples
+She now has {f*k}-{f*k//2} = <<{f*k}-{f*k//2}={f*k-f*k//2}>>{f*k-f*k//2} apples
+{name_m} sold a third of {f} which is {f}*(1/3) = <<{f}*(1/3)={f//3}>>{f//3} apples
+{name_m} now has {f}-{f//3} = <<{f}-{f//3}={f-f//3}>>{f-f//3} apples
+Altogether they now have {f*k-f*k//2}+{f-f//3} = <<{f*k-f*k//2}+{f-f//3}={f*k-f*k//2+f-f//3}>>{f*k-f*k//2+f-f//3} apples
+#### {f*k - f*k//2 + f - f//3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

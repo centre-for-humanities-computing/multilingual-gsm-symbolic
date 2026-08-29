@@ -1,0 +1,44 @@
+question = """
+Terry's mom brought home 4 different colored dogs from the shelter. The brown dog weighs 4 pounds. The black dog weighs 1 pound more than the brown dog. The white dog weighs twice as much as the brown dog. The grey dog weighs 2 pounds less than the black dog. What's the average weight of all the dogs?
+"""
+
+answer = """
+Since the black dog weighs 1 pound more than the brown dog, the black dog weighs 1 + 4 = <<1+4=5>>5 pounds.
+The white dog weighs 4 * 2 = <<4*2=8>>8 pounds.
+Because the grey dog weighs 2 pounds less than the black dog, the grey dog weighs 5 - 2 = <<5-2=3>>3 pounds.
+The total weight of all dogs is 4 + 5 + 8 + 3 = <<4+5+8+3=20>>20 pounds.
+The average weight of all the dogs is 20 / 4 = <<20/4=5>>5 pounds.
+#### 5
+"""
+
+id_orig = 3059
+id_shuffled = 3644
+
+question_annotated = """
+{name,Terry}'s mom brought home 4 different colored dogs from the shelter. The brown dog weighs {b,4} pounds. The black dog weighs 1 pound more than the brown dog. The white dog weighs {kt,twice} as much as the brown dog. The grey dog weighs {g,2} pounds less than the black dog. What's the average weight of all the dogs?
+
+#init:
+- name = sample(names)
+- kt, k = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $b = range(2, 200)
+- $g = range(2, 60)
+
+#conditions:
+- b + 1 - g > 0
+- divides(3*b + b*k + 2 - g, 4)
+
+#answer: (3*b + b*k + 2 - g)//4
+"""
+
+answer_annotated = """
+Since the black dog weighs 1 pound more than the brown dog, the black dog weighs 1 + {b} = <<1+{b}={b+1}>>{b+1} pounds.
+The white dog weighs {b} * {k} = <<{b}*{k}={b*k}>>{b*k} pounds.
+Because the grey dog weighs {g} pounds less than the black dog, the grey dog weighs {b+1} - {g} = <<{b+1}-{g}={b+1-g}>>{b+1-g} pounds.
+The total weight of all dogs is {b} + {b+1} + {b*k} + {b+1-g} = <<{b}+{b+1}+{b*k}+{b+1-g}={3*b + b*k + 2 - g}>>{3*b + b*k + 2 - g} pounds.
+The average weight of all the dogs is {3*b + b*k + 2 - g} / 4 = <<{3*b + b*k + 2 - g}/4={(3*b + b*k + 2 - g)//4}>>{(3*b + b*k + 2 - g)//4} pounds.
+#### {(3*b + b*k + 2 - g)//4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

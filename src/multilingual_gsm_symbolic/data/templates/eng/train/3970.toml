@@ -1,0 +1,45 @@
+question = """
+Rica's group won in a dance competition. She got 3/8 of the prize money. From Rica's prize money, she spent 1/5 of it and is now left with $300. How much was the prize money that her group won?
+"""
+
+answer = """
+Rica is left with 1 - 1/5 = 4/5 of her prize money which is equal to $300.
+Since 4/5 is worth $300, then 1/5 is worth $300/4 = $75.
+So, Rica got $75 x 5 = $375 from their prize money which is 3/8 of the total prize.
+Since 3/8 is equal to $375, then 1/8 is worth $375/3 = $125.
+So, the total prize money is $125 x 8 = $<<125*8=1000>>1000.
+#### 1000
+"""
+
+id_orig = 3345
+id_shuffled = 3970
+
+question_annotated = """
+{name,Rica}'s group won in a dance competition. She got {gn,3}/{gd,8} of the prize money. From {name,Rica}'s prize money, she spent 1/5 of it and is now left with ${L,300}. How much was the prize money that her group won?
+
+#init:
+- name = sample(names_female)
+- $L = range(120, 1220, 4)
+- $gn = range(2, 4)
+- $gd = range(4, 17)
+
+#conditions:
+- gd > gn
+- divides(L, 4)
+- divides(L * 5 // 4, gn)
+
+#answer: gd * (L * 5 // 4) // gn
+"""
+
+answer_annotated = """
+{name} is left with 1 - 1/5 = 4/5 of her prize money which is equal to ${L}.
+Since 4/5 is worth ${L}, then 1/5 is worth ${L}/4 = ${L//4}.
+So, {name} got ${L//4} x 5 = ${L*5//4} from their prize money which is {gn}/{gd} of the total prize.
+Since {gn}/{gd} is equal to ${L*5//4}, then 1/{gd} is worth ${L*5//4}/{gn} = ${L*5//4//gn}.
+So, the total prize money is ${L*5//4//gn} x {gd} = $<<{L*5//4//gn}*{gd}={gd*(L*5//4)//gn}>>{gd*(L*5//4)//gn}.
+#### {gd*(L*5//4)//gn}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+A tank contains 6000 liters of water, 2000 liters evaporated, and then 3500 liters were drained by Bob. How many liters are in the tank if it now rains for 30 minutes and every 10 minutes 350 liters of rain are added to the tank?
+"""
+
+answer = """
+After the first evaporation, the water tank has 6000 liters - 2000 liters = <<6000-2000=4000>>4000 liters.
+After the second extraction, the water tank has 4000 liters - 3500 liters= <<4000-3500=500>>500 liters
+The tank is refilled with rain 30 minutes / 10 minutes = <<30/10=3>>3 times
+The amount of water refilled with rain is 3 times * 350 liters per time = <<3*350=1050>>1050 liters.
+With the additional rainwater, the water tank has 500 liters + 1050 liters = <<500+1050=1550>>1550 liters.
+#### 1550
+"""
+
+id_orig = 3569
+id_shuffled = 4227
+
+question_annotated = """
+A tank contains {w,6000} liters of water, {e,2000} liters evaporated, and then {d,3500} liters were drained by {name,Bob}. How many liters are in the tank if it now rains for {t,30} minutes and every {iv,10} minutes {r,350} liters of rain are added to the tank?
+
+#init:
+- name = sample(names_male)
+- $w = range(4000, 8001, 1000)
+- $e = range(1000, 3001, 500)
+- $d = range(1500, 3501, 500)
+- $t = range(20, 61, 10)
+- $iv = range(5, 16, 5)
+- $r = range(350, 751, 100)
+
+#conditions:
+- w > e + d
+- divides(t, iv)
+
+#answer: w - e - d + t // iv * r
+"""
+
+answer_annotated = """
+After the first evaporation, the water tank has {w} liters - {e} liters = <<{w}-{e}={w-e}>>{w-e} liters.
+After the second extraction, the water tank has {w-e} liters - {d} liters= <<{w-e}-{d}={w-e-d}>>{w-e-d} liters
+The tank is refilled with rain {t} minutes / {iv} minutes = <<{t}/{iv}={t//iv}>>{t//iv} times
+The amount of water refilled with rain is {t//iv} times * {r} liters per time = <<{t//iv}*{r}={t//iv*r}>>{t//iv*r} liters.
+With the additional rainwater, the water tank has {w-e-d} liters + {t//iv*r} liters = <<{w-e-d}+{t//iv*r}={w-e-d+t//iv*r}>>{w-e-d+t//iv*r} liters.
+#### {w - e - d + t // iv * r}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

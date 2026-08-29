@@ -1,0 +1,42 @@
+question = """
+Theon's ship can move 15 nautical miles per hour while Yara's ship can move 30 nautical miles per hour. If their destination is 90 nautical miles away, how many hours ahead will Yara be ahead of Theon?
+"""
+
+answer = """
+Theon's estimated time of arrival is 90/15 = <<90/15=6>>6 hours.
+Yara's estimated time of arrival is 90/30 = <<90/30=3>>3 hours.
+Therefore, Yara is ahead by 6 - 3 = <<6-3=3>>3 hours.
+#### 3
+"""
+
+id_orig = 3097
+id_shuffled = 3682
+
+question_annotated = """
+{name_t,Theon}'s ship can move {a,15} nautical miles per hour while {name_y,Yara}'s ship can move {b,30} nautical miles per hour. If their destination is {d,90} nautical miles away, how many hours ahead will {name_y,Yara} be ahead of {name_t,Theon}?
+
+#init:
+- name_t = sample(names_male)
+- name_y = sample(names_female)
+- $a = range(2, 60)
+- $b = range(2, 120)
+- $d = range(10, 500, 10)
+
+#conditions:
+- b > a
+- divides(d, a)
+- divides(d, b)
+
+#answer: d//a - d//b
+"""
+
+answer_annotated = """
+{name_t}'s estimated time of arrival is {d}/{a} = <<{d}/{a}={d//a}>>{d//a} hours.
+{name_y}'s estimated time of arrival is {d}/{b} = <<{d}/{b}={d//b}>>{d//b} hours.
+Therefore, {name_y} is ahead by {d//a} - {d//b} = <<{d//a}-{d//b}={d//a-d//b}>>{d//a-d//b} hours.
+#### {d//a-d//b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

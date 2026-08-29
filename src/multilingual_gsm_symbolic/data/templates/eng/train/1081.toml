@@ -1,0 +1,41 @@
+question = """
+James has an old printer that crumples every seventh page and blurs the ink on every third page. If he prints 42 pages, how many are neither crumpled or blurred?
+"""
+
+answer = """
+First find the total number of pages that are crumpled: 42 pages / 7 = <<42/7=6>>6 pages
+Then find the total number of pages that are blurred: 42 pages / 3 = <<42/3=14>>14 pages
+Then find the number of pages that are both blurred and crumpled by finding how many numbers are less or equal to 42 and divisible by both 3 and 7: there are two, 21 and 42.
+Then subtract the number of crumpled and blurred pages from the total number of pages, and add the number of pages that were double-counted because they were both blurred and crumpled: 42 pages - 6 pages - 14 pages + 2 pages = <<42-6-14+2=24>>24 pages
+#### 24
+"""
+
+id_orig = 985
+id_shuffled = 1081
+
+question_annotated = """
+{name,James} has an old printer that crumples every {crd,seventh} page and blurs the ink on every {brd,third} page. If he prints {p,42} pages, how many are neither crumpled or blurred?
+
+#init:
+- name = sample(names_male)
+- crd, c = sample([("seventh", 7), ("eleventh", 11), ("thirteenth", 13), ("seventeenth", 17), ("nineteenth", 19), ("twenty-third", 23), ("twenty-ninth", 29), ("thirty-first", 31), ("thirty-seventh", 37), ("forty-first", 41)])
+- brd, b = sample([("second", 2), ("third", 3), ("fourth", 4), ("fifth", 5), ("eighth", 8), ("ninth", 9), ("sixteenth", 16), ("twenty-fifth", 25), ("twenty-seventh", 27), ("thirty-second", 32)])
+- $p = range(28, 2626, 2)
+
+#conditions:
+- p == c*b*2
+
+#answer: p - p//c - p//b + 2
+"""
+
+answer_annotated = """
+First find the total number of pages that are crumpled: {p} pages / {c} = <<{p}/{c}={p//c}>>{p//c} pages
+Then find the total number of pages that are blurred: {p} pages / {b} = <<{p}/{b}={p//b}>>{p//b} pages
+Then find the number of pages that are both blurred and crumpled by finding how many numbers are less or equal to {p} and divisible by both {b} and {c}: there are two, {c*b} and {p}.
+Then subtract the number of crumpled and blurred pages from the total number of pages, and add the number of pages that were double-counted because they were both blurred and crumpled: {p} pages - {p//c} pages - {p//b} pages + 2 pages = <<{p}-{p//c}-{p//b}+2={p-p//c-p//b+2}>>{p-p//c-p//b+2} pages
+#### {p-p//c-p//b+2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

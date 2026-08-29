@@ -1,0 +1,45 @@
+question = """
+Jack is running a bake sale to help pay for his basketball team's uniforms. He's already sold 4 brownies for $3 each and 5 lemon squares for $2 each. If Jack's goal is to make $50 and he sells cookies for $4 each, how many cookies does he need to sell to reach his goal?
+"""
+
+answer = """
+Jack earned from the brownies $3 per brownie * 4 brownies = $<<3*4=12>>12.
+Jack earned from the lemon squares $2 per square * 5 squares = $<<2*5=10>>10.
+He still needs to earn $50 - $12 - $10 = $<<50-12-10=28>>28.
+He sells cookies for $4 each, so Jack still needs to sell $28 / $4 = <<28/4=7>>7 cookies.
+#### 7
+"""
+
+id_orig = 238
+id_shuffled = 263
+
+question_annotated = """
+{name,Jack} is running a bake sale to help pay for his basketball team's uniforms. He's already sold {nb,4} brownies for ${pb,3} each and {nl,5} lemon squares for ${pl,2} each. If {name,Jack}'s goal is to make ${goal,50} and he sells cookies for ${pc,4} each, how many cookies does he need to sell to reach his goal?
+
+#init:
+- name = sample(names_male)
+- $nb = range(2, 8)
+- $pb = range(1, 5)
+- $nl = range(2, 8)
+- $pl = range(1, 5)
+- $pc = range(2, 9)
+- $goal = range(20, 100)
+
+#conditions:
+- goal > nb*pb + nl*pl
+- divides(goal - nb*pb - nl*pl, pc)
+
+#answer: (goal - nb*pb - nl*pl) // pc
+"""
+
+answer_annotated = """
+{name} earned from the brownies ${pb} per brownie * {nb} brownies = $<<{pb}*{nb}={pb*nb}>>{pb*nb}.
+{name} earned from the lemon squares ${pl} per square * {nl} squares = $<<{pl}*{nl}={pl*nl}>>{pl*nl}.
+He still needs to earn ${goal} - ${pb*nb} - ${pl*nl} = $<<{goal}-{pb*nb}-{pl*nl}={goal-pb*nb-pl*nl}>>{goal-pb*nb-pl*nl}.
+He sells cookies for ${pc} each, so {name} still needs to sell ${goal-pb*nb-pl*nl} / ${pc} = <<{goal-pb*nb-pl*nl}/{pc}={(goal - nb*pb - nl*pl)//pc}>>{(goal - nb*pb - nl*pl)//pc} cookies.
+#### {(goal - nb*pb - nl*pl)//pc}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

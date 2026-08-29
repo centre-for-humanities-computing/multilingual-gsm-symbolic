@@ -1,0 +1,45 @@
+question = """
+Mrs. Carlton gives out penalty points whenever her students misbehave. They get 5 points for interrupting, 10 points for insulting their classmates, and 25 points for throwing things. If they get 100 points, they have to go to the office. Jerry already interrupted twice and insulted his classmates 4 times. How many times can he throw things before he gets sent to the office?
+"""
+
+answer = """
+For interrupting, Jerry got 5 points per interruption * 2 interruptions = <<5*2=10>>10 points
+For insulting, he got 10 points per insult * 4 insults = <<10*4=40>>40 points
+To get to the 100 limit points, Jerry has 100 points - 10 points - 40 points = <<100-10-40=50>>50 points left
+He still has 50 points / 25 points per throw = <<50/25=2>>2 throws
+#### 2
+"""
+
+id_orig = 2515
+id_shuffled = 2903
+
+question_annotated = """
+Mrs. Carlton gives out penalty points whenever her students misbehave. They get {a,5} points for interrupting, {b,10} points for insulting their classmates, and {c,25} points for throwing things. If they get {limit,100} points, they have to go to the office. {name,Jerry} already interrupted {k_txt,twice} and insulted his classmates {m,4} times. How many times can he throw things before he gets sent to the office?
+
+#init:
+- name = sample(["Jerry", "Chris", "Oliver"])
+- k_txt, k = sample([("twice", 2), ("three times", 3), ("four times", 4), ("five times", 5)])
+- $a = range(2, 12)
+- $b = range(5, 16)
+- $c = range(5, 31, 5)
+- $limit = range(50, 210, 10)
+- $m = range(2, 7)
+
+#conditions:
+- limit - a*k - b*m > 0
+- divides(limit - a*k - b*m, c)
+
+#answer: (limit-a*k-b*m)//c
+"""
+
+answer_annotated = """
+For interrupting, {name} got {a} points per interruption * {k} interruptions = <<{a}*{k}={a*k}>>{a*k} points
+For insulting, he got {b} points per insult * {m} insults = <<{b}*{m}={b*m}>>{b*m} points
+To get to the {limit} limit points, {name} has {limit} points - {a*k} points - {b*m} points = <<{limit}-{a*k}-{b*m}={limit-a*k-b*m}>>{limit-a*k-b*m} points left
+He still has {limit-a*k-b*m} points / {c} points per throw = <<{limit-a*k-b*m}/{c}={(limit-a*k-b*m)//c}>>{(limit-a*k-b*m)//c} throws
+#### {(limit-a*k-b*m)//c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

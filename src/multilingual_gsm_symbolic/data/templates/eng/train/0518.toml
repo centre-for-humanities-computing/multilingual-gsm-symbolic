@@ -1,0 +1,39 @@
+question = """
+Carla bought 2 bags of mini peanut butter cups on clearance.  Each bag was $6.00 but was 75% off. How much did she spend on 2 bags of candy?
+"""
+
+answer = """
+Each bag was $6.00 but was marked down 75% for clearance so that's 6*.75 = $<<6*.75=4.50>>4.50 discount
+Each bag was $6.00 and there is a $4.50 discount so each bag is 6-4.50 = $<<6-4.50=1.50>>1.50
+Each bag was marked down to $1.50 a bag and she bought 2 bags for a total of 1.5*2 = $<<1.5*2=3.00>>3.00
+#### 3
+"""
+
+id_orig = 445
+id_shuffled = 518
+
+question_annotated = """
+{name,Carla} bought {b,2} bags of mini peanut butter cups on clearance.  Each bag was ${p,6}.00 but was {d,75}% off. How much did she spend on {b,2} bags of candy?
+
+#init:
+- name = sample(names_female)
+- $b = range(2, 21, 2)
+- $p = range(2, 102)
+- $d = range(25, 100, 25)
+
+#conditions:
+- divides(p*d - 50, 100)
+
+#answer: b*(100*p-p*d)//100
+"""
+
+answer_annotated = """
+Each bag was ${p}.00 but was marked down {d}% for clearance so that's {p}*.{d} = $<<{p}*.{d}={p*d//100}.50>>{p*d//100}.50 discount
+Each bag was ${p}.00 and there is a ${p*d//100}.50 discount so each bag is {p}-{p*d//100}.50 = $<<{p}-{p*d//100}.50={(100*p-p*d)//100}.50>>{(100*p-p*d)//100}.50
+Each bag was marked down to ${(100*p-p*d)//100}.50 a bag and she bought {b} bags for a total of {(100*p-p*d)//100}.5*{b} = $<<{(100*p-p*d)//100}.5*{b}={b*(100*p-p*d)//100}.00>>{b*(100*p-p*d)//100}.00
+#### {b*(100*p-p*d)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

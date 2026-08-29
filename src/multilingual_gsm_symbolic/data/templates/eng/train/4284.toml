@@ -1,0 +1,43 @@
+question = """
+Erin runs her own launderette and needs to cash in the change from the machines. There are 80 quarters and 100 dimes in every machine in the launderette. When Erin empties all of the machines and cashes in the change, she has a total of $90. She had no money before she emptied the machines and each machine held the same amount of money. How many machines are in the launderette?
+"""
+
+answer = """
+There are 4 quarters in a dollar so in quarters, each machine holds 80 quarters / 4 = $<<80/4=20>>20.
+There are 10 dimes in a dollar so in dimes, each machine holds 100 dimes / 10 = $10.
+Each machine therefore holds $20 in quarters + $10 in dimes = $<<20+10=30>>30.
+So Erin must therefore have $90 total income / $30 income per machine = <<90/30=3>>3 machines.
+#### 3
+"""
+
+id_orig = 3626
+id_shuffled = 4284
+
+question_annotated = """
+{name,Erin} runs her own launderette and needs to cash in the change from the machines. There are {q,80} quarters and {d,100} dimes in every machine in the launderette. When {name,Erin} empties all of the machines and cashes in the change, she has a total of ${total,90}. She had no money before she emptied the machines and each machine held the same amount of money. How many machines are in the launderette?
+
+#init:
+- name = sample(names_female)
+- $q = range(4, 208, 4)
+- $d = range(10, 510, 10)
+- $total = range(90, 200, 10)
+
+#conditions:
+- divides(q, 4)
+- divides(d, 10)
+- divides(total, q//4 + d//10)
+
+#answer: total//(q//4 + d//10)
+"""
+
+answer_annotated = """
+There are 4 quarters in a dollar so in quarters, each machine holds {q} quarters / 4 = $<<{q}/4={q//4}>>{q//4}.
+There are 10 dimes in a dollar so in dimes, each machine holds {d} dimes / 10 = ${d//10}.
+Each machine therefore holds ${q//4} in quarters + ${d//10} in dimes = $<<{q//4}+{d//10}={q//4+d//10}>>{q//4+d//10}.
+So {name} must therefore have ${total} total income / ${q//4+d//10} income per machine = <<{total}/{q//4+d//10}={total//(q//4+d//10)}>>{total//(q//4+d//10)} machines.
+#### {total//(q//4+d//10)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

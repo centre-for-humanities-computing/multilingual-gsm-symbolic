@@ -1,0 +1,51 @@
+question = """
+Daniel has a collection of 346 video games. 80 of them, Daniel bought for $12 each. Of the rest, 50% were bought for $7. All others had a price of $3 each. How much did Daniel spend on all the games in his collection?
+"""
+
+answer = """
+On 80 games, Daniel spend 80 games * $12/game = $<<80*12=960>>960.
+The rest of the collection is 346 games - 80 games = <<346-80=266>>266 games.
+50% of these games means 50/100 * 266 games = <<50/100*266=133>>133 games.
+Daniel bought them for $7 each, so he had to spend 133 games * $7/game = $<<133*7=931>>931 on them.
+The other 133 games were bought for $3 each, so they've cost him 133 games * $3/game = $<<133*3=399>>399.
+On all games in total Daniel spent $960 + $931 + $399 = $<<960+931+399=2290>>2290.
+#### 2290
+"""
+
+id_orig = 162
+id_shuffled = 188
+
+question_annotated = """
+{name,Daniel} has a collection of {total,346} video games. {n1,80} of them, {name,Daniel} bought for ${p1,12} each. Of the rest, {pct,50}% were bought for ${p2,7}. All others had a price of ${p3,3} each. How much did {name,Daniel} spend on all the games in his collection?
+
+#init:
+- name = sample(["Daniel", "Kevin", "Brian", "Marcus"])
+- $total = range(46, 400, 100)
+- $n1 = range(10, 100, 10)
+- $pct = range(25, 76, 25)
+- $p1 = range(8, 21)
+- $p2 = range(4, 11)
+- $p3 = range(1, 6)
+
+#conditions:
+- total > n1
+- p2 < p1
+- p3 < p2
+- divides(pct * (total - n1), 100)
+
+#answer: n1*p1 + (pct*(total-n1)//100)*p2 + (total-n1 - pct*(total-n1)//100)*p3
+"""
+
+answer_annotated = """
+On {n1} games, {name} spend {n1} games * ${p1}/game = $<<{n1}*{p1}={n1*p1}>>{n1*p1}.
+The rest of the collection is {total} games - {n1} games = <<{total}-{n1}={total-n1}>>{total-n1} games.
+{pct}% of these games means {pct}/100 * {total-n1} games = <<{pct}/100*{total-n1}={pct*(total-n1)//100}>>{pct*(total-n1)//100} games.
+{name} bought them for ${p2} each, so he had to spend {pct*(total-n1)//100} games * ${p2}/game = $<<{pct*(total-n1)//100}*{p2}={(pct*(total-n1)//100)*p2}>>{(pct*(total-n1)//100)*p2} on them.
+The other {total-n1-(pct*(total-n1)//100)} games were bought for ${p3} each, so they've cost him {total-n1-(pct*(total-n1)//100)} games * ${p3}/game = $<<{total-n1-(pct*(total-n1)//100)}*{p3}={(total-n1-(pct*(total-n1)//100))*p3}>>{(total-n1-(pct*(total-n1)//100))*p3}.
+On all games in total {name} spent ${n1*p1} + ${(pct*(total-n1)//100)*p2} + ${(total-n1-(pct*(total-n1)//100))*p3} = $<<{n1*p1}+{(pct*(total-n1)//100)*p2}+{(total-n1-(pct*(total-n1)//100))*p3}={n1*p1+(pct*(total-n1)//100)*p2+(total-n1-(pct*(total-n1)//100))*p3}>>{n1*p1+(pct*(total-n1)//100)*p2+(total-n1-(pct*(total-n1)//100))*p3}.
+#### {n1*p1+(pct*(total-n1)//100)*p2+(total-n1-(pct*(total-n1)//100))*p3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

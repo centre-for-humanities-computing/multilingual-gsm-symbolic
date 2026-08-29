@@ -1,0 +1,43 @@
+question = """
+Celina enjoys hiking in the mountains. Due to a lack of proper equipment, she decided to order a new pair of boots, a flashlight, and a special hoodie. The hoodie cost $80 and the flashlight was only 20% of that price. The pair of boots cost was $110, but due to a special promotion, Celina was able to buy them 10% cheaper. How much did Celina spend in total on the above-mentioned equipment?
+"""
+
+answer = """
+The flashlight was 20% of the price of the hoodie, so 80 * 20/100 = $<<80*20/100=16>>16.
+The promotion for a pair of boots was 110 * 10/100 = $<<110*10/100=11>>11.
+So the pair of boots cost 110 - 11 = $<<110-11=99>>99.
+Celina therefore spent 80 + 16 + 99 = $<<80+16+99=195>>195 on the equipment.
+#### 195
+"""
+
+id_orig = 1075
+id_shuffled = 1171
+
+question_annotated = """
+{name,Celina} enjoys hiking in the mountains. Due to a lack of proper equipment, she decided to order a new pair of boots, a flashlight, and a special hoodie. The hoodie cost ${h,80} and the flashlight was only {fp,20}% of that price. The pair of boots cost was ${b,110}, but due to a special promotion, {name,Celina} was able to buy them {dp,10}% cheaper. How much did {name,Celina} spend in total on the above-mentioned equipment?
+
+#init:
+- name = sample(names_female)
+- $h = range(40, 300, 10)
+- $fp = range(5, 55, 5)
+- $b = range(60, 400, 10)
+- $dp = range(5, 55, 5)
+
+#conditions:
+- divides(h*fp, 100)
+- divides(b*dp, 100)
+
+#answer: h + h*fp//100 + b - b*dp//100
+"""
+
+answer_annotated = """
+The flashlight was {fp}% of the price of the hoodie, so {h} * {fp}/100 = $<<{h}*{fp}/100={h*fp//100}>>{h*fp//100}.
+The promotion for a pair of boots was {b} * {dp}/100 = $<<{b}*{dp}/100={b*dp//100}>>{b*dp//100}.
+So the pair of boots cost {b} - {b*dp//100} = $<<{b}-{b*dp//100}={b-b*dp//100}>>{b-b*dp//100}.
+{name} therefore spent {h} + {h*fp//100} + {b-b*dp//100} = $<<{h}+{h*fp//100}+{b-b*dp//100}={h+h*fp//100+b-b*dp//100}>>{h+h*fp//100+b-b*dp//100} on the equipment.
+#### {h + h*fp//100 + b - b*dp//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

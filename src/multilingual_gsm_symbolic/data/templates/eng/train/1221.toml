@@ -1,0 +1,47 @@
+question = """
+Sharon wants to get kitchen supplies. She admired Angela's kitchen supplies which consist of 20 pots, 6 more than three times as many plates as the pots, and half as many cutlery as the plates. Sharon wants to buy half as many pots as Angela, 20 less than three times as many plates as Angela, and twice as much cutlery as Angela. What is the total number of kitchen supplies Sharon wants to buy?
+"""
+
+answer = """
+Angela has 6+3*20=<<6+3*20=66>>66 plates.
+Angela has 1/2*66=<<1/2*66=33>>33 cutlery.
+Sharon wants to buy 1/2*20=<<1/2*20=10>>10 pots.
+Sharon wants to buy 3*66-20=<<3*66-20=178>>178 plates.
+Sharon wants to buy 2*33= <<2*33=66>>66 cutlery.
+Sharon wants to buy a total of 10+178+66=<<10+178+66=254>>254 kitchen supplies.
+#### 254
+"""
+
+id_orig = 1125
+id_shuffled = 1221
+
+question_annotated = """
+{name_s,Sharon} wants to get kitchen supplies. She admired {name_a,Angela}'s kitchen supplies which consist of {p,20} pots, {m,6} more than three times as many plates as the pots, and half as many cutlery as the plates. {name_s,Sharon} wants to buy half as many pots as {name_a,Angela}, {n,20} less than three times as many plates as {name_a,Angela}, and twice as much cutlery as {name_a,Angela}. What is the total number of kitchen supplies {name_s,Sharon} wants to buy?
+
+#init:
+- name_s = sample(names_female)
+- name_a = sample(names_female)
+- $p = range(4, 104, 2)
+- $m = range(1, 51)
+- $n = range(2, 102, 2)
+
+#conditions:
+- divides(m + 3*p, 2)
+- 3*(m + 3*p) > n
+
+#answer: p//2 + 3*(m + 3*p) - n + 2*((m + 3*p)//2)
+"""
+
+answer_annotated = """
+{name_a} has {m}+3*{p}=<<{m}+3*{p}={m+3*p}>>{m+3*p} plates.
+{name_a} has 1/2*{m+3*p}=<<1/2*{m+3*p}={(m + 3*p)//2}>>{(m + 3*p)//2} cutlery.
+{name_s} wants to buy 1/2*{p}=<<1/2*{p}={p//2}>>{p//2} pots.
+{name_s} wants to buy 3*{m+3*p}-{n}=<<3*{m+3*p}-{n}={3*(m+3*p)-n}>>{3*(m+3*p)-n} plates.
+{name_s} wants to buy 2*{(m + 3*p)//2}= <<2*{(m + 3*p)//2}={m+3*p}>>{m+3*p} cutlery.
+{name_s} wants to buy a total of {p//2}+{3*(m+3*p)-n}+{m+3*p}=<<{p//2}+{3*(m+3*p)-n}+{m+3*p}={p//2 + 3*(m+3*p) - n + (m+3*p)}>>{p//2 + 3*(m+3*p) - n + (m+3*p)} kitchen supplies.
+#### {p//2 + 3*(m+3*p) - n + 2*((m + 3*p)//2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

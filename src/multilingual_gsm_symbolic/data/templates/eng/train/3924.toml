@@ -1,0 +1,45 @@
+question = """
+Karen is planning writing assignments for her fifth grade class. She knows each short-answer question takes 3 minutes to answer, each paragraph takes 15 minutes to write, and each essay takes an hour to write. If Karen assigns 2 essays and 5 paragraphs, how many short-answer questions should she assign if she wants to assign 4 hours of homework total?
+"""
+
+answer = """
+First figure out how many minutes 4 hours is: 4 hours * 60 minutes/hour = <<4*60=240>>240 minutes
+Then figure out how long the two essays will take by multiplying the time per essay by the number of essays: 2 essays * 1 hour/essay * 60 minutes/hour = <<2*1*60=120>>120 minutes
+Use the same method to find the total time spent writing paragraphs: 15 minutes/paragraph * 5 paragraphs = <<15*5=75>>75 minutes
+Now subtract the time spent on essays and paragraphs from the total time to find the time spent on all the short answer questions: 240 minutes - 120 minutes - 75 minutes = <<240-120-75=45>>45 minutes
+Finally, divide the total time spent on short-answer questions by the time per question to find the number of questions: 45 minutes / 3 minutes/question = <<45/3=15>>15 questions
+#### 15
+"""
+
+id_orig = 3299
+id_shuffled = 3924
+
+question_annotated = """
+{name,Karen} is planning writing assignments for her fifth grade class. She knows each short-answer question takes {qt,3} minutes to answer, each paragraph takes {pt,15} minutes to write, and each essay takes an hour to write. If {name,Karen} assigns 2 essays and {np,5} paragraphs, how many short-answer questions should she assign if she wants to assign {th,4} hours of homework total?
+
+#init:
+- name = sample(names_female)
+- $qt = range(2, 16)
+- $pt = range(2, 61)
+- $np = range(2, 13)
+- $th = range(2, 9)
+
+#conditions:
+- th*60 - 120 - pt*np > 0
+- divides(th*60 - 120 - pt*np, qt)
+
+#answer: (th*60 - 120 - pt*np)//qt
+"""
+
+answer_annotated = """
+First figure out how many minutes {th} hours is: {th} hours * 60 minutes/hour = <<{th}*60={th*60}>>{th*60} minutes
+Then figure out how long the two essays will take by multiplying the time per essay by the number of essays: 2 essays * 1 hour/essay * 60 minutes/hour = <<2*1*60=120>>120 minutes
+Use the same method to find the total time spent writing paragraphs: {pt} minutes/paragraph * {np} paragraphs = <<{pt}*{np}={pt*np}>>{pt*np} minutes
+Now subtract the time spent on essays and paragraphs from the total time to find the time spent on all the short answer questions: {th*60} minutes - 120 minutes - {pt*np} minutes = <<{th*60}-120-{pt*np}={th*60-120-pt*np}>>{th*60-120-pt*np} minutes
+Finally, divide the total time spent on short-answer questions by the time per question to find the number of questions: {th*60-120-pt*np} minutes / {qt} minutes/question = <<{th*60-120-pt*np}/{qt}={(th*60-120-pt*np)//qt}>>{(th*60-120-pt*np)//qt} questions
+#### {(th*60 - 120 - pt*np)//qt}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

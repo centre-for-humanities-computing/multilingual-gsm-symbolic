@@ -1,0 +1,46 @@
+question = """
+At the Delicious Delhi restaurant, Hilary bought three samosas at $2 each and four orders of pakoras, at $3 each, and a mango lassi, for $2. She left a 25% tip. How much did the meal cost Hilary, with tax, in dollars?
+"""
+
+answer = """
+The samosas cost 3*2=<<3*2=6>>6 dollars each.
+The pakoras cost 4*3=<<4*3=12>>12 dollars each.
+The food came to 6+12+2=<<6+12+2=20>>20 dollars
+The tip was an additional 20*.25=<<20*.25=5>>5 dollars
+The total is 20+5=<<20+5=25>>25.
+#### 25
+"""
+
+id_orig = 736
+id_shuffled = 809
+
+question_annotated = """
+At the Delicious Delhi restaurant, {name,Hilary} bought {sam_txt,three} samosas at ${p1,2} each and {pak_txt,four} orders of pakoras, at ${p2,3} each, and a mango lassi, for ${l,2}. She left a 25% tip. How much did the meal cost {name,Hilary}, with tax, in dollars?
+
+#init:
+- name = sample(names_female)
+- sam_txt, a = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- pak_txt, b = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $p1 = range(1, 11)
+- $p2 = range(1, 16)
+- $l = range(1, 11)
+
+#conditions:
+- a * p1 + b * p2 + l > 0
+- divides(a * p1 + b * p2 + l, 4)
+
+#answer: a * p1 + b * p2 + l + (a * p1 + b * p2 + l) // 4
+"""
+
+answer_annotated = """
+The samosas cost {a}*{p1}=<<{a}*{p1}={a*p1}>>{a*p1} dollars each.
+The pakoras cost {b}*{p2}=<<{b}*{p2}={b*p2}>>{b*p2} dollars each.
+The food came to {a*p1}+{b*p2}+{l}=<<{a*p1}+{b*p2}+{l}={a*p1+b*p2+l}>>{a*p1+b*p2+l} dollars
+The tip was an additional {a*p1+b*p2+l}*.25=<<{a*p1+b*p2+l}*.25={(a*p1+b*p2+l)//4}>>{(a*p1+b*p2+l)//4} dollars
+The total is {a*p1+b*p2+l}+{(a*p1+b*p2+l)//4}=<<{a*p1+b*p2+l}+{(a*p1+b*p2+l)//4}={a*p1+b*p2+l+(a*p1+b*p2+l)//4}>>{a*p1+b*p2+l+(a*p1+b*p2+l)//4}.
+#### {a*p1+b*p2+l+(a*p1+b*p2+l)//4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

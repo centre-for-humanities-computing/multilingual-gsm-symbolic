@@ -1,0 +1,53 @@
+question = """
+Raj's house has an area equal to 1,110 square feet. It has 4 bedrooms that each measure 11 x 11 feet. There are 2 bathrooms that are 6 x 8 feet each. The kitchen and living area complete the home and they have the same sized area. How many square feet is the area of the kitchen?
+"""
+
+answer = """
+Area of 1 bedroom = 11 * 11 = <<11*11=121>>121 square feet
+Area of 4 bedrooms = 121 * 4 = <<121*4=484>>484 square feet
+Area of 1 bathroom = 6 * 8 = <<6*8=48>>48 square feet
+Area of 2 bathrooms = 2 * 48 = <<2*48=96>>96 square feet
+Area of all bedrooms and bathrooms = 484 + 96 = <<484+96=580>>580 square feet
+Kitchen + living room = 1,110 - 580 = <<1110-580=530>>530
+Kitchen = 530/2 = <<530/2=265>>265
+The kitchen is 265 square feet.
+#### 265
+"""
+
+id_orig = 3227
+id_shuffled = 3840
+
+question_annotated = """
+{name,Raj}'s house has an area equal to 1,110 square feet. It has {nbed,4} bedrooms that each measure {bw,11} x {bh,11} feet. There are {nbath,2} bathrooms that are {pw,6} x {ph,8} feet each. The kitchen and living area complete the home and they have the same sized area. How many square feet is the area of the kitchen?
+
+#init:
+- name = sample(names_male)
+- $nbed = range(2, 7)
+- $bw = range(6, 14)
+- $bh = range(6, 14)
+- $nbath = range(2, 5)
+- $pw = range(4, 12)
+- $ph = range(4, 12)
+
+#conditions:
+- 1110 - (nbed*bw*bh + nbath*pw*ph) > 0
+- divides(1110 - (nbed*bw*bh + nbath*pw*ph), 2)
+
+#answer: (1110 - (nbed*bw*bh + nbath*pw*ph))//2
+"""
+
+answer_annotated = """
+Area of 1 bedroom = {bw} * {bh} = <<{bw}*{bh}={bw*bh}>>{bw*bh} square feet
+Area of {nbed} bedrooms = {bw*bh} * {nbed} = <<{bw*bh}*{nbed}={bw*bh*nbed}>>{bw*bh*nbed} square feet
+Area of 1 bathroom = {pw} * {ph} = <<{pw}*{ph}={pw*ph}>>{pw*ph} square feet
+Area of {nbath} bathrooms = {nbath} * {pw*ph} = <<{nbath}*{pw*ph}={nbath*pw*ph}>>{nbath*pw*ph} square feet
+Area of all bedrooms and bathrooms = {bw*bh*nbed} + {nbath*pw*ph} = <<{bw*bh*nbed}+{nbath*pw*ph}={bw*bh*nbed+nbath*pw*ph}>>{bw*bh*nbed+nbath*pw*ph} square feet
+Kitchen + living room = 1,110 - {bw*bh*nbed+nbath*pw*ph} = <<1110-{bw*bh*nbed+nbath*pw*ph}={1110-(nbed*bw*bh+nbath*pw*ph)}>>{1110-(nbed*bw*bh+nbath*pw*ph)}
+Kitchen = {1110-(nbed*bw*bh+nbath*pw*ph)}/2 = <<{1110-(nbed*bw*bh+nbath*pw*ph)}/2={(1110-(nbed*bw*bh+nbath*pw*ph))//2}>>{(1110-(nbed*bw*bh+nbath*pw*ph))//2}
+The kitchen is {(1110-(nbed*bw*bh+nbath*pw*ph))//2} square feet.
+#### {(1110-(nbed*bw*bh+nbath*pw*ph))//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

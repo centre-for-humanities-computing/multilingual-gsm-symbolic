@@ -1,0 +1,40 @@
+question = """
+Adam goes to a small school, which teaches 80 students in three classes. 40% of the students are in class A, and class B has 21 students fewer than class A. The rest are in class C. How many students are in this class?
+"""
+
+answer = """
+In class A, there are 40/100 * 80 = <<40/100*80=32>>32 students.
+In class B, the number of students is less by 21, which means class B has 32 - 21 = <<32-21=11>>11 students.
+That means 80 - 32 - 11 = <<80-32-11=37>>37 students are in class C.
+#### 37
+"""
+
+id_orig = 259
+id_shuffled = 284
+
+question_annotated = """
+{name,Adam} goes to a small school, which teaches {t,80} students in three classes. {p,40}% of the students are in class A, and class B has {f,21} students fewer than class A. The rest are in class C. How many students are in this class?
+
+#init:
+- name = sample(names_male)
+- $t = range(60, 260)
+- $p = range(10, 51)
+- $f = range(1, 31)
+
+#conditions:
+- divides(p * t, 100)
+- p * t / 100 > f
+
+#answer: t - p*t//100 - (p*t//100 - f)
+"""
+
+answer_annotated = """
+In class A, there are {p}/100 * {t} = <<{p}/100*{t}={p*t//100}>>{p*t//100} students.
+In class B, the number of students is less by {f}, which means class B has {p*t//100} - {f} = <<{p*t//100}-{f}={p*t//100-f}>>{p*t//100-f} students.
+That means {t} - {p*t//100} - {p*t//100-f} = <<{t}-{p*t//100}-{p*t//100-f}={t-p*t//100-(p*t//100-f)}>>{t-p*t//100-(p*t//100-f)} students are in class C.
+#### {t - p*t//100 - (p*t//100 - f)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

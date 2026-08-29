@@ -1,0 +1,42 @@
+question = """
+Buying a toaster requires an insurance plan that is 20% of the MSRP, plus a mandatory state tax rate of 50% after the insurance plan calculation. Jon chooses to buy a toaster that costs $30 at MSRP. What is the total he must pay?
+"""
+
+answer = """
+The insurance plan costs $30*0.2=$<<30*0.2=6>>6.
+The pre-state tax total is $30+$6=$<<30+6=36>>36.
+State tax will be $36*0.5=$<<36*0.5=18>>18.
+Jon needs to pay $18+$36=$<<18+36=54>>54 for his new toaster.
+#### 54
+"""
+
+id_orig = 3064
+id_shuffled = 3649
+
+question_annotated = """
+Buying a toaster requires an insurance plan that is {ins_pct,20}% of the MSRP, plus a mandatory state tax rate of {tax_pct,50}% after the insurance plan calculation. {name,Jon} chooses to buy a toaster that costs ${msrp,30} at MSRP. What is the total he must pay?
+
+#init:
+- name = sample(names_male)
+- $msrp = range(10, 210, 2)
+- $ins_pct = range(5, 55, 5)
+- $tax_pct = range(5, 55, 5)
+
+#conditions:
+- divides(msrp * ins_pct, 100)
+- divides((msrp + msrp*ins_pct//100) * tax_pct, 100)
+
+#answer: msrp + msrp*ins_pct//100 + (msrp + msrp*ins_pct//100)*tax_pct//100
+"""
+
+answer_annotated = """
+The insurance plan costs ${msrp}*{ins_pct/100}=$<<{msrp}*{ins_pct/100}={msrp*ins_pct//100}>>{msrp*ins_pct//100}.
+The pre-state tax total is ${msrp}+${msrp*ins_pct//100}=$<<{msrp}+{msrp*ins_pct//100}={msrp+msrp*ins_pct//100}>>{msrp+msrp*ins_pct//100}.
+State tax will be ${msrp+msrp*ins_pct//100}*{tax_pct/100}=$<<{msrp+msrp*ins_pct//100}*{tax_pct/100}={(msrp+msrp*ins_pct//100)*tax_pct//100}>>{(msrp+msrp*ins_pct//100)*tax_pct//100}.
+{name} needs to pay ${(msrp+msrp*ins_pct//100)*tax_pct//100}+${msrp+msrp*ins_pct//100}=$<<{(msrp+msrp*ins_pct//100)*tax_pct//100}+{msrp+msrp*ins_pct//100}={msrp+msrp*ins_pct//100+(msrp+msrp*ins_pct//100)*tax_pct//100}>>{msrp+msrp*ins_pct//100+(msrp+msrp*ins_pct//100)*tax_pct//100} for his new toaster.
+#### {msrp+msrp*ins_pct//100+(msrp+msrp*ins_pct//100)*tax_pct//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

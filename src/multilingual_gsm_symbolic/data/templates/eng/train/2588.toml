@@ -1,0 +1,42 @@
+question = """
+Thomas is making hummus. One of the ingredients in a hummus recipe is chickpeas. For one serving of hummus, the recipe calls for 1 cup of chickpeas. In a can of chickpeas, there are 16 ounces of chickpeas. In one cup of chickpeas, there are 6 ounces. To make 20 servings, how many cans of chickpeas should Thomas buy?
+"""
+
+answer = """
+For 20 servings, Thomas needs 20*1 = <<20*1=20>>20 cups of chickpeas.
+To have 20 cups, Thomas needs 20*6 = <<20*6=120>>120 ounces.
+120 ounces/16 ounces = <<120/16=7.5>>7.5 cans of chickpeas.
+Since Thomas cannot buy half a can, he needs to buy 8 cans.
+#### 8
+"""
+
+id_orig = 2250
+id_shuffled = 2588
+
+question_annotated = """
+{name,Thomas} is making hummus. One of the ingredients in a hummus recipe is chickpeas. For one serving of hummus, the recipe calls for 1 cup of chickpeas. In a can of chickpeas, there are {opc,16} ounces of chickpeas. In one cup of chickpeas, there are {opcup,6} ounces. To make {s,20} servings, how many cans of chickpeas should {name,Thomas} buy?
+
+#init:
+- name = sample(["Thomas", "Jerry", "Oliver", "Chris"])
+- $s = range(2, 102)
+- $opcup = range(4, 9)
+- $opc = sample([4, 8, 16, 32])
+
+#conditions:
+- not divides(s * opcup, opc)
+- s * opcup > opc
+
+#answer: int(s * opcup / opc) + 1
+"""
+
+answer_annotated = """
+For {s} servings, {name} needs {s}*1 = <<{s}*1={s}>>{s} cups of chickpeas.
+To have {s} cups, {name} needs {s}*{opcup} = <<{s}*{opcup}={s*opcup}>>{s*opcup} ounces.
+{s*opcup} ounces/{opc} ounces = <<{s*opcup}/{opc}={s*opcup/opc}>>{s*opcup/opc} cans of chickpeas.
+Since {name} cannot buy half a can, he needs to buy {int(s * opcup / opc) + 1} cans.
+#### {int(s * opcup / opc) + 1}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

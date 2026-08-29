@@ -1,0 +1,42 @@
+question = """
+Rodney and Todd are rowing down a river that is 50 yards wide at one end. If the river's width increases from this end uniformly by 2 yards every 10 meters along, and they row along the river at a rate of 5 m/s, how long (in seconds) will it take them to get to the point where the river is 80 yards wide?
+"""
+
+answer = """
+The difference in width between where they're starting from and their destination is 80-50 = <<80-50=30>>30 yards
+The width increases 2 yards every 10 m along the river so they would have to cover (30/2)*10 = <<(30/2)*10=150>>150 meters
+Traveling at the rate of 5m/s, he will spend 150/5 = <<150/5=30>>30 seconds
+#### 30
+"""
+
+id_orig = 1671
+id_shuffled = 1796
+
+question_annotated = """
+Rodney and Todd are rowing down a river that is {w0,50} yards wide at one end. If the river's width increases from this end uniformly by {inc,2} yards every {dist,10} meters along, and they row along the river at a rate of {rate,5} m/s, how long (in seconds) will it take them to get to the point where the river is {w1,80} yards wide?
+
+#init:
+- $w0 = range(10, 51, 5)
+- $w1 = range(20, 101, 4)
+- $inc = range(1, 6)
+- $dist = range(10, 101, 10)
+- $rate = range(1, 11)
+
+#conditions:
+- w1 > w0
+- divides(w1 - w0, inc)
+- is_int((w1 - w0)/inc*dist/rate)
+
+#answer: (w1 - w0)//inc*dist//rate
+"""
+
+answer_annotated = """
+The difference in width between where they're starting from and their destination is {w1}-{w0} = <<{w1}-{w0}={w1-w0}>>{w1-w0} yards
+The width increases {inc} yards every {dist} m along the river so they would have to cover ({w1-w0}/{inc})*{dist} = <<({w1-w0}/{inc})*{dist}={(w1-w0)//inc*dist}>>{(w1-w0)//inc*dist} meters
+Traveling at the rate of {rate}m/s, he will spend {(w1-w0)//inc*dist}/{rate} = <<{(w1-w0)//inc*dist}/{rate}={(w1-w0)//inc*dist//rate}>>{(w1-w0)//inc*dist//rate} seconds
+#### {(w1-w0)//inc*dist//rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

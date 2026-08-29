@@ -1,0 +1,51 @@
+question = """
+Monica and Sheila are twins. Their mother gave them $50 and told them to buy some toilet paper and spend the remainder on groceries. The toilet paper cost $12. They bought apples, butter, eggs, and a large ham for twice the cost of the toilet paper. Since they still had some leftover money, they called their mother and she gave them permission to buy whatever they wanted for themselves as long as they shared the money evenly. They saw some boots they really liked, but a pair of boots costs 3 times the amount they had left. How much more would Monica and Sheila each have to add of their own money to buy two pairs of boots?
+"""
+
+answer = """
+The groceries cost $12 x 2 = $<<12*2=24>>24
+Including the toilet paper, Monica and Sheila had already spent $12 + $24 = $<<12+24=36>>36
+This means that they had $50 - $36 = $<<50-36=14>>14 left to spend on themselves.
+However, the boots cost $14 x 3 = $<<14*3=42>>42 per pair.
+Two pairs of boots would cost $42 x 2 = $<<42*2=84>>84
+They need another $84 - $14 = $<<84-14=70>>70 to buy two pairs.
+Each of them needs to add another $70/2 = $<<70/2=35>>35
+#### 35
+"""
+
+id_orig = 3324
+id_shuffled = 3949
+
+question_annotated = """
+{n1,Monica} and {n2,Sheila} are twins. Their mother gave them ${m,50} and told them to buy some toilet paper and spend the remainder on groceries. The toilet paper cost ${t,12}. They bought apples, butter, eggs, and a large ham for {mult_txt,twice} the cost of the toilet paper. Since they still had some leftover money, they called their mother and she gave them permission to buy whatever they wanted for themselves as long as they shared the money evenly. They saw some boots they really liked, but a pair of boots costs {k,3} times the amount they had left. How much more would {n1,Monica} and {n2,Sheila} each have to add of their own money to buy two pairs of boots?
+
+#init:
+- n1 = sample(["Monica", "Sheila"])
+- n2 = sample(["Monica", "Sheila"])
+- mult_txt, mult_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $m = range(40, 160, 2)
+- $t = range(5, 30)
+- $k = range(2, 9)
+
+#conditions:
+- n1 != n2
+- m - mult_val*t - t > 0
+- divides((m - mult_val*t - t)*(2*k - 1), 2)
+
+#answer: ((m - mult_val*t - t)*(2*k - 1))//2
+"""
+
+answer_annotated = """
+The groceries cost ${t} x {mult_val} = $<<{t}*{mult_val}={t*mult_val}>>{t*mult_val}
+Including the toilet paper, {n1} and {n2} had already spent ${t} + ${t*mult_val} = $<<{t}+{t*mult_val}={t+t*mult_val}>>{t+t*mult_val}
+This means that they had ${m} - ${t+t*mult_val} = $<<{m}-{t+t*mult_val}={m-t*mult_val-t}>>{m-t*mult_val-t} left to spend on themselves.
+However, the boots cost ${m-t*mult_val-t} x {k} = $<<{m-t*mult_val-t}*{k}={(m-t*mult_val-t)*k}>>{(m-t*mult_val-t)*k} per pair.
+Two pairs of boots would cost ${(m-t*mult_val-t)*k} x 2 = $<<{(m-t*mult_val-t)*k}*2={2*(m-t*mult_val-t)*k}>>{2*(m-t*mult_val-t)*k}
+They need another ${2*(m-t*mult_val-t)*k} - ${m-t*mult_val-t} = $<<{2*(m-t*mult_val-t)*k}-{m-t*mult_val-t}={(2*k-1)*(m-t*mult_val-t)}>>{(2*k-1)*(m-t*mult_val-t)} to buy two pairs.
+Each of them needs to add another ${(2*k-1)*(m-t*mult_val-t)}/2 = $<<{(2*k-1)*(m-t*mult_val-t)}/2={(2*k-1)*(m-t*mult_val-t)//2}>>{(2*k-1)*(m-t*mult_val-t)//2}
+#### {(2*k-1)*(m-t*mult_val-t)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

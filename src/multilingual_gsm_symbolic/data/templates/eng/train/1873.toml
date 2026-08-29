@@ -1,0 +1,43 @@
+question = """
+At a certain school, 2/3 of the population are females. One-tenth of the males are foreign students. If the school has 300 students, how many students are non-foreign male students?
+"""
+
+answer = """
+There are 300 x 2/3 = <<300*2/3=200>>200 females in the school.
+So, 300 - 200 = <<300-200=100>>100 are males.
+Out of the 100 males, 100 x 1/10 = <<100*1/10=10>>10 are male foreign students.
+Thus, there are 100 - 10 = <<100-10=90>>90 non-foreign male students.
+#### 90
+"""
+
+id_orig = 1726
+id_shuffled = 1873
+
+question_annotated = """
+At a certain school, {fnum,2}/{fden,3} of the population are females. One-tenth of the males are foreign students. If the school has {total,300} students, how many students are non-foreign male students?
+
+#init:
+- $fnum = range(1, 5)
+- $fden = range(2, 21)
+- $total = range(20, 1020, 10)
+
+#conditions:
+- fnum < fden
+- divides(fnum * total, fden)
+- divides((fden - fnum) * total, fden)
+- divides((fden - fnum) * total // fden, 10)
+
+#answer: (fden - fnum) * total // fden - (fden - fnum) * total // fden // 10
+"""
+
+answer_annotated = """
+There are {total} x {fnum}/{fden} = <<{total}*{fnum}/{fden}={fnum*total//fden}>>{fnum*total//fden} females in the school.
+So, {total} - {fnum*total//fden} = <<{total}-{fnum*total//fden}={(fden-fnum)*total//fden}>>{(fden-fnum)*total//fden} are males.
+Out of the {(fden-fnum)*total//fden} males, {(fden-fnum)*total//fden} x 1/10 = <<{(fden-fnum)*total//fden}*1/10={(fden-fnum)*total//fden//10}>>{(fden-fnum)*total//fden//10} are male foreign students.
+Thus, there are {(fden-fnum)*total//fden} - {(fden-fnum)*total//fden//10} = <<{(fden-fnum)*total//fden}-{(fden-fnum)*total//fden//10}={(fden-fnum)*total//fden-(fden-fnum)*total//fden//10}>>{(fden-fnum)*total//fden-(fden-fnum)*total//fden//10} non-foreign male students.
+#### {(fden-fnum)*total//fden-(fden-fnum)*total//fden//10}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

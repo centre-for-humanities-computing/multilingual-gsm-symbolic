@@ -1,0 +1,39 @@
+question = """
+Lucy has been trying new recipes and wants to make sure she keeps the cupboard stocked with ingredients. She had a 500g bag of flour in the cupboard at the start of the week. She used 240g when she baked cookies on Tuesday, and accidentally spilled half of what was left when she was putting the flour away. If Lucy wants a full bag of flour in the cupboard, how much flour does she need to buy, in grams?
+"""
+
+answer = """
+After baking cookies, Lucy had 500 – 240 = <<500-240=260>>260g of flour left.
+She accidentally spilled half of this, which means she had 260 * 0.5 = <<260*0.5=130>>130g of flour left.
+She therefore needs 500 – 130 = <<500-130=370>>370g of flour.
+#### 370
+"""
+
+id_orig = 3434
+id_shuffled = 4069
+
+question_annotated = """
+{name,Lucy} has been trying new recipes and wants to make sure she keeps the cupboard stocked with ingredients. She had a {bag,500}g bag of flour in the cupboard at the start of the week. She used {used,240}g when she baked cookies on Tuesday, and accidentally spilled half of what was left when she was putting the flour away. If {name,Lucy} wants a full bag of flour in the cupboard, how much flour does she need to buy, in grams?
+
+#init:
+- name = sample(names_female)
+- $bag = range(300, 900, 10)
+- $used = range(50, 290, 10)
+
+#conditions:
+- used < bag
+- divides(bag - used, 2)
+
+#answer: bag - (bag - used)//2
+"""
+
+answer_annotated = """
+After baking cookies, {name} had {bag} – {used} = <<{bag}-{used}={bag-used}>>{bag-used}g of flour left.
+She accidentally spilled half of this, which means she had {bag-used} * 0.5 = <<{bag-used}*0.5={(bag-used)//2}>>{(bag-used)//2}g of flour left.
+She therefore needs {bag} – {(bag-used)//2} = <<{bag}-{(bag-used)//2}={bag-(bag-used)//2}>>{bag-(bag-used)//2}g of flour.
+#### {bag - (bag-used)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

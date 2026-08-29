@@ -1,0 +1,49 @@
+question = """
+In a car racing competition, Skye drove a 6-kilometer track. For the first 3 kilometers, his speed was 150 kilometers per hour. For the next 2 kilometers, his speed was 50 kilometers per hour more. For the remaining 1 kilometer, his speed was twice as fast as his speed on the first 3 kilometers. What is Skye's average speed for the entire race?
+"""
+
+answer = """
+Since time is obtained by dividing distance and speed, then Skye took 3 km/150 km per hr. = 1/50 of an hour to finish the first 3 kilometers of the race.
+His speed on the next 2 kilometers was 150 + 50 = <<150+50=200>>200 kilometers per hour.
+Hence, it took him 2 km/200 km per hr. = 1/100 of an hour to finish the next 2 kilometers.
+His speed on the remaining 1 kilometer is 150 x 2 = <<150*2=300>>300 kilometers per hour.
+Hence, it took him 1/300 of an hour to finish the 1 kilometer.
+So, the total time it took for Skye to complete the race was 1/50 + 1/100 + 1/300 = 1/30 of an hour.
+Therefore, his average speed for the entire race was 6 km/ 1/30 hour = 180 kilometers per hour.
+#### 180
+"""
+
+id_orig = 1722
+id_shuffled = 1969
+
+question_annotated = """
+In a car racing competition, {name,Skye} drove a 6-kilometer track. For the first 3 kilometers, his speed was {s1,150} kilometers per hour. For the next 2 kilometers, his speed was {extra,50} kilometers per hour more. For the remaining 1 kilometer, his speed was {mult_txt,twice} as fast as his speed on the first 3 kilometers. What is {name,Skye}'s average speed for the entire race?
+
+#init:
+- name = sample(names_male)
+- mult_txt, mult_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $s1 = range(6, 606, 3)
+- $extra = range(2, 202)
+
+#conditions:
+- divides(s1, 3)
+- divides(s1 + extra, 2)
+- divides((s1//3) * ((s1+extra)//2) * (s1*mult_val), (s1//3)*((s1+extra)//2) + (s1//3)*(s1*mult_val) + ((s1+extra)//2)*(s1*mult_val))
+
+#answer: 6 * (((s1//3) * ((s1+extra)//2) * (s1*mult_val)) // ((s1//3)*((s1+extra)//2) + (s1//3)*(s1*mult_val) + ((s1+extra)//2)*(s1*mult_val)))
+"""
+
+answer_annotated = """
+Since time is obtained by dividing distance and speed, then {name} took 3 km/{s1} km per hr. = 1/{s1//3} of an hour to finish the first 3 kilometers of the race.
+His speed on the next 2 kilometers was {s1} + {extra} = <<{s1}+{extra}={s1+extra}>>{s1+extra} kilometers per hour.
+Hence, it took him 2 km/{s1+extra} km per hr. = 1/{(s1+extra)//2} of an hour to finish the next 2 kilometers.
+His speed on the remaining 1 kilometer is {s1} x {mult_val} = <<{s1}*{mult_val}={s1*mult_val}>>{s1*mult_val} kilometers per hour.
+Hence, it took him 1/{s1*mult_val} of an hour to finish the 1 kilometer.
+So, the total time it took for {name} to complete the race was 1/{s1//3} + 1/{(s1+extra)//2} + 1/{s1*mult_val} = 1/{(s1//3) * ((s1+extra)//2) * (s1*mult_val) // ((s1//3)*((s1+extra)//2) + (s1//3)*(s1*mult_val) + ((s1+extra)//2)*(s1*mult_val))} of an hour.
+Therefore, his average speed for the entire race was 6 km/ 1/{(s1//3) * ((s1+extra)//2) * (s1*mult_val) // ((s1//3)*((s1+extra)//2) + (s1//3)*(s1*mult_val) + ((s1+extra)//2)*(s1*mult_val))} hour = {6 * (((s1//3) * ((s1+extra)//2) * (s1*mult_val)) // ((s1//3)*((s1+extra)//2) + (s1//3)*(s1*mult_val) + ((s1+extra)//2)*(s1*mult_val)))} kilometers per hour.
+#### {6 * (((s1//3) * ((s1+extra)//2) * (s1*mult_val)) // ((s1//3)*((s1+extra)//2) + (s1//3)*(s1*mult_val) + ((s1+extra)//2)*(s1*mult_val)))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

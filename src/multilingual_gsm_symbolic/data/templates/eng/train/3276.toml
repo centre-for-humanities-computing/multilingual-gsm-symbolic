@@ -1,0 +1,42 @@
+question = """
+The town of Centerville spends 15% of its annual budget on its public library. Centerville spent $3,000 on its public library and 24% on the public parks. How much is left of the annual budget?
+"""
+
+answer = """
+The entire budget of Centerville is $3000 / 0.15 = $<<3000/0.15=20000>>20,000
+The budget for the parks is $20,000 * 0.24 =$<<20000*0.24=4800>>4,800
+After the park and the library there will be $20,000 - ($3,000 + $4,800) = $<<20000-(3000+4800)=12200>>12,200 left in the budget.
+#### 12200
+"""
+
+id_orig = 2752
+id_shuffled = 3276
+
+question_annotated = """
+The town of Centerville spends {lp,15}% of its annual budget on its public library. Centerville spent ${sk,3},000 on its public library and {pp,24}% on the public parks. How much is left of the annual budget?
+
+#init:
+- lp_txt, lp = sample([("0.05", 5), ("0.08", 8), ("0.1", 10), ("0.15", 15), ("0.2", 20), ("0.25", 25)])
+- pp_txt, pp = sample([("0.12", 12), ("0.16", 16), ("0.2", 20), ("0.24", 24), ("0.28", 28), ("0.32", 32)])
+- $sk = range(1, 21)
+
+#conditions:
+- divides(sk*100000, lp)
+- divides((sk*100000//lp)*pp, 100)
+- (sk*100000//lp)*pp//100 % 1000 >= 100
+- sk*100000//lp - sk*1000 - (sk*100000//lp)*pp//100 > 0
+- (sk*100000//lp - sk*1000 - (sk*100000//lp)*pp//100) % 1000 >= 100
+
+#answer: sk*100000//lp - sk*1000 - (sk*100000//lp)*pp//100
+"""
+
+answer_annotated = """
+The entire budget of Centerville is ${sk*1000} / {lp_txt} = $<<{sk*1000}/{lp_txt}={sk*100000//lp}>>{sk*100000//lp//1000},000
+The budget for the parks is ${sk*100000//lp//1000},000 * {pp_txt} =$<<{sk*100000//lp}*{pp_txt}={(sk*100000//lp)*pp//100}>>{(sk*100000//lp)*pp//100//1000},{(sk*100000//lp)*pp//100%1000}
+After the park and the library there will be ${sk*100000//lp//1000},000 - (${sk},000 + ${(sk*100000//lp)*pp//100//1000},{(sk*100000//lp)*pp//100%1000}) = $<<{sk*100000//lp}-({sk*1000}+{(sk*100000//lp)*pp//100})={sk*100000//lp-sk*1000-(sk*100000//lp)*pp//100}>>{(sk*100000//lp-sk*1000-(sk*100000//lp)*pp//100)//1000},{(sk*100000//lp-sk*1000-(sk*100000//lp)*pp//100)%1000} left in the budget.
+#### {sk*100000//lp - sk*1000 - (sk*100000//lp)*pp//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

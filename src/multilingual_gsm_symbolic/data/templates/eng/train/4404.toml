@@ -1,0 +1,45 @@
+question = """
+Jerry is making cherry syrup. He needs 500 cherries per quart of syrup. It takes him 2 hours to pick 300 cherries and 3 hours to make the syrup. How long will it take him to make 9 quarts of syrup?
+"""
+
+answer = """
+First find how many cherries Jerry can pick in one hour: 300 cherries / 2 hours = <<300/2=150>>150 cherries/hour
+Then multiply the number of quarts of syrup by the number of cherries per quart to find the total number of quarts Jerry needs: 500 cherries/quart * 9 quarts = 4500 cherries
+Then divide the total number of cherries by the number of cherries he picks per hour to find the number of hours the cherry-picking takes: 4500 cherries / 150 cherries/hour = <<4500/150=30>>30 hours
+Then add the time it takes him to make the syrup to find the total time: 30 hours + 3 hours = <<30+3=33>>33 hours
+#### 33
+"""
+
+id_orig = 3734
+id_shuffled = 4404
+
+question_annotated = """
+{name,Jerry} is making cherry syrup. He needs {p,500} cherries per quart of syrup. It takes him {h,2} hours to pick {c,300} cherries and {s,3} hours to make the syrup. How long will it take him to make {q,9} quarts of syrup?
+
+#init:
+- name = sample(names_male)
+- $p = range(100, 1100, 50)
+- $h = range(2, 7)
+- $c = range(200, 700, 50)
+- $s = range(2, 9)
+- $q = range(2, 13)
+
+#conditions:
+- divides(c, h)
+- divides(p * q, c // h)
+- p * q >= c // h
+
+#answer: p*q//(c//h) + s
+"""
+
+answer_annotated = """
+First find how many cherries {name} can pick in one hour: {c} cherries / {h} hours = <<{c}/{h}={c//h}>>{c//h} cherries/hour
+Then multiply the number of quarts of syrup by the number of cherries per quart to find the total number of quarts {name} needs: {p} cherries/quart * {q} quarts = {p*q} cherries
+Then divide the total number of cherries by the number of cherries he picks per hour to find the number of hours the cherry-picking takes: {p*q} cherries / {c//h} cherries/hour = <<{p*q}/{c//h}={p*q//(c//h)}>>{p*q//(c//h)} hours
+Then add the time it takes him to make the syrup to find the total time: {p*q//(c//h)} hours + {s} hours = <<{p*q//(c//h)}+{s}={p*q//(c//h)+s}>>{p*q//(c//h)+s} hours
+#### {p*q//(c//h) + s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

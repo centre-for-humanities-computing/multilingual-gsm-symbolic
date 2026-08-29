@@ -1,0 +1,43 @@
+question = """
+Christopher uses 1 packet of a sugar substitute in his coffee.  He has 2 coffees a day.  The packets come 30 to a box and cost $4.00 a box.  How much will it cost him to have enough sugar substitutes to last him 90 days?
+"""
+
+answer = """
+He uses 1 packet per cup of coffee and he has 2 cups a day so that's 1*2 = <<1*2=2>>2 packets
+He wants enough to last him 90 days and he uses 2 packets a day so that's 90*2 = <<90*2=180>>180 packets
+The packets come 30 to a box and he needs 180 packets so that's 180/30 = <<180/30=6>>6 boxes of sugar substitute
+Each box costs $4.00 and he needs 6 boxes so that's 4*6 = $<<4*6=24.00>>24.00
+#### 24
+"""
+
+id_orig = 1753
+id_shuffled = 1938
+
+question_annotated = """
+{name,Christopher} uses {p,1} packet of a sugar substitute in his coffee.  He has {c,2} coffees a day.  The packets come {perbox,30} to a box and cost ${cost,4}.00 a box.  How much will it cost him to have enough sugar substitutes to last him {days,90} days?
+
+#init:
+- name = sample(names_male)
+- $p = range(1, 2)
+- $c = range(2, 6)
+- $days = range(30, 160, 10)
+- $perbox = range(10, 60, 10)
+- $cost = range(2, 12)
+
+#conditions:
+- divides(days * c, perbox)
+
+#answer: cost * (days * c // perbox)
+"""
+
+answer_annotated = """
+He uses {p} packet per cup of coffee and he has {c} cups a day so that's {p}*{c} = <<{p}*{c}={p*c}>>{p*c} packets
+He wants enough to last him {days} days and he uses {c} packets a day so that's {days}*{c} = <<{days}*{c}={days*c}>>{days*c} packets
+The packets come {perbox} to a box and he needs {days*c} packets so that's {days*c}/{perbox} = <<{days*c}/{perbox}={days*c//perbox}>>{days*c//perbox} boxes of sugar substitute
+Each box costs ${cost}.00 and he needs {days*c//perbox} boxes so that's {cost}*{days*c//perbox} = $<<{cost}*{days*c//perbox}={cost*(days*c//perbox)}.00>>{cost*(days*c//perbox)}.00
+#### {cost * (days * c // perbox)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

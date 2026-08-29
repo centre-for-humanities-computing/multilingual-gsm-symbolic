@@ -1,0 +1,39 @@
+question = """
+Zane purchases 2 polo shirts from the 40% off rack at the men’s store.  The polo shirts are $50 each at the regular price.  How much did he pay for the shirts?
+"""
+
+answer = """
+At regular price, the polo shirts are 2 x $50 = $<<2*50=100>>100.
+At 40% off, he gets a discount of , $100 x 40% = $<<100*40*.01=40>>40.
+With this discount, the polo shirts cost $100 - $40 = $<<100-40=60>>60.
+#### 60
+"""
+
+id_orig = 3364
+id_shuffled = 3989
+
+question_annotated = """
+{name,Zane} purchases {k,2} polo shirts from the {pct,40}% off rack at the men’s store.  The polo shirts are ${price,50} each at the regular price.  How much did he pay for the shirts?
+
+#init:
+- name = sample(names_male)
+- $k = range(2, 11)
+- $price = range(5, 105, 5)
+- $pct = range(5, 96, 5)
+
+#conditions:
+- divides(k * price * pct, 100)
+
+#answer: k * price - k * price * pct // 100
+"""
+
+answer_annotated = """
+At regular price, the polo shirts are {k} x ${price} = $<<{k}*{price}={k*price}>>{k*price}.
+At {pct}% off, he gets a discount of , ${k*price} x {pct}% = $<<{k*price}*{pct}*.01={k*price*pct//100}>>{k*price*pct//100}.
+With this discount, the polo shirts cost ${k*price} - ${k*price*pct//100} = $<<{k*price}-{k*price*pct//100}={k*price - k*price*pct//100}>>{k*price - k*price*pct//100}.
+#### {k * price - k * price * pct // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

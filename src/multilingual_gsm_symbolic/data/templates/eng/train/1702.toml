@@ -1,0 +1,41 @@
+question = """
+Steve has a bank account that earns 10% interest every year. He puts $100 in it, and then 10 each year. How much money is in it after two years?
+"""
+
+answer = """
+After one year it earns $10 in interest because 100 x .1 = <<100*.1=10>>10
+It has $120 in it after a year because 100 + 10 + 10 = <<100+10+10=120>>120
+In the second year it earns $12 in interest because 120 x .1 = <<120*.1=12>>12
+In the second year it has $142 in it because 120 + 12 + 10 = <<120+12+10=142>>142
+#### 142
+"""
+
+id_orig = 1577
+id_shuffled = 1702
+
+question_annotated = """
+{name,Steve} has a bank account that earns 10% interest every year. He puts ${p,100} in it, and then {add,10} each year. How much money is in it after two years?
+
+#init:
+- name = sample(names_male)
+- $p = range(100, 1100, 10)
+- $add = range(5, 505, 5)
+
+#conditions:
+- divides(p, 10)
+- divides(p + p//10 + add, 10)
+
+#answer: p + p//10 + add + (p + p//10 + add)//10 + add
+"""
+
+answer_annotated = """
+After one year it earns ${p//10} in interest because {p} x .1 = <<{p}*.1={p//10}>>{p//10}
+It has ${p+p//10+add} in it after a year because {p} + {p//10} + {add} = <<{p}+{p//10}+{add}={p+p//10+add}>>{p+p//10+add}
+In the second year it earns ${(p+p//10+add)//10} in interest because {p+p//10+add} x .1 = <<{p+p//10+add}*.1={(p+p//10+add)//10}>>{(p+p//10+add)//10}
+In the second year it has ${p+p//10+add+(p+p//10+add)//10+add} in it because {p+p//10+add} + {(p+p//10+add)//10} + {add} = <<{p+p//10+add}+{(p+p//10+add)//10}+{add}={p+p//10+add+(p+p//10+add)//10+add}>>{p+p//10+add+(p+p//10+add)//10+add}
+#### {p+p//10+add+(p+p//10+add)//10+add}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

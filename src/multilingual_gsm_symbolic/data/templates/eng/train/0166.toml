@@ -1,0 +1,40 @@
+question = """
+Winwin won $50 in a lottery. She paid 20% for the tax and she paid $5 for the processing fee. How much was she able to take home?
+"""
+
+answer = """
+Winwin paid $50 x 20/100 = $<<50*20/100=10>>10 for the tax.
+So, she has $50 - $10 = <<50-10=40>>40 after paying the tax.
+Therefore, Winwin was able to take home $40 - $5 = $<<40-5=35>>35 after she paid for the processing fee.
+#### 35
+"""
+
+id_orig = 148
+id_shuffled = 166
+
+question_annotated = """
+{name,Winwin} won ${w,50} in a lottery. She paid {p,20}% for the tax and she paid ${f,5} for the processing fee. How much was she able to take home?
+
+#init:
+- name = sample(names_female)
+- $w = range(20, 500, 10)
+- $p = range(5, 55, 5)
+- $f = range(1, 21)
+
+#conditions:
+- divides(w*p, 100)
+- w - w*p//100 > f
+
+#answer: w - w*p//100 - f
+"""
+
+answer_annotated = """
+{name} paid ${w} x {p}/100 = $<<{w}*{p}/100={w*p//100}>>{w*p//100} for the tax.
+So, she has ${w} - ${w*p//100} = <<{w}-{w*p//100}={w-w*p//100}>>{w-w*p//100} after paying the tax.
+Therefore, {name} was able to take home ${w-w*p//100} - ${f} = $<<{w-w*p//100}-{f}={w-w*p//100-f}>>{w-w*p//100-f} after she paid for the processing fee.
+#### {w - w*p//100 - f}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

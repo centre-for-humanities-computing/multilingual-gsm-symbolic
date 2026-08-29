@@ -1,0 +1,46 @@
+question = """
+Oliver is trying to decide between two different sized boxes of macaroni and cheese. He wants to know which is the better value, so instead of just looking at the overall price, he looks at the price per ounce. The larger box is 30 ounces and the smaller box is 20 ounces. The larger box costs $4.80. The smaller box costs $3.40. What is the price per ounce in cents of the box with the better value (lowest price per ounce)?
+"""
+
+answer = """
+The larger box of macaroni and cheese costs 480 cents / 30 ounces = <<480/30=16>>16 cents per ounce.
+The smaller box of macaroni and cheese costs 340 cents / 20 ounces = <<340/20=17>>17 cents per ounce.
+The lower price per ounce is <<16=16>>16 cents.
+#### 16
+"""
+
+id_orig = 3881
+id_shuffled = 4575
+
+question_annotated = """
+{name,Oliver} is trying to decide between two different sized boxes of macaroni and cheese. He wants to know which is the better value, so instead of just looking at the overall price, he looks at the price per ounce. The larger box is {lo,30} ounces and the smaller box is {so,20} ounces. The larger box costs ${dl,4}.{ce,80}. The smaller box costs ${sl,3}.{se,40}. What is the price per ounce in cents of the box with the better value (lowest price per ounce)?
+
+#init:
+- name = sample(names_male)
+- $lo = range(10, 31)
+- $so = range(5, 21)
+- $dl = range(2, 7)
+- $ce = range(10, 100, 10)
+- $sl = range(1, 6)
+- $se = range(10, 100, 10)
+
+#conditions:
+- lo > so
+- dl * 100 + ce > sl * 100 + se
+- divides(dl * 100 + ce, lo)
+- divides(sl * 100 + se, so)
+- (dl * 100 + ce) // lo < (sl * 100 + se) // so
+
+#answer: (dl * 100 + ce) // lo
+"""
+
+answer_annotated = """
+The larger box of macaroni and cheese costs {dl*100+ce} cents / {lo} ounces = <<{dl*100+ce}/{lo}={(dl*100+ce)//lo}>>{(dl*100+ce)//lo} cents per ounce.
+The smaller box of macaroni and cheese costs {sl*100+se} cents / {so} ounces = <<{sl*100+se}/{so}={(sl*100+se)//so}>>{(sl*100+se)//so} cents per ounce.
+The lower price per ounce is <<{(dl*100+ce)//lo}={(dl*100+ce)//lo}>>{(dl*100+ce)//lo} cents.
+#### {(dl*100+ce)//lo}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

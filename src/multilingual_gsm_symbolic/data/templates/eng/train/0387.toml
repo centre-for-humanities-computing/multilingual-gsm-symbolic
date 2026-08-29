@@ -1,0 +1,50 @@
+question = """
+Martha needs 4 cups of berries and 2 cups of heavy cream to make 1 quart of ice cream.  She wants to make 1 quart of strawberry ice cream and 1 quart of raspberry ice cream.  At the farmers market, the 2 cup packages of strawberries are $3.00 each and the 2 cup package of raspberries are $5.00 each.  The heavy cream is sold for $4.00 for a 4 cup container.  How much will it cost her to make 1 quart of each ice cream?
+"""
+
+answer = """
+She needs 4 cups of strawberries per quart of ice cream and the strawberries are sold in 2 cup packages. So 4/2 = <<4/2=2>>2 packages of strawberries
+The strawberries cost $3.00 per package and she needs 2 so 3*2=$<<3*2=6.00>>6.00
+She needs 4 cups of raspberries per quart of ice cream and the raspberries are sold in 2 cup packages. So 4/2 = <<4/2=2>>2 packages of raspberries
+The raspberries cost $5.00 per package and she needs 2 so 5*2 = $<<5*2=10.00>>10.00
+Every quart needs 2 cups of heavy cream and she's making 2 quarts so 2*2 = <<2*2=4>>4 quarts
+She will spend $6.00 on strawberries, $10.00 on raspberries and $4.00 on heavy cream bringing the total to 6+10+4 = $<<6+10+4=20.00>>20.00
+#### 20
+"""
+
+id_orig = 334
+id_shuffled = 387
+
+question_annotated = """
+{name,Martha} needs {b,4} cups of berries and {c,2} cups of heavy cream to make 1 quart of ice cream.  She wants to make 1 quart of strawberry ice cream and 1 quart of raspberry ice cream.  At the farmers market, the {pkg,2} cup packages of strawberries are ${ps,3}.00 each and the {pkg,2} cup package of raspberries are ${pr,5}.00 each.  The heavy cream is sold for ${pc,4}.00 for a {hcs,4} cup container.  How much will it cost her to make 1 quart of each ice cream?
+
+#init:
+- name = sample(names_female)
+- $b = range(2, 14, 2)
+- $c = range(1, 6)
+- $pkg = range(2, 11)
+- $ps = range(2, 12)
+- $pr = range(4, 14)
+- $pc = range(2, 12)
+- $hcs = range(2, 21)
+
+#conditions:
+- divides(b, pkg)
+- hcs == 2 * c
+
+#answer: ps*(b//pkg) + pr*(b//pkg) + pc
+"""
+
+answer_annotated = """
+She needs {b} cups of strawberries per quart of ice cream and the strawberries are sold in {pkg} cup packages. So {b}/{pkg} = <<{b}/{pkg}={b//pkg}>>{b//pkg} packages of strawberries
+The strawberries cost ${ps}.00 per package and she needs {b//pkg} so {ps}*{b//pkg}=$<<{ps}*{b//pkg}={ps*(b//pkg)}.00>>{ps*(b//pkg)}.00
+She needs {b} cups of raspberries per quart of ice cream and the raspberries are sold in {pkg} cup packages. So {b}/{pkg} = <<{b}/{pkg}={b//pkg}>>{b//pkg} packages of raspberries
+The raspberries cost ${pr}.00 per package and she needs {b//pkg} so {pr}*{b//pkg} = $<<{pr}*{b//pkg}={pr*(b//pkg)}.00>>{pr*(b//pkg)}.00
+Every quart needs {c} cups of heavy cream and she's making 2 quarts so {c}*2 = <<{c}*2={c*2}>>{c*2} quarts
+She will spend ${ps*(b//pkg)}.00 on strawberries, ${pr*(b//pkg)}.00 on raspberries and ${pc}.00 on heavy cream bringing the total to {ps*(b//pkg)}+{pr*(b//pkg)}+{pc} = $<<{ps*(b//pkg)}+{pr*(b//pkg)}+{pc}={(ps*(b//pkg))+(pr*(b//pkg))+pc}.00>>{(ps*(b//pkg))+(pr*(b//pkg))+pc}.00
+#### {ps*(b//pkg)+(pr*(b//pkg))+pc}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

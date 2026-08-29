@@ -1,0 +1,41 @@
+question = """
+Linda bought two coloring books at $4 each, 4 packs of peanuts at $1.50 each pack, and one stuffed animal. She gave the cashier $25 and got no change. How much does a stuffed animal cost?
+"""
+
+answer = """
+The two coloring books amount to 2 x $4 = $<<2*4=8>>8.
+The 4 packs of peanuts amount to 4 x $1.50 = $<<4*1.5=6>>6.
+The total cost for the coloring books and peanuts is $8 + $6 = $<<8+6=14>>14.
+Thus, the stuffed animal cost $25 - $14 = $<<25-14=11>>11.
+#### 11
+"""
+
+id_orig = 368
+id_shuffled = 430
+
+question_annotated = """
+{name,Linda} bought two coloring books at ${p,4} each, {k,4} packs of peanuts at $1.50 each pack, and one stuffed animal. She gave the cashier ${c,25} and got no change. How much does a stuffed animal cost?
+
+#init:
+- name = sample(names_female)
+- $p = range(2, 30)
+- $k = range(2, 14, 2)
+- $c = range(10, 100)
+
+#conditions:
+- c - (2*p + k*3//2) > 0
+
+#answer: c - (2*p + k*3//2)
+"""
+
+answer_annotated = """
+The two coloring books amount to 2 x ${p} = $<<2*{p}={2*p}>>{2*p}.
+The {k} packs of peanuts amount to {k} x $1.50 = $<<{k}*1.5={k*3//2}>>{k*3//2}.
+The total cost for the coloring books and peanuts is ${2*p} + ${k*3//2} = $<<{2*p}+{k*3//2}={2*p+k*3//2}>>{2*p+k*3//2}.
+Thus, the stuffed animal cost ${c} - ${2*p+k*3//2} = $<<{c}-{2*p+k*3//2}={c-(2*p+k*3//2)}>>{c-(2*p+k*3//2)}.
+#### {c-(2*p+k*3//2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Alyssa and Chelsea jointly bought 40 candles to decorate their room. Alyssa used half of them, and Chelsea used 70% of the remaining candles. How many candles are there in the room now?
+"""
+
+answer = """
+Alyssa used half of the candles, which is 1/2*40 = <<1/2*40=20>>20 candles
+The number of candles that remained is 40-20 = <<40-20=20>>20
+Chelsea used 70% of the remaining candles, a total of 70/100*20 = <<70/100*20=14>>14 candles.
+The total number of candles in the room now is 40 - 20-14 = <<40-20-14=6>>6
+#### 6
+"""
+
+id_orig = 3833
+id_shuffled = 4527
+
+question_annotated = """
+{name1,Alyssa} and {name2,Chelsea} jointly bought {t,40} candles to decorate their room. {name1,Alyssa} used half of them, and {name2,Chelsea} used {p,70}% of the remaining candles. How many candles are there in the room now?
+
+#init:
+- name1 = sample(["Alyssa", "Sophie", "Andrea"])
+- name2 = sample(["Chelsea", "Claire", "Anna"])
+- $t = range(4, 202, 2)
+- $p = range(10, 95, 5)
+
+#conditions:
+- divides(p * (t//2), 100)
+
+#answer: t - t//2 - p*(t//2)//100
+"""
+
+answer_annotated = """
+{name1} used half of the candles, which is 1/2*{t} = <<1/2*{t}={t//2}>>{t//2} candles
+The number of candles that remained is {t}-{t//2} = <<{t}-{t//2}={t-t//2}>>{t-t//2}
+{name2} used {p}% of the remaining candles, a total of {p}/100*{t//2} = <<{p}/100*{t//2}={p*(t//2)//100}>>{p*(t//2)//100} candles.
+The total number of candles in the room now is {t} - {t//2}-{p*(t//2)//100} = <<{t}-{t//2}-{p*(t//2)//100}={t - t//2 - p*(t//2)//100}>>{t - t//2 - p*(t//2)//100}
+#### {t - t//2 - p*(t//2)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

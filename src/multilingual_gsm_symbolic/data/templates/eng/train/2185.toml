@@ -1,0 +1,48 @@
+question = """
+Tyson can swim at a speed of 3 miles per hour in a lake and 2.5 mph in an ocean. This season, half his races happened in lakes and half his races happened in the ocean. He had ten total races, each of which was 3 miles long. How much time did he spend in his races?
+"""
+
+answer = """
+He did 5 races in the lake because 10 / 2 = <<10/2=5>>5
+He did 5 races in the ocean because 10 / 2 = <<10/2=5>>5
+He raced 15 miles in the lake because 5 x 3 = <<5*3=15>>15
+His lake races took 6 hours because 15 / 2.5 = <<15/2.5=6>>6
+He raced 15 miles in the ocean because 5 x 3 = <<5*3=15>>15
+His ocean races took 5 hours because 15 / 3 = <<15/3=5>>5
+He spent 11 hours racing because 5 + 6 = <<5+6=11>>11
+#### 11
+"""
+
+id_orig = 1925
+id_shuffled = 2185
+
+question_annotated = """
+{name,Tyson} can swim at a speed of {v,3} miles per hour in a lake and 2.5 mph in an ocean. This season, half his races happened in lakes and half his races happened in the ocean. He had {n_word,ten} total races, each of which was {d,3} miles long. How much time did he spend in his races?
+
+#init:
+- name = sample(names_male)
+- $v = range(2, 13)
+- n_word, n = sample([("two", 2), ("four", 4), ("six", 6), ("eight", 8), ("ten", 10), ("twelve", 12), ("fourteen", 14), ("sixteen", 16), ("eighteen", 18), ("twenty", 20)])
+- $d = range(1, 61)
+
+#conditions:
+- divides(n//2*d, 5)
+- divides(n//2*d, v)
+
+#answer: n//2*d*2//5 + n//2*d//v
+"""
+
+answer_annotated = """
+He did {n//2} races in the lake because {n} / 2 = <<{n}/2={n//2}>>{n//2}
+He did {n//2} races in the ocean because {n} / 2 = <<{n}/2={n//2}>>{n//2}
+He raced {n//2*d} miles in the lake because {n//2} x {d} = <<{n//2}*{d}={n//2*d}>>{n//2*d}
+His lake races took {n//2*d*2//5} hours because {n//2*d} / 2.5 = <<{n//2*d}/2.5={n//2*d*2//5}>>{n//2*d*2//5}
+He raced {n//2*d} miles in the ocean because {n//2} x {d} = <<{n//2}*{d}={n//2*d}>>{n//2*d}
+His ocean races took {n//2*d//v} hours because {n//2*d} / {v} = <<{n//2*d}/{v}={n//2*d//v}>>{n//2*d//v}
+He spent {n//2*d//v + n//2*d*2//5} hours racing because {n//2*d//v} + {n//2*d*2//5} = <<{n//2*d//v}+{n//2*d*2//5}={n//2*d//v + n//2*d*2//5}>>{n//2*d//v + n//2*d*2//5}
+#### {n//2*d*2//5 + n//2*d//v}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

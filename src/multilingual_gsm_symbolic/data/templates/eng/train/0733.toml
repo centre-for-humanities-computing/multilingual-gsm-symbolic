@@ -1,0 +1,40 @@
+question = """
+Abe finds 4 ants on the sidewalk.  Beth sees 50% more ants than Abe.  CeCe watches twice as many ants as Abe.  Duke discovers half as many ants as Abe.  How many ants do the four children find together?
+"""
+
+answer = """
+Beth finds 4 + 2 = <<4+2=6>>6 ants.
+CeCe finds 4 x 2 = <<4*2=8>>8 ants.
+Duke finds 4 / 2 = <<4/2=2>>2 ants.
+The four children find 4 + 6 + 8 + 2 = <<4+6+8+2=20>>20 ants.
+#### 20
+"""
+
+id_orig = 660
+id_shuffled = 733
+
+question_annotated = """
+{name,Abe} finds {a,4} ants on the sidewalk.  Beth sees {p,50}% more ants than {name,Abe}.  CeCe watches twice as many ants as {name,Abe}.  Duke discovers half as many ants as {name,Abe}.  How many ants do the four children find together?
+
+#init:
+- name = sample(names_male)
+- $a = range(4, 210, 2)
+- $p = range(10, 210, 10)
+
+#conditions:
+- divides(a * (p + 100), 100)
+
+#answer: a + a * (p + 100) // 100 + 2 * a + a // 2
+"""
+
+answer_annotated = """
+Beth finds {a} + {a*p//100} = <<{a}+{a*p//100}={a+a*p//100}>>{a+a*p//100} ants.
+CeCe finds {a} x 2 = <<{a}*2={2*a}>>{2*a} ants.
+Duke finds {a} / 2 = <<{a}/2={a//2}>>{a//2} ants.
+The four children find {a} + {a+a*p//100} + {2*a} + {a//2} = <<{a}+{a+a*p//100}+{2*a}+{a//2}={a + a * (p + 100) // 100 + 2 * a + a // 2}>>{a + a * (p + 100) // 100 + 2 * a + a // 2} ants.
+#### {a + a * (p + 100) // 100 + 2 * a + a // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

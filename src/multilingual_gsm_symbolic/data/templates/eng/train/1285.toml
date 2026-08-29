@@ -1,0 +1,48 @@
+question = """
+Yolanda scored 345 points over the entire season. There were 15 games over the season. She averaged 4 free throws (worth one point), and 5 two-point baskets per game. How many three-point baskets did she average a game?
+"""
+
+answer = """
+She averaged 23 points per game because 345 / 15 = <<345/15=23>>23
+She averaged 10 points a game off two-point baskets because 5 x 2 = 10
+She averaged 4 points a game from free throws because 4 x 1 = <<4*1=4>>4
+She averaged 14 points a game off non-three point baskets because 10 + 4 = <<10+4=14>>14
+She averaged 9 points from three-pointers because 23-14 = <<23-14=9>>9
+She averaged 3 three-pointers a game because 9 / 3 = <<9/3=3>>3
+#### 3
+"""
+
+id_orig = 1189
+id_shuffled = 1285
+
+question_annotated = """
+{name,Yolanda} scored {total,345} points over the entire season. There were {games,15} games over the season. She averaged {ft,4} free throws (worth one point), and {tp,5} two-point baskets per game. How many three-point baskets did she average a game?
+
+#init:
+- name = sample(names_female)
+- $total = range(120, 805, 5)
+- $games = range(10, 25)
+- $ft = range(1, 9)
+- $tp = range(1, 9)
+
+#conditions:
+- is_int(total / games)
+- total / games - tp * 2 - ft > 0
+- is_int((total / games - tp * 2 - ft) / 3)
+
+#answer: (total//games - tp*2 - ft)//3
+"""
+
+answer_annotated = """
+She averaged {total//games} points per game because {total} / {games} = <<{total}/{games}={total//games}>>{total//games}
+She averaged {tp*2} points a game off two-point baskets because {tp} x 2 = {tp*2}
+She averaged {ft} points a game from free throws because {ft} x 1 = <<{ft}*1={ft}>>{ft}
+She averaged {tp*2+ft} points a game off non-three point baskets because {tp*2} + {ft} = <<{tp*2}+{ft}={tp*2+ft}>>{tp*2+ft}
+She averaged {total//games - tp*2 - ft} points from three-pointers because {total//games}-{tp*2+ft} = <<{total//games}-{tp*2+ft}={total//games - tp*2 - ft}>>{total//games - tp*2 - ft}
+She averaged {(total//games - tp*2 - ft)//3} three-pointers a game because {total//games - tp*2 - ft} / 3 = <<{total//games - tp*2 - ft}/3={(total//games - tp*2 - ft)//3}>>{(total//games - tp*2 - ft)//3}
+#### {(total//games - tp*2 - ft)//3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

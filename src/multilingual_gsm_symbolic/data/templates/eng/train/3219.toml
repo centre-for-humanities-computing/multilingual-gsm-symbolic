@@ -1,0 +1,50 @@
+question = """
+Bob gets paid $5 an hour for the regular hours he works and $6 an hour for any overtime hours he works. All hours over 40 in a week are considered overtime. If Bob works 44  hours in the first week and 48 hours in the second week, how much did he make?
+"""
+
+answer = """
+Bob has worked 40 hours/week x 2 weeks = <<40*2=80>>80 regular hours
+Bob got paid 80 hours x $5/hour = $<<80*5=400>>400 for his regular hours
+Bob worked 44 hours - 40 hours = <<44-40=4>>4 hours of overtime in the first week
+Bob worked 48 hours - 40 hours = <<48-40=8>>8 hours of overtime in the second week
+In total Bob worker 8 hours + 4 hours =<<8+4=12>>12 hours of overtime.
+Bob got paid $6/hour x 12 hours = $<<6*12=72>>72 for overtime
+In 2 weeks Bob earned $400 + $72 = $<<400+72=472>>472
+#### 472
+"""
+
+id_orig = 2735
+id_shuffled = 3219
+
+question_annotated = """
+{name,Bob} gets paid ${rate_reg,5} an hour for the regular hours he works and ${rate_ot,6} an hour for any overtime hours he works. All hours over {thresh,40} in a week are considered overtime. If {name,Bob} works {w1,44}  hours in the first week and {w2,48} hours in the second week, how much did he make?
+
+#init:
+- name = sample(names_male)
+- $rate_reg = range(4, 7)
+- $rate_ot = range(6, 9)
+- $thresh = range(40, 41)
+- $w1 = range(41, 61)
+- $w2 = range(41, 61)
+
+#conditions:
+- w1 > thresh
+- w2 > thresh
+
+#answer: thresh*2*rate_reg + rate_ot*(w1 + w2 - 2*thresh)
+"""
+
+answer_annotated = """
+{name} has worked {thresh} hours/week x 2 weeks = <<{thresh}*2={thresh*2}>>{thresh*2} regular hours
+{name} got paid {thresh*2} hours x ${rate_reg}/hour = $<<{thresh*2}*{rate_reg}={thresh*2*rate_reg}>>{thresh*2*rate_reg} for his regular hours
+{name} worked {w1} hours - {thresh} hours = <<{w1}-{thresh}={w1-thresh}>>{w1-thresh} hours of overtime in the first week
+{name} worked {w2} hours - {thresh} hours = <<{w2}-{thresh}={w2-thresh}>>{w2-thresh} hours of overtime in the second week
+In total {name} worker {w2-thresh} hours + {w1-thresh} hours =<<{w2-thresh}+{w1-thresh}={w2+w1-2*thresh}>>{w2+w1-2*thresh} hours of overtime.
+{name} got paid ${rate_ot}/hour x {w2+w1-2*thresh} hours = $<<{rate_ot}*{w2+w1-2*thresh}={rate_ot*(w2+w1-2*thresh)}>>{rate_ot*(w2+w1-2*thresh)} for overtime
+In 2 weeks {name} earned ${thresh*2*rate_reg} + ${rate_ot*(w2+w1-2*thresh)} = $<<{thresh*2*rate_reg}+{rate_ot*(w2+w1-2*thresh)}={thresh*2*rate_reg+rate_ot*(w2+w1-2*thresh)}>>{thresh*2*rate_reg+rate_ot*(w2+w1-2*thresh)}
+#### {thresh*2*rate_reg + rate_ot*(w1 + w2 - 2*thresh)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Mark got a 5% raise at his job.  Before the raise, he earned 40 dollars per hour.  He works 8 hours per day for 5 days per week.  His old bills used to be 600 dollars a week but he decided to add a hundred dollar a week personal trainer.  How much does he have leftover a week?
+"""
+
+answer = """
+After the raise he earns 40*1.05=<<40*1.05=42>>42 dollars an hour
+He works 8 hours per day so earns 42*8=<<8*42=336>>336 per day
+He works 5 days per week so he earns 336*5=<<336*5=1680>>1680 a week
+His expenses after adding the personal trainer are 600+100=<<600+100=700>>700 a week
+So he has 1680-700=<<1680-700=980>>980 left over
+#### 980
+"""
+
+id_orig = 2015
+id_shuffled = 2333
+
+question_annotated = """
+{name,Mark} got a {r,5}% raise at his job.  Before the raise, he earned {w,40} dollars per hour.  He works {h,8} hours per day for {d,5} days per week.  His old bills used to be {b,600} dollars a week but he decided to add a hundred dollar a week personal trainer.  How much does he have leftover a week?
+
+#init:
+- name = sample(names_male)
+- $r = range(5, 21, 5)
+- $w = range(20, 120, 20)
+- $h = range(6, 12, 2)
+- $d = range(4, 7)
+- $b = range(400, 1400, 200)
+
+#conditions:
+- divides(w*r, 100)
+- w*(100+r)//100*h*d - b - 100 > 0
+
+#answer: w*(100+r)//100*h*d - b - 100
+"""
+
+answer_annotated = """
+After the raise he earns {w}*{(100+r)/100}=<<{w}*{(100+r)/100}={w*(100+r)//100}>>{w*(100+r)//100} dollars an hour
+He works {h} hours per day so earns {w*(100+r)//100}*{h}=<<{h}*{w*(100+r)//100}={h*(w*(100+r)//100)}>>{h*(w*(100+r)//100)} per day
+He works {d} days per week so he earns {w*(100+r)//100*h}*{d}=<<{w*(100+r)//100*h}*{d}={w*(100+r)//100*h*d}>>{w*(100+r)//100*h*d} a week
+His expenses after adding the personal trainer are {b}+100=<<{b}+100={b+100}>>{b+100} a week
+So he has {w*(100+r)//100*h*d}-{b+100}=<<{w*(100+r)//100*h*d}-{b+100}={w*(100+r)//100*h*d-b-100}>>{w*(100+r)//100*h*d-b-100} left over
+#### {w*(100+r)//100*h*d-b-100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

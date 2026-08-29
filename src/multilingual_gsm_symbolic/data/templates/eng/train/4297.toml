@@ -1,0 +1,58 @@
+question = """
+A small pizza can gives 4 slices, and a large pizza gives 8 slices.  George purchased 3 small and 2 large pizzas.  George would like to eat 3 pieces.  His friend Bob would like to eat one more piece than George.  Susie will eat half as many as Bob.  Bill, Fred and Mark would each like 3 pieces.  How many slices of pizza will be left over?
+"""
+
+answer = """
+George has 3 small pizzas * 4 slices = <<3*4=12>>12 pieces.
+George also has 2 large pizzas * 8 slices = <<2*8=16>>16 slices.
+Total, George has 12 + 16 slices = <<12+16=28>>28 slices of pizza.
+Bob will eat 3 slices + 1 = <<3+1=4>>4 slices.
+Susie will eat 1/2 * 4 slices = <<1/2*4=2>>2 slices.
+Bob, Fred and Mark will eat in total 3 + 3 + 3 = <<3+3+3=9>>9 pieces.
+Total slices of pizza eaten will be 3 + 4 + 2 + 9 = <<3+4+2+9=18>>18 pieces.
+Total pizza slices remaining will be 28 pieces - 18 = <<28-18=10>>10 slices left.
+#### 10
+"""
+
+id_orig = 3639
+id_shuffled = 4297
+
+question_annotated = """
+A small pizza can gives {s,4} slices, and a large pizza gives {l,8} slices.  {george,George} purchased {ns,3} small and {nl,2} large pizzas.  {george,George} would like to eat {g,3} pieces.  His friend {bob,Bob} would like to eat one more piece than {george,George}.  {susie,Susie} will eat half as many as {bob,Bob}.  {bill,Bill}, {fred,Fred} and {mark,Mark} would each like {e,3} pieces.  How many slices of pizza will be left over?
+
+#init:
+- george = sample(names_male)
+- bob = sample(names_male)
+- susie = sample(names_female)
+- bill = sample(names_male)
+- fred = sample(names_male)
+- mark = sample(names_male)
+- $s = range(2, 9)
+- $l = range(4, 19, 2)
+- $ns = range(1, 7)
+- $nl = range(1, 7)
+- $g = range(1, 12, 2)
+- $e = range(1, 7)
+
+#conditions:
+- l > s
+- ns*s + nl*l > g + (g + 1) + (g + 1)//2 + 3*e
+
+#answer: ns*s + nl*l - (g + (g + 1) + (g + 1)//2 + 3*e)
+"""
+
+answer_annotated = """
+{george} has {ns} small pizzas * {s} slices = <<{ns}*{s}={ns*s}>>{ns*s} pieces.
+{george} also has {nl} large pizzas * {l} slices = <<{nl}*{l}={nl*l}>>{nl*l} slices.
+Total, {george} has {ns*s} + {nl*l} slices = <<{ns*s}+{nl*l}={ns*s+nl*l}>>{ns*s+nl*l} slices of pizza.
+{bob} will eat {g} slices + 1 = <<{g}+1={g+1}>>{g+1} slices.
+{susie} will eat 1/2 * {g+1} slices = <<1/2*{g+1}={(g+1)//2}>>{(g+1)//2} slices.
+{bob}, {fred} and {mark} will eat in total {e} + {e} + {e} = <<{e}+{e}+{e}={3*e}>>{3*e} pieces.
+Total slices of pizza eaten will be {g} + {g+1} + {(g+1)//2} + {3*e} = <<{g}+{g+1}+{(g+1)//2}+{3*e}={g+(g+1)+(g+1)//2+3*e}>>{g+(g+1)+(g+1)//2+3*e} pieces.
+Total pizza slices remaining will be {ns*s+nl*l} pieces - {g+(g+1)+(g+1)//2+3*e} = <<{ns*s+nl*l}-{g+(g+1)+(g+1)//2+3*e}={ns*s+nl*l-(g+(g+1)+(g+1)//2+3*e)}>>{ns*s+nl*l-(g+(g+1)+(g+1)//2+3*e)} slices left.
+#### {ns*s+nl*l-(g+(g+1)+(g+1)//2+3*e)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

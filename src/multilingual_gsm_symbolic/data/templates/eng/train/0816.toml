@@ -1,0 +1,45 @@
+question = """
+Carol is an aviation engineer deciding how much fuel to put in a jet. The empty plane needs 20 gallons of fuel per mile. Each person on the plane increases this amount by 3 gallons per mile, and each bag increases it by 2 gallons per mile. If there are 30 passengers and 5 flight crew, and each person brought two bags, how many gallons of fuel does the plane need for a 400-mile trip?
+"""
+
+answer = """
+First find the total number of people by adding the number of passengers and flight crew: 30 people + 5 people = <<30+5=35>>35 people
+Then find the total number of bags by doubling the total number of people: 35 people * 2 bags/person = <<35*2=70>>70 bags
+Then find the fuel increase caused by the people by multiplying their number by the fuel increase per person: 35 people * 3 gallons/mile/person = <<35*3=105>>105 gallons/mile
+Then multiply the number of bags by the fuel increase per bag to find the total fuel increase they cause: 70 bags * 2 gallons/mile/bag = <<70*2=140>>140 gallons/mile
+Now add the fuel increases to the base fuel consumption to find the total fuel needed per mile: 140 gallons/mile + 105 gallons/mile + 20 gallons/mile = <<140+105+20=265>>265 gallons/mile
+Now multiply the fuel consumption per mile by the number of miles flown to find the total amount of fuel needed: 265 gallons/mile * 400 miles = <<265*400=106000>>106,000 gallons of fuel
+#### 106000
+"""
+
+id_orig = 743
+id_shuffled = 816
+
+question_annotated = """
+{name,Carol} is an aviation engineer deciding how much fuel to put in a jet. The empty plane needs {fuel,20} gallons of fuel per mile. Each person on the plane increases this amount by {per_person,3} gallons per mile, and each bag increases it by {per_bag,2} gallons per mile. If there are {passengers,30} passengers and {crew,5} flight crew, and each person brought two bags, how many gallons of fuel does the plane need for a {miles,400}-mile trip?
+
+#init:
+- name = sample(names_female)
+- $fuel = range(10, 50, 2)
+- $per_person = range(2, 7)
+- $per_bag = range(1, 5)
+- $passengers = range(10, 110, 10)
+- $crew = range(2, 7)
+- $miles = range(200, 1000, 200)
+
+#answer: ((passengers + crew) * 2 * per_bag + (passengers + crew) * per_person + fuel) * miles
+"""
+
+answer_annotated = """
+First find the total number of people by adding the number of passengers and flight crew: {passengers} people + {crew} people = <<{passengers}+{crew}={passengers + crew}>>{passengers + crew} people
+Then find the total number of bags by doubling the total number of people: {passengers + crew} people * 2 bags/person = <<{passengers + crew}*2={(passengers + crew) * 2}>>{(passengers + crew) * 2} bags
+Then find the fuel increase caused by the people by multiplying their number by the fuel increase per person: {passengers + crew} people * {per_person} gallons/mile/person = <<{passengers + crew}*{per_person}={(passengers + crew) * per_person}>>{(passengers + crew) * per_person} gallons/mile
+Then multiply the number of bags by the fuel increase per bag to find the total fuel increase they cause: {(passengers + crew) * 2} bags * {per_bag} gallons/mile/bag = <<{(passengers + crew) * 2}*{per_bag}={(passengers + crew) * 2 * per_bag}>>{(passengers + crew) * 2 * per_bag} gallons/mile
+Now add the fuel increases to the base fuel consumption to find the total fuel needed per mile: {(passengers + crew) * 2 * per_bag} gallons/mile + {(passengers + crew) * per_person} gallons/mile + {fuel} gallons/mile = <<{(passengers + crew) * 2 * per_bag}+{(passengers + crew) * per_person}+{fuel}={(passengers + crew) * 2 * per_bag + (passengers + crew) * per_person + fuel}>>{(passengers + crew) * 2 * per_bag + (passengers + crew) * per_person + fuel} gallons/mile
+Now multiply the fuel consumption per mile by the number of miles flown to find the total amount of fuel needed: {(passengers + crew) * 2 * per_bag + (passengers + crew) * per_person + fuel} gallons/mile * {miles} miles = <<{(passengers + crew) * 2 * per_bag + (passengers + crew) * per_person + fuel}*{miles}={((passengers + crew) * 2 * per_bag + (passengers + crew) * per_person + fuel) * miles}>>{((passengers + crew) * 2 * per_bag + (passengers + crew) * per_person + fuel) * miles} gallons of fuel
+#### {((passengers + crew) * 2 * per_bag + (passengers + crew) * per_person + fuel) * miles}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Paul earns $12.50 for each hour that he works. He then has to pay 20% for taxes and fees. After working 40 hours, Paul receives his paycheck. If he spends 15% of his paycheck on gummy bears, how much, in dollars, does he have left?
+"""
+
+answer = """
+His pay before taxes and fees is $12.50 x 40 hours = $<<12.5*40=500>>500.
+He pays $500 * 0.20 = $<<500*0.20=100>>100 for taxes and fees.
+Then he had $500 - $100 = $<<500-100=400>>400 remaining money.
+He takes out $400 * 0.15 = $<<400*0.15=60>>60 for his gummy bears.
+So he's left with $400 - $60 = $<<400-60=340>>340.
+#### 340
+"""
+
+id_orig = 1612
+id_shuffled = 1737
+
+question_annotated = """
+{name,Paul} earns $12.50 for each hour that he works. He then has to pay {t,20}% for taxes and fees. After working {h,40} hours, {name,Paul} receives his paycheck. If he spends {s,15}% of his paycheck on gummy bears, how much, in dollars, does he have left?
+
+#init:
+- name = sample(names_male)
+- $h = range(20, 122, 2)
+- $t = range(1, 26)
+- $s = range(1, 21)
+
+#conditions:
+- is_int(12.5*h)
+- is_int(12.5*h*t/100)
+- is_int((12.5*h - 12.5*h*t//100)*s/100)
+
+#answer: int(12.5*h)-int(12.5*h)*t//100-(int(12.5*h)-int(12.5*h)*t//100)*s//100
+"""
+
+answer_annotated = """
+His pay before taxes and fees is $12.50 x {h} hours = $<<12.5*{h}={int(12.5*h)}>>{int(12.5*h)}.
+He pays ${int(12.5*h)} * 0.{t} = $<<{int(12.5*h)}*0.{t}={int(12.5*h)*t//100}>>{int(12.5*h)*t//100} for taxes and fees.
+Then he had ${int(12.5*h)} - ${int(12.5*h)*t//100} = $<<{int(12.5*h)}-{int(12.5*h)*t//100}={int(12.5*h)-int(12.5*h)*t//100}>>{int(12.5*h)-int(12.5*h)*t//100} remaining money.
+He takes out ${int(12.5*h)-int(12.5*h)*t//100} * 0.{s} = $<<{int(12.5*h)-int(12.5*h)*t//100}*0.{s}={(int(12.5*h)-int(12.5*h)*t//100)*s//100}>>{(int(12.5*h)-int(12.5*h)*t//100)*s//100} for his gummy bears.
+So he's left with ${int(12.5*h)-int(12.5*h)*t//100} - ${(int(12.5*h)-int(12.5*h)*t//100)*s//100} = $<<{int(12.5*h)-int(12.5*h)*t//100}-{(int(12.5*h)-int(12.5*h)*t//100)*s//100}={int(12.5*h)-int(12.5*h)*t//100-(int(12.5*h)-int(12.5*h)*t//100)*s//100}>>{int(12.5*h)-int(12.5*h)*t//100-(int(12.5*h)-int(12.5*h)*t//100)*s//100}.
+#### {int(12.5*h)-int(12.5*h)*t//100-(int(12.5*h)-int(12.5*h)*t//100)*s//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

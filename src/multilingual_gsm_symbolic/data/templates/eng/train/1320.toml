@@ -1,0 +1,42 @@
+question = """
+Lyssa and Precious took an English proficiency exam. Lyssa answered 20% of the items incorrectly. Precious got 12 mistakes. How many more correct answers did Lyssa get than precious if there were 75 items in the exam?
+"""
+
+answer = """
+Lyssa got 75 x 20/100 = <<75*20/100=15>>15 mistakes.
+Lyssa's score is 75 - 15 = <<75-15=60>>60.
+The score of Precious is 75 - 12 = <<75-12=63>>63.
+Thus, Lyssa got 63 - 60 = <<63-60=3>>3 more correct answers than Precious.
+#### 3
+"""
+
+id_orig = 1213
+id_shuffled = 1320
+
+question_annotated = """
+{name,Lyssa} and Precious took an English proficiency exam. {name,Lyssa} answered {p,20}% of the items incorrectly. Precious got {m,12} mistakes. How many more correct answers did {name,Lyssa} get than precious if there were {t,75} items in the exam?
+
+#init:
+- name = sample(names_female)
+- $t = range(50, 210, 5)
+- $p = range(10, 55, 5)
+- $m = range(1, 30)
+
+#conditions:
+- divides(t * p, 100)
+- m > t * p // 100
+
+#answer: (t-m)-(t-t*p//100)
+"""
+
+answer_annotated = """
+{name} got {t} x {p}/100 = <<{t}*{p}/100={t*p//100}>>{t*p//100} mistakes.
+{name}'s score is {t} - {t*p//100} = <<{t}-{t*p//100}={t-t*p//100}>>{t-t*p//100}.
+The score of Precious is {t} - {m} = <<{t}-{m}={t-m}>>{t-m}.
+Thus, {name} got {t-m} - {t-t*p//100} = <<{t-m}-{t-t*p//100}={(t-m)-(t-t*p//100)}>>{(t-m)-(t-t*p//100)} more correct answers than Precious.
+#### {(t-m)-(t-t*p//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Pat is hunting for sharks to take photos. For every photo he takes he earns $15. He sees a shark about every 10 minutes. His boat fuel costs $50 an hour. If he shark hunts for 5 hours, how much money can he expect to make in profit?
+"""
+
+answer = """
+He will use $250 in fuel because 5 x 50 = <<5*50=250>>250
+He will be shark hunting for 300 minutes because 5 x 60 = <<5*60=300>>300
+He can expect to see 30 sharks because 300 / 10 = <<300/10=30>>30
+He will make $450 off these photos because 30 x 15 = <<30*15=450>>450
+He will make $200 in profit because 450 - 250 = <<450-250=200>>200
+#### 200
+"""
+
+id_orig = 3479
+id_shuffled = 4126
+
+question_annotated = """
+{name,Pat} is hunting for sharks to take photos. For every photo he takes he earns ${earn,15}. He sees a shark about every {mins,10} minutes. His boat fuel costs ${fuel,50} an hour. If he shark hunts for {hours,5} hours, how much money can he expect to make in profit?
+
+#init:
+- name = sample(["Pat", "Chris", "Oliver", "Noah", "Eric"])
+- $earn = range(10, 24)
+- $mins = range(2, 31)
+- $fuel = range(25, 76)
+- $hours = range(2, 7)
+
+#conditions:
+- divides(hours * 60, mins)
+- hours * 60 // mins * earn > hours * fuel
+
+#answer: hours * 60 // mins * earn - hours * fuel
+"""
+
+answer_annotated = """
+He will use ${hours*fuel} in fuel because {hours} x {fuel} = <<{hours}*{fuel}={hours*fuel}>>{hours*fuel}
+He will be shark hunting for {hours*60} minutes because {hours} x 60 = <<{hours}*60={hours*60}>>{hours*60}
+He can expect to see {hours*60//mins} sharks because {hours*60} / {mins} = <<{hours*60}/{mins}={hours*60//mins}>>{hours*60//mins}
+He will make ${hours*60//mins*earn} off these photos because {hours*60//mins} x {earn} = <<{hours*60//mins}*{earn}={hours*60//mins*earn}>>{hours*60//mins*earn}
+He will make ${hours*60//mins*earn - hours*fuel} in profit because {hours*60//mins*earn} - {hours*fuel} = <<{hours*60//mins*earn}-{hours*fuel}={hours*60//mins*earn-hours*fuel}>>{hours*60//mins*earn-hours*fuel}
+#### {hours*60//mins*earn - hours*fuel}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Ben has two brothers. They can each eat 12 slices of pizza. They are ordering pizza for the night and want to make sure they get enough. The large pizzas have 14 slices and the small pizzas have 8. If they order 1 small pizza, how many large pizzas do they need to order?
+"""
+
+answer = """
+They need 36 slices because 3 x 12 = <<3*12=36>>36
+After ordering the small, they need 28 slices because 36 -8 = <<28=28>>28
+They need 2 large pizzas because 28 / 14 = <<28/14=2>>2
+#### 2
+"""
+
+id_orig = 3359
+id_shuffled = 3984
+
+question_annotated = """
+{name,Ben} has {n_txt,two} brothers. They can each eat {s,12} slices of pizza. They are ordering pizza for the night and want to make sure they get enough. The large pizzas have {l,14} slices and the small pizzas have {sm,8}. If they order 1 small pizza, how many large pizzas do they need to order?
+
+#init:
+- name = sample(names_male)
+- n_txt, n = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $s = range(6, 25)
+- $l = range(8, 35)
+- $sm = range(4, 17)
+
+#conditions:
+- (n+1)*s > sm
+- divides((n+1)*s - sm, l)
+
+#answer: ((n+1)*s - sm) // l
+"""
+
+answer_annotated = """
+They need {(n+1)*s} slices because {n+1} x {s} = <<{n+1}*{s}={(n+1)*s}>>{(n+1)*s}
+After ordering the small, they need {(n+1)*s-sm} slices because {(n+1)*s} -{sm} = <<{(n+1)*s-sm}={(n+1)*s-sm}>>{(n+1)*s-sm}
+They need {((n+1)*s-sm)//l} large pizzas because {(n+1)*s-sm} / {l} = <<{(n+1)*s-sm}/{l}={((n+1)*s-sm)//l}>>{((n+1)*s-sm)//l}
+#### {((n+1)*s-sm)//l}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

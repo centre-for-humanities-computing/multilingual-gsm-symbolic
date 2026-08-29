@@ -1,0 +1,38 @@
+question = """
+Three snails raced across a rain-soaked sidewalk.  The first snail raced at a speed of 2 feet per minute.  The second snail raced at twice the speed of the first snail.  And the third snail traveled at five times the rate of speed as the second snail.  If it took the first snail 20 minutes to race all the way up the sidewalk, how long, in minutes, did it take for the third snail to race all the way up the sidewalk?
+"""
+
+answer = """
+If the first snail traveled the distance in 20 minutes, then the second snail, traveling at twice the rate of speed, would take 20/2=<<20/2=10>>10 minutes to complete the race.
+If the third snail raced at five times the speed of the second snail, then it would take the third snail 10/5=<<10/5=2>>2 minutes to race all the way up the sidewalk.
+#### 2
+"""
+
+id_orig = 3875
+id_shuffled = 4569
+
+question_annotated = """
+Three snails raced across a rain-soaked sidewalk.  The first snail raced at a speed of {s,2} feet per minute.  The second snail raced at {m1_txt,twice} the speed of the first snail.  And the third snail traveled at {m2_txt,five times} the rate of speed as the second snail.  If it took the first snail {t,20} minutes to race all the way up the sidewalk, how long, in minutes, did it take for the third snail to race all the way up the sidewalk?
+
+#init:
+- $s = range(2, 12)
+- $t = range(10, 210)
+- m1_txt, m1 = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- m2_txt, m2 = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+
+#conditions:
+- divides(t, m1)
+- divides(t // m1, m2)
+
+#answer: t // (m1 * m2)
+"""
+
+answer_annotated = """
+If the first snail traveled the distance in {t} minutes, then the second snail, traveling at {m1_txt} the rate of speed, would take {t}/{m1}=<<{t}/{m1}={t//m1}>>{t//m1} minutes to complete the race.
+If the third snail raced at {m2_txt} the speed of the second snail, then it would take the third snail {t//m1}/{m2}=<<{t//m1}/{m2}={t//(m1*m2)}>>{t//(m1*m2)} minutes to race all the way up the sidewalk.
+#### {t // (m1 * m2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

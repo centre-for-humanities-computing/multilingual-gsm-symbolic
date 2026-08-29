@@ -1,0 +1,41 @@
+question = """
+Mary is counting the number of minnows in the pond. 40% of the minnows have red bellies, 30% have green bellies and the rest have white bellies. If 20 minnows have red bellies, how many minnows have white bellies?
+"""
+
+answer = """
+First find the total number of minnows by dividing the number of red minnows by the percentage of minnows that are red: 20 minnows / 40% = 50 minnows
+Then subtract the percentages of red- and green-bellied minnows to find the percentage of white-bellied minnows: 100% - 40% - 30% = 30%
+Then multiply the total number of minnows by the percentage that have white bellies: 30% * 50 minnows = <<30*.01*50=15>>15 minnows
+#### 15
+"""
+
+id_orig = 1600
+id_shuffled = 1725
+
+question_annotated = """
+{name,Mary} is counting the number of minnows in the pond. {r,40}% of the minnows have red bellies, {g,30}% have green bellies and the rest have white bellies. If {n,20} minnows have red bellies, how many minnows have white bellies?
+
+#init:
+- name = sample(names_female)
+- $r = range(10, 90, 10)
+- $g = range(10, 90, 10)
+- $n = range(10, 210, 10)
+
+#conditions:
+- r + g < 100
+- divides(n * 100, r)
+- divides((100 - r - g) * n, r)
+
+#answer: (100 - r - g) * n // r
+"""
+
+answer_annotated = """
+First find the total number of minnows by dividing the number of red minnows by the percentage of minnows that are red: {n} minnows / {r}% = {n*100//r} minnows
+Then subtract the percentages of red- and green-bellied minnows to find the percentage of white-bellied minnows: 100% - {r}% - {g}% = {100-r-g}%
+Then multiply the total number of minnows by the percentage that have white bellies: {100-r-g}% * {n*100//r} minnows = <<{100-r-g}*.01*{n*100//r}={(100-r-g)*n//r}>>{(100-r-g)*n//r} minnows
+#### {(100-r-g)*n//r}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

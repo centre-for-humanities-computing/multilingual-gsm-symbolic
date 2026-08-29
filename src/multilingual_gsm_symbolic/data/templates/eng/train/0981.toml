@@ -1,0 +1,39 @@
+question = """
+Bobby needs to buy a new pair of fancy shoes.  He decides to go to a cobbler and get them handmade.  The cobbler charges $250 to make the mold.  He then charges $75 an hour for 8 hours to make the shoes.  The cobbler agrees to only charge 80% of the cost for work to make the shoes, since it is his first pair of shoes.  How much did Bobby pay?
+"""
+
+answer = """
+The cost of labor is 75*8=$<<75*8=600>>600
+So Bobby pays 600*.8=$<<600*.8=480>>480
+So that means Bobby pays 480+250=$<<480+250=730>>730
+#### 730
+"""
+
+id_orig = 885
+id_shuffled = 981
+
+question_annotated = """
+{name,Bobby} needs to buy a new pair of fancy shoes.  He decides to go to a cobbler and get them handmade.  The cobbler charges ${mold,250} to make the mold.  He then charges ${rate,75} an hour for {hours,8} hours to make the shoes.  The cobbler agrees to only charge 80% of the cost for work to make the shoes, since it is his first pair of shoes.  How much did {name,Bobby} pay?
+
+#init:
+- name = sample(names_male)
+- $mold = range(50, 550, 50)
+- $rate = range(20, 205, 5)
+- $hours = range(1, 13)
+
+#conditions:
+- divides(rate*hours, 5)
+
+#answer: mold + rate*hours*4//5
+"""
+
+answer_annotated = """
+The cost of labor is {rate}*{hours}=$<<{rate}*{hours}={rate*hours}>>{rate*hours}
+So {name} pays {rate*hours}*.8=$<<{rate*hours}*.8={rate*hours*4//5}>>{rate*hours*4//5}
+So that means {name} pays {rate*hours*4//5}+{mold}=$<<{rate*hours*4//5}+{mold}={mold+rate*hours*4//5}>>{mold+rate*hours*4//5}
+#### {mold + rate*hours*4//5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

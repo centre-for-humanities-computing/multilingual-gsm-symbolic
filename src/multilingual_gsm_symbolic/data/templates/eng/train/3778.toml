@@ -1,0 +1,43 @@
+question = """
+A shop sells laptops at $600 each and a smartphone at $400.  Celine buys two laptops and four smartphones for her children. How much change does she get back if she has $3000?
+"""
+
+answer = """
+The cost of the two laptops is 2 x $600 = $<<2*600=1200>>1200.
+The cost of the four smartphones is 4 x $400 = $<<4*400=1600>>1600.
+Thus, the total cost of all the items is $1200 + $1600 = $<<1200+1600=2800>>2800.
+Therefore, Celine gets a change of $3000 - $2800 = $<<3000-2800=200>>200.
+#### 200
+"""
+
+id_orig = 3179
+id_shuffled = 3778
+
+question_annotated = """
+A shop sells laptops at ${lp,600} each and a smartphone at ${sp,400}.  {name,Celine} buys {nl_txt,two} laptops and {ns_txt,four} smartphones for her children. How much change does she get back if she has ${m,3000}?
+
+#init:
+- name = sample(names_female)
+- nl_txt, nl = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- ns_txt, ns = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7)])
+- $lp = range(200, 801, 100)
+- $sp = range(200, 701, 100)
+- $m = range(3000, 9001, 500)
+
+#conditions:
+- nl * lp + ns * sp < m
+
+#answer: m - nl * lp - ns * sp
+"""
+
+answer_annotated = """
+The cost of the {nl_txt} laptops is {nl} x ${lp} = $<<{nl}*{lp}={nl*lp}>>{nl*lp}.
+The cost of the {ns_txt} smartphones is {ns} x ${sp} = $<<{ns}*{sp}={ns*sp}>>{ns*sp}.
+Thus, the total cost of all the items is ${nl*lp} + ${ns*sp} = $<<{nl*lp}+{ns*sp}={nl*lp+ns*sp}>>{nl*lp+ns*sp}.
+Therefore, {name} gets a change of ${m} - ${nl*lp+ns*sp} = $<<{m}-{nl*lp+ns*sp}={m-nl*lp-ns*sp}>>{m-nl*lp-ns*sp}.
+#### {m - nl * lp - ns * sp}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

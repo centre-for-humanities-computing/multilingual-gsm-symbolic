@@ -1,0 +1,33 @@
+question = """
+For the summer, the clothing store has a 50% discount for all items. On Wednesdays, there is an additional $10.00 off on all jeans after the summer discount is applied.  Before the sales tax applies, the cost of a pair of jeans is $14.50. How much was the original cost for the jeans before all the discounts?
+"""
+
+answer = """
+Before the Wednesday discount, the cost of the jean is $14.50 + $10.00 = $<<14.5+10=24.50>>24.50.
+Since the original price was reduced by 50%, the original cost for the jeans is $24.50 * 2 = $<<24.5*2=49.00>>49.00.
+#### 49
+"""
+
+id_orig = 3079
+id_shuffled = 3728
+
+question_annotated = """
+For the summer, the clothing store has a {pct,50}% discount for all items. On Wednesdays, there is an additional ${off,10}.00 off on all jeans after the summer discount is applied.  Before the sales tax applies, the cost of a pair of jeans is ${final,14}.50. How much was the original cost for the jeans before all the discounts?
+
+#init:
+- $final = range(5, 60)
+- $off = range(2, 31)
+- pct, m = sample([(50, 2), (75, 4), (90, 10)])
+
+#answer: (final + off) * m + m // 2
+"""
+
+answer_annotated = """
+Before the Wednesday discount, the cost of the jean is ${final}.50 + ${off}.00 = $<<{final}.5+{off}={final+off}.50>>{final+off}.50.
+Since the original price was reduced by {pct}%, the original cost for the jeans is ${final+off}.50 * {m} = $<<{final+off}.5*{m}={(final+off)*m + m//2}.00>>{(final+off)*m + m//2}.00.
+#### {(final + off) * m + m // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

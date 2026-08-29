@@ -1,0 +1,48 @@
+question = """
+Cappuccinos cost $2, iced teas cost $3, cafe lattes cost $1.5 and espressos cost $1 each. Sandy orders some drinks for herself and some friends. She orders three cappuccinos, two iced teas, two cafe lattes, and two espressos. How much change does she receive back for a twenty-dollar bill?
+"""
+
+answer = """
+Find the total cost of the cappuccinos by multiplying the price by the quantity: 3 cappuccinos x $2/cappuccino = $<<3*2=6>>6
+Then do the same for the iced teas: 2 iced teas x $3/tea = $<<2*3=6>>6
+Then do the same for the cafe lattes: 2 lattes x $1.5/latte = $<<2*1.5=3>>3
+Then do the same for the espressos: 2 espressos x $1 = $<<2*1=2>>2
+In total Sandy pays $6 + $6 + $3 + $2 = $<<6+6+3+2=17>>17
+Sandy will receive $20 - $17 = $<<20-17=3>>3 in change
+#### 3
+"""
+
+id_orig = 800
+id_shuffled = 873
+
+question_annotated = """
+Cappuccinos cost ${cap,2}, iced teas cost ${tea,3}, cafe lattes cost ${lat,1.5} and espressos cost ${esp,1} each. {name,Sandy} orders some drinks for herself and some friends. She orders three cappuccinos, two iced teas, two cafe lattes, and two espressos. How much change does she receive back for a {bill_txt,twenty}-dollar bill?
+
+#init:
+- name = sample(names_female)
+- bill_txt, bill = sample([("ten", 10), ("twenty", 20), ("fifty", 50)])
+- $cap = range(1, 10)
+- $tea = range(1, 8)
+- $esp = range(1, 8)
+- $lat = arange(0.5, 4.5, 0.5)
+
+#conditions:
+- is_int(3*cap + 2*tea + 2*lat + 2*esp)
+- 3*cap + 2*tea + 2*lat + 2*esp < bill
+
+#answer: bill - (3*cap + 2*tea + 2*lat + 2*esp)
+"""
+
+answer_annotated = """
+Find the total cost of the cappuccinos by multiplying the price by the quantity: 3 cappuccinos x ${cap}/cappuccino = $<<3*{cap}={3*cap}>>{3*cap}
+Then do the same for the iced teas: 2 iced teas x ${tea}/tea = $<<2*{tea}={2*tea}>>{2*tea}
+Then do the same for the cafe lattes: 2 lattes x ${lat}/latte = $<<2*{lat}={int(2*lat)}>>{int(2*lat)}
+Then do the same for the espressos: 2 espressos x ${esp} = $<<2*{esp}={2*esp}>>{2*esp}
+In total {name} pays ${3*cap} + ${2*tea} + ${int(2*lat)} + ${2*esp} = $<<{3*cap}+{2*tea}+{int(2*lat)}+{2*esp}={3*cap+2*tea+2*lat+2*esp}>>{3*cap+2*tea+2*lat+2*esp}
+{name} will receive ${bill} - ${3*cap+2*tea+2*lat+2*esp} = $<<{bill}-{3*cap+2*tea+2*lat+2*esp}={bill-(3*cap+2*tea+2*lat+2*esp)}>>{bill-(3*cap+2*tea+2*lat+2*esp)} in change
+#### {bill-(3*cap+2*tea+2*lat+2*esp)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

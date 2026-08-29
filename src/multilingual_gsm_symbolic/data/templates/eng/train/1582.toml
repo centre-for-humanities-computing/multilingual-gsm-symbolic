@@ -1,0 +1,47 @@
+question = """
+Pete has a bag with 10 marbles. 40% are blue and the rest are red. His friend will trade him two blue marbles for every red one. If Pete keeps 1 red marble, how many total marbles does he have after trading with his friend?
+"""
+
+answer = """
+He starts with 4 blue marbles because 10 x .4 = <<10*.4=4>>4
+60% of the marbles are red because 100 - 40 = <<100-40=60>>60
+He has 6 red marbles because 10 x .6 = <<10*.6=6>>6
+He trades 5 red marbles because 6 - 1 = <<6-1=5>>5
+He gets 10 blue marbles because 5 x 2 = <<5*2=10>>10
+He has 15 marbles now because 4 + 1 + 10 = <<4+1+10=15>>15
+#### 15
+"""
+
+id_orig = 1475
+id_shuffled = 1582
+
+question_annotated = """
+{name,Pete} has a bag with {n,10} marbles. {p,40}% are blue and the rest are red. His friend will trade him {r_txt,two} blue marbles for every red one. If {name,Pete} keeps 1 red marble, how many total marbles does he have after trading with his friend?
+
+#init:
+- name = sample(names_male)
+- $n = range(10, 210, 10)
+- $p = range(10, 100, 10)
+- r_txt, r = sample([("two", 2), ("three", 3), ("four", 4)])
+
+#conditions:
+- divides(n * p, 100)
+- divides(n * (100 - p), 100)
+- n * (100 - p) // 100 > 1
+
+#answer: n*p//100 + 1 + (n*(100-p)//100 - 1)*r
+"""
+
+answer_annotated = """
+He starts with {n*p//100} blue marbles because {n} x .{p//10} = <<{n}*.{p//10}={n*p//100}>>{n*p//100}
+{100-p}% of the marbles are red because 100 - {p} = <<100-{p}={100-p}>>{100-p}
+He has {n*(100-p)//100} red marbles because {n} x .{(100-p)//10} = <<{n}*.{(100-p)//10}={n*(100-p)//100}>>{n*(100-p)//100}
+He trades {n*(100-p)//100 - 1} red marbles because {n*(100-p)//100} - 1 = <<{n*(100-p)//100}-1={n*(100-p)//100 - 1}>>{n*(100-p)//100 - 1}
+He gets {(n*(100-p)//100 - 1)*r} blue marbles because {n*(100-p)//100 - 1} x {r} = <<{n*(100-p)//100 - 1}*{r}={(n*(100-p)//100 - 1)*r}>>{(n*(100-p)//100 - 1)*r}
+He has {n*p//100 + 1 + (n*(100-p)//100 - 1)*r} marbles now because {n*p//100} + 1 + {(n*(100-p)//100 - 1)*r} = <<{n*p//100}+1+{(n*(100-p)//100 - 1)*r}={n*p//100 + 1 + (n*(100-p)//100 - 1)*r}>>{n*p//100 + 1 + (n*(100-p)//100 - 1)*r}
+#### {n*p//100 + 1 + (n*(100-p)//100 - 1)*r}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,40 @@
+question = """
+Rachel is stuffing envelopes. She has eight hours to complete the task, and there are 1,500 envelopes. In the first hour, Rachel stuffs 135 envelopes. The second hour she stuffs 141 envelopes. How many envelopes will Rachel need to stuff per hour to finish the job?
+"""
+
+answer = """
+Rachel has 1500 - 135 - 141 envelopes = <<1500-135-141=1224>>1224 envelopes remaining to stuff.
+Rachel has 8 hours - 2 hours = <<8-2=6>>6 hours left to finish the task.
+Rachel needs to stuff 1224 envelopes / 6 hours = <<1224/6=204>>204 envelopes per hour.
+#### 204
+"""
+
+id_orig = 1334
+id_shuffled = 1441
+
+question_annotated = """
+{name,Rachel} is stuffing envelopes. She has {hours_txt,eight} hours to complete the task, and there are 1,500 envelopes. In the first hour, {name,Rachel} stuffs {x,135} envelopes. The second hour she stuffs {y,141} envelopes. How many envelopes will {name,Rachel} need to stuff per hour to finish the job?
+
+#init:
+- name = sample(names_female)
+- hours_txt, h = sample([("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- $x = range(100, 200)
+- $y = range(100, 200)
+
+#conditions:
+- 1500 - x - y > 0
+- divides(1500 - x - y, h - 2)
+
+#answer: (1500 - x - y)//(h - 2)
+"""
+
+answer_annotated = """
+{name} has 1500 - {x} - {y} envelopes = <<1500-{x}-{y}={1500-x-y}>>{1500-x-y} envelopes remaining to stuff.
+{name} has {h} hours - 2 hours = <<{h}-2={h-2}>>{h-2} hours left to finish the task.
+{name} needs to stuff {1500-x-y} envelopes / {h-2} hours = <<{1500-x-y}/{h-2}={(1500-x-y)//(h-2)}>>{(1500-x-y)//(h-2)} envelopes per hour.
+#### {(1500-x-y)//(h-2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

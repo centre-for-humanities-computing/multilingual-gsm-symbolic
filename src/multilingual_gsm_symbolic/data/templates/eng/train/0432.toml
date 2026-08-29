@@ -1,0 +1,44 @@
+question = """
+Nurse Missy is attending to the needs of 12 patients in her hospital ward.  Most of her patients require standard care, but one-third of her patients have special dietary requirements, which increases the serving time by 20%.  At dinner time, she brings each patient their meal. It takes 5 minutes to serve each standard care patient.  How long does it take, in minutes, for Missy to serve dinner to all of her patients?
+"""
+
+answer = """
+Nurse Missy has 12*(1/3)=<<12*(1/3)=4>>4 special needs patients.
+She has 12-4=<<12-4=8>>8 standard care patients.
+Special needs patients take 20% longer to serve, which means serving takes 1.2*5=6 minutes per patient.
+To serve dinner to all of her standard care patients, it will take 5*8=<<5*8=40>>40 minutes.
+To serve dinner to all of her special needs patients, it will take 6*4=<<6*4=24>>24 minutes.
+In total, it will take 40+24=<<40+24=64>>64 minutes to serve dinner to all of her patients.
+#### 64
+"""
+
+id_orig = 370
+id_shuffled = 432
+
+question_annotated = """
+Nurse {name,Missy} is attending to the needs of {n,12} patients in her hospital ward.  Most of her patients require standard care, but one-third of her patients have special dietary requirements, which increases the serving time by 20%.  At dinner time, she brings each patient their meal. It takes {t,5} minutes to serve each standard care patient.  How long does it take, in minutes, for {name,Missy} to serve dinner to all of her patients?
+
+#init:
+- name = sample(names_female)
+- $n = range(3, 303, 3)
+- $t = range(5, 105, 5)
+
+#conditions:
+- divides(n, 3)
+
+#answer: t*(n-n//3)+t*6//5*(n//3)
+"""
+
+answer_annotated = """
+Nurse {name} has {n}*(1/3)=<<{n}*(1/3)={n//3}>>{n//3} special needs patients.
+She has {n}-{n//3}=<<{n}-{n//3}={n-n//3}>>{n-n//3} standard care patients.
+Special needs patients take 20% longer to serve, which means serving takes 1.2*{t}={t*6//5} minutes per patient.
+To serve dinner to all of her standard care patients, it will take {t}*{n-n//3}=<<{t}*{n-n//3}={t*(n-n//3)}>>{t*(n-n//3)} minutes.
+To serve dinner to all of her special needs patients, it will take {t*6//5}*{n//3}=<<{t*6//5}*{n//3}={t*6//5*(n//3)}>>{t*6//5*(n//3)} minutes.
+In total, it will take {t*(n-n//3)}+{t*6//5*(n//3)}=<<{t*(n-n//3)}+{t*6//5*(n//3)}={t*(n-n//3)+t*6//5*(n//3)}>>{t*(n-n//3)+t*6//5*(n//3)} minutes to serve dinner to all of her patients.
+#### {t*(n-n//3)+t*6//5*(n//3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,40 @@
+question = """
+Jason drives past 3 convenience stores on his way to work. The distance between the first store and the second store is 6 miles. The distance between the second store and third store is 2/3rds longer than the distance between the first two stores. The distance from his house to the first store and the last store to work is the same, 4 miles. How long in miles is Jason's commute to work?
+"""
+
+answer = """
+First find the additional distance between the second store and the third store: 6 miles * 2/3 = <<6*2/3=4>>4 miles
+Then add that to the distance between the first two stores to find the total distance between the second and third stores: 4 miles + 6 miles = <<4+6=10>>10 miles
+Then add the distance between the first two stores, the distance from Jason's house to the first store, and the distance from the last store to work: 10 miles + 6 miles + 4 miles + 4 miles = <<10+6+4+4=24>>24 miles
+#### 24
+"""
+
+id_orig = 1759
+id_shuffled = 1942
+
+question_annotated = """
+{name,Jason} drives past 3 convenience stores on his way to work. The distance between the first store and the second store is {a,6} miles. The distance between the second store and third store is 2/3rds longer than the distance between the first two stores. The distance from his house to the first store and the last store to work is the same, {b,4} miles. How long in miles is {name,Jason}'s commute to work?
+
+#init:
+- name = sample(names_male)
+- $a = range(3, 100)
+- $b = range(1, 50)
+
+#conditions:
+- divides(a, 3)
+- a > 0
+- b > 0
+
+#answer: a*2//3 + 2*a + 2*b
+"""
+
+answer_annotated = """
+First find the additional distance between the second store and the third store: {a} miles * 2/3 = <<{a}*2/3={a*2//3}>>{a*2//3} miles
+Then add that to the distance between the first two stores to find the total distance between the second and third stores: {a*2//3} miles + {a} miles = <<{a*2//3}+{a}={a*2//3+a}>>{a*2//3+a} miles
+Then add the distance between the first two stores, the distance from {name}'s house to the first store, and the distance from the last store to work: {a*2//3+a} miles + {a} miles + {b} miles + {b} miles = <<{a*2//3+a}+{a}+{b}+{b}={a*2//3+a+a+b+b}>>{a*2//3+a+a+b+b} miles
+#### {a*2//3 + 2*a + 2*b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

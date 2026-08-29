@@ -1,0 +1,38 @@
+question = """
+In a bookstore, a book costs $5. When Sheryll bought 10 books, she was given a discount of $0.5 each. How much did Sheryll pay in all?
+"""
+
+answer = """
+Instead of $5 each, a book costs $5 - $0.5 = $<<5-0.5=4.5>>4.5 each.
+Sheryll paid $4.5/book x 10 books = $<<4.5*10=45>>45.
+#### 45
+"""
+
+id_orig = 1495
+id_shuffled = 1622
+
+question_annotated = """
+In a bookstore, a book costs ${price,5}. When {name,Sheryll} bought {books,10} books, she was given a discount of ${disc_txt,0.5} each. How much did {name,Sheryll} pay in all?
+
+#init:
+- name = sample(names_female)
+- $price = range(2, 31)
+- disc_txt, disc_val = sample([("0.5", 0.5), ("1.5", 1.5), ("2.5", 2.5), ("3.5", 3.5)])
+- $books = range(4, 42, 2)
+
+#conditions:
+- price > disc_val
+- is_int((price - disc_val) * books)
+
+#answer: int((price - disc_val) * books)
+"""
+
+answer_annotated = """
+Instead of ${price} each, a book costs ${price} - ${disc_txt} = $<<{price}-{disc_txt}={price - disc_val}>>{price - disc_val} each.
+{name} paid ${price - disc_val}/book x {books} books = $<<{price - disc_val}*{books}={int((price - disc_val) * books)}>>{int((price - disc_val) * books)}.
+#### {int((price - disc_val) * books)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,50 @@
+question = """
+James has a small tree outside his window with 30 branches with 90 twigs per branch. 30% of the twigs sprout 4 leaves and the rest sprout 5 leaves. How many leaves are on the tree total?
+"""
+
+answer = """
+First find the total number of twigs on the tree: 30 branches * 90 twigs/branch = <<30*90=2700>>2700 twigs
+Then multiply that number by 30% to find how many twigs have 4 leaves: 2700 twigs * 30% = <<2700*30*.01=810>>810 twigs
+Then subtract that number from the total number of twigs to find how many have 5 leaves: 2700 twigs - 810 twigs = <<2700-810=1890>>1890 twigs
+Then multiply that number by 5 to find the number of leaves on the 5-leaved twigs: 1890 twigs * 5 leaves/twig = <<1890*5=9450>>9450 leaves
+Then multiply the number of 4-leaved twigs by 4 to find the total number of leaves they have: 810 twigs * 4 leaves/twig = <<810*4=3240>>3240 leaves
+Then add the two groups of leaves to find the total number of leaves: 9450 leaves + 3240 leaves = <<9450+3240=12690>>12,690 leaves
+#### 12690
+"""
+
+id_orig = 3245
+id_shuffled = 3858
+
+question_annotated = """
+{name,James} has a small tree outside his window with {b,30} branches with {t,90} twigs per branch. {p,30}% of the twigs sprout {l4,4} leaves and the rest sprout {l5,5} leaves. How many leaves are on the tree total?
+
+#init:
+- name = sample(names_male)
+- $b = range(15, 40)
+- $t = range(60, 130, 10)
+- $p = range(5, 96, 5)
+- $l4 = range(2, 7)
+- $l5 = range(3, 9)
+
+#conditions:
+- is_int(b*t*p/100)
+- b*t*p >= 100
+- b*t*(100-p) >= 100
+- b*t*p//100*l4 + (b*t - b*t*p//100)*l5 >= 1000
+
+#answer: b*t*p//100*l4 + (b*t - b*t*p//100)*l5
+"""
+
+answer_annotated = """
+First find the total number of twigs on the tree: {b} branches * {t} twigs/branch = <<{b}*{t}={b*t}>>{b*t} twigs
+Then multiply that number by {p}% to find how many twigs have 4 leaves: {b*t} twigs * {p}% = <<{b*t}*{p}*.01={b*t*p//100}>>{b*t*p//100} twigs
+Then subtract that number from the total number of twigs to find how many have 5 leaves: {b*t} twigs - {b*t*p//100} twigs = <<{b*t}-{b*t*p//100}={b*t-b*t*p//100}>>{b*t-b*t*p//100} twigs
+Then multiply that number by {l5} to find the number of leaves on the {l5}-leaved twigs: {b*t-b*t*p//100} twigs * {l5} leaves/twig = <<{b*t-b*t*p//100}*{l5}={(b*t-b*t*p//100)*l5}>>{(b*t-b*t*p//100)*l5} leaves
+Then multiply the number of {l4}-leaved twigs by {l4} to find the total number of leaves they have: {b*t*p//100} twigs * {l4} leaves/twig = <<{b*t*p//100}*{l4}={b*t*p//100*l4}>>{b*t*p//100*l4} leaves
+Then add the two groups of leaves to find the total number of leaves: {(b*t-b*t*p//100)*l5} leaves + {b*t*p//100*l4} leaves = <<{(b*t-b*t*p//100)*l5}+{b*t*p//100*l4}={(b*t-b*t*p//100)*l5 + b*t*p//100*l4}>>{((b*t-b*t*p//100)*l5 + b*t*p//100*l4)//1000},{((b*t-b*t*p//100)*l5 + b*t*p//100*l4)%1000} leaves
+#### {b*t*p//100*l4 + (b*t - b*t*p//100)*l5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

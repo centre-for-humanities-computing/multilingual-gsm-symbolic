@@ -1,0 +1,43 @@
+question = """
+A bag was originally priced at $500. A week after, the price was reduced by 5%. Since the bag was still not sold, the selling price was reduced by 4% a month after. How much was the total reduction from the original selling price?
+"""
+
+answer = """
+The original price of the bag was reduced by $500 x 5/100 = $<<500*5/100=25>>25.
+So its selling price after a week was $500 - $25 = $<<500-25=475>>475.
+The price of the bag was again reduced by $475 x 4/100 = $<<475*4/100=19>>19.
+So, its selling price now is $475 - $19 = $<<475-19=456>>456.
+Therefore, the total reduction from the selling price is $500 - $456 = $<<500-456=44>>44.
+#### 44
+"""
+
+id_orig = 3380
+id_shuffled = 4005
+
+question_annotated = """
+A bag was originally priced at ${p,500}. A week after, the price was reduced by {r1,5}%. Since the bag was still not sold, the selling price was reduced by {r2,4}% a month after. How much was the total reduction from the original selling price?
+
+#init:
+- $p = range(100, 2100, 100)
+- $r1 = range(2, 51)
+- $r2 = range(2, 51)
+
+#conditions:
+- is_int(p*r1/100)
+- is_int((p - p*r1/100)*r2/100)
+
+#answer: p*r1//100 + (p - p*r1//100)*r2//100
+"""
+
+answer_annotated = """
+The original price of the bag was reduced by ${p} x {r1}/100 = $<<{p}*{r1}/100={p*r1//100}>>{p*r1//100}.
+So its selling price after a week was ${p} - ${p*r1//100} = $<<{p}-{p*r1//100}={p-p*r1//100}>>{p-p*r1//100}.
+The price of the bag was again reduced by ${p-p*r1//100} x {r2}/100 = $<<{p-p*r1//100}*{r2}/100={(p-p*r1//100)*r2//100}>>{(p-p*r1//100)*r2//100}.
+So, its selling price now is ${p-p*r1//100} - ${(p-p*r1//100)*r2//100} = $<<{p-p*r1//100}-{(p-p*r1//100)*r2//100}={p-p*r1//100-(p-p*r1//100)*r2//100}>>{p-p*r1//100-(p-p*r1//100)*r2//100}.
+Therefore, the total reduction from the selling price is ${p} - ${p-p*r1//100-(p-p*r1//100)*r2//100} = $<<{p}-{p-p*r1//100-(p-p*r1//100)*r2//100}={p*r1//100+(p-p*r1//100)*r2//100}>>{p*r1//100+(p-p*r1//100)*r2//100}.
+#### {p*r1//100+(p-p*r1//100)*r2//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

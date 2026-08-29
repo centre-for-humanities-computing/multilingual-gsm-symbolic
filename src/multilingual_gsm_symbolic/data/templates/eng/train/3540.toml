@@ -1,0 +1,41 @@
+question = """
+Edward had $17.80 to spend at the toy store. He bought 4 toy cars that cost $0.95 each and a race track that cost $6.00. How much money does Edward have left to buy more toys?
+"""
+
+answer = """
+The cost of the toy cars is 4 × $0.95 = $<<4*0.95=3.80>>3.80.
+The total cost of the toys is $3.80 + $6.00 = $<<3.80+6=9.80>>9.80.
+Edward has $17.80 − $9.80 = $8.00 left.
+#### 8
+"""
+
+id_orig = 2935
+id_shuffled = 3540
+
+question_annotated = """
+{name,Edward} had ${md,17}.{mc,80} to spend at the toy store. He bought {n,4} toy cars that cost $0.{pc,95} each and a race track that cost $6.00. How much money does {name,Edward} have left to buy more toys?
+
+#init:
+- name = sample(names_male)
+- $n = range(2, 13)
+- $md = range(5, 41)
+- $mc = range(10, 100, 10)
+- $pc = range(10, 100, 5)
+
+#conditions:
+- (md*100 + mc - n*pc - 600) % 100 == 0
+- md*100 + mc - n*pc - 600 > 0
+
+#answer: (md*100 + mc - n*pc - 600)//100
+"""
+
+answer_annotated = """
+The cost of the toy cars is {n} × $0.{pc} = $<<{n}*0.{pc}={n*pc//100}.{(n*pc%100)//10}{n*pc%10}>>{n*pc//100}.{(n*pc%100)//10}{n*pc%10}.
+The total cost of the toys is ${n*pc//100}.{(n*pc%100)//10}{n*pc%10} + $6.00 = $<<{n*pc//100}.{(n*pc%100)//10}{n*pc%10}+6={(n*pc+600)//100}.{((n*pc+600)%100)//10}{(n*pc+600)%10}>>{(n*pc+600)//100}.{((n*pc+600)%100)//10}{(n*pc+600)%10}.
+{name} has ${(md*100+mc)//100}.{((md*100+mc)%100)//10}{(md*100+mc)%10} − ${(n*pc+600)//100}.{((n*pc+600)%100)//10}{(n*pc+600)%10} = ${(md*100+mc-n*pc-600)//100}.{((md*100+mc-n*pc-600)%100)//10}{(md*100+mc-n*pc-600)%10} left.
+#### {(md*100+mc-n*pc-600)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,38 @@
+question = """
+Mark wants to tip his server 20% on a $200 check. If his friend agrees to kick in $10, how much should Mark add?
+"""
+
+answer = """
+First find the total tip amount: 20% * $200 = $<<20*.01*200=40>>40
+Then subtract the friend's contribution: $40 - $10 = $<<40-10=30>>30
+#### 30
+"""
+
+id_orig = 3104
+id_shuffled = 3689
+
+question_annotated = """
+{name,Mark} wants to tip his server {rate,20}% on a ${check,200} check. If his friend agrees to kick in ${friend,10}, how much should {name,Mark} add?
+
+#init:
+- name = sample(names_male)
+- $rate = range(5, 55, 5)
+- $check = range(20, 420, 10)
+- $friend = range(1, 30)
+
+#conditions:
+- divides(rate*check, 100)
+- rate*check > 100*friend
+
+#answer: int(rate*.01*check) - friend
+"""
+
+answer_annotated = """
+First find the total tip amount: {rate}% * ${check} = $<<{rate}*.01*{check}={int(rate*.01*check)}>>{int(rate*.01*check)}
+Then subtract the friend's contribution: ${int(rate*.01*check)} - ${friend} = $<<{int(rate*.01*check)}-{friend}={int(rate*.01*check)-friend}>>{int(rate*.01*check)-friend}
+#### {int(rate*.01*check)-friend}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

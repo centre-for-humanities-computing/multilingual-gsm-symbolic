@@ -1,0 +1,45 @@
+question = """
+There are 80 men in a race. 1/4 of the men tripped and were unable to finish. 2/3 of the remaining men were dehydrated and 1/5 of those dehydrated men couldn't finish the race. How many men finished the race?
+"""
+
+answer = """
+1/4 of 80 men is 80/4=<<80/4=20>>20 men
+20 men couldn't finish, so 80-20=<<80-20=60>>60 men remain
+60*2/3 = <<60*2/3=40>>40 men were dehydrated
+1/5 of the dehydrated couldn't finish 40*1/5=<<40*1/5=8>>8 men
+60-8=<<60-8=52>>52 men finished the race
+#### 52
+"""
+
+id_orig = 2215
+id_shuffled = 2553
+
+question_annotated = """
+There are {n,80} men in a race. {fa,1/4} of the men tripped and were unable to finish. 2/3 of the remaining men were dehydrated and {fc,1/5} of those dehydrated men couldn't finish the race. How many men finished the race?
+
+#init:
+- $n = range(20, 400, 2)
+- fa, da = sample([("1/4", 4), ("1/3", 3), ("1/5", 5), ("1/6", 6), ("1/8", 8)])
+- fc, dc = sample([("1/5", 5), ("1/4", 4), ("1/6", 6), ("1/8", 8)])
+
+#conditions:
+- divides(n, da)
+- divides((n - n//da) * 2, 3)
+- divides((n - n//da) * 2 // 3, dc)
+- n - n//da - (n - n//da) * 2 // 3 // dc > 0
+
+#answer: n - n//da - (n - n//da) * 2 // 3 // dc
+"""
+
+answer_annotated = """
+{fa} of {n} men is {n}/{da}=<<{n}/{da}={n//da}>>{n//da} men
+{n//da} men couldn't finish, so {n}-{n//da}=<<{n}-{n//da}={n-n//da}>>{n-n//da} men remain
+{n-n//da}*2/3 = <<{n-n//da}*2/3={(n-n//da)*2//3}>>{(n-n//da)*2//3} men were dehydrated
+{fc} of the dehydrated couldn't finish {(n-n//da)*2//3}*{fc}=<<{(n-n//da)*2//3}*{fc}={(n-n//da)*2//3//dc}>>{(n-n//da)*2//3//dc} men
+{n-n//da}-{(n-n//da)*2//3//dc}=<<{n-n//da}-{(n-n//da)*2//3//dc}={n-n//da-(n-n//da)*2//3//dc}>>{n-n//da-(n-n//da)*2//3//dc} men finished the race
+#### {n-n//da-(n-n//da)*2//3//dc}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

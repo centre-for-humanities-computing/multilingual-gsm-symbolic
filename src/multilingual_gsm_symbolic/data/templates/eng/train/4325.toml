@@ -1,0 +1,41 @@
+question = """
+To make a lasagna Martha needs 1.5kg of cheese and 500 grams of meat. The cheese costs $6 per kilogram, and the meat $8 per kilogram. How much does Martha need to pay for the ingredients?
+"""
+
+answer = """
+500 grams is 0.5 kilogram, so for the meat, Martha needs to pay 0.5 * 8 = $4.
+For the cheese, Martha needs to pay 1.5 * 6 = $<<1.5*6=9>>9.
+So in total for the ingredients, Martha needs to pay 4 + 9 = $<<4+9=13>>13.
+#### 13
+"""
+
+id_orig = 3655
+id_shuffled = 4325
+
+question_annotated = """
+To make a lasagna {name,Martha} needs {c_txt,1.5}kg of cheese and {g,500} grams of meat. The cheese costs ${pc,6} per kilogram, and the meat ${pm,8} per kilogram. How much does {name,Martha} need to pay for the ingredients?
+
+#init:
+- name = sample(names_female)
+- c_txt, chalf = sample([("1.5", 3), ("2", 4), ("2.5", 5), ("3", 6), ("4", 8)])
+- $g = range(500, 10500, 500)
+- $pc = range(4, 20)
+- $pm = range(6, 14, 2)
+
+#conditions:
+- divides(chalf * pc, 2)
+- divides(g * pm, 1000)
+
+#answer: g*pm//1000 + chalf*pc//2
+"""
+
+answer_annotated = """
+{g} grams is {g/1000} kilogram, so for the meat, {name} needs to pay {g/1000} * {pm} = ${g*pm//1000}.
+For the cheese, {name} needs to pay {c_txt} * {pc} = $<<{c_txt}*{pc}={chalf*pc//2}>>{chalf*pc//2}.
+So in total for the ingredients, {name} needs to pay {g*pm//1000} + {chalf*pc//2} = $<<{g*pm//1000}+{chalf*pc//2}={g*pm//1000 + chalf*pc//2}>>{g*pm//1000 + chalf*pc//2}.
+#### {g*pm//1000 + chalf*pc//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

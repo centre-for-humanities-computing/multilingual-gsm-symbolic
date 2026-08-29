@@ -1,0 +1,47 @@
+question = """
+There were 30 women and 20 men who attended the party. After few hours, 2/5 of the total number of people left. If 9 men left the party, how many more women stayed at the party than men?
+"""
+
+answer = """
+There were 30 + 20 = <<30+20=50>>50 attendees at the party.
+A total of 50 x 2/5 = <<50*2/5=20>>20 people left the party.
+Nine of those who left were men while 20 - 9 = <<20-9=11>>11 of them were women.
+So, 30 - 11= <<30-11=19>>19 women stayed at the party.
+And 20 - 9 = <<20-9=11>>11 men stayed at the party.
+Thus, 19 - 11 = <<19-11=8>>8 more women than men stayed at the party.
+#### 8
+"""
+
+id_orig = 3174
+id_shuffled = 3773
+
+question_annotated = """
+There were {w,30} women and {m,20} men who attended the party. After few hours, 2/5 of the total number of people left. If {ml,9} men left the party, how many more women stayed at the party than men?
+
+#init:
+- $w = range(10, 210, 10)
+- $m = range(10, 110, 10)
+- men_word, ml = sample([("Two", 2), ("Three", 3), ("Four", 4), ("Five", 5), ("Six", 6), ("Seven", 7), ("Eight", 8), ("Nine", 9), ("Ten", 10)])
+
+#conditions:
+- divides((w + m) * 2, 5)
+- int((w + m) * 2 / 5) > ml
+- m > ml
+- w - m + 2 * ml > int((w + m) * 2 / 5)
+
+#answer: w - ((w + m) * 2 // 5 - ml) - (m - ml)
+"""
+
+answer_annotated = """
+There were {w} + {m} = <<{w}+{m}={w+m}>>{w+m} attendees at the party.
+A total of {w+m} x 2/5 = <<{w+m}*2/5={(w+m)*2//5}>>{(w+m)*2//5} people left the party.
+{men_word} of those who left were men while {(w+m)*2//5} - {ml} = <<{(w+m)*2//5}-{ml}={(w+m)*2//5-ml}>>{(w+m)*2//5-ml} of them were women.
+So, {w} - {(w+m)*2//5-ml}= <<{w}-{(w+m)*2//5-ml}={w-((w+m)*2//5-ml)}>>{w-((w+m)*2//5-ml)} women stayed at the party.
+And {m} - {ml} = <<{m}-{ml}={m-ml}>>{m-ml} men stayed at the party.
+Thus, {w-((w+m)*2//5-ml)} - {m-ml} = <<{w-((w+m)*2//5-ml)}-{m-ml}={w-((w+m)*2//5-ml)-(m-ml)}>>{w-((w+m)*2//5-ml)-(m-ml)} more women than men stayed at the party.
+#### {w-((w+m)*2//5-ml)-(m-ml)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

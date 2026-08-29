@@ -1,0 +1,46 @@
+question = """
+A firefighter is paid $30 per hour for a 48-hour workweek. He pays 1/3 of the money on rent and $500 on food and $1000 on taxes per month. Calculate the total amount of money the firefighter has after paying his monthly expenses.
+"""
+
+answer = """
+The firefighter earns $30/hour * 48 hours/week = $<<30*48=1440>>1440 in a week.
+In a month, the firefighter earns $1440/week * 4 weeks/month = $5760
+His total monthly payment is 1/3 * $5760 = $<<1/3*5760=1920>>1920
+His total monthly expenses are $1920 for rent + $500 for food + $1000 for taxes = $<<1920+500+1000=3420>>3420
+The total amount of money the firefighter has after his expenses is $5760 - $3420 = $<<5760-3420=2340>>2340
+#### 2340
+"""
+
+id_orig = 3942
+id_shuffled = 4649
+
+question_annotated = """
+A firefighter is paid ${rate,30} per hour for a {hrs,48}-hour workweek. He pays {fnum,1}/{fden,3} of the money on rent and ${food,500} on food and ${tax,1000} on taxes per month. Calculate the total amount of money the firefighter has after paying his monthly expenses.
+
+#init:
+- $rate = range(14, 62, 2)
+- $hrs = range(36, 55, 2)
+- $fnum = range(1, 2)
+- $fden = range(2, 7)
+- $food = range(400, 901, 50)
+- $tax = range(800, 1801, 100)
+
+#conditions:
+- divides(fnum * rate * hrs * 4, fden)
+- rate * hrs * 4 * (fden - fnum) // fden > food + tax
+
+#answer: rate * hrs * 4 - fnum * rate * hrs * 4 // fden - food - tax
+"""
+
+answer_annotated = """
+The firefighter earns ${rate}/hour * {hrs} hours/week = $<<{rate}*{hrs}={rate*hrs}>>{rate*hrs} in a week.
+In a month, the firefighter earns ${rate*hrs}/week * 4 weeks/month = ${rate*hrs*4}
+His total monthly payment is {fnum}/{fden} * ${rate*hrs*4} = $<<{fnum}/{fden}*{rate*hrs*4}={fnum*rate*hrs*4//fden}>>{fnum*rate*hrs*4//fden}
+His total monthly expenses are ${fnum*rate*hrs*4//fden} for rent + ${food} for food + ${tax} for taxes = $<<{fnum*rate*hrs*4//fden}+{food}+{tax}={fnum*rate*hrs*4//fden+food+tax}>>{fnum*rate*hrs*4//fden+food+tax}
+The total amount of money the firefighter has after his expenses is ${rate*hrs*4} - ${fnum*rate*hrs*4//fden+food+tax} = $<<{rate*hrs*4}-{fnum*rate*hrs*4//fden+food+tax}={rate*hrs*4-fnum*rate*hrs*4//fden-food-tax}>>{rate*hrs*4-fnum*rate*hrs*4//fden-food-tax}
+#### {rate*hrs*4 - fnum*rate*hrs*4//fden - food - tax}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

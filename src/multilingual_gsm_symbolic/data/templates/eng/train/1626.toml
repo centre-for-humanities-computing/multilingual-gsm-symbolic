@@ -1,0 +1,41 @@
+question = """
+A tractor trailer has a load of 50,000 pounds.  10% of the weight gets unloaded at the first store, and 20% of the remaining load is removed at the second store.  How much weight, in pounds, is left on the truck after the two deliveries?
+"""
+
+answer = """
+First Store:50,000(.10)=<<5000=5000>>5000
+50,000-5000=<<50000-5000=45000>>45,000 pounds
+Second Store:45,000(.20)=9000
+45,000-9000=<<45000-9000=36000>>36,000 pounds
+#### 36000
+"""
+
+id_orig = 1501
+id_shuffled = 1626
+
+question_annotated = """
+A tractor trailer has a load of {w,50000} pounds.  {p1,10}% of the weight gets unloaded at the first store, and {p2,20}% of the remaining load is removed at the second store.  How much weight, in pounds, is left on the truck after the two deliveries?
+
+#init:
+- $w = range(1000, 51000, 100)
+- $p1 = range(5, 55, 5)
+- $p2 = range(5, 55, 5)
+
+#conditions:
+- divides(w * p1, 100)
+- divides((w - w * p1 // 100) * p2, 100)
+
+#answer: w - w * p1 // 100 - (w - w * p1 // 100) * p2 // 100
+"""
+
+answer_annotated = """
+First Store:{w}(.{p1})=<<{w * p1 // 100}={w * p1 // 100}>>{w * p1 // 100}
+{w}-{w * p1 // 100}=<<{w}-{w * p1 // 100}={w - w * p1 // 100}>>{w - w * p1 // 100} pounds
+Second Store:{w - w * p1 // 100}(.{p2})={(w - w * p1 // 100) * p2 // 100}
+{w - w * p1 // 100}-{(w - w * p1 // 100) * p2 // 100}=<<{w - w * p1 // 100}-{(w - w * p1 // 100) * p2 // 100}={w - w * p1 // 100 - (w - w * p1 // 100) * p2 // 100}>>{w - w * p1 // 100 - (w - w * p1 // 100) * p2 // 100} pounds
+#### {w - w * p1 // 100 - (w - w * p1 // 100) * p2 // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,44 @@
+question = """
+Jame gets a raise to $20 per hour and works 40 hours a week.  His old job was $16 an hour for 25 hours per week.  How much more money does he make per year in his new job than the old job if he works 52 weeks a year?
+"""
+
+answer = """
+He makes 20*40=$<<20*40=800>>800 per week
+He used to make 16*25=$<<16*25=400>>400 per week
+So his raise was 800-400=$<<800-400=400>>400 per week
+So he makes 400*52=$<<400*52=20800>>20,800 per year more
+#### 20800
+"""
+
+id_orig = 1344
+id_shuffled = 1451
+
+question_annotated = """
+{name,Jame} gets a raise to ${rate_new,20} per hour and works {hrs_new,40} hours a week.  His old job was ${rate_old,16} an hour for {hrs_old,25} hours per week.  How much more money does he make per year in his new job than the old job if he works {weeks,52} weeks a year?
+
+#init:
+- name = sample(names_male)
+- $rate_new = range(10, 62, 2)
+- $hrs_new = range(20, 71, 5)
+- $rate_old = range(8, 57, 4)
+- $hrs_old = range(15, 36, 5)
+- $weeks = range(48, 53)
+
+#conditions:
+- rate_new * hrs_new > rate_old * hrs_old
+- ((rate_new * hrs_new - rate_old * hrs_old) * weeks) % 1000 >= 100
+
+#answer: (rate_new * hrs_new - rate_old * hrs_old) * weeks
+"""
+
+answer_annotated = """
+He makes {rate_new}*{hrs_new}=$<<{rate_new}*{hrs_new}={rate_new*hrs_new}>>{rate_new*hrs_new} per week
+He used to make {rate_old}*{hrs_old}=$<<{rate_old}*{hrs_old}={rate_old*hrs_old}>>{rate_old*hrs_old} per week
+So his raise was {rate_new*hrs_new}-{rate_old*hrs_old}=$<<{rate_new*hrs_new}-{rate_old*hrs_old}={rate_new*hrs_new - rate_old*hrs_old}>>{rate_new*hrs_new - rate_old*hrs_old} per week
+So he makes {rate_new*hrs_new - rate_old*hrs_old}*{weeks}=$<<{rate_new*hrs_new - rate_old*hrs_old}*{weeks}={(rate_new*hrs_new - rate_old*hrs_old) * weeks}>>{str((rate_new*hrs_new - rate_old*hrs_old) * weeks // 1000) + "," + str(((rate_new*hrs_new - rate_old*hrs_old) * weeks) % 1000)} per year more
+#### {(rate_new*hrs_new - rate_old*hrs_old) * weeks}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

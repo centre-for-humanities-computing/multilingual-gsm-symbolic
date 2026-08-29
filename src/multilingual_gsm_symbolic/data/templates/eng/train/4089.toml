@@ -1,0 +1,53 @@
+question = """
+A local college is offering German lessons and currently has 8 students enrolled. Through advertising, 8 more became interested but a fourth of these dropped out within a day. 2 more got frustrated and left. The class then rallied to show how simple the course actually is and increased enrollment by 5 times the amount of students already enrolled in the class, but 2 had to drop it because of scheduling conflicts. After one last rally, 6 more people enrolled. As the days passed, half of the class eventually dropped, and half of the remaining students graduated. How many are still enrolled?
+"""
+
+answer = """
+8+8=<<8+8=16>>16 students are enrolled in the German class.
+8*.25=<<8*.25=2>>2 dropped out from the new recruits.
+2 more left, so the class had 16-2-2=<<16-2-2=12>>12 students left.
+There were 12*5+12=<<12*5+12=72>>72 total students in the class after the rally.
+Two people had to drop the class, so there were 72-2=<<72-2=70>>70 left.
+70+6=<<70+6=76>>76 were enrolled after the final rally.
+76/2=<<76/2=38>>38 are left after half the class dropped.
+38/2=<<38/2=19>>19 are left after half the class graduated.
+#### 19
+"""
+
+id_orig = 3454
+id_shuffled = 4089
+
+question_annotated = """
+A local college is offering German lessons and currently has {n,8} students enrolled. Through advertising, {k,8} more became interested but a fourth of these dropped out within a day. {f,2} more got frustrated and left. The class then rallied to show how simple the course actually is and increased enrollment by {m,5} times the amount of students already enrolled in the class, but {d,2} had to drop it because of scheduling conflicts. After one last rally, {r,6} more people enrolled. As the days passed, half of the class eventually dropped, and half of the remaining students graduated. How many are still enrolled?
+
+#init:
+- $n = range(2, 22)
+- $k = range(4, 21, 4)
+- drop_txt, d = sample([("Two", 2), ("Three", 3), ("Four", 4), ("Five", 5)])
+- $m = range(2, 7)
+- $f = range(1, 5)
+- $r = range(2, 17)
+
+#conditions:
+- n + k - k//4 - f > 0
+- (n+k-k//4-f)*m+(n+k-k//4-f)-d > 0
+- divides((n+k-k//4-f)*m+(n+k-k//4-f)-d+r, 4)
+
+#answer: ((n+k-k//4-f)*m+(n+k-k//4-f)-d+r)//4
+"""
+
+answer_annotated = """
+{n}+{k}=<<{n}+{k}={n+k}>>{n+k} students are enrolled in the German class.
+{k}*.25=<<{k}*.25={k//4}>>{k//4} dropped out from the new recruits.
+{f} more left, so the class had {n+k}-{k//4}-{f}=<<{n+k}-{k//4}-{f}={n+k-k//4-f}>>{n+k-k//4-f} students left.
+There were {n+k-k//4-f}*{m}+{n+k-k//4-f}=<<{n+k-k//4-f}*{m}+{n+k-k//4-f}={(n+k-k//4-f)*m+(n+k-k//4-f)}>>{(n+k-k//4-f)*m+(n+k-k//4-f)} total students in the class after the rally.
+{drop_txt} people had to drop the class, so there were {(n+k-k//4-f)*m+(n+k-k//4-f)}-{d}=<<{(n+k-k//4-f)*m+(n+k-k//4-f)}-{d}={(n+k-k//4-f)*m+(n+k-k//4-f)-d}>>{(n+k-k//4-f)*m+(n+k-k//4-f)-d} left.
+{(n+k-k//4-f)*m+(n+k-k//4-f)-d}+{r}=<<{(n+k-k//4-f)*m+(n+k-k//4-f)-d}+{r}={(n+k-k//4-f)*m+(n+k-k//4-f)-d+r}>>{(n+k-k//4-f)*m+(n+k-k//4-f)-d+r} were enrolled after the final rally.
+{(n+k-k//4-f)*m+(n+k-k//4-f)-d+r}/2=<<{(n+k-k//4-f)*m+(n+k-k//4-f)-d+r}/2={((n+k-k//4-f)*m+(n+k-k//4-f)-d+r)//2}>>{((n+k-k//4-f)*m+(n+k-k//4-f)-d+r)//2} are left after half the class dropped.
+{((n+k-k//4-f)*m+(n+k-k//4-f)-d+r)//2}/2=<<{((n+k-k//4-f)*m+(n+k-k//4-f)-d+r)//2}/2={((n+k-k//4-f)*m+(n+k-k//4-f)-d+r)//4}>>{((n+k-k//4-f)*m+(n+k-k//4-f)-d+r)//4} are left after half the class graduated.
+#### {((n+k-k//4-f)*m+(n+k-k//4-f)-d+r)//4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

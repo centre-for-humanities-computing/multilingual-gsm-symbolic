@@ -1,0 +1,43 @@
+question = """
+Rex is taking lessons for his driver’s license. He wants to take 40 hour-long lessons before his test, and decides to have two-hour sessions twice a week until he has done his test. After 6 weeks, how many more weeks will Rex need to continue taking lessons to reach his goal?
+"""
+
+answer = """
+Each week, Rex is taking 2 hour-long lessons * 2 times a week = <<2*2=4>>4 lessons.
+After 6 weeks, he has done 4 lessons per week * 6 weeks = <<4*6=24>>24 lessons.
+So Rex still needs 40 total lessons – 24 lessons taken = <<40-24=16>>16 lessons.
+He will therefore need lessons for another 16 lessons / 4 lessons per week = <<16/4=4>>4 weeks.
+#### 4
+"""
+
+id_orig = 3158
+id_shuffled = 3757
+
+question_annotated = """
+{name,Rex} is taking lessons for his driver’s license. He wants to take {total,40} hour-long lessons before his test, and decides to have {txt_h,two}-hour sessions {txt_t,twice} a week until he has done his test. After {w,6} weeks, how many more weeks will {name,Rex} need to continue taking lessons to reach his goal?
+
+#init:
+- name = sample(names_male)
+- txt_h, h = sample([("one", 1), ("two", 2), ("three", 3)])
+- txt_t, t = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $w = range(1, 13)
+- $total = range(30, 230)
+
+#conditions:
+- total > h*t*w
+- divides(total - h*t*w, h*t)
+
+#answer: (total - h*t*w)//(h*t)
+"""
+
+answer_annotated = """
+Each week, {name} is taking {h} hour-long lessons * {t} times a week = <<{h}*{t}={h*t}>>{h*t} lessons.
+After {w} weeks, he has done {h*t} lessons per week * {w} weeks = <<{h*t}*{w}={h*t*w}>>{h*t*w} lessons.
+So {name} still needs {total} total lessons – {h*t*w} lessons taken = <<{total}-{h*t*w}={total-h*t*w}>>{total-h*t*w} lessons.
+He will therefore need lessons for another {total-h*t*w} lessons / {h*t} lessons per week = <<{total-h*t*w}/{h*t}={(total-h*t*w)//(h*t)}>>{(total-h*t*w)//(h*t)} weeks.
+#### {(total - h*t*w)//(h*t)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

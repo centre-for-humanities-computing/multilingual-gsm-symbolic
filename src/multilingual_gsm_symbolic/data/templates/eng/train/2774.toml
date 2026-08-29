@@ -1,0 +1,39 @@
+question = """
+There were some snowflakes at first. It snowed an additional 4 snowflakes every 5 minutes. If there were 58 snowflakes after 1 hour, how many snowflakes were there at first?
+"""
+
+answer = """
+There are 60/5=<<60/5=12>>12 5-minute intervals in 1 hour.
+12*4=<<12*4=48>>48 snowflakes fell in 1 hour.
+There were 58-48=<<58-48=10>>10 snowflakes at first.
+#### 10
+"""
+
+id_orig = 2415
+id_shuffled = 2774
+
+question_annotated = """
+There were some snowflakes at first. It snowed an additional {rate,4} snowflakes every {mins,5} minutes. If there were {final,58} snowflakes after 1 hour, how many snowflakes were there at first?
+
+#init:
+- $rate = range(2, 21)
+- $mins = range(2, 31)
+- $final = range(20, 320)
+
+#conditions:
+- is_int(60 / mins)
+- final - 60 // mins * rate > 0
+
+#answer: final - 60 // mins * rate
+"""
+
+answer_annotated = """
+There are 60/{mins}=<<60/{mins}={60//mins}>>{60//mins} {mins}-minute intervals in 1 hour.
+{60//mins}*{rate}=<<{60//mins}*{rate}={60//mins*rate}>>{60//mins*rate} snowflakes fell in 1 hour.
+There were {final}-{60//mins*rate}=<<{final}-{60//mins*rate}={final-60//mins*rate}>>{final-60//mins*rate} snowflakes at first.
+#### {final-60//mins*rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

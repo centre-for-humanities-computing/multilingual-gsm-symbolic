@@ -1,0 +1,40 @@
+question = """
+When the machine is cold, as it is in the first hour of production, it takes 6 minutes to produce each molded flower pot. Thereafter, once it is warm, it takes only 5 minutes to produce each pot. How many additional pots are produced in the last hour of the day, compared to the first?
+"""
+
+answer = """
+In the first hour, it produces 60/6=<<60/6=10>>10 pots.
+In the last hour, it produces 60/5=<<60/5=12>>12 pots.
+12-10=<<12-10=2>>2 more pots are produced in the last hour.
+#### 2
+"""
+
+id_orig = 2542
+id_shuffled = 2930
+
+question_annotated = """
+When the machine is cold, as it is in the first {period,hour} of production, it takes {a,6} minutes to produce each molded flower pot. Thereafter, once it is warm, it takes only {b,5} minutes to produce each pot. How many additional pots are produced in the last {period,hour} of the day, compared to the first?
+
+#init:
+- period, mins_per_hour = sample([("hour", 60), ("two hours", 120)])
+- $a = range(2, 61)
+- $b = range(2, 61)
+
+#conditions:
+- b < a
+- divides(mins_per_hour, a)
+- divides(mins_per_hour, b)
+
+#answer: mins_per_hour//b - mins_per_hour//a
+"""
+
+answer_annotated = """
+In the first {period}, it produces {mins_per_hour}/{a}=<<{mins_per_hour}/{a}={mins_per_hour//a}>>{mins_per_hour//a} pots.
+In the last {period}, it produces {mins_per_hour}/{b}=<<{mins_per_hour}/{b}={mins_per_hour//b}>>{mins_per_hour//b} pots.
+{mins_per_hour//b}-{mins_per_hour//a}=<<{mins_per_hour//b}-{mins_per_hour//a}={mins_per_hour//b-mins_per_hour//a}>>{mins_per_hour//b-mins_per_hour//a} more pots are produced in the last {period}.
+#### {mins_per_hour//b-mins_per_hour//a}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

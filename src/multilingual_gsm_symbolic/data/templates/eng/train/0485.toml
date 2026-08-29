@@ -1,0 +1,40 @@
+question = """
+Austin bought his seven friends each a robot. Each robot costs $8.75.  He was charged $7.22 total for tax. He left with $11.53 in change. How much did Austin start with?
+"""
+
+answer = """
+First we need to find the total amount for the robots. 7 robots * $8.75 per robot = $<<7*8.75=61.25>>61.25 in total.
+Now we need to add in the tax $61.25 for the robots + $7.22 for tax = $<<61.25+7.22=68.47>>68.47 total spent in store.
+Now to find what was the beginning amount we take the $68.47 total spent in-store + $11.53 in change = $<<68.47+11.53=80>>80 to start.
+#### 80
+"""
+
+id_orig = 320
+id_shuffled = 485
+
+question_annotated = """
+{name,Austin} bought his {n_txt,seven} friends each a robot. Each robot costs ${p,8.75}.  He was charged ${t,7.22} total for tax. He left with ${c,11.53} in change. How much did {name,Austin} start with?
+
+#init:
+- name = sample(names_male)
+- n_txt, n = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12), ("thirteen", 13), ("fourteen", 14), ("fifteen", 15), ("sixteen", 16), ("seventeen", 17), ("eighteen", 18), ("nineteen", 19), ("twenty", 20)])
+- p = sample(["2.25", "2.75", "3.25", "3.75", "4.25", "4.75", "5.25", "5.75", "6.25", "6.75", "7.25", "7.75", "8.25", "8.75", "9.25", "9.75", "10.25", "10.75", "11.25", "11.75", "12.25", "12.75", "13.25", "13.75", "14.25", "14.75", "15.25", "15.75", "16.25", "16.75", "17.25", "17.75", "18.25", "18.75", "19.25", "19.75"])
+- t = sample(["7.22"])
+- c = sample(["11.53"])
+
+#conditions:
+- is_int(n*float(p) + float(t) + float(c))
+
+#answer: int(n*float(p)+float(t)+float(c))
+"""
+
+answer_annotated = """
+First we need to find the total amount for the robots. {n} robots * ${p} per robot = $<<{n}*{p}={n*float(p)}>>{n*float(p)} in total.
+Now we need to add in the tax ${n*float(p)} for the robots + ${t} for tax = $<<{n*float(p)}+{t}={n*float(p)+float(t)}>>{n*float(p)+float(t)} total spent in store.
+Now to find what was the beginning amount we take the ${n*float(p)+float(t)} total spent in-store + ${c} in change = $<<{n*float(p)+float(t)}+{c}={int(n*float(p)+float(t)+float(c))}>>{int(n*float(p)+float(t)+float(c))} to start.
+#### {int(n*float(p)+float(t)+float(c))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

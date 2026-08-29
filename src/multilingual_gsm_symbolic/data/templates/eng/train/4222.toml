@@ -1,0 +1,40 @@
+question = """
+Tina buys a loaf of bread for $50, 2oz of ham for $150, and a cake for $200. What percent of the cost is the ham and bread?
+"""
+
+answer = """
+The total cost of buying bread and ham was $50+$150 = $<<50+150=200>>200
+Together with the cake, Tina paid $200+$200 = $<<200+200=400>>400 for the items
+Since the total percentage for all the items is 100%, the cost of ham and bread is $200/$400 * 100% = <<200/400*100=50>>50% of the total cost of items.
+#### 50
+"""
+
+id_orig = 3564
+id_shuffled = 4222
+
+question_annotated = """
+{name,Tina} buys a loaf of bread for ${b,50}, 2oz of ham for ${h,150}, and a cake for ${c,200}. What percent of the cost is the ham and bread?
+
+#init:
+- name = sample(names_female)
+- $b = range(10, 210, 5)
+- $h = range(10, 310, 5)
+- $c = range(10, 310, 5)
+
+#conditions:
+- divides((b + h) * 100, b + h + c)
+- (b + h) * 100 // (b + h + c) % 25 == 0
+
+#answer: (b + h) * 100 // (b + h + c)
+"""
+
+answer_annotated = """
+The total cost of buying bread and ham was ${b}+${h} = $<<{b}+{h}={b+h}>>{b+h}
+Together with the cake, {name} paid ${b+h}+${c} = $<<{b+h}+{c}={b+h+c}>>{b+h+c} for the items
+Since the total percentage for all the items is 100%, the cost of ham and bread is ${b+h}/${b+h+c} * 100% = <<{b+h}/{b+h+c}*100={(b+h)*100//(b+h+c)}>>{(b+h)*100//(b+h+c)}% of the total cost of items.
+#### {(b + h) * 100 // (b + h + c)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

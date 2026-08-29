@@ -1,0 +1,46 @@
+question = """
+Jill sells girl scout cookies.  This year, she wants to sell at least 150 cookie boxes.  Her first customer buys 5 boxes,  Her second one buys 4 times more than her first customer.  Her third customer buys half as much as her second.  The fourth customer buys 3 times as much as her third.  Lastly, her final customer buys 10.  How many boxes so Jill have left to sell to hit her sales goal?
+"""
+
+answer = """
+Jill's second customer buys 4 times more than her first customer's 5 boxes, so they buy 4*5=<<4*5=20>>20 boxes
+Jill's third customer buys half of what her second customer bought, so that means they buy 20/2= <<20/2=10>>10 boxes
+Jill's fourth customer buys 3 times as many as what her third customer bought, so that means they buy 10*3= <<3*10=30>>30 boxes
+Adding in the 5 boxes sold to the first customer, and the 10 boxes sold to the last one, that means Jill has sold 5+10+20+10+30= <<5+10+20+10+30=75>>75 boxes
+Since Jill's goal is 150 boxes sold, and she's only sold 75 so far, she needs to sell 150-75=<<150-75=75>>75 more boxes to hit her goal
+#### 75
+"""
+
+id_orig = 3114
+id_shuffled = 3699
+
+question_annotated = """
+{name,Jill} sells girl scout cookies.  This year, she wants to sell at least {goal,150} cookie boxes.  Her first customer buys {a,5} boxes,  Her second one buys {m2,4} times more than her first customer.  Her third customer buys half as much as her second.  The fourth customer buys {m4,3} times as much as her third.  Lastly, her final customer buys {z,10}.  How many boxes so {name,Jill} have left to sell to hit her sales goal?
+
+#init:
+- name = sample(names_female)
+- $goal = range(50, 550, 50)
+- $a = range(2, 22)
+- $m2 = range(2, 8)
+- $m4 = range(2, 6)
+- $z = range(5, 25)
+
+#conditions:
+- divides(m2 * a, 2)
+- goal > a + z + m2*a + m2*a//2 + m4*(m2*a//2)
+
+#answer: goal - (a + z + m2*a + m2*a//2 + m4*(m2*a//2))
+"""
+
+answer_annotated = """
+{name}'s second customer buys {m2} times more than her first customer's {a} boxes, so they buy {m2}*{a}=<<{m2}*{a}={m2*a}>>{m2*a} boxes
+{name}'s third customer buys half of what her second customer bought, so that means they buy {m2*a}/2= <<{m2*a}/2={m2*a//2}>>{m2*a//2} boxes
+{name}'s fourth customer buys {m4} times as many as what her third customer bought, so that means they buy {m2*a//2}*{m4}= <<{m4}*{m2*a//2}={m4*(m2*a//2)}>>{m4*(m2*a//2)} boxes
+Adding in the {a} boxes sold to the first customer, and the {z} boxes sold to the last one, that means {name} has sold {a}+{z}+{m2*a}+{m2*a//2}+{m4*(m2*a//2)}= <<{a}+{z}+{m2*a}+{m2*a//2}+{m4*(m2*a//2)}={a+z+m2*a+m2*a//2+m4*(m2*a//2)}>>{a+z+m2*a+m2*a//2+m4*(m2*a//2)} boxes
+Since {name}'s goal is {goal} boxes sold, and she's only sold {a+z+m2*a+m2*a//2+m4*(m2*a//2)} so far, she needs to sell {goal}-{a+z+m2*a+m2*a//2+m4*(m2*a//2)}=<<{goal}-{a+z+m2*a+m2*a//2+m4*(m2*a//2)}={goal-(a+z+m2*a+m2*a//2+m4*(m2*a//2))}>>{goal-(a+z+m2*a+m2*a//2+m4*(m2*a//2))} more boxes to hit her goal
+#### {goal-(a+z+m2*a+m2*a//2+m4*(m2*a//2))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

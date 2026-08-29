@@ -1,0 +1,47 @@
+question = """
+John drinks 2 energy drinks. 1 of them is a 12-ounce drink with 250 grams of caffeine.  The second drink is 3 times more caffeinated per ounce but only 2 ounces.  He then takes a caffeine pill that has as much caffeine as his 2 drinks combined.  How much caffeine did he consume?
+"""
+
+answer = """
+The second drink was 2/12=1/6 the size of the first drink
+So it had 1/6*3=1/2 the caffeine
+That means it had 1/2*250=<<250/2=125>>125 grams of caffeine
+So the total amount of caffeine he drank was 125+250=<<125+250=375>>375 grams
+So he consumed 375*2=<<375*2=750>>750 grams of caffeine for the day
+#### 750
+"""
+
+id_orig = 414
+id_shuffled = 490
+
+question_annotated = """
+{name,John} drinks 2 energy drinks. 1 of them is a {o1,12}-ounce drink with {c1,250} grams of caffeine.  The second drink is {m,3} times more caffeinated per ounce but only {o2,2} ounces.  He then takes a caffeine pill that has as much caffeine as his 2 drinks combined.  How much caffeine did he consume?
+
+#init:
+- name = sample(names_male)
+- $o1 = range(8, 200)
+- $o2 = range(2, 50)
+- $m = range(2, 10)
+- $c1 = range(50, 500, 5)
+
+#conditions:
+- divides(o1, o2)
+- divides(o1//o2, m)
+- divides(c1, o1//o2//m)
+- o1//o2//m > 1
+
+#answer: 2*(c1//(o1//o2//m) + c1)
+"""
+
+answer_annotated = """
+The second drink was {o2}/{o1}=1/{o1//o2} the size of the first drink
+So it had 1/{o1//o2}*{m}=1/{o1//o2//m} the caffeine
+That means it had 1/{o1//o2//m}*{c1}=<<{c1}/{o1//o2//m}={c1//(o1//o2//m)}>>{c1//(o1//o2//m)} grams of caffeine
+So the total amount of caffeine he drank was {c1//(o1//o2//m)}+{c1}=<<{c1//(o1//o2//m)}+{c1}={(c1//(o1//o2//m))+c1}>>{(c1//(o1//o2//m))+c1} grams
+So he consumed {(c1//(o1//o2//m))+c1}*2=<<{(c1//(o1//o2//m))+c1}*2={2*((c1//(o1//o2//m))+c1)}>>{2*((c1//(o1//o2//m))+c1)} grams of caffeine for the day
+#### {2*((c1//(o1//o2//m))+c1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

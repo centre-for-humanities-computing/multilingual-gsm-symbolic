@@ -1,0 +1,49 @@
+question = """
+Annie is trying to figure out whether it's safe to drive her truck. For every 3 degrees the temperature drops below 32 degrees, Annie's chances of skidding on ice increase 5%. If she goes into a skid, she has a 40% of regaining control. Otherwise, she'll have a serious accident. If the temperature is 8 degrees, what is the percentage chance of Annie getting into a serious accident if she drives?
+"""
+
+answer = """
+First find how many degrees below 32 the temperature is: 32 degrees - 8 degrees = <<32-8=24>>24 degrees
+Then divide that amount by the number of degrees per 5% increase in skid risk to find how many 5% increases there are: 24 degrees / 3 degrees/5% increase = <<24/3=8>>8 5% increases
+Multiply the number of increases by 5% to find the total increase in skid risk: 8 * 5% = 40%
+Now find the chance that Annie has a serious accident if she goes into a skid by subtracting the chance she regains control from 100%: 100% - 40% = 60%
+Finally, multiply the chance of going into a skid by the chance of having a serious accident after a skid to find the total risk of a serious accident: 60% * 40% = 24%
+#### 24
+"""
+
+id_orig = 515
+id_shuffled = 588
+
+question_annotated = """
+{name,Annie} is trying to figure out whether it's safe to drive her truck. For every {step_deg,3} degrees the temperature drops below {threshold,32} degrees, {name,Annie}'s chances of skidding on ice increase {inc,5}%. If she goes into a skid, she has a {regain,40}% of regaining control. Otherwise, she'll have a serious accident. If the temperature is {temp,8} degrees, what is the percentage chance of {name,Annie} getting into a serious accident if she drives?
+
+#init:
+- name = sample(names_female)
+- $threshold = range(25, 41)
+- $step_deg = range(1, 7)
+- $inc = range(1, 13)
+- $regain = range(10, 95, 5)
+- $temp = range(-10, 26)
+
+#conditions:
+- temp < threshold
+- divides(threshold - temp, step_deg)
+- (threshold - temp) // step_deg * inc <= 100
+- divides((threshold - temp) // step_deg * inc * (100 - regain), 100)
+- (threshold - temp) // step_deg * inc * (100 - regain) >= 100
+
+#answer: (threshold - temp) // step_deg * inc * (100 - regain) // 100
+"""
+
+answer_annotated = """
+First find how many degrees below {threshold} the temperature is: {threshold} degrees - {temp} degrees = <<{threshold}-{temp}={threshold-temp}>>{threshold-temp} degrees
+Then divide that amount by the number of degrees per {inc}% increase in skid risk to find how many {inc}% increases there are: {threshold-temp} degrees / {step_deg} degrees/{inc}% increase = <<{threshold-temp}/{step_deg}={(threshold-temp)//step_deg}>>{(threshold-temp)//step_deg} {inc}% increases
+Multiply the number of increases by {inc}% to find the total increase in skid risk: {(threshold-temp)//step_deg} * {inc}% = {(threshold-temp)//step_deg*inc}%
+Now find the chance that {name} has a serious accident if she goes into a skid by subtracting the chance she regains control from 100%: 100% - {regain}% = {100-regain}%
+Finally, multiply the chance of going into a skid by the chance of having a serious accident after a skid to find the total risk of a serious accident: {100-regain}% * {(threshold-temp)//step_deg*inc}% = {(threshold-temp)//step_deg*inc*(100-regain)//100}%
+#### {(threshold - temp) // step_deg * inc * (100 - regain) // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

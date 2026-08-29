@@ -1,0 +1,41 @@
+question = """
+Jill and her brother Jack are going apple picking.  Jill's basket can hold twice as much as Jack's basket when both are full.  Jack's basket is full when it has 12 apples, but currently space for 4 more.  How many times could Jack's current number of apples fit into Jill's basket?
+"""
+
+answer = """
+Since Jill's basket can hold twice as much as Jack's, and Jack's is capable of holding 12 apples in total, this means Jill's basket can hold 12*2=<<12*2=24>>24 apples in total.
+Since Jack has 4 less than the maximum amount of apples he can fit in his basket, this means Jack has 12-4= <<12-4=8>>8 apples in his basket.
+Therefore, Jill's basket can hold 24/8= <<24/8=3>>3 times the amount of apples Jack is currently carrying.
+#### 3
+"""
+
+id_orig = 262
+id_shuffled = 287
+
+question_annotated = """
+{girl,Jill} and her brother {boy,Jack} are going apple picking.  {girl,Jill}'s basket can hold {mult_txt,twice} as much as {boy,Jack}'s basket when both are full.  {boy,Jack}'s basket is full when it has {cap,12} apples, but currently space for {more,4} more.  How many times could {boy,Jack}'s current number of apples fit into {girl,Jill}'s basket?
+
+#init:
+- girl = sample(names_female)
+- boy = sample(names_male)
+- mult_txt, m = sample(multi_times)
+- $cap = range(6, 106, 2)
+- $more = range(1, 11)
+
+#conditions:
+- more < cap
+- divides(cap * m, cap - more)
+
+#answer: cap * m // (cap - more)
+"""
+
+answer_annotated = """
+Since {girl}'s basket can hold {mult_txt} as much as {boy}'s, and {boy}'s is capable of holding {cap} apples in total, this means {girl}'s basket can hold {cap}*{m}=<<{cap}*{m}={cap*m}>>{cap*m} apples in total.
+Since {boy} has {more} less than the maximum amount of apples he can fit in his basket, this means {boy} has {cap}-{more}= <<{cap}-{more}={cap-more}>>{cap-more} apples in his basket.
+Therefore, {girl}'s basket can hold {cap*m}/{cap-more}= <<{cap*m}/{cap-more}={cap*m//(cap-more)}>>{cap*m//(cap-more)} times the amount of apples {boy} is currently carrying.
+#### {cap*m//(cap-more)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

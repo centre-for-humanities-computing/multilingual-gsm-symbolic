@@ -1,0 +1,44 @@
+question = """
+Lenny bought 20 boxes of pens. Each box contained  5 pens. She gave 40% of the pens to her close friends and one-fourth of what's left to her classmates. How many pens were left for Lenny?
+"""
+
+answer = """
+Lenny has 20 x 5 = <<20*5=100>>100 pens.
+She gave her close friends 100 x 40% = <<100*40*.01=40>>40 pens.
+So, 100 - 40 = <<100-40=60>>60 pens were left.
+Half of 60 is 60/4= <<60/4=15>>15 pens.
+Thus, Lenny has 60 - 15 = <<60-15=45>>45 pens left.
+#### 45
+"""
+
+id_orig = 762
+id_shuffled = 835
+
+question_annotated = """
+{name,Lenny} bought {b,20} boxes of pens. Each box contained  {p,5} pens. She gave {r,40}% of the pens to her close friends and one-fourth of what's left to her classmates. How many pens were left for {name,Lenny}?
+
+#init:
+- name = sample(names_male)
+- $b = range(20, 210, 20)
+- $p = range(2, 12)
+- $r = range(10, 91, 10)
+
+#conditions:
+- divides(b * p * r, 100)
+- divides(b * p * (100 - r), 400)
+
+#answer: b*p - b*p*r//100 - (b*p - b*p*r//100)//4
+"""
+
+answer_annotated = """
+{name} has {b} x {p} = <<{b}*{p}={b*p}>>{b*p} pens.
+She gave her close friends {b*p} x {r}% = <<{b*p}*{r}*.01={b*p*r//100}>>{b*p*r//100} pens.
+So, {b*p} - {b*p*r//100} = <<{b*p}-{b*p*r//100}={b*p - b*p*r//100}>>{b*p - b*p*r//100} pens were left.
+Half of {b*p - b*p*r//100} is {b*p - b*p*r//100}/4= <<{b*p - b*p*r//100}/4={(b*p - b*p*r//100)//4}>>{(b*p - b*p*r//100)//4} pens.
+Thus, {name} has {b*p - b*p*r//100} - {(b*p - b*p*r//100)//4} = <<{b*p - b*p*r//100}-{(b*p - b*p*r//100)//4}={b*p - b*p*r//100 - (b*p - b*p*r//100)//4}>>{b*p - b*p*r//100 - (b*p - b*p*r//100)//4} pens left.
+#### {b*p - b*p*r//100 - (b*p - b*p*r//100)//4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

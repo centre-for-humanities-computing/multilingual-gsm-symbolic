@@ -1,0 +1,43 @@
+question = """
+On a road map, 1/4 inch represents 8 miles of actual road distance. The towns of Pence and Hillcrest are represented by points 3 3/8 inches apart on the map. What is the actual distance, in miles, between the towns?
+"""
+
+answer = """
+If 1/4 inch on the map represents 8 miles on real land, 1 inch represents 4 * 8 = 32 miles.
+Since 1 inch represents 32 miles, 3 inches represent 3 * 32 = <<3*32=96>>96 miles.
+1/ 4 inch represents 8 miles, 1/8 inch represents 8 / 2 = <<8/2=4>>4 miles because 1/8 is half of 1/4.
+If 1/8 inch represents 4 miles, 3/8 of an inch represents 3 * 4 = 12 miles.
+This means 3 3/8 inches on the map translate to 96 + 12 = 108 miles.
+#### 108
+"""
+
+id_orig = 256
+id_shuffled = 281
+
+question_annotated = """
+On a road map, {btxt,1/4} inch represents {m,8} miles of actual road distance. The towns of Pence and Hillcrest are represented by points {w,3} {n,3}/{den,8} inches apart on the map. What is the actual distance, in miles, between the towns?
+
+#init:
+- btxt, k, den = sample([("1/2", 2, 4), ("1/3", 3, 6), ("1/4", 4, 8), ("1/5", 5, 10), ("1/6", 6, 12)])
+- $m = range(2, 202, 2)
+- $w = range(2, 12)
+- $n = range(1, 6)
+
+#conditions:
+- n < den
+
+#answer: k*m*w + n*(m//2)
+"""
+
+answer_annotated = """
+If {btxt} inch on the map represents {m} miles on real land, 1 inch represents {k} * {m} = {k*m} miles.
+Since 1 inch represents {k*m} miles, {w} inches represent {w} * {k*m} = <<{w}*{k*m}={w*k*m}>>{w*k*m} miles.
+1/ {den//2} inch represents {m} miles, 1/{den} inch represents {m} / 2 = <<{m}/2={m//2}>>{m//2} miles because 1/{den} is half of {btxt}.
+If 1/{den} inch represents {m//2} miles, {n}/{den} of an inch represents {n} * {m//2} = {n*(m//2)} miles.
+This means {w} {n}/{den} inches on the map translate to {w*k*m} + {n*(m//2)} = {k*m*w + n*(m//2)} miles.
+#### {k*m*w + n*(m//2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

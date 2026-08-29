@@ -1,0 +1,45 @@
+question = """
+Out of the 200 cookies that Javier baked from the recipe he learned online, his wife took 30%, and his daughter took 40 from the remaining cookies. If he ate half of the remaining cookies, how many cookies did they not eat?
+"""
+
+answer = """
+From the 200 cookies, Javier's wife ate 30/100*200 = <<30/100*200=60>>60
+After the wife ate 60 cookies, the number of cookies that remained was 200-60 = <<200-60=140>>140
+The daughter also ate 40 cookies leaving 140-40 = <<140-40=100>>100 cookies.
+If Javier ate half of the remaining cookies, he ate 1/2*100 = 50.
+The number of cookies that remained is 100-50 = <<100-50=50>>50
+#### 50
+"""
+
+id_orig = 1097
+id_shuffled = 1193
+
+question_annotated = """
+Out of the {n,200} cookies that {name,Javier} baked from the recipe he learned online, his wife took {p,30}%, and his daughter took {d,40} from the remaining cookies. If he ate half of the remaining cookies, how many cookies did they not eat?
+
+#init:
+- name = sample(names_male)
+- $n = range(100, 520, 20)
+- $p = range(10, 55, 10)
+- $d = range(10, 110, 10)
+
+#conditions:
+- divides(p*n, 100)
+- d < n - p*n//100
+- divides(n - p*n//100 - d, 2)
+
+#answer: n - p*n//100 - d - (n - p*n//100 - d)//2
+"""
+
+answer_annotated = """
+From the {n} cookies, {name}'s wife ate {p}/100*{n} = <<{p}/100*{n}={p*n//100}>>{p*n//100}
+After the wife ate {p*n//100} cookies, the number of cookies that remained was {n}-{p*n//100} = <<{n}-{p*n//100}={n-p*n//100}>>{n-p*n//100}
+The daughter also ate {d} cookies leaving {n-p*n//100}-{d} = <<{n-p*n//100}-{d}={n-p*n//100-d}>>{n-p*n//100-d} cookies.
+If {name} ate half of the remaining cookies, he ate 1/2*{n-p*n//100-d} = {(n-p*n//100-d)//2}.
+The number of cookies that remained is {n-p*n//100-d}-{(n-p*n//100-d)//2} = <<{n-p*n//100-d}-{(n-p*n//100-d)//2}={(n-p*n//100-d)-(n-p*n//100-d)//2}>>{n-p*n//100-d-(n-p*n//100-d)//2}
+#### {n-p*n//100-d-(n-p*n//100-d)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,44 @@
+question = """
+Luna, the poodle, is supposed to eat 2 cups of kibble every day.  But Luna's master, Mary, and her husband, Frank, sometimes feed Luna too much kibble.  One day, starting with a new, 12-cup bag of kibble, Mary gave Luna 1 cup of kibble in the morning and 1 cup of kibble in the evening, But on the same day, Frank also gave Luna 1 cup of kibble in the afternoon and twice as much in the late evening as he had given Luna in the afternoon.  The next morning, how many cups of kibble will Mary find remaining in the bag?
+"""
+
+answer = """
+Mary fed Luna 1+1=2 cups of kibble.
+Frank fed Luna 1-cup plus twice 1-cup, or 1+2=3 cups of kibble.
+In total, they fed Luna 2+3=<<2+3=5>>5 cups of kibble.
+Thus, if the new bag held 12 cups of kibble, the next morning, 12-5=<<12-5=7>>7 cups of kibble remained in the bag.
+#### 7
+"""
+
+id_orig = 757
+id_shuffled = 830
+
+question_annotated = """
+Luna, the poodle, is supposed to eat {sup,2} cups of kibble every day.  But Luna's master, {mname,Mary}, and her husband, {fname,Frank}, sometimes feed Luna too much kibble.  One day, starting with a new, {b,12}-cup bag of kibble, {mname,Mary} gave Luna {m,1} cup of kibble in the morning and {m,1} cup of kibble in the evening, But on the same day, {fname,Frank} also gave Luna {f,1} cup of kibble in the afternoon and {mult_txt,twice} as much in the late evening as he had given Luna in the afternoon.  The next morning, how many cups of kibble will {mname,Mary} find remaining in the bag?
+
+#init:
+- $sup = range(1, 5)
+- mname = sample(names_female)
+- fname = sample(names_male)
+- mult_txt, mult_val = sample(multi_times)
+- $m = range(1, 4)
+- $f = range(1, 4)
+- $b = range(8, 32)
+
+#conditions:
+- b > 2*m + f*(mult_val + 1)
+
+#answer: b - 2*m - f*(mult_val + 1)
+"""
+
+answer_annotated = """
+{mname} fed Luna {m}+{m}={m+m} cups of kibble.
+{fname} fed Luna {f}-cup plus {mult_txt} {f}-cup, or {f}+{f*mult_val}={f+f*mult_val} cups of kibble.
+In total, they fed Luna {m+m}+{f+f*mult_val}=<<{m+m}+{f+f*mult_val}={m+m+f+f*mult_val}>>{m+m+f+f*mult_val} cups of kibble.
+Thus, if the new bag held {b} cups of kibble, the next morning, {b}-{m+m+f+f*mult_val}=<<{b}-{m+m+f+f*mult_val}={b-2*m-f*(mult_val+1)}>>{b-2*m-f*(mult_val+1)} cups of kibble remained in the bag.
+#### {b - 2*m - f*(mult_val + 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

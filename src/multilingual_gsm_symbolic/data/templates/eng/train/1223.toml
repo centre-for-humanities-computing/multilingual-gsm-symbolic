@@ -1,0 +1,41 @@
+question = """
+Mason is cleaning out all the junk in his attic. 20% of the items are useful, 10% are valuable heirlooms, and 70% are junk. If Marcus's attic has 8 useful items in it, how many junk items does it have?
+"""
+
+answer = """
+First find the total number of items in the attic by dividing the number of useful items by the percentage of useful items: 8 items / .2 = <<8/.2=40>>40 items
+Then multiply the total number of items by the percentage that are junk to find the number of junk items: 40 items * .7 = <<40*.7=28>>28 items
+#### 28
+"""
+
+id_orig = 1127
+id_shuffled = 1223
+
+question_annotated = """
+{name,Mason} is cleaning out all the junk in his attic. {u,20}% of the items are useful, {h,10}% are valuable heirlooms, and {j,70}% are junk. If {name2,Marcus}'s attic has {n,8} useful items in it, how many junk items does it have?
+
+#init:
+- name = sample(names_male)
+- name2 = sample(names_male)
+- $u = range(10, 100, 10)
+- $h = range(1, 11)
+- $j = range(10, 100, 10)
+- $n = range(2, 102, 2)
+
+#conditions:
+- u + h + j <= 100
+- divides(n * 100, u)
+- divides(n * j, u)
+
+#answer: n * j // u
+"""
+
+answer_annotated = """
+First find the total number of items in the attic by dividing the number of useful items by the percentage of useful items: {n} items / .{u//10} = <<{n}/.{u//10}={n*100//u}>>{n*100//u} items
+Then multiply the total number of items by the percentage that are junk to find the number of junk items: {n*100//u} items * .{j//10} = <<{n*100//u}*.{j//10}={n*j//u}>>{n*j//u} items
+#### {n * j // u}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

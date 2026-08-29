@@ -1,0 +1,56 @@
+question = """
+Mark wants to have a water balloon fight with his friends. He goes to the store to buy balloons and sees that they sell small bags for $4, medium bags for $6 and extra large bags for $12. He has $24 and wants to get the most balloons as possible. If the $4 bags contain 50 balloons, the $6 bags contain 75 balloons and the $12 bags contain 200 balloons, what is the greatest number of balloons he can buy?
+"""
+
+answer = """
+He can buy 6 small bags because 24 / 4 = <<24/4=6>>6
+These give him 300 balloons, because 6 x 50 = <<6*50=300>>300
+He can buy 4 medium bags because 24 / 6 = <<24/6=4>>4
+These give him 300 balloons because 4 x 75 = <<4*75=300>>300
+He can buy 2 extra large bags because 24 / 12 = <<24/12=2>>2
+This gives him 400 balloons because 2 x 200 = <<2*200=400>>400
+400 is the most he can buy because 400 is greater than 300
+#### 400
+"""
+
+id_orig = 3136
+id_shuffled = 3735
+
+question_annotated = """
+{name,Mark} wants to have a water balloon fight with his friends. He goes to the store to buy balloons and sees that they sell small bags for ${ps,4}, medium bags for ${pm,6} and extra large bags for ${pxl,12}. He has ${money,24} and wants to get the most balloons as possible. If the ${ps,4} bags contain {bs,50} balloons, the ${pm,6} bags contain {bm,75} balloons and the ${pxl,12} bags contain {bxl,200} balloons, what is the greatest number of balloons he can buy?
+
+#init:
+- name = sample(names_male)
+- $ps = sample([4, 5])
+- $pm = sample([6, 10, 12])
+- $pxl = sample([12, 15, 20])
+- $money = sample([24, 120, 240, 360])
+- $bs = range(20, 105, 10)
+- $bm = range(30, 210, 15)
+- $bxl = range(60, 420, 20)
+
+#conditions:
+- divides(money, ps)
+- divides(money, pm)
+- divides(money, pxl)
+- pm < pxl
+- ps * bxl > pxl * bs
+- pm * bxl > pxl * bm
+
+#answer: money // pxl * bxl
+"""
+
+answer_annotated = """
+He can buy {money//ps} small bags because {money} / {ps} = <<{money}/{ps}={money//ps}>>{money//ps}
+These give him {money//ps*bs} balloons, because {money//ps} x {bs} = <<{money//ps}*{bs}={money//ps*bs}>>{money//ps*bs}
+He can buy {money//pm} medium bags because {money} / {pm} = <<{money}/{pm}={money//pm}>>{money//pm}
+These give him {money//pm*bm} balloons because {money//pm} x {bm} = <<{money//pm}*{bm}={money//pm*bm}>>{money//pm*bm}
+He can buy {money//pxl} extra large bags because {money} / {pxl} = <<{money}/{pxl}={money//pxl}>>{money//pxl}
+This gives him {money//pxl*bxl} balloons because {money//pxl} x {bxl} = <<{money//pxl}*{bxl}={money//pxl*bxl}>>{money//pxl*bxl}
+{money//pxl*bxl} is the most he can buy because {money//pxl*bxl} is greater than {money//ps*bs}
+#### {money//pxl*bxl}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

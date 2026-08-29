@@ -1,0 +1,50 @@
+question = """
+Tara has been planning to buy a laptop which costs $1000. A computer shop accepts payment in installments of $65 per month provided that a 20% down payment is made. If Tara wants to pay an additional $20 for the down payment, how much will her balance be after paying for 4 months?
+"""
+
+answer = """
+Tara has to make a $1000 x 20/100 = $<<1000*20/100=200>>200 down payment.
+Since Tara wants to pay $20 more for the down payment, her total down payment will be $200 + $20 = $<<200+20=220>>220.
+So her remaining balance payable over a year is $1000 - $220 = $<<1000-220=780>>780.
+Tara has to make a monthly payment of $780/year / 12 months/year = $<<780/12=65>>65/month.
+The total cost of her payments for 4 months is $65/month x 4 months = $<<65*4=260>>260.
+Therefore, Tara's balance after 4 months is $780 - $260 = $<<780-260=520>>520.
+#### 520
+"""
+
+id_orig = 66
+id_shuffled = 66
+
+question_annotated = """
+{name,Tara} has been planning to buy a laptop which costs ${cost,1000}. A computer shop accepts payment in installments of ${monthly,65} per month provided that a {pct,20}% down payment is made. If {name,Tara} wants to pay an additional ${extra,20} for the down payment, how much will her balance be after paying for {months,4} months?
+
+#init:
+- name = sample(names_female)
+- $cost = range(600, 2000, 50)
+- $pct = range(10, 51, 10)
+- $extra = range(10, 101, 10)
+- $monthly = range(20, 121, 5)
+- $months = range(2, 11)
+
+#conditions:
+- divides(cost * pct, 100)
+- cost - cost * pct // 100 - extra > 0
+- cost - cost * pct // 100 - extra == monthly * 12
+- cost - cost * pct // 100 - extra - monthly * months > 0
+
+#answer: cost - cost*pct//100 - extra - monthly*months
+"""
+
+answer_annotated = """
+{name} has to make a ${cost} x {pct}/100 = $<<{cost}*{pct}/100={cost*pct//100}>>{cost*pct//100} down payment.
+Since {name} wants to pay ${extra} more for the down payment, her total down payment will be ${cost*pct//100} + ${extra} = $<<{cost*pct//100}+{extra}={cost*pct//100+extra}>>{cost*pct//100+extra}.
+So her remaining balance payable over a year is ${cost} - ${cost*pct//100+extra} = $<<{cost}-{cost*pct//100+extra}={cost-cost*pct//100-extra}>>{cost-cost*pct//100-extra}.
+{name} has to make a monthly payment of ${cost-cost*pct//100-extra}/year / 12 months/year = $<<{cost-cost*pct//100-extra}/12={monthly}>>{monthly}/month.
+The total cost of her payments for {months} months is ${monthly}/month x {months} months = $<<{monthly}*{months}={monthly*months}>>{monthly*months}.
+Therefore, {name}'s balance after {months} months is ${cost-cost*pct//100-extra} - ${monthly*months} = $<<{cost-cost*pct//100-extra}-{monthly*months}={cost-cost*pct//100-extra-monthly*months}>>{cost-cost*pct//100-extra-monthly*months}.
+#### {cost-cost*pct//100-extra-monthly*months}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

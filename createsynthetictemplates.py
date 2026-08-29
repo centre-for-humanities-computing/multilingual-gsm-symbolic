@@ -1,202 +1,225 @@
+"""Generate synthetic English train templates using separate opencode instances.
+
+Every model call spawns a fresh `opencode run` process (a separate opencode
+instance) so the free x-preview-f-free model can be used without limits.
+"""
+
 import json
 import os
 import re
+import subprocess
+import tempfile
+import time
 import tomllib
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from contextlib import contextmanager, nullcontext
 from pathlib import Path
-from subprocess import Popen, TimeoutExpired
-from time import monotonic, sleep
-from urllib.error import URLError
-from urllib.request import urlopen
 
 from datasets import load_dataset
-from openai import OpenAI
 
+from multilingual_gsm_symbolic._helpers import format_numbers_by_language
 from multilingual_gsm_symbolic.load_data import load_replacements
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion
-from multilingual_gsm_symbolic.validation import (
-    validate_template_against_pytest_checks,
-)
+from multilingual_gsm_symbolic.validation import validate_template_against_pytest_checks
 
 GSM8K_DATASET = "openai/gsm8k"
 GSM8K_CONFIG = "main"
 GSM8K_SPLIT = "train"
-MODEL = "openai/gpt-5.5:nitro"
-CREATION = f"machine-generated from GSM8K using {MODEL}"
-MAX_TEMPLATE_ATTEMPTS = 10
-SYNTHETIC_FIDELITY = os.getenv("SYNTHETIC_FIDELITY", "surface").lower()
-if SYNTHETIC_FIDELITY not in {"surface", "answer"}:
+MODEL = os.getenv("SYNTHETIC_MODEL", "opencode/x-preview-f-free")
+CREATION = f"machine-generated from GSM8K using {MODEL} via opencode"
+OPENCODE_BIN = os.getenv(
+    "OPENCODE_BIN",
+    r"C:\Users\riley\AppData\Local\Programs\nodejs\node_modules\opencode-ai\bin\opencode.exe",
+)
+MAX_TEMPLATE_ATTEMPTS = int(os.getenv("SYNTHETIC_MAX_ATTEMPTS", "10"))
+SURFACE_ATTEMPTS = int(os.getenv("SYNTHETIC_SURFACE_ATTEMPTS", "6"))
+MAX_JOBS = int(os.getenv("SYNTHETIC_MAX_JOBS", "100"))
+WORKERS = int(os.getenv("SYNTHETIC_TEMPLATE_WORKERS", "6"))
+CALL_TIMEOUT_SECONDS = float(os.getenv("SYNTHETIC_CALL_TIMEOUT", "420"))
+FIDELITY = os.getenv("SYNTHETIC_FIDELITY", "surface").lower()
+if FIDELITY not in {"surface", "answer"}:
     raise RuntimeError("SYNTHETIC_FIDELITY must be 'surface' or 'answer'.")
-SYNTHETIC_PROVIDER = "openrouter"#os.getenv("SYNTHETIC_PROVIDER", "vllm").lower()
-VLLM_HOST = "127.0.0.1"
-VLLM_PORT = 8000
-VLLM_BASE_URL = f"http://{VLLM_HOST}:{VLLM_PORT}/v1"
-VLLM_HEALTH_URL = f"http://{VLLM_HOST}:{VLLM_PORT}/health"
-VLLM_STARTUP_TIMEOUT_SECONDS = 600
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", MODEL)
-CLIENT_TIMEOUT_SECONDS = float(os.getenv("SYNTHETIC_CLIENT_TIMEOUT_SECONDS", "300"))
 
-if SYNTHETIC_PROVIDER == "openrouter":
-    if not OPENROUTER_API_KEY:
-        raise RuntimeError("OPENROUTER_API_KEY is required when SYNTHETIC_PROVIDER=openrouter.")
-    CLIENT_BASE_URL = OPENROUTER_BASE_URL
-    CLIENT_API_KEY = OPENROUTER_API_KEY
-    CLIENT_MODEL = OPENROUTER_MODEL
-elif SYNTHETIC_PROVIDER == "vllm":
-    CLIENT_BASE_URL = VLLM_BASE_URL
-    CLIENT_API_KEY = "EMPTY"
-    CLIENT_MODEL = MODEL
-else:
-    raise RuntimeError(f"Unsupported SYNTHETIC_PROVIDER: {SYNTHETIC_PROVIDER}")
-
-
-# gather generated template ids and aggregate toml texts
-generated_source_ids = set()
-template_numbers = []
-
-toml_text = ""
 templates_dir = Path(__file__).parent / "src" / "multilingual_gsm_symbolic" / "data" / "templates" / "eng" / "test"
 output_dir = templates_dir.parent / "train"
 log_path = output_dir / "generation_log.jsonl"
 replacements_path = templates_dir.parent / "replacements.json"
-replacement_keys = list(json.loads(replacements_path.read_text(encoding="utf-8")))
-template_text_count = 0
-if templates_dir.exists():
-    for p in sorted(templates_dir.glob("*.toml"))[:5]:
-        try:
-            txt = p.read_text(encoding="utf-8")
-        except Exception:
-            continue
-        toml_text += "\n\n" + txt
-        template_text_count += 1
 
-if output_dir.exists():
-    for p in sorted(output_dir.glob("*.toml")):
+# ---------------------------------------------------------------------------
+# Gather style examples and already-generated source ids.
+# ---------------------------------------------------------------------------
+
+example_texts: list[str] = []
+generated_source_ids: set[int] = set()
+template_numbers: list[int] = []
+
+for directory in (templates_dir, output_dir):
+    if not directory.exists():
+        continue
+    for p in sorted(directory.glob("*.toml")):
         try:
             txt = p.read_text(encoding="utf-8")
         except Exception:
             continue
-        if template_text_count < 5:
-            toml_text += "\n\n" + txt
-            template_text_count += 1
+        if len(example_texts) < 3 and p.parent == templates_dir:
+            example_texts.append(txt)
+        if p.parent != output_dir:
+            continue
         try:
             data = tomllib.loads(txt)
-            id_orig = data["id_orig"]
-        except (KeyError, TypeError):
+            id_orig = int(data["id_orig"])
+        except (KeyError, TypeError, ValueError):
             print(f"Warning: {p} missing id_orig, skipping")
             continue
-        id_orig = int(id_orig)
-
+        if data.get("ignore"):
+            # Failed templates are repairable: treat them as not yet generated.
+            print(f"Note: {p.name} is marked ignore=true; will regenerate (repair pass)")
+            continue
         if str(data.get("creation", "")).startswith("machine-generated from GSM8K"):
             generated_source_ids.add(id_orig)
         template_numbers.append(int(p.stem))
 
+replacements = load_replacements("eng")
+
+replacement_summary_lines = []
+for name, values in replacements.items():
+    preview = ", ".join(json.dumps(v, ensure_ascii=False) for v in list(values)[:4])
+    replacement_summary_lines.append(f"- {name}: [{preview}, ...] ({len(values)} entries)")
+REPLACEMENT_SUMMARY = "\n".join(replacement_summary_lines)
+
+STYLE_EXAMPLES = "\n\n".join(example_texts)
+
+# A fully worked input/output pair showing the exact expected response format.
+FEW_SHOT = """\
+Example input:
+{"source_id": 0,
+ "question": "Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?",
+ "answer": "Natalia sold 48/2 = <<48/2=24>>24 clips in May.\\nNatalia sold 48+24 = <<48+24=72>>72 clips altogether in April and May.\\n#### 72"}
+
+Example correct response (body only - exactly this TOML, nothing else):
+question_annotated = \"\"\"
+{name,Natalia} sold clips to {a,48} of her friends in April, and then she sold half as many clips in May. How many clips did {name,Natalia} sell altogether in April and May?
+
+#init:
+- name = sample(names)
+- $a = range(10, 210, 2)
+
+#conditions:
+- a > 0
+
+#answer: a + a//2
+\"\"\"
+
+answer_annotated = \"\"\"
+{name} sold {a}/2 = <<{a}/2={a//2}>>{a//2} clips in May.
+{name} sold {a}+{a//2} = <<{a}+{a//2}={a+a//2}>>{a+a//2} clips altogether in April and May.
+#### {a+a//2}
+\"\"\""""
 
 SYSTEM_PROMPT = f"""\
 You are creating one new English symbolic TOML template for the multilingual-gsm-symbolic project.
 
-Return plain text for only the variable middle of a single TOML template.
-Do not return `question`, `answer`, `id_orig`, `id_shuffled`, `creation`, or `language` because those are added separately.
-Return only `question_annotated` and `answer_annotated` in valid TOML format.
-Following the existing project style, `#init`, `#conditions`, and `#answer` live inside `question_annotated`. `answer_annotated` should only contain the worked solution template.
+RESPONSE CONTRACT (violating this fails instantly):
+- Respond with plain TOML only: exactly two keys, `question_annotated` first, then `answer_annotated`, both TOML multiline basic strings (\"\"\"...\"\"\").
+- Do NOT return `question`, `answer`, `id_orig`, `id_shuffled`, `creation`, `language`, markdown fences, explanations, or any text before/after the TOML.
 
-The rendered defaults must surface-normalize to the supplied source question and answer: copy both verbatim and replace only exact value spans. Do not paraphrase, reorder arithmetic, or improve the explanation. Number words versus digits, capitalization, whitespace, and punctuation may differ.
+TEMPLATE FORMAT (see style examples below):
+- `question_annotated`: line 1 is the question with placeholders; then an `#init:` block; then optional `#conditions:` block; then `#answer: <expression>`.
+- `answer_annotated`: ONLY the worked solution template (no #init/#conditions/#answer).
 
-Here are existing templates to match the project style:
-{toml_text}
+FIDELITY RULE (most important):
+- The question line must equal the source question verbatim except that exact numeric/name spans may be replaced by placeholders `{{var,default}}`. Keep every other word, punctuation mark, and their order identical. The default value must be the original value from the source.
+- The answer template must equal the source answer verbatim except numbers replaced by `{{expr}}` placeholders that evaluate to the original number at the defaults. Copy the source wording line by line; keep all `<<calculation=result>>` markers exactly where they are, e.g. source `<<48/2=24>>24` becomes `<<{{a}}/2={{a//2}}>>{{a//2}}`.
+- Every `<<lhs=rhs>>` must satisfy eval(lhs) == rhs numerically after substitution.
+- End the answer template with the final line `#### {{<#answer expression>}}`.
 
-Here are the available English replacement list names from replacements.json. Use these list names as-is; do not invent replacement list names:
-{replacement_keys}
+PLACEHOLDER RULES:
+- Question placeholders are `{{variable,default}}` (default = the source value). Repeated uses of one variable repeat the same default.
+- Answer placeholders are `{{expression}}` only - never `{{variable,default}}` in the answer. A person's name inside the answer uses the bare form `{{name}}` (it evaluates to the sampled name).
+- Every placeholder variable must be defined in #init.
 
-Template rules:
-- Question placeholders must be exactly `{{variable,default}}`. Every placeholder needs a reachable default, and repeated placeholders for one variable must use the same default.
-- Answer placeholders must be only `{{expression}}`. They evaluate to the exact concrete answer; never use question-style defaults in answer_annotated.
-- In init, the first variable on each init line must be prefixed with $, for example: "$price = range(1, 20)".
-- In init, every right-hand side must be iterable; for fixed values use `range(12, 13)` or `sample([12])`, not `12`.
-- Each init line must define exactly one variable. Use only `range`, `arange`, or one-argument `sample`.
-- Do not use `range_str`, `range_list`, `sample_sequential`, or multi-variable #init lines.
-- range(start, end[, step]) uses a Python-style exclusive end. Never emit range(x, x), because it has no possible values.
-- String variables can use one-argument sample([...]) or project replacement lists.
-- Keep ranges modest and add conditions for divisibility, positivity, integer percentages, or other constraints.
-- Conditions must contain boolean expressions only. Do not put assignments, dictionary lookups, subscripts, attribute access, `^`, or format specifications such as `:.2f` anywhere in the template.
-- Prefer clean integer arithmetic. Avoid final answers that rely on floating point rounding.
-- Following the style of existing templates, sample enough values to ensure that the template can produce at least 100 question variations, but not more than 100 thousand question variations. 
-- When sampling things that there are project replacement lists for always use those lists. 
+INIT RULES:
+- First variable on each init line is prefixed with `$`, e.g. `- $a = range(10, 210, 2)`.
+- String variables use `- name = sample(names)` or `- name = sample(["Alice", "Bob"])` (no $ prefix needed for sample of strings? ALWAYS include $ on numeric ranges; for strings write without $).
+- Each init line defines exactly ONE variable; right side must be iterable (`range(...)`, `arange(...)`, or one-argument `sample([...])`). For a fixed value use `range(12, 13)` or `sample([12])`, never a bare literal.
+- Init lines CANNOT reference variables defined in other init lines.
+- `range(start, end[, step])` has Python-style EXCLUSIVE end. Never `range(x, x)`.
+- Keep ranges modest but ensure AT LEAST 100 distinct valid numeric combinations and AT MOST 100000 (count = product of option counts after conditions filter).
 
-Parser helpers available in synthetic templates:
-- Init helpers: range(start,end[,step]) uses a Python-style exclusive end; arange(start,end[,step]) samples a decimal string; sample(items) samples one item.
-- Conditions and answer helpers: is_int(x), divides(a,b), int(x), float(x), str(x), round(x), len(x), and Fraction(x).
-- Expressions may use constants, variables, lists/tuples, arithmetic, comparisons, and/or/not. Do not invent helpers beyond this list.
+CONDITIONS RULES:
+- Conditions are boolean expressions over init variables only, one per `- ` line, e.g. `- divides(a, 2)` or `- a * b < 10000`.
+- Allowed helpers in conditions/answers: divides(a, b), is_int(x), int(x), float(x), str(x), round(x), len(x), Fraction(x), plus arithmetic/comparisons/and/or/not. No subscripts, no dict lookups, no format specs like :.2f, no ^, no assignments.
+- Add conditions to guarantee integer results and positivity (e.g. divisibility).
 
+ANSWER EXPRESSION (#answer:) must be a single arithmetic expression over init variables equal to the original #### value at the defaults.
 
-- Do not invent unsupported helper functions or undefined replacement list names.
-- Init lines cannot reference other variables defined in init. For example you CANNOT: define {{var1}} in init and then use {{var1}} in the init expression for {{var2}}. All init expressions must be independently executable without relying on other variables.
-- If the question involves a currency you must sample from the currency replacement list and define a variable for the currency
-- All variables must be defined in init. Do not use undefined variables or variables that are only defined in the question_annotated. Before finalizing the TOML, check that all variables used in question_annotated and answer_annotated are defined in init.
+VARIABLE NAMING: short lowercase names matching what they hold (a, b, price, rate, mins, name). If the question mentions a person's name, create `name = sample(names_female)` / `sample(names_male)` / `sample(names)` as appropriate; use `{{name,default}}` in the question and bare `{{name}}` in the answer.
+
+Available English replacement lists (use these names AS-IS inside sample(); do not invent others):
+{REPLACEMENT_SUMMARY}
+
+Parser helpers available: range(start,end[,step]) exclusive end; arange(start,end[,step]) decimal strings; sample(items) picks one item.
+
+SELF-CHECK BEFORE RESPONDING:
+1. Question line == source question with ONLY value spans swapped for {{var,source_value}} placeholders.
+2. All defaults reproduce the source question AND source answer character-for-character (after substitution), including <<...>> blocks and #### value.
+3. Every <<lhs=rhs>> evaluates correctly at the defaults and at ALL sampled combinations.
+4. >= 100 and <= 100000 valid numeric combinations.
+5. One variable per init line, $ prefix, no cross-references, exclusive range ends, conditions boolean-only.
+
+Style examples of complete existing templates (match this style):
+{STYLE_EXAMPLES}
+
+{FEW_SHOT}
 """
 
-
 _QUESTION_PLACEHOLDER_RE = re.compile(r"\{([^},]+)(?:,[^}]+)?\}")
+_RE_THINK = re.compile(r"<think>.*?</think>", re.DOTALL)
+_RE_FENCE = re.compile(r"^\s*```[^\n`]*\n|\n```\s*$")
 
 
-@contextmanager
-def local_vllm_server():
-    process = Popen(
-        [
-            "vllm",
-            "serve",
-            MODEL,
-            "--host",
-            VLLM_HOST,
-            "--port",
-            str(VLLM_PORT),
-            "--quantization",
-            "nvfp4",
-            "--max-model-len",
-            "32768",
-        ],
-    )
-    deadline = monotonic() + VLLM_STARTUP_TIMEOUT_SECONDS
-    while True:
-        if process.poll() is not None:
-            raise RuntimeError(f"vLLM exited during startup with code {process.returncode}.")
+def call_model(prompt: str) -> str:
+    """Spawn a separate headless opencode instance and return its response."""
+    # Redirect through files instead of pipes: killed children can leave
+    # grandchildren holding pipe handles open, which would block forever.
+    import tempfile
+
+    with tempfile.TemporaryFile(mode="w+", encoding="utf-8", errors="replace") as out, tempfile.TemporaryFile(
+        mode="w+", encoding="utf-8", errors="replace"
+    ) as err:
+        proc = subprocess.Popen(
+            [OPENCODE_BIN, "run", "-m", MODEL, prompt],
+            stdout=out,
+            stderr=err,
+            creationflags=0x00000200,  # CREATE_NEW_PROCESS_GROUP
+        )
         try:
-            with urlopen(VLLM_HEALTH_URL, timeout=1):
-                break
-        except URLError:
-            if monotonic() >= deadline:
-                process.terminate()
-                process.wait()
-                raise TimeoutError(f"vLLM did not become healthy within {VLLM_STARTUP_TIMEOUT_SECONDS} seconds.")
-            sleep(1)
-    try:
-        yield
-    finally:
-        process.terminate()
-        try:
-            process.wait(timeout=30)
-        except TimeoutExpired:
-            process.kill()
-            process.wait()
+            returncode = proc.wait(timeout=CALL_TIMEOUT_SECONDS)
+        except subprocess.TimeoutExpired:
+            subprocess.run(
+                ["taskkill", "/PID", str(proc.pid), "/T", "/F"],
+                capture_output=True,
+            )
+            raise RuntimeError(f"opencode call timed out after {CALL_TIMEOUT_SECONDS}s")
+        out.seek(0)
+        err.seek(0)
+        stderr_text = err.read()
+        if returncode != 0:
+            raise RuntimeError(f"opencode exited with code {returncode}: {stderr_text[-500:]}")
+        return out.read()
 
 
 def _is_formatting_mismatch_error(error: Exception) -> bool:
-    message = str(error)
-    return "doesn't match original" in message
+    return "doesn't match original" in str(error)
 
 
 def _retry_instruction(error: Exception) -> tuple[str, str]:
-    """Return a short repair instruction without retaining failed model output."""
     message = str(error)
     if _is_formatting_mismatch_error(error):
+        which = "question" if "Formatted question" in message else "answer"
         return (
             "fidelity",
-            "Your rendered defaults did not meet the selected fidelity check. Copy the source question and answer; "
-            "change only exact value spans. Surface mode permits only number-word/digit, case, whitespace, and "
-            "punctuation differences.",
+            f"The rendered {which} did not match the source. Copy the source {which} verbatim; replace ONLY exact "
+            "value spans with placeholders. Keep <<lhs=rhs>> markers and every word identical.",
         )
     if any(
         token in message
@@ -206,18 +229,18 @@ def _retry_instruction(error: Exception) -> tuple[str, str]:
             "Could not derive value",
             "not found in assignments",
             "is not defined",
+            "Multiple default candidates",
         )
     ):
         return (
             "defaults",
-            "Every question placeholder must be `{variable,default}` and every default must be reachable from its "
-            "single-variable #init line. Keep paired text/number values out of this safe subset.",
+            "Every placeholder needs `{var,default}` with default reachable from its own single-variable #init line. "
+            "Make sure each default is produced by its range/sample and satisfies every condition.",
         )
     if "combinations" in message or "Too many combinations" in message:
         return (
             "combinations",
-            "Use independent modest ranges that yield 100 through 100,000 numeric combinations after conditions. "
-            "Do not add variables merely for variety.",
+            "Use independent modest ranges yielding between 100 and 100000 numeric combinations after conditions.",
         )
     if any(
         token in message
@@ -228,12 +251,21 @@ def _retry_instruction(error: Exception) -> tuple[str, str]:
             "Unterminated string",
             "index out of range",
             "can only concatenate",
+            "missing '#init:'",
+            "missing '#answer:'",
+            "derived variable",
         )
     ):
         return (
             "syntax",
-            "Stay in the safe subset: one variable per #init line; only range, arange, or one-argument sample; "
-            "no subscripts, format specifications, bitwise operators, tuples, or helper names not listed.",
+            "Stay in the safe subset: one variable per #init line; only range, arange, or one-argument sample; no "
+            "subscripts/format specs/bitwise operators/tuples; put #init, #conditions and #answer in question_annotated.",
+        )
+    if "computed" in message and "expected" in message:
+        return (
+            "chevron",
+            "Some <<lhs=rhs>> block computes the wrong number. Ensure the right-hand expression equals the left-hand "
+            "evaluation at the defaults, e.g. <<{a}/2={a//2}>>{a//2}.",
         )
     return (
         "validation",
@@ -268,7 +300,8 @@ def annotated_question_from_toml_text(text: str) -> AnnotatedQuestion:
 
 
 def _toml_multiline_string(value: str) -> str:
-    return '"""\n' + value.replace('"""', '\\"\\"\\"') + '\n"""'
+    escaped = value.replace("\\", "\\\\").replace('"""', '\\"\\"\\"')
+    return '"""\n' + escaped + '\n"""'
 
 
 def build_template_toml(example: dict, source_id: int, id_shuffled: int, body: str) -> str:
@@ -283,94 +316,124 @@ def build_template_toml(example: dict, source_id: int, id_shuffled: int, body: s
     )
 
 
+def serialize_template(template: AnnotatedQuestion) -> str:
+    return (
+        f"question = {_toml_multiline_string(template.question)}\n\n"
+        f"answer = {_toml_multiline_string(template.answer)}\n\n"
+        f"id_orig = {template.id_orig}\n"
+        f"id_shuffled = {template.id_shuffled}\n\n"
+        f"question_annotated = {_toml_multiline_string(template.question_annotated)}\n\n"
+        f"answer_annotated = {_toml_multiline_string(template.answer_annotated)}\n\n"
+        f'creation = "{template.creation}"\n\n'
+        f'language = "{template.language}"'
+    )
+
+
+def clean_model_output(output_text: str) -> str:
+    text = _RE_THINK.sub("", output_text)
+    text = re.sub(r"^\s*```(?:toml)?\s*\n?", "", text.strip())
+    text = re.sub(r"\n?```\s*$", "", text.strip())
+    start = text.find("question_annotated")
+    if start > 0:
+        text = text[start:]
+    return text.strip()
+
+
 def create_template(source_id: int, example: dict, id_shuffled: int) -> dict:
-    client = OpenAI(base_url=CLIENT_BASE_URL, api_key=CLIENT_API_KEY, timeout=CLIENT_TIMEOUT_SECONDS)
     user_prompt = {
         "source_id": source_id,
         "question": example["question"],
         "answer": example["answer"],
     }
-    base_messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": json.dumps(user_prompt)},
-    ]
-    replacements = load_replacements("eng")
+    base_prompt = SYSTEM_PROMPT + "\n\nNow generate the template body for this input (respond with TOML only):\n" + json.dumps(
+        user_prompt, ensure_ascii=False
+    )
 
     last_error = None
     last_failure_kind = None
     last_template_text = None
     attempts = []
+    answer_rebased = False
     for attempt in range(1, MAX_TEMPLATE_ATTEMPTS + 1):
-        print(f"Requesting template for source id {source_id}, attempt {attempt}/{MAX_TEMPLATE_ATTEMPTS}")
-        response = client.chat.completions.create(
-            model=CLIENT_MODEL,
-            messages=(
-                base_messages
-                if last_error is None
-                else base_messages
-                + [
-                    {
-                        "role": "user",
-                        "content": "The previous fresh candidate failed validation. Return a new template; do not revise or "
-                        "quote the failed candidate.\n\nFailure category: "
-                        + last_failure_kind
-                        + "\nRepair instruction: "
-                        + _retry_instruction(last_error)[1],
-                    }
-                ]
-            ),
-        )
-        # strip markdown toml tags that the model may include, and also strip leading/trailing whitespace
-        output_text = response.choices[0].message.content or ""
-        body = re.sub(r"^\s*```[^\n`]*\n|\n```\s*$", "", output_text.strip())
+        print(f"[id {source_id}] attempt {attempt}/{MAX_TEMPLATE_ATTEMPTS}", flush=True)
+        prompt = base_prompt
+        if last_error is not None:
+            kind, instruction = _retry_instruction(last_error)
+            prompt = (
+                base_prompt
+                + "\n\nA previous candidate failed validation. Return a completely new template that fixes the "
+                f"difference shown below; do not quote the failed one.\nFailure category: {kind}\nRepair "
+                f"instruction: {instruction}\n\nValidation error details (expected vs rendered):\n"
+                + str(last_error)[:1500]
+            )
+        fidelity_this_attempt = FIDELITY
+        if FIDELITY == "surface" and attempt > SURFACE_ATTEMPTS:
+            # Last resort per project decision: rebase the stored answer onto the
+            # template rendering so formatting checks pass.
+            fidelity_this_attempt = "answer"
+        try:
+            raw = call_model(prompt)
+        except subprocess.TimeoutExpired:
+            last_error = RuntimeError(f"opencode call timed out after {CALL_TIMEOUT_SECONDS}s")
+            last_failure_kind = "api"
+            attempts.append({"attempt": attempt, "error": str(last_error), "failure_kind": "api"})
+            time.sleep(min(20 * attempt, 120))
+            continue
+        except Exception as e:
+            last_error = e
+            last_failure_kind = "api"
+            attempts.append({"attempt": attempt, "error": str(e)[:300], "failure_kind": "api"})
+            # Back off on API errors so a throttled provider can recover.
+            time.sleep(min(20 * attempt, 120))
+            continue
+
+        body = clean_model_output(raw)
+        if "question_annotated" not in body or "answer_annotated" not in body:
+            last_error = RuntimeError("Response did not contain question_annotated/answer_annotated TOML.")
+            last_failure_kind = "format"
+            attempts.append({"attempt": attempt, "error": str(last_error), "failure_kind": "format"})
+            continue
+
         template_text = build_template_toml(example, source_id, id_shuffled, body)
         last_template_text = template_text
-        attempt_log = {"attempt": attempt, "template_text": template_text}
+        attempt_log: dict = {"attempt": attempt}
 
         try:
             template = annotated_question_from_toml_text(template_text)
             validate_template_against_pytest_checks(
-                template, replacements, source=f"{id_shuffled:04d}.toml", fidelity=SYNTHETIC_FIDELITY
+                template, replacements, source=f"{id_shuffled:04d}.toml", fidelity=fidelity_this_attempt
             )
             template.generate_questions(n=10, replacements=replacements, verbose=False)
         except Exception as e:
             last_error = e
             last_failure_kind, _ = _retry_instruction(e)
-            attempt_log["error"] = str(e)
+            attempt_log["error"] = str(e)[:2000]
             attempt_log["failure_kind"] = last_failure_kind
             attempts.append(attempt_log)
-            if _is_formatting_mismatch_error(e):
-                print(
-                    "Fidelity mismatch for "
-                    f"id {source_id} on attempt {attempt}/{MAX_TEMPLATE_ATTEMPTS}; "
-                    "requesting a fresh candidate."
-                )
-            else:
-                print(
-                    f"Validation failure ({last_failure_kind}) for id {source_id} "
-                    f"on attempt {attempt}/{MAX_TEMPLATE_ATTEMPTS}: {e}"
-                )
+            print(f"[id {source_id}] validation failure ({last_failure_kind}): {str(e)[:200]}", flush=True)
             continue
 
         attempts.append(attempt_log)
+        answer_rebased = template.answer.strip() != example["answer"].strip()
+        log_entry = {"source_id": source_id, "id_shuffled": id_shuffled, "success": True, "attempts": attempts}
+        if answer_rebased:
+            log_entry["answer_rebased"] = True
         return {
-            "template_text": template_text,
-            "log_entry": {"source_id": source_id, "id_shuffled": id_shuffled, "success": True, "attempts": attempts},
+            "template_text": serialize_template(template),
+            "log_entry": log_entry,
         }
 
-    if _is_formatting_mismatch_error(last_error):
-        last_error = "fidelity failure: formatting mismatch"
-    print(f"Error generating questions after {MAX_TEMPLATE_ATTEMPTS} attempts: {last_error}")
-    
-    return {
-        "template_text": (
+    print(f"[id {source_id}] FAILED after {MAX_TEMPLATE_ATTEMPTS} attempts: {str(last_error)[:200]}", flush=True)
+    if last_template_text:
+        fallback_text = (
             last_template_text
-            + "\n\n"
-            + "ignore = true  # failed after "
-            + str(MAX_TEMPLATE_ATTEMPTS)
-            + " attempts: "
-            + str(last_error)
-        ),
+            + f"\n\nignore = true  # failed after {MAX_TEMPLATE_ATTEMPTS} attempts: {last_error}"
+        )
+    else:
+        fallback_text = f'ignore = true  # failed: "{str(last_error)[:200]}"'
+
+    return {
+        "template_text": fallback_text,
         "log_entry": {
             "source_id": source_id,
             "id_shuffled": id_shuffled,
@@ -382,38 +445,73 @@ def create_template(source_id: int, example: dict, id_shuffled: int) -> dict:
     }
 
 
-gsm8k_train = load_dataset(GSM8K_DATASET, GSM8K_CONFIG, split=GSM8K_SPLIT)
-next_template_number = max(template_numbers, default=-1) + 1
+def main() -> None:
+    status_file = Path(__file__).parent / "logs" / "driver_status.json"
+    gsm8k_train = load_dataset(GSM8K_DATASET, GSM8K_CONFIG, split=GSM8K_SPLIT)
+    next_template_number = max(template_numbers, default=-1) + 1
 
-jobs = []
-for source_id, example in enumerate(gsm8k_train):
-    if source_id in generated_source_ids:
-        continue
-    if len(jobs) >= 90:
-        break
-    jobs.append((source_id, example, next_template_number + len(jobs)))
-
-output_dir.mkdir(exist_ok=True)
-server_context = local_vllm_server() if SYNTHETIC_PROVIDER == "vllm" else nullcontext()
-default_workers = "3" if SYNTHETIC_PROVIDER == "vllm" else "5"
-with server_context, ThreadPoolExecutor(
-    max_workers=int(os.getenv("SYNTHETIC_TEMPLATE_WORKERS", default_workers))
-) as executor:
-    futures = {executor.submit(create_template, *job): job for job in jobs}
-    for future in as_completed(futures):
-        source_id, _, id_shuffled = futures[future]
-        try:
-            result = future.result()
-        except Exception as e:
-            result = {
-                "template_text": None,
-                "log_entry": {"source_id": source_id, "id_shuffled": id_shuffled, "success": False, "error": str(e)},
-            }
-        with log_path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(result["log_entry"], ensure_ascii=False) + "\n")
-        toml = result["template_text"]
-        if toml is None:
-            print(f"Skipping template with id_shuffled={id_shuffled} due to generation error")
+    jobs = []
+    for source_id, example in enumerate(gsm8k_train):
+        if source_id in generated_source_ids:
             continue
-        (output_dir / f"{id_shuffled:04d}.toml").write_text(toml.strip() + "\n", encoding="utf-8")
-        print(f"Wrote {output_dir / f'{id_shuffled:04d}.toml'} for source id {source_id} and id_shuffled {id_shuffled}")
+        # Normalize stored text through the eng number formatter so the rendered
+        # output (which inserts thousands separators for >=10000) matches verbatim.
+        example = {
+            "question": format_numbers_by_language(example["question"], "eng"),
+            "answer": format_numbers_by_language(example["answer"], "eng"),
+        }
+        jobs.append((source_id, example, next_template_number + len(jobs)))
+        if len(jobs) >= MAX_JOBS:
+            break
+
+    remaining_total = sum(1 for sid in range(len(gsm8k_train)) if sid not in generated_source_ids)
+    status_file.parent.mkdir(exist_ok=True)
+    try:
+        _run_jobs(jobs, next_template_number)
+        if not jobs:
+            print("[repair] All English questions templatized.", flush=True)
+    finally:
+        status_file.write_text(
+            json.dumps({"jobs": len(jobs), "remaining_total": remaining_total}),
+            encoding="utf-8",
+        )
+    print(f"STATUS: batch={len(jobs)} remaining_total={remaining_total} done_on_disk={len(template_numbers)}")
+
+
+def _run_jobs(jobs: list, next_template_number: int) -> None:
+    print(f"Generating {len(jobs)} templates (ids {next_template_number}..{next_template_number + len(jobs) - 1})")
+    output_dir.mkdir(exist_ok=True)
+    successes = failures = 0
+    with ThreadPoolExecutor(max_workers=WORKERS) as executor:
+        futures = {executor.submit(create_template, *job): job for job in jobs}
+        for future in as_completed(futures):
+            source_id, _, id_shuffled = futures[future]
+            try:
+                result = future.result()
+            except Exception as e:
+                result = {
+                    "template_text": None,
+                    "log_entry": {"source_id": source_id, "id_shuffled": id_shuffled, "success": False, "error": str(e)},
+                }
+            with log_path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(result["log_entry"], ensure_ascii=False) + "\n")
+            toml = result["template_text"]
+            if toml is None:
+                failures += 1
+                print(f"Skipping id_shuffled={id_shuffled} due to generation error", flush=True)
+                continue
+            if result["log_entry"].get("success"):
+                successes += 1
+            else:
+                failures += 1
+            (output_dir / f"{id_shuffled:04d}.toml").write_text(toml.strip() + "\n", encoding="utf-8")
+            status = "OK " if result["log_entry"].get("success") else "IGN"
+            print(f"{status} wrote {output_dir / f'{id_shuffled:04d}.toml'} (source {source_id})", flush=True)
+
+    total = successes + failures
+    rate = failures / total * 100 if total else 0.0
+    print(f"DONE batch: {successes}/{total} succeeded, {failures} failed ({rate:.1f}% error rate)")
+
+
+if __name__ == "__main__":
+    main()

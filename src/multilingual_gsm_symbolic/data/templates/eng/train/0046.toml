@@ -1,0 +1,42 @@
+question = """
+Carolyn practices the piano for 20 minutes a day and the violin for three times as long. If she practice six days a week, how many minutes does she spend practicing in a month with four weeks?
+"""
+
+answer = """
+First find Carolyn's total violin practice time by tripling her piano practice time: 20 minutes/day * 3 = <<20*3=60>>60 minutes/day
+Then find the total amount of time she spends practicing each day: 60 minutes/day + 20 minutes/day = <<60+20=80>>80 minutes/day
+Then find the total time she spends practicing each week: 80 minutes/day * 6 days/week = <<80*6=480>>480 minutes/week
+Then find the total time she spends practicing each month: 480 minutes/week * 4 weeks/month = <<480*4=1920>>1920 minutes/month
+#### 1920
+"""
+
+id_orig = 46
+id_shuffled = 46
+
+question_annotated = """
+{name,Carolyn} practices the piano for {p,20} minutes a day and the violin for {mult_txt,three times} as long. If she practice {d_txt,six} days a week, how many minutes does she spend practicing in a month with {w_txt,four} weeks?
+
+#init:
+- name = sample(names_female)
+- mult_txt, m, mult_gerund = sample([("twice", 2, "doubling"), ("three times", 3, "tripling"), ("four times", 4, "quadrupling")])
+- $p = range(5, 105, 5)
+- d_txt, d = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7)])
+- w_txt, w = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+
+#conditions:
+- p > 0
+
+#answer: (p * m + p) * d * w
+"""
+
+answer_annotated = """
+First find {name}'s total violin practice time by {mult_gerund} her piano practice time: {p} minutes/day * {m} = <<{p}*{m}={p*m}>>{p*m} minutes/day
+Then find the total amount of time she spends practicing each day: {p*m} minutes/day + {p} minutes/day = <<{p*m}+{p}={p*m+p}>>{p*m+p} minutes/day
+Then find the total time she spends practicing each week: {p*m+p} minutes/day * {d} days/week = <<{p*m+p}*{d}={(p*m+p)*d}>>{(p*m+p)*d} minutes/week
+Then find the total time she spends practicing each month: {(p*m+p)*d} minutes/week * {w} weeks/month = <<{(p*m+p)*d}*{w}={(p*m+p)*d*w}>>{(p*m+p)*d*w} minutes/month
+#### {(p*m+p)*d*w}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

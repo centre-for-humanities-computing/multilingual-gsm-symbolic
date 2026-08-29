@@ -1,0 +1,41 @@
+question = """
+Dan spent an hour doing 400 work tasks at $0.25 each. Then Dan spent an hour doing 5 work tasks at $2.00 each. How much more did Dan make doing the good work compared to the lower-paid work?
+"""
+
+answer = """
+Dan spent an hour doing 400 tasks * $.25 = $100.
+Dan spent an hour doing 5 tasks * $2.00 each = $<<5*2=10.00>>10.00.
+Dan made $100 - $10 = $<<100-10=90.00>>90.00 per hour more doing the higher paid work.
+#### 90
+"""
+
+id_orig = 1283
+id_shuffled = 1390
+
+question_annotated = """
+{name,Dan} spent an hour doing {a,400} work tasks at $0.{c1,25} each. Then {name,Dan} spent an hour doing {b,5} work tasks at ${e,2}.00 each. How much more did {name,Dan} make doing the good work compared to the lower-paid work?
+
+#init:
+- name = sample(names_male)
+- $a = range(40, 460, 4)
+- $c1 = range(25, 100, 25)
+- $b = range(2, 7)
+- $e = range(2, 27)
+
+#conditions:
+- divides(a * c1, 100)
+- a * c1 // 100 > b * e
+
+#answer: a * c1 // 100 - b * e
+"""
+
+answer_annotated = """
+{name} spent an hour doing {a} tasks * $.{c1} = ${a*c1//100}.
+{name} spent an hour doing {b} tasks * ${e}.00 each = $<<{b}*{e}={b*e}.00>>{b*e}.00.
+{name} made ${a*c1//100} - ${b*e} = $<<{a*c1//100}-{b*e}={a*c1//100-b*e}.00>>{a*c1//100-b*e}.00 per hour more doing the higher paid work.
+#### {a*c1//100 - b*e}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,38 @@
+question = """
+Ella spends 40% of the money she makes from babysitting on video games. Last year she spent $100. This year she received a 10% raise. What is Ella’s new salary?
+"""
+
+answer = """
+Last year Ella made a total of $100 / (40/100) = $<<100/(40/100)=250>>250
+This year with her raise, Ella’s salary will be $250 * (110/100) = $<<250*(110/100)=275>>275
+#### 275
+"""
+
+id_orig = 3507
+id_shuffled = 4154
+
+question_annotated = """
+{name,Ella} spends {p,40}% of the money she makes from babysitting on video games. Last year she spent ${spent,100}. This year she received a {r,10}% raise. What is {name,Ella}’s new salary?
+
+#init:
+- name = sample(names_female)
+- $p = range(10, 41, 5)
+- $spent = range(20, 401, 20)
+- $r = range(5, 51, 5)
+
+#conditions:
+- divides(spent * 100, p)
+- divides(spent * 100 // p * (100 + r), 100)
+
+#answer: spent * 100 // p * (100 + r) // 100
+"""
+
+answer_annotated = """
+Last year {name} made a total of ${spent} / ({p}/100) = $<<{spent}/({p}/100)={spent*100//p}>>{spent*100//p}
+This year with her raise, {name}’s salary will be ${spent*100//p} * ({100+r}/100) = $<<{spent*100//p}*({100+r}/100)={spent*100//p*(100+r)//100}>>{spent*100//p*(100+r)//100}
+#### {spent * 100 // p * (100 + r) // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

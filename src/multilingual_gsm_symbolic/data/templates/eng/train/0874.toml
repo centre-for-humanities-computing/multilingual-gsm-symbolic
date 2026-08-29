@@ -1,0 +1,42 @@
+question = """
+Alex gets paid $500 a week and 10% of his weekly income is deducted as tax. He also pays his weekly water bill for $55 and gives away another 10% of his weekly income as a tithe. How much money does Alex have left?
+"""
+
+answer = """
+His income tax is 10% of 500 which is 500*10% = $<<500*10*.01=50>>50.
+His tithe costs 10% of $500 which is 500*10% = $<<500*10*.01=50>>50.
+The total expenses are 50 + 55 + 50 = $155
+He is then left with $500 - $ 155= $<<500-155=345>>345.
+#### 345
+"""
+
+id_orig = 801
+id_shuffled = 874
+
+question_annotated = """
+{name,Alex} gets paid ${pay,500} a week and {r,10}% of his weekly income is deducted as tax. He also pays his weekly water bill for ${bill,55} and gives away another {r,10}% of his weekly income as a tithe. How much money does {name,Alex} have left?
+
+#init:
+- name = sample(names_male)
+- $pay = range(100, 1100, 100)
+- $r = range(1, 21)
+- $bill = range(5, 105, 5)
+
+#conditions:
+- divides(pay * r, 100)
+- pay - 2*(pay*r//100) - bill > 0
+
+#answer: pay - 2*(pay*r//100) - bill
+"""
+
+answer_annotated = """
+His income tax is {r}% of {pay} which is {pay}*{r}% = $<<{pay}*{r}*.01={pay*r//100}>>{pay*r//100}.
+His tithe costs {r}% of ${pay} which is {pay}*{r}% = $<<{pay}*{r}*.01={pay*r//100}>>{pay*r//100}.
+The total expenses are {pay*r//100} + {bill} + {pay*r//100} = ${2*(pay*r//100) + bill}
+He is then left with ${pay} - $ {2*(pay*r//100) + bill}= $<<{pay}-{2*(pay*r//100) + bill}={pay - (2*(pay*r//100) + bill)}>>{pay - (2*(pay*r//100) + bill)}.
+#### {pay - 2*(pay*r//100) - bill}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

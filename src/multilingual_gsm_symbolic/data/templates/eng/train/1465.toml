@@ -1,0 +1,50 @@
+question = """
+Jenny is planning her catering budget for her wedding. She's going to have 80 guests. 3 times as many guests want steak as chicken. If each steak entree costs $25 and each chicken entree costs $18, how much is the total catering budget?
+"""
+
+answer = """
+Let s be the number of guests who want steak and c be the number who want chicken. We know that s + c = 80 and s = 3c.
+Substituting the second equation into the first equation, we get 3c + c = 80
+Combining like terms, we get 4c = 80
+Dividing both sides by 4, we get c = 20
+Then multiply the number of guests who want chicken by the cost of each chicken entree: 20 guests * $18/guest = $<<20*18=360>>360
+Then triple the number of guests who want chicken to find the number who want steak: 20 guests * 3 = <<20*3=60>>60 guests
+Then multiply the number of guests who want steak by the cost of each steak entree: 60 guests * $25/guest = $<<60*25=1500>>1500
+Then add the cost of the steak and chicken entrees to find the total cost: $1500 + $360 = $<<1500+360=1860>>1860
+#### 1860
+"""
+
+id_orig = 1358
+id_shuffled = 1465
+
+question_annotated = """
+{name,Jenny} is planning her catering budget for her wedding. She's going to have {g,80} guests. {m,3} times as many guests want steak as chicken. If each steak entree costs ${sc,25} and each chicken entree costs ${cc,18}, how much is the total catering budget?
+
+#init:
+- name = sample(names_female)
+- $g = range(40, 244, 4)
+- $m = range(3, 4)
+- $sc = range(20, 70)
+- $cc = range(10, 30)
+
+#conditions:
+- divides(g, m + 1)
+
+#answer: g//(m+1)*(m*sc + cc)
+"""
+
+answer_annotated = """
+Let s be the number of guests who want steak and c be the number who want chicken. We know that s + c = {g} and s = {m}c.
+Substituting the second equation into the first equation, we get {m}c + c = {g}
+Combining like terms, we get {m+1}c = {g}
+Dividing both sides by {m+1}, we get c = {g//(m+1)}
+Then multiply the number of guests who want chicken by the cost of each chicken entree: {g//(m+1)} guests * ${cc}/guest = $<<{g//(m+1)}*{cc}={g//(m+1)*cc}>>{g//(m+1)*cc}
+Then triple the number of guests who want chicken to find the number who want steak: {g//(m+1)} guests * {m} = <<{g//(m+1)}*{m}={g//(m+1)*m}>>{g//(m+1)*m} guests
+Then multiply the number of guests who want steak by the cost of each steak entree: {g//(m+1)*m} guests * ${sc}/guest = $<<{g//(m+1)*m}*{sc}={g//(m+1)*m*sc}>>{g//(m+1)*m*sc}
+Then add the cost of the steak and chicken entrees to find the total cost: ${g//(m+1)*m*sc} + ${g//(m+1)*cc} = $<<{g//(m+1)*m*sc}+{g//(m+1)*cc}={g//(m+1)*(m*sc+cc)}>>{g//(m+1)*(m*sc+cc)}
+#### {g//(m+1)*(m*sc+cc)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

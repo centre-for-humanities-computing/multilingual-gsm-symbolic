@@ -1,0 +1,47 @@
+question = """
+Tobias is buying a new pair of shoes that costs $95. He has been saving up his money each month for the past three months. He gets a $5 allowance a month. He also mows lawns and shovels driveways. He charges $15 to mow a lawn and $7 to shovel. After buying the shoes, he has $15 in change. If he mows 4 lawns, how many driveways did he shovel?
+"""
+
+answer = """
+He saved up $110 total because 95 + 15 = <<95+15=110>>110
+He saved $15 from his allowance because 3 x 5 = <<3*5=15>>15
+He earned $60 mowing lawns because 4 x 15 = <<4*15=60>>60
+He earned $35 shoveling driveways because 110 - 60 - 15 = <<110-60-15=35>>35
+He shoveled 5 driveways because 35 / 7 = <<35/7=5>>5
+#### 5
+"""
+
+id_orig = 11
+id_shuffled = 133
+
+question_annotated = """
+{name,Tobias} is buying a new pair of shoes that costs ${c,95}. He has been saving up his money each month for the past three months. He gets a ${al,5} allowance a month. He also mows lawns and shovels driveways. He charges ${lm,15} to mow a lawn and ${sd,7} to shovel. After buying the shoes, he has ${ch,15} in change. If he mows {l,4} lawns, how many driveways did he shovel?
+
+#init:
+- name = sample(names_male)
+- $c = range(85, 200, 5)
+- $al = range(3, 9)
+- $lm = range(10, 31, 5)
+- $sd = range(5, 17)
+- $ch = range(10, 41, 5)
+- $l = range(2, 8)
+
+#conditions:
+- divides(c + ch - l*lm - 3*al, sd)
+- c + ch - l*lm - 3*al > sd
+
+#answer: (c + ch - l*lm - 3*al) // sd
+"""
+
+answer_annotated = """
+He saved up ${c + ch} total because {c} + {ch} = <<{c}+{ch}={c + ch}>>{c + ch}
+He saved ${3*al} from his allowance because 3 x {al} = <<3*{al}={3*al}>>{3*al}
+He earned ${l*lm} mowing lawns because {l} x {lm} = <<{l}*{lm}={l*lm}>>{l*lm}
+He earned ${c + ch - l*lm - 3*al} shoveling driveways because {c + ch} - {l*lm} - {3*al} = <<{c + ch}-{l*lm}-{3*al}={c + ch - l*lm - 3*al}>>{c + ch - l*lm - 3*al}
+He shoveled {(c + ch - l*lm - 3*al) // sd} driveways because {c + ch - l*lm - 3*al} / {sd} = <<{c + ch - l*lm - 3*al}/{sd}={(c + ch - l*lm - 3*al) // sd}>>{(c + ch - l*lm - 3*al) // sd}
+#### {(c + ch - l*lm - 3*al) // sd}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

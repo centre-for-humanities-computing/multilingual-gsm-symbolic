@@ -1,0 +1,42 @@
+question = """
+Marissa is serving her kids lunch. Each kid gets a burger with 400 calories and 5 carrot sticks with 20 calories each, and some cookies with 50 calories each. Marissa wants each kid to eat a total of 750 calories for lunch. How many cookies does each kid get?
+"""
+
+answer = """
+First figure out how many total calories come from the carrots by multiplying the calories per carrot by the number of carrots: 20 calories/carrot * 5 carrots = <<20*5=100>>100 calories
+Then subtract the calories the kids have already eaten from the goal number of calories to find out how many more total calories they should eat: 750 calories - 400 calories - 100 calories = <<750-400-100=250>>250 calories
+Then divide the total number of calories by the calories per cookie to find the number of cookies each kid gets: 250 calories / 50 calories/cookie = <<250/50=5>>5 cookies
+#### 5
+"""
+
+id_orig = 2602
+id_shuffled = 3019
+
+question_annotated = """
+{name,Marissa} is serving her kids lunch. Each kid gets a burger with {burg,400} calories and {car,5} carrot sticks with {ccal,20} calories each, and some cookies with {ckal,50} calories each. {name,Marissa} wants each kid to eat a total of {total,750} calories for lunch. How many cookies does each kid get?
+
+#init:
+- name = sample(names_female)
+- $burg = range(200, 900, 50)
+- $car = range(2, 12)
+- $ccal = range(10, 60, 10)
+- $ckal = range(25, 125, 25)
+- $total = range(500, 1600, 50)
+
+#conditions:
+- total - burg - car * ccal > 0
+- divides(total - burg - car * ccal, ckal)
+
+#answer: (total - burg - car * ccal) // ckal
+"""
+
+answer_annotated = """
+First figure out how many total calories come from the carrots by multiplying the calories per carrot by the number of carrots: {ccal} calories/carrot * {car} carrots = <<{ccal}*{car}={ccal*car}>>{ccal*car} calories
+Then subtract the calories the kids have already eaten from the goal number of calories to find out how many more total calories they should eat: {total} calories - {burg} calories - {ccal*car} calories = <<{total}-{burg}-{ccal*car}={total-burg-ccal*car}>>{total-burg-ccal*car} calories
+Then divide the total number of calories by the calories per cookie to find the number of cookies each kid gets: {total-burg-ccal*car} calories / {ckal} calories/cookie = <<{total-burg-ccal*car}/{ckal}={(total-burg-ccal*car)//ckal}>>{(total-burg-ccal*car)//ckal} cookies
+#### {(total-burg-ccal*car)//ckal}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

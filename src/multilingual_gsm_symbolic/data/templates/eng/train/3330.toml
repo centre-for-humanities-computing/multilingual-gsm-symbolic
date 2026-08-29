@@ -1,0 +1,44 @@
+question = """
+Julian has 80 Facebook friends. 60% are boys and 40% are girls. Boyd has twice as many friends who are girls and has 100 friends total. What percentage of Boyd’s friends are boys?
+"""
+
+answer = """
+Julian's number of friends who are girls is .40*80 = <<.40*80=32>>32
+Boyd has twice as many friends as Julian who are girls, a total of 2*32 = <<2*32=64>>64
+If Boyd has 100 friends, he has 100-64 = <<100-64=36>>36 boys
+The percentage of boys in Boyd's Facebook friends is 36/100*100 = <<36/100*100=36>>36
+#### 36
+"""
+
+id_orig = 2796
+id_shuffled = 3330
+
+question_annotated = """
+Julian has {a,80} Facebook friends. {pb,60}% are boys and {pg,40}% are girls. Boyd has twice as many friends who are girls and has {b,100} friends total. What percentage of Boyd’s friends are boys?
+
+#init:
+- $a = range(20, 220, 2)
+- $b = range(40, 144, 4)
+- $pb = range(5, 100, 5)
+- $pg = range(5, 100, 5)
+
+#conditions:
+- pb + pg == 100
+- divides(pg * a, 100)
+- b - 2*(pg*a//100) > 0
+- divides((b - 2*(pg*a//100)) * 100, b)
+
+#answer: (b - 2*(pg*a//100)) * 100 // b
+"""
+
+answer_annotated = """
+Julian's number of friends who are girls is .{pg}*{a} = <<.{pg}*{a}={pg*a//100}>>{pg*a//100}
+Boyd has twice as many friends as Julian who are girls, a total of 2*{pg*a//100} = <<2*{pg*a//100}={2*(pg*a//100)}>>{2*(pg*a//100)}
+If Boyd has {b} friends, he has {b}-{2*(pg*a//100)} = <<{b}-{2*(pg*a//100)}={b-2*(pg*a//100)}>>{b-2*(pg*a//100)} boys
+The percentage of boys in Boyd's Facebook friends is {b-2*(pg*a//100)}/{b}*100 = <<{b-2*(pg*a//100)}/{b}*100={(b-2*(pg*a//100))*100//b}>>{(b-2*(pg*a//100))*100//b}
+#### {(b - 2*(pg*a//100)) * 100 // b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

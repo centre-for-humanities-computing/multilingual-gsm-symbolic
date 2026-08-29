@@ -1,0 +1,43 @@
+question = """
+There are enough provisions in a castle to feed 300 people for 90 days. After 30 days, 100 people leave the castle. How many more days are left until all the food runs out?
+"""
+
+answer = """
+After 30 days, there will be enough food left to sustain 300 people for 90 days – 30 days = 60 days.
+After the 100 people leave, there will be 300-100 = <<300-100=200>>200 people left.
+The 200 people will eat 200/300 = 2/3 as much food as the original group of people in the castle.
+The 60 days' worth of food will last this smaller group for 60 days / (2/3) = <<60/(2/3)=90>>90 more days.
+#### 90
+"""
+
+id_orig = 315
+id_shuffled = 368
+
+question_annotated = """
+There are enough provisions in a castle to feed {p,300} people for {d,90} days. After {t,30} days, {q,100} people leave the castle. How many more days are left until all the food runs out?
+
+#init:
+- $p = range(120, 520, 20)
+- $d = range(40, 220, 10)
+- $t = range(5, 35, 5)
+- $q = range(20, 120, 10)
+
+#conditions:
+- q < p
+- t < d
+- divides(p * (d - t), p - q)
+
+#answer: (d - t) * p // (p - q)
+"""
+
+answer_annotated = """
+After {t} days, there will be enough food left to sustain {p} people for {d} days – {t} days = {d-t} days.
+After the {q} people leave, there will be {p}-{q} = <<{p}-{q}={p-q}>>{p-q} people left.
+The {p-q} people will eat {p-q}/{p} = {Fraction((p-q)/p)} as much food as the original group of people in the castle.
+The {d-t} days' worth of food will last this smaller group for {d-t} days / ({Fraction((p-q)/p)}) = <<{d-t}/({Fraction((p-q)/p)})={(d-t)*p//(p-q)}>>{(d-t)*p//(p-q)} more days.
+#### {(d-t)*p//(p-q)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

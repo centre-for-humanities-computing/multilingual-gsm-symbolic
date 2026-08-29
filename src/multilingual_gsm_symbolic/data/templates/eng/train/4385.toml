@@ -1,0 +1,53 @@
+question = """
+Sam bought a dozen boxes, each with 30 highlighter pens inside, for $10 each box. He rearranged five of these boxes into packages of six highlighters each and sold them for $3 per package. He sold the rest of the highlighters separately at the rate of three pens for $2. How much profit did he make in total, in dollars?
+"""
+
+answer = """
+Sam bought 12 boxes x $10 = $<<12*10=120>>120 worth of highlighters.
+He bought 12 * 30 = <<12*30=360>>360 highlighters in total.
+Sam then took 5 boxes × 6 highlighters/box = <<5*6=30>>30 highlighters.
+He sold these boxes for 5 * $3 = $<<5*3=15>>15
+After selling these 5 boxes there were 360 - 30 = <<360-30=330>>330 highlighters remaining.
+These form 330 / 3 = <<330/3=110>>110 groups of three pens.
+He sold each of these groups for $2 each, so made 110 * 2 = $<<110*2=220>>220 from them.
+In total, then, he earned $220 + $15 = $<<220+15=235>>235.
+Since his original cost was $120, he earned $235 - $120 = $<<235-120=115>>115 in profit.
+#### 115
+"""
+
+id_orig = 3715
+id_shuffled = 4385
+
+question_annotated = """
+{name,Sam} bought a dozen boxes, each with {p,30} highlighter pens inside, for ${c,10} each box. He rearranged {k_txt,five} of these boxes into packages of six highlighters each and sold them for ${s,3} per package. He sold the rest of the highlighters separately at the rate of three pens for ${t,2}. How much profit did he make in total, in dollars?
+
+#init:
+- name = sample(names_male)
+- $p = range(18, 61, 3)
+- $c = range(5, 16)
+- k_txt, k = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- $s = range(2, 9)
+- $t = range(1, 6)
+
+#conditions:
+- (12 * p - 6 * k) // 3 * t + k * s - 12 * c > 0
+
+#answer: (12*p - 6*k)//3*t + k*s - 12*c
+"""
+
+answer_annotated = """
+{name} bought 12 boxes x ${c} = $<<12*{c}={12*c}>>{12*c} worth of highlighters.
+He bought 12 * {p} = <<12*{p}={12*p}>>{12*p} highlighters in total.
+{name} then took {k} boxes × 6 highlighters/box = <<{k}*6={k*6}>>{k*6} highlighters.
+He sold these boxes for {k} * ${s} = $<<{k}*{s}={k*s}>>{k*s}
+After selling these {k} boxes there were {12*p} - {k*6} = <<{12*p}-{k*6}={12*p-k*6}>>{12*p-k*6} highlighters remaining.
+These form {12*p-k*6} / 3 = <<{12*p-k*6}/3={(12*p-k*6)//3}>>{(12*p-k*6)//3} groups of three pens.
+He sold each of these groups for ${t} each, so made {(12*p-k*6)//3} * {t} = $<<{(12*p-k*6)//3}*{t}={(12*p-k*6)//3*t}>>{(12*p-k*6)//3*t} from them.
+In total, then, he earned ${(12*p-k*6)//3*t} + ${k*s} = $<<{(12*p-k*6)//3*t}+{k*s}={(12*p-k*6)//3*t+k*s}>>{(12*p-k*6)//3*t+k*s}.
+Since his original cost was ${12*c}, he earned ${(12*p-k*6)//3*t+k*s} - ${12*c} = $<<{(12*p-k*6)//3*t+k*s}-{12*c}={(12*p-k*6)//3*t+k*s-12*c}>>{(12*p-k*6)//3*t+k*s-12*c} in profit.
+#### {(12*p - 6*k)//3*t + k*s - 12*c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

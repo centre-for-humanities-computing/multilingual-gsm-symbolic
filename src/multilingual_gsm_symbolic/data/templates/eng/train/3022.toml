@@ -1,0 +1,43 @@
+question = """
+John adopts a dog from a shelter.  The dog ends up having health problems and this requires 3 vet appointments,  which cost $400 each.  After the first appointment, John paid $100 for pet insurance that covers 80% of the subsequent visits.  How much did he pay in total?
+"""
+
+answer = """
+He got a discount of 400*.8=$<<400*.8=320>>320
+He got that discount for 3-1=<<3-1=2>>2 visits
+So each of those visits cost 400-320=$<<400-320=80>>80
+So he paid 2*80=$<<2*80=160>>160 for those visits
+That means he paid a total of 400+160+100=$<<400+160+100=660>>660
+#### 660
+"""
+
+id_orig = 2605
+id_shuffled = 3022
+
+question_annotated = """
+{name,John} adopts a dog from a shelter.  The dog ends up having health problems and this requires {n,3} vet appointments,  which cost ${c,400} each.  After the first appointment, {name,John} paid ${i,100} for pet insurance that covers 80% of the subsequent visits.  How much did he pay in total?
+
+#init:
+- name = sample(names_male)
+- $n = range(3, 9)
+- $c = range(20, 420, 5)
+- $i = range(10, 210, 10)
+
+#conditions:
+- divides(c * 80, 100)
+
+#answer: c + (n - 1) * (c - c * 80 // 100) + i
+"""
+
+answer_annotated = """
+He got a discount of {c}*.8=$<<{c}*.8={c*80//100}>>{c*80//100}
+He got that discount for {n}-1=<<{n}-1={n-1}>>{n-1} visits
+So each of those visits cost {c}-{c*80//100}=$<<{c}-{c*80//100}={c-c*80//100}>>{c-c*80//100}
+So he paid {n-1}*{c-c*80//100}=$<<{n-1}*{c-c*80//100}={(n-1)*(c-c*80//100)}>>{(n-1)*(c-c*80//100)} for those visits
+That means he paid a total of {c}+{(n-1)*(c-c*80//100)}+{i}=$<<{c}+{(n-1)*(c-c*80//100)}+{i}={c+(n-1)*(c-c*80//100)+i}>>{c+(n-1)*(c-c*80//100)+i}
+#### {c+(n-1)*(c-c*80//100)+i}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Todd bought a pair of jeans that cost $125 at full price. The jeans were on sale for 20% off. He then applied a coupon that took off $10. He paid with a store credit card that gave him another 10% off the remaining amount. How many dollars did he save on the original price of the jeans?
+"""
+
+answer = """
+The jeans were on sale for 20% = 20 / 100 = 1 /5 off, so the sale took 125 / 5 = $<<125/5=25>>25 off.
+Thus, after the sale, the jeans cost $125 - $25 = $<<125-25=100>>100.
+Todd’s coupon lowered the price to $100 - $10 = $<<100-10=90>>90.
+The store credit card gave him 10% = 10 / 100 = 1 / 10 off, so the card took $90 / 10 = $<<90/10=9>>9 off.
+Thus, he paid $90 - $9 = $<<90-9=81>>81 for the jeans.
+Therefore, Todd saved $125 - $81 = $<<125-81=44>>44 on the original price of the jeans.
+#### 44
+"""
+
+id_orig = 1443
+id_shuffled = 1550
+
+question_annotated = """
+{name,Todd} bought a pair of jeans that cost ${p,125} at full price. The jeans were on sale for 20% off. He then applied a coupon that took off ${c,10}. He paid with a store credit card that gave him another 10% off the remaining amount. How many dollars did he save on the original price of the jeans?
+
+#init:
+- name = sample(names_male)
+- $p = range(50, 2000, 5)
+- $c = range(10, 110, 10)
+
+#conditions:
+- divides(p, 5)
+- c < p - p//5
+- divides(p - p//5 - c, 10)
+
+#answer: p - (p - p//5 - c - (p - p//5 - c)//10)
+"""
+
+answer_annotated = """
+The jeans were on sale for 20% = 20 / 100 = 1 /5 off, so the sale took {p} / 5 = $<<{p}/5={p//5}>>{p//5} off.
+Thus, after the sale, the jeans cost ${p} - ${p//5} = $<<{p}-{p//5}={p-p//5}>>{p-p//5}.
+{name}’s coupon lowered the price to ${p-p//5} - ${c} = $<<{p-p//5}-{c}={p-p//5-c}>>{p-p//5-c}.
+The store credit card gave him 10% = 10 / 100 = 1 / 10 off, so the card took ${p-p//5-c} / 10 = $<<{p-p//5-c}/10={(p-p//5-c)//10}>>{(p-p//5-c)//10} off.
+Thus, he paid ${p-p//5-c} - ${(p-p//5-c)//10} = $<<{p-p//5-c}-{(p-p//5-c)//10}={p-p//5-c-(p-p//5-c)//10}>>{p-p//5-c-(p-p//5-c)//10} for the jeans.
+Therefore, {name} saved ${p} - ${p-p//5-c-(p-p//5-c)//10} = $<<{p}-{p-p//5-c-(p-p//5-c)//10}={p-(p-p//5-c-(p-p//5-c)//10)}>>{p-(p-p//5-c-(p-p//5-c)//10)} on the original price of the jeans.
+#### {p-(p-p//5-c-(p-p//5-c)//10)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,42 @@
+question = """
+Janet wanted to move out of her parents' house and rent her own apartment.  She had $2,225 saved.  She found an apartment that cost $1,250 per month that was perfect for her.  The landlord said that she needed to be able to pay 2 months' rent in advance to rent the place and she would also need to put down a deposit of $500.  How much more money did Janet need in order to rent the apartment?
+"""
+
+answer = """
+To move in, Janet had to pay 2 months worth of rent so that would cost 2*1250 = $<<2*1250=2500>>2,500
+On top of the rent she needed to pay a deposit of $500 so 2500+500 = $<<2500+500=3000>>3,000 total to rent the apartment
+If it cost $3000 to move in and she had $2225 then she need 3000-2225 = $<<3000-2225=775>>775 more
+#### 775
+"""
+
+id_orig = 3636
+id_shuffled = 4319
+
+question_annotated = """
+{name,Janet} wanted to move out of her parents' house and rent her own apartment.  She had ${saved_txt,2,225} saved.  She found an apartment that cost ${rent_txt,1,250} per month that was perfect for her.  The landlord said that she needed to be able to pay {months,2} months' rent in advance to rent the place and she would also need to put down a deposit of ${dep,500}.  How much more money did {name,Janet} need in order to rent the apartment?
+
+#init:
+- name = sample(names_female)
+- saved_txt, saved = sample([("1,225", 1225), ("1,725", 1725), ("2,225", 2225), ("2,725", 2725), ("3,225", 3225), ("4,225", 4225)])
+- rent_txt, rent = sample([("650", 650), ("750", 750), ("850", 850), ("950", 950), ("1,050", 1050), ("1,150", 1150), ("1,250", 1250), ("1,350", 1350), ("1,450", 1450), ("1,550", 1550)])
+- $months = range(2, 5)
+- $dep = range(100, 1100, 50)
+
+#conditions:
+- months * rent >= 1000
+- months * rent + dep >= 1000
+- months * rent + dep > saved
+
+#answer: months * rent + dep - saved
+"""
+
+answer_annotated = """
+To move in, {name} had to pay {months} months worth of rent so that would cost {months}*{rent} = $<<{months}*{rent}={months*rent}>>{months*rent//1000},{(months*rent)%1000//100}{(months*rent)%100//10}{(months*rent)%10}
+On top of the rent she needed to pay a deposit of ${dep} so {months*rent}+{dep} = $<<{months*rent}+{dep}={months*rent+dep}>>{(months*rent+dep)//1000},{(months*rent+dep)%1000//100}{(months*rent+dep)%100//10}{(months*rent+dep)%10} total to rent the apartment
+If it cost ${months*rent+dep} to move in and she had ${saved} then she need {months*rent+dep}-{saved} = $<<{months*rent+dep}-{saved}={months*rent+dep-saved}>>{months*rent+dep-saved} more
+#### {months*rent+dep-saved}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

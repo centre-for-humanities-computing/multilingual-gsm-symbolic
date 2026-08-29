@@ -1,0 +1,46 @@
+question = """
+Isabelle gets a job so she can save enough money to go to a concert with her two brothers. Her ticket costs $20. Her brothers both get the children’s discount, and each of their tickets cost $10. Her brothers have saved $5 between the two of them and Isabelle has saved $5. If her job pays $3 per week, how many weeks must she work to afford the tickets?
+"""
+
+answer = """
+The tickets for both of her brothers will cost her $10 * 2 = $<<10*2=20>>20.
+To buy tickets for all of them, it will cost Isabelle $20 + $20 = $<<20+20=40>>40.
+Between all of them, they have saved a total of $5 + $5 = $<<5+5=10>>10.
+Since they have already saved $10, she needs to earn an additional $40 - $10 = $<<30=30>>30 to afford the tickets.
+Since she makes $3 per week, it will take her $30 / ($3/week) = <<30/(3)=10>>10 weeks to save enough money for all of the tickets.
+#### 10
+"""
+
+id_orig = 1211
+id_shuffled = 1318
+
+question_annotated = """
+{name,Isabelle} gets a job so she can save enough money to go to a concert with her two brothers. Her ticket costs ${a,20}. Her brothers both get the children’s discount, and each of their tickets cost ${b,10}. Her brothers have saved ${s1,5} between the two of them and {name,Isabelle} has saved ${s2,5}. If her job pays ${w,3} per week, how many weeks must she work to afford the tickets?
+
+#init:
+- name = sample(names_female)
+- $a = range(8, 58, 2)
+- $b = range(5, 55, 5)
+- $s1 = range(1, 11)
+- $s2 = range(1, 11)
+- $w = range(2, 13)
+
+#conditions:
+- a + 2*b > s1 + s2
+- divides(a + 2*b - s1 - s2, w)
+
+#answer: (a + 2*b - s1 - s2)//w
+"""
+
+answer_annotated = """
+The tickets for both of her brothers will cost her ${b} * 2 = $<<{b}*2={b*2}>>{b*2}.
+To buy tickets for all of them, it will cost {name} ${a} + ${2*b} = $<<{a}+{2*b}={a+2*b}>>{a+2*b}.
+Between all of them, they have saved a total of ${s1} + ${s2} = $<<{s1}+{s2}={s1+s2}>>{s1+s2}.
+Since they have already saved ${s1+s2}, she needs to earn an additional ${a+2*b} - ${s1+s2} = $<<{a+2*b-s1-s2}={a+2*b-s1-s2}>>{a+2*b-s1-s2} to afford the tickets.
+Since she makes ${w} per week, it will take her ${a+2*b-s1-s2} / (${w}/week) = <<{a+2*b-s1-s2}/({w})={(a+2*b-s1-s2)//w}>>{(a+2*b-s1-s2)//w} weeks to save enough money for all of the tickets.
+#### {(a + 2*b - s1 - s2)//w}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

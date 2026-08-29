@@ -1,0 +1,40 @@
+question = """
+Ivan had $10 and spent 1/5 of it on cupcakes. He then spent some money on a milkshake and had only $3 left. How much is the milkshake?
+"""
+
+answer = """
+Ivan spent a total of $10 - $3 = $<<10-3=7>>7 on cupcakes and a milkshake.
+The cost of the cupcake is $10 x 1/5 = $<<10*1/5=2>>2.
+So, $7 - $2 = $<<7-2=5>>5 was spent on the milkshake.
+#### 5
+"""
+
+id_orig = 3797
+id_shuffled = 4479
+
+question_annotated = """
+{name,Ivan} had ${m,10} and spent {frac_txt,1/5} of it on cupcakes. He then spent some money on a milkshake and had only ${left,3} left. How much is the milkshake?
+
+#init:
+- name = sample(names_male)
+- frac_txt, den = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5), ("1/6", 6)])
+- $m = range(10, 210, 2)
+- $left = range(1, 50)
+
+#conditions:
+- divides(m, den)
+- left + m // den < m
+
+#answer: m - left - m // den
+"""
+
+answer_annotated = """
+{name} spent a total of ${m} - ${left} = $<<{m}-{left}={m-left}>>{m-left} on cupcakes and a milkshake.
+The cost of the cupcake is ${m} x {frac_txt} = $<<{m}*{frac_txt}={m//den}>>{m//den}.
+So, ${m-left} - ${m//den} = $<<{m-left}-{m//den}={m-left-m//den}>>{m-left-m//den} was spent on the milkshake.
+#### {m-left-m//den}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

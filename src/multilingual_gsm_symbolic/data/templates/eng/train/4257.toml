@@ -1,0 +1,53 @@
+question = """
+Victor, Austin, and Brian made traps to catch shrimp. Victor's trap caught 26 shrimp and Austin's trap caught 8 less than Victor's. Brian's trap caught half of Victor and Austin's total number of shrimp. If the boys then sold their shrimp for $7 for every 11 tails of shrimp and then divided their earnings equally amongst themselves, how much money does each boy make?
+"""
+
+answer = """
+Austin's trap caught 26 - 8 = <<26-8=18>>18 shrimp.
+Together, Victor and Austin's traps caught 18 + 26 = <<18+26=44>>44 shrimp.
+Brian's trap caught 44/2 = <<44/2=22>>22 shrimp
+In total, they caught 26 + 18 + 22 = <<26+18+22=66>>66 shrimp.
+They were able to sell 66/11 = <<66/11=6>>6 sets of shrimp.
+They made a total of 6 x $7 = $<<6*7=42>>42
+Each boy made $42/ 3 = $<<42/3=14>>14
+#### 14
+"""
+
+id_orig = 3599
+id_shuffled = 4257
+
+question_annotated = """
+{n1,Victor}, {n2,Austin}, and {n3,Brian} made traps to catch shrimp. {n1,Victor}'s trap caught {a,26} shrimp and {n2,Austin}'s trap caught {b,8} less than {n1,Victor}'s. {n3,Brian}'s trap caught half of {n1,Victor} and {n2,Austin}'s total number of shrimp. If the boys then sold their shrimp for ${price,7} for every {per,11} tails of shrimp and then divided their earnings equally amongst themselves, how much money does each boy make?
+
+#init:
+- n1 = sample(["Victor", "Chris", "Oliver", "Noah", "Eric"])
+- n2 = sample(["Austin", "Jason", "Carl", "William", "Tyler"])
+- n3 = sample(["Brian", "Lucas", "Alex", "Joshua", "Ethan"])
+- $a = range(12, 112, 2)
+- $b = range(2, 30, 2)
+- $per = range(5, 25, 2)
+- $price = range(2, 15)
+
+#conditions:
+- a > b
+- divides(a - b + a, 2)
+- divides(a + (a - b) + (a - b + a) // 2, per)
+- divides((a + (a - b) + (a - b + a) // 2) // per * price, 3)
+
+#answer: (a + (a - b) + (a - b + a) // 2) // per * price // 3
+"""
+
+answer_annotated = """
+{n2}'s trap caught {a} - {b} = <<{a}-{b}={a-b}>>{a-b} shrimp.
+Together, {n1} and {n2}'s traps caught {a-b} + {a} = <<{a-b}+{a}={a-b+a}>>{a-b+a} shrimp.
+{n3}'s trap caught {a-b+a}/2 = <<{a-b+a}/2={(a-b+a)//2}>>{(a-b+a)//2} shrimp
+In total, they caught {a} + {a-b} + {(a-b+a)//2} = <<{a}+{a-b}+{(a-b+a)//2}={a+(a-b)+(a-b+a)//2}>>{a+(a-b)+(a-b+a)//2} shrimp.
+They were able to sell {a+(a-b)+(a-b+a)//2}/{per} = <<{a+(a-b)+(a-b+a)//2}/{per}={(a+(a-b)+(a-b+a)//2)//per}>>{(a+(a-b)+(a-b+a)//2)//per} sets of shrimp.
+They made a total of {(a+(a-b)+(a-b+a)//2)//per} x ${price} = $<<{(a+(a-b)+(a-b+a)//2)//per}*{price}={(a+(a-b)+(a-b+a)//2)//per*price}>>{(a+(a-b)+(a-b+a)//2)//per*price}
+Each boy made ${(a+(a-b)+(a-b+a)//2)//per*price}/ 3 = $<<{(a+(a-b)+(a-b+a)//2)//per*price}/3={(a+(a-b)+(a-b+a)//2)//per*price//3}>>{(a+(a-b)+(a-b+a)//2)//per*price//3}
+#### {(a+(a-b)+(a-b+a)//2)//per*price//3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

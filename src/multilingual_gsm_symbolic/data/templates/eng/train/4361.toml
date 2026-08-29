@@ -1,0 +1,52 @@
+question = """
+Nathan planted 5 strawberry plants and 7 tomato plants. He harvested 14 strawberries from each plant and 16 tomatoes from each plant. He then distributed the strawberries and tomatoes into baskets of 7. He sold a basket of strawberries for $9 and a basket of tomatoes for $6. How much money does Nathan make from his harvest?
+"""
+
+answer = """
+Nathan harvested a total of 5 x 14 = <<5*14=70>>70 strawberries
+He harvested a total of 7 x 16 = <<7*16=112>>112 tomatoes.
+He was able to fill 70/7 = <<70/7=10>>10 baskets with strawberries.
+He was able to fill 112/7 = <<112/7=16>>16 baskets with tomatoes.
+He made 10 x $9 = $<<10*9=90>>90 from the strawberries.
+He made 16 x $ 6 = $<<16*6=96>>96 from the tomatoes.
+All together, he made $90 + $96 = $<<90+96=186>>186 from his harvest.
+#### 186
+"""
+
+id_orig = 3691
+id_shuffled = 4361
+
+question_annotated = """
+{name,Nathan} planted {p1,5} strawberry plants and {p2,7} tomato plants. He harvested {s,14} strawberries from each plant and {t,16} tomatoes from each plant. He then distributed the strawberries and tomatoes into baskets of {b,7}. He sold a basket of strawberries for ${ps,9} and a basket of tomatoes for ${pt,6}. How much money does {name,Nathan} make from his harvest?
+
+#init:
+- name = sample(names_male)
+- $p1 = range(2, 8)
+- $p2 = range(2, 8)
+- $s = range(4, 18, 2)
+- $t = range(4, 18, 2)
+- $b = range(5, 9)
+- $ps = range(3, 11)
+- $pt = range(3, 11)
+
+#conditions:
+- divides(p1*s, b)
+- divides(p2*t, b)
+
+#answer: p1*s//b*ps + p2*t//b*pt
+"""
+
+answer_annotated = """
+{name} harvested a total of {p1} x {s} = <<{p1}*{s}={p1*s}>>{p1*s} strawberries
+He harvested a total of {p2} x {t} = <<{p2}*{t}={p2*t}>>{p2*t} tomatoes.
+He was able to fill {p1*s}/{b} = <<{p1*s}/{b}={p1*s//b}>>{p1*s//b} baskets with strawberries.
+He was able to fill {p2*t}/{b} = <<{p2*t}/{b}={p2*t//b}>>{p2*t//b} baskets with tomatoes.
+He made {p1*s//b} x ${ps} = $<<{p1*s//b}*{ps}={p1*s//b*ps}>>{p1*s//b*ps} from the strawberries.
+He made {p2*t//b} x $ {pt} = $<<{p2*t//b}*{pt}={p2*t//b*pt}>>{p2*t//b*pt} from the tomatoes.
+All together, he made ${p1*s//b*ps} + ${p2*t//b*pt} = $<<{p1*s//b*ps}+{p2*t//b*pt}={p1*s//b*ps+p2*t//b*pt}>>{p1*s//b*ps+p2*t//b*pt} from his harvest.
+#### {p1*s//b*ps + p2*t//b*pt}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

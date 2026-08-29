@@ -1,0 +1,45 @@
+question = """
+John throws a block party and splits the cost with 3 other people.  They buy 100 pounds of burgers at $3 per pound.  They also buy $80 of condiments and propane to cook everything.  John also buys all the alcohol which costs $200. How much did John spend altogether
+"""
+
+answer = """
+He splits the cost 3+1=<<3+1=4>>4 ways
+100 pounds of burgers at $3 per pound makes 100*3=$<<100*3=300>>300
+In addition to $80 for condiments and propane the total cost was 300+80=$<<300+80=380>>380
+That means each of them paid 380/4=$<<380/4=95>>95
+Then adding in the cost of alcohol, John spent 200+95=$<<200+95=295>>295
+#### 295
+"""
+
+id_orig = 160
+id_shuffled = 178
+
+question_annotated = """
+{name,John} throws a block party and splits the cost with {n,3} other people.  They buy {pounds,100} pounds of burgers at ${price,3} per pound.  They also buy ${condiments,80} of condiments and propane to cook everything.  {name,John} also buys all the alcohol which costs ${alcohol,200}. How much did {name,John} spend altogether
+
+#init:
+- name = sample(names_male)
+- $n = range(1, 7)
+- $pounds = range(10, 110, 10)
+- $price = range(1, 6)
+- $condiments = range(10, 90, 10)
+- $alcohol = range(50, 260, 30)
+
+#conditions:
+- divides(pounds*price + condiments, n + 1)
+
+#answer: alcohol + (pounds*price + condiments)//(n+1)
+"""
+
+answer_annotated = """
+He splits the cost {n}+1=<<{n}+1={n+1}>>{n+1} ways
+{pounds} pounds of burgers at ${price} per pound makes {pounds}*{price}=$<<{pounds}*{price}={pounds*price}>>{pounds*price}
+In addition to ${condiments} for condiments and propane the total cost was {pounds*price}+{condiments}=$<<{pounds*price}+{condiments}={pounds*price+condiments}>>{pounds*price+condiments}
+That means each of them paid {pounds*price+condiments}/{n+1}=$<<{pounds*price+condiments}/{n+1}={(pounds*price+condiments)//(n+1)}>>{(pounds*price+condiments)//(n+1)}
+Then adding in the cost of alcohol, {name} spent {alcohol}+{(pounds*price+condiments)//(n+1)}=$<<{alcohol}+{(pounds*price+condiments)//(n+1)}={alcohol+(pounds*price+condiments)//(n+1)}>>{alcohol+(pounds*price+condiments)//(n+1)}
+#### {alcohol+(pounds*price+condiments)//(n+1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

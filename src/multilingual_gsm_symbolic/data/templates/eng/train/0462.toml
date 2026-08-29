@@ -1,0 +1,46 @@
+question = """
+Karen is packing her backpack for a long-distance hike. She packs 20 pounds of water, 10 pounds of food, and 20 pounds of gear. During her hike, she drinks 2 pounds of water per hour and eats 1/3rd the weight of food per hour as water per hour. How much weight is she carrying after six hours?
+"""
+
+answer = """
+First find the weight of food Karen eats every hour: 2 pounds * 1/3 = 2/3 pounds food.
+Then find the total amount of weight Karen's backpack loses per hour she hikes: 2 pounds water/hour + 2/3 pound food/hour = 8/3 pounds/hour.
+Multiply this by the number of hours she hikes to find the total amount of weight she loses: 8/3 pounds/hour * 6 hours = <<8/3*6=16>>16 pounds.
+Add the weight of all her items to find total starting weight: 20 pounds + 10 pounds + 20 pounds = <<20+10+20=50>>50 pounds.
+Then subtract the weight she loses from the starting weight to find the weight after 6 hours: 50 pounds - 16 pounds = <<50-16=34>>34 pounds
+#### 34
+"""
+
+id_orig = 400
+id_shuffled = 462
+
+question_annotated = """
+{name,Karen} is packing her backpack for a long-distance hike. She packs {w,20} pounds of water, {f,10} pounds of food, and {g,20} pounds of gear. During her hike, she drinks 2 pounds of water per hour and eats 1/3rd the weight of food per hour as water per hour. How much weight is she carrying after {hrs_txt,six} hours?
+
+#init:
+- name = sample(["Karen", "Emma", "Sophie", "Abby"])
+- hrs_txt, hrs_val = sample([("three", 3), ("six", 6), ("nine", 9), ("twelve", 12), ("fifteen", 15), ("eighteen", 18)])
+- $w = range(20, 120, 5)
+- $f = range(10, 60, 5)
+- $g = range(10, 60, 5)
+
+#conditions:
+- 2 * hrs_val < w
+- 2 * hrs_val <= 3 * f
+- w + f + g > 8 * hrs_val // 3
+
+#answer: w + f + g - 8 * hrs_val // 3
+"""
+
+answer_annotated = """
+First find the weight of food {name} eats every hour: 2 pounds * 1/3 = 2/3 pounds food.
+Then find the total amount of weight {name}'s backpack loses per hour she hikes: 2 pounds water/hour + 2/3 pound food/hour = 8/3 pounds/hour.
+Multiply this by the number of hours she hikes to find the total amount of weight she loses: 8/3 pounds/hour * {hrs_val} hours = <<8/3*{hrs_val}={8*hrs_val//3}>>{8*hrs_val//3} pounds.
+Add the weight of all her items to find total starting weight: {w} pounds + {f} pounds + {g} pounds = <<{w}+{f}+{g}={w+f+g}>>{w+f+g} pounds.
+Then subtract the weight she loses from the starting weight to find the weight after {hrs_val} hours: {w+f+g} pounds - {8*hrs_val//3} pounds = <<{w+f+g}-{8*hrs_val//3}={w+f+g-8*hrs_val//3}>>{w+f+g-8*hrs_val//3} pounds
+#### {w+f+g-8*hrs_val//3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

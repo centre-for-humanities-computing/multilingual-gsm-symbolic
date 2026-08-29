@@ -1,0 +1,44 @@
+question = """
+Janet has 9 cards more than Brenda. Mara has twice as many cards as Janet. How many cards do they have in all if Mara has 40 cards less than 150?
+"""
+
+answer = """
+Mara has 150 - 40 = <<150-40=110>>110 cards.
+Janet has 110/2 = <<110/2=55>>55 cards since Mara has twice as many as Janet.
+Brenda has 55 - 9 = <<55-9=46>>46 cards since Janet has 9 cards more than Brenda.
+Therefore, they all have 110 + 55 + 46 = <<110+55+46=211>>211 cards.
+#### 211
+"""
+
+id_orig = 2521
+id_shuffled = 2909
+
+question_annotated = """
+{name1,Janet} has {diff,9} cards more than {name2,Brenda}. {name3,Mara} has twice as many cards as {name1,Janet}. How many cards do they have in all if {name3,Mara} has {less,40} cards less than {ref,150}?
+
+#init:
+- name1 = sample(names_female)
+- name2 = sample(names_female)
+- name3 = sample(names_female)
+- $ref = range(60, 256, 2)
+- $less = range(4, 104, 2)
+- $diff = range(3, 23)
+
+#conditions:
+- is_int((ref - less)/2)
+- (ref - less)/2 > diff
+
+#answer: (ref - less)*2 - diff
+"""
+
+answer_annotated = """
+{name3} has {ref} - {less} = <<{ref}-{less}={ref-less}>>{ref-less} cards.
+{name1} has {ref-less}/2 = <<{ref-less}/2={(ref-less)//2}>>{(ref-less)//2} cards since {name3} has twice as many as {name1}.
+{name2} has {(ref-less)//2} - {diff} = <<{(ref-less)//2}-{diff}={(ref-less)//2-diff}>>{(ref-less)//2-diff} cards since {name1} has {diff} cards more than {name2}.
+Therefore, they all have {ref-less} + {(ref-less)//2} + {(ref-less)//2-diff} = <<{ref-less}+{(ref-less)//2}+{(ref-less)//2-diff}={ref-less+(ref-less)//2+(ref-less)//2-diff}>>{ref-less+(ref-less)//2+(ref-less)//2-diff} cards.
+#### {(ref - less)*2 - diff}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

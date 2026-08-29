@@ -1,0 +1,41 @@
+question = """
+Mark wants to order a pair of slippers for his wife with her initials embroidered on top.  The slippers are currently $50.00 and are 10% off.  The embroidery will be $5.50 per shoe and shipping is a flat rate of $10.00.  How much will the slippers cost?
+"""
+
+answer = """
+The slippers are $50.00 and currently 10% off so that’s 50*.10 = $<<50*.10=5.00>>5.00 discount
+The slippers are $50.00 with a $5.00 discount which makes them 50-5 = $<<50-5=45.00>>45.00
+The embroidery will be $5.50 per shoe, and 2 shoes make a pair so it will cost 5.50*2 = $<<5.50*2=11.00>>11.00
+The shoes are on sale for $45.00, the embroidery will be $11.00 and the shipping is $10.00 for a total of 45+11+10 = $<<45+11+10=66.00>>66.00
+#### 66
+"""
+
+id_orig = 2626
+id_shuffled = 3043
+
+question_annotated = """
+{name,Mark} wants to order a pair of slippers for his wife with her initials embroidered on top.  The slippers are currently ${p,50}.00 and are {pct,10}% off.  The embroidery will be $5.50 per shoe and shipping is a flat rate of ${s,10}.00.  How much will the slippers cost?
+
+#init:
+- name = sample(names_male)
+- $p = range(20, 210, 10)
+- $pct = range(5, 55, 5)
+- $s = range(5, 55, 5)
+
+#conditions:
+- divides(p * pct, 100)
+
+#answer: p - p*pct//100 + 11 + s
+"""
+
+answer_annotated = """
+The slippers are ${p}.00 and currently {pct}% off so that’s {p}*.{pct} = $<<{p}*.{pct}={p*pct//100}.00>>{p*pct//100}.00 discount
+The slippers are ${p}.00 with a ${p*pct//100}.00 discount which makes them {p}-{p*pct//100} = $<<{p}-{p*pct//100}={p-p*pct//100}.00>>{p-p*pct//100}.00
+The embroidery will be $5.50 per shoe, and 2 shoes make a pair so it will cost 5.50*2 = $<<5.50*2=11.00>>11.00
+The shoes are on sale for ${p-p*pct//100}.00, the embroidery will be $11.00 and the shipping is ${s}.00 for a total of {p-p*pct//100}+11+{s} = $<<{p-p*pct//100}+11+{s}={p-p*pct//100+11+s}.00>>{p-p*pct//100+11+s}.00
+#### {p-p*pct//100+11+s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

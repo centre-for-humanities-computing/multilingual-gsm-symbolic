@@ -1,0 +1,44 @@
+question = """
+Sean and Sierra invited 200 guests to their wedding.  If 83% of the guests RSVP with a Yes response and 9% of the guests RSVP with a No response, how many guests did not respond at all?
+"""
+
+answer = """
+Yes RSVP responses are 200 x 83% = <<200*83*.01=166>>166 guests.
+No RSVP responses are 200 x 9% = <<200*9*.01=18>>18 guests.
+Guests who responded are 166 + 18 = <<166+18=184>>184.
+Guests who did not respond at all are 200 - 184 = <<200-184=16>>16.
+#### 16
+"""
+
+id_orig = 2889
+id_shuffled = 3451
+
+question_annotated = """
+{name1,Sean} and {name2,Sierra} invited {total,200} guests to their wedding.  If {p_yes,83}% of the guests RSVP with a Yes response and {p_no,9}% of the guests RSVP with a No response, how many guests did not respond at all?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_female)
+- $total = range(100, 500, 100)
+- $p_yes = range(10, 95)
+- $p_no = range(1, 20)
+
+#conditions:
+- p_yes + p_no < 100
+- divides(total * p_yes, 100)
+- divides(total * p_no, 100)
+
+#answer: total - total*p_yes//100 - total*p_no//100
+"""
+
+answer_annotated = """
+Yes RSVP responses are {total} x {p_yes}% = <<{total}*{p_yes}*.01={total*p_yes//100}>>{total*p_yes//100} guests.
+No RSVP responses are {total} x {p_no}% = <<{total}*{p_no}*.01={total*p_no//100}>>{total*p_no//100} guests.
+Guests who responded are {total*p_yes//100} + {total*p_no//100} = <<{total*p_yes//100}+{total*p_no//100}={total*p_yes//100 + total*p_no//100}>>{total*p_yes//100 + total*p_no//100}.
+Guests who did not respond at all are {total} - {total*p_yes//100 + total*p_no//100} = <<{total}-{total*p_yes//100 + total*p_no//100}={total - total*p_yes//100 - total*p_no//100}>>{total - total*p_yes//100 - total*p_no//100}.
+#### {total - total*p_yes//100 - total*p_no//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

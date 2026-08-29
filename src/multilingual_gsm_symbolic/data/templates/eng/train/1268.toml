@@ -1,0 +1,41 @@
+question = """
+Colbert is building a treehouse out of wooden planks. The treehouse needs 200 wooden planks. A quarter of these planks come from Colbert’s storage, half of these planks come from Colbert’s parents, 20 planks come from Colbert’s friends and he buys the rest from the store. How many planks of wood does he need to buy from the store to finish his treehouse?
+"""
+
+answer = """
+In Colbert’s storage, there are 200 wooden planks / 4 = <<200/4=50>>50 wooden planks.
+From his parents, there are 200 wooden planks / 2 = <<200/2=100>>100 wooden planks.
+So in total, Colbert has not had to buy 50 wooden planks from storage + 100 wooden planks from his parents + 20 wooden planks from his friends = <<50+100+20=170>>170 wooden planks.
+He therefore still needs to buy 200 needed wooden planks – 170 owned wooden planks = <<200-170=30>>30 wooden planks.
+#### 30
+"""
+
+id_orig = 1172
+id_shuffled = 1268
+
+question_annotated = """
+{name,Colbert} is building a treehouse out of wooden planks. The treehouse needs {total,200} wooden planks. A quarter of these planks come from {name,Colbert}’s storage, half of these planks come from {name,Colbert}’s parents, {friends,20} planks come from {name,Colbert}’s friends and he buys the rest from the store. How many planks of wood does he need to buy from the store to finish his treehouse?
+
+#init:
+- name = sample(names_male)
+- $total = range(40, 400, 4)
+- $friends = range(5, 60)
+
+#conditions:
+- divides(total, 4)
+- total - total//4 - total//2 - friends > 0
+
+#answer: total - total//4 - total//2 - friends
+"""
+
+answer_annotated = """
+In {name}’s storage, there are {total} wooden planks / 4 = <<{total}/4={total//4}>>{total//4} wooden planks.
+From his parents, there are {total} wooden planks / 2 = <<{total}/2={total//2}>>{total//2} wooden planks.
+So in total, {name} has not had to buy {total//4} wooden planks from storage + {total//2} wooden planks from his parents + {friends} wooden planks from his friends = <<{total//4}+{total//2}+{friends}={total//4+total//2+friends}>>{total//4+total//2+friends} wooden planks.
+He therefore still needs to buy {total} needed wooden planks – {total//4+total//2+friends} owned wooden planks = <<{total}-{total//4+total//2+friends}={total-total//4-total//2-friends}>>{total-total//4-total//2-friends} wooden planks.
+#### {total-total//4-total//2-friends}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

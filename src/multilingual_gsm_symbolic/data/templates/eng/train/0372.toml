@@ -1,0 +1,41 @@
+question = """
+Natalie's sister had 8 small diaries in her locker. Last summer she bought double the number of diaries she had and then lost 1/4 of what she had. How many diaries does Natalie's sister have now?
+"""
+
+answer = """
+Natalie's sister bought 2 * 8 = <<2*8=16>>16 diaries.
+So she then had 16 + 8 = <<16+8=24>>24 diaries.
+Afterwards, she loses 1/4 * 24 = <<24*1/4=6>>6 diaries.
+So, Natalie's sister now has 24 - 6 = <<24-6=18>>18 diaries.
+#### 18
+"""
+
+id_orig = 319
+id_shuffled = 372
+
+question_annotated = """
+{name,Natalie}'s sister had {a,8} small diaries in her locker. Last summer she bought {k_txt,double} the number of diaries she had and then lost {frac_txt,1/4} of what she had. How many diaries does {name,Natalie}'s sister have now?
+
+#init:
+- name = sample(names_female)
+- $a = range(2, 202, 2)
+- k_txt, k = sample([("double", 2), ("triple", 3)])
+- frac_txt, d = sample([("1/2", 2), ("1/3", 3), ("1/4", 4), ("1/5", 5)])
+
+#conditions:
+- divides(a * (k + 1), d)
+
+#answer: a + a*k - a*(k + 1)//d
+"""
+
+answer_annotated = """
+{name}'s sister bought {k} * {a} = <<{k}*{a}={k*a}>>{k*a} diaries.
+So she then had {k*a} + {a} = <<{k*a}+{a}={k*a+a}>>{k*a+a} diaries.
+Afterwards, she loses {frac_txt} * {k*a+a} = <<{k*a+a}*{frac_txt}={(k*a+a)//d}>>{(k*a+a)//d} diaries.
+So, {name}'s sister now has {k*a+a} - {(k*a+a)//d} = <<{k*a+a}-{(k*a+a)//d}={k*a+a-(k*a+a)//d}>>{k*a+a-(k*a+a)//d} diaries.
+#### {a + a*k - a*(k + 1)//d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

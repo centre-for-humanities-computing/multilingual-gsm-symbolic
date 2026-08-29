@@ -1,0 +1,49 @@
+question = """
+A group of 6 students organized a fundraiser to go to Nicaragua for the summer. For them to go on the trip, each of them needs at least $450. On top of that, they need $3000 for their miscellaneous collective expenses. On the first day of their fundraiser, they receive $600. On the second day, they receive $900, and on the third day, they receive $400. For the next 4 days, they receive only half of what they raised on the first 3 days. How much more money does each person need to raise for them to reach their goal?
+"""
+
+answer = """
+All together, they need to raise ($450 x 6) + $3000 = $<<450*6+3000=5700>>5700
+The raised $600 + $900 + $400 = $<<600+900+400=1900>>1900 the first 3 days.
+For the next 4 days, they only raised $1900/2 = $<<1900/2=950>>950
+In the week, they raised $1900 + $950 = $<<1900+950=2850>>2850
+They still need $5700 - $2850 = $<<5700-2850=2850>>2850
+Each person still needs $2850/6 = $<<2850/6=475>>475
+#### 475
+"""
+
+id_orig = 2067
+id_shuffled = 2385
+
+question_annotated = """
+A group of {n,6} students organized a fundraiser to go to Nicaragua for the summer. For them to go on the trip, each of them needs at least ${per,450}. On top of that, they need ${exp,3000} for their miscellaneous collective expenses. On the first day of their fundraiser, they receive ${d1,600}. On the second day, they receive ${d2,900}, and on the third day, they receive ${d3,400}. For the next 4 days, they receive only half of what they raised on the first 3 days. How much more money does each person need to raise for them to reach their goal?
+
+#init:
+- $n = range(2, 8)
+- $per = range(90, 990, 90)
+- $exp = range(1000, 3500, 500)
+- $d1 = range(200, 1200, 200)
+- $d2 = range(100, 1000, 100)
+- $d3 = range(200, 1200, 200)
+
+#conditions:
+- divides(d1 + d2 + d3, 2)
+- divides(per*n + exp - (d1 + d2 + d3 + (d1 + d2 + d3)//2), n)
+- per*n + exp > d1 + d2 + d3 + (d1 + d2 + d3)//2
+
+#answer: (per*n + exp - (d1 + d2 + d3 + (d1 + d2 + d3)//2)) // n
+"""
+
+answer_annotated = """
+All together, they need to raise (${per} x {n}) + ${exp} = $<<{per}*{n}+{exp}={per*n+exp}>>{per*n+exp}
+The raised ${d1} + ${d2} + ${d3} = $<<{d1}+{d2}+{d3}={d1+d2+d3}>>{d1+d2+d3} the first 3 days.
+For the next 4 days, they only raised ${d1+d2+d3}/2 = $<<{d1+d2+d3}/2={(d1+d2+d3)//2}>>{(d1+d2+d3)//2}
+In the week, they raised ${d1+d2+d3} + ${(d1+d2+d3)//2} = $<<{d1+d2+d3}+{(d1+d2+d3)//2}={d1+d2+d3+(d1+d2+d3)//2}>>{d1+d2+d3+(d1+d2+d3)//2}
+They still need ${per*n+exp} - ${d1+d2+d3+(d1+d2+d3)//2} = $<<{per*n+exp}-{d1+d2+d3+(d1+d2+d3)//2}={per*n+exp-(d1+d2+d3+(d1+d2+d3)//2)}>>{per*n+exp-(d1+d2+d3+(d1+d2+d3)//2)}
+Each person still needs ${per*n+exp-(d1+d2+d3+(d1+d2+d3)//2)}/{n} = $<<{per*n+exp-(d1+d2+d3+(d1+d2+d3)//2)}/{n}={(per*n+exp-(d1+d2+d3+(d1+d2+d3)//2))//n}>>{(per*n+exp-(d1+d2+d3+(d1+d2+d3)//2))//n}
+#### {(per*n + exp - (d1 + d2 + d3 + (d1 + d2 + d3)//2)) // n}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

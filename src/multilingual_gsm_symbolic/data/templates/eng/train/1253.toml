@@ -1,0 +1,47 @@
+question = """
+Tony's dad is very strict about the washing machine and family members are only allowed to wash 50 total ounces of clothing at a time. Tony doesn't want to break the rules, so he weighs his clothes and finds that a pair of socks weighs 2 ounces, underwear weighs 4 ounces, a shirt weighs 5 ounces, shorts weigh 8 ounces, and pants weigh 10 ounces. Tony is washing a pair of pants, 2 shirts, a pair of shorts, and 3 pairs of socks. How many more pairs of underwear can he add to the wash and not break the rule?
+"""
+
+answer = """
+He is washing 10 ounces of shirts because 2 x 5 = <<2*5=10>>10
+He is washing 6 ounces of socks because 3 x 2 = <<3*2=6>>6
+He is already washing 34 ounces of clothes because 10 + 10 + 8 + 6 = <<10+10+8+6=34>>34
+He can wash 16 more ounces because 50 - 34 = <<50-34=16>>16
+He can wash 4 pairs of underwear because 16 / 4 = <<16/4=4>>4
+#### 4
+"""
+
+id_orig = 1157
+id_shuffled = 1253
+
+question_annotated = """
+{name,Tony}'s dad is very strict about the washing machine and family members are only allowed to wash {lim,50} total ounces of clothing at a time. {name,Tony} doesn't want to break the rules, so he weighs his clothes and finds that a pair of socks weighs {sock,2} ounces, underwear weighs {uw,4} ounces, a shirt weighs {shirt,5} ounces, shorts weigh {shorts,8} ounces, and pants weigh {pants,10} ounces. {name,Tony} is washing a pair of pants, 2 shirts, a pair of shorts, and 3 pairs of socks. How many more pairs of underwear can he add to the wash and not break the rule?
+
+#init:
+- name = sample(names_male)
+- $lim = range(40, 95)
+- $sock = range(1, 4)
+- $uw = range(2, 7)
+- $shirt = range(2, 6)
+- $shorts = range(3, 11)
+- $pants = range(5, 13)
+
+#conditions:
+- lim > pants + 2*shirt + shorts + 3*sock
+- divides(lim - (pants + 2*shirt + shorts + 3*sock), uw)
+
+#answer: (lim - (pants + 2*shirt + shorts + 3*sock)) // uw
+"""
+
+answer_annotated = """
+He is washing {2*shirt} ounces of shirts because 2 x {shirt} = <<2*{shirt}={2*shirt}>>{2*shirt}
+He is washing {3*sock} ounces of socks because 3 x {sock} = <<3*{sock}={3*sock}>>{3*sock}
+He is already washing {pants + 2*shirt + shorts + 3*sock} ounces of clothes because {pants} + {2*shirt} + {shorts} + {3*sock} = <<{pants}+{2*shirt}+{shorts}+{3*sock}={pants + 2*shirt + shorts + 3*sock}>>{pants + 2*shirt + shorts + 3*sock}
+He can wash {lim - (pants + 2*shirt + shorts + 3*sock)} more ounces because {lim} - {pants + 2*shirt + shorts + 3*sock} = <<{lim}-{pants + 2*shirt + shorts + 3*sock}={lim - (pants + 2*shirt + shorts + 3*sock)}>>{lim - (pants + 2*shirt + shorts + 3*sock)}
+He can wash {(lim - (pants + 2*shirt + shorts + 3*sock)) // uw} pairs of underwear because {lim - (pants + 2*shirt + shorts + 3*sock)} / {uw} = <<{lim - (pants + 2*shirt + shorts + 3*sock)}/{uw}={(lim - (pants + 2*shirt + shorts + 3*sock)) // uw}>>{(lim - (pants + 2*shirt + shorts + 3*sock)) // uw}
+#### {(lim - (pants + 2*shirt + shorts + 3*sock)) // uw}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

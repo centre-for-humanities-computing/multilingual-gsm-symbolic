@@ -1,0 +1,41 @@
+question = """
+Wendi brought home 4 chickens.  After a few days, she brought home enough additional chickens to double the number of chickens she owned.  Then, a neighbor's dog ate one of her chickens.  Finally, Wendi found an additional 4 less than ten chickens and brought them home too.  After this, how many chickens does Wendi have?
+"""
+
+answer = """
+Wendi doubled her number of chickens from 4 to 4*2=<<4*2=8>>8 chickens.
+After a dog ate one of the chickens, 8-1=<<8-1=7>>7 chickens remained.
+4 less than 10 is 10-4=<<10-4=6>>6.
+Therefore, Wendi added another 4 less than ten chickens for a total of 7+6=13 chickens.
+#### 13
+"""
+
+id_orig = 953
+id_shuffled = 1049
+
+question_annotated = """
+{name,Wendi} brought home {c,4} chickens.  After a few days, she brought home enough additional chickens to double the number of chickens she owned.  Then, a neighbor's dog ate {eaten_txt,one} of her chickens.  Finally, {name,Wendi} found an additional {f,4} less than ten chickens and brought them home too.  After this, how many chickens does {name,Wendi} have?
+
+#init:
+- name = sample(names_female)
+- eaten_txt, eaten_val = sample([("one", 1), ("two", 2)])
+- $c = range(2, 30)
+- $f = range(2, 10)
+
+#conditions:
+- c * 2 > eaten_val
+
+#answer: c * 2 - eaten_val + 10 - f
+"""
+
+answer_annotated = """
+{name} doubled her number of chickens from {c} to {c}*2=<<{c}*2={c*2}>>{c*2} chickens.
+After a dog ate {eaten_txt} of the chickens, {c*2}-{eaten_val}=<<{c*2}-{eaten_val}={c*2-eaten_val}>>{c*2-eaten_val} chickens remained.
+{f} less than 10 is 10-{f}=<<10-{f}={10-f}>>{10-f}.
+Therefore, {name} added another {f} less than ten chickens for a total of {c*2-eaten_val}+{10-f}={c*2-eaten_val+10-f} chickens.
+#### {c*2-eaten_val+10-f}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

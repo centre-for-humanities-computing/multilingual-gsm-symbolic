@@ -1,0 +1,54 @@
+question = """
+The lunchroom is full of students: 40% are girls and the remainder are boys. There are 2 monitors for every 15 students. There are 8 monitors. Every boy drinks, on average, 1 carton of milk, and every girl drinks, on average, 2 cartons of milk. How many total cartons of milk are consumed by the students in the lunchroom?
+"""
+
+answer = """
+There is 1 monitor for every fifteen students because 30 / 2 = <<30/2=15>>15
+There are 120 students because 8 x 15 = <<8*15=120>>120
+60% of the lunchroom is boys because 100 - 40 = <<100-40=60>>60
+There are 72 boys because 120 x .6 = <<120*.6=72>>72
+There are 48 girls because 120 x .4 = <<120*.4=48>>48
+The boys drink 72 cartons of milk because 72 x 1 = <<72*1=72>>72
+The girls drink 96 cartons of milk because 48 x 2 = <<48*2=96>>96
+They drink 168 cartons of milk because 72 + 96 = <<72+96=168>>168
+#### 168
+"""
+
+id_orig = 2937
+id_shuffled = 3499
+
+question_annotated = """
+The lunchroom is full of students: {gpct,40}% are girls and the remainder are boys. There are {m,2} monitors for every {g,15} students. There are {nmon,8} monitors. Every boy drinks, on average, {bm,1} carton of milk, and every girl drinks, on average, {gm,2} cartons of milk. How many total cartons of milk are consumed by the students in the lunchroom?
+
+#init:
+- $gpct = range(10, 100, 10)
+- $m = range(2, 7)
+- $g = range(15, 16)
+- $nmon = range(2, 20)
+- $bm = range(1, 4)
+- $gm = range(1, 5)
+
+#conditions:
+- gpct != 30
+- gpct != 70
+- divides(nmon * g * gpct, 100)
+- divides(nmon * g * (100 - gpct), 100)
+
+#answer: nmon*g*((100-gpct)*bm+gpct*gm)//100
+"""
+
+answer_annotated = """
+There is 1 monitor for every fifteen students because {m*g} / {m} = <<{m*g}/{m}={g}>>{g}
+There are {nmon*g} students because {nmon} x {g} = <<{nmon}*{g}={nmon*g}>>{nmon*g}
+{100-gpct}% of the lunchroom is boys because 100 - {gpct} = <<100-{gpct}={100-gpct}>>{100-gpct}
+There are {nmon*g*(100-gpct)//100} boys because {nmon*g} x .{(100-gpct)//10} = <<{nmon*g}*.{(100-gpct)//10}={nmon*g*(100-gpct)//100}>>{nmon*g*(100-gpct)//100}
+There are {nmon*g*gpct//100} girls because {nmon*g} x .{gpct//10} = <<{nmon*g}*.{gpct//10}={nmon*g*gpct//100}>>{nmon*g*gpct//100}
+The boys drink {nmon*g*(100-gpct)//100*bm} cartons of milk because {nmon*g*(100-gpct)//100} x {bm} = <<{nmon*g*(100-gpct)//100}*{bm}={nmon*g*(100-gpct)//100*bm}>>{nmon*g*(100-gpct)//100*bm}
+The girls drink {nmon*g*gpct//100*gm} cartons of milk because {nmon*g*gpct//100} x {gm} = <<{nmon*g*gpct//100}*{gm}={nmon*g*gpct//100*gm}>>{nmon*g*gpct//100*gm}
+They drink {nmon*g*((100-gpct)*bm+gpct*gm)//100} cartons of milk because {nmon*g*(100-gpct)//100*bm} + {nmon*g*gpct//100*gm} = <<{nmon*g*(100-gpct)//100*bm}+{nmon*g*gpct//100*gm}={nmon*g*((100-gpct)*bm+gpct*gm)//100}>>{nmon*g*((100-gpct)*bm+gpct*gm)//100}
+#### {nmon*g*((100-gpct)*bm+gpct*gm)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

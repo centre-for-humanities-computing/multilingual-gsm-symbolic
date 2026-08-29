@@ -1,0 +1,43 @@
+question = """
+Andy is checking to see if all the cars in the parking lot paid for their parking. 75% of the cars have valid tickets, and 1/5th that number have permanent parking passes. If there are 300 cars in the parking lot, how many people tried to park in the lot without paying?
+"""
+
+answer = """
+First find how many cars have valid tickets: 75% * 300 cars = <<75*.01*300=225>>225 cars
+Then find the percentage of cars with parking passes: 75% / 5 = 15%
+Then multiply that number by the total number of cars to find the number with parking passes: 15% * 300 cars = <<15*.01*300=45>>45 cars
+Then subtract all the cars with valid forms of parking to find the number parked illegally: 300 cars - 225 cars - 45 cars = <<300-225-45=30>>30 cars
+#### 30
+"""
+
+id_orig = 1762
+id_shuffled = 2067
+
+question_annotated = """
+{name,Andy} is checking to see if all the cars in the parking lot paid for their parking. {v,75}% of the cars have valid tickets, and 1/5th that number have permanent parking passes. If there are {n,300} cars in the parking lot, how many people tried to park in the lot without paying?
+
+#init:
+- name = sample(names_male)
+- $v = range(5, 85, 5)
+- $n = range(100, 2100, 100)
+
+#conditions:
+- divides(v*n, 100)
+- divides(v*n, 500)
+- int(v*.01*n) == v*n//100
+- int(v//5*.01*n) == v*n//500
+
+#answer: n - v*n//100 - v*n//500
+"""
+
+answer_annotated = """
+First find how many cars have valid tickets: {v}% * {n} cars = <<{v}*.01*{n}={v*n//100}>>{v*n//100} cars
+Then find the percentage of cars with parking passes: {v}% / 5 = {v//5}%
+Then multiply that number by the total number of cars to find the number with parking passes: {v//5}% * {n} cars = <<{v//5}*.01*{n}={v*n//500}>>{v*n//500} cars
+Then subtract all the cars with valid forms of parking to find the number parked illegally: {n} cars - {v*n//100} cars - {v*n//500} cars = <<{n}-{v*n//100}-{v*n//500}={n-v*n//100-v*n//500}>>{n-v*n//100-v*n//500} cars
+#### {n - v*n//100 - v*n//500}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

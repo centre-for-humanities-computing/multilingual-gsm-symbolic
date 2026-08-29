@@ -1,0 +1,42 @@
+question = """
+Martha is making centerpieces for her Thanksgiving dinner. There are six centerpieces, and each centerpiece uses 8 roses, twice as many orchids as roses, and a certain number of lilies. If Martha wants to spend $2700 total, and each flower costs $15, how many lilies will she put in each centerpiece?
+"""
+
+answer = """
+First figure out how many total flowers Martha is going to buy by dividing her total spending by the price per flower: $2700 / $15/flower = <<2700/15=180>>180 flowers
+Now figure out how many flowers are in each centerpiece by dividing the total number of flowers by the number of centerpieces: 180 flowers / 6 centerpieces = <<180/6=30>>30 flowers / centerpiece
+Now figure out how many orchids are in each centerpiece by multiplying the number of roses per centerpiece by 2: 8 roses/centerpiece * 2 = <<8*2=16>>16 orchids/centerpiece
+Now subtract the number of roses and orchids per centerpiece from the total number of flowers per centerpiece to find the number of lilies per centerpiece: 30 flowers - 16 orchids - 8 roses = <<30-16-8=6>>6 lilies
+#### 6
+"""
+
+id_orig = 1103
+id_shuffled = 1199
+
+question_annotated = """
+{name,Martha} is making centerpieces for her Thanksgiving dinner. There are six centerpieces, and each centerpiece uses {r,8} roses, twice as many orchids as roses, and a certain number of lilies. If {name,Martha} wants to spend ${total,2700} total, and each flower costs ${price,15}, how many lilies will she put in each centerpiece?
+
+#init:
+- name = sample(names_female)
+- $r = range(3, 13)
+- $total = range(1500, 6000, 50)
+- $price = range(10, 35, 5)
+
+#conditions:
+- divides(total, price * 6)
+- total // (price * 6) - 3 * r > 0
+
+#answer: total//price//6 - r*2 - r
+"""
+
+answer_annotated = """
+First figure out how many total flowers {name} is going to buy by dividing her total spending by the price per flower: ${total} / ${price}/flower = <<{total}/{price}={total//price}>>{total//price} flowers
+Now figure out how many flowers are in each centerpiece by dividing the total number of flowers by the number of centerpieces: {total//price} flowers / 6 centerpieces = <<{total//price}/6={total//price//6}>>{total//price//6} flowers / centerpiece
+Now figure out how many orchids are in each centerpiece by multiplying the number of roses per centerpiece by 2: {r} roses/centerpiece * 2 = <<{r}*2={r*2}>>{r*2} orchids/centerpiece
+Now subtract the number of roses and orchids per centerpiece from the total number of flowers per centerpiece to find the number of lilies per centerpiece: {total//price//6} flowers - {r*2} orchids - {r} roses = <<{total//price//6}-{r*2}-{r}={total//price//6-r*2-r}>>{total//price//6-r*2-r} lilies
+#### {total//price//6 - r*2 - r}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

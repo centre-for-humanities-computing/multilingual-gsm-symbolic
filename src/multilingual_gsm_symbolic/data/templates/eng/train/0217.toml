@@ -1,0 +1,52 @@
+question = """
+Apple sold 100 iPhones at their New York store today for an average cost of $1000. They also sold 20 iPads for an average cost of $900 and 80 Apple TVs for an average cost of $200. What was the average cost across all products sold today?
+"""
+
+answer = """
+The sales for iPhones were 100 iPhones * $1000 per iPhone on average = $<<100*1000=100000>>100,000
+The sales for iPads today were 20 iPads * $900 per iPad = $<<20*900=18000>>18,000
+The sales for Apple TV’s today were 80 * $200 = $<<80*200=16000>>16,000
+The total sales for Apple at their New York store today was $100,000 + $18,000 + $16,000 = $<<100000+18000+16000=134000>>134,000
+The total number of products sold was 100 + 20 + 80 = <<100+20+80=200>>200
+The average cost per product sold was $134,000 total sales / 200 total products = $<<134000/200=670>>670
+#### 670
+"""
+
+id_orig = 192
+id_shuffled = 217
+
+question_annotated = """
+Apple sold {a,100} iPhones at their {city,New York} store today for an average cost of ${p1,1000}. They also sold {b,20} iPads for an average cost of ${p2,900} and {c,80} Apple TVs for an average cost of ${p3,200}. What was the average cost across all products sold today?
+
+#init:
+- city = sample(cities)
+- $a = range(100, 101)
+- $p1 = range(500, 1500, 100)
+- $b = range(20, 21)
+- $p2 = range(400, 1400, 100)
+- $c = range(80, 81)
+- $p3 = range(100, 1100, 100)
+
+#conditions:
+- divides(a * p1, 1000)
+- divides(b * p2, 1000)
+- divides(c * p3, 1000)
+- a * p1 + b * p2 + c * p3 < 1000000
+- divides(a * p1 + b * p2 + c * p3, a + b + c)
+
+#answer: (a * p1 + b * p2 + c * p3) // (a + b + c)
+"""
+
+answer_annotated = """
+The sales for iPhones were {a} iPhones * ${p1} per iPhone on average = $<<{a}*{p1}={a*p1}>>{a*p1//1000},000
+The sales for iPads today were {b} iPads * ${p2} per iPad = $<<{b}*{p2}={b*p2}>>{b*p2//1000},000
+The sales for Apple TV’s today were {c} * ${p3} = $<<{c}*{p3}={c*p3}>>{c*p3//1000},000
+The total sales for Apple at their {city} store today was ${a*p1//1000},000 + ${b*p2//1000},000 + ${c*p3//1000},000 = $<<{a*p1}+{b*p2}+{c*p3}={a*p1+b*p2+c*p3}>>{(a*p1+b*p2+c*p3)//1000},000
+The total number of products sold was {a} + {b} + {c} = <<{a}+{b}+{c}={a+b+c}>>{a+b+c}
+The average cost per product sold was ${(a*p1+b*p2+c*p3)//1000},000 total sales / {a+b+c} total products = $<<{a*p1+b*p2+c*p3}/{a+b+c}={(a*p1+b*p2+c*p3)//(a+b+c)}>>{(a*p1+b*p2+c*p3)//(a+b+c)}
+#### {(a*p1+b*p2+c*p3)//(a+b+c)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,44 @@
+question = """
+Karen packs peanut butter sandwiches in her daughter's lunch 2 randomly chosen days of the week. The other 3 school days, she packs a ham sandwich. She packs a piece of cake on one randomly chosen day and cookies the other four days. What is the probability, expressed as a percentage, that Karen packs a ham sandwich and cake on the same day?
+"""
+
+answer = """
+There are 5 school days in a week, so the probability Karen packs a ham sandwich is 3/5 and the probability she packs cake is 1/5
+Multiply the two probabilities to find the probability both things happen: 3/5 * 1/5 = 3/25
+Now divide 3 by 25 and multiply by 100% to express this probability as a percentage: 3/25 * 100% = 12%
+#### 12
+"""
+
+id_orig = 2472
+id_shuffled = 2951
+
+question_annotated = """
+{name,Karen} packs peanut butter sandwiches in her daughter's lunch {pb,2} randomly chosen days of the week. The other {ham,3} school days, she packs a ham sandwich. She packs a piece of cake on {cake_txt,one} randomly chosen day and cookies the other {cookie_txt,four} days. What is the probability, expressed as a percentage, that {name,Karen} packs a ham sandwich and cake on the same day?
+
+#init:
+- name = sample(names_female)
+- $pb = range(2, 19)
+- $ham = range(2, 19)
+- cake_txt, cake_val = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- cookie_txt, cookie_val = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12), ("thirteen", 13), ("fourteen", 14), ("fifteen", 15), ("sixteen", 16), ("seventeen", 17), ("eighteen", 18), ("nineteen", 19), ("twenty", 20)])
+
+#conditions:
+- divides(pb + ham, 5)
+- pb + ham < 26
+- cookie_val == pb + ham - cake_val
+- cookie_val >= 2
+- divides(ham * cake_val * 100, (pb + ham) * (pb + ham))
+
+#answer: ham * cake_val * 100 // ((pb + ham) * (pb + ham))
+"""
+
+answer_annotated = """
+There are {pb + ham} school days in a week, so the probability {name} packs a ham sandwich is {ham}/{pb + ham} and the probability she packs cake is {cake_val}/{pb + ham}
+Multiply the two probabilities to find the probability both things happen: {ham}/{pb + ham} * {cake_val}/{pb + ham} = {ham * cake_val}/{(pb + ham) * (pb + ham)}
+Now divide {ham * cake_val} by {(pb + ham) * (pb + ham)} and multiply by 100% to express this probability as a percentage: {ham * cake_val}/{(pb + ham) * (pb + ham)} * 100% = {ham * cake_val * 100 // ((pb + ham) * (pb + ham))}%
+#### {ham * cake_val * 100 // ((pb + ham) * (pb + ham))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

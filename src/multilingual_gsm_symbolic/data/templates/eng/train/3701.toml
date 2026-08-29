@@ -1,0 +1,42 @@
+question = """
+An airplane was flying from California to Virginia.  The flight started with 124 passengers.  They made a layover in Texas.  58 passengers got off and 24 got on.  From there, they flew to North Carolina, where 47 people got off and 14 got on, before flying to Virginia.  There were also a total of 10 crew members on board for the entire flight.  How many people landed in Virginia?
+"""
+
+answer = """
+They started with 124 passengers. 58 got off and 24 got on so 124-58+24 = <<124-58+24=90>>90
+90 people flew to NC where 47 passengers got off and 14 got on. This flight now had 90-47+14 = <<90-47+14=57>>57
+There were also 10 crew members so 57+10 = 67 passengers landed in Virginia
+#### 67
+"""
+
+id_orig = 3116
+id_shuffled = 3701
+
+question_annotated = """
+An airplane was flying from California to Virginia.  The flight started with {p,124} passengers.  They made a layover in Texas.  {x1,58} passengers got off and {y1,24} got on.  From there, they flew to North Carolina, where {x2,47} people got off and {y2,14} got on, before flying to Virginia.  There were also a total of {c,10} crew members on board for the entire flight.  How many people landed in Virginia?
+
+#init:
+- $p = range(112, 137, 4)
+- $x1 = range(46, 71, 4)
+- $y1 = range(16, 41, 8)
+- $x2 = range(35, 60, 4)
+- $y2 = range(8, 22, 2)
+- $c = range(8, 13)
+
+#conditions:
+- p - x1 > 0
+- p - x1 + y1 - x2 > 0
+
+#answer: p - x1 + y1 - x2 + y2 + c
+"""
+
+answer_annotated = """
+They started with {p} passengers. {x1} got off and {y1} got on so {p}-{x1}+{y1} = <<{p}-{x1}+{y1}={p-x1+y1}>>{p-x1+y1}
+{p-x1+y1} people flew to NC where {x2} passengers got off and {y2} got on. This flight now had {p-x1+y1}-{x2}+{y2} = <<{p-x1+y1}-{x2}+{y2}={p-x1+y1-x2+y2}>>{p-x1+y1-x2+y2}
+There were also {c} crew members so {p-x1+y1-x2+y2}+{c} = {p-x1+y1-x2+y2+c} passengers landed in Virginia
+#### {p - x1 + y1 - x2 + y2 + c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

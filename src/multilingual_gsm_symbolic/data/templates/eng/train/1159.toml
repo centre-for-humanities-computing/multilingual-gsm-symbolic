@@ -1,0 +1,38 @@
+question = """
+Nina made a two-layer cake and a dozen cupcakes for her friend’s birthday party. Each layer of cake takes the same amount of sugar to make as a dozen cupcakes. Nina used 720 grams of sugar to bake everything. How many grams of sugar are in one cupcake?
+"""
+
+answer = """
+Nina made 2 cake layers which were equal to 2 x 12 = <<2*12=24>>24 cupcakes.
+She made the equivalent of 24 + 12 = <<24+12=36>>36 cupcakes in all.
+Thus, there are 720 / 36 = <<720/36=20>>20 grams of sugar in a cupcake.
+#### 20
+"""
+
+id_orig = 1063
+id_shuffled = 1159
+
+question_annotated = """
+{name,Nina} made a {layers_txt,two}-layer cake and a dozen cupcakes for her friend’s birthday party. Each layer of cake takes the same amount of sugar to make as a dozen cupcakes. {name,Nina} used {sugar,720} grams of sugar to bake everything. How many grams of sugar are in one cupcake?
+
+#init:
+- name = sample(names_female)
+- layers_txt, layers_val = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $sugar = range(120, 6000, 12)
+
+#conditions:
+- divides(sugar, layers_val * 12 + 12)
+
+#answer: sugar // (layers_val * 12 + 12)
+"""
+
+answer_annotated = """
+{name} made {layers_val} cake layers which were equal to {layers_val} x 12 = <<{layers_val}*12={layers_val*12}>>{layers_val*12} cupcakes.
+She made the equivalent of {layers_val*12} + 12 = <<{layers_val*12}+12={layers_val*12+12}>>{layers_val*12+12} cupcakes in all.
+Thus, there are {sugar} / {layers_val*12+12} = <<{sugar}/{layers_val*12+12}={sugar//(layers_val*12+12)}>>{sugar//(layers_val*12+12)} grams of sugar in a cupcake.
+#### {sugar//(layers_val*12+12)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

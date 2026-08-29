@@ -1,0 +1,41 @@
+question = """
+A book has 8 chapters. Beth has read 2 chapters in 3 hours. If she continues reading at that rate, in how many hours will she be able to finish reading the remaining chapters?
+"""
+
+answer = """
+Beth still needs to read 8 - 2 = <<8-2=6>>6 chapters.
+She can read 1 chapter in 3/2 = <<1.5=1.5>>1.5 hours.
+Therefore, she will be able to finish reading the remaining chapters in 1.5 x 6 = <<1.5*6=9>>9 hours.
+#### 9
+"""
+
+id_orig = 1653
+id_shuffled = 1778
+
+question_annotated = """
+A book has {total,8} chapters. {name,Beth} has read {read,2} chapters in {hours,3} hours. If she continues reading at that rate, in how many hours will she be able to finish reading the remaining chapters?
+
+#init:
+- name = sample(names_female)
+- $total = range(4, 62, 2)
+- $read = range(2, 30, 2)
+- $hours = range(1, 61)
+
+#conditions:
+- total > read
+- is_int(2 * hours / read)
+- not is_int(hours / read)
+
+#answer: int(hours * (total - read) / read)
+"""
+
+answer_annotated = """
+{name} still needs to read {total} - {read} = <<{total}-{read}={total-read}>>{total-read} chapters.
+She can read 1 chapter in {hours}/{read} = <<{hours/read}={hours/read}>>{hours/read} hours.
+Therefore, she will be able to finish reading the remaining chapters in {hours/read} x {total-read} = <<{hours/read}*{total-read}={int(hours*(total-read)/read)}>>{int(hours*(total-read)/read)} hours.
+#### {int(hours*(total-read)/read)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

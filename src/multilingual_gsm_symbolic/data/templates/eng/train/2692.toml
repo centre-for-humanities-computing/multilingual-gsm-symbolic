@@ -1,0 +1,40 @@
+question = """
+Olivia's insurance premium starts out at $50/month. It goes up 10% for every accident and $5/month for every ticket. If she gets in one accident and gets 3 tickets, what's her new insurance premium?
+"""
+
+answer = """
+First find the increase due to the accident: $50 * 10% = $<<50*10*.01=5>>5
+Then find the total increase due to the tickets: $5/ticket * 3 tickets = $<<5*3=15>>15
+Then add both increases to the base price to find the new price: $50 + $5 + $15 = $<<50+5+15=70>>70
+#### 70
+"""
+
+id_orig = 2344
+id_shuffled = 2692
+
+question_annotated = """
+{name,Olivia}'s insurance premium starts out at ${base,50}/month. It goes up {rate,10}% for every accident and ${fee,5}/month for every ticket. If she gets in one accident and gets {t,3} tickets, what's her new insurance premium?
+
+#init:
+- name = sample(names_female)
+- $base = range(20, 210, 10)
+- $rate = range(2, 12, 2)
+- $fee = range(2, 22)
+- $t = range(1, 6)
+
+#conditions:
+- divides(base * rate, 100)
+
+#answer: base + base*rate//100 + fee*t
+"""
+
+answer_annotated = """
+First find the increase due to the accident: ${base} * {rate}% = $<<{base}*{rate}*.01={base*rate//100}>>{base*rate//100}
+Then find the total increase due to the tickets: ${fee}/ticket * {t} tickets = $<<{fee}*{t}={fee*t}>>{fee*t}
+Then add both increases to the base price to find the new price: ${base} + ${base*rate//100} + ${fee*t} = $<<{base}+{base*rate//100}+{fee*t}={base+base*rate//100+fee*t}>>{base+base*rate//100+fee*t}
+#### {base+base*rate//100+fee*t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

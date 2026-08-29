@@ -1,0 +1,52 @@
+question = """
+Maria is a saleswoman at a flower shop. On the first day, she sold 30 tulips and 20 roses. The next day, she doubled the previous day's sales. On the third day, she sold only 10% of the tulips sold on the second day and 16 roses. The price of one tulip is $2 and one rose is $3. How much did Maria earn over these three days?
+"""
+
+answer = """
+On the second day, Maria sold 30 * 2 = <<30*2=60>>60 tulips.
+She also sold 20 * 2 = <<20*2=40>>40 roses the second day.
+On the third day, Maria sold only 10/100 * 60 = <<10/100*60=6>>6 tulips.
+Over these three days Maria sold 30 + 60 + 6 = <<30+60+6=96>>96 tulips.
+She also sold 20 + 40 + 16 = <<20+40+16=76>>76 roses.
+So on the tulips Maria earned 96 * 2 = $<<96*2=192>>192.
+And on roses Maria earned 76 * 3 = $<<76*3=228>>228.
+In total, over these three days, Maria has earned 192 + 228 = $<<192+228=420>>420.
+#### 420
+"""
+
+id_orig = 1413
+id_shuffled = 1520
+
+question_annotated = """
+{name,Maria} is a saleswoman at a flower shop. On the first day, she sold {t1,30} tulips and {r1,20} roses. The next day, she doubled the previous day's sales. On the third day, she sold only {pct,10}% of the tulips sold on the second day and {r3,16} roses. The price of one tulip is ${pt,2} and one rose is ${pr,3}. How much did {name,Maria} earn over these three days?
+
+#init:
+- name = sample(names_female)
+- $t1 = range(10, 110, 10)
+- $r1 = range(10, 60, 10)
+- $pct = range(10, 60, 10)
+- $r3 = range(5, 55, 5)
+- $pt = range(1, 6)
+- $pr = range(1, 6)
+
+#conditions:
+- divides(pct*2*t1, 100)
+
+#answer: (t1+t1*2+pct*2*t1//100)*pt+(r1+r1*2+r3)*pr
+"""
+
+answer_annotated = """
+On the second day, {name} sold {t1} * 2 = <<{t1}*2={t1*2}>>{t1*2} tulips.
+She also sold {r1} * 2 = <<{r1}*2={r1*2}>>{r1*2} roses the second day.
+On the third day, {name} sold only {pct}/100 * {t1*2} = <<{pct}/100*{t1*2}={pct*2*t1//100}>>{pct*2*t1//100} tulips.
+Over these three days {name} sold {t1} + {t1*2} + {pct*2*t1//100} = <<{t1}+{t1*2}+{pct*2*t1//100}={t1+t1*2+pct*2*t1//100}>>{t1+t1*2+pct*2*t1//100} tulips.
+She also sold {r1} + {r1*2} + {r3} = <<{r1}+{r1*2}+{r3}={r1+r1*2+r3}>>{r1+r1*2+r3} roses.
+So on the tulips {name} earned {t1+t1*2+pct*2*t1//100} * {pt} = $<<{t1+t1*2+pct*2*t1//100}*{pt}={(t1+t1*2+pct*2*t1//100)*pt}>>{(t1+t1*2+pct*2*t1//100)*pt}.
+And on roses {name} earned {r1+r1*2+r3} * {pr} = $<<{r1+r1*2+r3}*{pr}={(r1+r1*2+r3)*pr}>>{(r1+r1*2+r3)*pr}.
+In total, over these three days, {name} has earned {(t1+t1*2+pct*2*t1//100)*pt} + {(r1+r1*2+r3)*pr} = $<<{(t1+t1*2+pct*2*t1//100)*pt}+{(r1+r1*2+r3)*pr}={(t1+t1*2+pct*2*t1//100)*pt+(r1+r1*2+r3)*pr}>>{(t1+t1*2+pct*2*t1//100)*pt+(r1+r1*2+r3)*pr}.
+#### {(t1+t1*2+pct*2*t1//100)*pt+(r1+r1*2+r3)*pr}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

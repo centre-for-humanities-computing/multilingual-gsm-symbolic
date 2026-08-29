@@ -1,0 +1,42 @@
+question = """
+When Betty makes cheesecake, she sweetens it with a ratio of one part sugar to four parts cream cheese, and she flavors it with one teaspoon of vanilla for every two cups of cream cheese. For every one teaspoon of vanilla, she uses two eggs. She used two cups of sugar in her latest cheesecake. How many eggs did she use?
+"""
+
+answer = """
+Betty used 2 cups of sugar in her cheesecake, so she used 2 * 1 = <<2*1=2>>2 times her ratio.
+Thus, she used 2 * 4 = <<2*4=8>>8 cups of cream cheese.
+She uses 1 teaspoon of vanilla for 2 cups of cream cheese, so she used 8 / 2 = 4 teaspoons of vanilla.
+For each teaspoon of vanilla, she uses 2 eggs, so she used 2 * 4 = <<2*4=8>>8 eggs.
+#### 8
+"""
+
+id_orig = 1034
+id_shuffled = 1130
+
+question_annotated = """
+When {name,Betty} makes cheesecake, she sweetens it with a ratio of one part sugar to {cr_txt,four} parts cream cheese, and she flavors it with one teaspoon of vanilla for every {cv_txt,two} cups of cream cheese. For every one teaspoon of vanilla, she uses {ev_txt,two} eggs. She used {su_txt,two} cups of sugar in her latest cheesecake. How many eggs did she use?
+
+#init:
+- name = sample(names_female)
+- cr_txt, cr = sample([("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- cv_txt, cv = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- ev_txt, ev = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- su_txt, su = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+
+#conditions:
+- divides(su * cr, cv)
+
+#answer: su * cr // cv * ev
+"""
+
+answer_annotated = """
+{name} used {su} cups of sugar in her cheesecake, so she used {su} * 1 = <<{su}*1={su}>>{su} times her ratio.
+Thus, she used {su} * {cr} = <<{su}*{cr}={su*cr}>>{su*cr} cups of cream cheese.
+She uses 1 teaspoon of vanilla for {cv} cups of cream cheese, so she used {su*cr} / {cv} = {su*cr//cv} teaspoons of vanilla.
+For each teaspoon of vanilla, she uses {ev} eggs, so she used {ev} * {su*cr//cv} = <<{ev}*{su*cr//cv}={ev*(su*cr//cv)}>>{ev*(su*cr//cv)} eggs.
+#### {su * cr // cv * ev}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

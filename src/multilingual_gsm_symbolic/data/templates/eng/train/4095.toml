@@ -1,0 +1,48 @@
+question = """
+Aaron and his brother Carson each saved up $40 to go to dinner. The bill is 3/4 of their total money. After, they go out for ice cream. Each scoop costs $1.5 and they get the same amount as each other. If they leave with $1 in change each, how many scoops did they each buy?
+"""
+
+answer = """
+They had $80 saved up because 2 x 40 = <<2*40=80>>80
+They spent $60 because 80 x (3/4) = <<80*(3/4)=60>>60
+They had $20 left for ice cream because 80 - 60 = <<80-60=20>>20
+They had $2 left after leaving the ice cream shop because 2 x 1 = <<2*1=2>>2
+They spent $18 on ice cream because 20 - 2 = <<20-2=18>>18
+The bought 12 scoops of ice cream because 18 / 1.5 = <<18/1.5=12>>12
+The each bought 6 scoops because 12 / 2 = <<12/2=6>>6
+#### 6
+"""
+
+id_orig = 3460
+id_shuffled = 4095
+
+question_annotated = """
+{name,Aaron} and his brother {bro,Carson} each saved up ${s,40} to go to dinner. The bill is 3/4 of their total money. After, they go out for ice cream. Each scoop costs $1.5 and they get the same amount as each other. If they leave with ${chg,1} in change each, how many scoops did they each buy?
+
+#init:
+- name = sample(names_male)
+- bro = sample(names_male)
+- $s = range(10, 310, 2)
+- $chg = range(1, 5)
+
+#conditions:
+- s > 4 * chg
+- divides(s - 4 * chg, 6)
+
+#answer: (s - 4*chg)//6
+"""
+
+answer_annotated = """
+They had ${2*s} saved up because 2 x {s} = <<2*{s}={2*s}>>{2*s}
+They spent ${2*s*3//4} because {2*s} x (3/4) = <<{2*s}*(3/4)={2*s*3//4}>>{2*s*3//4}
+They had ${2*s - 2*s*3//4} left for ice cream because {2*s} - {2*s*3//4} = <<{2*s}-{2*s*3//4}={2*s - 2*s*3//4}>>{2*s - 2*s*3//4}
+They had ${2*chg} left after leaving the ice cream shop because 2 x {chg} = <<2*{chg}={2*chg}>>{2*chg}
+They spent ${s//2 - 2*chg} on ice cream because {s//2} - {2*chg} = <<{s//2}-{2*chg}={s//2 - 2*chg}>>{s//2 - 2*chg}
+The bought {(s - 4*chg)//3} scoops of ice cream because {s//2 - 2*chg} / 1.5 = <<{s//2 - 2*chg}/1.5={(s - 4*chg)//3}>>{(s - 4*chg)//3}
+The each bought {(s - 4*chg)//6} scoops because {(s - 4*chg)//3} / 2 = <<{(s - 4*chg)//3}/2={(s - 4*chg)//6}>>{(s - 4*chg)//6}
+#### {(s - 4*chg)//6}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

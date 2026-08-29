@@ -1,0 +1,40 @@
+question = """
+Wendy went to the dentist for a cleaning, two fillings, and a tooth extraction. The dentist charges $70 for a cleaning and $120 for a filling. Wendy’s dentist bill was five times the cost of a filling. What did Wendy pay for the tooth extraction?
+"""
+
+answer = """
+Wendy’s dentist bill was 5 * $120 = $<<5*120=600>>600.
+She got two fillings at a cost of 2 * $120 = $<<2*120=240>>240.
+Thus, Wendy paid $600 - $240 - $70 = $<<600-240-70=290>>290 for the tooth extraction.
+#### 290
+"""
+
+id_orig = 1933
+id_shuffled = 2243
+
+question_annotated = """
+{name,Wendy} went to the dentist for a cleaning, two fillings, and a tooth extraction. The dentist charges ${c,70} for a cleaning and ${f,120} for a filling. {name,Wendy}’s dentist bill was {m_txt,five times} the cost of a filling. What did {name,Wendy} pay for the tooth extraction?
+
+#init:
+- name = sample(names_female)
+- m_txt, m = sample(multi_times)
+- $c = range(30, 200, 10)
+- $f = range(50, 300, 10)
+
+#conditions:
+- m > 2
+- f * (m - 2) > c
+
+#answer: m*f - 2*f - c
+"""
+
+answer_annotated = """
+{name}’s dentist bill was {m} * ${f} = $<<{m}*{f}={m*f}>>{m*f}.
+She got two fillings at a cost of 2 * ${f} = $<<2*{f}={2*f}>>{2*f}.
+Thus, {name} paid ${m*f} - ${2*f} - ${c} = $<<{m*f}-{2*f}-{c}={m*f - 2*f - c}>>{m*f - 2*f - c} for the tooth extraction.
+#### {m*f - 2*f - c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

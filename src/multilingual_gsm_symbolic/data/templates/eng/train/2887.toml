@@ -1,0 +1,41 @@
+question = """
+This year the Oscar swag bags include two diamond earrings that cost $6,000 each, a new iPhone that costs $2,000, and some designer scarves that each cost $1,500. If the total value of the swag bag is $20,000, how many scarves are there?
+"""
+
+answer = """
+First find the total cost of the diamond earrings: $6,000/earring * 2 earrings = $<<6000*2=12000>>12,000
+Then subtract the cost of the earrings and iPhone from the total cost of the bags to find the cost of all the scarves: $20,000 - $12,000 - $2,000 = $<<20000-12000-2000=6000>>6,000
+Then divide the total cost of the scarves by the cost per scarf to find the number of scarves: $6,000 / $1,500/scarf = <<6000/1500=4>>4 scarves
+#### 4
+"""
+
+id_orig = 2496
+id_shuffled = 2887
+
+question_annotated = """
+This year the Oscar swag bags include two diamond earrings that cost ${e,6},000 each, a new iPhone that costs ${i,2},000, and some designer scarves that each cost ${s,1},500. If the total value of the swag bag is ${t,20},000, how many scarves are there?
+
+#init:
+- $e = range(2, 21)
+- $i = range(1, 21)
+- $s = range(1, 11)
+- $t = range(6, 101)
+
+#conditions:
+- t - 2*e - i > 0
+- 2*(t - 2*e - i) >= 2*s + 1
+- divides(2*(t - 2*e - i), 2*s + 1)
+
+#answer: 2*(t - 2*e - i)//(2*s + 1)
+"""
+
+answer_annotated = """
+First find the total cost of the diamond earrings: ${e},000/earring * 2 earrings = $<<{e*1000}*2={e*2000}>>{e*2},000
+Then subtract the cost of the earrings and iPhone from the total cost of the bags to find the cost of all the scarves: ${t},000 - ${e*2},000 - ${i},000 = $<<{t*1000}-{e*2000}-{i*1000}={(t-2*e-i)*1000}>>{t-2*e-i},000
+Then divide the total cost of the scarves by the cost per scarf to find the number of scarves: ${t-2*e-i},000 / ${s},500/scarf = <<{(t-2*e-i)*1000}/{s*1000+500}={2*(t-2*e-i)//(2*s+1)}>>{2*(t-2*e-i)//(2*s+1)} scarves
+#### {2*(t - 2*e - i)//(2*s + 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

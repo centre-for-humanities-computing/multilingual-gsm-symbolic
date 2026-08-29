@@ -1,0 +1,48 @@
+question = """
+Cadence has worked for her new company five months longer than she worked for her old company. If she worked at her old company for 3 years earning $5000 per month, and she's now earning 20% more in the new company, calculate the total amount of money she's earned in both companies in the period she's worked for them?
+"""
+
+answer = """
+In her old company, if she worked for three years, the total number of months she was paid for is 3 years*12, which is the number of months in a year = <<3*12=36>>36 months.
+If each month she was paid $5000, her total earnings in the old company were $5000* 36 =$<<5000*36=180000>>180,000
+In her new company, she is paid 20% more, which is 20/100*$5000 = $<<20/100*5000=1000>>1000 per month more than what she was paid at the old company.
+In total, she earns $5000+$1000 = $<<5000+1000=6000>>6000 per month in her new company.
+Since she's worked five months more in the new company than the old company, she has worked for 36+5 = <<36+5=41>>41 months in the new company.
+The total amount she's earned in the new company is $6000*41 = $<<6000*41=246000>>246,000
+The combined total for both companies is $246,000+$180,000 = $<<246000+180000=426000>>426,000
+#### 426000
+"""
+
+id_orig = 922
+id_shuffled = 1018
+
+question_annotated = """
+{name,Cadence} has worked for her new company {extra_txt,five} months longer than she worked for her old company. If she worked at her old company for {yrs,3} years earning ${sal,5000} per month, and she's now earning {pct,20}% more in the new company, calculate the total amount of money she's earned in both companies in the period she's worked for them?
+
+#init:
+- name = sample(names_female)
+- yrs_txt, yrs = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- extra_txt, extra = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+- $sal = range(2000, 12000, 500)
+- $pct = range(5, 105, 5)
+
+#conditions:
+- divides(pct * sal, 100)
+
+#answer: (sal + pct*sal//100) * (yrs*12 + extra) + sal*yrs*12
+"""
+
+answer_annotated = """
+In her old company, if she worked for {yrs_txt} years, the total number of months she was paid for is {yrs} years*12, which is the number of months in a year = <<{yrs}*12={yrs*12}>>{yrs*12} months.
+If each month she was paid ${sal}, her total earnings in the old company were ${sal}* {yrs*12} =$<<{sal}*{yrs*12}={sal*yrs*12}>>{sal*yrs*12}
+In her new company, she is paid {pct}% more, which is {pct}/100*${sal} = $<<{pct}/100*{sal}={pct*sal//100}>>{pct*sal//100} per month more than what she was paid at the old company.
+In total, she earns ${sal}+${pct*sal//100} = $<<{sal}+{pct*sal//100}={sal+pct*sal//100}>>{sal+pct*sal//100} per month in her new company.
+Since she's worked {extra_txt} months more in the new company than the old company, she has worked for {yrs*12}+{extra} = <<{yrs*12}+{extra}={yrs*12+extra}>>{yrs*12+extra} months in the new company.
+The total amount she's earned in the new company is ${sal+pct*sal//100}*{yrs*12+extra} = $<<{sal+pct*sal//100}*{yrs*12+extra}={(sal+pct*sal//100)*(yrs*12+extra)}>>{(sal+pct*sal//100)*(yrs*12+extra)}
+The combined total for both companies is ${(sal+pct*sal//100)*(yrs*12+extra)}+${sal*yrs*12} = $<<{(sal+pct*sal//100)*(yrs*12+extra)}+{sal*yrs*12}={(sal+pct*sal//100)*(yrs*12+extra)+sal*yrs*12}>>{(sal+pct*sal//100)*(yrs*12+extra)+sal*yrs*12}
+#### {(sal + pct*sal//100) * (yrs*12 + extra) + sal*yrs*12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

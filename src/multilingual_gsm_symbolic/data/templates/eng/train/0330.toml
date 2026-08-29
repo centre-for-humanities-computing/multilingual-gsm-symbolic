@@ -1,0 +1,46 @@
+question = """
+A family has three adults and children, both girls and boys. They went out for a family trip and prepared 3 dozen boiled eggs for the trip. Every adult got 3 eggs, and the boys each received 1 more egg than each girl since the girls had some snacks. How many boys went on the trip if the number of girls was 7 and each girl received an egg?
+"""
+
+answer = """
+The total number of eggs the family had is 3 * 12 = <<3*12=36>>36 eggs
+If each adult received 3 eggs, the total number of eggs they got is 3 * 3 = <<3*3=9>>9 eggs.
+The children shared 36 - 9 = <<36-9=27>>27 eggs
+Since each girl received an egg, the boys shared 27 - 7 = <<27-7=20>>20 eggs
+If each boy received 1 egg more than each girl, each received 1+1 = <<1+1=2>>2 eggs
+The boys received 20 eggs, and if each got 2 eggs, then 20/2 = <<20/2=10>>10 boys went on the trip
+#### 10
+"""
+
+id_orig = 290
+id_shuffled = 330
+
+question_annotated = """
+A family has three adults and children, both girls and boys. They went out for a family trip and prepared {dozen,3} dozen boiled eggs for the trip. Every adult got {e,3} eggs, and the boys each received 1 more egg than each girl since the girls had some snacks. How many boys went on the trip if the number of girls was {girls,7} and each girl received an egg?
+
+#init:
+- $dozen = range(2, 8)
+- $e = range(2, 6)
+- $girls = range(2, 16)
+
+#conditions:
+- 3*e < dozen*12
+- dozen*12 - 3*e - girls >= 2
+- divides(dozen*12 - 3*e - girls, 2)
+
+#answer: (dozen*12 - 3*e - girls)//2
+"""
+
+answer_annotated = """
+The total number of eggs the family had is {dozen} * 12 = <<{dozen}*12={dozen*12}>>{dozen*12} eggs
+If each adult received {e} eggs, the total number of eggs they got is {e} * 3 = <<{e}*3={e*3}>>{e*3} eggs.
+The children shared {dozen*12} - {e*3} = <<{dozen*12}-{e*3}={dozen*12-e*3}>>{dozen*12-e*3} eggs
+Since each girl received an egg, the boys shared {dozen*12-e*3} - {girls} = <<{dozen*12-e*3}-{girls}={dozen*12-e*3-girls}>>{dozen*12-e*3-girls} eggs
+If each boy received 1 egg more than each girl, each received 1+1 = <<1+1=2>>2 eggs
+The boys received {dozen*12-e*3-girls} eggs, and if each got 2 eggs, then {dozen*12-e*3-girls}/2 = <<{dozen*12-e*3-girls}/2={(dozen*12-e*3-girls)//2}>>{(dozen*12-e*3-girls)//2} boys went on the trip
+#### {(dozen*12-e*3-girls)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

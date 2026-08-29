@@ -1,0 +1,37 @@
+question = """
+Marvin and Tina were selling candy bars to help fund their class trip.  The candy bars cost $2 each.  Marvin sold 35 candy bars total.  Tina sold three times the number of candy bars as Marvin.  How much more money did Tina make for the class trip selling candy bars compared to Marvin?
+"""
+
+answer = """
+Marvin sold 35 candy bars at $2 each so 35 * 2 = $<<35*2=70>>70 worth of candy
+Tina sold three times the amount of candy so $70 * 3 = $<<70*3=210>>210 worth of candy
+If Tina sold $210 worth of candy and Marvin sold $70 in candy then 210 - 70 = $<<210-70=140>>140 more sold than Marvin
+#### 140
+"""
+
+id_orig = 110
+id_shuffled = 110
+
+question_annotated = """
+{name,Marvin} and {other,Tina} were selling candy bars to help fund their class trip.  The candy bars cost ${price,2} each.  {name,Marvin} sold {a,35} candy bars total.  {other,Tina} sold {mult_txt,three times} the number of candy bars as {name,Marvin}.  How much more money did {other,Tina} make for the class trip selling candy bars compared to {name,Marvin}?
+
+#init:
+- name = sample(names_male)
+- other = sample(names_female)
+- $price = range(2, 11)
+- $a = range(10, 110)
+- mult_txt, mult_val = sample([("twice", 2), ("thrice", 3), ("four times", 4)])
+
+#answer: (a * price) * (mult_val - 1)
+"""
+
+answer_annotated = """
+{name} sold {a} candy bars at ${price} each so {a} * {price} = $<<{a}*{price}={a*price}>>{a*price} worth of candy
+{other} sold {mult_txt} the amount of candy so ${a*price} * {mult_val} = $<<{a*price}*{mult_val}={a*price*mult_val}>>{a*price*mult_val} worth of candy
+If {other} sold ${a*price*mult_val} worth of candy and {name} sold ${a*price} in candy then {a*price*mult_val} - {a*price} = $<<{a*price*mult_val}-{a*price}={(a * price) * (mult_val - 1)}>>{(a * price) * (mult_val - 1)} more sold than {name}
+#### {(a * price) * (mult_val - 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

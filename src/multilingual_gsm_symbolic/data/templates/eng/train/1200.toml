@@ -1,0 +1,43 @@
+question = """
+Nine hundred tickets were sold to a concert. Three-fourths of those who bought the ticket came before the start of the concert. Five-ninths of the remaining came few minutes after the first song. Eighty people arrived during the middle part of the concert while the rest did not go. How many of those who bought the tickets did not go?
+"""
+
+answer = """
+900 x 3/4 = <<900*3/4=675>>675 people came before the start of the concert.
+900 - 675 = <<900-675=225>>225 people did not come before the start of the concert.
+225 x 5/9 = <<225*5/9=125>>125 people came few minutes after the first song.
+So, 125 + 80 = <<125+80=205>>205 people came to the concert that was not able to be at the start of the concert.
+Therefore, 225 - 205 = <<225-205=20>>20 people did not go to the concert.
+#### 20
+"""
+
+id_orig = 1104
+id_shuffled = 1200
+
+question_annotated = """
+{total_txt,Nine hundred} tickets were sold to a concert. Three-fourths of those who bought the ticket came before the start of the concert. Five-ninths of the remaining came few minutes after the first song. {mid_txt,Eighty} people arrived during the middle part of the concert while the rest did not go. How many of those who bought the tickets did not go?
+
+#init:
+- total_txt, total = sample([("Nine hundred", 900), ("Three hundred sixty", 360), ("Seven hundred twenty", 720), ("One thousand eighty", 1080), ("One thousand four hundred forty", 1440), ("One thousand eight hundred", 1800), ("Two thousand one hundred sixty", 2160), ("Two thousand five hundred twenty", 2520), ("Two thousand eight hundred eighty", 2880), ("Three thousand two hundred forty", 3240), ("Three thousand six hundred", 3600), ("Three thousand nine hundred sixty", 3960), ("Four thousand three hundred twenty", 4320), ("Four thousand six hundred eighty", 4680), ("Five thousand forty", 5040), ("Five thousand seven hundred sixty", 5760)])
+- mid_txt, mid_val = sample([("Ten", 10), ("Twenty", 20), ("Thirty", 30), ("Forty", 40), ("Fifty", 50), ("Sixty", 60), ("Seventy", 70), ("Eighty", 80)])
+
+#conditions:
+- divides(total, 4)
+- divides(total * 5, 36)
+- total / 9 > mid_val
+
+#answer: total-total*3//4-(total-total*3//4)*5//9-mid_val
+"""
+
+answer_annotated = """
+{total} x 3/4 = <<{total}*3/4={total*3//4}>>{total*3//4} people came before the start of the concert.
+{total} - {total*3//4} = <<{total}-{total*3//4}={total-total*3//4}>>{total-total*3//4} people did not come before the start of the concert.
+{total-total*3//4} x 5/9 = <<{total-total*3//4}*5/9={(total-total*3//4)*5//9}>>{(total-total*3//4)*5//9} people came few minutes after the first song.
+So, {(total-total*3//4)*5//9} + {mid_val} = <<{(total-total*3//4)*5//9}+{mid_val}={(total-total*3//4)*5//9+mid_val}>>{(total-total*3//4)*5//9+mid_val} people came to the concert that was not able to be at the start of the concert.
+Therefore, {total-total*3//4} - {(total-total*3//4)*5//9+mid_val} = <<{total-total*3//4}-{(total-total*3//4)*5//9+mid_val}={total-total*3//4-(total-total*3//4)*5//9-mid_val}>>{total-total*3//4-(total-total*3//4)*5//9-mid_val} people did not go to the concert.
+#### {total-total*3//4-(total-total*3//4)*5//9-mid_val}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,37 @@
+question = """
+As soon as you enter the taxi, you pay a ride fee of $2. Michelle rode a taxi from her office to her home, which constitutes 4 miles. If the taxi charge per mile is $2.5, how much did pay Michelle pay in total for her ride?
+"""
+
+answer = """
+The taxi charge for a distance of 4 miles is 4 x $2.5 = $<<4*2.5=10>>10.
+The total amount that Michelle paid for the ride was $2 + $10 = $<<2+10=12>>12.
+#### 12
+"""
+
+id_orig = 3168
+id_shuffled = 3767
+
+question_annotated = """
+As soon as you enter the taxi, you pay a ride fee of ${fee,2}. {name,Michelle} rode a taxi from her office to her home, which constitutes {miles,4} miles. If the taxi charge per mile is ${rate,2.5}, how much did pay {name,Michelle} pay in total for her ride?
+
+#init:
+- name = sample(names_female)
+- $fee = range(1, 6)
+- $miles = range(2, 22)
+- $rate = sample([1.5, 2, 2.5, 3, 3.5])
+
+#conditions:
+- is_int(miles * rate)
+
+#answer: fee + miles * rate
+"""
+
+answer_annotated = """
+The taxi charge for a distance of {miles} miles is {miles} x ${rate} = $<<{miles}*{rate}={miles*rate}>>{miles*rate}.
+The total amount that {name} paid for the ride was ${fee} + ${miles*rate} = $<<{fee}+{miles*rate}={fee+miles*rate}>>{fee+miles*rate}.
+#### {fee+miles*rate}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

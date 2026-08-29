@@ -1,0 +1,41 @@
+question = """
+Rookie police officers have to buy duty shoes at the full price of $85, but officers who have served at least a year get a 20% discount. Officers who have served at least three years get an additional 25% off the discounted price. How much does an officer who has served at least three years have to pay for shoes?
+"""
+
+answer = """
+Cops that served a year pay $85 * 0.2 = $<<85*0.2=17>>17 less.
+Cops that served a year pay $85 - $17 = $<<85-17=68>>68.
+Cops that served at least 3 years get a $68 * 0.25 = $<<68*0.25=17>>17 discount.
+Cops that served at least 3 years pay $68 - $17 = $<<68-17=51>>51 for shoes.
+#### 51
+"""
+
+id_orig = 2585
+id_shuffled = 2986
+
+question_annotated = """
+Rookie police officers have to buy duty shoes at the full price of ${p,85}, but officers who have served at least a year get a {d1,20}% discount. Officers who have served at least three years get an additional {d2,25}% off the discounted price. How much does an officer who has served at least three years have to pay for shoes?
+
+#init:
+- $p = range(50, 210, 5)
+- $d1 = range(5, 55, 5)
+- $d2 = range(5, 55, 5)
+
+#conditions:
+- divides(p * d1, 100)
+- divides((p - p*d1//100) * d2, 100)
+
+#answer: p - p*d1//100 - (p - p*d1//100)*d2//100
+"""
+
+answer_annotated = """
+Cops that served a year pay ${p} * {d1/100} = $<<{p}*{d1/100}={p*d1//100}>>{p*d1//100} less.
+Cops that served a year pay ${p} - ${p*d1//100} = $<<{p}-{p*d1//100}={p-p*d1//100}>>{p-p*d1//100}.
+Cops that served at least 3 years get a ${p-p*d1//100} * {d2/100} = $<<{p-p*d1//100}*{d2/100}={(p-p*d1//100)*d2//100}>>{(p-p*d1//100)*d2//100} discount.
+Cops that served at least 3 years pay ${p-p*d1//100} - ${(p-p*d1//100)*d2//100} = $<<{p-p*d1//100}-{(p-p*d1//100)*d2//100}={p-p*d1//100-(p-p*d1//100)*d2//100}>>{p-p*d1//100-(p-p*d1//100)*d2//100} for shoes.
+#### {p-p*d1//100-(p-p*d1//100)*d2//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

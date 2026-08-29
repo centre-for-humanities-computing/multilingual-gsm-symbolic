@@ -1,0 +1,44 @@
+question = """
+Bobby received his weekly paycheck today.  Although his salary is $450 per week, his actual paycheck is reduced in size because there are some taxes, insurance payments, and fees removed from his pay before his employer writes the check.  If the government removes 1/3 in federal taxes and 8% in state taxes, the health insurance removes $50 per week, the life insurance removes $20 per week, and the city charges him a fee of $10 per week for parking, then what is the final amount left in Bobby's paycheck, in dollars?
+"""
+
+answer = """
+The federal government takes out 1/3*450=<<1/3*450=150>>150 dollars.
+The state takes out 0.08*450=<<0.08*450=36>>36 dollars.
+Then the final amount remaining after all the deductions are removed is 450-150-36-50-20-10=<<450-150-36-50-20-10=184>>184 dollars
+#### 184
+"""
+
+id_orig = 3706
+id_shuffled = 4376
+
+question_annotated = """
+{name,Bobby} received his weekly paycheck today.  Although his salary is ${sal,450} per week, his actual paycheck is reduced in size because there are some taxes, insurance payments, and fees removed from his pay before his employer writes the check.  If the government removes {fed_txt,1/3} in federal taxes and {p,8}% in state taxes, the health insurance removes ${hi,50} per week, the life insurance removes ${li,20} per week, and the city charges him a fee of ${fee,10} per week for parking, then what is the final amount left in {name,Bobby}'s paycheck, in dollars?
+
+#init:
+- name = sample(names_male)
+- fed_txt, fd = sample([("1/2", 2), ("1/3", 3), ("1/4", 4)])
+- $sal = range(240, 496, 15)
+- $p = range(2, 10)
+- $hi = range(20, 70, 10)
+- $li = range(10, 50, 10)
+- $fee = range(5, 30, 5)
+
+#conditions:
+- divides(sal, fd)
+- divides(sal * p, 100)
+- sal - sal//fd - sal*p//100 - hi - li - fee > 0
+
+#answer: sal - sal//fd - sal*p//100 - hi - li - fee
+"""
+
+answer_annotated = """
+The federal government takes out {fed_txt}*{sal}=<<{fed_txt}*{sal}={sal//fd}>>{sal//fd} dollars.
+The state takes out 0.0{p}*{sal}=<<0.0{p}*{sal}={sal*p//100}>>{sal*p//100} dollars.
+Then the final amount remaining after all the deductions are removed is {sal}-{sal//fd}-{sal*p//100}-{hi}-{li}-{fee}=<<{sal}-{sal//fd}-{sal*p//100}-{hi}-{li}-{fee}={sal-sal//fd-sal*p//100-hi-li-fee}>>{sal-sal//fd-sal*p//100-hi-li-fee} dollars
+#### {sal - sal//fd - sal*p//100 - hi - li - fee}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

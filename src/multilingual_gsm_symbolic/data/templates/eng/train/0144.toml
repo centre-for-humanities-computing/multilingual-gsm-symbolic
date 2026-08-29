@@ -1,0 +1,43 @@
+question = """
+There are 40 students in a class. If 1/10 are absent, 3/4 of the students who are present are in the classroom, and the rest are in the canteen, how many students are in the canteen?
+"""
+
+answer = """
+Out of the 40, 40 x 1/10 = <<40*1/10=4>>4 students are absent.
+So, 40 - 4 = <<40-4=36>>36 students are present in school.
+Out of the 36, 36 x 3/4 = <<36*3/4=27>>27 students are in the classroom.
+This means, 36 - 27 = <<36-27=9>>9 students are in the canteen.
+#### 9
+"""
+
+id_orig = 133
+id_shuffled = 144
+
+question_annotated = """
+There are {n,40} students in a class. If {an,1}/{ad,10} are absent, {cn,3}/{cd,4} of the students who are present are in the classroom, and the rest are in the canteen, how many students are in the canteen?
+
+#init:
+- $n = range(40, 260)
+- $an = range(1, 4)
+- $ad = range(8, 13)
+- $cn = range(1, 4)
+- $cd = range(4, 7)
+
+#conditions:
+- divides(n * an, ad)
+- divides((n - n*an//ad) * cn, cd)
+
+#answer: (n - n*an//ad) - (n - n*an//ad)*cn//cd
+"""
+
+answer_annotated = """
+Out of the {n}, {n} x {an}/{ad} = <<{n}*{an}/{ad}={n*an//ad}>>{n*an//ad} students are absent.
+So, {n} - {n*an//ad} = <<{n}-{n*an//ad}={n - n*an//ad}>>{n - n*an//ad} students are present in school.
+Out of the {n - n*an//ad}, {n - n*an//ad} x {cn}/{cd} = <<{n - n*an//ad}*{cn}/{cd}={(n - n*an//ad)*cn//cd}>>{(n - n*an//ad)*cn//cd} students are in the classroom.
+This means, {n - n*an//ad} - {(n - n*an//ad)*cn//cd} = <<{n - n*an//ad}-{(n - n*an//ad)*cn//cd}={(n - n*an//ad) - (n - n*an//ad)*cn//cd}>>{(n - n*an//ad) - (n - n*an//ad)*cn//cd} students are in the canteen.
+#### {(n - n*an//ad) - (n - n*an//ad)*cn//cd}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

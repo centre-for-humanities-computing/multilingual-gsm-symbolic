@@ -1,0 +1,45 @@
+question = """
+At A.T. Cross Luxury Pens, a pencil sells at twenty-five cents while a pen sells at fifteen cents. Bowen buys 40 pens and 2/5 times more pencils than pens from A.T. Cross Luxury Pens. Calculate the total amount of money Bowen spends.
+"""
+
+answer = """
+Bowen bought 2/5 * 40 pens = <<2/5*40=16>>16 more pencils than pens.
+The total number of pencils that he bought is 40 pencils + 16 pencils = <<40+16=56>>56 pencils
+If each pencil costs twenty-five cents, the total amount of money he spent on pencils is 56 pencils * $0.25/pencil = $<<56*0.25=14>>14
+On pens, Bowen spent $0.15/pen * 40 pens = $<<0.15*40=6>>6
+The total amount of money Bowen spent is $14 + $6 = $<<14+6=20>>20
+#### 20
+"""
+
+id_orig = 2755
+id_shuffled = 3257
+
+question_annotated = """
+At A.T. Cross Luxury Pens, a pencil sells at twenty-five cents while a pen sells at fifteen cents. {name,Bowen} buys {p,40} pens and {num,2}/{den,5} times more pencils than pens from A.T. Cross Luxury Pens. Calculate the total amount of money {name,Bowen} spends.
+
+#init:
+- name = sample(names_male)
+- $p = range(20, 620, 20)
+- $num = range(1, 5)
+- $den = range(5, 21)
+
+#conditions:
+- num < den
+- divides(num * p, den)
+- divides(p + num*p//den, 4)
+
+#answer: (p + num*p//den)//4 + 3*p//20
+"""
+
+answer_annotated = """
+{name} bought {num}/{den} * {p} pens = <<{num}/{den}*{p}={num*p//den}>>{num*p//den} more pencils than pens.
+The total number of pencils that he bought is {p} pencils + {num*p//den} pencils = <<{p}+{num*p//den}={p+num*p//den}>>{p+num*p//den} pencils
+If each pencil costs twenty-five cents, the total amount of money he spent on pencils is {p+num*p//den} pencils * $0.25/pencil = $<<{p+num*p//den}*0.25={(p+num*p//den)//4}>>{(p+num*p//den)//4}
+On pens, {name} spent $0.15/pen * {p} pens = $<<0.15*{p}={3*p//20}>>{3*p//20}
+The total amount of money {name} spent is ${(p+num*p//den)//4} + ${3*p//20} = $<<{(p+num*p//den)//4}+{3*p//20}={(p+num*p//den)//4+3*p//20}>>{(p+num*p//den)//4+3*p//20}
+#### {(p+num*p//den)//4+3*p//20}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

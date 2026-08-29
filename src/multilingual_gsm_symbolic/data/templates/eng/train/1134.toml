@@ -1,0 +1,43 @@
+question = """
+Marge planted 23 seeds in her garden. Five of the seeds never grew into plants. A third of the remaining seeds grew, but the plants were eaten by squirrels and rabbits. A third of the number of uneaten plants were strangled by weeds. Marge pulled two weeds, but liked the flowers on one weed and let the plant grow as part of her garden. How many plants did Marge end up with?
+"""
+
+answer = """
+Marge had 23 - 5 = <<23-5=18>>18 seeds grow into plants.
+Rabbits ate 18 / 3 = <<18/3=6>>6 plants.
+There were 18 - 6 = <<18-6=12>>12 plants left.
+Weeds strangled 12 / 3 = <<12/3=4>>4 plants.
+She had 12 - 4 = <<12-4=8>>8 plants left.
+Marge kept 1 weed, so she ended up with 8 + 1 = <<8+1=9>>9 plants.
+#### 9
+"""
+
+id_orig = 1038
+id_shuffled = 1134
+
+question_annotated = """
+{name,Marge} planted {s,23} seeds in her garden. Five of the seeds never grew into plants. A third of the remaining seeds grew, but the plants were eaten by squirrels and rabbits. A third of the number of uneaten plants were strangled by weeds. {name,Marge} pulled two weeds, but liked the flowers on one weed and let the plant grow as part of her garden. How many plants did {name,Marge} end up with?
+
+#init:
+- name = sample(["Marge", "Sophie", "Abby", "Emma"])
+- $s = range(14, 1010, 9)
+
+#conditions:
+- divides(s - 5, 9)
+
+#answer: s - 5 - (s - 5)//3 - (s - 5 - (s - 5)//3)//3 + 1
+"""
+
+answer_annotated = """
+{name} had {s} - 5 = <<{s}-5={s-5}>>{s-5} seeds grow into plants.
+Rabbits ate {s-5} / 3 = <<{s-5}/3={(s-5)//3}>>{(s-5)//3} plants.
+There were {s-5} - {(s-5)//3} = <<{s-5}-{(s-5)//3}={s-5-(s-5)//3}>>{s-5-(s-5)//3} plants left.
+Weeds strangled {s-5-(s-5)//3} / 3 = <<{s-5-(s-5)//3}/3={(s-5-(s-5)//3)//3}>>{(s-5-(s-5)//3)//3} plants.
+She had {s-5-(s-5)//3} - {(s-5-(s-5)//3)//3} = <<{s-5-(s-5)//3}-{(s-5-(s-5)//3)//3}={s-5-(s-5)//3-((s-5-(s-5)//3)//3)}>>{s-5-(s-5)//3-((s-5-(s-5)//3)//3)} plants left.
+{name} kept 1 weed, so she ended up with {s-5-(s-5)//3-((s-5-(s-5)//3)//3)} + 1 = <<{s-5-(s-5)//3-((s-5-(s-5)//3)//3)}+1={s-5-(s-5)//3-((s-5-(s-5)//3)//3)+1}>>{s-5-(s-5)//3-((s-5-(s-5)//3)//3)+1} plants.
+#### {s-5-(s-5)//3-((s-5-(s-5)//3)//3)+1}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

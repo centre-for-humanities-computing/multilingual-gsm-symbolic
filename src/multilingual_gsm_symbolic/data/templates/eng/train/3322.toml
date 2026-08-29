@@ -1,0 +1,42 @@
+question = """
+John is budgeting for his marriage. The venue cost $10,000. It cost $500 for each guest, and John wants 50 guests while his wife wants 60% more than that. How much would the wedding cost if John's wife gets her way?
+"""
+
+answer = """
+The bride wanted 50*.6=<<50*.6=30>>30 more guests than the husband
+So the bride wanted 50+30=<<50+30=80>>80 guests
+So the guests cost 80*$500=$<<80*500=40000>>40,000
+So the total cost was $40,000+$10,000=$<<40000+10000=50000>>50,000
+#### 50000
+"""
+
+id_orig = 2785
+id_shuffled = 3322
+
+question_annotated = """
+{name,John} is budgeting for his marriage. The venue cost $10,000. It cost ${c,500} for each guest, and {name,John} wants {g,50} guests while his wife wants {p,60}% more than that. How much would the wedding cost if {name,John}'s wife gets her way?
+
+#init:
+- name = sample(names_male)
+- $g = range(10, 210, 2)
+- $c = range(50, 550, 50)
+- $p = range(20, 100, 10)
+
+#conditions:
+- divides(g * p, 100)
+- divides((g + g*p//100) * c, 1000)
+
+#answer: (g + g*p//100)*c + 10000
+"""
+
+answer_annotated = """
+The bride wanted {g}*.{p//10}=<<{g}*.{p//10}={g*p//100}>>{g*p//100} more guests than the husband
+So the bride wanted {g}+{g*p//100}=<<{g}+{g*p//100}={g+g*p//100}>>{g+g*p//100} guests
+So the guests cost {g+g*p//100}*${c}=$<<{g+g*p//100}*{c}={(g+g*p//100)*c}>>{(g+g*p//100)*c//1000},000
+So the total cost was ${(g+g*p//100)*c//1000},000+$10,000=$<<{(g+g*p//100)*c}+10000={(g+g*p//100)*c+10000}>>{((g+g*p//100)*c+10000)//1000},000
+#### {(g + g*p//100)*c + 10000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,49 @@
+question = """
+Billy and Margaret are competing with each other to see who can swim 10 laps the fastest. Billy swims his first 5 laps in 2 minutes, swims the next 3 laps in 4 minutes, swims the next lap in 1 minute, then swims his final lap. Margaret finishes swimming all of her laps in 10 minutes. Billy wins the competition by finishing his laps 30 seconds before Margaret does. In seconds, how long did it take Billy to swim his final lap?
+"""
+
+answer = """
+Margaret finished all of her laps in 10 minutes * 60 seconds = <<10*60=600>>600 seconds.
+Billy’s first 5 laps took 2 minutes * 60 seconds = <<2*60=120>>120 seconds.
+His next 3 laps took 4 minutes * 60 seconds = <<4*60=240>>240 seconds.
+His ninth lap took 1 minute * 60 seconds = <<1*60=60>>60 seconds.
+So his first 9 laps took 120 + 240 + 60 = <<120+240+60=420>>420 seconds.
+Billy finished swimming his laps before Margaret so all of his laps took a total of 600 – 30 = <<600-30=570>>570 seconds.
+This means that it took 570 seconds in total swimming time – 420 seconds in time spent swimming the first 9 laps = 150 seconds for Billy to swim his final lap.
+#### 150
+"""
+
+id_orig = 3576
+id_shuffled = 4234
+
+question_annotated = """
+{name_b,Billy} and {name_g,Margaret} are competing with each other to see who can swim 10 laps the fastest. {name_b,Billy} swims his first 5 laps in {t1,2} minutes, swims the next 3 laps in {t2,4} minutes, swims the next lap in 1 minute, then swims his final lap. {name_g,Margaret} finishes swimming all of her laps in {m,10} minutes. {name_b,Billy} wins the competition by finishing his laps {s,30} seconds before {name_g,Margaret} does. In seconds, how long did it take {name_b,Billy} to swim his final lap?
+
+#init:
+- name_b = sample(names_male)
+- name_g = sample(names_female)
+- $t1 = range(2, 6)
+- $t2 = range(2, 11)
+- $m = range(2, 31)
+- $s = range(10, 91, 10)
+
+#conditions:
+- m*60 - (t1 + t2 + 1)*60 - s > 0
+
+#answer: m*60 - s - (t1 + t2 + 1)*60
+"""
+
+answer_annotated = """
+{name_g} finished all of her laps in {m} minutes * 60 seconds = <<{m}*60={m*60}>>{m*60} seconds.
+{name_b}’s first 5 laps took {t1} minutes * 60 seconds = <<{t1}*60={t1*60}>>{t1*60} seconds.
+His next 3 laps took {t2} minutes * 60 seconds = <<{t2}*60={t2*60}>>{t2*60} seconds.
+His ninth lap took 1 minute * 60 seconds = <<1*60=60>>60 seconds.
+So his first 9 laps took {t1*60} + {t2*60} + 60 = <<{t1*60}+{t2*60}+60={t1*60+t2*60+60}>>{t1*60+t2*60+60} seconds.
+{name_b} finished swimming his laps before {name_g} so all of his laps took a total of {m*60} – {s} = <<{m*60}-{s}={m*60-s}>>{m*60-s} seconds.
+This means that it took {m*60-s} seconds in total swimming time – {t1*60+t2*60+60} seconds in time spent swimming the first 9 laps = {m*60-s-(t1+t2+1)*60} seconds for {name_b} to swim his final lap.
+#### {m*60-s-(t1+t2+1)*60}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Nancy wanted to make peanut butter cookies for a family gathering, but her cousin is allergic to peanuts. She decided to make almond butter cookies instead. A jar of almond butter costs three times the amount that a jar of peanut butter does. It takes half a jar to make a batch of cookies. A jar of peanut butter costs $3. How many dollars more does it cost per batch to make almond butter cookies instead of peanut butter cookies?
+"""
+
+answer = """
+A jar of almond butter costs 3 * 3 = $<<3*3=9>>9.
+It takes half a jar to make a batch of cookies, so it costs 9 / 2 = $<<9/2=4.50>>4.50 to use almond butter.
+It costs 3 / 2 = $<<3/2=1.50>>1.50 to use peanut butter.
+Thus, it costs 4.50 - 1.50 = $<<4.50-1.50=3>>3 more to make a batch of almond butter cookies than peanut butter cookies.
+#### 3
+"""
+
+id_orig = 2121
+id_shuffled = 2450
+
+question_annotated = """
+{name,Nancy} wanted to make peanut butter cookies for a family gathering, but her cousin is allergic to peanuts. She decided to make almond butter cookies instead. A jar of almond butter costs {txt_m,three times} the amount that a jar of peanut butter does. It takes half a jar to make a batch of cookies. A jar of peanut butter costs ${p,3}. How many dollars more does it cost per batch to make almond butter cookies instead of peanut butter cookies?
+
+#init:
+- name = sample(names_female)
+- txt_m, m = sample([("three times", 3), ("five times", 5), ("seven times", 7)])
+- $p = range(1, 200, 2)
+
+#conditions:
+- not divides(m * p, 2)
+- m * p < 2000
+
+#answer: p * (m - 1) // 2
+"""
+
+answer_annotated = """
+A jar of almond butter costs {m} * {p} = $<<{m}*{p}={m*p}>>{m*p}.
+It takes half a jar to make a batch of cookies, so it costs {m*p} / 2 = $<<{m*p}/2={m*p//2}.{(m*p)%2*50}>>{m*p//2}.{(m*p)%2*50} to use almond butter.
+It costs {p} / 2 = $<<{p}/2={p//2}.{p%2*50}>>{p//2}.{p%2*50} to use peanut butter.
+Thus, it costs {m*p//2}.{(m*p)%2*50} - {p//2}.{p%2*50} = $<<{m*p//2}.{(m*p)%2*50}-{p//2}.{p%2*50}={p*(m-1)//2}>>{p*(m-1)//2} more to make a batch of almond butter cookies than peanut butter cookies.
+#### {p*(m-1)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

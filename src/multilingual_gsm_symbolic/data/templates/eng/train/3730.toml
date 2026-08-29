@@ -1,0 +1,44 @@
+question = """
+Jason is trying to figure out whether he can afford a new car. The car he wants costs $32,000, and he can make a down payment of $8,000. He'll have to get a loan for the rest of the amount and make 48 equal monthly payments on it. Each month, he also has to pay interest equal to 5% of that month's payment. How much will Jason's monthly payments be?
+"""
+
+answer = """
+First figure out how much the loan will be: $32,000 - $8,000 = $<<32000-8000=24000>>24,000
+Then divide the loan amount by the number of payments to find the monthly payment before interest: $24,000 / 48 months = $<<24000/48=500>>500/month
+Then multiply the loan amount by 5% to find out how much the interest is: $500/month * .05 = $<<500*.05=25>>25/month
+Then add the interest to the payment amount to find the total monthly payment: $500/month + $25/month = $<<500+25=525>>525/month
+#### 525
+"""
+
+id_orig = 3118
+id_shuffled = 3730
+
+question_annotated = """
+{name,Jason} is trying to figure out whether he can afford a new car. The car he wants costs ${ct,32},000, and he can make a down payment of ${dt,8},000. He'll have to get a loan for the rest of the amount and make {npay,48} equal monthly payments on it. Each month, he also has to pay interest equal to {rate,5}% of that month's payment. How much will {name,Jason}'s monthly payments be?
+
+#init:
+- name = sample(names_male)
+- $ct = range(20, 91)
+- $dt = range(1, 31)
+- $npay = range(12, 61, 12)
+- $rate = range(1, 10)
+
+#conditions:
+- dt < ct
+- divides((ct-dt)*1000, npay)
+- is_int((ct-dt)*1000/npay*rate/100)
+
+#answer: (ct-dt)*1000//npay*(100+rate)//100
+"""
+
+answer_annotated = """
+First figure out how much the loan will be: ${ct},000 - ${dt},000 = $<<{ct*1000}-{dt*1000}={(ct-dt)*1000}>>{(ct-dt)},000
+Then divide the loan amount by the number of payments to find the monthly payment before interest: ${(ct-dt)},000 / {npay} months = $<<{(ct-dt)*1000}/{npay}={(ct-dt)*1000//npay}>>{(ct-dt)*1000//npay}/month
+Then multiply the loan amount by {rate}% to find out how much the interest is: ${(ct-dt)*1000//npay}/month * .0{rate} = $<<{(ct-dt)*1000//npay}*.0{rate}={(ct-dt)*1000//npay*rate//100}>>{(ct-dt)*1000//npay*rate//100}/month
+Then add the interest to the payment amount to find the total monthly payment: ${(ct-dt)*1000//npay}/month + ${(ct-dt)*1000//npay*rate//100}/month = $<<{(ct-dt)*1000//npay}+{(ct-dt)*1000//npay*rate//100}={(ct-dt)*1000//npay*(100+rate)//100}>>{(ct-dt)*1000//npay*(100+rate)//100}/month
+#### {(ct-dt)*1000//npay*(100+rate)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

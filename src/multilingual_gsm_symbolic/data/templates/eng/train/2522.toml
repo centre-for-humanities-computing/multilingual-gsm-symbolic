@@ -1,0 +1,42 @@
+question = """
+Frankie's parents let him have many pets. He has six more snakes than he has cats. He has one less parrot than cats. Six of his pets have four legs. He has 2 dogs. How many pets does he have in total?
+"""
+
+answer = """
+He has 6 - 2 = <<6-2=4>>4 cats.
+He has 4 - 1 = <<4-1=3>>3 parrots.
+He has 4 + 6 = <<4+6=10>>10 snakes.
+He has a total of 2 + 4 + 3 + 10 = <<2+4+3+10=19>>19 pets.
+#### 19
+"""
+
+id_orig = 2184
+id_shuffled = 2522
+
+question_annotated = """
+{name,Frankie}'s parents let him have many pets. He has {snake_word,six} more snakes than he has cats. He has {parrot_word,one} less parrot than cats. {fourleg_word,Six} of his pets have four legs. He has {d,2} dogs. How many pets does he have in total?
+
+#init:
+- name = sample(names_male)
+- snake_word, m = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10)])
+- parrot_word, p = sample([("one", 1), ("two", 2), ("three", 3)])
+- fourleg_word, f = sample([("Four", 4), ("Five", 5), ("Six", 6), ("Seven", 7), ("Eight", 8), ("Nine", 9), ("Ten", 10), ("Eleven", 11), ("Twelve", 12)])
+- $d = range(1, 13)
+
+#conditions:
+- f - d > p
+
+#answer: d + (f - d) + (f - d - p) + (f - d + m)
+"""
+
+answer_annotated = """
+He has {f} - {d} = <<{f}-{d}={f-d}>>{f-d} cats.
+He has {f-d} - {p} = <<{f-d}-{p}={f-d-p}>>{f-d-p} parrots.
+He has {f-d} + {m} = <<{f-d}+{m}={f-d+m}>>{f-d+m} snakes.
+He has a total of {d} + {f-d} + {f-d-p} + {f-d+m} = <<{d}+{f-d}+{f-d-p}+{f-d+m}={d+(f-d)+(f-d-p)+(f-d+m)}>>{d+(f-d)+(f-d-p)+(f-d+m)} pets.
+#### {d+(f-d)+(f-d-p)+(f-d+m)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+A small, old, wooden bridge can hold up to 100 kilograms at once. Mike, Megan, and Kelly are three children who decided to cross the bridge at the same time. Kelly weighs 34 kilograms, which is 15% less than Megan. Mike weighs 5 kilograms more than Megan. How much too much do the three children weigh together to cross the bridge?
+"""
+
+answer = """
+If Kelly weighs 15% less than Megan, this means Kelly's weight is 100 - 15 = <<100-15=85>>85% of Megan's weight.
+85% is 0.85, so Megan weighs 34 / 0.85 = <<34/0.85=40>>40 kilograms.
+Mike weighs 5 kilograms more than Megan, so he weighs 40 + 5 = <<40+5=45>>45 kilograms.
+In total all three kids weigh 34 + 40 + 45 = <<34+40+45=119>>119 kilograms.
+That means to cross the bridge safely, they weigh 119 - 100 = <<119-100=19>>19 kilograms too much.
+#### 19
+"""
+
+id_orig = 1476
+id_shuffled = 1617
+
+question_annotated = """
+A small, old, wooden bridge can hold up to {cap,100} kilograms at once. {n3,Mike}, {n2,Megan}, and {n1,Kelly} are three children who decided to cross the bridge at the same time. {n1,Kelly} weighs {k,34} kilograms, which is {p,15}% less than {n2,Megan}. {n3,Mike} weighs {e,5} kilograms more than {n2,Megan}. How much too much do the three children weigh together to cross the bridge?
+
+#init:
+- n1, n2, n3 = sample([("Kelly", "Megan", "Mike"), ("Abby", "Emma", "Chris"), ("Sophie", "Andrea", "Oliver"), ("Emma", "Sophie", "Noah"), ("Andrea", "Abby", "Eric")])
+- $cap = range(90, 210, 10)
+- $k = range(24, 90, 2)
+- $p = range(5, 55, 5)
+- $e = range(2, 12)
+
+#conditions:
+- divides(k*100, 100-p)
+- is_int(k/((100-p)/100))
+- k + 2*(k*100//(100-p)) + e > cap
+- k + 2*(k*100//(100-p)) + e <= 350
+
+#answer: k + 2*(k*100//(100-p)) + e - cap
+"""
+
+answer_annotated = """
+If {n1} weighs {p}% less than {n2}, this means {n1}'s weight is 100 - {p} = <<100-{p}={100-p}>>{100-p}% of {n2}'s weight.
+{100-p}% is {(100-p)/100}, so {n2} weighs {k} / {(100-p)/100} = <<{k}/{(100-p)/100}={k*100//(100-p)}>>{k*100//(100-p)} kilograms.
+{n3} weighs {e} kilograms more than {n2}, so he weighs {k*100//(100-p)} + {e} = <<{k*100//(100-p)}+{e}={k*100//(100-p)+e}>>{k*100//(100-p)+e} kilograms.
+In total all three kids weigh {k} + {k*100//(100-p)} + {k*100//(100-p)+e} = <<{k}+{k*100//(100-p)}+{k*100//(100-p)+e}={k + 2*(k*100//(100-p)) + e}>>{k + 2*(k*100//(100-p)) + e} kilograms.
+That means to cross the bridge safely, they weigh {k + 2*(k*100//(100-p)) + e} - {cap} = <<{k + 2*(k*100//(100-p)) + e}-{cap}={k + 2*(k*100//(100-p)) + e - cap}>>{k + 2*(k*100//(100-p)) + e - cap} kilograms too much.
+#### {k + 2*(k*100//(100-p)) + e - cap}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

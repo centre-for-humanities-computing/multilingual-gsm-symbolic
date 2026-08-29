@@ -1,0 +1,45 @@
+question = """
+Mary and her two friends agreed to evenly pay for the cost of 2 pounds of chicken. Mary's mother went to the grocery and bought the 2-pound chicken, 3 pounds of beef that cost $4 per pound, and a liter of oil that costs $1. If Mary's mother paid a total of $16 for the grocery, how much should Mary and her two friends pay each for the chicken?
+"""
+
+answer = """
+Three pounds of beef cost $4 x 3 = $<<4*3=12>>12.
+Mary's mother paid $12 + $1 = $<<12+1=13>>13 for the beef and oil.
+Hence, the 2-pound chicken cost $16 - $13 = $<<16-13=3>>3.
+There are 1 (Mary) + 2 friends = <<1+2=3>>3 people who will split the $3 cost.
+Therefore, each of them will pay $3/3 = $<<3/3=1>>1.
+#### 1
+"""
+
+id_orig = 2653
+id_shuffled = 3086
+
+question_annotated = """
+{name,Mary} and her two friends agreed to evenly pay for the cost of {c,2} pounds of chicken. {name,Mary}'s mother went to the grocery and bought the {c,2}-pound chicken, 3 pounds of beef that cost ${p,4} per pound, and a liter of oil that costs ${o,1}. If {name,Mary}'s mother paid a total of ${t,16} for the grocery, how much should {name,Mary} and her two friends pay each for the chicken?
+
+#init:
+- name = sample(["Mary", "Emma", "Anna", "Sophia", "Linda"])
+- $c = range(1, 6)
+- $p = range(2, 8)
+- $o = range(1, 11)
+- $t = range(10, 46)
+
+#conditions:
+- t - p*3 - o > 0
+- divides(t - p*3 - o, 3)
+
+#answer: (t - p*3 - o)//3
+"""
+
+answer_annotated = """
+Three pounds of beef cost ${p} x 3 = $<<{p}*3={p*3}>>{p*3}.
+{name}'s mother paid ${p*3} + ${o} = $<<{p*3}+{o}={p*3+o}>>{p*3+o} for the beef and oil.
+Hence, the {c}-pound chicken cost ${t} - ${p*3+o} = $<<{t}-{p*3+o}={t-p*3-o}>>{t-p*3-o}.
+There are 1 ({name}) + 2 friends = <<1+2=3>>3 people who will split the ${t-p*3-o} cost.
+Therefore, each of them will pay ${t-p*3-o}/3 = $<<{t-p*3-o}/3={(t-p*3-o)//3}>>{(t-p*3-o)//3}.
+#### {(t - p*3 - o)//3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

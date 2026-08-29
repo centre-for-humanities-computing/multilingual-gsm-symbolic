@@ -1,0 +1,45 @@
+question = """
+Haley is getting ready to watch a comet fly over her house. She spends two hours shopping for a telescope, half an hour getting everything set up in the backyard, three times the setup time making snacks, and 20 minutes watching the comet. What percentage of the total time she spent on all those activities was spent watching the comet, rounded to the nearest percent?
+"""
+
+answer = """
+First convert Haley's shopping time to minutes: 2 hours * 60 minutes/hour = <<2*60=120>>120 minutes
+Then convert Haley's setup time to minutes: .5 hours * 60 minutes/hour = <<.5*60=30>>30 minutes
+Then find the total time she spends making a snack: 3 * 30 minutes = <<3*30=90>>90 minutes
+Then add the time she spends on each activity to find the total time: 120 minutes + 30 minutes + 90 minutes = <<120+30+90=240>>240 minutes
+Then divide the time she spends watching the comet by the total time and multiply by 100% to express the answer as a percentage: 20 minutes / 240 minutes = 8.333...%, which rounds down to 8%
+#### 8
+"""
+
+id_orig = 3520
+id_shuffled = 4167
+
+question_annotated = """
+{name,Haley} is getting ready to watch a comet fly over her house. She spends {hrs_word,two} hours shopping for a telescope, half an hour getting everything set up in the backyard, {mult_word,three} times the setup time making snacks, and {mins,20} minutes watching the comet. What percentage of the total time she spent on all those activities was spent watching the comet, rounded to the nearest percent?
+
+#init:
+- name = sample(names_female)
+- hrs_word, hrs = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7)])
+- mult_word, mult = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $mins = range(10, 61, 5)
+
+#conditions:
+- (mins * 100 / (hrs*60+30+mult*30)) - int(mins * 100 / (hrs*60+30+mult*30)) < 0.5
+- not is_int(mins * 100 / (hrs*60+30+mult*30))
+- not is_int(mins * 100000 / (hrs*60+30+mult*30))
+
+#answer: round(mins * 100 / (hrs*60+30+mult*30))
+"""
+
+answer_annotated = """
+First convert {name}'s shopping time to minutes: {hrs} hours * 60 minutes/hour = <<{hrs}*60={hrs*60}>>{hrs*60} minutes
+Then convert {name}'s setup time to minutes: .5 hours * 60 minutes/hour = <<.5*60=30>>30 minutes
+Then find the total time she spends making a snack: {mult} * 30 minutes = <<{mult}*30={mult*30}>>{mult*30} minutes
+Then add the time she spends on each activity to find the total time: {hrs*60} minutes + 30 minutes + {mult*30} minutes = <<{hrs*60}+30+{mult*30}={hrs*60+30+mult*30}>>{hrs*60+30+mult*30} minutes
+Then divide the time she spends watching the comet by the total time and multiply by 100% to express the answer as a percentage: {mins} minutes / {hrs*60+30+mult*30} minutes = {int(mins * 100 / (hrs*60+30+mult*30) * 1000) / 1000}...%, which rounds down to {round(mins * 100 / (hrs*60+30+mult*30))}%
+#### {round(mins * 100 / (hrs*60+30+mult*30))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

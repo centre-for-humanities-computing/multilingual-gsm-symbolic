@@ -1,0 +1,39 @@
+question = """
+Bert made 12 sandwiches for his trip. On the first day, he ate half of the sandwiches he made. The next day he ate 2 sandwiches less. How many sandwiches does Bert have left after these two days?
+"""
+
+answer = """
+On the first day, Bert ate 12 / 2 = <<12/2=6>>6 sandwiches.
+The second day he ate 6 - 2 = <<6-2=4>>4 sandwiches.
+So in total Bert is left with 12 - 6 - 4 = <<12-6-4=2>>2 sandwiches.
+#### 2
+"""
+
+id_orig = 3256
+id_shuffled = 3869
+
+question_annotated = """
+{name,Bert} made {a,12} sandwiches for his trip. On the first day, he ate half of the sandwiches he made. The next day he ate {b,2} sandwiches less. How many sandwiches does {name,Bert} have left after these two days?
+
+#init:
+- name = sample(names_male)
+- $a = range(10, 210, 2)
+- $b = range(1, 10)
+
+#conditions:
+- divides(a, 2)
+- a//2 - b > 0
+
+#answer: a - a//2 - (a//2 - b)
+"""
+
+answer_annotated = """
+On the first day, {name} ate {a} / 2 = <<{a}/2={a//2}>>{a//2} sandwiches.
+The second day he ate {a//2} - {b} = <<{a//2}-{b}={a//2-b}>>{a//2-b} sandwiches.
+So in total {name} is left with {a} - {a//2} - {a//2-b} = <<{a}-{a//2}-{a//2-b}={a-a//2-(a//2-b)}>>{a-a//2-(a//2-b)} sandwiches.
+#### {a - a//2 - (a//2 - b)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

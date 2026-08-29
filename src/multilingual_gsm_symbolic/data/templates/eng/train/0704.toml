@@ -1,0 +1,44 @@
+question = """
+Mary and Rose went shopping to buy presents. They spent the same amount. Mary bought two pairs of sunglasses for $50 each and a pair of jeans for $100.  Rose bought a pair of shoes at $150 and two decks of basketball cards. How much did one deck of basketball cards cost?
+"""
+
+answer = """
+Two pairs of sunglasses costs 2 x $50 = $<<2*50=100>>100.
+So, Mary spent $100 + $100 = $<<100+100=200>>200.
+Thus, two decks of basketball cards costs $200 - $150 = $<<200-150=50>>50.
+Therefore, one deck of basketball cards costs $50/2 = $<<50/2=25>>25.
+#### 25
+"""
+
+id_orig = 631
+id_shuffled = 704
+
+question_annotated = """
+{name1,Mary} and {name2,Rose} went shopping to buy presents. They spent the same amount. {name1,Mary} bought two pairs of sunglasses for ${c,50} each and a pair of jeans for ${j,100}.  {name2,Rose} bought a pair of shoes at ${s,150} and two decks of basketball cards. How much did one deck of basketball cards cost?
+
+#init:
+- name1 = sample(["Mary", "Claire", "Laura"])
+- name2 = sample(["Rose", "Lily", "Nina"])
+- $c = range(10, 110, 5)
+- $j = range(10, 210, 5)
+- $s = range(10, 160, 5)
+
+#conditions:
+- name1 != name2
+- j + 2*c > s
+- divides(2*c + j - s, 2)
+
+#answer: (2*c + j - s)//2
+"""
+
+answer_annotated = """
+Two pairs of sunglasses costs 2 x ${c} = $<<2*{c}={2*c}>>{2*c}.
+So, {name1} spent ${2*c} + ${j} = $<<{2*c}+{j}={2*c+j}>>{2*c+j}.
+Thus, two decks of basketball cards costs ${2*c+j} - ${s} = $<<{2*c+j}-{s}={2*c+j-s}>>{2*c+j-s}.
+Therefore, one deck of basketball cards costs ${2*c+j-s}/2 = $<<{2*c+j-s}/2={(2*c+j-s)//2}>>{(2*c+j-s)//2}.
+#### {(2*c + j - s)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

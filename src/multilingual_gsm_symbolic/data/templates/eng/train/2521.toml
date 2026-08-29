@@ -1,0 +1,47 @@
+question = """
+Andrew installed hardwood flooring in his house. His bedroom took eight wooden planks, his living room took twenty planks, and his kitchen took eleven planks. The guest bedroom took two fewer planks than Andrew’s bedroom, and each of his two hallways took four planks. He accidentally ruined three planks in each bedroom by dragging furniture over them and had to replace them. He ended up with six leftover planks at the end. How many wooden planks did Andrew buy to start with?
+"""
+
+answer = """
+Andrew’s guest bedroom took 8 - 2 = <<8-2=6>>6 wooden planks.
+His hallways took 2 * 4 = <<2*4=8>>8 planks.
+In two bedrooms, he ruined 3 planks each, so the bedrooms took an extra 3 * 2 = <<3*2=6>>6 planks.
+In all, he used 8 + 20 + 11 + 6 + 8 + 6 = <<8+20+11+6+8+6=59>>59 planks for his whole house.
+Andrew had 6 leftover planks, so he bought 59 + 6 = <<6+59=65>>65 wooden planks to start with.
+#### 65
+"""
+
+id_orig = 2183
+id_shuffled = 2521
+
+question_annotated = """
+{name,Andrew} installed hardwood flooring in his house. His bedroom took {bed_txt,eight} wooden planks, his living room took {liv_txt,twenty} planks, and his kitchen took {kit_txt,eleven} planks. The guest bedroom took {fewer_txt,two} fewer planks than {name,Andrew}’s bedroom, and each of his two hallways took {hp_txt,four} planks. He accidentally ruined {ruin_txt,three} planks in each bedroom by dragging furniture over them and had to replace them. He ended up with {left_txt,six} leftover planks at the end. How many wooden planks did {name,Andrew} buy to start with?
+
+#init:
+- name = sample(["Andrew", "Bruce", "Colin", "Derek", "Evan", "Frank"])
+- bed_txt, bed = sample([("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10)])
+- liv_txt, liv = sample([("ten", 10), ("twelve", 12), ("fourteen", 14), ("sixteen", 16), ("eighteen", 18), ("twenty", 20)])
+- kit_txt, kit = sample([("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11)])
+- fewer_txt, fewer = sample([("one", 1), ("two", 2), ("three", 3)])
+- hp_txt, hp = sample([("three", 3), ("four", 4), ("five", 5)])
+- ruin_txt, ruin = sample([("two", 2), ("three", 3), ("four", 4)])
+- left_txt, left = sample([("five", 5), ("six", 6), ("seven", 7)])
+
+#conditions:
+- bed > fewer
+
+#answer: bed + liv + kit + bed - fewer + 2 * hp + ruin * 2 + left
+"""
+
+answer_annotated = """
+{name}’s guest bedroom took {bed} - {fewer} = <<{bed}-{fewer}={bed-fewer}>>{bed-fewer} wooden planks.
+His hallways took 2 * {hp} = <<2*{hp}={2*hp}>>{2*hp} planks.
+In two bedrooms, he ruined {ruin} planks each, so the bedrooms took an extra {ruin} * 2 = <<{ruin}*2={ruin*2}>>{ruin*2} planks.
+In all, he used {bed} + {liv} + {kit} + {bed-fewer} + {2*hp} + {ruin*2} = <<{bed}+{liv}+{kit}+{bed-fewer}+{2*hp}+{ruin*2}={bed+liv+kit+bed-fewer+2*hp+ruin*2}>>{bed+liv+kit+bed-fewer+2*hp+ruin*2} planks for his whole house.
+{name} had {left} leftover planks, so he bought {bed+liv+kit+bed-fewer+2*hp+ruin*2} + {left} = <<{left}+{bed+liv+kit+bed-fewer+2*hp+ruin*2}={left+bed+liv+kit+bed-fewer+2*hp+ruin*2}>>{left+bed+liv+kit+bed-fewer+2*hp+ruin*2} wooden planks to start with.
+#### {left+bed+liv+kit+bed-fewer+2*hp+ruin*2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

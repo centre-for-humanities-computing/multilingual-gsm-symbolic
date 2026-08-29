@@ -1,0 +1,47 @@
+question = """
+Brittney can chop 15 onions in 5 minutes. Carl can chop 20 onions within that same time. How many more onions can Carl chop in 30 minutes than Brittney?
+"""
+
+answer = """
+Brittney can chop 15/5 = <<15/5=3>>3 onions in one minute.
+Carl can chop 20/5 = <<20/5=4>>4 onions in one minute.
+Brittney can chop 3 x 30 = <<3*30=90>>90 onions in 30 minutes.
+Carl can chop 4 x 30 = <<4*30=120>>120 onions in 30 minutes.
+Carl can chop 120 - 90 = <<120-90=30>>30 more onions than Brittney in 30 minutes.
+#### 30
+"""
+
+id_orig = 1410
+id_shuffled = 1517
+
+question_annotated = """
+{name_b,Brittney} can chop {b,15} onions in {t,5} minutes. {name_c,Carl} can chop {c,20} onions within that same time. How many more onions can {name_c,Carl} chop in {m,30} minutes than {name_b,Brittney}?
+
+#init:
+- name_b = sample(names_female)
+- name_c = sample(names_male)
+- $t = range(2, 12)
+- $b = range(5, 105, 5)
+- $c = range(5, 105, 5)
+- $m = range(10, 70, 10)
+
+#conditions:
+- divides(b, t)
+- divides(c, t)
+- c > b
+
+#answer: (c-b)//t*m
+"""
+
+answer_annotated = """
+{name_b} can chop {b}/{t} = <<{b}/{t}={b//t}>>{b//t} onions in one minute.
+{name_c} can chop {c}/{t} = <<{c}/{t}={c//t}>>{c//t} onions in one minute.
+{name_b} can chop {b//t} x {m} = <<{b//t}*{m}={b//t*m}>>{b//t*m} onions in {m} minutes.
+{name_c} can chop {c//t} x {m} = <<{c//t}*{m}={c//t*m}>>{c//t*m} onions in {m} minutes.
+{name_c} can chop {c//t*m} - {b//t*m} = <<{c//t*m}-{b//t*m}={(c-b)//t*m}>>{(c-b)//t*m} more onions than {name_b} in {m} minutes.
+#### {(c-b)//t*m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

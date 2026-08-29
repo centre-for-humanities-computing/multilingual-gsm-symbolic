@@ -1,0 +1,42 @@
+question = """
+There are four lamps in Valerie's room. All of them are burnt out, so she needs to buy new light bulbs. She needs 3 small light bulbs and 1 large light bulb. She has $60 to spend. If small light bulbs cost $8 and large light bulbs cost $12, how much money will Valerie have left over?
+"""
+
+answer = """
+She will spend 3*$8=$<<3*8=24>>24 on small light bulbs.
+In total she will spend $24+$12=$<<24+12=36>>36 on the 4 light bulbs.
+She will have $60-$36=$<<60-36=24>>24 left over.
+#### 24
+"""
+
+id_orig = 1643
+id_shuffled = 1768
+
+question_annotated = """
+There are {lamps_txt,four} lamps in {name,Valerie}'s room. All of them are burnt out, so she needs to buy new light bulbs. She needs {s,3} small light bulbs and 1 large light bulb. She has ${m,60} to spend. If small light bulbs cost ${ps,8} and large light bulbs cost ${pl,12}, how much money will {name,Valerie} have left over?
+
+#init:
+- name = sample(names_female)
+- lamps_txt, n_lamps = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $s = range(2, 7)
+- $m = range(20, 220, 10)
+- $ps = range(2, 21)
+- $pl = range(4, 44, 4)
+
+#conditions:
+- s + 1 == n_lamps
+- m > s*ps + pl
+
+#answer: m - s*ps - pl
+"""
+
+answer_annotated = """
+She will spend {s}*${ps}=$<<{s}*{ps}={s*ps}>>{s*ps} on small light bulbs.
+In total she will spend ${s*ps}+${pl}=$<<{s*ps}+{pl}={s*ps+pl}>>{s*ps+pl} on the {n_lamps} light bulbs.
+She will have ${m}-${s*ps+pl}=$<<{m}-{s*ps+pl}={m-s*ps-pl}>>{m-s*ps-pl} left over.
+#### {m-s*ps-pl}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

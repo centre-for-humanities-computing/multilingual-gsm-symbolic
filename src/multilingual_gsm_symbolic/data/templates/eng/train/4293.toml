@@ -1,0 +1,48 @@
+question = """
+Mike spent 37 dollars on notebooks.  He bought a total of 12 notebooks.  He bought 3 red notebooks at 4 dollars each, 2 green notebooks at 2 dollars each, and the rest were blue notebooks.  How much does each blue notebook cost?
+"""
+
+answer = """
+He bought 12-3-2=<<12-3-2=7>>7 blue notebooks.
+He paid 3*$4=$<<3*4=12>>12 for red notebooks
+He paid 2*$2=$<<2*2=4>>4 for green notebooks
+He spent $37-$12-$4=$<<37-12-4=21>>21 on blue notebooks.
+Each blue notebook costs $21/7=$<<21/7=3>>3.
+#### 3
+"""
+
+id_orig = 3635
+id_shuffled = 4293
+
+question_annotated = """
+{name,Mike} spent {t,37} dollars on notebooks.  He bought a total of {n,12} notebooks.  He bought {r,3} red notebooks at {rp,4} dollars each, {g,2} green notebooks at {gp,2} dollars each, and the rest were blue notebooks.  How much does each blue notebook cost?
+
+#init:
+- name = sample(names_male)
+- $t = range(10, 60)
+- $n = range(6, 30)
+- $r = range(1, 5)
+- $rp = range(1, 6)
+- $g = range(1, 5)
+- $gp = range(1, 6)
+
+#conditions:
+- r + g < n
+- t - r * rp - g * gp > 0
+- divides(t - r * rp - g * gp, n - r - g)
+
+#answer: (t - r * rp - g * gp) // (n - r - g)
+"""
+
+answer_annotated = """
+He bought {n}-{r}-{g}=<<{n}-{r}-{g}={n-r-g}>>{n-r-g} blue notebooks.
+He paid {r}*${rp}=$<<{r}*{rp}={r*rp}>>{r*rp} for red notebooks
+He paid {g}*${gp}=$<<{g}*{gp}={g*gp}>>{g*gp} for green notebooks
+He spent ${t}-${r*rp}-${g*gp}=$<<{t}-{r*rp}-{g*gp}={t-r*rp-g*gp}>>{t-r*rp-g*gp} on blue notebooks.
+Each blue notebook costs ${(t-r*rp-g*gp)}/{n-r-g}=$<<{(t-r*rp-g*gp)}/{n-r-g}={(t-r*rp-g*gp)//(n-r-g)}>>{(t-r*rp-g*gp)//(n-r-g)}.
+#### {(t-r*rp-g*gp)//(n-r-g)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

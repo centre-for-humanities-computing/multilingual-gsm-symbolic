@@ -1,0 +1,44 @@
+question = """
+Niko has bought 9 pairs of socks that cost $2 each and plans to resell them. He wants to gain 25% profit from four of the pairs of socks and $0.2 profit each for the other 5 pairs of socks. How much will his total profit be?
+"""
+
+answer = """
+Niko will earn $2 x 25/100 = $<<2*25/100=0.5>>0.5 profit for each of the first four pairs of socks.
+So, his total profit for the four pairs of socks will be $0.5 x 4 = $<<0.5*4=2>>2.
+His total earnings for the 5 pairs of socks is $0.2 x 5 = $<<0.2*5=1>>1.
+Therefore, his total profit will be $2 + $1 = $<<2+1=3>>3.
+#### 3
+"""
+
+id_orig = 1727
+id_shuffled = 1874
+
+question_annotated = """
+{name,Niko} has bought {tot,9} pairs of socks that cost ${cost,2} each and plans to resell them. He wants to gain {pct,25}% profit from four of the pairs of socks and $0.2 profit each for the other {n2,5} pairs of socks. How much will his total profit be?
+
+#init:
+- name = sample(names_male)
+- $cost = range(2, 12)
+- $pct = range(5, 51, 5)
+- $n2 = range(5, 36, 5)
+- $tot = range(9, 41)
+
+#conditions:
+- tot == n2 + 4
+- divides(cost * pct * 4, 100)
+- not divides(cost * pct, 100)
+
+#answer: int(cost * pct / 100 * 4) + int(0.2 * n2)
+"""
+
+answer_annotated = """
+{name} will earn ${cost} x {pct}/100 = $<<{cost}*{pct}/100={cost*pct/100}>>{cost*pct/100} profit for each of the first four pairs of socks.
+So, his total profit for the four pairs of socks will be ${cost*pct/100} x 4 = $<<{cost*pct/100}*4={int(cost*pct/100*4)}>>{int(cost*pct/100*4)}.
+His total earnings for the {n2} pairs of socks is $0.2 x {n2} = $<<0.2*{n2}={int(0.2*n2)}>>{int(0.2*n2)}.
+Therefore, his total profit will be ${int(cost*pct/100*4)} + ${int(0.2*n2)} = $<<{int(cost*pct/100*4)}+{int(0.2*n2)}={int(cost*pct/100*4)+int(0.2*n2)}>>{int(cost*pct/100*4)+int(0.2*n2)}.
+#### {int(cost*pct/100*4)+int(0.2*n2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

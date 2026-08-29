@@ -1,0 +1,43 @@
+question = """
+Rick held a fundraiser and is figuring out who still owes money. He marked on a sheet how much everyone has promised to contribute, but he forgot to note how much some people had actually paid. Altogether, everyone has promised to contribute $400, and Rick has actually received $285.  Sally, Amy, Derek, and Carl all still owe money. Sally and Carl both owe equal amounts, Amy owes $30, and Derek owes half as much as Amy. How much, in dollars, do Sally and Carl each owe?
+"""
+
+answer = """
+In total, Rick is still owed 400 - 285 = $<<400-285=115>>115.
+Derek owes half as much as Amy, so he owes $30 / 2 = $<<30/2=15>>15.
+This means that Sally and Carl owe a combined total of $115 - $30 – $15 = $<<115-30-15=70>>70.
+As they owe equal amounts, they therefore owe $70 / 2 = $<<70/2=35>>35 each.
+#### 35
+"""
+
+id_orig = 3291
+id_shuffled = 3904
+
+question_annotated = """
+{name,Rick} held a fundraiser and is figuring out who still owes money. He marked on a sheet how much everyone has promised to contribute, but he forgot to note how much some people had actually paid. Altogether, everyone has promised to contribute ${p,400}, and {name,Rick} has actually received ${r,285}.  Sally, Amy, Derek, and Carl all still owe money. Sally and Carl both owe equal amounts, Amy owes ${amy,30}, and Derek owes half as much as Amy. How much, in dollars, do Sally and Carl each owe?
+
+#init:
+- name = sample(["Rick", "Chris", "Oliver", "Noah", "Eric"])
+- $p = range(400, 800, 20)
+- $r = range(85, 385, 10)
+- $amy = range(2, 102, 4)
+
+#conditions:
+- divides(amy, 2)
+- p - r - amy - amy//2 > 0
+- divides(p - r - amy - amy//2, 2)
+
+#answer: (p - r - amy - amy//2)//2
+"""
+
+answer_annotated = """
+In total, {name} is still owed {p} - {r} = $<<{p}-{r}={p-r}>>{p-r}.
+Derek owes half as much as Amy, so he owes ${amy} / 2 = $<<{amy}/2={amy//2}>>{amy//2}.
+This means that Sally and Carl owe a combined total of ${p-r} - ${amy} – ${amy//2} = $<<{p-r}-{amy}-{amy//2}={p-r-amy-amy//2}>>{p-r-amy-amy//2}.
+As they owe equal amounts, they therefore owe ${p-r-amy-amy//2} / 2 = $<<{p-r-amy-amy//2}/2={(p-r-amy-amy//2)//2}>>{(p-r-amy-amy//2)//2} each.
+#### {(p-r-amy-amy//2)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

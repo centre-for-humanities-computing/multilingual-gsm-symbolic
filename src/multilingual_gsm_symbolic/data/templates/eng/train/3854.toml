@@ -1,0 +1,40 @@
+question = """
+James needs 40 fish to make one sushi roll. He goes to the market and buys 400 fish, but later finds out that 20% of the fish have gone bad and cannot be used. How many sushi rolls did James make with the remaining fish?
+"""
+
+answer = """
+If James bought 400 fish, the number of fish that were bad is 20/100*400 = <<20/100*400=80>>80
+The remaining fish that he used to make the sushi rolls is 400-80 = <<400-80=320>>320
+If 40 fish are required to make one sushi roll, 320 fish will make 320/40 = <<320/40=8>>8 sushi rolls
+#### 8
+"""
+
+id_orig = 3241
+id_shuffled = 3854
+
+question_annotated = """
+{name,James} needs {r,40} fish to make one sushi roll. He goes to the market and buys {b,400} fish, but later finds out that {p,20}% of the fish have gone bad and cannot be used. How many sushi rolls did {name,James} make with the remaining fish?
+
+#init:
+- name = sample(names_male)
+- $r = range(20, 61, 10)
+- $b = range(200, 1300, 100)
+- $p = range(5, 56, 5)
+
+#conditions:
+- divides(p * b, 100)
+- divides(b - p*b//100, r)
+
+#answer: (b - p*b//100) // r
+"""
+
+answer_annotated = """
+If {name} bought {b} fish, the number of fish that were bad is {p}/100*{b} = <<{p}/100*{b}={p*b//100}>>{p*b//100}
+The remaining fish that he used to make the sushi rolls is {b}-{p*b//100} = <<{b}-{p*b//100}={b-p*b//100}>>{b-p*b//100}
+If {r} fish are required to make one sushi roll, {b-p*b//100} fish will make {b-p*b//100}/{r} = <<{b-p*b//100}/{r}={(b-p*b//100)//r}>>{(b-p*b//100)//r} sushi rolls
+#### {(b-p*b//100)//r}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

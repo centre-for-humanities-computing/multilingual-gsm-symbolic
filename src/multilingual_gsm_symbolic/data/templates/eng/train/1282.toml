@@ -1,0 +1,45 @@
+question = """
+John decides to install a ramp in his house.  He needs to get permits which cost $250.  After that, he hires a contractor which costs $150 an hour and the guy works for 3 days at 5 hours per day.  He also pays an inspector 80% less to make sure it is OK.  How much was the total cost?
+"""
+
+answer = """
+The contractor works for 3*5=<<3*5=15>>15 hours
+That means he charged 150*15=$<<150*15=2250>>2250
+The inspector charged 2250*.8=$1800 less
+So the inspector charged 2250-1800=$<<2250-1800=450>>450
+So the total amount charged was 250+450+2250=$<<250+450+2250=2950>>2950
+#### 2950
+"""
+
+id_orig = 1186
+id_shuffled = 1282
+
+question_annotated = """
+{name,John} decides to install a ramp in his house.  He needs to get permits which cost ${c,250}.  After that, he hires a contractor which costs ${r,150} an hour and the guy works for {d,3} days at {h,5} hours per day.  He also pays an inspector {p,80}% less to make sure it is OK.  How much was the total cost?
+
+#init:
+- name = sample(names_male)
+- $c = range(50, 550, 50)
+- $r = range(10, 210, 10)
+- $d = range(1, 4)
+- $h = range(1, 6)
+- $p = range(10, 100, 10)
+
+#conditions:
+- divides(r*d*h*p, 100)
+
+#answer: c + r*d*h + r*d*h - r*d*h*p//100
+"""
+
+answer_annotated = """
+The contractor works for {d}*{h}=<<{d}*{h}={d*h}>>{d*h} hours
+That means he charged {r}*{d*h}=$<<{r}*{d*h}={r*d*h}>>{r*d*h}
+The inspector charged {r*d*h}*.{p//10}=${r*d*h*p//100} less
+So the inspector charged {r*d*h}-{r*d*h*p//100}=$<<{r*d*h}-{r*d*h*p//100}={r*d*h-r*d*h*p//100}>>{r*d*h-r*d*h*p//100}
+So the total amount charged was {c}+{r*d*h-r*d*h*p//100}+{r*d*h}=$<<{c}+{r*d*h-r*d*h*p//100}+{r*d*h}={c+r*d*h+r*d*h-r*d*h*p//100}>>{c+r*d*h+r*d*h-r*d*h*p//100}
+#### {c+r*d*h+r*d*h-r*d*h*p//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

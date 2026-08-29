@@ -1,0 +1,44 @@
+question = """
+Paulo wants to get a burger meal that costs $6. Aside from that, he also wants to get a soda which costs 1/3 as much as the burger meal. While on the counter, Jeremy asked Paulo to get him 2 of each item Paulo is going to get. How much will they be charged for their orders combined?
+"""
+
+answer = """
+They are to order a total of 3 burger meals and 3 sodas for Paulo and Jeremy.
+The cost of a soda is $6/3 = $<<6/3=2>>2.
+So, the 3 sodas will amount to $2/soda x 3 sodas = $<<2*3=6>>6.
+The 3 burger meals will amount to $6/burger x 3 burgers = $<<6*3=18>>18.
+Hence, the total cost for their orders is $6 + $18 = $<<6+18=24>>24.
+#### 24
+"""
+
+id_orig = 2349
+id_shuffled = 2708
+
+question_annotated = """
+{name,Paulo} wants to get a burger meal that costs ${m,6}. Aside from that, he also wants to get a soda which costs 1/{d,3} as much as the burger meal. While on the counter, {name2,Jeremy} asked {name,Paulo} to get him {k,2} of each item {name,Paulo} is going to get. How much will they be charged for their orders combined?
+
+#init:
+- name = sample(names_male)
+- name2 = sample(names_male)
+- $m = range(6, 200, 2)
+- $d = range(2, 7)
+- $k = range(2, 6)
+
+#conditions:
+- divides(m, d)
+
+#answer: (m//d + m) * (k + 1)
+"""
+
+answer_annotated = """
+They are to order a total of {k+1} burger meals and {k+1} sodas for {name} and {name2}.
+The cost of a soda is ${m}/{d} = $<<{m}/{d}={m//d}>>{m//d}.
+So, the {k+1} sodas will amount to ${m//d}/soda x {k+1} sodas = $<<{m//d}*{k+1}={m//d*(k+1)}>>{m//d*(k+1)}.
+The {k+1} burger meals will amount to ${m}/burger x {k+1} burgers = $<<{m}*{k+1}={m*(k+1)}>>{m*(k+1)}.
+Hence, the total cost for their orders is ${m//d*(k+1)} + ${m*(k+1)} = $<<{m//d*(k+1)}+{m*(k+1)}={(m//d+m)*(k+1)}>>{(m//d+m)*(k+1)}.
+#### {(m//d + m) * (k + 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

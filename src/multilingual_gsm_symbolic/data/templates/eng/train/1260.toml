@@ -1,0 +1,39 @@
+question = """
+Hayden has a tank with a small hole in the bottom. The tank starts with 40 gallons of water. It loses 2 gallons of water per hour. Hayden does not add any water for the first two hours. He adds 1 gallon of water to the tank in hour three. He adds three gallons of water to the tank in the fourth hour. How much water is left in the tank at the end of the fourth hour?
+"""
+
+answer = """
+Over the four hours, the tank loses 2 * 4 = <<2*4=8>>8 gallons of water.
+Hayden adds a total of 1 + 3 = <<1+3=4>>4 gallons of water.
+At the end of the four hours, there is 40 - 8 + 4 = <<40-8+4=36>>36 gallons of water left in the tank.
+#### 36
+"""
+
+id_orig = 1164
+id_shuffled = 1260
+
+question_annotated = """
+{name,Hayden} has a tank with a small hole in the bottom. The tank starts with {start,40} gallons of water. It loses {loss,2} gallons of water per hour. {name,Hayden} does not add any water for the first two hours. He adds 1 gallon of water to the tank in hour three. He adds {add_word,three} gallons of water to the tank in the fourth hour. How much water is left in the tank at the end of the fourth hour?
+
+#init:
+- name = sample(names_male)
+- add_word, add2 = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9)])
+- $start = range(20, 110, 2)
+- $loss = range(1, 9)
+
+#conditions:
+- start - loss * 4 + 1 + add2 > 0
+
+#answer: start - loss*4 + 1 + add2
+"""
+
+answer_annotated = """
+Over the four hours, the tank loses {loss} * 4 = <<{loss}*4={loss*4}>>{loss*4} gallons of water.
+{name} adds a total of 1 + {add2} = <<1+{add2}={1+add2}>>{1+add2} gallons of water.
+At the end of the four hours, there is {start} - {loss*4} + {1+add2} = <<{start}-{loss*4}+{1+add2}={start-loss*4+1+add2}>>{start-loss*4+1+add2} gallons of water left in the tank.
+#### {start-loss*4+1+add2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

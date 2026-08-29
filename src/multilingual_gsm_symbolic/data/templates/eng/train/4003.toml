@@ -1,0 +1,43 @@
+question = """
+Krista started raising chickens. She has 10 hens who lay eggs. She sells the eggs for $3 a dozen. In four weeks, she sold $120 worth of eggs. If she sold all the eggs her hens laid, how many eggs does each hen lay a week?
+"""
+
+answer = """
+At $3 a dozen, Krista sold $120 / $3 = <<120/3=40>>40 dozen eggs.
+If 10 hens laid 40 dozen eggs in 4 weeks, that means 40 dozen eggs / 10 hens = <<40/10=4>>4 dozen eggs were laid by each hen in four weeks.
+To find out how many eggs each hen laid in a week, 4 dozen eggs / 4 weeks = <<4/4=1>>1 dozen eggs each week.
+Since a dozen has 12 eggs, each hen lays 12*1 = <<12*1=12>>12 eggs each week.
+#### 12
+"""
+
+id_orig = 3378
+id_shuffled = 4003
+
+question_annotated = """
+{name,Krista} started raising chickens. She has {h,10} hens who lay eggs. She sells the eggs for ${p,3} a dozen. In four weeks, she sold ${t,120} worth of eggs. If she sold all the eggs her hens laid, how many eggs does each hen lay a week?
+
+#init:
+- name = sample(names_female)
+- $h = range(5, 31)
+- $p = range(1, 11)
+- $t = range(24, 4824, 24)
+
+#conditions:
+- divides(t, p)
+- divides(t//p, h)
+- divides(t//p//h, 4)
+
+#answer: 12 * t // (4 * p * h)
+"""
+
+answer_annotated = """
+At ${p} a dozen, {name} sold ${t} / ${p} = <<{t}/{p}={t//p}>>{t//p} dozen eggs.
+If {h} hens laid {t//p} dozen eggs in 4 weeks, that means {t//p} dozen eggs / {h} hens = <<{t//p}/{h}={t//p//h}>>{t//p//h} dozen eggs were laid by each hen in four weeks.
+To find out how many eggs each hen laid in a week, {t//p//h} dozen eggs / 4 weeks = <<{t//p//h}/4={t//p//h//4}>>{t//p//h//4} dozen eggs each week.
+Since a dozen has 12 eggs, each hen lays 12*{t//p//h//4} = <<12*{t//p//h//4}={12*(t//p//h//4)}>>{12*(t//p//h//4)} eggs each week.
+#### {12*(t//p//h//4)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

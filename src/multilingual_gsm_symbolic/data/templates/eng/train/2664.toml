@@ -1,0 +1,46 @@
+question = """
+Mary brought 50 stickers to class. She gave 4 stickers to each of her 5 friends. She gave everyone else in class two stickers each. If she has 8 stickers left over, how many students are in the class, including Mary?
+"""
+
+answer = """
+She gave out 50 - 8 = <<50-8=42>>42 stickers in total.
+She gave 4 * 5 = <<4*5=20>>20 stickers to her friends.
+She gave out 42 - 20 = <<42-20=22>>22 stickers to the rest of the class.
+This means there are 22 / 2 = <<22/2=11>>11 other students in the class.
+There are a total of 1 + 5 + 11 = <<1+5+11=17>>17 students in the class.
+#### 17
+"""
+
+id_orig = 2316
+id_shuffled = 2664
+
+question_annotated = """
+{name,Mary} brought {t,50} stickers to class. She gave {f,4} stickers to each of her {k,5} friends. She gave everyone else in class two stickers each. If she has {left,8} stickers left over, how many students are in the class, including {name,Mary}?
+
+#init:
+- name = sample(names_female)
+- $t = range(20, 202, 2)
+- $f = range(2, 10)
+- $k = range(2, 12)
+- $left = range(2, 30)
+
+#conditions:
+- t > left
+- t - left > f * k
+- divides(t - left - f*k, 2)
+
+#answer: 1 + k + (t - left - f*k)//2
+"""
+
+answer_annotated = """
+She gave out {t} - {left} = <<{t}-{left}={t-left}>>{t-left} stickers in total.
+She gave {f} * {k} = <<{f}*{k}={f*k}>>{f*k} stickers to her friends.
+She gave out {t-left} - {f*k} = <<{t-left}-{f*k}={t-left-f*k}>>{t-left-f*k} stickers to the rest of the class.
+This means there are {t-left-f*k} / 2 = <<{t-left-f*k}/2={(t-left-f*k)//2}>>{(t-left-f*k)//2} other students in the class.
+There are a total of 1 + {k} + {(t-left-f*k)//2} = <<1+{k}+{(t-left-f*k)//2}={1+k+(t-left-f*k)//2}>>{1+k+(t-left-f*k)//2} students in the class.
+#### {1 + k + (t - left - f*k)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

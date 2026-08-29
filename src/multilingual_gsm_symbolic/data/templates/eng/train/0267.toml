@@ -1,0 +1,49 @@
+question = """
+Ann is baking cookies. She bakes three dozen oatmeal raisin cookies, two dozen sugar cookies, and four dozen chocolate chip cookies. Ann gives away two dozen oatmeal raisin cookies, 1.5 dozen sugar cookies, and 2.5 dozen chocolate chip cookies. How many total cookies does she keep?
+"""
+
+answer = """
+Ann had 3 dozen oatmeal cookies - 2 dozen = <<3-2=1>>1 dozen oatmeal cookies left.
+Ann had 2 dozen sugar cookies - 1.5 dozen = <<2-1.5=.5>>.5 dozen sugar cookies left.
+Ann had 4 dozen chocolate chip cookies - 2.5 dozen = 1.5 dozen chocolate chip cookies left.
+Ann has a total of 1 + .5 + 1.5 dozen cookies = <<1+.5+1.5=3>>3 dozen cookies.
+3 dozen cookies is 3 *12 cookies = <<3*12=36>>36 cookies remaining.
+#### 36
+"""
+
+id_orig = 242
+id_shuffled = 267
+
+question_annotated = """
+{name,Ann} is baking cookies. She bakes {b_oat_txt,three} dozen oatmeal raisin cookies, {b_sug_txt,two} dozen sugar cookies, and {b_chip_txt,four} dozen chocolate chip cookies. {name,Ann} gives away {g_oat_txt,two} dozen oatmeal raisin cookies, {g_sug,1.5} dozen sugar cookies, and {g_chip,2.5} dozen chocolate chip cookies. How many total cookies does she keep?
+
+#init:
+- name = sample(names)
+- b_oat_txt, b_oat = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- g_oat_txt, g_oat = sample([("one", 1), ("two", 2), ("three", 3)])
+- b_sug_txt, b_sug = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- g_sug = sample([1.5, 2.5, 3.5])
+- b_chip_txt, b_chip = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7)])
+- g_chip = sample([2.5, 3.5, 4.5, 5.5])
+
+#conditions:
+- b_oat > g_oat
+- b_sug - g_sug == 0.5
+- b_chip - g_chip > 0
+- b_chip - g_chip != 0.5
+
+#answer: (b_oat-g_oat+b_sug-g_sug+b_chip-g_chip)*12
+"""
+
+answer_annotated = """
+{name} had {b_oat} dozen oatmeal cookies - {g_oat} dozen = <<{b_oat}-{g_oat}={b_oat-g_oat}>>{b_oat-g_oat} dozen oatmeal cookies left.
+{name} had {b_sug} dozen sugar cookies - {g_sug} dozen = <<{b_sug}-{g_sug}=.5>>.5 dozen sugar cookies left.
+{name} had {b_chip} dozen chocolate chip cookies - {g_chip} dozen = {b_chip-g_chip} dozen chocolate chip cookies left.
+{name} has a total of {b_oat-g_oat} + .5 + {b_chip-g_chip} dozen cookies = <<{b_oat-g_oat}+.5+{b_chip-g_chip}={int(b_oat-g_oat+.5+b_chip-g_chip)}>>{int(b_oat-g_oat+.5+b_chip-g_chip)} dozen cookies.
+{int(b_oat-g_oat+.5+b_chip-g_chip)} dozen cookies is {int(b_oat-g_oat+.5+b_chip-g_chip)} *12 cookies = <<{int(b_oat-g_oat+.5+b_chip-g_chip)}*12={(b_oat-g_oat+b_sug-g_sug+b_chip-g_chip)*12}>>{(b_oat-g_oat+b_sug-g_sug+b_chip-g_chip)*12} cookies remaining.
+#### {(b_oat-g_oat+b_sug-g_sug+b_chip-g_chip)*12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

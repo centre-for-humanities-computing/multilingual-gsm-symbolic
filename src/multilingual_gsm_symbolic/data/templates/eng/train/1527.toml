@@ -1,0 +1,42 @@
+question = """
+Compared to the amount of water she drank, Carla drank three times as much soda minus 6 ounces. If she drank 54 ounces of liquid total, how much water did she drink?
+"""
+
+answer = """
+Let s be the amount of soda Carla drank and w be the amount of water she drank. We know that s + w = 54 and s = 3w - 6. Substituting the second equation into the first, we get 3w - 6 + w = 54.
+Combining like terms, we get 4w - 6 = 54
+Adding 6 to both sides, we get 4w = 60
+Dividing both sides by 4, we get w = 15
+#### 15
+"""
+
+id_orig = 1420
+id_shuffled = 1527
+
+question_annotated = """
+Compared to the amount of water she drank, {name,Carla} drank {mult_txt,three times} as much soda minus {off,6} ounces. If she drank {tot,54} ounces of liquid total, how much water did she drink?
+
+#init:
+- name = sample(names_female)
+- mult_txt, m = sample([("twice", 2), ("three times", 3), ("four times", 4), ("five times", 5)])
+- $off = range(1, 30)
+- $tot = range(10, 220)
+
+#conditions:
+- divides(tot + off, m + 1)
+- m * ((tot + off) // (m + 1)) > off
+
+#answer: (tot + off) // (m + 1)
+"""
+
+answer_annotated = """
+Let s be the amount of soda {name} drank and w be the amount of water she drank. We know that s + w = {tot} and s = {m}w - {off}. Substituting the second equation into the first, we get {m}w - {off} + w = {tot}.
+Combining like terms, we get {m+1}w - {off} = {tot}
+Adding {off} to both sides, we get {m+1}w = {tot+off}
+Dividing both sides by {m+1}, we get w = {(tot+off)//(m+1)}
+#### {(tot+off)//(m+1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

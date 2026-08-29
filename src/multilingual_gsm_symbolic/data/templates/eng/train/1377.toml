@@ -1,0 +1,40 @@
+question = """
+Danielle bought a new house for $280k. She paid a $40k deposit on the house, and pays the rest using a mortgage that is spread out over 10 years. Danielle makes equal payments every month and at the end of the 10 years, the entire balance will be paid off. How much, in thousands of dollars, does Danielle pay each month?
+"""
+
+answer = """
+After paying the deposit, Danielle still has to pay a total of $280k purchase price - $40k deposit = $<<280-40=240>>240k via her mortgage.
+As the mortgage is over 10 years, Danielle’s payments need to total $240k mortgage balance / 10 years = $<<240/10=24>>24k per year.
+So each month, Danielle has to pay $24k per year / 12 months in a year = $2k per month.
+#### 2
+"""
+
+id_orig = 1270
+id_shuffled = 1377
+
+question_annotated = """
+{name,Danielle} bought a new house for ${price,280}k. She paid a ${deposit,40}k deposit on the house, and pays the rest using a mortgage that is spread out over {years,10} years. {name,Danielle} makes equal payments every month and at the end of the {years,10} years, the entire balance will be paid off. How much, in thousands of dollars, does {name,Danielle} pay each month?
+
+#init:
+- name = sample(names_female)
+- $price = range(100, 2100, 10)
+- $deposit = range(10, 100, 10)
+- $years = range(2, 13)
+
+#conditions:
+- price > deposit
+- divides(price - deposit, years * 12)
+
+#answer: (price - deposit) // years // 12
+"""
+
+answer_annotated = """
+After paying the deposit, {name} still has to pay a total of ${price}k purchase price - ${deposit}k deposit = $<<{price}-{deposit}={price-deposit}>>{price-deposit}k via her mortgage.
+As the mortgage is over {years} years, {name}’s payments need to total ${price-deposit}k mortgage balance / {years} years = $<<{price-deposit}/{years}={(price-deposit)//years}>>{(price-deposit)//years}k per year.
+So each month, {name} has to pay ${(price-deposit)//years}k per year / 12 months in a year = ${(price-deposit)//years//12}k per month.
+#### {(price-deposit)//years//12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

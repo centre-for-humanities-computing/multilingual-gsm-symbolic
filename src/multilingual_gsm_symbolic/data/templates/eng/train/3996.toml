@@ -1,0 +1,49 @@
+question = """
+Rita is reading a five-chapter book with 95 pages. Each chapter has three pages more than the previous one. How many pages does the first chapter have?
+"""
+
+answer = """
+Let P be the number of pages in the first chapter.
+The second chapter has P + 3 pages.
+The third chapter has P + 3 + 3 = P + <<+3+3=6>>6 pages.
+The fourth chapter has P + 6 + 3 = P + <<+6+3=9>>9 pages.
+The fifth chapter has P + 9 + 3 = P + <<+9+3=12>>12 pages.
+The whole book has P + 3 + P + 6 + P + 9 + P + 12 = 5P + 30 = 95 pages.
+Thus, without the 30 extra pages from additional chapters, 5P = 95 - 30 = 65 pages.
+Therefore, the first chapter had P = 65 / 5 = <<65/5=13>>13 pages.
+#### 13
+"""
+
+id_orig = 3371
+id_shuffled = 3996
+
+question_annotated = """
+{name,Rita} is reading a five-chapter book with {total,95} pages. Each chapter has {inc_txt,three} pages more than the previous one. How many pages does the first chapter have?
+
+#init:
+- name = sample(names_female)
+- inc_txt, inc = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $total = range(50, 400)
+
+#conditions:
+- divides(total - 10*inc, 5)
+- total - 10*inc > 0
+
+#answer: (total - inc*10)//5
+"""
+
+answer_annotated = """
+Let P be the number of pages in the first chapter.
+The second chapter has P + {inc} pages.
+The third chapter has P + {inc} + {inc} = P + <<+{inc}+{inc}={inc*2}>>{inc*2} pages.
+The fourth chapter has P + {inc*2} + {inc} = P + <<+{inc*2}+{inc}={inc*3}>>{inc*3} pages.
+The fifth chapter has P + {inc*3} + {inc} = P + <<+{inc*3}+{inc}={inc*4}>>{inc*4} pages.
+The whole book has P + {inc} + P + {inc*2} + P + {inc*3} + P + {inc*4} = 5P + {inc*10} = {total} pages.
+Thus, without the {inc*10} extra pages from additional chapters, 5P = {total} - {inc*10} = {total - inc*10} pages.
+Therefore, the first chapter had P = {total - inc*10} / 5 = <<{total - inc*10}/5={(total - inc*10)//5}>>{(total - inc*10)//5} pages.
+#### {(total - inc*10)//5}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

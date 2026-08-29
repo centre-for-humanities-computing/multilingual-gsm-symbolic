@@ -1,0 +1,48 @@
+question = """
+When Harriett vacuumed the sofa and chair she found 10 quarters, 3 dimes, 3 nickels, and 5 pennies.  How much money did Harriett find?
+"""
+
+answer = """
+She found 10 quarters that are $0.25 each so she found 10*.25 = $<<10*.25=2.50>>2.50
+She found 3 dimes that are $0.10 each so she found 3*.10 = $<<3*.10=0.30>>0.30
+She found 3 nickels that are $0.05 each so she found 3*.05 = $<<3*.05=0.15>>0.15
+She found 5 pennies that are $0.01 each so she found 5*.01 = $<<5*.01=0.05>>0.05
+All total she found 2.50+.30+.15+.05 = $3.00 in change
+#### 3
+"""
+
+id_orig = 1435
+id_shuffled = 1542
+
+question_annotated = """
+When {name,Harriett} vacuumed the sofa and chair she found {q,10} quarters, {d,3} dimes, {n,3} nickels, and {p,5} pennies.  How much money did {name,Harriett} find?
+
+#init:
+- name = sample(names_female)
+- $q = range(2, 42)
+- $d = range(2, 32)
+- $n = range(3, 44)
+- $p = range(5, 6)
+
+#conditions:
+- q % 4 != 0
+- d % 10 != 0
+- n % 2 != 0
+- n % 20 != 1
+- (25*q + 10*d + 5*n + p) % 100 == 0
+
+#answer: (25*q + 10*d + 5*n + p)//100
+"""
+
+answer_annotated = """
+She found {q} quarters that are $0.25 each so she found {q}*.25 = $<<{q}*.25={q*25//100}.{q*25%100}>>{q*25//100}.{q*25%100}
+She found {d} dimes that are $0.10 each so she found {d}*.10 = $<<{d}*.10={d*10//100}.{d*10%100}>>{d*10//100}.{d*10%100}
+She found {n} nickels that are $0.05 each so she found {n}*.05 = $<<{n}*.05={n*5/100}>>{n*5/100}
+She found {p} pennies that are $0.01 each so she found {p}*.01 = $<<{p}*.01={p/100}>>{p/100}
+All total she found {q*25//100}.{q*25%100}+.{d*10%100}+.{n*5%100}+.05 = ${(25*q + 10*d + 5*n + p)//100}.00 in change
+#### {(25*q + 10*d + 5*n + p)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

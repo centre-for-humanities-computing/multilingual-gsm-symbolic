@@ -1,0 +1,44 @@
+question = """
+Philip has a farm with animals. He has 20 cows, 50% more ducks. Philip also has as many pigs as one-fifth of ducks and cows in total. How many animals does Philip have on his farm?
+"""
+
+answer = """
+Philip has 50/100 * 20 = <<50/100*20=10>>10 more ducks than cows.
+Which means he has 20 + 10 = <<20+10=30>>30 ducks.
+So Philip's cows and ducks sum up to 20 + 30 = <<20+30=50>>50 animals.
+If there are 50 cows and ducks, that means Philip has 1/5 * 50 = <<50*1/5=10>>10 pigs.
+In total Philip has 50 + 10 = <<50+10=60>>60 animals on his farm.
+#### 60
+"""
+
+id_orig = 3654
+id_shuffled = 4324
+
+question_annotated = """
+{name,Philip} has a farm with animals. He has {c,20} cows, {pct,50}% more ducks. {name,Philip} also has as many pigs as {frac_txt,one-fifth} of ducks and cows in total. How many animals does {name,Philip} have on his farm?
+
+#init:
+- name = sample(names_male)
+- frac_txt, d = sample([("one-half", 2), ("one-third", 3), ("one-quarter", 4), ("one-fifth", 5), ("one-sixth", 6), ("one-seventh", 7), ("one-eighth", 8), ("one-ninth", 9), ("one-tenth", 10)])
+- $c = range(10, 410, 10)
+- $pct = range(20, 110, 10)
+
+#conditions:
+- divides(pct * c, 100)
+- divides(2*c + pct*c//100, d)
+
+#answer: 2*c + pct*c//100 + (2*c + pct*c//100)//d
+"""
+
+answer_annotated = """
+{name} has {pct}/100 * {c} = <<{pct}/100*{c}={pct*c//100}>>{pct*c//100} more ducks than cows.
+Which means he has {c} + {pct*c//100} = <<{c}+{pct*c//100}={c+pct*c//100}>>{c+pct*c//100} ducks.
+So {name}'s cows and ducks sum up to {c} + {c+pct*c//100} = <<{c}+{c+pct*c//100}={2*c+pct*c//100}>>{2*c+pct*c//100} animals.
+If there are {2*c+pct*c//100} cows and ducks, that means {name} has 1/{d} * {2*c+pct*c//100} = <<{2*c+pct*c//100}*1/{d}={(2*c+pct*c//100)//d}>>{(2*c+pct*c//100)//d} pigs.
+In total {name} has {2*c+pct*c//100} + {(2*c+pct*c//100)//d} = <<{2*c+pct*c//100}+{(2*c+pct*c//100)//d}={2*c+pct*c//100+(2*c+pct*c//100)//d}>>{2*c+pct*c//100+(2*c+pct*c//100)//d} animals on his farm.
+#### {2*c + pct*c//100 + (2*c + pct*c//100)//d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

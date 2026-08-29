@@ -1,0 +1,40 @@
+question = """
+A cleaning company produces two sanitizer sprays. One spray kills 50% of germs, and another spray kills 25% of germs. However, 5% of the germs they kill are the same ones. What percentage of germs would be left after using both sanitizer sprays together?
+"""
+
+answer = """
+After the first spray kills 50% of germs, there will be 100 - 50 = <<100-50=50>>50% left.
+The second spray kills 25%, but 5% have already been killed by the 50% spray, so it kills 25 - 5 = <<25-5=20>>20%.
+After the second spray kills 20% of the remaining germs, there will be 50 - 20 = <<50-20=30>>30% left.
+#### 30
+"""
+
+id_orig = 142
+id_shuffled = 160
+
+question_annotated = """
+A cleaning company produces two sanitizer sprays. One spray kills {p1,50}% of germs, and another spray kills {p2,25}% of germs. However, {ov,5}% of the germs they kill are the same ones. What percentage of germs would be left after using both sanitizer sprays together?
+
+#init:
+- $p1 = range(10, 90)
+- $p2 = range(5, 60)
+- $ov = range(1, 15)
+
+#conditions:
+- ov < p2
+- ov < p1
+- p1 + p2 - ov < 100
+
+#answer: 100 - p1 - p2 + ov
+"""
+
+answer_annotated = """
+After the first spray kills {p1}% of germs, there will be 100 - {p1} = <<100-{p1}={100-p1}>>{100-p1}% left.
+The second spray kills {p2}%, but {ov}% have already been killed by the {p1}% spray, so it kills {p2} - {ov} = <<{p2}-{ov}={p2-ov}>>{p2-ov}%.
+After the second spray kills {p2-ov}% of the remaining germs, there will be {100-p1} - {p2-ov} = <<{100-p1}-{p2-ov}={100-p1-(p2-ov)}>>{100-p1-(p2-ov)}% left.
+#### {100 - p1 - p2 + ov}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

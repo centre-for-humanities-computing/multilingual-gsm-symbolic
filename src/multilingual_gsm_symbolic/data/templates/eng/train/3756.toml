@@ -1,0 +1,43 @@
+question = """
+Chris’s internet bill is $45 per month for 100 GB and $0.25 for every 1 GB over. His bill for this month is $65. How many GB over was Chris charged for on this bill?
+"""
+
+answer = """
+Let G stand for the number of GB billed, so the total bill is $0.25G + $45 flat rate charge = $65 total bill.
+Now we will solve for G. $0.25G + $45 flat rate - $45 = $65 -$45. This simplifies to $0.25G = $20
+$0.25G/$0.25 = $20/$0.25
+G = 80 GB were charged on this bill.
+#### 80
+"""
+
+id_orig = 3157
+id_shuffled = 3756
+
+question_annotated = """
+{name,Chris}’s internet bill is ${a,45} per month for {b,100} GB and ${rate_txt,0.25} for every 1 GB over. His bill for this month is ${total,65}. How many GB over was {name,Chris} charged for on this bill?
+
+#init:
+- name = sample(names_male)
+- rate_txt, rate_cents = sample([("0.10", 10), ("0.25", 25), ("0.50", 50)])
+- $a = range(20, 60)
+- $b = range(50, 250, 25)
+- $total = range(45, 205, 5)
+
+#conditions:
+- total > a
+- is_int((total - a) * 100 / rate_cents)
+
+#answer: int((total - a) * 100 / rate_cents)
+"""
+
+answer_annotated = """
+Let G stand for the number of GB billed, so the total bill is ${rate_txt}G + ${a} flat rate charge = ${total} total bill.
+Now we will solve for G. ${rate_txt}G + ${a} flat rate - ${a} = ${total} -${a}. This simplifies to ${rate_txt}G = ${total - a}
+${rate_txt}G/${rate_txt} = ${total - a}/${rate_txt}
+G = {int((total - a) * 100 / rate_cents)} GB were charged on this bill.
+#### {int((total - a) * 100 / rate_cents)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

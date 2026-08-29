@@ -1,0 +1,45 @@
+question = """
+Joseph had 16 baseball cards. He gave 3/8 of the cards to his brother and 2 cards to his brother. What percentage of the cards is left to Joseph?
+"""
+
+answer = """
+Joseph gave 16 x 3/8 = <<16*3/8=6>>6 cards to his brother.
+He gave a total of 6 + 2 = <<6+2=8>>8 cards to his brother and friend.
+Joseph has 16 - 8 = <<16-8=8>>8 cards left.
+This is 8/16 x 100% = 50% of his cards.
+#### 50
+"""
+
+id_orig = 3895
+id_shuffled = 4589
+
+question_annotated = """
+{name,Joseph} had {t,16} baseball cards. He gave {p,3}/{q,8} of the cards to his brother and {g,2} cards to his brother. What percentage of the cards is left to {name,Joseph}?
+
+#init:
+- name = sample(names_male)
+- $t = range(4, 204, 4)
+- $p = range(1, 5)
+- $q = range(2, 13)
+- $g = range(1, 6)
+
+#conditions:
+- p < q
+- divides(p * t, q)
+- t - p*t//q - g > 0
+- divides(100 * (t - p*t//q - g), t)
+
+#answer: 100 * (t - p*t//q - g) // t
+"""
+
+answer_annotated = """
+{name} gave {t} x {p}/{q} = <<{t}*{p}/{q}={p*t//q}>>{p*t//q} cards to his brother.
+He gave a total of {p*t//q} + {g} = <<{p*t//q}+{g}={p*t//q+g}>>{p*t//q+g} cards to his brother and friend.
+{name} has {t} - {p*t//q+g} = <<{t}-{p*t//q+g}={t-p*t//q-g}>>{t-p*t//q-g} cards left.
+This is {t-p*t//q-g}/{t} x 100% = {100*(t-p*t//q-g)//t}% of his cards.
+#### {100*(t-p*t//q-g)//t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

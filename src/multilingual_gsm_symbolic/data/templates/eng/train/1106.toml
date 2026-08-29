@@ -1,0 +1,40 @@
+question = """
+Erin works in the school cafeteria serving soup. Each bowl of soup has 10 ounces, and Erin can serve 5 bowls per minute. If the pot of soup has 6 gallons of soup, how long will it take Erin to serve all the soup, rounded to the nearest minute? (There are 128 ounces to a gallon.)
+"""
+
+answer = """
+First find the number of ounces Erin serves per minute: 10 ounces/bowl * 5 bowls/minute = <<10*5=50>>50 ounces/minute
+Then find the number of ounces in the pot: 6 gallons * 128 ounces/gallon = <<6*128=768>>768 ounces
+Then divide the total amount of soup by the amount of soup Erin serves per minute: 768 minutes / 50 ounces/minute = <<768/50=15.36>>15.36 minutes, which rounds down to 15 minutes
+#### 15
+"""
+
+id_orig = 1010
+id_shuffled = 1106
+
+question_annotated = """
+{name,Erin} works in the school cafeteria serving soup. Each bowl of soup has {b,10} ounces, and {name,Erin} can serve {r,5} bowls per minute. If the pot of soup has {g,6} gallons of soup, how long will it take {name,Erin} to serve all the soup, rounded to the nearest minute? (There are 128 ounces to a gallon.)
+
+#init:
+- name = sample(names_female)
+- $b = range(4, 21, 2)
+- $r = range(2, 11)
+- $g = range(2, 21)
+
+#conditions:
+- b * r < g * 128
+- 2 * ((g * 128) % (b * r)) < b * r
+
+#answer: g * 128 // (b * r)
+"""
+
+answer_annotated = """
+First find the number of ounces {name} serves per minute: {b} ounces/bowl * {r} bowls/minute = <<{b}*{r}={b*r}>>{b*r} ounces/minute
+Then find the number of ounces in the pot: {g} gallons * 128 ounces/gallon = <<{g}*128={g*128}>>{g*128} ounces
+Then divide the total amount of soup by the amount of soup {name} serves per minute: {g*128} minutes / {b*r} ounces/minute = <<{g*128}/{b*r}={g*128/(b*r)}>>{g*128/(b*r)} minutes, which rounds down to {g*128//(b*r)} minutes
+#### {g * 128 // (b * r)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

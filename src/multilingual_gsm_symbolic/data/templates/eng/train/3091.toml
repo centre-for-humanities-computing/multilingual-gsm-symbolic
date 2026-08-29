@@ -1,0 +1,45 @@
+question = """
+Zander collected 100 stickers. He gave some of his stickers to his two friends, Andrew and Bill. Andrew received 1/5 of Zander's stickers, while Bill received 3/10 of the remaining stickers. How many stickers did Andrew give to his two friends?
+"""
+
+answer = """
+Andrew received 100 x 1/5 = <<100*1/5=20>>20 stickers.
+So, there were 100 - 20 = <<100-20=80>>80 stickers left.
+Bill received 80 x 3/10 = <<80*3/10=24>>24 stickers.
+Therefore, Andrew gave away 20 + 24 = <<20+24=44>>44 stickers.
+#### 44
+"""
+
+id_orig = 2658
+id_shuffled = 3091
+
+question_annotated = """
+{name,Zander} collected {a,100} stickers. He gave some of his stickers to his two friends, Andrew and Bill. Andrew received {p,1}/{q,5} of {name,Zander}'s stickers, while Bill received {s,3}/{t,10} of the remaining stickers. How many stickers did Andrew give to his two friends?
+
+#init:
+- name = sample(names_male)
+- $a = range(60, 220, 20)
+- $p = range(1, 4)
+- $q = range(2, 7)
+- $s = range(1, 5)
+- $t = range(2, 12)
+
+#conditions:
+- p < q
+- divides(a*p, q)
+- divides((a - a*p//q)*s, t)
+
+#answer: a*p//q + (a - a*p//q)*s//t
+"""
+
+answer_annotated = """
+Andrew received {a} x {p}/{q} = <<{a}*{p}/{q}={a*p//q}>>{a*p//q} stickers.
+So, there were {a} - {a*p//q} = <<{a}-{a*p//q}={a-a*p//q}>>{a-a*p//q} stickers left.
+Bill received {a-a*p//q} x {s}/{t} = <<{a-a*p//q}*{s}/{t}={(a - a*p//q)*s//t}>>{(a - a*p//q)*s//t} stickers.
+Therefore, Andrew gave away {a*p//q} + {(a - a*p//q)*s//t} = <<{a*p//q}+{(a - a*p//q)*s//t}={a*p//q+(a - a*p//q)*s//t}>>{a*p//q+(a - a*p//q)*s//t} stickers.
+#### {a*p//q+(a - a*p//q)*s//t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

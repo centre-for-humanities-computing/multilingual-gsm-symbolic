@@ -1,0 +1,42 @@
+question = """
+Nicole collected 400 Pokemon cards. Cindy collected twice as many, and Rex collected half of Nicole and Cindy's combined total. If Rex divided his card equally among himself and his three younger siblings, how many cards does Rex have left?
+"""
+
+answer = """
+Cindy has 400 x 2 = <<400*2=800>>800 cards.
+Nicole and Cindy have 400 + 800 = <<400+800=1200>>1200 cards.
+Rex has 1200/2 = <<1200/2=600>>600 cards.
+Rex is left with 600/(3+1=4) = <<600/4=150>>150 cards
+#### 150
+"""
+
+id_orig = 3222
+id_shuffled = 3835
+
+question_annotated = """
+{name,Nicole} collected {a,400} Pokemon cards. Cindy collected {mult_txt,twice} as many, and Rex collected half of {name,Nicole} and Cindy's combined total. If Rex divided his card equally among himself and his {sib_txt,three} younger siblings, how many cards does Rex have left?
+
+#init:
+- name = sample(names_female)
+- mult_txt, k = sample(multi_times)
+- sib_txt, sib = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $a = range(20, 420, 2)
+
+#conditions:
+- divides(a * (1 + k), 2)
+- divides((a + a*k) // 2, sib + 1)
+
+#answer: (a + a*k)//2//(sib + 1)
+"""
+
+answer_annotated = """
+Cindy has {a} x {k} = <<{a}*{k}={a*k}>>{a*k} cards.
+{name} and Cindy have {a} + {a*k} = <<{a}+{a*k}={a+a*k}>>{a+a*k} cards.
+Rex has {a+a*k}/2 = <<{a+a*k}/2={(a + a*k)//2}>>{(a + a*k)//2} cards.
+Rex is left with {(a + a*k)//2}/({sib}+1={sib + 1}) = <<{(a + a*k)//2}/{sib + 1}={(a + a*k)//2/(sib + 1)}>>{(a + a*k)//2//(sib + 1)} cards
+#### {(a + a*k)//2//(sib + 1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

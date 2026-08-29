@@ -1,0 +1,42 @@
+question = """
+The town is having a race to see who can run around the town square 7 times the fastest. The town square is 3/4 of a mile long. The winner finishes the race in 42 minutes. Last year's winner finished in 47.25 minutes. How many minutes on average faster did this year's winner run one mile of the race compared to last year?
+"""
+
+answer = """
+The race is 5.25 miles long because 7 x .75 = <<7*.75=5.25>>5.25
+They ran a mile in 8 minutes because 42 / 5.25 = <<42/5.25=8>>8
+Last year's winner ran a mile in 9 minutes because 47.25 / 5.25 = <<47.25/5.25=9>>9
+They ran 1 minute faster per mile compared to last year's winner.
+#### 1
+"""
+
+id_orig = 3577
+id_shuffled = 4235
+
+question_annotated = """
+The town is having a race to see who can run around the town square {L,7} times the fastest. The town square is 3/4 of a mile long. The winner finishes the race in {tn_txt,42} minutes. Last year's winner finished in {to_txt,47.25} minutes. How many minutes on average faster did this year's winner run one mile of the race compared to last year?
+
+#init:
+- $L = range(2, 17)
+- tn_txt, tn = sample([("42", 42), ("24", 24), ("36", 36), ("48", 48), ("60", 60), ("72", 72), ("84", 84), ("96", 96), ("108", 108), ("120", 120), ("132", 132)])
+- to_txt, to = sample([("47.25", 47.25), ("42", 42), ("63", 63), ("84", 84), ("105", 105), ("126", 126), ("147", 147), ("168", 168), ("189", 189), ("210", 210)])
+
+#conditions:
+- is_int(tn / (L * 0.75))
+- is_int(to / (L * 0.75))
+- to > tn
+
+#answer: int(to / (L * 0.75)) - int(tn / (L * 0.75))
+"""
+
+answer_annotated = """
+The race is {L*0.75} miles long because {L} x .75 = <<{L}*.75={L*0.75}>>{L*0.75}
+They ran a mile in {int(tn / (L * 0.75))} minutes because {tn_txt} / {L*0.75} = <<{tn}/{L*0.75}={int(tn / (L * 0.75))}>>{int(tn / (L * 0.75))}
+Last year's winner ran a mile in {int(to / (L * 0.75))} minutes because {to_txt} / {L*0.75} = <<{to}/{L*0.75}={int(to / (L * 0.75))}>>{int(to / (L * 0.75))}
+They ran {int(to / (L * 0.75)) - int(tn / (L * 0.75))} minute faster per mile compared to last year's winner.
+#### {int(to / (L * 0.75)) - int(tn / (L * 0.75))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

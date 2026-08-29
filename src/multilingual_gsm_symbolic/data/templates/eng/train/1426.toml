@@ -1,0 +1,48 @@
+question = """
+A party of 4 order 3 dozen oysters on the half shell for $15.00 a dozen, 2 pounds of steamed shrimp for $14.00 a pound and 2 pounds of fried clams for $13.50 a pound.  If they split the bill equally, how much will they each owe?
+"""
+
+answer = """
+They ordered 3 dozen oysters at $15.00 a dozen so that's 3*15 = $<<3*15=45.00>>45.00
+They ordered 2 pounds of shrimp for $14.00 a pound so that's 2*14 = $<<2*14=28.00>>28.00
+They ordered 2 pounds of fried clams for $13.50 a pound so that's 2*13.50 = $<<2*13.50=27.00>>27.00
+All total their bill comes to 45+28+27 = $<<45+28+27=100.00>>100.00
+Their bill was $100.00 and they are splitting it equally amongst 4 people so they each owe 100/4 = $<<100/4=25.00>>25.00
+#### 25
+"""
+
+id_orig = 1319
+id_shuffled = 1426
+
+question_annotated = """
+A party of {p,4} order {d,3} dozen oysters on the half shell for ${od,15}.00 a dozen, {s,2} pounds of steamed shrimp for ${sd,14}.00 a pound and {c,2} pounds of fried clams for ${cd_d,13}.{cd_c,50} a pound.  If they split the bill equally, how much will they each owe?
+
+#init:
+- $p = range(2, 7)
+- $d = range(1, 7)
+- $od = range(10, 18)
+- $s = range(1, 7)
+- $sd = range(10, 17)
+- $c = range(1, 7)
+- $cd_d = range(12, 16)
+- $cd_c = range(25, 76, 25)
+
+#conditions:
+- divides(c * cd_c, 100)
+- divides(d*od + s*sd + c*(cd_d*100+cd_c)//100, p)
+
+#answer: (d*od + s*sd + c*(cd_d*100+cd_c)//100)//p
+"""
+
+answer_annotated = """
+They ordered {d} dozen oysters at ${od}.00 a dozen so that's {d}*{od} = $<<{d}*{od}={d*od}.00>>{d*od}.00
+They ordered {s} pounds of shrimp for ${sd}.00 a pound so that's {s}*{sd} = $<<{s}*{sd}={s*sd}.00>>{s*sd}.00
+They ordered {c} pounds of fried clams for ${cd_d}.{cd_c} a pound so that's {c}*{cd_d}.{cd_c} = $<<{c}*{cd_d}.{cd_c}={c*(cd_d*100+cd_c)//100}.00>>{c*(cd_d*100+cd_c)//100}.00
+All total their bill comes to {d*od}+{s*sd}+{c*(cd_d*100+cd_c)//100} = $<<{d*od}+{s*sd}+{c*(cd_d*100+cd_c)//100}={d*od + s*sd + c*(cd_d*100+cd_c)//100}.00>>{d*od + s*sd + c*(cd_d*100+cd_c)//100}.00
+Their bill was ${d*od + s*sd + c*(cd_d*100+cd_c)//100}.00 and they are splitting it equally amongst {p} people so they each owe {d*od + s*sd + c*(cd_d*100+cd_c)//100}/{p} = $<<{d*od + s*sd + c*(cd_d*100+cd_c)//100}/{p}={(d*od + s*sd + c*(cd_d*100+cd_c)//100)//p}.00>>{(d*od + s*sd + c*(cd_d*100+cd_c)//100)//p}.00
+#### {(d*od + s*sd + c*(cd_d*100+cd_c)//100)//p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+A rancher has 340 head of cattle. He was about to sell them all for $204,000 when 172 of them fell sick and died. Because of the sickness, his customers lost confidence in his cattle, forcing him to lower his price by $150 per head. How much money would the devastated farmer lose if he sold the remaining cattle at the lowered price compared to the amount he would have made by selling them at the original price?
+"""
+
+answer = """
+The rancher would have sold his cattle for $204,000/340 = $<<204000/340=600>>600 per head.
+He was left with a remainder of 340 - 172 = <<340-172=168>>168 head of cattle.
+The lowered price is $600 - $150 = $<<600-150=450>>450 per head.
+He would make $450 x 168 = $<<450*168=75600>>75,600 at the lowered price.
+He could have made $600 x 168 = $<<600*168=100800>>100,800 at the original price.
+He would lose $100,800 - $75,600 = $<<100800-75600=25200>>25,200
+#### 25200
+"""
+
+id_orig = 2728
+id_shuffled = 3248
+
+question_annotated = """
+A rancher has {total,340} head of cattle. He was about to sell them all for ${sale,204000} when {died,172} of them fell sick and died. Because of the sickness, his customers lost confidence in his cattle, forcing him to lower his price by ${cut,150} per head. How much money would the devastated farmer lose if he sold the remaining cattle at the lowered price compared to the amount he would have made by selling them at the original price?
+
+#init:
+- $total = range(200, 420, 20)
+- $sale = range(160000, 324000, 4000)
+- $died = range(12, 200, 4)
+- $cut = range(50, 210, 25)
+
+#conditions:
+- divides(sale, total)
+- died < total
+- sale//total > cut
+
+#answer: cut * (total - died)
+"""
+
+answer_annotated = """
+The rancher would have sold his cattle for ${sale}/{total} = $<<{sale}/{total}={sale//total}>>{sale//total} per head.
+He was left with a remainder of {total} - {died} = <<{total}-{died}={total-died}>>{total-died} head of cattle.
+The lowered price is ${sale//total} - ${cut} = $<<{sale//total}-{cut}={(sale//total)-cut}>>{(sale//total)-cut} per head.
+He would make ${(sale//total)-cut} x {total-died} = $<<{(sale//total)-cut}*{total-died}={(sale//total-cut)*(total-died)}>>{(sale//total-cut)*(total-died)} at the lowered price.
+He could have made ${sale//total} x {total-died} = $<<{sale//total}*{total-died}={sale//total*(total-died)}>>{sale//total*(total-died)} at the original price.
+He would lose ${sale//total*(total-died)} - ${(sale//total-cut)*(total-died)} = $<<{sale//total*(total-died)}-{(sale//total-cut)*(total-died)}={cut*(total-died)}>>{cut*(total-died)}
+#### {cut*(total-died)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

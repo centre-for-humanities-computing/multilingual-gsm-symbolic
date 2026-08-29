@@ -1,0 +1,44 @@
+question = """
+Rebecca bought 2 pies for the holiday weekend.  Each pie was sliced into 8 slices.  Rebecca ate 1 slice of each pie.  Her family and friends ate 50% of the remaining pies over the weekend.  On Sunday evening Rebecca and her husband each had another slice of pie.  How many slices are remaining?
+"""
+
+answer = """
+She bought 2 pies that had 8 slices each for a total of 2*8 = <<2*8=16>>16 slices
+Rebecca ate 2 of the 16 slices leaving 16-2 =<<16-2=14>>14 slices
+Her family and friends at 50% of the pie so they ate 14*.50 = <<14*.50=7>>7 slices
+There were 14 slices and her family and friends ate 7 slices so that leaves 14-7 = <<14-7=7>>7 slices
+Sunday night Rebecca and her husband each had a slice from the remaining slices so that leaves 7-2 = <<7-2=5>>5 slices
+#### 5
+"""
+
+id_orig = 2534
+id_shuffled = 2922
+
+question_annotated = """
+{name,Rebecca} bought {p,2} pies for the holiday weekend.  Each pie was sliced into {s,8} slices.  {name,Rebecca} ate {r,1} slice of each pie.  Her family and friends ate 50% of the remaining pies over the weekend.  On Sunday evening {name,Rebecca} and her husband each had another slice of pie.  How many slices are remaining?
+
+#init:
+- name = sample(names_female)
+- $p = range(2, 12)
+- $s = range(4, 21)
+- $r = range(1, 4)
+
+#conditions:
+- divides(p * (s - r), 2)
+- p * (s - r) // 2 > 2
+
+#answer: p*s - p*r - p*(s-r)//2 - 2
+"""
+
+answer_annotated = """
+She bought {p} pies that had {s} slices each for a total of {p}*{s} = <<{p}*{s}={p*s}>>{p*s} slices
+{name} ate {p*r} of the {p*s} slices leaving {p*s}-{p*r} =<<{p*s}-{p*r}={p*s-p*r}>>{p*s-p*r} slices
+Her family and friends at 50% of the pie so they ate {p*(s-r)}*.50 = <<{p*(s-r)}*.50={p*(s-r)//2}>>{p*(s-r)//2} slices
+There were {p*(s-r)} slices and her family and friends ate {p*(s-r)//2} slices so that leaves {p*(s-r)}-{p*(s-r)//2} = <<{p*(s-r)}-{p*(s-r)//2}={p*(s-r)-p*(s-r)//2}>>{p*(s-r)-p*(s-r)//2} slices
+Sunday night {name} and her husband each had a slice from the remaining slices so that leaves {p*(s-r)-p*(s-r)//2}-2 = <<{p*(s-r)-p*(s-r)//2}-2={p*(s-r)-p*(s-r)//2-2}>>{p*(s-r)-p*(s-r)//2-2} slices
+#### {p*s - p*r - p*(s-r)//2 - 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

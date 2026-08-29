@@ -1,0 +1,42 @@
+question = """
+Bert's golden retriever has grown tremendously since it was a puppy.  At 7 weeks old, the puppy weighed 6 pounds, but doubled in weight by week 9.  It doubled in weight again at 3 months old, and doubled again at 5 months old.  Finally, the dog reached its final adult weight by adding another 30 pounds by the time it was one year old.  What is the dog's full adult weight, in pounds?
+"""
+
+answer = """
+At 7 weeks old, the puppy weighed 6 pounds, but doubled in weight by week 9 to reach a weight of 6*2=<<6+6=12>>12 pounds.
+It doubled in weight again at 3 months old to reach a weight of 12*2=<<12*2=24>>24 pounds.
+It doubled in weight again at 5 months old to reach a weight of 24*2=<<24*2=48>>48 pounds.
+And it reached its full adult weight by adding another 30 lbs to reach a final weight of 48+30=78 pounds.
+#### 78
+"""
+
+id_orig = 415
+id_shuffled = 477
+
+question_annotated = """
+{name,Bert}'s golden retriever has grown tremendously since it was a puppy.  At {w1,7} weeks old, the puppy weighed {a,6} pounds, but doubled in weight by week {w2,9}.  It doubled in weight again at 3 months old, and doubled again at 5 months old.  Finally, the dog reached its final adult weight by adding another {b,30} pounds by the time it was one year old.  What is the dog's full adult weight, in pounds?
+
+#init:
+- name = sample(names_male)
+- $w1 = range(3, 9)
+- $w2 = range(9, 15)
+- $a = range(2, 42, 2)
+- $b = range(10, 110, 10)
+
+#conditions:
+- w2 > w1
+
+#answer: a*8 + b
+"""
+
+answer_annotated = """
+At {w1} weeks old, the puppy weighed {a} pounds, but doubled in weight by week {w2} to reach a weight of {a}*2=<<{a}+{a}={a*2}>>{a*2} pounds.
+It doubled in weight again at 3 months old to reach a weight of {a*2}*2=<<{a*2}*2={a*4}>>{a*4} pounds.
+It doubled in weight again at 5 months old to reach a weight of {a*4}*2=<<{a*4}*2={a*8}>>{a*8} pounds.
+And it reached its full adult weight by adding another {b} lbs to reach a final weight of {a*8}+{b}={a*8+b} pounds.
+#### {a*8+b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

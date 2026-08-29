@@ -1,0 +1,39 @@
+question = """
+Nissa is calculating a jail sentence for a man who was convicted of burglary. The base sentence is 1 year of jail for every $5,000 of goods stolen. The burglar is going to have his sentence length increased by 25% because this is his third offense, plus 2 additional years for resisting arrest. How many years total is the burglar's sentence if he stole $40,000 worth of goods?
+"""
+
+answer = """
+First find how many years the base sentence will be: $40,000 / 1 year/$5,000 = <<40000/5000=8>>8 years
+Then find how long the increase for the third offense is: 8 years * 25% = <<8*25*.01=2>>2 years
+Then add the third-offense increase and the sentence for resisting arrest to the base sentence: 8 years + 2 years + 2 years = <<8+2+2=12>>12 years
+#### 12
+"""
+
+id_orig = 2474
+id_shuffled = 2847
+
+question_annotated = """
+{name,Nissa} is calculating a jail sentence for a man who was convicted of burglary. The base sentence is 1 year of jail for every $5,000 of goods stolen. The burglar is going to have his sentence length increased by {p,25}% because this is his third offense, plus {e,2} additional years for resisting arrest. How many years total is the burglar's sentence if he stole ${t,40},000 worth of goods?
+
+#init:
+- name = sample(names)
+- $t = range(15, 215, 5)
+- $p = range(10, 110, 5)
+- $e = range(1, 11)
+
+#conditions:
+- divides(t//5 * p, 100)
+
+#answer: t//5 + t//5*p//100 + e
+"""
+
+answer_annotated = """
+First find how many years the base sentence will be: ${t},000 / 1 year/$5,000 = <<{t*1000}/5000={t//5}>>{t//5} years
+Then find how long the increase for the third offense is: {t//5} years * {p}% = <<{t//5}*{p}*.01={t//5*p//100}>>{t//5*p//100} years
+Then add the third-offense increase and the sentence for resisting arrest to the base sentence: {t//5} years + {t//5*p//100} years + {e} years = <<{t//5}+{t//5*p//100}+{e}={t//5+t//5*p//100+e}>>{t//5+t//5*p//100+e} years
+#### {t//5 + t//5*p//100 + e}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

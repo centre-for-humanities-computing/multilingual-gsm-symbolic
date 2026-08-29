@@ -1,0 +1,42 @@
+question = """
+Yvette wants to frame a new picture. When she goes to her local frame shop, she finds out that the frame she wanted is 20% more expensive than her budget of $60. If she paid for a smaller frame at 3/4 the new price of the frame she initially intended to buy, how much money did she remain with?
+"""
+
+answer = """
+The frame she initially intended to buy was 20/100*$60=$<<20/100*60=12>>12 more expensive than she had thought.
+This means the frame was being sold at $60+$12 = $<<60+12=72>>72
+If she paid for a smaller frame at 3/4 the price of the frame she initially intended to buy, she paid 3/4*$72 = $<<3/4*72=54>>54
+Yvette remained with $60-$54 = $<<60-54=6>>6
+#### 6
+"""
+
+id_orig = 1560
+id_shuffled = 1966
+
+question_annotated = """
+{name,Yvette} wants to frame a new picture. When she goes to her local frame shop, she finds out that the frame she wanted is {pct,20}% more expensive than her budget of ${budget,60}. If she paid for a smaller frame at 3/4 the new price of the frame she initially intended to buy, how much money did she remain with?
+
+#init:
+- name = sample(names_female)
+- $pct = range(5, 31, 5)
+- $budget = range(40, 2000, 20)
+
+#conditions:
+- divides(pct*budget, 100)
+- divides(budget + pct*budget//100, 4)
+- budget > 3*(budget + pct*budget//100)//4
+
+#answer: budget - 3*(budget + pct*budget//100)//4
+"""
+
+answer_annotated = """
+The frame she initially intended to buy was {pct}/100*${budget}=$<<{pct}/100*{budget}={pct*budget//100}>>{pct*budget//100} more expensive than she had thought.
+This means the frame was being sold at ${budget}+${pct*budget//100} = $<<{budget}+{pct*budget//100}={budget+pct*budget//100}>>{budget+pct*budget//100}
+If she paid for a smaller frame at 3/4 the price of the frame she initially intended to buy, she paid 3/4*${budget+pct*budget//100} = $<<3/4*{budget+pct*budget//100}={3*(budget+pct*budget//100)//4}>>{3*(budget+pct*budget//100)//4}
+{name} remained with ${budget}-${3*(budget+pct*budget//100)//4} = $<<{budget}-{3*(budget+pct*budget//100)//4}={budget-3*(budget+pct*budget//100)//4}>>{budget-3*(budget+pct*budget//100)//4}
+#### {budget - 3*(budget + pct*budget//100)//4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

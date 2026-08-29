@@ -1,0 +1,44 @@
+question = """
+Jerry wakes up one morning and finds the thermostat set to 40 degrees. He set it to double the initial temperature. His dad notices, yells at Jerry, and reducing the temperature by 30 degrees. Later, Jerry's mother reduces the temperature by 30%, before his sister increases it by 24 degrees. What's the final temperature?
+"""
+
+answer = """
+First double the initial temperature: 40 degrees * 2 = <<40*2=80>>80 degrees
+Then reduce that amount by 30 to reflect the dad's change: 80 degrees - 30 degrees = <<80-30=50>>50 degrees
+Then multiply that number by 30% to find how much Jerry's mother reduces the temperature: 50 degrees * .3 = <<50*.3=15>>15 degrees
+Now subtract 15 degrees from 50 degrees to find the temperature after the mother's change: 50 degrees - 15 degrees = <<50-15=35>>35 degrees
+Finally, add 24 degrees to find the final temperature: 35 degrees + 24 degrees = <<35+24=59>>59 degrees
+#### 59
+"""
+
+id_orig = 2943
+id_shuffled = 3505
+
+question_annotated = """
+{name,Jerry} wakes up one morning and finds the thermostat set to {a,40} degrees. He set it to double the initial temperature. His dad notices, yells at {name,Jerry}, and reducing the temperature by {b,30} degrees. Later, {name,Jerry}'s mother reduces the temperature by 30%, before his sister increases it by {c,24} degrees. What's the final temperature?
+
+#init:
+- name = sample(names_male)
+- $a = range(10, 110)
+- $b = range(1, 101)
+- $c = range(1, 51)
+
+#conditions:
+- a*2 - b > 0
+- divides(a*2 - b, 10)
+
+#answer: (a*2 - b)*7//10 + c
+"""
+
+answer_annotated = """
+First double the initial temperature: {a} degrees * 2 = <<{a}*2={a*2}>>{a*2} degrees
+Then reduce that amount by {b} to reflect the dad's change: {a*2} degrees - {b} degrees = <<{a*2}-{b}={a*2-b}>>{a*2-b} degrees
+Then multiply that number by 30% to find how much {name}'s mother reduces the temperature: {a*2-b} degrees * .3 = <<{a*2-b}*.3={(a*2-b)*3//10}>>{(a*2-b)*3//10} degrees
+Now subtract {(a*2-b)*3//10} degrees from {a*2-b} degrees to find the temperature after the mother's change: {a*2-b} degrees - {(a*2-b)*3//10} degrees = <<{a*2-b}-{(a*2-b)*3//10}={(a*2-b)*7//10}>>{(a*2-b)*7//10} degrees
+Finally, add {c} degrees to find the final temperature: {(a*2-b)*7//10} degrees + {c} degrees = <<{(a*2-b)*7//10}+{c}={(a*2-b)*7//10+c}>>{(a*2-b)*7//10+c} degrees
+#### {(a*2-b)*7//10+c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

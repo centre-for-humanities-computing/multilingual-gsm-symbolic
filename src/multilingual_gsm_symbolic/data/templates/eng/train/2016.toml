@@ -1,0 +1,50 @@
+question = """
+Carson is refilling his tires. Each tire can hold 500 cubic inches of air. Two of the tires are completely flat and empty. One tire is 40% full and the last tire is 70% full. If Carson injects 50 cubic inches of air with each pump, how many pumps will it take him to fill all the tires?
+"""
+
+answer = """
+First, if the a full tire needs 500 cubic inches of air, then two empty tires need: 500 cubic inches/tire * 2 tires = <<500*2=1000>>1000 cubic inches.
+Accordingly, the 40%-full tire needs 500 cubic inches * (100%-40%).
+So, we find the 40%-full tire needs 500 cubic inches * (60%) = <<500*(60*.01)=300>>300 cubic inches.
+And, the 70%-full tire needs 500 cubic inches * (100%-70%).
+So, the 70%-full tire needs 500 cubic inches * (30%)= <<500*(30*.01)=150>>150 cubic inches.
+Now add up the needs of all the tires to find the total number of cubic inches needed: 1000 cubic inches + 300 cubic inches + 150 cubic inches = <<1000+300+150=1450>>1450 cubic inches.
+Finally, if the pumps each hold 50 cubic inches, the total number of pumps needed is 1550 cubic inches / 50 cubic inches/pump = 29 pumps.
+#### 29
+"""
+
+id_orig = 1817
+id_shuffled = 2016
+
+question_annotated = """
+{name,Carson} is refilling his tires. Each tire can hold {a,500} cubic inches of air. Two of the tires are completely flat and empty. One tire is {p1,40}% full and the last tire is {p2,70}% full. If {name,Carson} injects {p,50} cubic inches of air with each pump, how many pumps will it take him to fill all the tires?
+
+#init:
+- name = sample(names_male)
+- $a = range(100, 600, 100)
+- $p1 = range(5, 96, 5)
+- $p2 = range(5, 96, 5)
+- $p = range(10, 130, 10)
+
+#conditions:
+- divides(a*(100-p1), 100)
+- divides(a*(100-p2), 100)
+- divides(a*(400-p1-p2), 100*p)
+
+#answer: a*(400-p1-p2)//(100*p)
+"""
+
+answer_annotated = """
+First, if the a full tire needs {a} cubic inches of air, then two empty tires need: {a} cubic inches/tire * 2 tires = <<{a}*2={a*2}>>{a*2} cubic inches.
+Accordingly, the {p1}%-full tire needs {a} cubic inches * (100%-{p1}%).
+So, we find the {p1}%-full tire needs {a} cubic inches * ({100-p1}%) = <<{a}*({100-p1}*.01)={a*(100-p1)//100}>>{a*(100-p1)//100} cubic inches.
+And, the {p2}%-full tire needs {a} cubic inches * (100%-{p2}%).
+So, the {p2}%-full tire needs {a} cubic inches * ({100-p2}%)= <<{a}*({100-p2}*.01)={a*(100-p2)//100}>>{a*(100-p2)//100} cubic inches.
+Now add up the needs of all the tires to find the total number of cubic inches needed: {a*2} cubic inches + {a*(100-p1)//100} cubic inches + {a*(100-p2)//100} cubic inches = <<{a*2}+{a*(100-p1)//100}+{a*(100-p2)//100}={a*(400-p1-p2)//100}>>{a*(400-p1-p2)//100} cubic inches.
+Finally, if the pumps each hold {p} cubic inches, the total number of pumps needed is 1550 cubic inches / {p} cubic inches/pump = {a*(400-p1-p2)//(100*p)} pumps.
+#### {a*(400-p1-p2)//(100*p)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

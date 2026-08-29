@@ -1,0 +1,43 @@
+question = """
+John sublets his apartment to 3 people who each pay $400 per month.  He rents the apartment for $900 a month.  How much profit does he make in a year?
+"""
+
+answer = """
+He gets 3*$400=$<<3*400=1200>>1200 per month
+So he gets 1200*12=$<<1200*12=14400>>14,400 per year
+So he pays 12*900=$<<12*900=10800>>10,800 a year
+That means his profit is 14,400-10,800=$<<14400-10800=3600>>3600 per year
+#### 3600
+"""
+
+id_orig = 388
+id_shuffled = 450
+
+question_annotated = """
+{name,John} sublets his apartment to {n,3} people who each pay ${p,400} per month.  He rents the apartment for ${r,900} a month.  How much profit does he make in a year?
+
+#init:
+- name = sample(names_male)
+- $n = range(2, 9)
+- $p = range(150, 850, 50)
+- $r = range(300, 1900, 100)
+
+#conditions:
+- n * p > r
+- n*p*12 - 1000*(n*p*12//1000) >= 100
+- 12*r - 1000*(12*r//1000) >= 100
+
+#answer: 12 * (n * p - r)
+"""
+
+answer_annotated = """
+He gets {n}*${p}=$<<{n}*{p}={n*p}>>{n*p} per month
+So he gets {n*p}*12=$<<{n*p}*12={n*p*12}>>{n*p*12//1000},{n*p*12-1000*(n*p*12//1000)} per year
+So he pays 12*{r}=$<<12*{r}={12*r}>>{12*r//1000},{12*r-1000*(12*r//1000)} a year
+That means his profit is {n*p*12//1000},{n*p*12-1000*(n*p*12//1000)}-{12*r//1000},{12*r-1000*(12*r//1000)}=$<<{n*p*12}-{12*r}={12*(n*p-r)}>>{12*(n*p-r)} per year
+#### {12 * (n * p - r)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

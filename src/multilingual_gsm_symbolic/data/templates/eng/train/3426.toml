@@ -1,0 +1,46 @@
+question = """
+Noah’s bedroom light uses 6 watts per hour. His office light is much brighter so he can see to work and uses three times as much energy. The living room light has a much larger space to cover and has to be more powerful, so it uses four times as much energy as his bedroom light. If Noah leaves all those lights on for two hours, how many watts has he used?
+"""
+
+answer = """
+Noah’s bedroom light uses 6 watts per hour, so it would use 2 * 6 = <<6*2=12>>12 watts in two hours.
+His office light uses 3 times as many watts as his bedroom light, so it uses 3 * 6 = <<3*6=18>>18 watts per hour.
+In two hours, the office light would use 18 * 2 = <<18*2=36>>36 watts.
+The living room light uses 4 times as many watts as his bedroom light, so it uses 4 * 6 = <<4*6=24>>24 watts per hour.
+In two hours, the living room light would use 24 * 2 = <<24*2=48>>48 watts.
+Thus, if Noah leaves all those lights on for two hours, he has used 12 + 36 + 48 = <<12+36+48=96>>96 watts.
+#### 96
+"""
+
+id_orig = 2878
+id_shuffled = 3426
+
+question_annotated = """
+{name,Noah}’s bedroom light uses {w,6} watts per hour. His office light is much brighter so he can see to work and uses {mo_txt,three} times as much energy. The living room light has a much larger space to cover and has to be more powerful, so it uses {ml_txt,four} times as much energy as his bedroom light. If {name,Noah} leaves all those lights on for {h_txt,two} hours, how many watts has he used?
+
+#init:
+- name = sample(names_male)
+- $w = range(2, 60)
+- mo_txt, mo = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- ml_txt, ml = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- h_txt, h = sample([("two", 2), ("three", 3), ("four", 4)])
+
+#conditions:
+- w > 0
+
+#answer: (1 + mo + ml) * w * h
+"""
+
+answer_annotated = """
+{name}’s bedroom light uses {w} watts per hour, so it would use {h} * {w} = <<{w}*{h}={w*h}>>{w*h} watts in {h_txt} hours.
+His office light uses {mo} times as many watts as his bedroom light, so it uses {mo} * {w} = <<{mo}*{w}={mo*w}>>{mo*w} watts per hour.
+In {h_txt} hours, the office light would use {mo*w} * {h} = <<{mo*w}*{h}={mo*w*h}>>{mo*w*h} watts.
+The living room light uses {ml} times as many watts as his bedroom light, so it uses {ml} * {w} = <<{ml}*{w}={ml*w}>>{ml*w} watts per hour.
+In {h_txt} hours, the living room light would use {ml*w} * {h} = <<{ml*w}*{h}={ml*w*h}>>{ml*w*h} watts.
+Thus, if {name} leaves all those lights on for {h_txt} hours, he has used {w*h} + {mo*w*h} + {ml*w*h} = <<{w*h}+{mo*w*h}+{ml*w*h}={(1 + mo + ml) * w * h}>>{(1 + mo + ml) * w * h} watts.
+#### {(1 + mo + ml) * w * h}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

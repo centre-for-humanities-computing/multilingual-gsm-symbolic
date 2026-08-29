@@ -1,0 +1,48 @@
+question = """
+Rodney is a door-to-door salesman trying to sell home security systems. He gets a commission of $25 for each system he sells. He is canvassing a neighborhood of four streets with eight houses each. The first street gave him half the sales that the second street did, while every house on the third street turned him away and the fourth street resulted in only one sale. His total commission was $175. How many security systems did he sell on the second street?
+"""
+
+answer = """
+Let S be the number of systems Rodney sold on the first street.
+He sold 2S systems on the second street.
+Based on his commission, he sold 175 / 25 = <<175/25=7>>7 systems.
+In all, he sold S + 2S + 0 + 1 = 3S + 1 = 7 systems.
+On the first and second streets, he sold 3S = 7 - 1 = 6 systems.
+Thus, on the first street he sold S = 6 / 3 = <<6/3=2>>2 systems.
+On the second street, Rodney sold 2 * 2 = <<2*2=4>>4 security systems.
+#### 4
+"""
+
+id_orig = 2116
+id_shuffled = 2445
+
+question_annotated = """
+{name,Rodney} is a door-to-door salesman trying to sell home security systems. He gets a commission of ${comm,25} for each system he sells. He is canvassing a neighborhood of four streets with eight houses each. The first street gave him half the sales that the second street did, while every house on the third street turned him away and the fourth street resulted in only one sale. His total commission was ${total,175}. How many security systems did he sell on the second street?
+
+#init:
+- name = sample(names_male)
+- $comm = range(5, 105, 5)
+- $total = range(30, 4030, 5)
+
+#conditions:
+- divides(total, comm)
+- total//comm > 1
+- divides(total//comm - 1, 3)
+
+#answer: 2*((total//comm - 1)//3)
+"""
+
+answer_annotated = """
+Let S be the number of systems {name} sold on the first street.
+He sold 2S systems on the second street.
+Based on his commission, he sold {total} / {comm} = <<{total}/{comm}={total//comm}>>{total//comm} systems.
+In all, he sold S + 2S + 0 + 1 = 3S + 1 = {total//comm} systems.
+On the first and second streets, he sold 3S = {total//comm} - 1 = {total//comm - 1} systems.
+Thus, on the first street he sold S = {total//comm - 1} / 3 = <<{total//comm - 1}/3={(total//comm - 1)//3}>>{(total//comm - 1)//3} systems.
+On the second street, {name} sold 2 * {(total//comm - 1)//3} = <<2*{(total//comm - 1)//3}={2*((total//comm - 1)//3)}>>{2*((total//comm - 1)//3)} security systems.
+#### {2*((total//comm - 1)//3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

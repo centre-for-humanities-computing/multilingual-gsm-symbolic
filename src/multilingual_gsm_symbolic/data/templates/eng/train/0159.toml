@@ -1,0 +1,39 @@
+question = """
+Larry spends half an hour twice a day walking and playing with his dog. He also spends a fifth of an hour every day feeding his dog. How many minutes does Larry spend on his dog each day?
+"""
+
+answer = """
+Larry spends 30 * 2 = <<30*2=60>>60 minutes per day walking his dog.
+Larry spends 60 / 5 = <<60/5=12>>12 minutes every day feeding his dog.
+Larry spends 60 + 12 = <<60+12=72>>72 minutes per day on his dog.
+#### 72
+"""
+
+id_orig = 141
+id_shuffled = 159
+
+question_annotated = """
+{name,Larry} spends {walk_span,half an hour} {times_txt,twice} a day walking and playing with his dog. He also spends {feed_span,a fifth of an hour} every day feeding his dog. How many minutes does {name,Larry} spend on his dog each day?
+
+#init:
+- name = sample(names_male)
+- walk_span, mins_walk = sample([("half an hour", 30), ("a quarter of an hour", 15), ("three quarters of an hour", 45), ("twenty minutes", 20), ("forty minutes", 40), ("fifty minutes", 50), ("ten minutes", 10)])
+- times_txt, k = sample(multi_times)
+- feed_span, feed_den = sample([("a fifth of an hour", 5), ("a quarter of an hour", 4), ("a third of an hour", 3), ("a sixth of an hour", 6), ("a tenth of an hour", 10), ("a twelfth of an hour", 12)])
+
+#conditions:
+- 60 % feed_den == 0
+
+#answer: mins_walk * k + 60 // feed_den
+"""
+
+answer_annotated = """
+{name} spends {mins_walk} * {k} = <<{mins_walk}*{k}={mins_walk*k}>>{mins_walk*k} minutes per day walking his dog.
+{name} spends 60 / {feed_den} = <<60/{feed_den}={60//feed_den}>>{60//feed_den} minutes every day feeding his dog.
+{name} spends {mins_walk*k} + {60//feed_den} = <<{mins_walk*k}+{60//feed_den}={mins_walk*k+60//feed_den}>>{mins_walk*k+60//feed_den} minutes per day on his dog.
+#### {mins_walk*k + 60//feed_den}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Jack makes his own cold brew coffee.  He makes it in batches of 1.5 gallons.  He drinks 96 ounces of coffee every 2 days.  It takes 20 hours to make coffee.  How long does he spend making coffee over 24 days?
+"""
+
+answer = """
+He makes it in batches of 1.5*128=<<1.5*128=192>>192 ounces
+He drinks 96/2=<<96/2=48>>48 ounces of coffee a day
+So he drinks the coffee in 192/48=<<192/48=4>>4 days
+So in 24 days he makes 24/4=<<24/4=6>>6 batches
+That means he spends 6*20=<<6*20=120>>120 hours making coffee
+#### 120
+"""
+
+id_orig = 2546
+id_shuffled = 2934
+
+question_annotated = """
+{name,Jack} makes his own cold brew coffee.  He makes it in batches of 1.5 gallons.  He drinks {d,96} ounces of coffee every {p,2} days.  It takes {t,20} hours to make coffee.  How long does he spend making coffee over {T,24} days?
+
+#init:
+- name = sample(names_male)
+- $d = range(60, 260, 4)
+- $p = range(2, 7)
+- $t = range(10, 45, 5)
+- $T = range(12, 132, 12)
+
+#conditions:
+- divides(d, p)
+- divides(192*p, d)
+- divides(T*d, 192*p)
+
+#answer: T*d//(192*p)*t
+"""
+
+answer_annotated = """
+He makes it in batches of 1.5*128=<<1.5*128=192>>192 ounces
+He drinks {d}/{p}=<<{d}/{p}={d//p}>>{d//p} ounces of coffee a day
+So he drinks the coffee in 192/{d//p}=<<192/{d//p}={192*p//d}>>{192*p//d} days
+So in {T} days he makes {T}/{192*p//d}=<<{T}/{192*p//d}={T*d//(192*p)}>>{T*d//(192*p)} batches
+That means he spends {T*d//(192*p)}*{t}=<<{T*d//(192*p)}*{t}={T*d//(192*p)*t}>>{T*d//(192*p)*t} hours making coffee
+#### {T*d//(192*p)*t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

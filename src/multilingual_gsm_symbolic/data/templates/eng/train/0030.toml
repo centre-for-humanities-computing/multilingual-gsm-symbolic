@@ -1,0 +1,43 @@
+question = """
+Ann, Bill, Cate, and Dale each buy personal pan pizzas cut into 4 pieces. If Bill and Dale eat 50% of their pizzas and Ann and Cate eat 75% of the pizzas, how many pizza pieces are left uneaten?
+"""
+
+answer = """
+In total, there are 4 x 4 = <<4*4=16>>16 pizza pieces.
+Bill and Dale eat 2 x 4 x 50% = <<2*4*50*.01=4>>4 pieces.
+Ann and Cate eat 2 x 4 x 75% = <<2*4*75*.01=6>>6 pieces.
+The four of them eat 4 + 6 = <<4+6=10>>10 pieces.
+There are 16 - 10 = <<16-10=6>>6 pizza pieces uneaten.
+#### 6
+"""
+
+id_orig = 30
+id_shuffled = 30
+
+question_annotated = """
+Ann, Bill, Cate, and Dale each buy personal pan pizzas cut into {pieces,4} pieces. If Bill and Dale eat {p1,50}% of their pizzas and Ann and Cate eat {p2,75}% of the pizzas, how many pizza pieces are left uneaten?
+
+#init:
+- $pieces = range(2, 21)
+- $p1 = range(10, 55, 5)
+- $p2 = range(55, 100, 5)
+
+#conditions:
+- divides(2*pieces*p1, 100)
+- divides(2*pieces*p2, 100)
+
+#answer: 4*pieces - 2*pieces*p1//100 - 2*pieces*p2//100
+"""
+
+answer_annotated = """
+In total, there are 4 x {pieces} = <<4*{pieces}={4*pieces}>>{4*pieces} pizza pieces.
+Bill and Dale eat 2 x {pieces} x {p1}% = <<2*{pieces}*{p1}*.01={2*pieces*p1//100}>>{2*pieces*p1//100} pieces.
+Ann and Cate eat 2 x {pieces} x {p2}% = <<2*{pieces}*{p2}*.01={2*pieces*p2//100}>>{2*pieces*p2//100} pieces.
+The four of them eat {2*pieces*p1//100} + {2*pieces*p2//100} = <<{2*pieces*p1//100}+{2*pieces*p2//100}={2*pieces*p1//100+2*pieces*p2//100}>>{2*pieces*p1//100+2*pieces*p2//100} pieces.
+There are {4*pieces} - {2*pieces*p1//100+2*pieces*p2//100} = <<{4*pieces}-{2*pieces*p1//100+2*pieces*p2//100}={4*pieces-2*pieces*p1//100-2*pieces*p2//100}>>{4*pieces-2*pieces*p1//100-2*pieces*p2//100} pizza pieces uneaten.
+#### {4*pieces - 2*pieces*p1//100 - 2*pieces*p2//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

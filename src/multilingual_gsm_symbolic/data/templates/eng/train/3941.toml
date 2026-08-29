@@ -1,0 +1,43 @@
+question = """
+There were 50 candies left in a bowl after Shelly ate 20 candies the previous week. Her friend comes over, bringing twice as much candy as she originally had. Shelly adds this to the bowl and they decide to divide them equally. How much candy did her friend have after eating 10 of her candies?
+"""
+
+answer = """
+The total number of candies Shelley had before eating some is 50 + 20 = <<50+20=70>>70 candies.
+When her friend came over, she brought 2*70 = <<2*70=140>>140 candies.
+The total number of candies in the bowl is now 140+50= <<140+50=190>>190 candies.
+When they divide this equally between them, each gets 190/2 = <<190/2=95>>95 candies.
+When Shelly’s friend eats 10 of her candies, she still has 95-10 = <<95-10=85>>85 candies.
+#### 85
+"""
+
+id_orig = 3316
+id_shuffled = 3941
+
+question_annotated = """
+There were {left,50} candies left in a bowl after Shelly ate {ate,20} candies the previous week. Her friend comes over, bringing {mult_txt,twice} as much candy as she originally had. Shelly adds this to the bowl and they decide to divide them equally. How much candy did her friend have after eating {eats,10} of her candies?
+
+#init:
+- $left = range(10, 110)
+- $ate = range(5, 45)
+- mult_txt, mult_val = sample([("twice", 2), ("thrice", 3), ("four times", 4)])
+- $eats = range(1, 13)
+
+#conditions:
+- divides((left + ate) * mult_val + left, 2)
+
+#answer: ((left + ate) * mult_val + left)//2 - eats
+"""
+
+answer_annotated = """
+The total number of candies Shelley had before eating some is {left} + {ate} = <<{left}+{ate}={left+ate}>>{left+ate} candies.
+When her friend came over, she brought {mult_val}*{left+ate} = <<{mult_val}*{left+ate}={mult_val*(left+ate)}>>{mult_val*(left+ate)} candies.
+The total number of candies in the bowl is now {mult_val*(left+ate)}+{left}= <<{mult_val*(left+ate)}+{left}={mult_val*(left+ate)+left}>>{mult_val*(left+ate)+left} candies.
+When they divide this equally between them, each gets {((left+ate)*mult_val+left)}/2 = <<{((left+ate)*mult_val+left)}/2={((left+ate)*mult_val+left)//2}>>{((left+ate)*mult_val+left)//2} candies.
+When Shelly’s friend eats {eats} of her candies, she still has {((left+ate)*mult_val+left)//2}-{eats} = <<{((left+ate)*mult_val+left)//2}-{eats}={((left+ate)*mult_val+left)//2-eats}>>{((left+ate)*mult_val+left)//2-eats} candies.
+#### {((left+ate)*mult_val+left)//2-eats}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

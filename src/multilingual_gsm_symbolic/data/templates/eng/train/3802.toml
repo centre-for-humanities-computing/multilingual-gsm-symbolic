@@ -1,0 +1,43 @@
+question = """
+The cost of transporting 80 bags of cement, each weighing 50 kgs, is $6000. What's the cost of transporting three times as many cement bags, each weighing 3/5 times as many kgs?
+"""
+
+answer = """
+Three times as many cement bags is 3*80 = <<3*80=240>>240 cement bags.
+If a bag of cement weighs 50 kg, 3/5 times as much weight is 3/5*50 = <<3/5*50=30>>30 kgs.
+If the cost of transporting 80 bags of cement, each weighing 50 kgs, is $6000, the cost of transporting one bag of cement weighing 50 kg is $6000/80 = $<<6000/80=75>>75
+Since a bag weighing 50 kgs costs $75 to transport, a bag weighing 30 kgs will cost 30* $75/50 = $<<30*75/50=45>>45 to transport.
+The cost of transporting 240 cement bags each weighing 30 kgs is $45*240 = $<<45*240=10800>>10,800
+#### 10800
+"""
+
+id_orig = 3203
+id_shuffled = 3802
+
+question_annotated = """
+The cost of transporting {b,80} bags of cement, each weighing {w,50} kgs, is ${c,6000}. What's the cost of transporting three times as many cement bags, each weighing 3/5 times as many kgs?
+
+#init:
+- $b = range(10, 110)
+- $w = range(10, 105, 5)
+- $c = range(1000, 10100, 100)
+
+#conditions:
+- divides(c, b)
+- divides(3*(c//b), 5)
+
+#answer: 3*b*(3*(c//b)//5)
+"""
+
+answer_annotated = """
+Three times as many cement bags is 3*{b} = <<3*{b}={3*b}>>{3*b} cement bags.
+If a bag of cement weighs {w} kg, 3/5 times as much weight is 3/5*{w} = <<3/5*{w}={3*w//5}>>{3*w//5} kgs.
+If the cost of transporting {b} bags of cement, each weighing {w} kgs, is ${c}, the cost of transporting one bag of cement weighing {w} kg is ${c}/{b} = $<<{c}/{b}={c//b}>>{c//b}
+Since a bag weighing {w} kgs costs ${c//b} to transport, a bag weighing {3*w//5} kgs will cost {3*w//5}* ${c//b}/{w} = $<<{3*w//5}*{c//b}/{w}={3*w//5*(c//b)//w}>>{3*w//5*(c//b)//w} to transport.
+The cost of transporting {3*b} cement bags each weighing {3*w//5} kgs is ${3*(c//b)//5}*{3*b} = $<<{3*(c//b)//5}*{3*b}={3*b*(3*(c//b)//5)}>>{3*b*(3*(c//b)//5)}
+#### {3*b*(3*(c//b)//5)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

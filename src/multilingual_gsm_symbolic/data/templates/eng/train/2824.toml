@@ -1,0 +1,41 @@
+question = """
+Sanya can wash 7 bath towels in one wash, which will take 1 hour.  She only has 2 hours in a day to do this task.  If she has 98 bath towels, how many days will she need to wash all of them?
+"""
+
+answer = """
+Every day, Sanya can wash 7 x 2 = <<7*2=14>>14 bath towels.
+To wash all the towels, she will need 98 / 14 = <<98/14=7>>7 days.
+#### 7
+"""
+
+id_orig = 2451
+id_shuffled = 2824
+
+question_annotated = """
+{name,Sanya} can wash {w,7} bath towels in one wash, which will take {h,1} hour.  She only has {d,2} hours in a day to do this task.  If she has {t,98} bath towels, how many days will she need to wash all of them?
+
+#init:
+- name = sample(names_female)
+- $w = range(2, 21)
+- $h = range(1, 4)
+- $d = range(2, 26)
+- $t = range(10, 400)
+
+#conditions:
+- divides(d, h)
+- d >= h
+- t >= w * (d//h)
+- divides(t, w * (d//h))
+
+#answer: t // (w * (d//h))
+"""
+
+answer_annotated = """
+Every day, {name} can wash {w} x {d//h} = <<{w}*{d//h}={w*(d//h)}>>{w*(d//h)} bath towels.
+To wash all the towels, she will need {t} / {w*(d//h)} = <<{t}/{w*(d//h)}={t//(w*(d//h))}>>{t//(w*(d//h))} days.
+#### {t//(w*(d//h))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+James's favorite basketball player got paid based on how many points he averaged each week. He gets $10,000 if he averages 30 or more points a game and $8,000 if he averages under 30 points a game. For his last week, in the first game he scored 30 points and in the second game he scored 28 points. In the third game he scored 32 points. In the fourth game he scored 34 points and in the fifth game he scored 26 points. How much does he get paid for the week?
+"""
+
+answer = """
+His favorite player scored 150 total points that week because 30 plus 28 plus 32 plus 34 plus 26 equals 150
+He averaged 30 points a game because 150 divided by 5 equals <<150/5=30>>30.
+He gets paid $10,000 because that's how much he gets if he averages 30 or more points that week.
+#### 10,000
+"""
+
+id_orig = 497
+id_shuffled = 570
+
+question_annotated = """
+{name,James}'s favorite basketball player got paid based on how many points he averaged each week. He gets ${hi,10,000} if he averages {thr,30} or more points a game and ${lo,8,000} if he averages under {thr,30} points a game. For his last week, in the first game he scored {g1,30} points and in the second game he scored {g2,28} points. In the third game he scored {g3,32} points. In the fourth game he scored {g4,34} points and in the fifth game he scored {g5,26} points. How much does he get paid for the week?
+
+#init:
+- name = sample(names_male)
+- hi = sample(["10,000", "11,000", "12,000"])
+- lo = sample(["6,000", "7,000", "8,000"])
+- $thr = range(25, 31)
+- $g1 = range(28, 34)
+- $g2 = range(24, 30)
+- $g3 = range(29, 35)
+- $g4 = range(31, 37)
+- $g5 = range(23, 29)
+
+#conditions:
+- is_int((g1+g2+g3+g4+g5)/5)
+- (g1+g2+g3+g4+g5)/5 >= thr
+
+#answer: hi
+"""
+
+answer_annotated = """
+His favorite player scored {g1+g2+g3+g4+g5} total points that week because {g1} plus {g2} plus {g3} plus {g4} plus {g5} equals {g1+g2+g3+g4+g5}
+He averaged {(g1+g2+g3+g4+g5)//5} points a game because {g1+g2+g3+g4+g5} divided by 5 equals <<{g1+g2+g3+g4+g5}/5={(g1+g2+g3+g4+g5)//5}>>{(g1+g2+g3+g4+g5)//5}.
+He gets paid ${hi} because that's how much he gets if he averages {thr} or more points that week.
+#### {hi}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

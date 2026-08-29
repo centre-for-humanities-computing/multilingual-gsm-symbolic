@@ -1,0 +1,45 @@
+question = """
+Two stores sell the same model of smartphone, but they offer it at different prices and with different discounts. Store A lists the smartphone at a full price of $125 and offers an additional discount of 8%.  Store B lists the same smartphone for $130 and offers an additional discount of 10%.  After both stores' discounts are applied, how much cheaper is store A's smartphone than store B's smartphone?
+"""
+
+answer = """
+Store A has a $125 x 8/100 = $<<125*8/100=10>>10 discount.
+So the smartphone from store A will only cost $125 - $10 = $<<125-10=115>>115.
+Store B has a $130 x 10/100 = $<<130*10/100=13>>13 discount.
+So the smartphone from store B will only cost $130 - $13 = $<<130-13=117>>117.
+Thus, store A's smartphone is $117 - $115 = $<<117-115=2>>2 cheaper than that of store B.
+#### 2
+"""
+
+id_orig = 2127
+id_shuffled = 2456
+
+question_annotated = """
+Two stores sell the same model of smartphone, but they offer it at different prices and with different discounts. Store A lists the smartphone at a full price of ${pa,125} and offers an additional discount of {da,8}%.  Store B lists the same smartphone for ${pb,130} and offers an additional discount of {db,10}%.  After both stores' discounts are applied, how much cheaper is store A's smartphone than store B's smartphone?
+
+#init:
+- $pa = range(100, 300, 5)
+- $da = range(2, 26, 2)
+- $pb = range(100, 300, 5)
+- $db = range(2, 26, 2)
+
+#conditions:
+- divides(pa*da, 100)
+- divides(pb*db, 100)
+- (pb - pb*db//100) - (pa - pa*da//100) > 0
+
+#answer: (pb - pb*db//100) - (pa - pa*da//100)
+"""
+
+answer_annotated = """
+Store A has a ${pa} x {da}/100 = $<<{pa}*{da}/100={pa*da//100}>>{pa*da//100} discount.
+So the smartphone from store A will only cost ${pa} - ${pa*da//100} = $<<{pa}-{pa*da//100}={pa-pa*da//100}>>{pa-pa*da//100}.
+Store B has a ${pb} x {db}/100 = $<<{pb}*{db}/100={pb*db//100}>>{pb*db//100} discount.
+So the smartphone from store B will only cost ${pb} - ${pb*db//100} = $<<{pb}-{pb*db//100}={pb-pb*db//100}>>{pb-pb*db//100}.
+Thus, store A's smartphone is ${pb-pb*db//100} - ${pa-pa*da//100} = $<<{pb-pb*db//100}-{pa-pa*da//100}={(pb-pb*db//100)-(pa-pa*da//100)}>>{(pb-pb*db//100)-(pa-pa*da//100)} cheaper than that of store B.
+#### {(pb - pb*db//100) - (pa - pa*da//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

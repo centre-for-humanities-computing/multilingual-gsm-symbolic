@@ -1,0 +1,45 @@
+question = """
+Marlon had 30 female baby bunnies in his hutch. They matured after four months, and he gave 2/5 of them to his friend Rodney. If after another three months the bunnies conceived and gave birth to 2 kittens each, calculate the total number of bunnies Marlon has in his hutch now.
+"""
+
+answer = """
+When he gave Rodney 2/5 of the bunnies, he gave away 2/5*30 = <<2/5*30=12>>12 bunnies.
+He remained with 30-12 = <<30-12=18>>18 bunnies.
+When the bunnies gave birth to two kittens each, the total number of kittens born is 18*2 = <<18*2=36>>36.
+In total, Marlon now has 36+18 = <<36+18=54>>54 bunnies
+#### 54
+"""
+
+id_orig = 2970
+id_shuffled = 3544
+
+question_annotated = """
+{name,Marlon} had {a,30} female baby bunnies in his hutch. They matured after four months, and he gave {num,2}/{den,5} of them to his friend {friend,Rodney}. If after another three months the bunnies conceived and gave birth to {k,2} kittens each, calculate the total number of bunnies {name,Marlon} has in his hutch now.
+
+#init:
+- name = sample(names_male)
+- friend = sample(names_male)
+- $a = range(10, 210, 2)
+- $num = range(1, 8)
+- $den = range(2, 10)
+- k_txt, k = sample([("two", 2), ("three", 3), ("four", 4)])
+
+#conditions:
+- num < den
+- divides(num * a, den)
+- a - num*a//den > 0
+
+#answer: a - num*a//den + (a - num*a//den)*k
+"""
+
+answer_annotated = """
+When he gave {friend} {num}/{den} of the bunnies, he gave away {num}/{den}*{a} = <<{num}/{den}*{a}={num*a//den}>>{num*a//den} bunnies.
+He remained with {a}-{num*a//den} = <<{a}-{num*a//den}={a-num*a//den}>>{a-num*a//den} bunnies.
+When the bunnies gave birth to {k_txt} kittens each, the total number of kittens born is {a-num*a//den}*{k} = <<{a-num*a//den}*{k}={(a-num*a//den)*k}>>{(a-num*a//den)*k}.
+In total, {name} now has {(a-num*a//den)*k}+{a-num*a//den} = <<{(a-num*a//den)*k}+{a-num*a//den}={(a-num*a//den)*k+a-num*a//den}>>{(a-num*a//den)*k+a-num*a//den} bunnies
+#### {a - num*a//den + (a - num*a//den)*k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

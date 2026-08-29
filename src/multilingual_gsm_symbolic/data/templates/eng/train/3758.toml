@@ -1,0 +1,42 @@
+question = """
+Layla is feeding her pet fish. She has two Goldfish which each get one teaspoon of fish food. Her 3 Swordtails each get 2 teaspoons of food. Her 8 Guppies each eat half a teaspoon of food. How much food does she have to give to her fish in total?
+"""
+
+answer = """
+The two Goldfish eat a total of 2 * 1 = <<2*1=2>>2 teaspoons of food.
+The 3 Swordtails eat a total of 3 * 2 = <<3*2=6>>6 teaspoons of food.
+The 8 Guppies eat a total of 8 * 1/2 = <<8*1/2=4>>4 teaspoons of food.
+In total, all of her fish eat 2 + 6 + 4 = <<2+6+4=12>>12 teaspoons of fish food.
+#### 12
+"""
+
+id_orig = 3159
+id_shuffled = 3758
+
+question_annotated = """
+{name,Layla} is feeding her pet fish. She has {gf_word,two} Goldfish which each get one teaspoon of fish food. Her {sw,3} Swordtails each get {sw_amt,2} teaspoons of food. Her {gu,8} Guppies each eat half a teaspoon of food. How much food does she have to give to her fish in total?
+
+#init:
+- name = sample(names_female)
+- gf_word, gf = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $sw = range(2, 13)
+- $sw_amt = range(2, 10)
+- $gu = range(2, 21)
+
+#conditions:
+- divides(gu, 2)
+
+#answer: gf + sw * sw_amt + gu // 2
+"""
+
+answer_annotated = """
+The {gf_word} Goldfish eat a total of {gf} * 1 = <<{gf}*1={gf}>>{gf} teaspoons of food.
+The {sw} Swordtails eat a total of {sw} * {sw_amt} = <<{sw}*{sw_amt}={sw*sw_amt}>>{sw*sw_amt} teaspoons of food.
+The {gu} Guppies eat a total of {gu} * 1/2 = <<{gu}*1/2={gu//2}>>{gu//2} teaspoons of food.
+In total, all of her fish eat {gf} + {sw*sw_amt} + {gu//2} = <<{gf}+{sw*sw_amt}+{gu//2}={gf+sw*sw_amt+gu//2}>>{gf+sw*sw_amt+gu//2} teaspoons of fish food.
+#### {gf + sw * sw_amt + gu // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

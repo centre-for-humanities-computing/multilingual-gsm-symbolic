@@ -1,0 +1,42 @@
+question = """
+One US cup equals 250ml. Brian is making lasagna for himself, his wife, his two kids, his parents, and his wife's parents. The recipe requires 1/2 a cup of milk per serving. How many 1L cartons of milk does Brian need to buy if each person is expected to eat 2 servings?
+"""
+
+answer = """
+There will be a total of (1) Brian + (1) Brian's wife + (2) two kids + (2) Brian's parents + (2) Brian's in-laws = 1+1+2+2+2= <<1+1+2+2+2=8>>8 people eating
+If 1 person eats 2 serving of lasagna then 8 people will eat 8 * 2 = <<8*2=16>>16 servings
+If each serving requires 1/2 cup of milk then 16 servings require 16 * 1/2 cups = <<16*1/2=8>>8 cups of milk
+If one cup of milk equals 250 ml, then 8 cups of milk equal 8 * 250 = <<8*250=2000>>2000 ml of milk
+1L carton of milk equals 1000ml of milk, therefore Brian needs 2000/1000 = <<2000/1000=2>>2 cartons of 1L milk
+#### 2
+"""
+
+id_orig = 1215
+id_shuffled = 1322
+
+question_annotated = """
+One US cup equals {x,250}ml. {name,Brian} is making lasagna for himself, his wife, his two kids, his parents, and his wife's parents. The recipe requires 1/2 a cup of milk per serving. How many 1L cartons of milk does {name,Brian} need to buy if each person is expected to eat {spp,2} servings?
+
+#init:
+- name = sample(names_male)
+- $spp = range(2, 11)
+- $x = range(50, 1550, 5)
+
+#conditions:
+- divides(4 * spp * x, 1000)
+
+#answer: 4 * spp * x // 1000
+"""
+
+answer_annotated = """
+There will be a total of (1) {name} + (1) {name}'s wife + (2) two kids + (2) {name}'s parents + (2) {name}'s in-laws = 1+1+2+2+2= <<1+1+2+2+2=8>>8 people eating
+If 1 person eats {spp} serving of lasagna then 8 people will eat 8 * {spp} = <<8*{spp}={8*spp}>>{8*spp} servings
+If each serving requires 1/2 cup of milk then {8*spp} servings require {8*spp} * 1/2 cups = <<{8*spp}*1/2={4*spp}>>{4*spp} cups of milk
+If one cup of milk equals {x} ml, then {4*spp} cups of milk equal {4*spp} * {x} = <<{4*spp}*{x}={4*spp*x}>>{4*spp*x} ml of milk
+1L carton of milk equals 1000ml of milk, therefore {name} needs {4*spp*x}/1000 = <<{4*spp*x}/1000={4*spp*x//1000}>>{4*spp*x//1000} cartons of 1L milk
+#### {4 * spp * x // 1000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

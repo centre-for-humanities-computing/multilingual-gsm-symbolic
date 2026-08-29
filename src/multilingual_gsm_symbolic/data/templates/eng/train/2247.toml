@@ -1,0 +1,39 @@
+question = """
+Stacy went to a store to buy some pairs of shorts. Each pair normally cost $10, but there's a discount of 10% on the total cost for people who purchase 3 or more pairs at once. How much can she save by buying 3 pairs at once as opposed to purchasing them individually at different times?
+"""
+
+answer = """
+Without the discount, each pair cost $10 so 3 pairs cost 3*$10 = $<<10*3=30>>30
+With a discount of 10% on the total cost, she can pay only $30-($30*(10/100)) = $<<30-(30*(10/100))=27>>27
+By buying 3 at once in order to get the discount, she can save $30-$27 = $3
+#### 3
+"""
+
+id_orig = 1942
+id_shuffled = 2247
+
+question_annotated = """
+{name,Stacy} went to a store to buy some pairs of shorts. Each pair normally cost ${p,10}, but there's a discount of {d,10}% on the total cost for people who purchase {k,3} or more pairs at once. How much can she save by buying {k,3} pairs at once as opposed to purchasing them individually at different times?
+
+#init:
+- name = sample(names_female)
+- $p = range(2, 50)
+- $d = range(5, 51, 5)
+- $k = range(3, 12)
+
+#conditions:
+- divides(p * k * d, 100)
+
+#answer: p*k*d//100
+"""
+
+answer_annotated = """
+Without the discount, each pair cost ${p} so {k} pairs cost {k}*${p} = $<<{p}*{k}={p*k}>>{p*k}
+With a discount of {d}% on the total cost, she can pay only ${p*k}-(${p*k}*({d}/100)) = $<<{p*k}-({p*k}*({d}/100))={p*k-p*k*d//100}>>{p*k-p*k*d//100}
+By buying {k} at once in order to get the discount, she can save ${p*k}-${p*k-p*k*d//100} = ${p*k*d//100}
+#### {p*k*d//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,38 @@
+question = """
+Roberto recently received a 20% raise from his previous salary, which was already 40% higher than his starting salary. If Roberto's starting salary was $80,000, what is his current salary?
+"""
+
+answer = """
+Roberto has received 2 raises. On his first raise he received a 40% bump, therefore his new salary was $80,000 * 140% = $<<80000*140*.01=112000>>112,000
+On his second raise, Roberto received a 20% bump, therefore his current salary is $112,000 * 120% = $<<112000*120*.01=134400>>134,400
+#### 134400
+"""
+
+id_orig = 556
+id_shuffled = 629
+
+question_annotated = """
+{name,Roberto} recently received a {r2,20}% raise from his previous salary, which was already {r1,40}% higher than his starting salary. If {name,Roberto}'s starting salary was ${sal,80000}, what is his current salary?
+
+#init:
+- name = sample(names_male)
+- $sal = range(20000, 210000, 10000)
+- $r1 = range(5, 60, 5)
+- $r2 = range(5, 55, 5)
+
+#conditions:
+- is_int(sal*(100+r1)/100)
+- is_int(sal*(100+r1)/100*(100+r2)/100)
+
+#answer: sal//10000*(100+r1)*(100+r2)
+"""
+
+answer_annotated = """
+{name} has received 2 raises. On his first raise he received a {r1}% bump, therefore his new salary was ${sal} * {100+r1}% = $<<{sal}*{100+r1}*.01={sal*(100+r1)//100}>>{sal*(100+r1)//100}
+On his second raise, {name} received a {r2}% bump, therefore his current salary is ${sal*(100+r1)//100} * {100+r2}% = $<<{sal*(100+r1)//100}*{100+r2}*.01={sal*(100+r1)//100*(100+r2)//100}>>{sal*(100+r1)//100*(100+r2)//100}
+#### {sal*(100+r1)//100*(100+r2)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

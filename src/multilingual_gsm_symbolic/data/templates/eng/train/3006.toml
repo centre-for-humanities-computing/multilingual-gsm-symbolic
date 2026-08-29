@@ -1,0 +1,43 @@
+question = """
+Cindy was hired to teach 4 math courses which required her to be in the classroom for 48 hours a week altogether. How much did Cindy earn for teaching 1 math course in a month with exactly 4 weeks if her hourly rate per class is $25?
+"""
+
+answer = """
+In a week, Cindy spends an average of 48 hours/week / 4 courses = 12 hours/week for 1 math course.
+In a month, 1 math course is 12 hours/week x 4 weeks/month = <<12*4=48>>48 hours.
+Therefore, she earns $25/hour x 48 hours/week = $<<25*48=1200>>1200 a month for 1 math course.
+#### 1,200
+"""
+
+id_orig = 2583
+id_shuffled = 3006
+
+question_annotated = """
+{name,Cindy} was hired to teach {c,4} math courses which required her to be in the classroom for {h,48} hours a week altogether. How much did {name,Cindy} earn for teaching 1 math course in a month with exactly {w,4} weeks if her hourly rate per class is ${r,25}?
+
+#init:
+- name = sample(names_female)
+- $c = range(2, 7)
+- $h = range(20, 101)
+- $w = range(3, 6)
+- $r = range(15, 36, 5)
+
+#conditions:
+- divides(h, c)
+- 1000 <= r * (h // c) * w
+- r * (h // c) * w <= 9999
+- r * (h // c) * w % 1000 >= 100
+
+#answer: r * (h // c) * w
+"""
+
+answer_annotated = """
+In a week, {name} spends an average of {h} hours/week / {c} courses = {h//c} hours/week for 1 math course.
+In a month, 1 math course is {h//c} hours/week x {w} weeks/month = <<{h//c}*{w}={(h//c)*w}>>{(h//c)*w} hours.
+Therefore, she earns ${r}/hour x {(h//c)*w} hours/week = $<<{r}*{(h//c)*w}={r*(h//c)*w}>>{r*(h//c)*w} a month for 1 math course.
+#### {r*(h//c)*w//1000},{r*(h//c)*w%1000}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

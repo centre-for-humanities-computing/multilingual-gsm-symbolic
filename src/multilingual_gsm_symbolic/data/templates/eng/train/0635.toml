@@ -1,0 +1,47 @@
+question = """
+Joy fosters dogs.  The mom foster dog eats 1.5 cups of food, three times a day.  The puppies each eat 1/2 cup of food, twice a day.  There are 5 puppies.  How much food will Joy need for the next 6 days?
+"""
+
+answer = """
+The mom dog eats 1.5 cups of food * 3 = <<1.5*3=4.5>>4.5 cups per day.
+For 6 days the mom dog will need 6 * 4.5 cups = <<6*4.5=27>>27 cups of food.
+The puppies eat 1/2 cup of food * 2 = <<1/2*2=1>>1 cup per day.
+There are 5 puppies * 1 cup = <<5*1=5>>5 cups per day for the puppies.
+For the 6 days, the puppies will need 5 cups * 6 = <<5*6=30>>30 cups of food.
+Combined the dogs will need 27 cups + 30 cups = <<27+30=57>>57 cups.
+#### 57
+"""
+
+id_orig = 562
+id_shuffled = 635
+
+question_annotated = """
+{name,Joy} fosters dogs.  The mom foster dog eats 1.5 cups of food, {mw,three} times a day.  The puppies each eat 1/2 cup of food, {pw,twice} a day.  There are {np,5} puppies.  How much food will {name,Joy} need for the next {d,6} days?
+
+#init:
+- name = sample(names)
+- mw, m = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- pw, w = sample([("once", 1), ("twice", 2), ("three times", 3), ("four times", 4)])
+- $d = range(4, 13, 2)
+- $np = range(2, 22)
+
+#conditions:
+- is_int(d * m * 1.5)
+- is_int(np * w * d / 2)
+
+#answer: d * 1.5 * m + np * w * d / 2
+"""
+
+answer_annotated = """
+The mom dog eats 1.5 cups of food * {m} = <<1.5*{m}={1.5*m}>>{1.5*m} cups per day.
+For {d} days the mom dog will need {d} * {1.5*m} cups = <<{d}*{1.5*m}={d*1.5*m}>>{d*1.5*m} cups of food.
+The puppies eat 1/2 cup of food * {w} = <<1/2*{w}={0.5*w}>>{0.5*w} cup per day.
+There are {np} puppies * {0.5*w} cup = <<{np}*{0.5*w}={np*0.5*w}>>{np*0.5*w} cups per day for the puppies.
+For the {d} days, the puppies will need {np*0.5*w} cups * {d} = <<{np*0.5*w}*{d}={np*0.5*w*d}>>{np*0.5*w*d} cups of food.
+Combined the dogs will need {d*1.5*m} cups + {np*0.5*w*d} cups = <<{d*1.5*m}+{np*0.5*w*d}={d*1.5*m+np*0.5*w*d}>>{d*1.5*m+np*0.5*w*d} cups.
+#### {d * 1.5 * m + np * w * d / 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

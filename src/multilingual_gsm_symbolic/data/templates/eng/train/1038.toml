@@ -1,0 +1,40 @@
+question = """
+While Paul watches movies, he runs on his treadmill. He can run a mile in 12 minutes. He watches two movies, which are an average length of 1.5 hours. How many miles does he run?
+"""
+
+answer = """
+He runs for 3 hours because 2 x 1.5 = <<2*1.5=3>>3
+He runs for 180 minutes because 3 x 60 = <<3*60=180>>180
+He runs 15 miles because 180 / 12 = <<180/12=15>>15
+#### 15
+"""
+
+id_orig = 942
+id_shuffled = 1038
+
+question_annotated = """
+While {name,Paul} watches movies, he runs on his treadmill. He can run a mile in {pace,12} minutes. He watches {n_txt,two} movies, which are an average length of {len_txt,1.5} hours. How many miles does he run?
+
+#init:
+- name = sample(names_male)
+- n_txt, n_val = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- len_txt, len_min = sample([("0.5", 30), ("1", 60), ("1.5", 90), ("2", 120), ("2.5", 150), ("3", 180)])
+- $pace = range(4, 46)
+
+#conditions:
+- divides(n_val * len_min, 60)
+- divides(n_val * len_min, pace)
+
+#answer: n_val * len_min // pace
+"""
+
+answer_annotated = """
+He runs for {n_val * len_min // 60} hours because {n_val} x {len_txt} = <<{n_val}*{len_txt}={n_val * len_min // 60}>>{n_val * len_min // 60}
+He runs for {n_val * len_min} minutes because {n_val * len_min // 60} x 60 = <<{n_val * len_min // 60}*60={n_val * len_min}>>{n_val * len_min}
+He runs {n_val * len_min // pace} miles because {n_val * len_min} / {pace} = <<{n_val * len_min}/{pace}={n_val * len_min // pace}>>{n_val * len_min // pace}
+#### {n_val * len_min // pace}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

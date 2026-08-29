@@ -1,0 +1,44 @@
+question = """
+Carson is going to spend 4 hours at a carnival. The wait for the roller coaster is 30 minutes, the wait for the tilt-a-whirl is 60 minutes, and the wait for the giant slide is 15 minutes. If Carson rides the roller coaster 4 times and the tilt-a-whirl once, how many times can he ride the giant slide? (Wait times include the time actually spent on the ride.)
+"""
+
+answer = """
+First figure out how many minutes Carson spends at the carnival by multiplying the number of hours he's there by the number of minutes per hour: 4 hours * 60 minutes/hour = <<4*60=240>>240 minutes
+Then figure out how long Carson spends waiting for the roller coaster by multiplying the wait time per ride by the number of rides: 4 rides * 30 minutes/ride = <<4*30=120>>120 minutes
+Now subtract the time Carson spends on the roller coaster and tilt-a-whirl from the total time he spends at the park to find out how much time he has left: 240 minutes - 120 minutes - 60 minutes = <<240-120-60=60>>60 minutes
+Now divide the time Carson has left by the wait time for the giant slide to see how many times he can ride it: 60 minutes / 15 minutes/ride = <<60/15=4>>4 rides
+#### 4
+"""
+
+id_orig = 2256
+id_shuffled = 2594
+
+question_annotated = """
+{name,Carson} is going to spend {h,4} hours at a carnival. The wait for the roller coaster is {rc,30} minutes, the wait for the tilt-a-whirl is {ta,60} minutes, and the wait for the giant slide is {gs,15} minutes. If {name,Carson} rides the roller coaster {r,4} times and the tilt-a-whirl once, how many times can he ride the giant slide? (Wait times include the time actually spent on the ride.)
+
+#init:
+- name = sample(names_male)
+- $h = range(2, 7)
+- $rc = range(10, 60, 5)
+- $ta = range(10, 110, 10)
+- $gs = range(5, 35, 5)
+- $r = range(1, 6)
+
+#conditions:
+- h * 60 - r * rc - ta > 0
+- divides(h * 60 - r * rc - ta, gs)
+
+#answer: (h * 60 - r * rc - ta) // gs
+"""
+
+answer_annotated = """
+First figure out how many minutes {name} spends at the carnival by multiplying the number of hours he's there by the number of minutes per hour: {h} hours * 60 minutes/hour = <<{h}*60={h*60}>>{h*60} minutes
+Then figure out how long {name} spends waiting for the roller coaster by multiplying the wait time per ride by the number of rides: {r} rides * {rc} minutes/ride = <<{r}*{rc}={r*rc}>>{r*rc} minutes
+Now subtract the time {name} spends on the roller coaster and tilt-a-whirl from the total time he spends at the park to find out how much time he has left: {h*60} minutes - {r*rc} minutes - {ta} minutes = <<{h*60}-{r*rc}-{ta}={h*60-r*rc-ta}>>{h*60-r*rc-ta} minutes
+Now divide the time {name} has left by the wait time for the giant slide to see how many times he can ride it: {h*60-r*rc-ta} minutes / {gs} minutes/ride = <<{h*60-r*rc-ta}/{gs}={(h*60-r*rc-ta)//gs}>>{(h*60-r*rc-ta)//gs} rides
+#### {(h*60-r*rc-ta)//gs}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

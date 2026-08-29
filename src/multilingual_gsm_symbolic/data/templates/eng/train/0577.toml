@@ -1,0 +1,50 @@
+question = """
+From March to August, Sam made $460 doing 23 hours of yard work. However, from September to February, Sam was only able to work for 8 hours. If Sam is saving up to buy a video game console that costs $600 and has already spent $340 to fix his car, how many more hours does he need to work before he can buy the video game console?
+"""
+
+answer = """
+Sam makes $460 / 23 hrs = $<<460/23=20>>20/hr.
+From September to February, Sam made 8hrs x $20/hr = $<<8*20=160>>160.
+From March to February, Sam made a total of $460 + $160 = $620.
+After fixing his car, he was left with $620 - $340 = $<<620-340=280>>280.
+Sam needs another $600 - $280 = $<<600-280=320>>320.
+Sam needs to work another $320 / $20/hr = <<320/20=16>>16 hours.
+#### 16
+"""
+
+id_orig = 504
+id_shuffled = 577
+
+question_annotated = """
+From March to August, {name,Sam} made ${a,460} doing {h,23} hours of yard work. However, from September to February, {name,Sam} was only able to work for {s,8} hours. If {name,Sam} is saving up to buy a video game console that costs ${p,600} and has already spent ${c,340} to fix his car, how many more hours does he need to work before he can buy the video game console?
+
+#init:
+- name = sample(names_male)
+- $a = range(100, 820, 60)
+- $h = range(2, 25)
+- $s = range(2, 11)
+- $c = range(100, 440, 40)
+- $p = range(400, 900, 50)
+
+#conditions:
+- divides(a, h)
+- a + s*(a//h) - c > 0
+- p - (a + s*(a//h) - c) > 0
+- divides(p - (a + s*(a//h) - c), a//h)
+
+#answer: (p-(a+s*(a//h)-c))//(a//h)
+"""
+
+answer_annotated = """
+{name} makes ${a} / {h} hrs = $<<{a}/{h}={a//h}>>{a//h}/hr.
+From September to February, {name} made {s}hrs x ${a//h}/hr = $<<{s}*{a//h}={s*(a//h)}>>{s*(a//h)}.
+From March to February, {name} made a total of ${a} + ${s*(a//h)} = ${a+s*(a//h)}.
+After fixing his car, he was left with ${a+s*(a//h)} - ${c} = $<<{a+s*(a//h)}-{c}={a+s*(a//h)-c}>>{a+s*(a//h)-c}.
+{name} needs another ${p} - ${a+s*(a//h)-c} = $<<{p}-{a+s*(a//h)-c}={p-(a+s*(a//h)-c)}>>{p-(a+s*(a//h)-c)}.
+{name} needs to work another ${p-(a+s*(a//h)-c)} / ${a//h}/hr = <<{p-(a+s*(a//h)-c)}/{a//h}={(p-(a+s*(a//h)-c))//(a//h)}>>{(p-(a+s*(a//h)-c))//(a//h)} hours.
+#### {(p-(a+s*(a//h)-c))//(a//h)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

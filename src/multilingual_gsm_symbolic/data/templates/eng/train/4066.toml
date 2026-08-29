@@ -1,0 +1,41 @@
+question = """
+The school is hosting a race after school. The winner is the person who runs the most laps around the school in 12 minutes.  One lap around the school is 100 meters. The winner is awarded a gift certificate equal to $3.5 for every one hundred meters they run. The winner runs 24 laps around the school. On average, how much did they earn per minute?
+"""
+
+answer = """
+They ran 2,400 meters because 24 laps x 100 m/lap = <<24*100=2400>>2400 m
+They ran 200 meters per minute because 2400 m / 12 min = <<2400/12=200>>200 m/min
+For every minute they ran they earned an average of $7 because $3.5/100m x 200 m/min = $<<3.5/100*200=7>>7/min
+#### 7
+"""
+
+id_orig = 3431
+id_shuffled = 4066
+
+question_annotated = """
+The school is hosting a race after school. The winner is the person who runs the most laps around the school in {mins,12} minutes.  One lap around the school is {mpl,100} meters. The winner is awarded a gift certificate equal to ${rate,3.5} for every one hundred meters they run. The winner runs {laps,24} laps around the school. On average, how much did they earn per minute?
+
+#init:
+- $laps = range(10, 201)
+- $mpl = range(10, 241)
+- $mins = range(10, 31)
+- $rate = sample([2.5, 3, 3.5, 4, 4.5])
+
+#conditions:
+- laps * mpl == 2400
+- divides(laps * mpl, mins)
+- is_int(rate * laps * mpl / (100 * mins))
+
+#answer: int(rate * laps * mpl / (100 * mins))
+"""
+
+answer_annotated = """
+They ran 2,400 meters because {laps} laps x {mpl} m/lap = <<{laps}*{mpl}={laps*mpl}>>{laps*mpl} m
+They ran {(laps*mpl)//mins} meters per minute because {laps*mpl} m / {mins} min = <<{laps*mpl}/{mins}={(laps*mpl)//mins}>>{(laps*mpl)//mins} m/min
+For every minute they ran they earned an average of ${int(rate*laps*mpl/(100*mins))} because ${rate}/100m x {(laps*mpl)//mins} m/min = $<<{rate}/100*{(laps*mpl)//mins}={int(rate*laps*mpl/(100*mins))}>>{int(rate*laps*mpl/(100*mins))}/min
+#### {int(rate*laps*mpl/(100*mins))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

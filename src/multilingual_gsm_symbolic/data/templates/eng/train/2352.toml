@@ -1,0 +1,42 @@
+question = """
+Luke is planning a trip to London and wants to see how long it will take him to travel there. He decides that he will take a bus to the town center, walk for 15 minutes to the train center, wait twice this long for the train to arrive, and then take the 6-hour train ride to London. If Luke’s entire trip takes him 8 hours, how many minutes does his bus ride take?
+"""
+
+answer = """
+Removing the time of the train ride from the journey shows that his trip to get on the train took him 8 hours – 6 hours = <<8-6=2>>2 hours.
+Converting this time into minutes shows that getting to the train took 2 hours * 60 minutes/hour = <<2*60=120>>120 minutes.
+Waiting for the train to arrive took twice as long as his walk, so 15 minutes * 2 = <<15*2=30>>30 minutes.
+This means that his bus ride must have taken 120 minutes – 30 minutes - 15 minutes = <<120-30-15=75>>75 minutes.
+#### 75
+"""
+
+id_orig = 2034
+id_shuffled = 2352
+
+question_annotated = """
+{name,Luke} is planning a trip to London and wants to see how long it will take him to travel there. He decides that he will take a bus to the town center, walk for {w,15} minutes to the train center, wait twice this long for the train to arrive, and then take the {t,6}-hour train ride to London. If {name,Luke}’s entire trip takes him {total,8} hours, how many minutes does his bus ride take?
+
+#init:
+- name = sample(names_male)
+- $w = range(5, 65, 5)
+- $t = range(1, 7)
+- $total = range(2, 13)
+
+#conditions:
+- total > t
+- (total - t) * 60 - 3 * w > 0
+
+#answer: (total - t) * 60 - 3 * w
+"""
+
+answer_annotated = """
+Removing the time of the train ride from the journey shows that his trip to get on the train took him {total} hours – {t} hours = <<{total}-{t}={total-t}>>{total-t} hours.
+Converting this time into minutes shows that getting to the train took {total-t} hours * 60 minutes/hour = <<{total-t}*60={(total-t)*60}>>{(total-t)*60} minutes.
+Waiting for the train to arrive took twice as long as his walk, so {w} minutes * 2 = <<{w}*2={w*2}>>{w*2} minutes.
+This means that his bus ride must have taken {(total-t)*60} minutes – {w*2} minutes - {w} minutes = <<{(total-t)*60}-{w*2}-{w}={(total-t)*60-w*2-w}>>{(total-t)*60-w*2-w} minutes.
+#### {(total - t) * 60 - 3 * w}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

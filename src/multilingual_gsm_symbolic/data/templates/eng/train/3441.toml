@@ -1,0 +1,42 @@
+question = """
+For breakfast, Anna bought a bagel for $0.95 and a glass of orange juice for $0.85. At lunch, Anna spent $4.65 on a sandwich and $1.15 on a carton of milk. How much more money did Anna spend on lunch than on breakfast?
+"""
+
+answer = """
+The total cost of breakfast is $0.95 + $0.85 = $<<0.95+0.85=1.80>>1.80.
+The total cost of lunch is $4.65 + $1.15 = $<<4.65+1.15=5.80>>5.80.
+Anna spent $5.80 − $1.80 = $4 more on lunch than breakfast.
+#### 4
+"""
+
+id_orig = 2849
+id_shuffled = 3441
+
+question_annotated = """
+For breakfast, {name,Anna} bought a bagel for $0.{bc,95} and a glass of orange juice for $0.{jc,85}. At lunch, {name,Anna} spent $4.{sd,65} on a sandwich and $1.{mc,15} on a carton of milk. How much more money did {name,Anna} spend on lunch than on breakfast?
+
+#init:
+- name = sample(names_female)
+- $bc = range(10, 100, 5)
+- $jc = range(10, 100, 5)
+- $sd = range(10, 100, 5)
+- $mc = range(10, 100, 5)
+
+#conditions:
+- (bc + jc) % 100 >= 10
+- (sd + mc) % 100 >= 10
+- (500 + sd + mc - bc - jc) % 100 == 0
+
+#answer: (500 + sd + mc - bc - jc)//100
+"""
+
+answer_annotated = """
+The total cost of breakfast is $0.{bc} + $0.{jc} = $<<0.{bc}+0.{jc}={(bc+jc)//100}.{(bc+jc)%100}>>{(bc+jc)//100}.{(bc+jc)%100}.
+The total cost of lunch is $4.{sd} + $1.{mc} = $<<4.{sd}+1.{mc}={(500+sd+mc)//100}.{(500+sd+mc)%100}>>{(500+sd+mc)//100}.{(500+sd+mc)%100}.
+{name} spent ${(500+sd+mc)//100}.{(500+sd+mc)%100} − ${(bc+jc)//100}.{(bc+jc)%100} = ${(500+sd+mc-bc-jc)//100} more on lunch than breakfast.
+#### {(500+sd+mc-bc-jc)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

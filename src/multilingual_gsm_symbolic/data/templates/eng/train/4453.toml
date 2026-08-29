@@ -1,0 +1,42 @@
+question = """
+Jenny is scraping gum off the bottom of the seats in a stadium with two sections. Section A has 1 subsection with 60 seats and 3 subsections with 80 seats each. Section B has 20 more seats than 3 times as many seats as Section A has total. How many seats does Section B have?
+"""
+
+answer = """
+First find how many total seats are in the 80-seat subsections: 80 seats/subsection * 3 subsections = 240 seats
+Then add the number of seats in the 60-seat section to find the total number of seats in Section A: 240 seats + 60 seats = <<240+60=300>>300 seats
+Then triple that number: 300 seats * 3 = <<300*3=900>>900 seats
+Then add 20 seats to find the total number of seats in Section B: 900 seats + 20 seats = <<900+20=920>>920 seats
+#### 920
+"""
+
+id_orig = 3771
+id_shuffled = 4453
+
+question_annotated = """
+{name,Jenny} is scraping gum off the bottom of the seats in a stadium with two sections. Section A has 1 subsection with {s60,60} seats and {k,3} subsections with {s80,80} seats each. Section B has {extra,20} more seats than 3 times as many seats as Section A has total. How many seats does Section B have?
+
+#init:
+- name = sample(names_female)
+- $s60 = range(30, 130, 10)
+- $s80 = range(40, 240, 10)
+- $k = range(2, 6)
+- $extra = range(5, 105, 5)
+
+#conditions:
+- s60 + k * s80 > 0
+
+#answer: 3 * (s60 + k * s80) + extra
+"""
+
+answer_annotated = """
+First find how many total seats are in the {s80}-seat subsections: {s80} seats/subsection * {k} subsections = {s80*k} seats
+Then add the number of seats in the {s60}-seat section to find the total number of seats in Section A: {s80*k} seats + {s60} seats = <<{s80*k}+{s60}={s80*k+s60}>>{s80*k+s60} seats
+Then triple that number: {s60+k*s80} seats * 3 = <<{s60+k*s80}*3={3*(s60+k*s80)}>>{3*(s60+k*s80)} seats
+Then add {extra} seats to find the total number of seats in Section B: {3*(s60+k*s80)} seats + {extra} seats = <<{3*(s60+k*s80)}+{extra}={3*(s60+k*s80)+extra}>>{3*(s60+k*s80)+extra} seats
+#### {3*(s60+k*s80)+extra}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

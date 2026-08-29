@@ -1,0 +1,45 @@
+question = """
+Faye had $20. Today, her mother gave her twice as much as her money. If she bought ten cupcakes at $1.50 each and five boxes of cookies at $3 per box, how much money did she have left?
+"""
+
+answer = """
+Faye's mother gave her 2 x $20 = $<<2*20=40>>40.
+So, Faye had a total of $20 + $40 = $<<20+40=60>>60.
+Ten cupcakes cost 10 x $1.50 = $<<10*1.5=15>>15.
+Five boxes of cookies cost 5 x $3 = $<<5*3=15>>15.
+Thus, Faye spent $15 + $15 = $<<15+15=30>>30.
+Therefore, Faye has $60 - $30 = $<<60-30=30>>30 left.
+#### 30
+"""
+
+id_orig = 3865
+id_shuffled = 4559
+
+question_annotated = """
+{name,Faye} had ${a,20}. Today, her mother gave her {multi_word,twice} as much as her money. If she bought ten cupcakes at $1.50 each and five boxes of cookies at ${pb,3} per box, how much money did she have left?
+
+#init:
+- name = sample(names_female)
+- multi_word, m = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $a = range(10, 210, 2)
+- $pb = range(2, 10)
+
+#conditions:
+- a*m + a > 15 + 5*pb
+
+#answer: a*m + a - 15 - 5*pb
+"""
+
+answer_annotated = """
+{name}'s mother gave her {m} x ${a} = $<<{m}*{a}={m*a}>>{m*a}.
+So, {name} had a total of ${a} + ${m*a} = $<<{a}+{m*a}={a+m*a}>>{a+m*a}.
+Ten cupcakes cost 10 x $1.50 = $<<10*1.5=15>>15.
+Five boxes of cookies cost 5 x ${pb} = $<<5*{pb}={5*pb}>>{5*pb}.
+Thus, {name} spent $15 + ${5*pb} = $<<15+{5*pb}={15+5*pb}>>{15+5*pb}.
+Therefore, {name} has ${a+m*a} - ${15+5*pb} = $<<{a+m*a}-{15+5*pb}={a*m+a-15-5*pb}>>{a*m+a-15-5*pb} left.
+#### {a*m+a-15-5*pb}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+The number of short students in a class is 2/5 of the total number of students. If there are 90 tall students, and the class has 400 students, calculate the total number of students with average height.
+"""
+
+answer = """
+The number of short students in the class is 2/5*400 = <<2/5*400=160>>160
+The total number of short and tall students is 160+90 = <<160+90=250>>250
+Since there are 400 students in the class, the number of students with average height is 400-250 = <<400-250=150>>150
+#### 150
+"""
+
+id_orig = 1601
+id_shuffled = 1726
+
+question_annotated = """
+The number of short students in a class is {p,2}/{d,5} of the total number of students. If there are {tall,90} tall students, and the class has {total,400} students, calculate the total number of students with average height.
+
+#init:
+- $p = range(1, 10)
+- $d = range(2, 20)
+- $tall = range(10, 210, 10)
+- $total = range(120, 520, 40)
+
+#conditions:
+- p < d
+- divides(p * total, d)
+- total - (p * total // d + tall) > 0
+
+#answer: total - (p * total // d + tall)
+"""
+
+answer_annotated = """
+The number of short students in the class is {p}/{d}*{total} = <<{p}/{d}*{total}={p*total//d}>>{p*total//d}
+The total number of short and tall students is {p*total//d}+{tall} = <<{p*total//d}+{tall}={p*total//d+tall}>>{p*total//d+tall}
+Since there are {total} students in the class, the number of students with average height is {total}-{p*total//d+tall} = <<{total}-{p*total//d+tall}={total-(p*total//d+tall)}>>{total-(p*total//d+tall)}
+#### {total - (p * total // d + tall)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,44 @@
+question = """
+Doris works at the Widget Factory in the packing department. She puts 3 widgets in each carton, which are 4 inches wide, 4 inches long, and 5 inches tall. She then packs those cartons into a shipping box before sending it to the loading bay. The shipping boxes are 20 inches wide, 20 inches long, and 20 inches high. How many widgets get shipped in each shipping box?
+"""
+
+answer = """
+Each carton has an area of 4*4*5 = <<4*4*5=80>>80 square inches.
+Each shipping box has an area of 20*20*20 = <<20*20*20=8000>>8000 square inches
+The total number of cartons that will fit into each box is 8000/80 = <<8000/80=100>>100
+Since there are 3 widgets in each carton, the total number of cartons in each box will be 3*100 = <<3*100=300>>300
+#### 300
+"""
+
+id_orig = 3789
+id_shuffled = 4471
+
+question_annotated = """
+{name,Doris} works at the Widget Factory in the packing department. She puts {w,3} widgets in each carton, which are {c,4} inches wide, {c,4} inches long, and {h,5} inches tall. She then packs those cartons into a shipping box before sending it to the loading bay. The shipping boxes are {b,20} inches wide, {b,20} inches long, and {b,20} inches high. How many widgets get shipped in each shipping box?
+
+#init:
+- name = sample(names_female)
+- $w = range(2, 10)
+- $c = range(2, 12)
+- $h = range(2, 12)
+- $b = range(6, 36)
+
+#conditions:
+- b > c
+- b > h
+- is_int((b**3)/(c*c*h))
+
+#answer: w * b**3 // (c*c*h)
+"""
+
+answer_annotated = """
+Each carton has an area of {c}*{c}*{h} = <<{c}*{c}*{h}={c*c*h}>>{c*c*h} square inches.
+Each shipping box has an area of {b}*{b}*{b} = <<{b}*{b}*{b}={b**3}>>{b**3} square inches
+The total number of cartons that will fit into each box is {b**3}/{c*c*h} = <<{b**3}/{c*c*h}={(b**3)//(c*c*h)}>>{(b**3)//(c*c*h)}
+Since there are {w} widgets in each carton, the total number of cartons in each box will be {w}*{(b**3)//(c*c*h)} = <<{w}*{(b**3)//(c*c*h)}={w*((b**3)//(c*c*h))}>>{w*((b**3)//(c*c*h))}
+#### {w * b**3 // (c*c*h)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

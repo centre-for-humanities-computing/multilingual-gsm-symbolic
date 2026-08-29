@@ -1,0 +1,39 @@
+question = """
+Matthew, the baker, arrives at work early every morning to make his famous caramel-apple coffee cakes for the day.  It usually takes Matthew 1 hour to assemble ingredients, 1.5 hours to bake the cakes, and another 1 hour to decorate each cake with cinnamon sprinkles.  One day, Matthew's oven failed to reach the correct temperature and it took twice as long for the cakes to bake as they usually take.  On that day, how long did it take, in hours, for Matthew to make his famous caramel-apple coffee cakes?
+"""
+
+answer = """
+Twice 1.5 hours is 2*1.5=<<2*1.5=3>>3 hours.
+Thus, on that day, it took Matthew 1+3+1=<<1+3+1=5>>5 hours to make the cakes.
+#### 5
+"""
+
+id_orig = 870
+id_shuffled = 966
+
+question_annotated = """
+{name,Matthew}, the baker, arrives at work early every morning to make his famous caramel-apple coffee cakes for the day.  It usually takes {name,Matthew} {asm,1} hour to assemble ingredients, {bake,1.5} hours to bake the cakes, and another {dec,1} hour to decorate each cake with cinnamon sprinkles.  One day, {name,Matthew}'s oven failed to reach the correct temperature and it took twice as long for the cakes to bake as they usually take.  On that day, how long did it take, in hours, for {name,Matthew} to make his famous caramel-apple coffee cakes?
+
+#init:
+- name = sample(names_male)
+- $asm = range(1, 5)
+- $bake = sample([1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5])
+- $dec = range(1, 4)
+
+#conditions:
+- asm > 0
+- bake > 0
+- dec > 0
+
+#answer: asm + int(bake*2) + dec
+"""
+
+answer_annotated = """
+Twice {bake} hours is 2*{bake}=<<2*{bake}={int(bake*2)}>>{int(bake*2)} hours.
+Thus, on that day, it took {name} {asm}+{int(bake*2)}+{dec}=<<{asm}+{int(bake*2)}+{dec}={asm+int(bake*2)+dec}>>{asm+int(bake*2)+dec} hours to make the cakes.
+#### {asm+int(bake*2)+dec}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

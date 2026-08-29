@@ -1,0 +1,48 @@
+question = """
+Joe plays a soccer tournament with his team. Matches won score 3 points for the winning team and tied matches score 1 point for both teams. Joe and his team won 1 game and drew 3. The first-place team has won 2 games and tied 2. By how many points did the first-place team beat Joe's team?
+"""
+
+answer = """
+For 1 match won, Joe's team scored 1 * 3 = <<1*3=3>>3 points.
+For 3 tied games, Joe's team scored 3 * 1 = <<3*1=3>>3 points.
+In total, Joe's team scored 3 + 3 = <<3+3=6>>6 points.
+For 2 games won, the first-place team scored 2 * 3 = <<2*3=6>>6 points
+For 2 tied games, the first-place team scored 2 * 1 = <<2*1=2>>2 points
+In total, the first-place team scored 6 + 2 = <<6+2=8>>8 points.
+The first-place team outscored Joe's team by 8 - 6 = <<8-6=2>>2 points.
+#### 2
+"""
+
+id_orig = 938
+id_shuffled = 1034
+
+question_annotated = """
+{name,Joe} plays a soccer tournament with his team. Matches won score 3 points for the winning team and tied matches score 1 point for both teams. {name,Joe} and his team won {w,1} {game_word,game} and drew {d,3}. The first-place team has won {w2,2} games and tied {d2,2}. By how many points did the first-place team beat {name,Joe}'s team?
+
+#init:
+- name = sample(names_male)
+- game_word, w = sample([("game", 1), ("games", 2), ("games", 3), ("games", 4)])
+- $d = range(1, 10)
+- $w2 = range(2, 10)
+- $d2 = range(1, 10)
+
+#conditions:
+- w2 * 3 + d2 > w * 3 + d
+
+#answer: w2 * 3 + d2 - w * 3 - d
+"""
+
+answer_annotated = """
+For {w} match won, {name}'s team scored {w} * 3 = <<{w}*3={w*3}>>{w*3} points.
+For {d} tied games, {name}'s team scored {d} * 1 = <<{d}*1={d}>>{d} points.
+In total, {name}'s team scored {w*3} + {d} = <<{w*3}+{d}={w*3+d}>>{w*3+d} points.
+For {w2} games won, the first-place team scored {w2} * 3 = <<{w2}*3={w2*3}>>{w2*3} points
+For {d2} tied games, the first-place team scored {d2} * 1 = <<{d2}*1={d2}>>{d2} points
+In total, the first-place team scored {w2*3} + {d2} = <<{w2*3}+{d2}={w2*3+d2}>>{w2*3+d2} points.
+The first-place team outscored {name}'s team by {w2*3+d2} - {w*3+d} = <<{w2*3+d2}-{w*3+d}={w2*3+d2-w*3-d}>>{w2*3+d2-w*3-d} points.
+#### {w2 * 3 + d2 - w * 3 - d}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

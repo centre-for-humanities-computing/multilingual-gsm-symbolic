@@ -1,0 +1,46 @@
+question = """
+Joan is at the grocery store. She has a total of $60 to spend. She is going to purchase 2 containers of hummus, which are $5 each. She is going to purchase chicken for $20, bacon for $10, and vegetables for $10. She wants to purchase apples which are $2 each. With her remaining money, how many apples can she purchase?
+"""
+
+answer = """
+The total cost of the hummus is 2 * $5 = $<<2*5=10>>10
+The total cost of the chicken, bacon, and vegetables is $20 + $10 + $10 = $<<20+10+10=40>>40
+The remaining money she has is $60 - $10 - $40 = $<<60-10-40=10>>10
+The amount of apples she can purchase is $10 / $2 = <<10/2=5>>5
+#### 5
+"""
+
+id_orig = 761
+id_shuffled = 834
+
+question_annotated = """
+{name,Joan} is at the grocery store. She has a total of ${total,60} to spend. She is going to purchase {hn,2} containers of hummus, which are ${hp,5} each. She is going to purchase chicken for ${cp,20}, bacon for ${bp,10}, and vegetables for ${vp,10}. She wants to purchase apples which are ${ap,2} each. With her remaining money, how many apples can she purchase?
+
+#init:
+- name = sample(names_female)
+- $total = range(40, 220, 20)
+- $hn = range(1, 5)
+- $hp = range(1, 11, 2)
+- $cp = range(5, 30, 5)
+- $bp = range(5, 21, 5)
+- $vp = range(5, 21, 5)
+- $ap = range(1, 8)
+
+#conditions:
+- total - hn*hp - cp - bp - vp > 0
+- divides(total - hn*hp - cp - bp - vp, ap)
+
+#answer: (total - hn*hp - cp - bp - vp) // ap
+"""
+
+answer_annotated = """
+The total cost of the hummus is {hn} * ${hp} = $<<{hn}*{hp}={hn*hp}>>{hn*hp}
+The total cost of the chicken, bacon, and vegetables is ${cp} + ${bp} + ${vp} = $<<{cp}+{bp}+{vp}={cp+bp+vp}>>{cp+bp+vp}
+The remaining money she has is ${total} - ${hn*hp} - ${cp+bp+vp} = $<<{total}-{hn*hp}-{cp+bp+vp}={total-hn*hp-cp-bp-vp}>>{total-hn*hp-cp-bp-vp}
+The amount of apples she can purchase is ${total-hn*hp-cp-bp-vp} / ${ap} = <<{total-hn*hp-cp-bp-vp}/{ap}={(total-hn*hp-cp-bp-vp)//ap}>>{(total-hn*hp-cp-bp-vp)//ap}
+#### {(total-hn*hp-cp-bp-vp)//ap}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

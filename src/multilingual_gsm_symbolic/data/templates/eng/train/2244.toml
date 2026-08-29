@@ -1,0 +1,48 @@
+question = """
+Jeff wanted to rent an apartment to live in for the next 5 years until he finishes his studies. He found a nice apartment next to his school, the owner asks Jeff to pay $300 each month, Jeff agreed, and for the first 3 years everything went fine, but then the owner wanted to raise the price for each month to $350. Jeff agreed again and continued paying until he graduated. How much did Jeff end up paying for the apartment throughout the 5 years?
+"""
+
+answer = """
+At first Jeff paid, $300/month x 12 months = $<<300*12=3600>>3,600/year
+He paid $3,600/year x 3 years = $10,800 the firsts 3 years.
+The final 2 years he paid $350/month x 12 months = $<<350*12=4200>>4,200/year
+He paid $4,200/year x 2 years = $<<4200*2=8400>>8,400 the last 2 years.
+He paid the owner $10,800 + $8,400 = $<<10800+8400=19200>>19,200 in total.
+#### 19200
+"""
+
+id_orig = 1934
+id_shuffled = 2244
+
+question_annotated = """
+{name,Jeff} wanted to rent an apartment to live in for the next 5 years until he finishes his studies. He found a nice apartment next to his school, the owner asks {name,Jeff} to pay ${r1,300} each month, {name,Jeff} agreed, and for the first 3 years everything went fine, but then the owner wanted to raise the price for each month to ${r2,350}. {name,Jeff} agreed again and continued paying until he graduated. How much did {name,Jeff} end up paying for the apartment throughout the 5 years?
+
+#init:
+- name = sample(names_male)
+- $r1 = range(50, 2050, 50)
+- $r2 = range(50, 2050, 50)
+
+#conditions:
+- r1 * 12 >= 1000
+- r2 * 12 >= 1000
+- not divides(r1 * 12, 1000)
+- not divides(3 * r1 * 12, 1000)
+- not divides(r2 * 12, 1000)
+- not divides(2 * r2 * 12, 1000)
+- not divides(3 * r1 * 12 + 2 * r2 * 12, 1000)
+
+#answer: 3*r1*12 + 2*r2*12
+"""
+
+answer_annotated = """
+At first {name} paid, ${r1}/month x 12 months = $<<{r1}*12={r1*12}>>{r1*12//1000},{r1*12 - 1000*(r1*12//1000)}/year
+He paid ${r1*12//1000},{r1*12 - 1000*(r1*12//1000)}/year x 3 years = ${3*r1*12//1000},{3*r1*12 - 1000*(3*r1*12//1000)} the firsts 3 years.
+The final 2 years he paid ${r2}/month x 12 months = $<<{r2}*12={r2*12}>>{r2*12//1000},{r2*12 - 1000*(r2*12//1000)}/year
+He paid ${r2*12//1000},{r2*12 - 1000*(r2*12//1000)}/year x 2 years = $<<{r2*12}*2={r2*12*2}>>{r2*12*2//1000},{r2*12*2 - 1000*(r2*12*2//1000)} the last 2 years.
+He paid the owner ${3*r1*12//1000},{3*r1*12 - 1000*(3*r1*12//1000)} + ${2*r2*12//1000},{2*r2*12 - 1000*(2*r2*12//1000)} = $<<{3*r1*12}+{2*r2*12}={3*r1*12 + 2*r2*12}>>{(3*r1*12 + 2*r2*12)//1000},{(3*r1*12 + 2*r2*12) - 1000*((3*r1*12 + 2*r2*12)//1000)} in total.
+#### {3*r1*12 + 2*r2*12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

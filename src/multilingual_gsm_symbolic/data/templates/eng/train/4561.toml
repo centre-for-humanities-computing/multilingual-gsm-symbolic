@@ -1,0 +1,42 @@
+question = """
+Susan is taking a two week vacation. She works five days a week and has six days of paid vacation. The rest of her workdays will be unpaid vacation time. She gets paid $15 per hour and works 8 hours a day. How much pay will she miss on her vacation?
+"""
+
+answer = """
+Susan works 2 * 5 = <<2*5=10>>10 days in two weeks.
+She is taking 10 - 6 = <<10-6=4>>4 days of unpaid vacation.
+At $15 per hour, she is paid 15 * 8 = $<<15*8=120>>120 per day.
+At $120 per day, Susan will miss 120 * 4 = $<<120*4=480>>480 on her vacation.
+#### 480
+"""
+
+id_orig = 3867
+id_shuffled = 4561
+
+question_annotated = """
+{name,Susan} is taking a two week vacation. She works {wd_txt,five} days a week and has {pv_txt,six} days of paid vacation. The rest of her workdays will be unpaid vacation time. She gets paid ${r,15} per hour and works {h,8} hours a day. How much pay will she miss on her vacation?
+
+#init:
+- name = sample(names_female)
+- wd_txt, d = sample([("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- pv_txt, v = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10)])
+- $r = range(5, 55, 5)
+- $h = range(4, 13, 2)
+
+#conditions:
+- v < 2 * d
+
+#answer: r * h * (2 * d - v)
+"""
+
+answer_annotated = """
+{name} works 2 * {d} = <<2*{d}={2*d}>>{2*d} days in two weeks.
+She is taking {2*d} - {v} = <<{2*d}-{v}={2*d-v}>>{2*d-v} days of unpaid vacation.
+At ${r} per hour, she is paid {r} * {h} = $<<{r}*{h}={r*h}>>{r*h} per day.
+At ${r*h} per day, {name} will miss {r*h} * {2*d-v} = $<<{r*h}*{2*d-v}={r*h*(2*d-v)}>>{r*h*(2*d-v)} on her vacation.
+#### {r*h*(2*d-v)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+It takes Polly 20 minutes to cook breakfast every day. She spends 5 minutes cooking lunch. She spends 10 minutes cooking dinner 4 days this week. The rest of the days she spends 30 minutes cooking dinner. How many minutes does Polly spend cooking this week?
+"""
+
+answer = """
+Polly spends 20*7 =<<20*7=140>>140 minutes cooking breakfast.
+She spends 5*7= <<5*7=35>>35 minutes cooking lunch.
+She spends (10*4)+(30*3)= <<10*4+30*3=130>>130 minutes cooking dinner.
+Therefore, she spends 140+35+130=<<140+35+130=305>>305 minutes cooking this week.
+#### 305
+"""
+
+id_orig = 2767
+id_shuffled = 3285
+
+question_annotated = """
+It takes {name,Polly} {bf,20} minutes to cook breakfast every day. She spends {lu,5} minutes cooking lunch. She spends {df,10} minutes cooking dinner {dd,4} days this week. The rest of the days she spends {ds,30} minutes cooking dinner. How many minutes does {name,Polly} spend cooking this week?
+
+#init:
+- name = sample(names_female)
+- $bf = range(5, 45, 5)
+- $lu = range(1, 21)
+- $df = range(2, 42, 2)
+- $dd = range(1, 7)
+- $ds = range(10, 60, 10)
+
+#conditions:
+- dd < 7
+
+#answer: bf*7 + lu*7 + df*dd + ds*(7 - dd)
+"""
+
+answer_annotated = """
+{name} spends {bf}*7 =<<{bf}*7={bf*7}>>{bf*7} minutes cooking breakfast.
+She spends {lu}*7= <<{lu}*7={lu*7}>>{lu*7} minutes cooking lunch.
+She spends ({df}*{dd})+({ds}*{7-dd})= <<{df}*{dd}+{ds}*{7-dd}={df*dd+ds*(7-dd)}>>{df*dd+ds*(7-dd)} minutes cooking dinner.
+Therefore, she spends {bf*7}+{lu*7}+{df*dd+ds*(7-dd)}=<<{bf*7}+{lu*7}+{df*dd+ds*(7-dd)}={bf*7+lu*7+df*dd+ds*(7-dd)}>>{bf*7+lu*7+df*dd+ds*(7-dd)} minutes cooking this week.
+#### {bf*7+lu*7+df*dd+ds*(7-dd)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

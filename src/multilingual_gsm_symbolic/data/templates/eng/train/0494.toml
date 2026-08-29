@@ -1,0 +1,43 @@
+question = """
+Mrs. Wilsborough saved $500 to buy concert tickets for her family. She bought 2 VIP tickets at $100 each and 3 regular tickets at $50 each. How much of her savings does Mrs. Wilsborough have after she buys the tickets?
+"""
+
+answer = """
+The 2 VIP tickets amount to $100 x 2 = $<<100*2=200>>200.
+The 3 regular tickets amount to $50 x 3 = $<<50*3=150>>150.
+Thus, the total cost of the tickets is $200 + $150 = $<<200+150=350>>350.
+Therefore, Mrs. Wilsborough is left with $500 - $350 = $<<500-350=150>>150 of her savings.
+#### 150
+"""
+
+id_orig = 421
+id_shuffled = 494
+
+question_annotated = """
+{name,Mrs. Wilsborough} saved ${s,500} to buy concert tickets for her family. She bought {vc,2} VIP tickets at ${vp,100} each and {rc,3} regular tickets at ${rp,50} each. How much of her savings does {name,Mrs. Wilsborough} have after she buys the tickets?
+
+#init:
+- name = sample(["Mrs. Wilsborough", "Mrs. Anderson", "Mrs. Chen", "Mrs. Davis"])
+- $vc = range(1, 6)
+- $vp = range(10, 110, 10)
+- $rc = range(1, 6)
+- $rp = range(10, 60, 10)
+- $s = range(200, 1300, 100)
+
+#conditions:
+- s > vc*vp + rc*rp
+
+#answer: s - (vc*vp + rc*rp)
+"""
+
+answer_annotated = """
+The {vc} VIP tickets amount to ${vp} x {vc} = $<<{vp}*{vc}={vp*vc}>>{vp*vc}.
+The {rc} regular tickets amount to ${rp} x {rc} = $<<{rp}*{rc}={rp*rc}>>{rp*rc}.
+Thus, the total cost of the tickets is ${vp*vc} + ${rp*rc} = $<<{vp*vc}+{rp*rc}={vp*vc+rp*rc}>>{vp*vc+rp*rc}.
+Therefore, {name} is left with ${s} - ${vp*vc+rp*rc} = $<<{s}-{vp*vc+rp*rc}={s-(vc*vp+rc*rp)}>>{s-(vc*vp+rc*rp)} of her savings.
+#### {s - (vc*vp + rc*rp)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Patsy is gearing up for this weekend’s graduation.  She needs to have 6 appetizers per each of her 30 guests.  She’s making 3 dozen deviled eggs, 2 dozen pigs in a blanket and 2 dozen kebabs.  How many more dozen appetizers does she need to make?
+"""
+
+answer = """
+She needs 6 appetizers per each of her 30 guests so she needs 6*30 = <<6*30=180>>180 appetizers
+She’s made 3 dozen deviled eggs, 2 dozen pigs in a blanket and 2 dozen kebabs so she’s made 3+2+2 = <<3+2+2=7>>7 dozen appetizers
+7 dozen appetizers is 7*12 = <<7*12=84>>84 appetizers
+She needs 180 appetizers and has made 84 so she needs 180-84 = <<180-84=96>>96 appetizers
+96 appetizers, in dozens, is 96/12 = <<96/12=8>>8 dozen more appetizers
+#### 8
+"""
+
+id_orig = 798
+id_shuffled = 871
+
+question_annotated = """
+{name,Patsy} is gearing up for this weekend’s graduation.  She needs to have {p,6} appetizers per each of her {g,30} guests.  She’s making {d1,3} dozen deviled eggs, {d2,2} dozen pigs in a blanket and {d3,2} dozen kebabs.  How many more dozen appetizers does she need to make?
+
+#init:
+- name = sample(names_female)
+- $p = range(2, 13)
+- $g = range(10, 210, 10)
+- $d1 = range(1, 6)
+- $d2 = range(1, 6)
+- $d3 = range(1, 6)
+
+#conditions:
+- divides(p * g, 12)
+- p * g > (d1 + d2 + d3) * 12
+
+#answer: p*g//12 - d1 - d2 - d3
+"""
+
+answer_annotated = """
+She needs {p} appetizers per each of her {g} guests so she needs {p}*{g} = <<{p}*{g}={p*g}>>{p*g} appetizers
+She’s made {d1} dozen deviled eggs, {d2} dozen pigs in a blanket and {d3} dozen kebabs so she’s made {d1}+{d2}+{d3} = <<{d1}+{d2}+{d3}={d1+d2+d3}>>{d1+d2+d3} dozen appetizers
+{d1+d2+d3} dozen appetizers is {d1+d2+d3}*12 = <<{d1+d2+d3}*12={(d1+d2+d3)*12}>>{(d1+d2+d3)*12} appetizers
+She needs {p*g} appetizers and has made {(d1+d2+d3)*12} so she needs {p*g}-{(d1+d2+d3)*12} = <<{p*g}-{(d1+d2+d3)*12}={p*g-(d1+d2+d3)*12}>>{p*g-(d1+d2+d3)*12} appetizers
+{p*g-(d1+d2+d3)*12} appetizers, in dozens, is {p*g-(d1+d2+d3)*12}/12 = <<{p*g-(d1+d2+d3)*12}/12={p*g//12-d1-d2-d3}>>{p*g//12-d1-d2-d3} dozen more appetizers
+#### {p*g//12-d1-d2-d3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

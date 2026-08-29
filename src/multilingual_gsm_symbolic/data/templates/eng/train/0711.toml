@@ -1,0 +1,50 @@
+question = """
+James buys 200 lotto tickets for 2 dollars each.  Of those tickets 20% are winners.  80% of the winners are for 5 dollars. 1 ticket is the grand prize of $5,000.  The other tickets win an average of $10.  How much did he profit?
+"""
+
+answer = """
+He spent 200*2=$<<200*2=400>>400
+There were 200*.2=<<200*.2=40>>40 tickets
+Of those 40*.8=32 are 5 dollar winners
+So they win 32*5=$<<32*5=160>>160
+He has 40-32=<<40-32=8>>8 other winning tickets
+Of those 8-1=<<8-1=7>>7 wins $10
+So they win 10*7=$<<10*7=70>>70
+So he won 5000+70+160-400=$<<5000+70+160-400=4830>>4830
+#### 4830
+"""
+
+id_orig = 638
+id_shuffled = 711
+
+question_annotated = """
+James buys {t,200} lotto tickets for {p,2} dollars each.  Of those tickets 20% are winners.  80% of the winners are for {v,5} dollars. 1 ticket is the grand prize of $5,000.  The other tickets win an average of ${avg,10}.  How much did he profit?
+
+#init:
+- $t = range(100, 501, 25)
+- $p = range(1, 6)
+- $v = range(2, 12)
+- $avg = range(2, 22)
+
+#conditions:
+- divides(t, 25)
+- int(t*0.2) - int(t*0.2)*4//5 > 1
+
+#answer: 5000 + avg*(int(t*0.2) - int(t*0.2)*4//5 - 1) + int(t*0.2)*4//5*v - t*p
+"""
+
+answer_annotated = """
+He spent {t}*{p}=$<<{t}*{p}={t*p}>>{t*p}
+There were {t}*.2=<<{t}*.2={int(t*0.2)}>>{int(t*0.2)} tickets
+Of those {int(t*0.2)}*.8={int(t*0.2)*4//5} are {v} dollar winners
+So they win {int(t*0.2)*4//5}*{v}=$<<{int(t*0.2)*4//5}*{v}={int(t*0.2)*4//5*v}>>{int(t*0.2)*4//5*v}
+He has {int(t*0.2)}-{int(t*0.2)*4//5}=<<{int(t*0.2)}-{int(t*0.2)*4//5}={int(t*0.2)-int(t*0.2)*4//5}>>{int(t*0.2)-int(t*0.2)*4//5} other winning tickets
+Of those {int(t*0.2)-int(t*0.2)*4//5}-1=<<{int(t*0.2)-int(t*0.2)*4//5}-1={int(t*0.2)-int(t*0.2)*4//5-1}>>{int(t*0.2)-int(t*0.2)*4//5-1} wins ${avg}
+So they win {avg}*{int(t*0.2)-int(t*0.2)*4//5-1}=$<<{avg}*{int(t*0.2)-int(t*0.2)*4//5-1}={avg*(int(t*0.2)-int(t*0.2)*4//5-1)}>>{avg*(int(t*0.2)-int(t*0.2)*4//5-1)}
+So he won 5000+{avg*(int(t*0.2)-int(t*0.2)*4//5-1)}+{int(t*0.2)*4//5*v}-{t*p}=$<<5000+{avg*(int(t*0.2)-int(t*0.2)*4//5-1)}+{int(t*0.2)*4//5*v}-{t*p}={5000+avg*(int(t*0.2)-int(t*0.2)*4//5-1)+int(t*0.2)*4//5*v-t*p}>>{5000+avg*(int(t*0.2)-int(t*0.2)*4//5-1)+int(t*0.2)*4//5*v-t*p}
+#### {5000+avg*(int(t*0.2)-int(t*0.2)*4//5-1)+int(t*0.2)*4//5*v-t*p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

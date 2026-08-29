@@ -1,0 +1,50 @@
+question = """
+Bill is trying to decide whether to make blueberry muffins or raspberry muffins. Blueberries cost $5.00 per 6 ounce carton and raspberries cost $3.00 per 8 ounce carton. If Bill is going to make 4 batches of muffins, and each batch takes 12 ounces of fruit, how much money would he save by using raspberries instead of blueberries?
+"""
+
+answer = """
+First find how many ounces of fruit Bill will need total: 12 ounces/batch * 4 batches = <<12*4=48>>48 ounces
+Then find how many cartons of blueberries Bill would need: 48 ounces / 6 ounces/carton = <<48/6=8>>8 cartons
+Then multiply that number by the cost per carton to find the total cost of the blueberries: 8 cartons * $5/carton = $<<8*5=40>>40
+Then find how many cartons of raspberries Bill would need: 48 ounces / 8 ounces/carton = <<48/8=6>>6 cartons
+Then multiply that number by the cost per carton to find the total cost of the raspberries: 6 cartons * $3/carton = $<<6*3=18>>18
+Then subtract the cost of the raspberries from the cost of the blueberries to find the difference: $40 - $18 = $<<40-18=22>>22
+#### 22
+"""
+
+id_orig = 3004
+id_shuffled = 3578
+
+question_annotated = """
+{name,Bill} is trying to decide whether to make blueberry muffins or raspberry muffins. Blueberries cost ${bp,5}.00 per {bs,6} ounce carton and raspberries cost ${rp,3}.00 per {rs,8} ounce carton. If {name,Bill} is going to make {n,4} batches of muffins, and each batch takes {oz,12} ounces of fruit, how much money would he save by using raspberries instead of blueberries?
+
+#init:
+- name = sample(names_male)
+- $bp = range(2, 8)
+- $bs = range(2, 12)
+- $rp = range(1, 7)
+- $rs = range(2, 12)
+- $n = range(2, 6)
+- $oz = range(2, 17)
+
+#conditions:
+- divides(oz*n, bs)
+- divides(oz*n, rs)
+- oz*n//bs*bp > oz*n//rs*rp
+
+#answer: oz*n//bs*bp - oz*n//rs*rp
+"""
+
+answer_annotated = """
+First find how many ounces of fruit {name} will need total: {oz} ounces/batch * {n} batches = <<{oz}*{n}={oz*n}>>{oz*n} ounces
+Then find how many cartons of blueberries {name} would need: {oz*n} ounces / {bs} ounces/carton = <<{oz*n}/{bs}={oz*n//bs}>>{oz*n//bs} cartons
+Then multiply that number by the cost per carton to find the total cost of the blueberries: {oz*n//bs} cartons * ${bp}/carton = $<<{oz*n//bs}*{bp}={oz*n//bs*bp}>>{oz*n//bs*bp}
+Then find how many cartons of raspberries {name} would need: {oz*n} ounces / {rs} ounces/carton = <<{oz*n}/{rs}={oz*n//rs}>>{oz*n//rs} cartons
+Then multiply that number by the cost per carton to find the total cost of the raspberries: {oz*n//rs} cartons * ${rp}/carton = $<<{oz*n//rs}*{rp}={oz*n//rs*rp}>>{oz*n//rs*rp}
+Then subtract the cost of the raspberries from the cost of the blueberries to find the difference: ${oz*n//bs*bp} - ${oz*n//rs*rp} = $<<{oz*n//bs*bp}-{oz*n//rs*rp}={oz*n//bs*bp - oz*n//rs*rp}>>{oz*n//bs*bp - oz*n//rs*rp}
+#### {oz*n//bs*bp - oz*n//rs*rp}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Caden has four jars of coins. One jar of pennies, one jar of nickels, one jar of dimes and one jar of quarters. He has twice as many quarters as he does dimes. He has five times as many nickels as he does dimes. He has three times as many pennies as he does nickels. If he has 120 pennies, how much money does he have?
+"""
+
+answer = """
+Starting with 120 pennies he has $1.20
+If he has three times as many pennies as he does nickels, he has 120 pennies / 3 nickels per penny = 40 nickels. 40 nickels = 40 * $0.05 = $<<40*0.05=2>>2
+If he has five times as many nickels as dimes he has 40 nickels / 5 dimes per nickel = 8 dimes. 8 * $0.10 = $<<40/5*0.10=0.80>>0.80
+if he has twice as many quarters than he does dimes, he has 8 dimes * 2 quarters per dime = 16 quarters = 16 *$ 0.25 = $<<8*2*0.25=4.00>>4.00
+In all he has $1.20 + $2.00 + $0.80 + $4.00 = $<<1.20+2+0.8+4=8.00>>8.00
+#### 8
+"""
+
+id_orig = 3085
+id_shuffled = 3729
+
+question_annotated = """
+{name,Caden} has four jars of coins. One jar of pennies, one jar of nickels, one jar of dimes and one jar of quarters. He has twice as many quarters as he does dimes. He has five times as many nickels as he does dimes. He has three times as many pennies as he does nickels. If he has {p,120} pennies, how much money does he have?
+
+#init:
+- name = sample(names_male)
+- $p = range(120, 12061, 60)
+
+#conditions:
+- not divides(p, 300)
+
+#answer: (p + p//3*5 + p//15*10 + p//15*2*25)//100
+"""
+
+answer_annotated = """
+Starting with {p} pennies he has ${str(p//100) + "." + str(p%100)}
+If he has three times as many pennies as he does nickels, he has {p} pennies / 3 nickels per penny = {p//3} nickels. {p//3} nickels = {p//3} * $0.05 = $<<{p//3}*0.05={p//3*5//100}>>{p//3*5//100}
+If he has five times as many nickels as dimes he has {p//3} nickels / 5 dimes per nickel = {p//15} dimes. {p//15} * $0.10 = $<<{p//3}/5*0.10={p//15*10//100}.{p//15*10%100}>>{p//15*10//100}.{p//15*10%100}
+if he has twice as many quarters than he does dimes, he has {p//15} dimes * 2 quarters per dime = {p//15*2} quarters = {p//15*2} *$ 0.25 = $<<{p//15}*2*0.25={p//15*2*25//100}.00>>{p//15*2*25//100}.00
+In all he has ${str(p//100) + "." + str(p%100)} + ${p//3*5//100}.00 + ${p//15*10//100}.{p//15*10%100} + ${p//15*2*25//100}.00 = $<<{str(p//100) + "." + str(p%100)}+{p//3*5//100}+{p//15/10}+{p//15*2*25//100}={(p + p//3*5 + p//15*10 + p//15*2*25)//100}.00>>{(p + p//3*5 + p//15*10 + p//15*2*25)//100}.00
+#### {(p + p//3*5 + p//15*10 + p//15*2*25)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

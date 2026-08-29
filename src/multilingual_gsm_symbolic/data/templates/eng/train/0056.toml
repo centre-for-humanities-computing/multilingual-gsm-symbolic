@@ -1,0 +1,41 @@
+question = """
+Leo's assignment was divided into three parts. He finished the first part of his assignment in 25 minutes. It took him twice as long to finish the second part. If he was able to finish his assignment in 2 hours, how many minutes did Leo finish the third part of the assignment?
+"""
+
+answer = """
+It took Leo 25 x 2 = <<25*2=50>>50 minutes to finish the second part of the assignment.
+Leo finished the first and second parts of the assignment in 25 + 50 = <<25+50=75>>75 minutes.
+He finished the entire assignment in 60 x 2 = <<60*2=120>>120 minutes.
+Therefore, it took Leo 120 - 75 = <<120-75=45>>45 minutes to finish the third part of the assignment.
+#### 45
+"""
+
+id_orig = 56
+id_shuffled = 56
+
+question_annotated = """
+{name,Leo}'s assignment was divided into three parts. He finished the first part of his assignment in {a,25} minutes. It took him {m_txt,twice} as long to finish the second part. If he was able to finish his assignment in {h,2} hours, how many minutes did {name,Leo} finish the third part of the assignment?
+
+#init:
+- name = sample(names_male)
+- m_txt, m_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $a = range(5, 100)
+- $h = range(1, 5)
+
+#conditions:
+- a * (1 + m_val) < h * 60
+
+#answer: h*60 - a*(1 + m_val)
+"""
+
+answer_annotated = """
+It took {name} {a} x {m_val} = <<{a}*{m_val}={a*m_val}>>{a*m_val} minutes to finish the second part of the assignment.
+{name} finished the first and second parts of the assignment in {a} + {a*m_val} = <<{a}+{a*m_val}={a+a*m_val}>>{a+a*m_val} minutes.
+He finished the entire assignment in 60 x {h} = <<60*{h}={h*60}>>{h*60} minutes.
+Therefore, it took {name} {h*60} - {a+a*m_val} = <<{h*60}-{a+a*m_val}={h*60-a-a*m_val}>>{h*60-a-a*m_val} minutes to finish the third part of the assignment.
+#### {h*60 - a*(1 + m_val)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Carla is dividing up chores for her two kids, Anna and Billy. She wants each of them to spend the same number of minutes working. Sweeping takes 3 minutes per room, washing the dishes takes 2 minutes per dish, and doing laundry takes 9 minutes per load. If Anna does the sweeping for 10 rooms and Billy does two loads of laundry, how many dishes should Billy wash so they spend the same amount of time doing chores?
+"""
+
+answer = """
+First find the total time Billy spends on laundry: 2 loads * 9 minutes/load = <<2*9=18>>18 minutes
+Then find the total time Anna spends sweeping: 3 minutes/room * 10 rooms = <<3*10=30>>30 minutes
+Then find how much longer Anna has already worked than Billy: 30 minutes - 18 minutes = <<30-18=12>>12 minutes
+Then divide the difference in work time by the time to wash one dish to find the number of dishes Billy has to wash to work the same amount of time as Anna: 12 minutes / 2 minutes/dish = <<12/2=6>>6 dishes
+#### 6
+"""
+
+id_orig = 3648
+id_shuffled = 4306
+
+question_annotated = """
+{c,Carla} is dividing up chores for her two kids, {na,Anna} and {nb,Billy}. She wants each of them to spend the same number of minutes working. Sweeping takes {sweep,3} minutes per room, washing the dishes takes {dish,2} minutes per dish, and doing laundry takes {load,9} minutes per load. If {na,Anna} does the sweeping for {rooms,10} rooms and {nb,Billy} does {loads_t,two} loads of laundry, how many dishes should {nb,Billy} wash so they spend the same amount of time doing chores?
+
+#init:
+- c = sample(names_female)
+- na = sample(names_female)
+- nb = sample(names_male)
+- $sweep = range(2, 12)
+- $dish = range(2, 8)
+- $load = range(4, 14)
+- $rooms = range(4, 44, 2)
+- loads_t, loads = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+
+#conditions:
+- sweep * rooms > loads * load
+- divides(sweep * rooms - loads * load, dish)
+
+#answer: (sweep * rooms - loads * load) // dish
+"""
+
+answer_annotated = """
+First find the total time {nb} spends on laundry: {loads} loads * {load} minutes/load = <<{loads}*{load}={loads*load}>>{loads*load} minutes
+Then find the total time {na} spends sweeping: {sweep} minutes/room * {rooms} rooms = <<{sweep}*{rooms}={sweep*rooms}>>{sweep*rooms} minutes
+Then find how much longer {na} has already worked than {nb}: {sweep*rooms} minutes - {loads*load} minutes = <<{sweep*rooms}-{loads*load}={sweep*rooms-loads*load}>>{sweep*rooms-loads*load} minutes
+Then divide the difference in work time by the time to wash one dish to find the number of dishes {nb} has to wash to work the same amount of time as {na}: {sweep*rooms-loads*load} minutes / {dish} minutes/dish = <<{sweep*rooms-loads*load}/{dish}={(sweep*rooms-loads*load)//dish}>>{(sweep*rooms-loads*load)//dish} dishes
+#### {(sweep*rooms-loads*load)//dish}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

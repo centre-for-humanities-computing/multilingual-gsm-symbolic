@@ -1,0 +1,44 @@
+question = """
+Carmen is counting the cars that pass by her window. All the cars are either white, black, or red. She sees 50 trucks and 40 cars. Half the trucks are red, and another 20% are black. If she picks one car at random, what is the percentage chance it's a white truck, rounded to the nearest integer?
+"""
+
+answer = """
+First find the total number of vehicles Carmen counted: 50 trucks + 40 cars = <<50+40=90>>90 vehicles
+Then find the number of trucks that were red: 50 trucks / 2 = <<50/2=25>>25 trucks
+Then find the number of trucks that were black: 50 trucks * .2 = <<50*.2=10>>10 trucks
+Then subtract the red and black trucks from the total number of trucks to find the number of white trucks: 50 trucks - 25 trucks - 10 trucks = <<50-25-10=15>>15 trucks
+Then divide the number of white trucks by the number of vehicles and multiply by 100% to find the percentage of vehicles that are white trucks: 15 trucks / 90 vehicles * 100% = 16.66...%, which rounds up to 17%.
+#### 17
+"""
+
+id_orig = 1842
+id_shuffled = 2041
+
+question_annotated = """
+{name,Carmen} is counting the cars that pass by her window. All the cars are either white, black, or red. She sees {t,50} trucks and {c,40} cars. Half the trucks are red, and another 20% are black. If she picks one car at random, what is the percentage chance it's a white truck, rounded to the nearest integer?
+
+#init:
+- name = sample(names_female)
+- $t = range(10, 210, 10)
+- $c = range(10, 110, 5)
+
+#conditions:
+- divides(t, 2)
+- divides(t, 5)
+- t - t//2 - t//5 > 0
+
+#answer: round((t - t//2 - t//5)/(t + c)*100)
+"""
+
+answer_annotated = """
+First find the total number of vehicles {name} counted: {t} trucks + {c} cars = <<{t}+{c}={t+c}>>{t+c} vehicles
+Then find the number of trucks that were red: {t} trucks / 2 = <<{t}/2={t//2}>>{t//2} trucks
+Then find the number of trucks that were black: {t} trucks * .2 = <<{t}*.2={t//5}>>{t//5} trucks
+Then subtract the red and black trucks from the total number of trucks to find the number of white trucks: {t} trucks - {t//2} trucks - {t//5} trucks = <<{t}-{t//2}-{t//5}={t-t//2-t//5}>>{t-t//2-t//5} trucks
+Then divide the number of white trucks by the number of vehicles and multiply by 100% to find the percentage of vehicles that are white trucks: {t-t//2-t//5} trucks / {t+c} vehicles * 100% = 16.66...%, which rounds up to {round((t-t//2-t//5)/(t+c)*100)}%.
+#### {round((t-t//2-t//5)/(t+c)*100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

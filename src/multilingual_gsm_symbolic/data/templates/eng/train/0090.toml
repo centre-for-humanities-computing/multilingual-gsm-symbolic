@@ -1,0 +1,44 @@
+question = """
+Herman likes to feed the birds in December, January and February.  He feeds them 1/2 cup in the morning and 1/2 cup in the afternoon.  How many cups of food will he need for all three months?
+"""
+
+answer = """
+December has 31 days, January has 31 days and February has 28 days for a total of 31+31+28 = <<31+31+28=90>>90 days
+He feeds them 1/2 cup in the morning and 1/2 cup in the afternoon for a total of 1/2+1/2 = <<1/2+1/2=1>>1 cup per day
+If he feeds them 1 cup per day for 90 days then he will need 1*90 = <<1*90=90>>90 cups of birdseed
+#### 90
+"""
+
+id_orig = 90
+id_shuffled = 90
+
+question_annotated = """
+{name,Herman} likes to feed the birds in {mo1,December}, {mo2,January} and {mo3,February}.  He feeds them {m,1/2} cup in the morning and {a,1/2} cup in the afternoon.  How many cups of food will he need for all three months?
+
+#init:
+- name = sample(names_male)
+- m, mv = sample([("1/2", 1), ("1", 2), ("3/2", 3), ("2", 4)])
+- a, av = sample([("1/2", 1), ("1", 2), ("3/2", 3), ("2", 4)])
+- mo1, d1 = sample([("January", 31), ("February", 28), ("March", 31), ("April", 30), ("May", 31), ("June", 30), ("July", 31), ("August", 31), ("September", 30), ("October", 31), ("November", 30), ("December", 31)])
+- mo2, d2 = sample([("January", 31), ("February", 28), ("March", 31), ("April", 30), ("May", 31), ("June", 30), ("July", 31), ("August", 31), ("September", 30), ("October", 31), ("November", 30), ("December", 31)])
+- mo3, d3 = sample([("January", 31), ("February", 28), ("March", 31), ("April", 30), ("May", 31), ("June", 30), ("July", 31), ("August", 31), ("September", 30), ("October", 31), ("November", 30), ("December", 31)])
+
+#conditions:
+- mo1 != mo2
+- mo1 != mo3
+- mo2 != mo3
+- divides(mv + av, 2)
+
+#answer: ((mv + av) // 2) * (d1 + d2 + d3)
+"""
+
+answer_annotated = """
+{mo1} has {d1} days, {mo2} has {d2} days and {mo3} has {d3} days for a total of {d1}+{d2}+{d3} = <<{d1}+{d2}+{d3}={d1+d2+d3}>>{d1+d2+d3} days
+He feeds them {m} cup in the morning and {a} cup in the afternoon for a total of {m}+{a} = <<{m}+{a}={(mv+av)//2}>>{(mv+av)//2} cup per day
+If he feeds them {(mv+av)//2} cup per day for {d1+d2+d3} days then he will need {(mv+av)//2}*{d1+d2+d3} = <<{(mv+av)//2}*{d1+d2+d3}={((mv+av)//2)*(d1+d2+d3)}>>{((mv+av)//2)*(d1+d2+d3)} cups of birdseed
+#### {((mv+av)//2)*(d1+d2+d3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

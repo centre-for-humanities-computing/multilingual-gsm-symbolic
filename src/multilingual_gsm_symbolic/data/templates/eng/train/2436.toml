@@ -1,0 +1,41 @@
+question = """
+Rhett has been late on two of his monthly rent payments, but his landlord does not charge late fees and so he will be able to pay their total cost with 3/5 of his next month's salary after taxes. If he is currently paid $5000 per month and has to pay 10% tax, calculate his rent expense per month?
+"""
+
+answer = """
+If Rhett is currently paid $5000 per month, he pays 10/100*$5000 = $<<10/100*5000=500>>500 in taxes.
+Rhett has been late on two of his monthly rent payments and plans to pay them with 3/5*$4500=$<<3/5*4500=2700>>2700 from his salary after taxes.
+If he is to pay $2700 for two late monthly rent payments, his monthly rent expense is $2700/2=$<<2700/2=1350>>1350
+#### 1350
+"""
+
+id_orig = 2107
+id_shuffled = 2436
+
+question_annotated = """
+{name,Rhett} has been late on {n_txt,two} of his monthly rent payments, but his landlord does not charge late fees and so he will be able to pay their total cost with 3/5 of his next month's salary after taxes. If he is currently paid ${s,5000} per month and has to pay {t,10}% tax, calculate his rent expense per month?
+
+#init:
+- name = sample(names_male)
+- n_txt, n = sample([("two", 2), ("three", 3), ("four", 4)])
+- $s = range(2000, 12200, 100)
+- $t = range(1, 30)
+
+#conditions:
+- divides(t * s, 100)
+- divides(3 * (s - t * s // 100), 5)
+- divides(3 * (s - t * s // 100) // 5, n)
+
+#answer: 3 * (s - t * s // 100) // 5 // n
+"""
+
+answer_annotated = """
+If {name} is currently paid ${s} per month, he pays {t}/100*${s} = $<<{t}/100*{s}={t*s//100}>>{t*s//100} in taxes.
+{name} has been late on {n_txt} of his monthly rent payments and plans to pay them with 3/5*${s - t*s//100}=$<<3/5*{s - t*s//100}={3*(s - t*s//100)//5}>>{3*(s - t*s//100)//5} from his salary after taxes.
+If he is to pay ${3*(s - t*s//100)//5} for {n_txt} late monthly rent payments, his monthly rent expense is ${3*(s - t*s//100)//5}/{n}=$<<{3*(s - t*s//100)//5}/{n}={3*(s - t*s//100)//5//n}>>{3*(s - t*s//100)//5//n}
+#### {3 * (s - t * s // 100) // 5 // n}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

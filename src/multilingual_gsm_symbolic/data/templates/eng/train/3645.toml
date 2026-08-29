@@ -1,0 +1,44 @@
+question = """
+If it takes 10 people 10 days to shovel 10,000 pounds of coal, how many days will it take half of these ten people to shovel 40,000 pounds of coal?
+"""
+
+answer = """
+The 10 people shovel 10,000 pounds per 10 days, or 10,000/10=<<10000/10=1000>>1000 pounds per day per 10 people.
+And 1000 pounds per day per 10 people is 1000/10=<<1000/10=100>>100 pounds per day per person.
+Half of ten people is 10/2=<<10/2=5>>5 people.
+At 100 pounds per day per person, 5 people can shovel 5*100=<<5*100=500>>500 pounds per day.
+Therefore, for 5 people to shovel 40,000 pounds, it will take 40,000/500=<<40000/500=80>>80 days.
+#### 80
+"""
+
+id_orig = 3060
+id_shuffled = 3645
+
+question_annotated = """
+If it takes 10 people {d,10} days to shovel {c,10000} pounds of coal, how many days will it take half of these ten people to shovel {t,40000} pounds of coal?
+
+#init:
+- $d = range(2, 22)
+- $c = range(2000, 20001, 1000)
+- $t = range(20000, 60001, 2000)
+
+#conditions:
+- divides(c, d)
+- divides(c, 10 * d)
+- divides(2 * d * t, c)
+
+#answer: 2*d*t//c
+"""
+
+answer_annotated = """
+The 10 people shovel {c} pounds per {d} days, or {c}/{d}=<<{c}/{d}={c//d}>>{c//d} pounds per day per 10 people.
+And {c//d} pounds per day per 10 people is {c//d}/10=<<{c//d}/10={c//(10*d)}>>{c//(10*d)} pounds per day per person.
+Half of ten people is 10/2=<<10/2=5>>5 people.
+At {c//(10*d)} pounds per day per person, 5 people can shovel 5*{c//(10*d)}=<<5*{c//(10*d)}={5*(c//(10*d))}>>{5*(c//(10*d))} pounds per day.
+Therefore, for 5 people to shovel {t} pounds, it will take {t}/{5*(c//(10*d))}=<<{t}/{5*(c//(10*d))}={2*d*t//c}>>{2*d*t//c} days.
+#### {2*d*t//c}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

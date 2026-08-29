@@ -1,0 +1,44 @@
+question = """
+Two runners are competing in a 10-mile race.  The first runs at an average pace of 8 minutes per mile, while the second runs at an average pace of 7 minutes per mile.  After 56 minutes, the second runner stops for a drink of water.  For how many minutes could the second runner remain stopped before the first runner catches up with him?
+"""
+
+answer = """
+After 56 minutes, the second runner has traveled 56/7 = <<56/7=8>>8 miles.
+Similarly, the first runner has traveled 56/8 = <<56/8=7>>7 miles.
+Therefore, the two runners are 8 - 7 = <<8-7=1>>1 mile apart when the second runner stops.
+Thus, the second runner can stop for a maximum of 8 minutes, which is the amount of time it takes the first runner to travel 1 mile.
+#### 8
+"""
+
+id_orig = 3433
+id_shuffled = 4068
+
+question_annotated = """
+Two runners are competing in a {d,10}-mile race.  The first runs at an average pace of {p1,8} minutes per mile, while the second runs at an average pace of {p2,7} minutes per mile.  After {t,56} minutes, the second runner stops for a drink of water.  For how many minutes could the second runner remain stopped before the first runner catches up with him?
+
+#init:
+- $d = range(10, 21)
+- $p1 = range(4, 21)
+- $p2 = range(2, 21)
+- $t = range(20, 201)
+
+#conditions:
+- p2 < p1
+- divides(t, p2)
+- divides(t, p1)
+- t // p2 < d
+
+#answer: (t//p2 - t//p1) * p1
+"""
+
+answer_annotated = """
+After {t} minutes, the second runner has traveled {t}/{p2} = <<{t}/{p2}={t//p2}>>{t//p2} miles.
+Similarly, the first runner has traveled {t}/{p1} = <<{t}/{p1}={t//p1}>>{t//p1} miles.
+Therefore, the two runners are {t//p2} - {t//p1} = <<{t//p2}-{t//p1}={t//p2-t//p1}>>{t//p2-t//p1} mile apart when the second runner stops.
+Thus, the second runner can stop for a maximum of {(t//p2-t//p1)*p1} minutes, which is the amount of time it takes the first runner to travel {t//p2-t//p1} mile.
+#### {(t//p2-t//p1)*p1}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

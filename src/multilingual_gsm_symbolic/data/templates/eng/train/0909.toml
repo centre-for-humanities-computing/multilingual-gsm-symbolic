@@ -1,0 +1,39 @@
+question = """
+Tom cannot afford a normal doctor, so he goes to a discount clinic that is 70% cheaper.   It takes two visits, though, instead of 1.   A normal doctor charges $200 for a visit.   How much money does he save?
+"""
+
+answer = """
+Each of Tom's visits was 200*.7=$<<200*.7=140>>140 cheaper
+So he paid $200 - $140 = $<<200-140=60>>60 per visit
+That means he paid $60 * 2 = $<<60*2=120>>120
+So he saved $200 - $120 = $<<200-120=80>>80
+#### 80
+"""
+
+id_orig = 813
+id_shuffled = 909
+
+question_annotated = """
+{name,Tom} cannot afford a normal doctor, so he goes to a discount clinic that is 70% cheaper.   It takes two visits, though, instead of 1.   A normal doctor charges ${p,200} for a visit.   How much money does he save?
+
+#init:
+- name = sample(names_male)
+- $p = range(20, 1220, 10)
+
+#conditions:
+- p > 0
+
+#answer: p - 2*(p - round(p*.7))
+"""
+
+answer_annotated = """
+Each of {name}'s visits was {p}*.7=$<<{p}*.7={round(p*.7)}>>{round(p*.7)} cheaper
+So he paid ${p} - ${round(p*.7)} = $<<{p}-{round(p*.7)}={p-round(p*.7)}>>{p-round(p*.7)} per visit
+That means he paid ${p-round(p*.7)} * 2 = $<<{p-round(p*.7)}*2={2*(p-round(p*.7))}>>{2*(p-round(p*.7))}
+So he saved ${p} - ${2*(p-round(p*.7))} = $<<{p}-{2*(p-round(p*.7))}={p-2*(p-round(p*.7))}>>{p-2*(p-round(p*.7))}
+#### {p-2*(p-round(p*.7))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

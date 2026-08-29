@@ -1,0 +1,43 @@
+question = """
+Leo has to write a 400-word story for his literature class. 10 words fit on each line of his notebook and 20 lines fit on each page. Lucas has filled one and a half pages. How many words does he have left to write?
+"""
+
+answer = """
+Half a page is 20 / 2 =<<20/2=10>>10 lines.
+In total, he has written 20 + 10 = <<20+10=30>>30 lines.
+The 30 lines written are 30 * 10 = <<30*10=300>>300 words.
+Lucas has 400 - 300 = <<400-300=100>>100 words left to write.
+#### 100
+"""
+
+id_orig = 1411
+id_shuffled = 1518
+
+question_annotated = """
+{name1,Leo} has to write a {total,400}-word story for his literature class. {wpl,10} words fit on each line of his notebook and {lpp,20} lines fit on each page. {name2,Lucas} has filled one and a half pages. How many words does he have left to write?
+
+#init:
+- name1 = sample(names_male)
+- name2 = sample(names_male)
+- $total = range(200, 1100, 100)
+- $wpl = range(5, 31, 5)
+- $lpp = range(4, 44, 2)
+
+#conditions:
+- divides(lpp, 2)
+- total - (lpp + lpp//2) * wpl > 0
+
+#answer: total - (lpp + lpp//2) * wpl
+"""
+
+answer_annotated = """
+Half a page is {lpp} / 2 =<<{lpp}/2={lpp//2}>>{lpp//2} lines.
+In total, he has written {lpp} + {lpp//2} = <<{lpp}+{lpp//2}={lpp+lpp//2}>>{lpp+lpp//2} lines.
+The {lpp+lpp//2} lines written are {lpp+lpp//2} * {wpl} = <<{lpp+lpp//2}*{wpl}={(lpp+lpp//2)*wpl}>>{(lpp+lpp//2)*wpl} words.
+{name2} has {total} - {(lpp+lpp//2)*wpl} = <<{total}-{(lpp+lpp//2)*wpl}={total-(lpp+lpp//2)*wpl}>>{total-(lpp+lpp//2)*wpl} words left to write.
+#### {total-(lpp+lpp//2)*wpl}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

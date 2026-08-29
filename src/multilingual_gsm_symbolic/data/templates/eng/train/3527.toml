@@ -1,0 +1,49 @@
+question = """
+Bertha plays tennis. Every ten games, one of her tennis balls wears out. Every five games, she loses a ball. Every four games, she buys a canister of three balls. She started with two balls and gave one to her partner. After twenty games, how many tennis balls does she have?
+"""
+
+answer = """
+Bertha wears out 20 / 10 = <<20/10=2>>2 tennis balls in 20 games.
+She loses 20 / 5 = <<20/5=4>>4 tennis balls in 20 games.
+She buys canisters of 3 * 20 / 4 = <<3*20/4=15>>15 tennis balls in 20 games.
+Bertha started with 2 balls and gave 1 away, so she has 2 + 15 - 2 - 4 - 1 = <<2+15-2-4-1=10>>10 tennis balls after twenty games.
+#### 10
+"""
+
+id_orig = 2965
+id_shuffled = 3527
+
+question_annotated = """
+{name,Bertha} plays tennis. Every {wear_txt,ten} games, one of her tennis balls wears out. Every {lose_txt,five} games, she loses a ball. Every {buy_txt,four} games, she buys a canister of {size_txt,three} balls. She started with {start_txt,two} balls and gave {gave_txt,one} to her partner. After {games_txt,twenty} games, how many tennis balls does she have?
+
+#init:
+- name = sample(names_female)
+- wear_txt, w = sample([("ten", 10), ("twelve", 12), ("fifteen", 15), ("twenty", 20), ("twenty-five", 25), ("thirty", 30)])
+- lose_txt, l = sample([("five", 5), ("six", 6), ("eight", 8), ("ten", 10), ("fifteen", 15), ("twenty", 20)])
+- buy_txt, b = sample([("four", 4), ("five", 5), ("six", 6), ("eight", 8), ("ten", 10)])
+- size_txt, c = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6)])
+- start_txt, s = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- gave_txt, v = sample([("one", 1), ("two", 2), ("three", 3)])
+- games_txt, g = sample([("twenty", 20), ("thirty", 30), ("forty", 40), ("fifty", 50)])
+
+#conditions:
+- divides(g, w)
+- divides(g, l)
+- divides(c * g, b)
+- v < s
+- s + c*g/b - g/w - g/l - v > 0
+
+#answer: s + c*g//b - g//w - g//l - v
+"""
+
+answer_annotated = """
+{name} wears out {g} / {w} = <<{g}/{w}={g//w}>>{g//w} tennis balls in {g} games.
+She loses {g} / {l} = <<{g}/{l}={g//l}>>{g//l} tennis balls in {g} games.
+She buys canisters of {c} * {g} / {b} = <<{c}*{g}/{b}={c*g//b}>>{c*g//b} tennis balls in {g} games.
+{name} started with {s} balls and gave {v} away, so she has {s} + {c*g//b} - {g//w} - {g//l} - {v} = <<{s}+{c*g//b}-{g//w}-{g//l}-{v}={s+c*g//b-g//w-g//l-v}>>{s+c*g//b-g//w-g//l-v} tennis balls after {games_txt} games.
+#### {s + c*g//b - g//w - g//l - v}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

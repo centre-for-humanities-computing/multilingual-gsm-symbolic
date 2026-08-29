@@ -1,0 +1,44 @@
+question = """
+Remi wants to drink more water. He has a refillable water bottle that holds 20 ounces of water. That week Remi refills the bottle 3 times a day and drinks the whole bottle each time except for twice when he accidentally spills 5 ounces the first time and 8 ounces the second time. In 7 days how many ounces of water does Remi drink?
+"""
+
+answer = """
+Remi drinks the same amount of water every day for a week except for when he spills some of it. His water bottle holds 20 ounces which he drinks 3 times a day, 20 x 3 = <<60=60>>60 ounces a typical day.
+Over 7 days, without spilling anything, Remi drinks 60 ounces x 7 days = <<60*7=420>>420 ounces.
+Except Remi spills 8 + 5 ounces of water during the week = <<8+5=13>>13 ounces of water Remi spills.
+Total, Remi drinks 420 ounces - 13 ounces of spilled water = <<420-13=407>>407 ounces Remi drank during the week.
+#### 407
+"""
+
+id_orig = 2787
+id_shuffled = 3305
+
+question_annotated = """
+{name,Remi} wants to drink more water. He has a refillable water bottle that holds {cap,20} ounces of water. That week {name,Remi} refills the bottle {refills,3} times a day and drinks the whole bottle each time except for twice when he accidentally spills {s1,5} ounces the first time and {s2,8} ounces the second time. In 7 days how many ounces of water does {name,Remi} drink?
+
+#init:
+- name = sample(names_male)
+- $cap = range(4, 31)
+- $refills = range(1, 5)
+- $s1 = range(1, 16)
+- $s2 = range(1, 16)
+
+#conditions:
+- cap * refills * 7 > s1 + s2
+- s1 < cap
+- s2 < cap
+
+#answer: cap * refills * 7 - s1 - s2
+"""
+
+answer_annotated = """
+{name} drinks the same amount of water every day for a week except for when he spills some of it. His water bottle holds {cap} ounces which he drinks {refills} times a day, {cap} x {refills} = <<{cap*refills}={cap*refills}>>{cap*refills} ounces a typical day.
+Over 7 days, without spilling anything, {name} drinks {cap*refills} ounces x 7 days = <<{cap*refills}*7={cap*refills*7}>>{cap*refills*7} ounces.
+Except {name} spills {s2} + {s1} ounces of water during the week = <<{s2}+{s1}={s1+s2}>>{s1+s2} ounces of water {name} spills.
+Total, {name} drinks {cap*refills*7} ounces - {s1+s2} ounces of spilled water = <<{cap*refills*7}-{s1+s2}={cap*refills*7-s1-s2}>>{cap*refills*7-s1-s2} ounces {name} drank during the week.
+#### {cap*refills*7-s1-s2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

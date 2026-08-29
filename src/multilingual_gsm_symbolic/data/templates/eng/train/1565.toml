@@ -1,0 +1,42 @@
+question = """
+Stefan goes to a restaurant to eat dinner with his family. They order an appetizer that costs $10 and 4 entrees that are $20 each. If they tip 20% of the total for the waiter, what is the total amount of money that they spend at the restaurant?
+"""
+
+answer = """
+The total cost of the entrees is 4 * $20 = $<<4*20=80>>80.
+The total cost of the dinner is $80 + $10 = $<<80+10=90>>90.
+The tip is $90 * 0.20 = $<<90*0.20=18>>18
+The total cost with tip is $90 + $18 = $<<90+18=108>>108
+#### 108
+"""
+
+id_orig = 1458
+id_shuffled = 1565
+
+question_annotated = """
+{name,Stefan} goes to a restaurant to eat dinner with his family. They order an appetizer that costs ${app,10} and {n,4} entrees that are ${e,20} each. If they tip {tip,20}% of the total for the waiter, what is the total amount of money that they spend at the restaurant?
+
+#init:
+- name = sample(names_male)
+- $app = range(2, 52)
+- $n = range(2, 8)
+- $e = range(10, 50)
+- $tip = range(10, 55, 5)
+
+#conditions:
+- divides((n*e + app) * tip, 100)
+
+#answer: n*e + app + (n*e + app)*tip//100
+"""
+
+answer_annotated = """
+The total cost of the entrees is {n} * ${e} = $<<{n}*{e}={n*e}>>{n*e}.
+The total cost of the dinner is ${n*e} + ${app} = $<<{n*e}+{app}={n*e+app}>>{n*e+app}.
+The tip is ${n*e+app} * 0.{tip} = $<<{n*e+app}*0.{tip}={(n*e+app)*tip//100}>>{(n*e+app)*tip//100}
+The total cost with tip is ${n*e+app} + ${(n*e+app)*tip//100} = $<<{n*e+app}+{(n*e+app)*tip//100}={n*e + app + (n*e + app)*tip//100}>>{n*e + app + (n*e + app)*tip//100}
+#### {n*e + app + (n*e + app)*tip//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

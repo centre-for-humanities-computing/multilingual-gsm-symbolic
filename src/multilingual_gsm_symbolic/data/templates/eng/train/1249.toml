@@ -1,0 +1,46 @@
+question = """
+John gets his pool cleaned every 3 days.  It cost $150 each time and he gives the guy a 10% tip each time he comes to clean.  Then twice a month he needs to use $200 of chemicals.  How much does his pool cost a month?
+"""
+
+answer = """
+He gets his pool cleaned 30/3=<<30/3=10>>10 times a month
+Each time he gets it cleaned he tips 150*.1=$<<150*.1=15>>15
+So he pays 150+15=$<<150+15=165>>165
+So he pays 165*10=$<<165*10=1650>>1650 a month on cleaning
+The chemicals cost 200*2=$<<200*2=400>>400
+So in total, he pays 1650+400=$<<1650+400=2050>>2050
+#### 2050
+"""
+
+id_orig = 1153
+id_shuffled = 1249
+
+question_annotated = """
+{name,John} gets his pool cleaned every {d,3} days.  It cost ${c,150} each time and he gives the guy a 10% tip each time he comes to clean.  Then {times_word,twice} a month he needs to use ${ch,200} of chemicals.  How much does his pool cost a month?
+
+#init:
+- name = sample(names_male)
+- $d = range(2, 16)
+- $c = range(50, 500, 10)
+- times_word, k = sample(multi_times)
+- $ch = range(50, 400, 10)
+
+#conditions:
+- divides(30, d)
+
+#answer: (c + c//10) * (30//d) + ch*k
+"""
+
+answer_annotated = """
+He gets his pool cleaned 30/{d}=<<30/{d}={30//d}>>{30//d} times a month
+Each time he gets it cleaned he tips {c}*.1=$<<{c}*.1={c//10}>>{c//10}
+So he pays {c}+{c//10}=$<<{c}+{c//10}={c+c//10}>>{c+c//10}
+So he pays {c+c//10}*{30//d}=$<<{c+c//10}*{30//d}={(c+c//10)*(30//d)}>>{(c+c//10)*(30//d)} a month on cleaning
+The chemicals cost {ch}*{k}=$<<{ch}*{k}={ch*k}>>{ch*k}
+So in total, he pays {(c+c//10)*(30//d)}+{ch*k}=$<<{(c+c//10)*(30//d)}+{ch*k}={(c+c//10)*(30//d)+ch*k}>>{(c+c//10)*(30//d)+ch*k}
+#### {(c + c//10) * (30//d) + ch*k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

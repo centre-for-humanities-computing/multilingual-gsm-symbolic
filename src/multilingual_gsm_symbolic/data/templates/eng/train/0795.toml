@@ -1,0 +1,42 @@
+question = """
+Coral is reading a book that is 600 pages long.  She reads half of it in the first week, and 30 percent of the remaining pages the second week. How many pages must she read the third week in order to finish the book?
+"""
+
+answer = """
+Week 1:600/2=300
+600-300=<<600-300=300>>300 pages remain
+Week 2:300(.30)=90 pages
+300-90=<<300-90=210>>210 pages remain
+Week 3:210 pages
+#### 210
+"""
+
+id_orig = 722
+id_shuffled = 795
+
+question_annotated = """
+{name,Coral} is reading a book that is {p,600} pages long.  She reads half of it in the first week, and {pc,30} percent of the remaining pages the second week. How many pages must she read the third week in order to finish the book?
+
+#init:
+- name = sample(names_female)
+- $p = range(20, 620, 2)
+- $pc = range(10, 100, 10)
+
+#conditions:
+- divides((p - p//2)*pc, 100)
+
+#answer: p - p//2 - (p-p//2)*pc//100
+"""
+
+answer_annotated = """
+Week 1:{p}/2={p//2}
+{p}-{p//2}=<<{p}-{p//2}={p-p//2}>>{p-p//2} pages remain
+Week 2:{p-p//2}(.{pc})={(p-p//2)*pc//100} pages
+{p-p//2}-{(p-p//2)*pc//100}=<<{p-p//2}-{(p-p//2)*pc//100}={p - p//2 - (p-p//2)*pc//100}>>{p - p//2 - (p-p//2)*pc//100} pages remain
+Week 3:{p - p//2 - (p-p//2)*pc//100} pages
+#### {p - p//2 - (p-p//2)*pc//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

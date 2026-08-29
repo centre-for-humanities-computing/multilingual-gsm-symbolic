@@ -1,0 +1,49 @@
+question = """
+Utopia National Park hosted 30,000 elephants on Friday night. The next morning, there was a 4-hour elephant exodus out of the park, at a constant rate of 2,880 elephants/hour. Over the next 7-hour period, new elephants entered the park at a constant rate. If the final number of elephants in the park was 28,980, at what rate did the new elephants enter the park?
+"""
+
+answer = """
+The Saturday morning exodus out of the park comprised 4*2880 = <<4*2880=11520>>11,520 elephants
+This means that after the exodus, the park was left with 30,000 - 11,520 = <<30000-11520=18480>>18,480 elephants
+Since the final number of elephants was 28,980, the new elephants that entered were 28,980 - 18,480 = <<28980-18480=10500>>10,500
+The rate at which the new elephants entered the park was therefore 10,500/7 = <<10500/7=1500>>1500 elephants/hour
+#### 1500
+"""
+
+id_orig = 395
+id_shuffled = 488
+
+question_annotated = """
+Utopia National Park hosted {tk,30},000 elephants on Friday night. The next morning, there was a {h1,4}-hour elephant exodus out of the park, at a constant rate of {rk,2},{ro,880} elephants/hour. Over the next {h2,7}-hour period, new elephants entered the park at a constant rate. If the final number of elephants in the park was {fk,28},{fo,980}, at what rate did the new elephants enter the park?
+
+#init:
+- $tk = range(12, 46, 2)
+- $rk = range(1, 5)
+- $ro = range(280, 890, 300)
+- $h1 = range(4, 5)
+- $fk = range(20, 33, 2)
+- $fo = range(650, 990, 110)
+- $h2 = range(6, 9)
+
+#conditions:
+- tk * 1000 - h1 * (rk * 1000 + ro) >= 1000
+- fk * 1000 + fo - tk * 1000 + h1 * (rk * 1000 + ro) >= 1000
+- divides(fk * 1000 + fo - tk * 1000 + h1 * (rk * 1000 + ro), h2)
+- (h1 * ro) % 1000 >= 100
+- (h1 * ro) % 1000 <= 900
+- (fo + h1 * ro) % 1000 >= 100
+
+#answer: (fk * 1000 + fo - tk * 1000 + h1 * (rk * 1000 + ro)) // h2
+"""
+
+answer_annotated = """
+The Saturday morning exodus out of the park comprised {h1}*{rk * 1000 + ro} = <<{h1}*{rk * 1000 + ro}={h1 * (rk * 1000 + ro)}>>{(h1 * (rk * 1000 + ro)) // 1000},{(h1 * (rk * 1000 + ro)) % 1000} elephants
+This means that after the exodus, the park was left with {tk},000 - {(h1 * (rk * 1000 + ro)) // 1000},{(h1 * (rk * 1000 + ro)) % 1000} = <<{tk * 1000}-{h1 * (rk * 1000 + ro)}={tk * 1000 - h1 * (rk * 1000 + ro)}>>{(tk * 1000 - h1 * (rk * 1000 + ro)) // 1000},{(tk * 1000 - h1 * (rk * 1000 + ro)) % 1000} elephants
+Since the final number of elephants was {fk},{fo}, the new elephants that entered were {fk},{fo} - {(tk * 1000 - h1 * (rk * 1000 + ro)) // 1000},{(tk * 1000 - h1 * (rk * 1000 + ro)) % 1000} = <<{fk * 1000 + fo}-{tk * 1000 - h1 * (rk * 1000 + ro)}={fk * 1000 + fo - (tk * 1000 - h1 * (rk * 1000 + ro))}>>{(fk * 1000 + fo - (tk * 1000 - h1 * (rk * 1000 + ro))) // 1000},{(fk * 1000 + fo - (tk * 1000 - h1 * (rk * 1000 + ro))) % 1000}
+The rate at which the new elephants entered the park was therefore {(fk * 1000 + fo - (tk * 1000 - h1 * (rk * 1000 + ro))) // 1000},{(fk * 1000 + fo - (tk * 1000 - h1 * (rk * 1000 + ro))) % 1000}/{h2} = <<{fk * 1000 + fo - (tk * 1000 - h1 * (rk * 1000 + ro))}/{h2}={(fk * 1000 + fo - tk * 1000 + h1 * (rk * 1000 + ro)) // h2}>>{(fk * 1000 + fo - tk * 1000 + h1 * (rk * 1000 + ro)) // h2} elephants/hour
+#### {(fk * 1000 + fo - tk * 1000 + h1 * (rk * 1000 + ro)) // h2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

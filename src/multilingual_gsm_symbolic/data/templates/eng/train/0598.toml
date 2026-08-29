@@ -1,0 +1,43 @@
+question = """
+Carla needs to drive her car to do a bunch of errands. She needs to drive 8 miles to the grocery store, 6 miles to pick up her kids from school, 12 miles to drop her kids off at soccer practice, and twice the distance from the school to soccer practice to get everyone home again. If Carla's car gets 25 miles per gallon, and gas costs $2.50, how much will Carla have to spend on gas for her trip?
+"""
+
+answer = """
+First find the distance between soccer practice and home by multiplying the distance between soccer practice and school by 2: 12 miles * 2 = <<12*2=24>>24 miles
+Then find the total distance Carla drives by adding the length of each trip: 24 miles + 12 miles + 6 miles + 8 miles = <<24+12+6+8=50>>50 miles
+Then find how many gallons of gas she needs by dividing the distance of the trip by her car's gas mileage: 50 miles / 25 mpg = <<50/25=2>>2 gallons
+Then multiple the gallons of gas by the price per gallon to find the total cost: 2 gallons * $2.50 = $<<2*2.5=5>>5
+#### 5
+"""
+
+id_orig = 525
+id_shuffled = 598
+
+question_annotated = """
+{name,Carla} needs to drive her car to do a bunch of errands. She needs to drive {a,8} miles to the grocery store, {b,6} miles to pick up her kids from school, {c,12} miles to drop her kids off at soccer practice, and twice the distance from the school to soccer practice to get everyone home again. If {name,Carla}'s car gets {m,25} miles per gallon, and gas costs $2.50, how much will {name,Carla} have to spend on gas for her trip?
+
+#init:
+- name = sample(names_female)
+- $a = range(2, 52, 2)
+- $b = range(2, 52, 2)
+- $c = range(4, 54, 2)
+- $m = range(15, 45)
+
+#conditions:
+- a + b + 3*c >= m
+- divides(a + b + 3*c, 2*m)
+
+#answer: int((a + b + 3*c)//m * 2.5)
+"""
+
+answer_annotated = """
+First find the distance between soccer practice and home by multiplying the distance between soccer practice and school by 2: {c} miles * 2 = <<{c}*2={2*c}>>{2*c} miles
+Then find the total distance {name} drives by adding the length of each trip: {2*c} miles + {c} miles + {b} miles + {a} miles = <<{2*c}+{c}+{b}+{a}={a+b+3*c}>>{a+b+3*c} miles
+Then find how many gallons of gas she needs by dividing the distance of the trip by her car's gas mileage: {a+b+3*c} miles / {m} mpg = <<{a+b+3*c}/{m}={(a+b+3*c)//m}>>{(a+b+3*c)//m} gallons
+Then multiple the gallons of gas by the price per gallon to find the total cost: {(a+b+3*c)//m} gallons * $2.50 = $<<{(a+b+3*c)//m}*2.5={int((a+b+3*c)//m*2.5)}>>{int((a+b+3*c)//m*2.5)}
+#### {int((a+b+3*c)//m*2.5)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

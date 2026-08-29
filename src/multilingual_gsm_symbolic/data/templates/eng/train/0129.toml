@@ -1,0 +1,38 @@
+question = """
+Dan owns an ice cream shop and every sixth customer gets a free ice cream cone. Cones cost $2 each. If he sold $100 worth of cones, how many free ones did he give away?
+"""
+
+answer = """
+He sold 50 cones because 100 / 2 = <<100/2=50>>50
+He gave away 10 cones because 50 / 5 = <<50/5=10>>10
+#### 10
+"""
+
+id_orig = 129
+id_shuffled = 129
+
+question_annotated = """
+{name,Dan} owns an ice cream shop and every {nth_txt,sixth} customer gets a free ice cream cone. Cones cost ${p,2} each. If he sold ${s,100} worth of cones, how many free ones did he give away?
+
+#init:
+- name = sample(names_male)
+- nth_txt, n = sample([("third", 3), ("fourth", 4), ("fifth", 5), ("sixth", 6), ("seventh", 7), ("eighth", 8), ("ninth", 9), ("tenth", 10)])
+- $p = range(1, 11)
+- $s = range(20, 1020, 4)
+
+#conditions:
+- divides(s, p)
+- divides(s // p, n - 1)
+
+#answer: s // p // (n - 1)
+"""
+
+answer_annotated = """
+He sold {s//p} cones because {s} / {p} = <<{s}/{p}={s//p}>>{s//p}
+He gave away {s//p//(n-1)} cones because {s//p} / {n-1} = <<{s//p}/{n-1}={s//p//(n-1)}>>{s//p//(n-1)}
+#### {s//p//(n-1)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+Simon wanted to buy flowers that his mom could plant for Mother's Day.  The garden center was offering 10% off all purchases.  He bought 5 pansies at $2.50 each, one hydrangea that cost $12.50 and 5 petunias that cost $1.00 each.  If he paid with a $50 bill, how much change would Simon receive back from his purchase?
+"""
+
+answer = """
+5 pansies at $2.50 each is 5*2.50 = $<<5*2.5=12.50>>12.50
+5 petunias at $1.00 each 5*1 = $<<5*1=5.00>>5.00
+All total he spends 12.50+12.50+5.00 = $<<12.50+12.50+5.00=30.00>>30.00
+The sale is 10% off so 30*.10 = $<<30*.10=3.00>>3.00
+The purchase total now comes to 30-3 = $<<30-3=27.00>>27.00
+He pays with a $50 bill so 50-27 = $<<50-27=23.00>>23.00
+#### 23
+"""
+
+id_orig = 178
+id_shuffled = 307
+
+question_annotated = """
+{name,Simon} wanted to buy flowers that his mom could plant for Mother's Day.  The garden center was offering {r,10}% off all purchases.  He bought {p,5} pansies at $2.50 each, one hydrangea that cost $12.50 and 5 petunias that cost $1.00 each.  If he paid with a ${b,50} bill, how much change would {name,Simon} receive back from his purchase?
+
+#init:
+- name = sample(["Simon", "David", "Michael"])
+- $p = range(3, 20, 2)
+- $r = range(10, 60, 10)
+- $b = range(20, 120)
+
+#conditions:
+- divides((5*p+5)*r, 100)
+- b * 100 > (5*p+5) * (100 - r)
+
+#answer: b - (5*p+5 - (5*p+5)*r//100)
+"""
+
+answer_annotated = """
+{p} pansies at $2.50 each is {p}*2.50 = $<<{p}*2.5={int(p*2.5)}.50>>{int(p*2.5)}.50
+5 petunias at $1.00 each 5*1 = $<<5*1=5.00>>5.00
+All total he spends {int(p*2.5)}.50+{int(p*2.5)}.50+5.00 = $<<{int(p*2.5)}.50+{int(p*2.5)}.50+5.00={5*p+5}.00>>{5*p+5}.00
+The sale is {r}% off so {5*p+5}*.{r} = $<<{5*p+5}*.{r}={(5*p+5)*r//100}.00>>{(5*p+5)*r//100}.00
+The purchase total now comes to {5*p+5}-{(5*p+5)*r//100} = $<<{5*p+5}-{(5*p+5)*r//100}={5*p+5-(5*p+5)*r//100}.00>>{5*p+5-(5*p+5)*r//100}.00
+He pays with a ${b} bill so {b}-{5*p+5-(5*p+5)*r//100} = $<<{b}-{5*p+5-(5*p+5)*r//100}={b-(5*p+5-(5*p+5)*r//100)}.00>>{b-(5*p+5-(5*p+5)*r//100)}.00
+#### {b-(5*p+5-(5*p+5)*r//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

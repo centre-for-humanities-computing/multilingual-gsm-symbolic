@@ -1,0 +1,43 @@
+question = """
+Billy is breeding mice for an experiment. He starts with 8 mice, who each have 6 pups. When the pups grow up, all the mice have another 6 pups. Then each adult mouse eats 2 of their pups due to the stress of overcrowding. How many mice are left?
+"""
+
+answer = """
+First find the number of pups in the first generation: 8 mice * 6 pups/mouse = <<8*6=48>>48 pups
+Then add the number of adult mice to find the total number of mice: 48 pups + 8 mice = <<48+8=56>>56 mice
+Then find the number of pups per mouse that survive from the second generation: 6 pups/mouse - 2 pups/mouse = <<6-2=4>>4 pups/mouse
+Then multiply that number by the number of adult mice to find the number of pups in the second generation: 56 mice * 4 pups/mouse = <<56*4=224>>224 mice
+Then add the number of adult mice to the number of second-generation pups to find the total number of mice: 224 mice + 56 mice = <<224+56=280>>280 mice
+#### 280
+"""
+
+id_orig = 3835
+id_shuffled = 4529
+
+question_annotated = """
+{name,Billy} is breeding mice for an experiment. He starts with {m,8} mice, who each have {p,6} pups. When the pups grow up, all the mice have another {p,6} pups. Then each adult mouse eats {k,2} of their pups due to the stress of overcrowding. How many mice are left?
+
+#init:
+- name = sample(names_male)
+- $m = range(2, 31)
+- $p = range(3, 13)
+- $k = range(1, 6)
+
+#conditions:
+- k < p
+
+#answer: m*p+m+(m*p+m)*(p-k)
+"""
+
+answer_annotated = """
+First find the number of pups in the first generation: {m} mice * {p} pups/mouse = <<{m}*{p}={m*p}>>{m*p} pups
+Then add the number of adult mice to find the total number of mice: {m*p} pups + {m} mice = <<{m*p}+{m}={m*p+m}>>{m*p+m} mice
+Then find the number of pups per mouse that survive from the second generation: {p} pups/mouse - {k} pups/mouse = <<{p}-{k}={p-k}>>{p-k} pups/mouse
+Then multiply that number by the number of adult mice to find the number of pups in the second generation: {m*p+m} mice * {p-k} pups/mouse = <<{m*p+m}*{p-k}={(m*p+m)*(p-k)}>>{(m*p+m)*(p-k)} mice
+Then add the number of adult mice to the number of second-generation pups to find the total number of mice: {(m*p+m)*(p-k)} mice + {m*p+m} mice = <<{(m*p+m)*(p-k)}+{m*p+m}={(m*p+m)*(p-k)+m*p+m}>>{(m*p+m)*(p-k)+m*p+m} mice
+#### {(m*p+m)*(p-k)+m*p+m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

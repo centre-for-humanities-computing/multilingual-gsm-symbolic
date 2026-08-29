@@ -1,0 +1,43 @@
+question = """
+Felicia is baking a cake. She needs 2 cups of flour, a cup of white sugar, a 1/4 cup of brown sugar, and a 1/2 cup of oil. Her only measuring scoop is 1/4 cup. How many times does she fill it to complete the measurements?
+"""
+
+answer = """
+She fills it 8 times for the flour because 2 / (1/4) =<<2/(1/4)=8>>8
+She fills it 4 times for the white sugar because 1 / (1/4) = <<1/(1/4)=4>>4
+She fills is 2 times for the oil because (1/2) / (1/4) = <<(1/2)/(1/4)=2>>2
+She fills it 1 time for the brown sugar because she needs exactly 1/4 of a cup
+She fills is 15 times because 8 + 4 + 2 + 1 equals <<8+4+2+1=15>>15
+#### 15
+"""
+
+id_orig = 2153
+id_shuffled = 2482
+
+question_annotated = """
+{name,Felicia} is baking a cake. She needs {f,2} cups of flour, a cup of white sugar, a {scoop_txt,1/4} cup of brown sugar, and a {oil_txt,1/2} cup of oil. Her only measuring scoop is {scoop_txt,1/4} cup. How many times does she fill it to complete the measurements?
+
+#init:
+- name = sample(names_female)
+- $f = range(1, 31)
+- scoop_txt, scoop_d = sample([("1/4", 4), ("1/2", 2), ("1/8", 8)])
+- oil_txt, oil_r = sample([("1/2", 2), ("3/4", 3), ("1/4", 1)])
+
+#conditions:
+- is_int(oil_r * scoop_d / 4)
+
+#answer: f*scoop_d + scoop_d + oil_r*scoop_d//4 + 1
+"""
+
+answer_annotated = """
+She fills it {f*scoop_d} times for the flour because {f} / ({scoop_txt}) =<<{f}/({scoop_txt})={f*scoop_d}>>{f*scoop_d}
+She fills it {scoop_d} times for the white sugar because 1 / ({scoop_txt}) = <<1/({scoop_txt})={scoop_d}>>{scoop_d}
+She fills is {oil_r*scoop_d//4} times for the oil because ({oil_txt}) / ({scoop_txt}) = <<({oil_txt})/({scoop_txt})={oil_r*scoop_d//4}>>{oil_r*scoop_d//4}
+She fills it 1 time for the brown sugar because she needs exactly {scoop_txt} of a cup
+She fills is {f*scoop_d + scoop_d + oil_r*scoop_d//4 + 1} times because {f*scoop_d} + {scoop_d} + {oil_r*scoop_d//4} + 1 equals <<{f*scoop_d}+{scoop_d}+{oil_r*scoop_d//4}+1={f*scoop_d + scoop_d + oil_r*scoop_d//4 + 1}>>{f*scoop_d + scoop_d + oil_r*scoop_d//4 + 1}
+#### {f*scoop_d + scoop_d + oil_r*scoop_d//4 + 1}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

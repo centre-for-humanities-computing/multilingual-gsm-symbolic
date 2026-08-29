@@ -1,0 +1,46 @@
+question = """
+Last year Jessica paid $1000 for rent, $200 for food, and $100 for car insurance each month. This year her rent goes up by 30%, food costs increase by 50%, and the cost of her car insurance triples because she was at fault in an accident. How much more does Jessica pay for her expenses over the whole year compared to last year?
+"""
+
+answer = """
+First find the increase in rent by multiplying last year's rent by 30%: $1000 * .3 = $<<1000*.3=300>>300
+Then find the food cost increase by multiplying last year's costs by 50%: $200 * .5 = $<<200*.5=100>>100
+Then find the new car insurance price by multiplying last year's price by 3: $100 * 3 = $<<100*3=300>>300
+Then subtract the cost of car insurance last year from this year's price to find the increase: $300 - $100 = $<<300-100=200>>200
+Now find how much Jessica's monthly expenses increased by adding the increases in each of the three costs: $300 + $100 + $200 = $<<300+100+200=600>>600
+Now multiply the increase per month by the number of months in a year to find the annual increase: $600/month * 12 months/year = $<<600*12=7200>>7200/year
+#### 7200
+"""
+
+id_orig = 211
+id_shuffled = 236
+
+question_annotated = """
+Last year {name,Jessica} paid ${rent,1000} for rent, ${food,200} for food, and ${ins,100} for car insurance each month. This year her rent goes up by 30%, food costs increase by 50%, and the cost of her car insurance triples because she was at fault in an accident. How much more does {name,Jessica} pay for her expenses over the whole year compared to last year?
+
+#init:
+- name = sample(names_female)
+- $rent = range(500, 2100, 100)
+- $food = range(100, 500, 20)
+- $ins = range(50, 350, 25)
+
+#conditions:
+- divides(rent, 10)
+- divides(food, 2)
+
+#answer: (rent*3//10 + food//2 + ins*2) * 12
+"""
+
+answer_annotated = """
+First find the increase in rent by multiplying last year's rent by 30%: ${rent} * .3 = $<<{rent}*.3={rent*3//10}>>{rent*3//10}
+Then find the food cost increase by multiplying last year's costs by 50%: ${food} * .5 = $<<{food}*.5={food//2}>>{food//2}
+Then find the new car insurance price by multiplying last year's price by 3: ${ins} * 3 = $<<{ins}*3={ins*3}>>{ins*3}
+Then subtract the cost of car insurance last year from this year's price to find the increase: ${ins*3} - ${ins} = $<<{ins*3}-{ins}={ins*2}>>{ins*2}
+Now find how much {name}'s monthly expenses increased by adding the increases in each of the three costs: ${rent*3//10} + ${food//2} + ${ins*2} = $<<{rent*3//10}+{food//2}+{ins*2}={rent*3//10+food//2+ins*2}>>{rent*3//10+food//2+ins*2}
+Now multiply the increase per month by the number of months in a year to find the annual increase: ${rent*3//10+food//2+ins*2}/month * 12 months/year = $<<{rent*3//10+food//2+ins*2}*12={(rent*3//10+food//2+ins*2)*12}>>{(rent*3//10+food//2+ins*2)*12}/year
+#### {(rent*3//10+food//2+ins*2)*12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Seth lost 17.5 pounds. Jerome lost three times that many pounds and Veronica lost 1.5 pounds more than Seth. How many pounds did the 3 people lose in total?
+"""
+
+answer = """
+Seth = <<17.5=17.5>>17.5 pounds
+Jerome = 3 * 17.5 = <<3*17.5=52.5>>52.5 pounds
+Veronica = 17.5 + 1.5 = <<17.5+1.5=19>>19 pounds
+Total = 17.5 + 52.5 + 19 = <<17.5+52.5+19=89>>89 pounds
+The 3 people lost a total of 89 pounds.
+#### 89
+"""
+
+id_orig = 1489
+id_shuffled = 1620
+
+question_annotated = """
+Seth lost {a,17.5} pounds. Jerome lost three times that many pounds and Veronica lost {b,1.5} pounds more than Seth. How many pounds did the 3 people lose in total?
+
+#init:
+- $a = sample([10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5])
+- $b = sample([0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5])
+
+#conditions:
+- is_int(a * 5 + b)
+
+#answer: a * 5 + b
+"""
+
+answer_annotated = """
+Seth = <<{a}={a}>>{a} pounds
+Jerome = 3 * {a} = <<3*{a}={a*3}>>{a*3} pounds
+Veronica = {a} + {b} = <<{a}+{b}={int(a+b)}>>{int(a+b)} pounds
+Total = {a} + {a*3} + {int(a+b)} = <<{a}+{a*3}+{int(a+b)}={int(a*5+b)}>>{int(a*5+b)} pounds
+The 3 people lost a total of {int(a*5+b)} pounds.
+#### {int(a*5+b)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

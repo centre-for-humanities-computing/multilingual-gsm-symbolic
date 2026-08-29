@@ -1,0 +1,43 @@
+question = """
+Jonathan eats 2500 calories every day except for Saturday, when he consumes an extra 1000 calories.  He burns 3000 calories every day.  What is his weekly caloric deficit?
+"""
+
+answer = """
+He consumes 2500+1000=<<2500+1000=3500>>3500 calories on Saturday
+He consumes 2500*6+3500=<<2500*6+3500=18500>>18,500 calories in the week.
+He burns 3000*7=<<3000*7=21000>>21,000 calories in the week
+His caloric deficit is 21,000-18,500=<<21000-18500=2500>>2500 calories per week
+#### 2500
+"""
+
+id_orig = 2681
+id_shuffled = 3132
+
+question_annotated = """
+{name,Jonathan} eats {a,2500} calories every day except for Saturday, when he consumes an extra {x,1000} calories.  He burns {c,3000} calories every day.  What is his weekly caloric deficit?
+
+#init:
+- name = sample(names_male)
+- $a = range(1500, 5501, 500)
+- $x = range(500, 3501, 500)
+- $c = range(2000, 9001, 1000)
+
+#conditions:
+- divides(c, 1000)
+- not divides(7*a + x, 1000)
+- c*7 > 7*a + x
+
+#answer: c*7 - 7*a - x
+"""
+
+answer_annotated = """
+He consumes {a}+{x}=<<{a}+{x}={a+x}>>{a+x} calories on Saturday
+He consumes {a}*6+{a+x}=<<{a}*6+{a+x}={7*a+x}>>{(7*a+x)//1000},{(7*a+x)%1000} calories in the week.
+He burns {c}*7=<<{c}*7={c*7}>>{c*7//1000},000 calories in the week
+His caloric deficit is {c*7//1000},000-{(7*a+x)//1000},{(7*a+x)%1000}=<<{c*7}-{7*a+x}={c*7-7*a-x}>>{c*7-7*a-x} calories per week
+#### {c*7-7*a-x}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

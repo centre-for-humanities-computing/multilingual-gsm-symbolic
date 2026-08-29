@@ -1,0 +1,43 @@
+question = """
+Bronson decides to collect Oak Leaves from around his Neighborhood. He collects 12 on Thursday and 13 on Friday. 20% are Brown and 20% are Green. The rest are yellow. How many yellow leaves does he collect?
+"""
+
+answer = """
+He collects 25 leaves because 12 + 13 = <<12+13=25>>25
+60% of them are yellow because 100 - 20 - 20 = <<100-20-20=60>>60
+He collects 15 yellow leaves because 25 x .6 = <<25*.6=15>>15
+#### 15
+"""
+
+id_orig = 1376
+id_shuffled = 1483
+
+question_annotated = """
+{name,Bronson} decides to collect Oak Leaves from around his Neighborhood. He collects {a,12} on {day1,Thursday} and {b,13} on {day2,Friday}. {p_brown,20}% are Brown and {p_green,20}% are Green. The rest are yellow. How many yellow leaves does he collect?
+
+#init:
+- name = sample(["Bronson", "Chris", "Oliver", "Noah", "Eric"])
+- day1 = sample(weekdays)
+- day2 = sample(weekdays)
+- $a = range(6, 22, 2)
+- $b = range(7, 23, 2)
+- $p_brown = range(10, 50, 10)
+- $p_green = range(10, 50, 10)
+
+#conditions:
+- day1 != day2
+- divides((a + b) * (100 - p_brown - p_green), 100)
+
+#answer: (a + b) * (100 - p_brown - p_green) // 100
+"""
+
+answer_annotated = """
+He collects {a+b} leaves because {a} + {b} = <<{a}+{b}={a+b}>>{a+b}
+{100-p_brown-p_green}% of them are yellow because 100 - {p_brown} - {p_green} = <<100-{p_brown}-{p_green}={100-p_brown-p_green}>>{100-p_brown-p_green}
+He collects {(a+b)*(100-p_brown-p_green)//100} yellow leaves because {a+b} x .{(100-p_brown-p_green)//10} = <<{a+b}*.{(100-p_brown-p_green)//10}={(a+b)*(100-p_brown-p_green)//100}>>{(a+b)*(100-p_brown-p_green)//100}
+#### {(a + b) * (100 - p_brown - p_green) // 100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

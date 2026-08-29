@@ -1,0 +1,41 @@
+question = """
+Stacy just bought a 6 month prescription of flea & tick medicine for her dog for $150.00 online.  Her cashback app was offering 10% cashback and she has a mail-in rebate for $25.00 on a 6-month prescription.  How much will the medicine cost after cash back and rebate offers?
+"""
+
+answer = """
+Her cash back app gave her 10% back on $150.00 so that's .10*150 = $<<10*.01*150=15.00>>15.00 cash back
+She received $15.00 from the cashback app and has a $25.00 mail-in rebate for a total of 15+25 = $<<15+25=40.00>>40.00 discounts
+She spent $150.00 for the medicine and has $40.00 worth of discounts so the medicine will cost 150-40 = $<<150-40=110.00>>110.00
+#### 110
+"""
+
+id_orig = 1414
+id_shuffled = 1521
+
+question_annotated = """
+{name,Stacy} just bought a {m,6} month prescription of flea & tick medicine for her dog for ${p,150}.00 online.  Her cashback app was offering {r,10}% cashback and she has a mail-in rebate for ${b,25}.00 on a {m,6}-month prescription.  How much will the medicine cost after cash back and rebate offers?
+
+#init:
+- name = sample(names_female)
+- $m = range(3, 13)
+- $p = range(20, 520, 10)
+- $r = range(5, 55, 5)
+- $b = range(5, 105, 5)
+
+#conditions:
+- divides(p * r, 100)
+- r*p//100 + b < p
+
+#answer: p - r*p//100 - b
+"""
+
+answer_annotated = """
+Her cash back app gave her {r}% back on ${p}.00 so that's .10*{p} = $<<{r}*.01*{p}={r*p//100}.00>>{r*p//100}.00 cash back
+She received ${r*p//100}.00 from the cashback app and has a ${b}.00 mail-in rebate for a total of {r*p//100}+{b} = $<<{r*p//100}+{b}={r*p//100+b}.00>>{r*p//100+b}.00 discounts
+She spent ${p}.00 for the medicine and has ${r*p//100+b}.00 worth of discounts so the medicine will cost {p}-{r*p//100+b} = $<<{p}-{r*p//100+b}={p-r*p//100-b}.00>>{p-r*p//100-b}.00
+#### {p-r*p//100-b}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

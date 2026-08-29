@@ -1,0 +1,48 @@
+question = """
+Colton had 72 dolphin stickers. He gave 4 stickers each to 3 friends.  He also gave his friend Mandy 2 more than he gave his three friends total.   And he gave Justin 10 less than Mandy.  How many stickers does Colton have left?
+"""
+
+answer = """
+Colton gave away 4 stickers * 3 friends = <<4*3=12>>12 stickers.
+Colton gave Mandy 2 + 12 stickers = <<2+12=14>>14 stickers.
+Colton gave Justin 14 stickers - 10 = <<14-10=4>>4 stickers.
+In total, Colton gave away 12 + 14 + 4 stickers = <<12+14+4=30>>30 stickers.
+Colton's number of total stickers at the end is 72 - 30 = <<72-30=42>>42 stickers.
+#### 42
+"""
+
+id_orig = 179
+id_shuffled = 204
+
+question_annotated = """
+{name,Colton} had {t,72} dolphin stickers. He gave {f,4} stickers each to {k,3} friends.  He also gave his friend {name2,Mandy} {m,2} more than he gave his {ktxt,three} friends total.   And he gave {name3,Justin} {j,10} less than {name2,Mandy}.  How many stickers does {name,Colton} have left?
+
+#init:
+- name = sample(names_male)
+- name2 = sample(names_female)
+- name3 = sample(names_male)
+- ktxt, k = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $t = range(40, 200, 4)
+- $f = range(2, 7)
+- $m = range(1, 9)
+- $j = range(2, 12)
+
+#conditions:
+- f * k + m > j
+- t > 3*f*k + 2*m - j
+
+#answer: t - (3*f*k + 2*m - j)
+"""
+
+answer_annotated = """
+{name} gave away {f} stickers * {k} friends = <<{f}*{k}={f*k}>>{f*k} stickers.
+{name} gave {name2} {m} + {f*k} stickers = <<{m}+{f*k}={m+f*k}>>{m+f*k} stickers.
+{name} gave {name3} {m+f*k} stickers - {j} = <<{m+f*k}-{j}={m+f*k-j}>>{m+f*k-j} stickers.
+In total, {name} gave away {f*k} + {m+f*k} + {m+f*k-j} stickers = <<{f*k}+{m+f*k}+{m+f*k-j}={3*f*k+2*m-j}>>{3*f*k+2*m-j} stickers.
+{name}'s number of total stickers at the end is {t} - {3*f*k+2*m-j} = <<{t}-{3*f*k+2*m-j}={t-(3*f*k+2*m-j)}>>{t-(3*f*k+2*m-j)} stickers.
+#### {t-(3*f*k+2*m-j)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

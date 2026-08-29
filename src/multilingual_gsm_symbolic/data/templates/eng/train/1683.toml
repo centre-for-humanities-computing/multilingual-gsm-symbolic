@@ -1,0 +1,46 @@
+question = """
+Janet is trying to decide whether to quit her job and start freelancing. She works 40 hours a week at both jobs. She get paid $30/hour at her current job, and would get paid $40/hour as a freelancer. However, she'd have to pay an extra $25 a week in FICA taxes plus $400/month in healthcare premiums. How much more would Janet make per month as a freelancer if there are four weeks in a month?
+"""
+
+answer = """
+First find the difference in hourly wages: $40/hour - $30/hour = $<<40-30=10>>10/hour
+Then multiply that difference by the number of hours she works in a week to find the weekly difference: $10/hour * 40 hours/week = $<<10*40=400>>400/week
+Then multiply that amount by the number of weeks in a month to find the monthly difference in her earnings: $400/week * 4 weeks/month = $<<400*4=1600>>1600/month
+Then find the total additional amount Janet pays in FICA taxes: $25/week * 4 weeks/month = $<<25*4=100>>100/month
+Then subtract Janet's extra FICA taxes and healthcare premium from the additional money she earns to find the net increase in her pay from freelancing: $1600/month - $400/month - $100/month = $<<1600-400-100=1100>>1100/month
+#### 1100
+"""
+
+id_orig = 1558
+id_shuffled = 1683
+
+question_annotated = """
+{name,Janet} is trying to decide whether to quit her job and start freelancing. She works {hours,40} hours a week at both jobs. She get paid ${wage_cur,30}/hour at her current job, and would get paid ${wage_free,40}/hour as a freelancer. However, she'd have to pay an extra ${fica,25} a week in FICA taxes plus ${health,400}/month in healthcare premiums. How much more would {name,Janet} make per month as a freelancer if there are four weeks in a month?
+
+#init:
+- name = sample(names_female)
+- $hours = range(30, 51, 2)
+- $wage_cur = range(10, 31, 4)
+- $wage_free = range(34, 104, 2)
+- $fica = range(15, 36, 5)
+- $health = range(300, 501, 100)
+
+#conditions:
+- wage_free > wage_cur
+- (wage_free - wage_cur) * hours * 4 > fica * 4 + health
+
+#answer: (wage_free - wage_cur) * hours * 4 - health - fica * 4
+"""
+
+answer_annotated = """
+First find the difference in hourly wages: ${wage_free}/hour - ${wage_cur}/hour = $<<{wage_free}-{wage_cur}={wage_free-wage_cur}>>{wage_free-wage_cur}/hour
+Then multiply that difference by the number of hours she works in a week to find the weekly difference: ${wage_free-wage_cur}/hour * {hours} hours/week = $<<{wage_free-wage_cur}*{hours}={(wage_free-wage_cur)*hours}>>{(wage_free-wage_cur)*hours}/week
+Then multiply that amount by the number of weeks in a month to find the monthly difference in her earnings: ${(wage_free-wage_cur)*hours}/week * 4 weeks/month = $<<{(wage_free-wage_cur)*hours}*4={(wage_free-wage_cur)*hours*4}>>{(wage_free-wage_cur)*hours*4}/month
+Then find the total additional amount {name} pays in FICA taxes: ${fica}/week * 4 weeks/month = $<<{fica}*4={fica*4}>>{fica*4}/month
+Then subtract {name}'s extra FICA taxes and healthcare premium from the additional money she earns to find the net increase in her pay from freelancing: ${(wage_free-wage_cur)*hours*4}/month - ${health}/month - ${fica*4}/month = $<<{(wage_free-wage_cur)*hours*4}-{health}-{fica*4}={(wage_free-wage_cur)*hours*4-health-fica*4}>>{(wage_free-wage_cur)*hours*4-health-fica*4}/month
+#### {(wage_free-wage_cur)*hours*4 - health - fica*4}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

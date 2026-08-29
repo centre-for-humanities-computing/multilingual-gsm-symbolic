@@ -1,0 +1,43 @@
+question = """
+Eighteen hours ago, Beth and I took 100 photographs of our project. Today, Beth and I will take 20% fewer photographs of the same project. If we were to take 300 photographs of the project, how many photographs would we take to reach the target?
+"""
+
+answer = """
+If you took 100 photographs of the project 18 hours ago, and today 20% few photographs have been taken, then 20/100*100 = 20 fewer photographs of the project have been taken today.
+The total number of photographs of the project that have been taken today is 100-20 = <<100-20=80>>80
+So far, you've taken 80+100 = <<80+100=180>>180 photographs of the project.
+Since the target number of photographs is 300, the number of photographs that you need to take to reach the target is 300-180 = <<300-180=120>>120
+#### 120
+"""
+
+id_orig = 1995
+id_shuffled = 2313
+
+question_annotated = """
+Eighteen hours ago, {name,Beth} and I took {a,100} photographs of our project. Today, {name,Beth} and I will take {p,20}% fewer photographs of the same project. If we were to take {t,300} photographs of the project, how many photographs would we take to reach the target?
+
+#init:
+- name = sample(names_female)
+- $p = range(5, 50, 5)
+- $a = range(10, 210, 2)
+- $t = range(200, 1200, 10)
+
+#conditions:
+- p < a
+- divides(a*p, 100)
+- t > a - p*a//100 + a
+
+#answer: t - (a - p*a//100 + a)
+"""
+
+answer_annotated = """
+If you took {a} photographs of the project 18 hours ago, and today {p}% few photographs have been taken, then {p}/100*{a} = {p*a//100} fewer photographs of the project have been taken today.
+The total number of photographs of the project that have been taken today is {a}-{p*a//100} = <<{a}-{p*a//100}={a-p*a//100}>>{a-p*a//100}
+So far, you've taken {a-p*a//100}+{a} = <<{a-p*a//100}+{a}={a-p*a//100+a}>>{a-p*a//100+a} photographs of the project.
+Since the target number of photographs is {t}, the number of photographs that you need to take to reach the target is {t}-{a-p*a//100+a} = <<{t}-{a-p*a//100+a}={t-(a-p*a//100+a)}>>{t-(a-p*a//100+a)}
+#### {t-(a-p*a//100+a)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,41 @@
+question = """
+Sunnyvale School was having a picnic. They wanted to make fruit punch. They had 4.5 liters of orange punch. They had twice as much cherry punch as orange punch and 1.5 liters less of apple juice than cherry punch. When they combined all of the fruit juices together, how many liters of fruit punch did they have?
+"""
+
+answer = """
+Orange = <<4.5=4.5>>4.5 L
+Cherry = 2 * 4.5 = <<2*4.5=9>>9 L
+Apple = 9 - 1.5 = <<9-1.5=7.5>>7.5 L
+Total punch = 4.5 + 9 + 7.5 = <<4.5+9+7.5=21>>21 L
+They had 21 liters of fruit punch for the picnic.
+#### 21
+"""
+
+id_orig = 2592
+id_shuffled = 3010
+
+question_annotated = """
+Sunnyvale School was having a picnic. They wanted to make fruit punch. They had {o_txt,4.5} liters of orange punch. They had twice as much cherry punch as orange punch and {d_txt,1.5} liters less of apple juice than cherry punch. When they combined all of the fruit juices together, how many liters of fruit punch did they have?
+
+#init:
+- o_txt, o_half = sample([("0.5", 1), ("1.5", 3), ("2.5", 5), ("3.5", 7), ("4.5", 9), ("5.5", 11), ("6.5", 13), ("7.5", 15), ("8.5", 17), ("9.5", 19), ("10.5", 21), ("11.5", 23), ("12.5", 25), ("13.5", 27), ("14.5", 29), ("15.5", 31)])
+- d_txt, d_half = sample([("0.5", 1), ("1.5", 3), ("2.5", 5), ("3.5", 7), ("4.5", 9), ("5.5", 11), ("6.5", 13), ("7.5", 15), ("8.5", 17), ("9.5", 19)])
+
+#conditions:
+- 2 * o_half > d_half
+
+#answer: (5*o_half - d_half) // 2
+"""
+
+answer_annotated = """
+Orange = <<{o_txt}={o_txt}>>{o_txt} L
+Cherry = 2 * {o_txt} = <<2*{o_txt}={o_half}>>{o_half} L
+Apple = {o_half} - {d_txt} = <<{o_half}-{d_txt}={(2*o_half - d_half)/2}>>{(2*o_half - d_half)/2} L
+Total punch = {o_txt} + {o_half} + {(2*o_half - d_half)/2} = <<{o_txt}+{o_half}+{(2*o_half - d_half)/2}={(5*o_half - d_half) // 2}>>{(5*o_half - d_half) // 2} L
+They had {(5*o_half - d_half) // 2} liters of fruit punch for the picnic.
+#### {(5*o_half - d_half) // 2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Hortense loves daisies and sunflowers.  She planted 25 daisy seeds and 25 sunflower seeds in her flower bed.  If 60% of the daisy seeds germinate, and 80% of the sunflower seeds germinate, and 80% of the resulting plants produce flowers, how many plants will she grow that produce flowers?
+"""
+
+answer = """
+At a germination rate of 60%, 25 seeds will yield 60/100*25=<<60/100*25=15>>15 plants.
+At a germination rate of 80%, 25 seeds will yield 80/100*25=<<80/100*25=20>>20 plants.
+In total, she will have grown 15+20=<<15+20=35>>35 plants.
+If 80% of the plants developed flowers, then she will have grown (80/100)*35=<<(80/100)*35=28>>28 plants that produce flowers.
+#### 28
+"""
+
+id_orig = 1550
+id_shuffled = 1675
+
+question_annotated = """
+{name,Hortense} loves daisies and sunflowers.  She planted {d,25} daisy seeds and {s,25} sunflower seeds in her flower bed.  If {rd,60}% of the daisy seeds germinate, and {rs,80}% of the sunflower seeds germinate, and {rf,80}% of the resulting plants produce flowers, how many plants will she grow that produce flowers?
+
+#init:
+- name = sample(names_female)
+- $d = range(4, 51)
+- $s = range(4, 51)
+- $rd = range(5, 101, 5)
+- $rs = range(5, 101, 5)
+- $rf = range(10, 101, 10)
+
+#conditions:
+- divides(rd * d, 100)
+- divides(rs * s, 100)
+- divides(rf * (rd*d//100 + rs*s//100), 100)
+
+#answer: rf*(rd*d//100 + rs*s//100)//100
+"""
+
+answer_annotated = """
+At a germination rate of {rd}%, {d} seeds will yield {rd}/100*{d}=<<{rd}/100*{d}={rd*d//100}>>{rd*d//100} plants.
+At a germination rate of {rs}%, {s} seeds will yield {rs}/100*{s}=<<{rs}/100*{s}={rs*s//100}>>{rs*s//100} plants.
+In total, she will have grown {rd*d//100}+{rs*s//100}=<<{rd*d//100}+{rs*s//100}={rd*d//100+rs*s//100}>>{rd*d//100+rs*s//100} plants.
+If {rf}% of the plants developed flowers, then she will have grown ({rf}/100)*{rd*d//100+rs*s//100}=<<({rf}/100)*{rd*d//100+rs*s//100}={rf*(rd*d//100+rs*s//100)//100}>>{rf*(rd*d//100+rs*s//100)//100} plants that produce flowers.
+#### {rf*(rd*d//100+rs*s//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

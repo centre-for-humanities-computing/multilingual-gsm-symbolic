@@ -1,0 +1,52 @@
+question = """
+A hay farmer harvested 560 bales of hay from 5 acres of grass per month last year. This year, he planted an additional 7 acres of grass. If the farmer also owns 9 horses and each horse consumes 3 bales of hay a day, how many bales of hay would the farmer have left by the end of December if he starts feeding them this year's hay beginning the first day of September?
+"""
+
+answer = """
+For every acre of grass, the farmer can harvest 560/5 = <<560/5=112>>112 bales of hay each month.
+This year, the farmer has 7 + 5 = <<7+5=12>>12 acres of grass.
+He can expect to harvest 12 x 112 = <<12*112=1344>>1344 bales of hay per month.
+The total hay production this year is 1344*12 = <<1344*12=16128>>16,128
+From September to December, the farmer would have to feed his horses for a total of 30 + 31 + 30 + 31 = <<30+31+30+31=122>>122 days
+Each day his horse eats a total of 3*9 = <<3*9=27>>27 bales of hay.
+For the 122 days, the horses will eat a total of 27*122 = <<27*122=3294>>3294 bales.
+The total number of bales remaining will be 16,128-3294 = <<16128-3294=12834>>12,834.
+#### 12834
+"""
+
+id_orig = 404
+id_shuffled = 466
+
+question_annotated = """
+A hay farmer harvested {x,560} bales of hay from {a,5} acres of grass per month last year. This year, he planted an additional {b,7} acres of grass. If the farmer also owns {h,9} horses and each horse consumes {c,3} bales of hay a day, how many bales of hay would the farmer have left by the end of December if he starts feeding them this year's hay beginning the first day of September?
+
+#init:
+- $x = range(500, 1150, 20)
+- $a = range(4, 13)
+- $b = range(3, 13)
+- $h = range(2, 12)
+- $c = range(1, 6)
+
+#conditions:
+- divides(x, a)
+- 12*(a+b)*(x//a) >= 10000
+- 12*(a+b)*(x//a) - 122*c*h >= 10000
+
+#answer: 12*(a+b)*(x//a) - 122*c*h
+"""
+
+answer_annotated = """
+For every acre of grass, the farmer can harvest {x}/{a} = <<{x}/{a}={x//a}>>{x//a} bales of hay each month.
+This year, the farmer has {b} + {a} = <<{b}+{a}={a+b}>>{a+b} acres of grass.
+He can expect to harvest {a+b} x {x//a} = <<{a+b}*{x//a}={(a+b)*(x//a)}>>{(a+b)*(x//a)} bales of hay per month.
+The total hay production this year is {(a+b)*(x//a)}*12 = <<{(a+b)*(x//a)}*12={12*(a+b)*(x//a)}>>{str(12*(a+b)*(x//a)//1000)},{str(12*(a+b)*(x//a)%1000)}
+From September to December, the farmer would have to feed his horses for a total of 30 + 31 + 30 + 31 = <<30+31+30+31=122>>122 days
+Each day his horse eats a total of {c}*{h} = <<{c}*{h}={c*h}>>{c*h} bales of hay.
+For the 122 days, the horses will eat a total of {c*h}*122 = <<{c*h}*122={122*c*h}>>{122*c*h} bales.
+The total number of bales remaining will be {str(12*(a+b)*(x//a)//1000)},{str(12*(a+b)*(x//a)%1000)}-{122*c*h} = <<{12*(a+b)*(x//a)}-{122*c*h}={12*(a+b)*(x//a)-122*c*h}>>{str((12*(a+b)*(x//a)-122*c*h)//1000)},{str((12*(a+b)*(x//a)-122*c*h)%1000)}.
+#### {12*(a+b)*(x//a)-122*c*h}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

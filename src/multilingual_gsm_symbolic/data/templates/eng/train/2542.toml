@@ -1,0 +1,40 @@
+question = """
+While passing by a store, Miley noticed that a bag that cost $150 last week is now on sale for $135. What percent is the discount?
+"""
+
+answer = """
+The bag is now sold for $150 - $135 = $<<150-135=15>>15 less.
+The discount is 15/150 = 1/10.
+Thus, the percent discount is 1/10 x 100% = 10%.
+#### 10
+"""
+
+id_orig = 2204
+id_shuffled = 2542
+
+question_annotated = """
+While passing by a store, {name,Miley} noticed that a bag that cost ${p,150} last week is now on sale for ${s,135}. What percent is the discount?
+
+#init:
+- name = sample(names_female)
+- $p = range(20, 520, 5)
+- $s = range(5, 515, 5)
+
+#conditions:
+- s < p
+- divides(p, p - s)
+- divides(100, p // (p - s))
+
+#answer: 100 // (p // (p - s))
+"""
+
+answer_annotated = """
+The bag is now sold for ${p} - ${s} = $<<{p}-{s}={p-s}>>{p-s} less.
+The discount is {p-s}/{p} = 1/{p // (p - s)}.
+Thus, the percent discount is 1/{p // (p - s)} x 100% = {100 // (p // (p - s))}%.
+#### {100 // (p // (p - s))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

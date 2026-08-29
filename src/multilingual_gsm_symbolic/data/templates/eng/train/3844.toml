@@ -1,0 +1,45 @@
+question = """
+Lucca bought 200 pieces of bread. Lucca ate 1/4 of the pieces of bread in one day, and 2/5 of the remaining pieces the next day. If he ate half of the remaining pieces on the third day, calculate how many pieces of bread are remaining.
+"""
+
+answer = """
+On the first day, Lucca ate 1/4*200 = <<1/4*200=50>>50 pieces.
+The number of pieces remaining after the first day is 200-50 = <<200-50=150>>150
+On the second day, Lucca ate 2/5*150 = <<2/5*150=60>>60 pieces of bread.
+The pieces of bread that remained after the second day is 150-60 = <<150-60=90>>90
+If Lucca ate half of the remaining pieces of bread on the third day, he ate 1/2*90 = 45 pieces.
+The pieces of bread that are remaining after the third day are 90-45=<<90-45=45>>45.
+#### 45
+"""
+
+id_orig = 3231
+id_shuffled = 3844
+
+question_annotated = """
+{name,Lucca} bought {total,200} pieces of bread. {name,Lucca} ate 1/4 of the pieces of bread in one day, and 2/5 of the remaining pieces the next day. If he ate half of the remaining pieces on the third day, calculate how many pieces of bread are remaining.
+
+#init:
+- name = sample(names_male)
+- $total = range(40, 40040)
+
+#conditions:
+- divides(total, 4)
+- divides(total - total//4, 5)
+- divides(total - total//4 - (total - total//4)*2//5, 2)
+
+#answer: total - total//4 - (total - total//4)*2//5 - (total - total//4 - (total - total//4)*2//5)//2
+"""
+
+answer_annotated = """
+On the first day, {name} ate 1/4*{total} = <<1/4*{total}={total//4}>>{total//4} pieces.
+The number of pieces remaining after the first day is {total}-{total//4} = <<{total}-{total//4}={total - total//4}>>{total - total//4}
+On the second day, {name} ate 2/5*{total - total//4} = <<2/5*{total - total//4}={(total - total//4)*2//5}>>{(total - total//4)*2//5} pieces of bread.
+The pieces of bread that remained after the second day is {total - total//4}-{(total - total//4)*2//5} = <<{total - total//4}-{(total - total//4)*2//5}={total - total//4 - (total - total//4)*2//5}>>{total - total//4 - (total - total//4)*2//5}
+If {name} ate half of the remaining pieces of bread on the third day, he ate 1/2*{total - total//4 - (total - total//4)*2//5} = {(total - total//4 - (total - total//4)*2//5)//2} pieces.
+The pieces of bread that are remaining after the third day are {total - total//4 - (total - total//4)*2//5}-{(total - total//4 - (total - total//4)*2//5)//2}=<<{total - total//4 - (total - total//4)*2//5}-{(total - total//4 - (total - total//4)*2//5)//2}={total - total//4 - (total - total//4)*2//5 - (total - total//4 - (total - total//4)*2//5)//2}>>{total - total//4 - (total - total//4)*2//5 - (total - total//4 - (total - total//4)*2//5)//2}.
+#### {total - total//4 - (total - total//4)*2//5 - (total - total//4 - (total - total//4)*2//5)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

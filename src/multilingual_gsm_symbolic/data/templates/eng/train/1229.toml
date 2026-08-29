@@ -1,0 +1,48 @@
+question = """
+Marcus is having a water balloon party. He has 100 balloons. Each balloon holds 3 ounces of water. He can buy 50 ounces of water for $2.5 a bottle. If he walks into the store with 2 $10 bills, how much change will he have after he buys all the water he needs?
+"""
+
+answer = """
+He will need 300 ounces of water because 100 x 3 = <<100*3=300>>300
+He will need 6 bottles because 300 / 50 = <<300/50=6>>6
+This will cost $15 because 6 x 2.5 = <<6*2.5=15>>15
+He has $20 because 2 x 10 = <<2*10=20>>20
+He will get $5 in change because 20 - 15 = <<20-15=5>>5
+#### 5
+"""
+
+id_orig = 1133
+id_shuffled = 1229
+
+question_annotated = """
+{name,Marcus} is having a water balloon party. He has {b,100} balloons. Each balloon holds {o,3} ounces of water. He can buy {s,50} ounces of water for ${p,2.5} a bottle. If he walks into the store with {n,2} ${v,10} bills, how much change will he have after he buys all the water he needs?
+
+#init:
+- name = sample(names_male)
+- $b = range(10, 110, 2)
+- $o = range(1, 6)
+- $s = range(40, 61, 10)
+- $n = range(2, 6)
+- $v = range(5, 21, 5)
+- p = sample([2.5])
+
+#conditions:
+- divides(b * o, s)
+- is_int(b * o // s * p)
+- n * v > (b * o // s) * p
+
+#answer: n * v - (b * o // s) * p
+"""
+
+answer_annotated = """
+He will need {b*o} ounces of water because {b} x {o} = <<{b}*{o}={b*o}>>{b*o}
+He will need {b*o//s} bottles because {b*o} / {s} = <<{b*o}/{s}={b*o//s}>>{b*o//s}
+This will cost ${(b*o//s)*p} because {b*o//s} x {p} = <<{b*o//s}*{p}={(b*o//s)*p}>>{(b*o//s)*p}
+He has ${n*v} because {n} x {v} = <<{n}*{v}={n*v}>>{n*v}
+He will get ${n*v-(b*o//s)*p} in change because {n*v} - {(b*o//s)*p} = <<{n*v}-{(b*o//s)*p}={n*v-(b*o//s)*p}>>{n*v-(b*o//s)*p}
+#### {n * v - (b * o // s) * p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

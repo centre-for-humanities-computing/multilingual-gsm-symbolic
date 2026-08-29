@@ -1,0 +1,55 @@
+question = """
+Sam works at the Widget Factory, assembling Widgets. He can assemble 1 widget every 10 minutes. Jack from the loading dock can help assemble widgets when he doesn't have anything else to do. When he helps, they put together 2 complete widgets every 15 minutes. Recently the factory hired Tony to help assemble widgets. Being new to the job, he doesn't work as fast as Sam or Jack. Yesterday Sam worked for 6 hours before he had to leave work early for a dentist appointment. Jack was able to help out for 4 hours before he had to go back to the loading dock to unload a new shipment of widget materials. Tony worked the entire 8-hour shift. At the end of the day, they had completed 68 widgets. How long does it take Tony to assemble a Widget, in minutes?
+"""
+
+answer = """
+Sam completes a widget every 10 minutes.
+When Jack helps they finish 2 in 15 minutes. Sam has finished 1 widget and has begun working on another one, and Jack finishes the second one at 15 minutes. So it takes Jack 15 minutes to complete a widget.
+Sam worked for 6 hours yesterday, so he was able to complete 6 hours * 60 minutes per hour / 10 minutes per widget = <<6*60/10=36>>36 widgets.
+Jack worked for 4 hours, so he was able to complete 4 hours * 60 minutes per hour / 15 minutes per widget = <<4*60/15=16>>16 widgets.
+Sam, Jack, and Tony were able to complete 68 widgets together. So of those, Tony personally completed 68 widgets - 36 widgets - 16 widgets = <<68-36-16=16>>16 widgets.
+It took Tony 8 hours to complete those 16 widgets, so he takes 8 hours * 60 minutes per hour / 16 widgets = <<8*60/16=30>>30 minutes per widget.
+#### 30
+"""
+
+id_orig = 399
+id_shuffled = 461
+
+question_annotated = """
+{n1,Sam} works at the Widget Factory, assembling Widgets. He can assemble 1 widget every {m,10} minutes. {n2,Jack} from the loading dock can help assemble widgets when he doesn't have anything else to do. When he helps, they put together 2 complete widgets every {t,15} minutes. Recently the factory hired {n3,Tony} to help assemble widgets. Being new to the job, he doesn't work as fast as {n1,Sam} or {n2,Jack}. Yesterday {n1,Sam} worked for {hs,6} hours before he had to leave work early for a dentist appointment. {n2,Jack} was able to help out for {hj,4} hours before he had to go back to the loading dock to unload a new shipment of widget materials. {n3,Tony} worked the entire {ht,8}-hour shift. At the end of the day, they had completed {w,68} widgets. How long does it take {n3,Tony} to assemble a Widget, in minutes?
+
+#init:
+- n1 = sample(names_male)
+- n2 = sample(names_male)
+- n3 = sample(names_male)
+- $m = range(5, 25, 5)
+- $t = range(10, 45, 5)
+- $hs = range(1, 9)
+- $hj = range(1, 9)
+- $ht = range(1, 9)
+- $w = range(20, 101)
+
+#conditions:
+- t >= m
+- t < 2*m
+- divides(hs*60, m)
+- divides(hj*60, t)
+- w > hs*60//m + hj*60//t
+- divides(ht*60, w-hs*60//m-hj*60//t)
+
+#answer: ht*60//(w-hs*60//m-hj*60//t)
+"""
+
+answer_annotated = """
+{n1} completes a widget every {m} minutes.
+When {n2} helps they finish 2 in {t} minutes. {n1} has finished 1 widget and has begun working on another one, and {n2} finishes the second one at {t} minutes. So it takes {n2} {t} minutes to complete a widget.
+{n1} worked for {hs} hours yesterday, so he was able to complete {hs} hours * 60 minutes per hour / {m} minutes per widget = <<{hs}*60/{m}={hs*60//m}>>{hs*60//m} widgets.
+{n2} worked for {hj} hours, so he was able to complete {hj} hours * 60 minutes per hour / {t} minutes per widget = <<{hj}*60/{t}={hj*60//t}>>{hj*60//t} widgets.
+{n1}, {n2}, and {n3} were able to complete {w} widgets together. So of those, {n3} personally completed {w} widgets - {hs*60//m} widgets - {hj*60//t} widgets = <<{w}-{hs*60//m}-{hj*60//t}={w-hs*60//m-hj*60//t}>>{w-hs*60//m-hj*60//t} widgets.
+It took {n3} {ht} hours to complete those {w-hs*60//m-hj*60//t} widgets, so he takes {ht} hours * 60 minutes per hour / {w-hs*60//m-hj*60//t} widgets = <<{ht}*60/{w-hs*60//m-hj*60//t}={ht*60//(w-hs*60//m-hj*60//t)}>>{ht*60//(w-hs*60//m-hj*60//t)} minutes per widget.
+#### {ht*60//(w-hs*60//m-hj*60//t)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

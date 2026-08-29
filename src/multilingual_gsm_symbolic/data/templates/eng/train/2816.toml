@@ -1,0 +1,42 @@
+question = """
+Mary goes with her 3 children to the circus. Tickets cost $2 for adults and $1 for children. Mary pays with a $20 bill. How much change will she receive?
+"""
+
+answer = """
+Mary's ticket costs $2/ticket * 1 ticket = $<<2*1=2>>2
+Mary's children's tickets cost 3 tickets * $1 = $<<3*1=3>>3
+Together the tickets cost $2 + $3 = $<<2+3=5>>5
+After paying with a 20-dollar bill, Mary will receive $20 - $5 = $<<20-5=15>>15
+#### 15
+"""
+
+id_orig = 2443
+id_shuffled = 2816
+
+question_annotated = """
+{name,Mary} goes with her {k,3} children to the circus. Tickets cost ${p,2} for adults and ${c,1} for children. {name,Mary} pays with a ${b,20} bill. How much change will she receive?
+
+#init:
+- name = sample(names_female)
+- $k = range(2, 12)
+- $p = range(2, 12)
+- $c = range(1, 11)
+- $b = range(20, 120, 10)
+
+#conditions:
+- b > p + c*k
+
+#answer: b - p - c*k
+"""
+
+answer_annotated = """
+{name}'s ticket costs ${p}/ticket * 1 ticket = $<<{p}*1={p}>>{p}
+{name}'s children's tickets cost {k} tickets * ${c} = $<<{k}*{c}={k*c}>>{k*c}
+Together the tickets cost ${p} + ${k*c} = $<<{p}+{k*c}={p+k*c}>>{p+k*c}
+After paying with a {b}-dollar bill, {name} will receive ${b} - ${p+k*c} = $<<{b}-{p+k*c}={b-p-k*c}>>{b-p-k*c}
+#### {b-p-c*k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,52 @@
+question = """
+A shopping center sells T-shirts at $8 each, a sweater at $18,  and a jacket at $80. The jacket is on sale with a 10% discount. The sales tax is 5%.  Kevin wants to buy six T-shirts, four sweaters, and five jackets for his children. How much does Kevin have to pay for all the items, including the sales tax?
+"""
+
+answer = """
+The six T-shirts cost 6 x $8 = $<<6*8=48>>48.
+The four sweaters cost 4 x $18 = $<<4*18=72>>72.
+And five jackets normally cost 5 x $80 = $<<5*80=400>>400.
+So, a discount of 10/100 x $400 = $<<10/100*400=40>>40 for the five jackets.
+Thus, the selling price of the five jackets is $400 - $40 = $<<400-40=360>>360.
+Hence, the total cost of all the items is $48 + $72 + $360 = $<<48+72+360=480>>480.
+The sales tax is equal to 5/100 x $480 = $<<5/100*480=24>>24.
+Therefore, Kevin has to pay $480 + $24 = $<<480+24=504>>504. Including the sales tax.
+#### 504
+"""
+
+id_orig = 468
+id_shuffled = 541
+
+question_annotated = """
+A shopping center sells T-shirts at ${p1,8} each, a sweater at ${p2,18},  and a jacket at ${p3,80}. The jacket is on sale with a {d,10}% discount. The sales tax is {r,5}%.  {name,Kevin} wants to buy six T-shirts, four sweaters, and five jackets for his children. How much does {name,Kevin} have to pay for all the items, including the sales tax?
+
+#init:
+- name = sample(names_male)
+- $p1 = range(2, 12)
+- $p2 = range(10, 30)
+- $p3 = range(40, 90, 10)
+- $d = range(5, 31, 5)
+- $r = range(1, 6)
+
+#conditions:
+- divides(d * 5 * p3, 100)
+- divides(r * (6*p1 + 4*p2 + 5*p3 - d*5*p3//100), 100)
+
+#answer: 6*p1+4*p2+5*p3-d*5*p3//100+r*(6*p1+4*p2+5*p3-d*5*p3//100)//100
+"""
+
+answer_annotated = """
+The six T-shirts cost 6 x ${p1} = $<<6*{p1}={6*p1}>>{6*p1}.
+The four sweaters cost 4 x ${p2} = $<<4*{p2}={4*p2}>>{4*p2}.
+And five jackets normally cost 5 x ${p3} = $<<5*{p3}={5*p3}>>{5*p3}.
+So, a discount of {d}/100 x ${5*p3} = $<<{d}/100*{5*p3}={d*5*p3//100}>>{d*5*p3//100} for the five jackets.
+Thus, the selling price of the five jackets is ${5*p3} - ${d*5*p3//100} = $<<{5*p3}-{d*5*p3//100}={5*p3-d*5*p3//100}>>{5*p3-d*5*p3//100}.
+Hence, the total cost of all the items is ${6*p1} + ${4*p2} + ${5*p3-d*5*p3//100} = $<<{6*p1}+{4*p2}+{5*p3-d*5*p3//100}={6*p1+4*p2+5*p3-d*5*p3//100}>>{6*p1+4*p2+5*p3-d*5*p3//100}.
+The sales tax is equal to {r}/100 x ${6*p1+4*p2+5*p3-d*5*p3//100} = $<<{r}/100*{6*p1+4*p2+5*p3-d*5*p3//100}={r*(6*p1+4*p2+5*p3-d*5*p3//100)//100}>>{r*(6*p1+4*p2+5*p3-d*5*p3//100)//100}.
+Therefore, {name} has to pay ${6*p1+4*p2+5*p3-d*5*p3//100} + ${r*(6*p1+4*p2+5*p3-d*5*p3//100)//100} = $<<{6*p1+4*p2+5*p3-d*5*p3//100}+{r*(6*p1+4*p2+5*p3-d*5*p3//100)//100}={6*p1+4*p2+5*p3-d*5*p3//100+r*(6*p1+4*p2+5*p3-d*5*p3//100)//100}>>{6*p1+4*p2+5*p3-d*5*p3//100+r*(6*p1+4*p2+5*p3-d*5*p3//100)//100}. including the sales tax.
+#### {6*p1+4*p2+5*p3-d*5*p3//100+r*(6*p1+4*p2+5*p3-d*5*p3//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

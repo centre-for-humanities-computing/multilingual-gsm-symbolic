@@ -1,0 +1,42 @@
+question = """
+Megan has read 32 books this year.  Kelcie has read 1/4 the amount of books that Megan has read.  Greg has read 9 more than twice the number of books that Kelcie has read.  How many books total have Megan, Kelcie, and Greg read?
+"""
+
+answer = """
+Kelcie: 32/4=<<32/4=8>>8 books
+Greg: 9+2(8)=25 books
+Total:32+8+25=<<32+8+25=65>>65 books
+#### 65
+"""
+
+id_orig = 447
+id_shuffled = 520
+
+question_annotated = """
+{n1,Megan} has read {a,32} books this year.  {n2,Kelcie} has read 1/{k,4} the amount of books that {n1,Megan} has read.  {n3,Greg} has read {c,9} more than {mt,twice} the number of books that {n2,Kelcie} has read.  How many books total have {n1,Megan}, {n2,Kelcie}, and {n3,Greg} read?
+
+#init:
+- n1 = sample(["Megan", "Sophie", "Anna", "Emma"])
+- n2 = sample(["Kelcie", "Abby", "Laura", "Emily"])
+- n3 = sample(["Greg", "Chris", "Oliver", "Noah"])
+- $a = range(24, 224, 2)
+- $k = range(2, 6)
+- $c = range(1, 21)
+- mt, m = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+
+#conditions:
+- divides(a, k)
+
+#answer: a + a//k + c + m*(a//k)
+"""
+
+answer_annotated = """
+{n2}: {a}/{k}=<<{a}/{k}={a//k}>>{a//k} books
+{n3}: {c}+{m}({a//k})={c+m*(a//k)} books
+Total:{a}+{a//k}+{c+m*(a//k)}=<<{a}+{a//k}+{c+m*(a//k)}={a+a//k+c+m*(a//k)}>>{a+a//k+c+m*(a//k)} books
+#### {a+a//k+c+m*(a//k)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,38 @@
+question = """
+Tim's car goes down in value by $1000 a year.  He bought it for $20,000. How much is it worth after 6 years?
+"""
+
+answer = """
+It went down in value 1000*6=$<<1000*6=6000>>6000
+So the car is worth 20,000-6000=$<<20000-6000=14000>>14,000
+#### 14000
+"""
+
+id_orig = 2461
+id_shuffled = 2834
+
+question_annotated = """
+{name,Tim}'s car goes down in value by ${d,1000} a year.  He bought it for ${p,20},000. How much is it worth after {y,6} years?
+
+#init:
+- name = sample(names_male)
+- $p = range(5, 51)
+- $d = range(100, 5000, 100)
+- $y = range(1, 21)
+
+#conditions:
+- (d*y) % 1000 == 0
+- d*y//1000 < p
+
+#answer: p*1000 - d*y
+"""
+
+answer_annotated = """
+It went down in value {d}*{y}=$<<{d}*{y}={d*y}>>{d*y}
+So the car is worth {p},000-{d*y}=$<<{p*1000}-{d*y}={p*1000-d*y}>>{p - d*y//1000},000
+#### {p*1000-d*y}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,45 @@
+question = """
+Opal won $100.00 betting on a horse race.  She put half of her winnings into savings and bet the other half of her winnings.  This time, she made a 60% profit and again, put half of her earnings into savings.  How much did she put into her savings?
+"""
+
+answer = """
+She won $100.00 and put half into savings so she put 100/2 = $<<100/2=50.00>>50.00 into savings
+She won $100.00 and put $50.00 into savings so that leaves 100-50 = $<<100-50=50.00>>50.00 to bet
+She bet $50.00 and made a 60% profit so her profit was 50*.60 = $30.00
+The total wins in the second bet are 30+50 = $<<30+50=80>>80
+She put half of her $80.00 earnings into savings so that's 80/2 = $<<80/2=40.00>>40.00 into savings
+She put $50.00 into saving from her 1st bet and $40.00 from her second so she has saved 50+40 = $<<50+40=90.00>>90.00
+#### 90
+"""
+
+id_orig = 3697
+id_shuffled = 4367
+
+question_annotated = """
+{name,Opal} won ${w,100}.00 betting on a horse race.  She put half of her winnings into savings and bet the other half of her winnings.  This time, she made a {p,60}% profit and again, put half of her earnings into savings.  How much did she put into her savings?
+
+#init:
+- name = sample(names_female)
+- $w = range(20, 1040, 20)
+- $p = range(5, 100, 5)
+
+#conditions:
+- divides(w//2*p, 100)
+- divides(w//2*p//100 + w//2, 2)
+
+#answer: w//2 + (w//2*p//100 + w//2)//2
+"""
+
+answer_annotated = """
+She won ${w}.00 and put half into savings so she put {w}/2 = $<<{w}/2={w//2}.00>>{w//2}.00 into savings
+She won ${w}.00 and put ${w//2}.00 into savings so that leaves {w}-{w//2} = $<<{w}-{w//2}={w//2}.00>>{w//2}.00 to bet
+She bet ${w//2}.00 and made a {p}% profit so her profit was {w//2}*.{p} = ${w//2*p//100}.00
+The total wins in the second bet are {w//2*p//100}+{w//2} = $<<{w//2*p//100}+{w//2}={w//2*p//100+w//2}>>{w//2*p//100+w//2}
+She put half of her ${w//2*p//100+w//2}.00 earnings into savings so that's {w//2*p//100+w//2}/2 = $<<{w//2*p//100+w//2}/2={(w//2*p//100+w//2)//2}.00>>{(w//2*p//100+w//2)//2}.00 into savings
+She put ${w//2}.00 into saving from her 1st bet and ${(w//2*p//100+w//2)//2}.00 from her second so she has saved {w//2}+{(w//2*p//100+w//2)//2} = $<<{w//2}+{(w//2*p//100+w//2)//2}={w//2+(w//2*p//100+w//2)//2}.00>>{w//2+(w//2*p//100+w//2)//2}.00
+#### {w//2 + (w//2*p//100 + w//2)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

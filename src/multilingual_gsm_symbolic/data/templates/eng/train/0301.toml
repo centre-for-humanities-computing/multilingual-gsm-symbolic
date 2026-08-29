@@ -1,0 +1,47 @@
+question = """
+Sabrina went to the library and found a historical series novel called The Rangers Apprentice. There are 14 books in the series, and each book has 200 pages. She read four books in a month and half the number of books remaining in the second month. What's the total number of pages Sabrina has to read to finish the whole series?
+"""
+
+answer = """
+The total number of pages in the series is 14 books * 200 pages/book = <<14*200=2800>>2800 pages.
+Sabrina read 4 books *200 pages/book = <<4*200=800>>800 pages in the first month.
+She still has 14 books - 4 books = <<14-4=10>>10 books after reading four books.
+In the second month, she read 1/2*10 books = <<1/2*10=5>>5 books.
+The total number of pages she read is 5 books * 200 pages/book = <<5*200=1000>>1000 in the second month.
+In total, Sabrina 1000 pages + 800 pages = <<1000+800=1800>>1800 pages in two months.
+Sabrina has to read 2800 pages - 1800 pages = <<2800-1800=1000>>1000 more pages to complete the total series.
+#### 1000
+"""
+
+id_orig = 276
+id_shuffled = 301
+
+question_annotated = """
+{name,Sabrina} went to the library and found a historical series novel called The Rangers Apprentice. There are {b,14} books in the series, and each book has {p,200} pages. She read {n_txt,four} books in a month and half the number of books remaining in the second month. What's the total number of pages {name,Sabrina} has to read to finish the whole series?
+
+#init:
+- name = sample(names_female)
+- n_txt, n = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $b = range(12, 42, 2)
+- $p = range(50, 300, 10)
+
+#conditions:
+- divides(b - n, 2)
+
+#answer: b*p - ((b-n)//2*p + n*p)
+"""
+
+answer_annotated = """
+The total number of pages in the series is {b} books * {p} pages/book = <<{b}*{p}={b*p}>>{b*p} pages.
+{name} read {n} books *{p} pages/book = <<{n}*{p}={n*p}>>{n*p} pages in the first month.
+She still has {b} books - {n} books = <<{b}-{n}={b-n}>>{b-n} books after reading {n_txt} books.
+In the second month, she read 1/2*{b-n} books = <<1/2*{b-n}={(b-n)//2}>>{(b-n)//2} books.
+The total number of pages she read is {(b-n)//2} books * {p} pages/book = <<{(b-n)//2}*{p}={(b-n)//2*p}>>{(b-n)//2*p} in the second month.
+In total, {name} {(b-n)//2*p} pages + {n*p} pages = <<{(b-n)//2*p}+{n*p}={(b-n)//2*p+n*p}>>{(b-n)//2*p+n*p} pages in two months.
+{name} has to read {b*p} pages - {(b-n)//2*p+n*p} pages = <<{b*p}-{(b-n)//2*p+n*p}={b*p-((b-n)//2*p+n*p)}>>{b*p-((b-n)//2*p+n*p)} more pages to complete the total series.
+#### {b*p-((b-n)//2*p+n*p)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+Bruce buys 5 packs of crayons at $5 each, 10 books at $5 each, and 3 calculators at $5 each. If he has $200, how many bags can he buy with the change if one costs $10 each?
+"""
+
+answer = """
+He pays 5*5=$<<5*5=25>>25 for buying crayons.
+He pays 10*5=$<<10*5=50>>50 for buying books.
+He pays 3*5=$<<3*5=15>>15 for buying calculators.
+The change he has for buying bags is 200-25-50-15=$<<200-25-50-15=110>>110.
+The number of bags he can buy is 110/10=<<110/10=11>>11 bags.
+#### 11
+"""
+
+id_orig = 2123
+id_shuffled = 2452
+
+question_annotated = """
+{name,Bruce} buys {c1,5} packs of crayons at ${p,5} each, {c2,10} books at ${p,5} each, and {c3,3} calculators at ${p,5} each. If he has ${total,200}, how many bags can he buy with the change if one costs ${pbag,10} each?
+
+#init:
+- name = sample(names_male)
+- $c1 = range(2, 11)
+- $c2 = range(2, 12)
+- $c3 = range(2, 11)
+- $p = range(2, 12)
+- $total = range(40, 220, 20)
+- $pbag = range(2, 22, 2)
+
+#conditions:
+- total - c1*p - c2*p - c3*p > 0
+- divides(total - c1*p - c2*p - c3*p, pbag)
+
+#answer: (total - c1*p - c2*p - c3*p)//pbag
+"""
+
+answer_annotated = """
+He pays {c1}*{p}=$<<{c1}*{p}={c1*p}>>{c1*p} for buying crayons.
+He pays {c2}*{p}=$<<{c2}*{p}={c2*p}>>{c2*p} for buying books.
+He pays {c3}*{p}=$<<{c3}*{p}={c3*p}>>{c3*p} for buying calculators.
+The change he has for buying bags is {total}-{c1*p}-{c2*p}-{c3*p}=$<<{total}-{c1*p}-{c2*p}-{c3*p}={total-c1*p-c2*p-c3*p}>>{total-c1*p-c2*p-c3*p}.
+The number of bags he can buy is {total-c1*p-c2*p-c3*p}/{pbag}=<<{total-c1*p-c2*p-c3*p}/{pbag}={(total-c1*p-c2*p-c3*p)//pbag}>>{(total-c1*p-c2*p-c3*p)//pbag} bags.
+#### {(total-c1*p-c2*p-c3*p)//pbag}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

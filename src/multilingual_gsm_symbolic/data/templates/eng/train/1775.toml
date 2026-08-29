@@ -1,0 +1,44 @@
+question = """
+Edna made cookies for all of her neighbors and left the cookies outside for them to take. She made 150 cookies so her 15 neighbors could get 10 cookies each. However, the neighbor who arrived last told Edna there were only 8 cookies left. Edna thinks it was Sarah who took too many cookies. If all the other neighbors took the correct amount of cookies, how many cookies did Sarah take?
+"""
+
+answer = """
+Sarah and the final neighbor took the wrong amount, which means that 15 neighbors – 1 Sarah – 1 final neighbor = 13 neighbors took 10 cookies each.
+This is a total of 13 neighbors * 10 cookies = <<13*10=130>>130 cookies taken by the first 13 neighbors.
+There were only 8 cookies left, so that means the first 13 neighbors and Sarah took a total of 150 – 8 = 142 cookies.
+So Sarah must have taken 142 – 130 = <<142-130=12>>12 cookies.
+#### 12
+"""
+
+id_orig = 1650
+id_shuffled = 1775
+
+question_annotated = """
+{name,Edna} made cookies for all of her neighbors and left the cookies outside for them to take. She made {t,150} cookies so her {n,15} neighbors could get {e,10} cookies each. However, the neighbor who arrived last told {name,Edna} there were only {l,8} cookies left. {name,Edna} thinks it was {thief,Sarah} who took too many cookies. If all the other neighbors took the correct amount of cookies, how many cookies did {thief,Sarah} take?
+
+#init:
+- name = sample(["Edna", "Emma", "Claire"])
+- thief = sample(["Sarah", "Ellen", "Isabella"])
+- $t = range(100, 400)
+- $n = range(5, 30)
+- $e = range(2, 20)
+- $l = range(0, 20)
+
+#conditions:
+- t == n * e
+- l < e
+
+#answer: t - l - (n - 2) * e
+"""
+
+answer_annotated = """
+{thief} and the final neighbor took the wrong amount, which means that {n} neighbors – 1 {thief} – 1 final neighbor = {n-2} neighbors took {e} cookies each.
+This is a total of {n-2} neighbors * {e} cookies = <<{n-2}*{e}={(n-2)*e}>>{(n-2)*e} cookies taken by the first {n-2} neighbors.
+There were only {l} cookies left, so that means the first {n-2} neighbors and {thief} took a total of {t} – {l} = {t-l} cookies.
+So {thief} must have taken {t-l} – {(n-2)*e} = <<{t-l}-{(n-2)*e}={t-l-(n-2)*e}>>{t-l-(n-2)*e} cookies.
+#### {t - l - (n-2)*e}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

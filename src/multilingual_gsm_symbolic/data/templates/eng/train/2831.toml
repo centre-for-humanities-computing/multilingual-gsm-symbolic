@@ -1,0 +1,41 @@
+question = """
+Robert, a sales agent, earns a basic salary of $1250 per month and,  10% commission on his monthly sales. Last month, his total sales were $23,600. He allocated 20% of his total earnings to savings and the rest of the money to his monthly expenses. How much were his monthly expenses last month?
+"""
+
+answer = """
+Robert earned a commission of $23,600 x 10/100 = $<<23600*10/100=2360>>2360.
+So, he earned a total of $1250 + $2360 = $<<1250+2360=3610>>3610.
+And, he saved $3610 x 20/100 = $<<3610*20/100=722>>722.
+Therefore, his total expenses last month was $3610 - $722= $<<3610-722=2888>>2888
+#### 2888
+"""
+
+id_orig = 2458
+id_shuffled = 2831
+
+question_annotated = """
+{name,Robert}, a sales agent, earns a basic salary of ${sal,1250} per month and,  {rate,10}% commission on his monthly sales. Last month, his total sales were $23,600. He allocated {sav,20}% of his total earnings to savings and the rest of the money to his monthly expenses. How much were his monthly expenses last month?
+
+#init:
+- name = sample(names_male)
+- $sal = range(900, 3000, 10)
+- $rate = range(2, 21)
+- $sav = range(5, 51, 5)
+
+#conditions:
+- divides((sal + 23600*rate//100) * sav, 100)
+
+#answer: sal + 23600*rate//100 - (sal + 23600*rate//100)*sav//100
+"""
+
+answer_annotated = """
+{name} earned a commission of $23,600 x {rate}/100 = $<<23600*{rate}/100={23600*rate//100}>>{23600*rate//100}.
+So, he earned a total of ${sal} + ${23600*rate//100} = $<<{sal}+{23600*rate//100}={sal+23600*rate//100}>>{sal+23600*rate//100}.
+And, he saved ${sal+23600*rate//100} x {sav}/100 = $<<{sal+23600*rate//100}*{sav}/100={(sal+23600*rate//100)*sav//100}>>{(sal+23600*rate//100)*sav//100}.
+Therefore, his total expenses last month was ${sal+23600*rate//100} - ${(sal+23600*rate//100)*sav//100}= $<<{sal+23600*rate//100}-{(sal+23600*rate//100)*sav//100}={sal+23600*rate//100-(sal+23600*rate//100)*sav//100}>>{sal+23600*rate//100-(sal+23600*rate//100)*sav//100}
+#### {sal+23600*rate//100-(sal+23600*rate//100)*sav//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

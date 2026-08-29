@@ -1,0 +1,41 @@
+question = """
+In a compound, the number of cats is 20% less than the number of dogs. There are also twice as many frogs as the number of dogs in the compound. Calculate the total number of animals present in the compound if there are 160 frogs.
+"""
+
+answer = """
+There are twice as many frogs as dogs in the compound, meaning there are 160/2 = <<160/2=80>>80 dogs.
+The total number of frogs and dogs in the compound is 80+160 = <<80+160=240>>240
+The number of cats is less than 20% of the number of dogs, which means there are 20/100*80 = <<20/100*80=16>>16 dogs more than the number of cats.
+Therefore, the number of cats is 80-16 = <<80-16=64>>64 cats
+The total number of animals in the compound is 64 cats +240 dogs and frogs = <<64+240=304>>304 animals.
+#### 304
+"""
+
+id_orig = 909
+id_shuffled = 1005
+
+question_annotated = """
+In a compound, the number of cats is {pct,20}% less than the number of dogs. There are also twice as many frogs as the number of dogs in the compound. Calculate the total number of animals present in the compound if there are {frogs,160} frogs.
+
+#init:
+- $pct = range(5, 100, 5)
+- $frogs = range(20, 2020, 20)
+
+#conditions:
+- divides(pct * (frogs//2), 100)
+
+#answer: frogs//2 - pct*frogs//200 + frogs//2 + frogs
+"""
+
+answer_annotated = """
+There are twice as many frogs as dogs in the compound, meaning there are {frogs}/2 = <<{frogs}/2={frogs//2}>>{frogs//2} dogs.
+The total number of frogs and dogs in the compound is {frogs//2}+{frogs} = <<{frogs//2}+{frogs}={frogs//2+frogs}>>{frogs//2+frogs}
+The number of cats is less than {pct}% of the number of dogs, which means there are {pct}/100*{frogs//2} = <<{pct}/100*{frogs//2}={pct*frogs//200}>>{pct*frogs//200} dogs more than the number of cats.
+Therefore, the number of cats is {frogs//2}-{pct*frogs//200} = <<{frogs//2}-{pct*frogs//200}={frogs//2-pct*frogs//200}>>{frogs//2-pct*frogs//200} cats
+The total number of animals in the compound is {frogs//2-pct*frogs//200} cats +{frogs//2+frogs} dogs and frogs = <<{frogs//2-pct*frogs//200}+{frogs//2+frogs}={frogs//2-pct*frogs//200+frogs//2+frogs}>>{frogs//2-pct*frogs//200+frogs//2+frogs} animals.
+#### {frogs//2 - pct*frogs//200 + frogs//2 + frogs}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

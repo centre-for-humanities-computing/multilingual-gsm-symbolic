@@ -1,0 +1,48 @@
+question = """
+Tricia ordered three dozen eggs. She will use 1/4 of them for making crepes, and 2/3 of the remaining for making cupcakes. How many eggs are left to make sunny-side-up eggs for breakfast?
+"""
+
+answer = """
+Since a dozen is equal to 12, then 3 dozen eggs are equal to 12 x 3 = <<3*12=36>>36 eggs.
+Tricia will use 36 x 1/4 = <<36*1/4=9>>9 eggs for making crepes.
+So there are 36 - 9 = <<36-9=27>>27 eggs left.
+27 x 2/3 = <<27*2/3=18>>18 eggs will be used for making cupcakes.
+Thus, there are only 27 - 18 = <<27-18=9>>9 eggs left to make sunny-side-up eggs for breakfast.
+#### 9
+"""
+
+id_orig = 3473
+id_shuffled = 4120
+
+question_annotated = """
+{name,Tricia} ordered three dozen eggs. She will use {p,1}/{q,4} of them for making crepes, and {r,2}/{s,3} of the remaining for making cupcakes. How many eggs are left to make sunny-side-up eggs for breakfast?
+
+#init:
+- name = sample(names_female)
+- $p = range(1, 7)
+- $q = range(2, 13)
+- $r = range(1, 7)
+- $s = range(2, 13)
+
+#conditions:
+- p < q
+- r < s
+- divides(36*p, q)
+- divides((36 - 36*p//q)*r, s)
+- 36 - 36*p//q - (36 - 36*p//q)*r//s > 0
+
+#answer: 36 - 36*p//q - (36 - 36*p//q)*r//s
+"""
+
+answer_annotated = """
+Since a dozen is equal to 12, then 3 dozen eggs are equal to 12 x 3 = <<3*12=36>>36 eggs.
+{name} will use 36 x {p}/{q} = <<36*{p}/{q}={36*p//q}>>{36*p//q} eggs for making crepes.
+So there are 36 - {36*p//q} = <<36-{36*p//q}={36-36*p//q}>>{36-36*p//q} eggs left.
+{36-36*p//q} x {r}/{s} = <<{36-36*p//q}*{r}/{s}={(36-36*p//q)*r//s}>>{(36-36*p//q)*r//s} eggs will be used for making cupcakes.
+Thus, there are only {36-36*p//q} - {(36-36*p//q)*r//s} = <<{36-36*p//q}-{(36-36*p//q)*r//s}={36-36*p//q-(36-36*p//q)*r//s}>>{36-36*p//q-(36-36*p//q)*r//s} eggs left to make sunny-side-up eggs for breakfast.
+#### {36 - 36*p//q - (36 - 36*p//q)*r//s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

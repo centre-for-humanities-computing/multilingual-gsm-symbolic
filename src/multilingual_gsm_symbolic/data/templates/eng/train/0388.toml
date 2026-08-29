@@ -1,0 +1,46 @@
+question = """
+Eve wants to buy her 3 nieces cooking gear that's made for kids.  The hand mitts cost $14.00 and the apron is $16.00.  A set of 3 cooking utensils is $10.00 and a small knife is twice the amount of the utensils.  The store is offering a 25% off sale on all cooking gear.  How much will Eve spend on the gifts?
+"""
+
+answer = """
+A small knife is twice the amount of the utensils that costs $10.00 so the knife costs 2*10 = $<<2*10=20.00>>20.00
+All total, each little kit will costs $14.00 for mitts, $16.00 for an apron, $10.00 for utensils and $20.00 for a knife for a total of 14+16+10+20 = $<<14+16+10+20=60.00>>60.00
+Each kit costs $60.00 and they are currently 25% off so that's a savings of 60*.25 = $<<60*.25=15.00>>15.00
+The kits are $60.00 and they are $15.00 off so they now cost 60-15 = $<<60-15=45.00>>45.00
+She needs to buy 3 kits and each kit costs $45.00 so that's 3*45 = $<<3*45=135.00>>135.00
+#### 135
+"""
+
+id_orig = 335
+id_shuffled = 388
+
+question_annotated = """
+{name,Eve} wants to buy her {n,3} nieces cooking gear that's made for kids.  The hand mitts cost ${m,14}.00 and the apron is ${ap,16}.00.  A set of {k,3} cooking utensils is ${u,10}.00 and a small knife is twice the amount of the utensils.  The store is offering a {d,25}% off sale on all cooking gear.  How much will {name,Eve} spend on the gifts?
+
+#init:
+- name = sample(["Eve", "Sophie", "Emma", "Laura", "Anna"])
+- $n = range(2, 7)
+- $m = range(6, 28, 2)
+- $ap = range(6, 34, 2)
+- $k = range(2, 6)
+- $u = range(4, 24, 2)
+- $d = range(5, 55, 5)
+
+#conditions:
+- divides((m + ap + 3*u) * d, 100)
+
+#answer: n*(m+ap+3*u - (m+ap+3*u)*d//100)
+"""
+
+answer_annotated = """
+A small knife is twice the amount of the utensils that costs ${u}.00 so the knife costs 2*{u} = $<<2*{u}={2*u}.00>>{2*u}.00
+All total, each little kit will costs ${m}.00 for mitts, ${ap}.00 for an apron, ${u}.00 for utensils and ${2*u}.00 for a knife for a total of {m}+{ap}+{u}+{2*u} = $<<{m}+{ap}+{u}+{2*u}={m+ap+u+2*u}.00>>{m+ap+u+2*u}.00
+Each kit costs ${m+ap+u+2*u}.00 and they are currently {d}% off so that's a savings of {m+ap+u+2*u}*.{d} = $<<{m+ap+u+2*u}*.{d}={(m+ap+u+2*u)*d//100}.00>>{(m+ap+u+2*u)*d//100}.00
+The kits are ${m+ap+u+2*u}.00 and they are ${(m+ap+u+2*u)*d//100}.00 off so they now cost {m+ap+u+2*u}-{(m+ap+u+2*u)*d//100} = $<<{m+ap+u+2*u}-{(m+ap+u+2*u)*d//100}={m+ap+u+2*u-(m+ap+u+2*u)*d//100}.00>>{m+ap+u+2*u-(m+ap+u+2*u)*d//100}.00
+She needs to buy {n} kits and each kit costs ${m+ap+u+2*u-(m+ap+u+2*u)*d//100}.00 so that's {n}*{m+ap+u+2*u-(m+ap+u+2*u)*d//100} = $<<{n}*{m+ap+u+2*u-(m+ap+u+2*u)*d//100}={n*(m+ap+u+2*u-(m+ap+u+2*u)*d//100)}.00>>{n*(m+ap+u+2*u-(m+ap+u+2*u)*d//100)}.00
+#### {n*(m+ap+u+2*u-(m+ap+u+2*u)*d//100)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

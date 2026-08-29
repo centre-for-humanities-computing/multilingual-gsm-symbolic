@@ -1,0 +1,47 @@
+question = """
+A plumber is trying to decide which of three different jobs he should take to make the most money.  The first job involves fixing three toilets and three sinks at an apartment complex.  The second involves two toilets and five sinks at a different apartment complex.  The third involves fixing one toilet, two showers and three sinks at a third apartment complex.  If the plumber charges $30 to fix a sink, $40 to fix a shower and $50 to fix a toilet, what is the most money the plumber can earn if he can only choose one of these three jobs?
+"""
+
+answer = """
+If the plumber chooses the first job, he would earn 3*50 + 3*30 = $<<3*50+3*30=240>>240.
+If he chooses the second, he'd earn 2*50 + 5*30 = $<<2*50+5*30=250>>250.
+If he chooses the third, he'd earn 50 + 2*40 + 3*30 = $<<50+2*40+3*30=220>>220.
+Therefore, the most money he can earn from one of these jobs is $<<250=250>>250.
+#### 250
+"""
+
+id_orig = 774
+id_shuffled = 847
+
+question_annotated = """
+A plumber is trying to decide which of three different jobs he should take to make the most money.  The first job involves fixing {t1_txt,three} toilets and {s1_txt,three} sinks at an apartment complex.  The second involves {t2_txt,two} toilets and {s2_txt,five} sinks at a different apartment complex.  The third involves fixing one toilet, {h_txt,two} showers and {s3_txt,three} sinks at a third apartment complex.  If the plumber charges ${p_s,30} to fix a sink, ${p_sh,40} to fix a shower and ${p_t,50} to fix a toilet, what is the most money the plumber can earn if he can only choose one of these three jobs?
+
+#init:
+- t1_txt, t1 = sample([("two", 2), ("three", 3), ("four", 4)])
+- s1_txt, s1 = sample([("two", 2), ("three", 3), ("four", 4)])
+- t2_txt, t2 = sample([("two", 2), ("three", 3), ("four", 4)])
+- s2_txt, s2 = sample([("four", 4), ("five", 5), ("six", 6)])
+- h_txt, h = sample([("two", 2), ("three", 3), ("four", 4)])
+- s3_txt, s3 = sample([("two", 2), ("three", 3), ("four", 4)])
+- $p_s = range(20, 41, 10)
+- $p_sh = range(20, 41, 10)
+- $p_t = range(30, 61, 10)
+
+#conditions:
+- t1*p_t + s1*p_s < t2*p_t + s2*p_s
+- p_t + h*p_sh + s3*p_s < t2*p_t + s2*p_s
+
+#answer: t2*p_t + s2*p_s
+"""
+
+answer_annotated = """
+If the plumber chooses the first job, he would earn {t1}*{p_t} + {s1}*{p_s} = $<<{t1}*{p_t}+{s1}*{p_s}={t1*p_t+s1*p_s}>>{t1*p_t+s1*p_s}.
+If he chooses the second, he'd earn {t2}*{p_t} + {s2}*{p_s} = $<<{t2}*{p_t}+{s2}*{p_s}={t2*p_t+s2*p_s}>>{t2*p_t+s2*p_s}.
+If he chooses the third, he'd earn {p_t} + {h}*{p_sh} + {s3}*{p_s} = $<<{p_t}+{h}*{p_sh}+{s3}*{p_s}={p_t+h*p_sh+s3*p_s}>>{p_t+h*p_sh+s3*p_s}.
+Therefore, the most money he can earn from one of these jobs is $<<{t2*p_t+s2*p_s}={t2*p_t+s2*p_s}>>{t2*p_t+s2*p_s}.
+#### {t2*p_t+s2*p_s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

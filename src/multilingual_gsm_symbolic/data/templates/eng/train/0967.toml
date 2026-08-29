@@ -1,0 +1,40 @@
+question = """
+In 2021, Wayne is 37 years old.  His brother Peter is 3 years older than him and their sister Julia is 2 years older than Peter.  What year was Julia born in?
+"""
+
+answer = """
+Peter is 3 years older than Wayne who is 37 so Peter is 37+3 = <<37+3=40>>40 years old
+Julia is 2 years older than Peter who is 40 so Julia is 2+40 = <<2+40=42>>42 years old
+It's 2021 and Julia is 42 years old so she was born in 2021-42 = <<2021-42=1979>>1979
+#### 1979
+"""
+
+id_orig = 871
+id_shuffled = 967
+
+question_annotated = """
+In {year,2021}, {name,Wayne} is {age,37} years old.  His brother Peter is {d1,3} years older than him and their sister Julia is {d2,2} years older than Peter.  What year was Julia born in?
+
+#init:
+- name = sample(names_male)
+- $year = range(2000, 2100)
+- $age = range(20, 60)
+- $d1 = range(1, 4)
+- $d2 = range(1, 4)
+
+#conditions:
+- year > age + d1 + d2
+
+#answer: year - (age + d1 + d2)
+"""
+
+answer_annotated = """
+Peter is {d1} years older than {name} who is {age} so Peter is {age}+{d1} = <<{age}+{d1}={age+d1}>>{age+d1} years old
+Julia is {d2} years older than Peter who is {age+d1} so Julia is {d2}+{age+d1} = <<{d2}+{age+d1}={d2+age+d1}>>{d2+age+d1} years old
+It's {year} and Julia is {d2+age+d1} years old so she was born in {year}-{d2+age+d1} = <<{year}-{d2+age+d1}={year-(d2+age+d1)}>>{year-(d2+age+d1)}
+#### {year-(age+d1+d2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

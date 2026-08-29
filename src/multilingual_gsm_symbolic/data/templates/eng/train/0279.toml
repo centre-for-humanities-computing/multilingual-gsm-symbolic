@@ -1,0 +1,43 @@
+question = """
+Nate got lost looking for his car in the airport parking lot. He had to walk through every row in Section G and Section H to find it. Section G has 15 rows that each hold 10 cars. Section H has 20 rows that each hold 9 cars. If Nate can walk past 11 cars per minute, how many minutes did he spend searching the parking lot?
+"""
+
+answer = """
+First find the number of cars in Section G by multiplying the number of rows by the number of cars per row: 15 rows * 10 cars/row = <<15*10=150>>150 cars
+Then do the same thing for Section H: 20 rows * 9 cars/row = <<20*9=180>>180 cars
+Then add the two quantities of cars to find the total number of cars Nate walked past: 150 cars + 180 cars = <<150+180=330>>330 cars
+Finally, divide the number of cars Nate passed by the numbers he passes each minute to find how long he spent searching: 330 cars / 11 cars/minute = <<330/11=30>>30 minutes
+#### 30
+"""
+
+id_orig = 254
+id_shuffled = 279
+
+question_annotated = """
+{name,Nate} got lost looking for his car in the airport parking lot. He had to walk through every row in Section G and Section H to find it. Section G has {g_rows,15} rows that each hold {g_cars,10} cars. Section H has {h_rows,20} rows that each hold {h_cars,9} cars. If {name,Nate} can walk past {speed,11} cars per minute, how many minutes did he spend searching the parking lot?
+
+#init:
+- name = sample(names_male)
+- $g_rows = range(3, 23)
+- $g_cars = range(4, 12)
+- $h_rows = range(3, 33)
+- $h_cars = range(4, 12)
+- $speed = range(5, 15)
+
+#conditions:
+- divides(g_rows*g_cars + h_rows*h_cars, speed)
+
+#answer: (g_rows*g_cars + h_rows*h_cars)//speed
+"""
+
+answer_annotated = """
+First find the number of cars in Section G by multiplying the number of rows by the number of cars per row: {g_rows} rows * {g_cars} cars/row = <<{g_rows}*{g_cars}={g_rows*g_cars}>>{g_rows*g_cars} cars
+Then do the same thing for Section H: {h_rows} rows * {h_cars} cars/row = <<{h_rows}*{h_cars}={h_rows*h_cars}>>{h_rows*h_cars} cars
+Then add the two quantities of cars to find the total number of cars {name} walked past: {g_rows*g_cars} cars + {h_rows*h_cars} cars = <<{g_rows*g_cars}+{h_rows*h_cars}={g_rows*g_cars+h_rows*h_cars}>>{g_rows*g_cars+h_rows*h_cars} cars
+Finally, divide the number of cars {name} passed by the numbers he passes each minute to find how long he spent searching: {g_rows*g_cars+h_rows*h_cars} cars / {speed} cars/minute = <<{g_rows*g_cars+h_rows*h_cars}/{speed}={(g_rows*g_cars+h_rows*h_cars)//speed}>>{(g_rows*g_cars+h_rows*h_cars)//speed} minutes
+#### {(g_rows*g_cars+h_rows*h_cars)//speed}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

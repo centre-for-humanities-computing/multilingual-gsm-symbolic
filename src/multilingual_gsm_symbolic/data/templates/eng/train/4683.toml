@@ -1,0 +1,48 @@
+question = """
+Janet lives in a city built on a grid system.  She walks 3 blocks north, then seven times as many blocks west. Then she turns around and walks 8 blocks south and twice as many blocks east in the direction of her home. If Janet can walk 2 blocks/minute, how long will it take her to get home?
+"""
+
+answer = """
+First, find the total number of blocks south Janet is from her starting point by subtracting the blocks she walked north from the blocks she walked south: 8 blocks - 3 blocks = <<8-3=5>>5 blocks
+Then find the number blocks she walked west: 3 blocks * 7 = <<3*7=21>>21 blocks
+Then find the number of blocks she walked east: 8 blocks * 2 = <<8*2=16>>16 blocks
+Subtract the number of blocks she walked east from the number of blocks she walked west to find how many blocks west of her starting point she is: 21 blocks - 16 blocks = <<21-16=5>>5 blocks
+Add the number of blocks she needs to walk north to the number of blocks she needs to walk east: 5 blocks + 5 blocks = <<5+5=10>>10 blocks
+Finally, divide the distance she needs to walk by her speed to find how long she'll spend walking: 10 blocks / 2 blocks/minute = <<10/2=5>>5 minutes
+#### 5
+"""
+
+id_orig = 3961
+id_shuffled = 4683
+
+question_annotated = """
+{name,Janet} lives in a city built on a grid system.  She walks {n,3} blocks north, then {mult_txt,seven times} as many blocks west. Then she turns around and walks {s,8} blocks south and twice as many blocks east in the direction of her home. If {name,Janet} can walk {v,2} blocks/minute, how long will it take her to get home?
+
+#init:
+- name = sample(names_female)
+- mult_txt, mult_val = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5), ("six times", 6), ("seven times", 7), ("eight times", 8), ("nine times", 9), ("ten times", 10)])
+- $n = range(2, 20)
+- $s = range(3, 30)
+- $v = range(1, 6)
+
+#conditions:
+- s > n
+- n * mult_val > 2 * s
+- divides(s - n + n * mult_val - 2 * s, v)
+
+#answer: (s - n + n * mult_val - 2 * s) // v
+"""
+
+answer_annotated = """
+First, find the total number of blocks south {name} is from her starting point by subtracting the blocks she walked north from the blocks she walked south: {s} blocks - {n} blocks = <<{s}-{n}={s-n}>>{s-n} blocks
+Then find the number blocks she walked west: {n} blocks * {mult_val} = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} blocks
+Then find the number of blocks she walked east: {s} blocks * 2 = <<{s}*2={2*s}>>{2*s} blocks
+Subtract the number of blocks she walked east from the number of blocks she walked west to find how many blocks west of her starting point she is: {n*mult_val} blocks - {2*s} blocks = <<{n*mult_val}-{2*s}={n*mult_val-2*s}>>{n*mult_val-2*s} blocks
+Add the number of blocks she needs to walk north to the number of blocks she needs to walk east: {s-n} blocks + {n*mult_val-2*s} blocks = <<{s-n}+{n*mult_val-2*s}={s-n+n*mult_val-2*s}>>{s-n+n*mult_val-2*s} blocks
+Finally, divide the distance she needs to walk by her speed to find how long she'll spend walking: {s-n+n*mult_val-2*s} blocks / {v} blocks/minute = <<{s-n+n*mult_val-2*s}/{v}={(s-n+n*mult_val-2*s)//v}>>{(s-n+n*mult_val-2*s)//v} minutes
+#### {(s-n+n*mult_val-2*s)//v}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

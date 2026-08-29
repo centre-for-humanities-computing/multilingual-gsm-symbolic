@@ -1,0 +1,42 @@
+question = """
+Beth is looking at her book collection and is wondering how many comic books she owns. She has 120 books and 65% are novels. 18 are graphic novels. The rest are comic books. What percentage of comic books does she own?
+"""
+
+answer = """
+The proportion of graphic novels is .15 because 18 / 120 = <<18/120=.15>>.15
+The percentage of graphic novels is 15 because 100 x .15 = <<100*.15=15>>15
+The percentage of comic books is 20 because 100 - 65 - 15 = <<100-65-15=20>>20
+#### 20
+"""
+
+id_orig = 2987
+id_shuffled = 3561
+
+question_annotated = """
+{name,Beth} is looking at her book collection and is wondering how many comic books she owns. She has {t,120} books and {p,65}% are novels. {g,18} are graphic novels. The rest are comic books. What percentage of comic books does she own?
+
+#init:
+- name = sample(names_female)
+- $t = range(40, 220, 20)
+- $p = range(5, 95, 5)
+- $g = range(4, 62, 2)
+
+#conditions:
+- divides(100*g, t)
+- 100*g >= 10*t
+- 100*g <= 99*t
+- p*t + 100*g < 100*t
+
+#answer: 100 - p - 100*g//t
+"""
+
+answer_annotated = """
+The proportion of graphic novels is .{100*g//t} because {g} / {t} = <<{g}/{t}=.{100*g//t}>>.{100*g//t}
+The percentage of graphic novels is {100*g//t} because 100 x .{100*g//t} = <<100*.{100*g//t}={100*g//t}>>{100*g//t}
+The percentage of comic books is {100-p-100*g//t} because 100 - {p} - {100*g//t} = <<100-{p}-{100*g//t}={100-p-100*g//t}>>{100-p-100*g//t}
+#### {100-p-100*g//t}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

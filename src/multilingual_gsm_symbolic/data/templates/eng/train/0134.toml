@@ -1,0 +1,40 @@
+question = """
+Joy can read 8 pages of a book in 20 minutes. How many hours will it take her to read 120 pages?
+"""
+
+answer = """
+In one hour, there are 3 sets of 20 minutes.
+So, Joy can read 8 x 3 = <<8*3=24>>24 pages in an hour.
+It will take her 120/24 = <<120/24=5>>5 hours to read 120 pages.
+#### 5
+"""
+
+id_orig = 14
+id_shuffled = 134
+
+question_annotated = """
+{name,Joy} can read {r,8} pages of a book in {m,20} minutes. How many hours will it take her to read {t,120} pages?
+
+#init:
+- name = sample(names_female)
+- $r = range(2, 50)
+- $m = range(5, 61, 5)
+- $t = range(50, 550, 10)
+
+#conditions:
+- divides(60, m)
+- divides(t, r * (60 // m))
+
+#answer: t // (r * (60 // m))
+"""
+
+answer_annotated = """
+In one hour, there are {60//m} sets of {m} minutes.
+So, {name} can read {r} x {60//m} = <<{r}*{60//m}={r*(60//m)}>>{r*(60//m)} pages in an hour.
+It will take her {t}/{r*(60//m)} = <<{t}/{r*(60//m)}={t//(r*(60//m))}>>{t//(r*(60//m))} hours to read {t} pages.
+#### {t // (r * (60 // m))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

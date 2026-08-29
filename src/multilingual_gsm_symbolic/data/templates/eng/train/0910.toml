@@ -1,0 +1,38 @@
+question = """
+Every Sunday, Sean picks up 1 almond croissant and 1 salami and cheese croissant that are $4.50 each.  He also grabs a plain croissant for $3.00 and a loaf of focaccia for $4.00.  On his way home he stops and picks up 2 lattes for $2.50 each.  How much did he spend?
+"""
+
+answer = """
+The almond croissant and the salami and cheese croissant are $4.50 each so that's 2*4.50 = $9.00
+He buys 2 lattes that are $2.50 each so that's 2*2.50 = $<<2*2.50=5.00>>5.00
+The flavored croissants are $9.00, the lattes are $5.00 and he also grabbed a plain croissant for $3.00 and focaccia for $4.00 for a total of 9+5+3+4 = $<<9+5+3+4=21.00>>21.00
+#### 21
+"""
+
+id_orig = 814
+id_shuffled = 910
+
+question_annotated = """
+Every Sunday, {name,Sean} picks up 1 almond croissant and 1 salami and cheese croissant that are ${pf,4}.50 each.  He also grabs a plain croissant for ${pp,3}.00 and a loaf of focaccia for ${pb,4}.00.  On his way home he stops and picks up {nl,2} lattes for ${pl,2}.50 each.  How much did he spend?
+
+#init:
+- name = sample(names_male)
+- $pf = range(2, 12)
+- $pp = range(1, 8)
+- $pb = range(2, 10)
+- $pl = range(1, 6)
+- $nl = range(2, 13, 2)
+
+#answer: 2*pf+1+nl*(2*pl+1)//2+pp+pb
+"""
+
+answer_annotated = """
+The almond croissant and the salami and cheese croissant are ${pf}.50 each so that's 2*{pf}.50 = ${2*pf+1}.00
+He buys {nl} lattes that are ${pl}.50 each so that's {nl}*{pl}.50 = $<<{nl}*{pl}.50={nl*(2*pl+1)//2}.00>>{nl*(2*pl+1)//2}.00
+The flavored croissants are ${2*pf+1}.00, the lattes are ${nl*(2*pl+1)//2}.00 and he also grabbed a plain croissant for ${pp}.00 and focaccia for ${pb}.00 for a total of {2*pf+1}+{nl*(2*pl+1)//2}+{pp}+{pb} = $<<{2*pf+1}+{nl*(2*pl+1)//2}+{pp}+{pb}={2*pf+1+nl*(2*pl+1)//2+pp+pb}.00>>{2*pf+1+nl*(2*pl+1)//2+pp+pb}.00
+#### {2*pf+1+nl*(2*pl+1)//2+pp+pb}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,48 @@
+question = """
+Mitch made 20 macarons. Joshua made 6 more macarons than Mitch but half as many macarons as Miles. Renz made 1 fewer than 3/4 as many macarons as Miles. If they will combine their macarons to give them to the kids on the street, how many kids would receive 2 macarons each?
+"""
+
+answer = """
+Joshua made 20 + 6 = <<20+6=26>>26 macarons.
+Miles made 26 x 2 = <<26*2=52>>52 macarons.
+Three-fourths of Miles' macarons is 52 x 3/4 = <<52*3/4=39>>39.
+So Renz made 39 - 1 = <<39-1=38>>38 macarons.
+The four of them have a total of 20 + 26 + 52 + 38 = <<20+26+52+38=136>>136 macarons combined.
+Thus, 136/2 = <<136/2=68>>68 kids would receive 2 macarons each.
+#### 68
+"""
+
+id_orig = 2255
+id_shuffled = 2593
+
+question_annotated = """
+{n1,Mitch} made {m,20} macarons. {n2,Joshua} made {j,6} more macarons than {n1,Mitch} but half as many macarons as {n3,Miles}. {n4,Renz} made 1 fewer than 3/4 as many macarons as {n3,Miles}. If they will combine their macarons to give them to the kids on the street, how many kids would receive 2 macarons each?
+
+#init:
+- n1 = sample(names_male)
+- n2 = sample(names_male)
+- n3 = sample(names_male)
+- n4 = sample(names_male)
+- $m = range(10, 110)
+- $j = range(2, 22)
+
+#conditions:
+- divides((m+j)*2*3, 4)
+- divides(m+(m+j)+(m+j)*2+(m+j)*2*3//4-1, 2)
+
+#answer: m+(m+j)+(m+j)*2+(m+j)*2*3//4-1
+"""
+
+answer_annotated = """
+{n2} made {m} + {j} = <<{m}+{j}={m+j}>>{m+j} macarons.
+{n3} made {m+j} x 2 = <<{m+j}*2={(m+j)*2}>>{(m+j)*2} macarons.
+Three-fourths of {n3}' macarons is {(m+j)*2} x 3/4 = <<{(m+j)*2}*3/4={(m+j)*2*3//4}>>{(m+j)*2*3//4}.
+So {n4} made {(m+j)*2*3//4} - 1 = <<{(m+j)*2*3//4}-1={(m+j)*2*3//4-1}>>{(m+j)*2*3//4-1} macarons.
+The four of them have a total of {m} + {m+j} + {(m+j)*2} + {(m+j)*2*3//4-1} = <<{m}+{m+j}+{(m+j)*2}+{(m+j)*2*3//4-1}={m+(m+j)+(m+j)*2+(m+j)*2*3//4-1}>>{m+(m+j)+(m+j)*2+(m+j)*2*3//4-1} macarons combined.
+Thus, {m+(m+j)+(m+j)*2+(m+j)*2*3//4-1}/2 = <<{m+(m+j)+(m+j)*2+(m+j)*2*3//4-1}/2={(m+(m+j)+(m+j)*2+(m+j)*2*3//4-1)//2}>>{(m+(m+j)+(m+j)*2+(m+j)*2*3//4-1)//2} kids would receive 2 macarons each.
+#### {(m+(m+j)+(m+j)*2+(m+j)*2*3//4-1)//2}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

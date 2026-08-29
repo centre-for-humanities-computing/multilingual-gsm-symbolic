@@ -1,0 +1,39 @@
+question = """
+Jessica just got her driving permit. She must complete 50 hours of driving with a parent to get her driver’s license. It takes 20 minutes to drive to school. If she drives to and from school every day, how many school days will it take Jessica to meet the 50-hour driving requirement?
+"""
+
+answer = """
+Jessica will drive 20 minutes, twice every school day (to and from school), so 20 minutes x 2 trips = <<20*2=40>>40 minutes each day.
+There are 60 minutes in 1 hour, so 50 hours of driving x 60 minutes/hour = <<50*60=3000>>3,000 minutes.
+If you take the 3,000 minutes she needs to drive / 40 minutes driving each day = <<3000/40=75>>75 school days to drive 50 hours.
+#### 75
+"""
+
+id_orig = 2136
+id_shuffled = 2465
+
+question_annotated = """
+{name,Jessica} just got her driving permit. She must complete {h,50} hours of driving with a parent to get her driver’s license. It takes {m,20} minutes to drive to school. If she drives to and from school every day, how many school days will it take {name,Jessica} to meet the {h,50}-hour driving requirement?
+
+#init:
+- name = sample(names_female)
+- $h = range(50, 550, 50)
+- $m = range(5, 105, 5)
+
+#conditions:
+- divides(h * 60, 1000)
+- divides(h * 60, 2 * m)
+
+#answer: h * 60 // (2 * m)
+"""
+
+answer_annotated = """
+{name} will drive {m} minutes, twice every school day (to and from school), so {m} minutes x 2 trips = <<{m}*2={2*m}>>{2*m} minutes each day.
+There are 60 minutes in 1 hour, so {h} hours of driving x 60 minutes/hour = <<{h}*60={h*60}>>{h*60//1000},000 minutes.
+If you take the {h*60//1000},000 minutes she needs to drive / {2*m} minutes driving each day = <<{h*60}/{2*m}={h*60//(2*m)}>>{h*60//(2*m)} school days to drive {h} hours.
+#### {h * 60 // (2 * m)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

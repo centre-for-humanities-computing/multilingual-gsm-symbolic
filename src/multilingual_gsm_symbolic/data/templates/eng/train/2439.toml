@@ -1,0 +1,48 @@
+question = """
+In a grocery store, Julia bought 2 pieces of Snickers and 3 packs of M&M's. If each piece of Snickers costs $1.5 and a pack of M&M's has the same cost as 2 Snickers, how much is Julia's change if she gave the cashier 2 $10 bills?
+"""
+
+answer = """
+Two pieces of snickers cost $1.5 x 2 = $<<1.5*2=3>>3.
+One pack of M&M's costs $3 so 3 packs cost $3 x 3 = $<<3*3=9>>9.
+The total amount that she needs to pay is $3 + $9 = $<<3+9=12>>12.
+Julia gave the cashier $10 x 2 = $<<10*2=20>>20.
+So, her change is $20 - $12 = $<<20-12=8>>8.
+#### 8
+"""
+
+id_orig = 2110
+id_shuffled = 2439
+
+question_annotated = """
+In a grocery store, {name,Julia} bought {s,2} pieces of Snickers and {m,3} packs of M&M's. If each piece of Snickers costs ${p,1.5} and a pack of M&M's has the same cost as {r,2} Snickers, how much is {name,Julia}'s change if she gave the cashier {bills,2} ${b,10} bills?
+
+#init:
+- name = sample(names_female)
+- p = sample([1.5])
+- $s = range(2, 22, 2)
+- $m = range(2, 27)
+- $r = range(2, 12, 2)
+- $bills = range(2, 7)
+- $b = range(10, 11)
+
+#conditions:
+- divides(s, 2)
+- divides(r, 2)
+- b * bills > int(p*s) + int(p*r)*m
+
+#answer: b*bills - int(p*s) - int(p*r)*m
+"""
+
+answer_annotated = """
+Two pieces of snickers cost ${p} x {s} = $<<{p}*{s}={int(p*s)}>>{int(p*s)}.
+One pack of M&M's costs ${int(p*r)} so {m} packs cost ${int(p*r)} x {m} = $<<{int(p*r)}*{m}={int(p*r)*m}>>{int(p*r)*m}.
+The total amount that she needs to pay is ${int(p*s)} + ${int(p*r)*m} = $<<{int(p*s)}+{int(p*r)*m}={int(p*s)+int(p*r)*m}>>{int(p*s)+int(p*r)*m}.
+{name} gave the cashier ${b} x {bills} = $<<{b}*{bills}={b*bills}>>{b*bills}.
+So, her change is ${b*bills} - ${int(p*s)+int(p*r)*m} = $<<{b*bills}-{int(p*s)+int(p*r)*m}={b*bills-int(p*s)-int(p*r)*m}>>{b*bills-int(p*s)-int(p*r)*m}.
+#### {b*bills-int(p*s)-int(p*r)*m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

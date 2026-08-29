@@ -1,0 +1,45 @@
+question = """
+Anahi bought a 500 pages book to write some notes on. In the first week, she wrote on 150 pages. In the second week, she wrote on 30% of the remaining pages. While continuing writing, she accidentally spilled coffee on the book and damaged 20 percent of the empty pages she was to write on. Calculate the total number of empty pages available for her to write on now.
+"""
+
+answer = """
+If she bought a 500 pages book and wrote on 150 pages, the number of empty pages remaining is 500-150 = <<500-150=350>>350 pages.
+She then wrote on 30% of the remaining empty pages on the second week, a total of 30/100*350 = <<30/100*350=105>>105 pages
+The number of remaining empty pages is 350-105 = <<350-105=245>>245 pages.
+When she spilled coffee on the remaining empty pages, the number of damaged pages was 20/100*245 = <<20/100*245=49>>49
+The number of empty pages remaining that she could write on is 245-49 = <<245-49=196>>196 pages
+#### 196
+"""
+
+id_orig = 3303
+id_shuffled = 3928
+
+question_annotated = """
+{name,Anahi} bought a {p,500} pages book to write some notes on. In the first week, she wrote on {f,150} pages. In the second week, she wrote on {x,30}% of the remaining pages. While continuing writing, she accidentally spilled coffee on the book and damaged {y,20} percent of the empty pages she was to write on. Calculate the total number of empty pages available for her to write on now.
+
+#init:
+- name = sample(names_female)
+- $p = range(300, 1300, 50)
+- $f = range(50, 600, 50)
+- $x = range(10, 60, 10)
+- $y = range(10, 60, 10)
+
+#conditions:
+- f < p
+- divides(y * (p - f) * (100 - x), 10000)
+
+#answer: p - f - x*(p-f)//100 - y*(p - f - x*(p-f)//100)//100
+"""
+
+answer_annotated = """
+If she bought a {p} pages book and wrote on {f} pages, the number of empty pages remaining is {p}-{f} = <<{p}-{f}={p-f}>>{p-f} pages.
+She then wrote on {x}% of the remaining empty pages on the second week, a total of {x}/100*{p-f} = <<{x}/100*{p-f}={x*(p-f)//100}>>{x*(p-f)//100} pages
+The number of remaining empty pages is {p-f}-{x*(p-f)//100} = <<{p-f}-{x*(p-f)//100}={p-f-x*(p-f)//100}>>{p-f-x*(p-f)//100} pages.
+When she spilled coffee on the remaining empty pages, the number of damaged pages was {y}/100*{p-f-x*(p-f)//100} = <<{y}/100*{p-f-x*(p-f)//100}={y*(p-f-x*(p-f)//100)//100}>>{y*(p-f-x*(p-f)//100)//100}
+The number of empty pages remaining that she could write on is {p-f-x*(p-f)//100}-{y*(p-f-x*(p-f)//100)//100} = <<{p-f-x*(p-f)//100}-{y*(p-f-x*(p-f)//100)//100}={p-f-x*(p-f)//100-y*(p-f-x*(p-f)//100)//100}>>{p-f-x*(p-f)//100-y*(p-f-x*(p-f)//100)//100} pages
+#### {p-f-x*(p-f)//100-y*(p-f-x*(p-f)//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

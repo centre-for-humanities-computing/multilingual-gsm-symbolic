@@ -1,0 +1,40 @@
+question = """
+Gerald thought it would be funny to trick his coworker, who's allergic to peanuts, into eating a peanut butter cookie. When his coworker goes into anaphylactic shock and is taken to the hospital, Gerald is arrested. The judge sentences Gerald to 3 months for assault and 2 years for poisoning, then extends his sentence by 1/3 since this is Gerald's third offense. How many months does Gerald spend in jail?
+"""
+
+answer = """
+First convert the 2-year sentence to months: 2 years * 12 months/year = <<2*12=24>>24 months
+Then add the 3 months for assault: 24 months + 3 months = <<24+3=27>>27 months
+Then find how long the 1/3 extension is: 27 months / 3 = <<27/3=9>>9 months
+Finally, add up the three lengths of time to find the total sentence length: 27 months + 9 months = <<27+9=36>>36 months
+#### 36
+"""
+
+id_orig = 1823
+id_shuffled = 2022
+
+question_annotated = """
+{name,Gerald} thought it would be funny to trick his coworker, who's allergic to peanuts, into eating a peanut butter cookie. When his coworker goes into anaphylactic shock and is taken to the hospital, {name,Gerald} is arrested. The judge sentences {name,Gerald} to {assault,3} months for assault and {years,2} years for poisoning, then extends his sentence by 1/3 since this is {name,Gerald}'s third offense. How many months does {name,Gerald} spend in jail?
+
+#init:
+- name = sample(names_male)
+- $assault = range(2, 50)
+- $years = range(1, 11)
+
+#conditions:
+- divides(years*12 + assault, 3)
+
+#answer: years*12 + assault + (years*12 + assault)//3
+"""
+
+answer_annotated = """
+First convert the {years}-year sentence to months: {years} years * 12 months/year = <<{years}*12={years*12}>>{years*12} months
+Then add the {assault} months for assault: {years*12} months + {assault} months = <<{years*12}+{assault}={years*12+assault}>>{years*12+assault} months
+Then find how long the 1/3 extension is: {years*12+assault} months / 3 = <<{years*12+assault}/3={(years*12+assault)//3}>>{(years*12+assault)//3} months
+Finally, add up the three lengths of time to find the total sentence length: {years*12+assault} months + {(years*12+assault)//3} months = <<{years*12+assault}+{(years*12+assault)//3}={years*12+assault+(years*12+assault)//3}>>{years*12+assault+(years*12+assault)//3} months
+#### {years*12 + assault + (years*12 + assault)//3}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

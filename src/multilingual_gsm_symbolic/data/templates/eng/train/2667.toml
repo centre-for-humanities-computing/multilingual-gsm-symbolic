@@ -1,0 +1,40 @@
+question = """
+Mr. Mayer bought Corgi dogs for $1000 each. He plans to sell them with a 30% profit. If one of his friends wants to buy two dogs, how much should his friend pay?
+"""
+
+answer = """
+Mr. Mayer wants to get a $1000 x 30/100 = $<<1000*30/100=300>>300 profit.
+So, he will sell each Corgi dog for $1000 + $300 = $<<1000+300=1300>>1300.
+Hence, his friend should pay $1300 x 2 = $<<1300*2=2600>>2600.
+#### 2600
+"""
+
+id_orig = 2319
+id_shuffled = 2667
+
+question_annotated = """
+{name,Mr. Mayer} bought {breed,Corgi} dogs for ${p,1000} each. He plans to sell them with a {r,30}% profit. If one of his friends wants to buy {num_txt,two} dogs, how much should his friend pay?
+
+#init:
+- name = sample(names_male)
+- breed = sample(["Corgi", "Poodle", "Beagle"])
+- num_txt, k = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $p = range(100, 3100, 100)
+- $r = range(5, 105, 5)
+
+#conditions:
+- divides(p * r, 100)
+
+#answer: (p + p*r//100) * k
+"""
+
+answer_annotated = """
+{name} wants to get a ${p} x {r}/100 = $<<{p}*{r}/100={p*r//100}>>{p*r//100} profit.
+So, he will sell each {breed} dog for ${p} + ${p*r//100} = $<<{p}+{p*r//100}={p+p*r//100}>>{p+p*r//100}.
+Hence, his friend should pay ${p+p*r//100} x {k} = $<<{p+p*r//100}*{k}={(p+p*r//100)*k}>>{(p+p*r//100)*k}.
+#### {(p + p*r//100) * k}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

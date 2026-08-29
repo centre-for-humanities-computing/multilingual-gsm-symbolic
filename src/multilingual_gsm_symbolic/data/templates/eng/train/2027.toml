@@ -1,0 +1,46 @@
+question = """
+Joseph invested $1000 into a hedge fund. The fund promised a yearly interest rate of 10%. If he deposited an additional $100 every month into the account to add to his initial investment of $1000, how much money will he have in the fund after two years?
+"""
+
+answer = """
+For the first year, Joseph will have invested $1000 + ($100 * 12) = $<<1000+100*12=2200>>2200.
+The interest calculated for the first year will be $2200 * 10% = $<<2200*10*.01=220>>220.
+The total value of the investment for the first year will be $2200 + $220 = $<<2200+220=2420>>2420.
+For the second year, the total invested will be $2420 + ($100 * 12) = $<<2420+100*12=3620>>3620.
+The interest calculated after the second year will be $3620 * 10% = $<<3620*10*.01=362>>362.
+Therefore, Joseph's investment in the mutual fund will be worth $3620 + $362 = $<<3620+362=3982>>3982.
+#### 3982
+"""
+
+id_orig = 1828
+id_shuffled = 2027
+
+question_annotated = """
+{name,Joseph} invested ${p,1000} into a hedge fund. The fund promised a yearly interest rate of {r,10}%. If he deposited an additional ${m,100} every month into the account to add to his initial investment of ${p,1000}, how much money will he have in the fund after two years?
+
+#init:
+- name = sample(names_male)
+- $p = range(500, 5100, 100)
+- $r = range(1, 21)
+- $m = range(50, 550, 50)
+
+#conditions:
+- divides((p + m*12) * r, 100)
+- divides((p + 24*m + (p + m*12)*r//100) * r, 100)
+
+#answer: p + 24*m + (p + m*12)*r//100 + (p + 24*m + (p + m*12)*r//100)*r//100
+"""
+
+answer_annotated = """
+For the first year, {name} will have invested ${p} + (${m} * 12) = $<<{p}+{m}*12={p+m*12}>>{p+m*12}.
+The interest calculated for the first year will be ${p+m*12} * {r}% = $<<{p+m*12}*{r}*.01={(p+m*12)*r//100}>>{(p+m*12)*r//100}.
+The total value of the investment for the first year will be ${p+m*12} + ${(p+m*12)*r//100} = $<<{p+m*12}+{(p+m*12)*r//100}={p+m*12+(p+m*12)*r//100}>>{p+m*12+(p+m*12)*r//100}.
+For the second year, the total invested will be ${p+m*12+(p+m*12)*r//100} + (${m} * 12) = $<<{p+m*12+(p+m*12)*r//100}+{m}*12={p+24*m+(p+m*12)*r//100}>>{p+24*m+(p+m*12)*r//100}.
+The interest calculated after the second year will be ${p+24*m+(p+m*12)*r//100} * {r}% = $<<{p+24*m+(p+m*12)*r//100}*{r}*.01={(p+24*m+(p+m*12)*r//100)*r//100}>>{(p+24*m+(p+m*12)*r//100)*r//100}.
+Therefore, {name}'s investment in the mutual fund will be worth ${p+24*m+(p+m*12)*r//100} + ${(p+24*m+(p+m*12)*r//100)*r//100} = $<<{p+24*m+(p+m*12)*r//100}+{(p+24*m+(p+m*12)*r//100)*r//100}={p+24*m+(p+m*12)*r//100+(p+24*m+(p+m*12)*r//100)*r//100}>>{p+24*m+(p+m*12)*r//100+(p+24*m+(p+m*12)*r//100)*r//100}.
+#### {p+24*m+(p+m*12)*r//100+(p+24*m+(p+m*12)*r//100)*r//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

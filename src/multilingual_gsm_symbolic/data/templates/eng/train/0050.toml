@@ -1,0 +1,42 @@
+question = """
+Gerald spends $100 a month on baseball supplies. His season is 4 months long. He wants to use the months he's not playing baseball to save up by raking, shoveling, and mowing lawns. He charges $10 for each. How many chores does he need to average a month to save up for his supplies?
+"""
+
+answer = """
+He needs to save up $400 because 4 x 100 = <<4*100=400>>400
+He has 8 months to earn this money because 12 - 4 = <<12-4=8>>8
+He needs to earn $50 a month because 400 / 8 = <<400/8=50>>50
+He needs to do 5 tasks a month because 50 / 10 = <<50/10=5>>5
+#### 5
+"""
+
+id_orig = 50
+id_shuffled = 50
+
+question_annotated = """
+{name,Gerald} spends ${cost,100} a month on baseball supplies. His season is {season,4} months long. He wants to use the months he's not playing baseball to save up by raking, shoveling, and mowing lawns. He charges ${charge,10} for each. How many chores does he need to average a month to save up for his supplies?
+
+#init:
+- name = sample(names_male)
+- $cost = range(10, 210, 10)
+- $season = range(2, 10)
+- $charge = range(5, 105, 5)
+
+#conditions:
+- divides(season*cost, 12-season)
+- divides(season*cost//(12-season), charge)
+
+#answer: season*cost//(12-season)//charge
+"""
+
+answer_annotated = """
+He needs to save up ${season*cost} because {season} x {cost} = <<{season}*{cost}={season*cost}>>{season*cost}
+He has {12-season} months to earn this money because 12 - {season} = <<12-{season}={12-season}>>{12-season}
+He needs to earn ${season*cost//(12-season)} a month because {season*cost} / {12-season} = <<{season*cost}/{12-season}={season*cost//(12-season)}>>{season*cost//(12-season)}
+He needs to do {season*cost//(12-season)//charge} tasks a month because {season*cost//(12-season)} / {charge} = <<{season*cost//(12-season)}/{charge}={season*cost//(12-season)//charge}>>{season*cost//(12-season)//charge}
+#### {season*cost//(12-season)//charge}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

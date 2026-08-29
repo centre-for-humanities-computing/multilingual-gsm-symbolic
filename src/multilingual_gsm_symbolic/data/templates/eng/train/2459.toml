@@ -1,0 +1,41 @@
+question = """
+Amelia has $60 to spend on her dinner at a restaurant. The first course costs $15 and the second course $5 more. The cost of the dessert is 25% of the price of the second course. How much money will Amelia have left after buying all those meals?
+"""
+
+answer = """
+The second course cost Amelia $15 + $5 = $<<15+5=20>>20.
+The dessert cost 25/100 * $20 = $<<25/100*20=5>>5.
+That leaves Amelia with $60 - $15 - $20 - $5 = $<<60-15-20-5=20>>20.
+#### 20
+"""
+
+id_orig = 2130
+id_shuffled = 2459
+
+question_annotated = """
+{name,Amelia} has ${a,60} to spend on her dinner at a restaurant. The first course costs ${b,15} and the second course ${d,5} more. The cost of the dessert is {p,25}% of the price of the second course. How much money will {name,Amelia} have left after buying all those meals?
+
+#init:
+- name = sample(names_female)
+- $a = range(50, 210, 10)
+- $b = range(10, 100, 5)
+- $d = range(2, 22)
+- $p = range(25, 76, 25)
+
+#conditions:
+- divides(b + d, 4)
+- a - b - (b + d) - (b + d) * p // 100 > 0
+
+#answer: a - b - (b + d) - (b + d) * p // 100
+"""
+
+answer_annotated = """
+The second course cost {name} ${b} + ${d} = $<<{b}+{d}={b+d}>>{b+d}.
+The dessert cost {p}/100 * ${b+d} = $<<{p}/100*{b+d}={p*(b+d)//100}>>{p*(b+d)//100}.
+That leaves {name} with ${a} - ${b} - ${b+d} - ${p*(b+d)//100} = $<<{a}-{b}-{b+d}-{p*(b+d)//100}={a-b-(b+d)-(b+d)*p//100}>>{a-b-(b+d)-(b+d)*p//100}.
+#### {a-b-(b+d)-(b+d)*p//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,43 @@
+question = """
+Maddie watches 8 episodes of a TV show this week. Each episode is about 44 minutes long. If she watches 138 minutes of the show on Monday. She does not watch any TV on Tuesday and Wednesday. On Thursday, she watches 21 minutes. On Friday, she watches 2 episodes. How many more minutes did she watch over the weekend?
+"""
+
+answer = """
+Maddie watches a total of 8*44=<<8*44=352>>352 minutes of the TV show during the week.
+On Friday, she watches 2*44=<<2*44=88>>88 minutes
+On Monday, Thursday, and Friday, she watches 138+21+88 = <<138+21+88=247>>247 minutes.
+Thus, on the weekend she watches 352-247 = <<352-247=105>>105 minutes of the TV show.
+#### 105
+"""
+
+id_orig = 1564
+id_shuffled = 1689
+
+question_annotated = """
+{name,Maddie} watches {eps,8} episodes of a TV show this week. Each episode is about {mins,44} minutes long. If she watches {mon,138} minutes of the show on Monday. She does not watch any TV on Tuesday and Wednesday. On Thursday, she watches {thu,21} minutes. On Friday, she watches {fri,2} episodes. How many more minutes did she watch over the weekend?
+
+#init:
+- name = sample(names_female)
+- $eps = range(4, 14)
+- $mins = range(20, 62, 2)
+- $mon = range(30, 150, 12)
+- $thu = range(3, 45, 6)
+- $fri = range(1, 6)
+
+#conditions:
+- eps*mins - mon - thu - fri*mins > 0
+
+#answer: eps*mins - mon - thu - fri*mins
+"""
+
+answer_annotated = """
+{name} watches a total of {eps}*{mins}=<<{eps}*{mins}={eps*mins}>>{eps*mins} minutes of the TV show during the week.
+On Friday, she watches {fri}*{mins}=<<{fri}*{mins}={fri*mins}>>{fri*mins} minutes
+On Monday, Thursday, and Friday, she watches {mon}+{thu}+{fri*mins} = <<{mon}+{thu}+{fri*mins}={mon+thu+fri*mins}>>{mon+thu+fri*mins} minutes.
+Thus, on the weekend she watches {eps*mins}-{mon+thu+fri*mins} = <<{eps*mins}-{mon+thu+fri*mins}={eps*mins-mon-thu-fri*mins}>>{eps*mins-mon-thu-fri*mins} minutes of the TV show.
+#### {eps*mins-mon-thu-fri*mins}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

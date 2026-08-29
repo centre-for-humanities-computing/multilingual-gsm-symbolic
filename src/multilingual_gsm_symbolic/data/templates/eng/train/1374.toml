@@ -1,0 +1,47 @@
+question = """
+On Tuesday, Liza had $800 in her checking account. On Wednesday, she paid her rent, $450. On Thursday, she deposited her $1500 paycheck. On Friday, she paid her electricity and internet bills which were $117 and $100, respectively. Then on Saturday, she paid her phone bill, $70. How much money is left in Liza's account?
+"""
+
+answer = """
+On Wednesday, Liza had $800 - $450 = $<<800-450=350>>350 left in her account.
+After depositing on Thursday, she had $350 + $1500 = $<<350+1500=1850>>1850 in her account.
+On Friday, she paid a total of $117 + $100 = $<<117+100=217>>217 for her electricity and internet bills.
+So, $1850 - $217 = $<<1850-217=1633>>1633 was left on her account on Friday.
+After paying her phone bill, Liza has $1633 - $70 = $<<1633-70=1563>>1563 left in her account.
+#### 1563
+"""
+
+id_orig = 1267
+id_shuffled = 1374
+
+question_annotated = """
+On Tuesday, {name,Liza} had ${b,800} in her checking account. On Wednesday, she paid her rent, ${r,450}. On Thursday, she deposited her ${p,1500} paycheck. On Friday, she paid her electricity and internet bills which were ${e1,117} and ${e2,100}, respectively. Then on Saturday, she paid her phone bill, ${ph,70}. How much money is left in {name,Liza}'s account?
+
+#init:
+- name = sample(names_female)
+- $b = range(700, 1300, 100)
+- $r = range(150, 500, 50)
+- $p = range(500, 2300, 250)
+- $e1 = range(17, 137, 20)
+- $e2 = range(40, 140, 20)
+- $ph = range(30, 90, 10)
+
+#conditions:
+- b > r
+- b - r + p > e1 + e2
+
+#answer: b - r + p - e1 - e2 - ph
+"""
+
+answer_annotated = """
+On Wednesday, {name} had ${b} - ${r} = $<<{b}-{r}={b-r}>>{b-r} left in her account.
+After depositing on Thursday, she had ${b-r} + ${p} = $<<{b-r}+{p}={b-r+p}>>{b-r+p} in her account.
+On Friday, she paid a total of ${e1} + ${e2} = $<<{e1}+{e2}={e1+e2}>>{e1+e2} for her electricity and internet bills.
+So, ${b-r+p} - ${e1+e2} = $<<{b-r+p}-{e1+e2}={b-r+p-e1-e2}>>{b-r+p-e1-e2} was left on her account on Friday.
+After paying her phone bill, {name} has ${b-r+p-e1-e2} - ${ph} = $<<{b-r+p-e1-e2}-{ph}={b-r+p-e1-e2-ph}>>{b-r+p-e1-e2-ph} left in her account.
+#### {b-r+p-e1-e2-ph}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

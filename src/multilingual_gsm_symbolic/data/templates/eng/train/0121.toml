@@ -1,0 +1,50 @@
+question = """
+Stella and Twinkle are filling up a truck with a capacity of 6000 stone blocks at the rate of 250 blocks per hour per person. They work for four hours and are then joined by 6 other people who also work at the same rate. How many hours did filling the truck take?
+"""
+
+answer = """
+Stella and Twinkle filled up the truck at the rate of 250 blocks per hour per person, a total of 2*250 = <<250*2=500>>500 blocks per hour for both.
+After working for four hours, Stella and Twinkle had filled 4*500 = <<4*500=2000>>2000 blocks into the truck.
+The number of blocks they had to put into the truck for it to be full is 6000-2000 = <<6000-2000=4000>>4000
+When 6 more people joined Stella and Twinkle, a total of 2+6 = <<2+6=8>>8 people were filling the truck now.
+Working at the rate of 250 blocks per person, the eight people filled the truck with 250*8 = <<250*8=2000>>2000 blocks in one hour.
+If there were 4000 blocks that still needed to be put into the truck, the 8 people took 4000/2000 = <<4000/2000=2>>2 hours to fill the truck with the blocks.
+The total time it took to fill up the tank is 4+2 = <<4+2=6>>6 hours.
+#### 6
+"""
+
+id_orig = 121
+id_shuffled = 121
+
+question_annotated = """
+{n1,Stella} and {n2,Twinkle} are filling up a truck with a capacity of {cap,6000} stone blocks at the rate of {r,250} blocks per hour per person. They work for {h_txt,four} hours and are then joined by {j,6} other people who also work at the same rate. How many hours did filling the truck take?
+
+#init:
+- n1 = sample(["Stella", "Anna"])
+- n2 = sample(["Twinkle", "Bella"])
+- h_txt, h = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $cap = range(3000, 21300, 100)
+- $r = range(100, 350, 50)
+- $j = range(1, 9)
+
+#conditions:
+- cap - 2*h*r >= r*(2+j)
+- divides(cap - 2*h*r, r*(2+j))
+
+#answer: h + (cap - 2*h*r)//(r*(2+j))
+"""
+
+answer_annotated = """
+{n1} and {n2} filled up the truck at the rate of {r} blocks per hour per person, a total of 2*{r} = <<{r}*2={2*r}>>{2*r} blocks per hour for both.
+After working for {h_txt} hours, {n1} and {n2} had filled {h}*{2*r} = <<{h}*{2*r}={h*2*r}>>{h*2*r} blocks into the truck.
+The number of blocks they had to put into the truck for it to be full is {cap}-{h*2*r} = <<{cap}-{h*2*r}={cap-h*2*r}>>{cap-h*2*r}
+When {j} more people joined {n1} and {n2}, a total of 2+{j} = <<2+{j}={2+j}>>{2+j} people were filling the truck now.
+Working at the rate of {r} blocks per person, the eight people filled the truck with {r}*{2+j} = <<{r}*{2+j}={r*(2+j)}>>{r*(2+j)} blocks in one hour.
+If there were {cap-h*2*r} blocks that still needed to be put into the truck, the {2+j} people took {cap-h*2*r}/{r*(2+j)} = <<{cap-h*2*r}/{r*(2+j)}={(cap-h*2*r)//(r*(2+j))}>>{(cap-h*2*r)//(r*(2+j))} hours to fill the truck with the blocks.
+The total time it took to fill up the tank is {h}+{(cap-h*2*r)//(r*(2+j))} = <<{h}+{(cap-h*2*r)//(r*(2+j))}={h+(cap-h*2*r)//(r*(2+j))}>>{h+(cap-h*2*r)//(r*(2+j))} hours.
+#### {h+(cap-h*2*r)//(r*(2+j))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,46 @@
+question = """
+An elementary school teacher is making Halloween goodie bags for her class.  She wants the bags to be personalized, so she surveys her students asking whether they'd like a vampire-themed bag or a pumpkin-themed bag.  Of her 25 students, 11 indicate they want the vampire-themed bag and 14 indicate they want the pumpkin-themed bag.  The store the teacher shops at sells packs of 5 of each theme at a price of $3 per package, as well as individual bags of each theme at a price of $1 each.  What is the least amount of money the teacher can spend on the bags if she buys every student the theme they requested?
+"""
+
+answer = """
+Because it is cheaper to buy the packs of 5, the teacher should satisfy the 11 students who want the vampire theme with 2 packs of 5 and 1 individual bag. This will cost the teacher 2*3 + 1*1 = $<<2*3+1*1=7>>7.
+Similarly, the 14 students who want a pumpkin-themed bag can be satisfied by 2 packs of 5 and 4 individual bags at a cost of 2*3 + 4*1 = $<<2*3+4*1=10>>10.
+Therefore, the teacher must spend 7 + 10 = $<<7+10=17>>17.
+#### 17
+"""
+
+id_orig = 803
+id_shuffled = 876
+
+question_annotated = """
+An elementary school teacher is making Halloween goodie bags for her class.  She wants the bags to be personalized, so she surveys her students asking whether they'd like a vampire-themed bag or a pumpkin-themed bag.  Of her {s,25} students, {v,11} indicate they want the vampire-themed bag and {p,14} indicate they want the pumpkin-themed bag.  The store the teacher shops at sells packs of {k,5} of each theme at a price of ${c,3} per package, as well as individual bags of each theme at a price of ${i,1} each.  What is the least amount of money the teacher can spend on the bags if she buys every student the theme they requested?
+
+#init:
+- $v = range(6, 46)
+- $p = range(6, 46)
+- $s = range(12, 91)
+- $k = range(4, 7)
+- $c = range(2, 6)
+- $i = range(1, 4)
+
+#conditions:
+- s == v + p
+- c < k * i
+- v >= k
+- p >= k
+- v % k > 0
+- p % k > 0
+
+#answer: (v//k)*c + (v%k)*i + (p//k)*c + (p%k)*i
+"""
+
+answer_annotated = """
+Because it is cheaper to buy the packs of {k}, the teacher should satisfy the {v} students who want the vampire theme with {v//k} packs of {k} and {v%k} individual bag. This will cost the teacher {v//k}*{c} + {v%k}*{i} = $<<{v//k}*{c}+{v%k}*{i}={(v//k)*c+(v%k)*i}>>{(v//k)*c+(v%k)*i}.
+Similarly, the {p} students who want a pumpkin-themed bag can be satisfied by {p//k} packs of {k} and {p%k} individual bags at a cost of {p//k}*{c} + {p%k}*{i} = $<<{p//k}*{c}+{p%k}*{i}={(p//k)*c+(p%k)*i}>>{(p//k)*c+(p%k)*i}.
+Therefore, the teacher must spend {(v//k)*c+(v%k)*i} + {(p//k)*c+(p%k)*i} = $<<{(v//k)*c+(v%k)*i}+{(p//k)*c+(p%k)*i}={(v//k)*c+(v%k)*i+(p//k)*c+(p%k)*i}>>{(v//k)*c+(v%k)*i+(p//k)*c+(p%k)*i}.
+#### {(v//k)*c+(v%k)*i+(p//k)*c+(p%k)*i}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

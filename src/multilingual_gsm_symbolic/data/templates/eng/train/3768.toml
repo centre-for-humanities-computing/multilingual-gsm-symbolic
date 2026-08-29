@@ -1,0 +1,42 @@
+question = """
+John cuts his grass to 2 inches.  It grows .5 inches per month.  When it gets to 4 inches he cuts it back down to 2 inches.  It cost $100 to get his grass cut.  How much does he pay per year?
+"""
+
+answer = """
+He cuts his grass 4-2=<<4-2=2>>2 inches
+So he gets it cut every 2/.5=<<2/.5=4>>4 months
+That means he gets it cut 12/4=<<12/4=3>>3 times a year
+So he pays 100*3=$<<100*3=300>>300 per year
+#### 300
+"""
+
+id_orig = 3169
+id_shuffled = 3768
+
+question_annotated = """
+{name,John} cuts his grass to {cut_h,2} inches.  It grows .5 inches per month.  When it gets to {max_h,4} inches he cuts it back down to {cut_h,2} inches.  It cost ${cost,100} to get his grass cut.  How much does he pay per year?
+
+#init:
+- name = sample(names_male)
+- $cut_h = range(1, 5)
+- $max_h = range(3, 25)
+- $cost = range(20, 520, 10)
+
+#conditions:
+- max_h > cut_h
+- divides(12, 2*(max_h - cut_h))
+
+#answer: cost * (12 // (2 * (max_h - cut_h)))
+"""
+
+answer_annotated = """
+He cuts his grass {max_h}-{cut_h}=<<{max_h}-{cut_h}={max_h-cut_h}>>{max_h-cut_h} inches
+So he gets it cut every {max_h-cut_h}/.5=<<{max_h-cut_h}/.5={2*(max_h-cut_h)}>>{2*(max_h-cut_h)} months
+That means he gets it cut 12/{2*(max_h-cut_h)}=<<12/{2*(max_h-cut_h)}={12//(2*(max_h-cut_h))}>>{12//(2*(max_h-cut_h))} times a year
+So he pays {cost}*{12//(2*(max_h-cut_h))}=$<<{cost}*{12//(2*(max_h-cut_h))}={cost*(12//(2*(max_h-cut_h)))}>>{cost*(12//(2*(max_h-cut_h)))} per year
+#### {cost * (12 // (2 * (max_h - cut_h)))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

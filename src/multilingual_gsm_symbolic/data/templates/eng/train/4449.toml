@@ -1,0 +1,46 @@
+question = """
+In a basketball game, Jon scored 3 points. Jack scored 5 points more than Jon, and Tom scored 4 less than the points of Jon and Jack together. How many points did they score altogether?
+"""
+
+answer = """
+Jack scored 3 + 5 = <<3+5=8>>8 points.
+Together, Jon and Jack scored 8 + 3 = <<8+3=11>>11 points.
+So, Tom scored 11 - 4 = <<11-4=7>>7 points.
+Thus, Jon, Jack, and Tom scored a total of 3 + 8 + 7 = <<3+8+7=18>>18 points.
+#### 18
+"""
+
+id_orig = 3767
+id_shuffled = 4449
+
+question_annotated = """
+In a basketball game, {p1,Jon} scored {j,3} points. {p2,Jack} scored {k,5} points more than {p1,Jon}, and {p3,Tom} scored {m,4} less than the points of {p1,Jon} and {p2,Jack} together. How many points did they score altogether?
+
+#init:
+- p1 = sample(["Jon", "Jack", "Tom"])
+- p2 = sample(["Jon", "Jack", "Tom"])
+- p3 = sample(["Jon", "Jack", "Tom"])
+- $j = range(2, 22)
+- $k = range(2, 12)
+- $m = range(1, 11)
+
+#conditions:
+- p1 != p2
+- p1 != p3
+- p2 != p3
+- 2*j + k > m
+
+#answer: 4*j + 2*k - m
+"""
+
+answer_annotated = """
+{p2} scored {j} + {k} = <<{j}+{k}={j+k}>>{j+k} points.
+Together, {p1} and {p2} scored {j+k} + {j} = <<{j+k}+{j}={2*j+k}>>{2*j+k} points.
+So, {p3} scored {2*j+k} - {m} = <<{2*j+k}-{m}={2*j+k-m}>>{2*j+k-m} points.
+Thus, {p1}, {p2}, and {p3} scored a total of {j} + {j+k} + {2*j+k-m} = <<{j}+{j+k}+{2*j+k-m}={4*j+2*k-m}>>{4*j+2*k-m} points.
+#### {4*j+2*k-m}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

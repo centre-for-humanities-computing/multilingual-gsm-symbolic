@@ -1,0 +1,45 @@
+question = """
+A tank with a capacity of 8000 gallons is 3/4 full. Daxton empty's the tank by 40% of the total volume of water in the tank to water his vegetable farm. He then fills the tank with 30% of the volume of water remaining in the tank. Calculate the final volume of water in the tank.
+"""
+
+answer = """
+The volume of water that is in the tank initially is 3/4*8000 = <<3/4*8000=6000>>6000 gallons.
+When Daxton empties 40% of the water, he pumps out 40/100*6000 = <<2400=2400>>2400 gallons of water.
+The total volume of water remaining in the tank is 6000-2400 = <<6000-2400=3600>>3600 gallons.
+Daxton then fills the tank with 30/100*3600 = <<30/100*3600=1080>>1080 gallons of water.
+The final volume of water in the tank is 3600+1080 = <<3600+1080=4680>>4680 gallons.
+#### 4680
+"""
+
+id_orig = 3355
+id_shuffled = 3980
+
+question_annotated = """
+A tank with a capacity of {cap,8000} gallons is 3/4 full. {name,Daxton} empty's the tank by {p1,40}% of the total volume of water in the tank to water his vegetable farm. He then fills the tank with {p2,30}% of the volume of water remaining in the tank. Calculate the final volume of water in the tank.
+
+#init:
+- name = sample(names_male)
+- $cap = range(100, 10100, 4)
+- $p1 = range(5, 60, 5)
+- $p2 = range(5, 60, 5)
+
+#conditions:
+- divides(3*cap, 4)
+- divides(p1 * (3*cap//4), 100)
+- divides(p2 * (3*cap//4 - p1*(3*cap//4)//100), 100)
+
+#answer: 3*cap//4 - p1*(3*cap//4)//100 + p2*(3*cap//4 - p1*(3*cap//4)//100)//100
+"""
+
+answer_annotated = """
+The volume of water that is in the tank initially is 3/4*{cap} = <<3/4*{cap}={3*cap//4}>>{3*cap//4} gallons.
+When {name} empties {p1}% of the water, he pumps out {p1}/100*{3*cap//4} = <<{p1*(3*cap//4)//100}={p1*(3*cap//4)//100}>>{p1*(3*cap//4)//100} gallons of water.
+The total volume of water remaining in the tank is {3*cap//4}-{p1*(3*cap//4)//100} = <<{3*cap//4}-{p1*(3*cap//4)//100}={3*cap//4 - p1*(3*cap//4)//100}>>{3*cap//4 - p1*(3*cap//4)//100} gallons.
+{name} then fills the tank with {p2}/100*{3*cap//4 - p1*(3*cap//4)//100} = <<{p2}/100*{3*cap//4 - p1*(3*cap//4)//100}={p2*(3*cap//4 - p1*(3*cap//4)//100)//100}>>{p2*(3*cap//4 - p1*(3*cap//4)//100)//100} gallons of water.
+The final volume of water in the tank is {3*cap//4 - p1*(3*cap//4)//100}+{p2*(3*cap//4 - p1*(3*cap//4)//100)//100} = <<{3*cap//4 - p1*(3*cap//4)//100}+{p2*(3*cap//4 - p1*(3*cap//4)//100)//100}={3*cap//4 - p1*(3*cap//4)//100 + p2*(3*cap//4 - p1*(3*cap//4)//100)//100}>>{3*cap//4 - p1*(3*cap//4)//100 + p2*(3*cap//4 - p1*(3*cap//4)//100)//100} gallons.
+#### {3*cap//4 - p1*(3*cap//4)//100 + p2*(3*cap//4 - p1*(3*cap//4)//100)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,47 @@
+question = """
+A bulk warehouse is offering 48 cans of sparkling water for $12.00 a case.  The local grocery store is offering the same sparkling water for $6.00 and it only has 12 cans.  How much more expensive, per can, in cents, is this deal at the grocery store?
+"""
+
+answer = """
+The bulk warehouse has 48 cans for $12.00 so that's 12/48 = $0.25 a can
+The local grocery store has 12 cans for $6.00 so that's 6/12 = $0.50 a can
+The grocery store offer is $0.50 a can and the warehouse is $0.25 a can so the grocery store is .50-.25 = $<<0.50-.25=0.25>>0.25 more expensive per can
+#### 25
+"""
+
+id_orig = 123
+id_shuffled = 123
+
+question_annotated = """
+A bulk warehouse is offering {a,48} cans of sparkling water for ${pc,12}.00 a case.  The local grocery store is offering the same sparkling water for ${qc,6}.00 and it only has {b,12} cans.  How much more expensive, per can, in cents, is this deal at the grocery store?
+
+#init:
+- $a = range(4, 60, 2)
+- $pc = range(4, 24)
+- $b = range(4, 40)
+- $qc = range(4, 24)
+
+#conditions:
+- divides(pc * 100, a)
+- divides(qc * 100, b)
+- pc * 100 // a >= 10
+- pc * 100 // a <= 99
+- qc * 100 // b >= 10
+- qc * 100 // b <= 99
+- qc * 100 // b > pc * 100 // a
+- qc * 100 // b - (pc * 100 // a) >= 10
+- qc * 100 // b - (pc * 100 // a) <= 99
+
+#answer: qc*100//b - pc*100//a
+"""
+
+answer_annotated = """
+The bulk warehouse has {a} cans for ${pc}.00 so that's {pc}/{a} = $0.{pc*100//a} a can
+The local grocery store has {b} cans for ${qc}.00 so that's {qc}/{b} = $0.{qc*100//b} a can
+The grocery store offer is $0.{qc*100//b} a can and the warehouse is $0.{pc*100//a} a can so the grocery store is .{qc*100//b}-.{pc*100//a} = $<<0.{qc*100//b}-.{pc*100//a}=0.{qc*100//b-pc*100//a}>>0.{qc*100//b-pc*100//a} more expensive per can
+#### {qc*100//b - pc*100//a}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

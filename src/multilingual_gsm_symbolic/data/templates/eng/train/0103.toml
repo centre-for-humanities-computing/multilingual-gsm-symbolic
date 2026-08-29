@@ -1,0 +1,53 @@
+question = """
+Janice can type 6 sentences per minute. Today at work, Janice continued working on a paper she started typing yesterday. She typed for 20 minutes, took a break, and typed 15 minutes longer. She then had to erase 40 sentences she had typed incorrectly. After a meeting, she typed for 18 minutes more. In all, the paper had 536 sentences by the end of today. How many sentences did she start with today?
+"""
+
+answer = """
+Janice had X sentences from yesterday already typed to start with today.
+Janice typed 6 * 20 = <<6*20=120>>120 sentences before her break.
+She typed 6 * 15 = <<6*15=90>>90 sentences after her break.
+She typed 6 * 18 = <<6*18=108>>108 sentences after her meeting.
+Therefore, she typed 120 + 90 + 108 = <<120+90+108=318>>318 sentences today in all.
+She had to erase 40 sentences, so she had 318 - 40 = <<318-40=278>>278 sentences that she typed today left.
+The paper had X + 278 = 536 sentences at the end of today.
+Thus, she had X = 536 - 278 = <<536-278=258>>258 sentences typed on the paper to start with today.
+#### 258
+"""
+
+id_orig = 103
+id_shuffled = 103
+
+question_annotated = """
+{name,Janice} can type {r,6} sentences per minute. Today at work, {name,Janice} continued working on a paper she started typing yesterday. She typed for {t1,20} minutes, took a break, and typed {t2,15} minutes longer. She then had to erase {e,40} sentences she had typed incorrectly. After a meeting, she typed for {t3,18} minutes more. In all, the paper had {total,536} sentences by the end of today. How many sentences did she start with today?
+
+#init:
+- name = sample(names_female)
+- $r = range(5, 11)
+- $t1 = range(10, 31, 5)
+- $t2 = range(10, 26, 5)
+- $t3 = range(10, 22, 2)
+- $e = range(20, 101, 20)
+- $total = range(344, 744, 16)
+
+#conditions:
+- r*(t1+t2+t3) > e
+- total - (r*(t1+t2+t3) - e) > 0
+
+#answer: total - r*(t1+t2+t3) + e
+"""
+
+answer_annotated = """
+{name} had X sentences from yesterday already typed to start with today.
+{name} typed {r} * {t1} = <<{r}*{t1}={r*t1}>>{r*t1} sentences before her break.
+She typed {r} * {t2} = <<{r}*{t2}={r*t2}>>{r*t2} sentences after her break.
+She typed {r} * {t3} = <<{r}*{t3}={r*t3}>>{r*t3} sentences after her meeting.
+Therefore, she typed {r*t1} + {r*t2} + {r*t3} = <<{r*t1}+{r*t2}+{r*t3}={r*(t1+t2+t3)}>>{r*(t1+t2+t3)} sentences today in all.
+She had to erase {e} sentences, so she had {r*(t1+t2+t3)} - {e} = <<{r*(t1+t2+t3)}-{e}={r*(t1+t2+t3)-e}>>{r*(t1+t2+t3)-e} sentences that she typed today left.
+The paper had X + {r*(t1+t2+t3)-e} = {total} sentences at the end of today.
+Thus, she had X = {total} - {r*(t1+t2+t3)-e} = <<{total}-{r*(t1+t2+t3)-e}={total-r*(t1+t2+t3)+e}>>{total-r*(t1+t2+t3)+e} sentences typed on the paper to start with today.
+#### {total - r*(t1+t2+t3) + e}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

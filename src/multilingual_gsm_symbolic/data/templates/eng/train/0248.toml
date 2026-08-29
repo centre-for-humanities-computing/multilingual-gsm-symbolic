@@ -1,0 +1,41 @@
+question = """
+Andy and Bob went to the canteen to buy snacks. They spent the same amount. Andy bought a can of soda at $1 and two hamburgers at $2 each.  Bob ordered two sandwiches for $3 and a can of fruit drink.  How much did Bob's fruit drink cost?
+"""
+
+answer = """
+Two hamburger cost 2 x $2 = $<<2*2=4>>4.
+So, Andy spent $1 + $4 = $<<1+4=5>>5.
+Therefore, Bob's fruit drink cost $5 - $3 = $<<5-3=2>>2.
+#### 2
+"""
+
+id_orig = 223
+id_shuffled = 248
+
+question_annotated = """
+{name1,Andy} and {name2,Bob} went to the canteen to buy snacks. They spent the same amount. {name1,Andy} bought a can of soda at ${p_soda,1} and two hamburgers at ${p_burger,2} each.  {name2,Bob} ordered two sandwiches for ${p_sand,3} and a can of fruit drink.  How much did {name2,Bob}'s fruit drink cost?
+
+#init:
+- name1 = sample(["Andy", "Chris", "Oliver", "James"])
+- name2 = sample(["Bob", "Noah", "Eric", "David"])
+- $p_soda = range(1, 16)
+- $p_burger = range(1, 16)
+- $p_sand = range(1, 41)
+
+#conditions:
+- name1 != name2
+- p_soda + 2 * p_burger > p_sand
+
+#answer: p_soda + 2 * p_burger - p_sand
+"""
+
+answer_annotated = """
+Two hamburger cost 2 x ${p_burger} = $<<2*{p_burger}={2*p_burger}>>{2*p_burger}.
+So, {name1} spent ${p_soda} + ${2*p_burger} = $<<{p_soda}+{2*p_burger}={p_soda+2*p_burger}>>{p_soda+2*p_burger}.
+Therefore, {name2}'s fruit drink cost ${p_soda+2*p_burger} - ${p_sand} = $<<{p_soda+2*p_burger}-{p_sand}={p_soda+2*p_burger-p_sand}>>{p_soda+2*p_burger-p_sand}.
+#### {p_soda+2*p_burger-p_sand}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,44 @@
+question = """
+Mr. Salazar had seven dozen oranges. He reserved 1/4 of it for his friend and was able to sell 3/7 of the remaining yesterday. Today, he saw four rotten oranges. How many oranges are left to be sold today?
+"""
+
+answer = """
+Mr. Salazar had 7 x 12 = <<7*12=84>>84 oranges.
+He reserved 84 x 1/4 = <<84*1/4=21>>21 oranges for his friend.
+Ha had 84 - 21 = <<84-21=63>>63 oranges to be sold yesterday.
+But only 63 x 3/7 = <<63*3/7=27>>27 oranges were sold yesterday.
+So, he had 63 - 27 = <<63-27=36>>36 oranges left.
+Since four oranges are rotten, then only 36 - 4 = <<36-4=32>>32 oranges are left to be sold today.
+#### 32
+"""
+
+id_orig = 2660
+id_shuffled = 3119
+
+question_annotated = """
+Mr. {name,Salazar} had {dozw,seven} dozen oranges. He reserved 1/4 of it for his friend and was able to sell 3/7 of the remaining yesterday. Today, he saw {rotw,four} rotten oranges. How many oranges are left to be sold today?
+
+#init:
+- name = sample(names_male)
+- dozw, doz = sample([("seven", 7), ("fourteen", 14), ("twenty-one", 21), ("twenty-eight", 28), ("thirty-five", 35), ("forty-two", 42), ("forty-nine", 49), ("fifty-six", 56), ("sixty-three", 63)])
+- rotw, rot = sample([("one", 1), ("two", 2), ("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8), ("nine", 9), ("ten", 10), ("eleven", 11), ("twelve", 12)])
+
+#conditions:
+- rot < doz*36//7
+
+#answer: doz*36//7 - rot
+"""
+
+answer_annotated = """
+Mr. {name} had {doz} x 12 = <<{doz}*12={doz*12}>>{doz*12} oranges.
+He reserved {doz*12} x 1/4 = <<{doz*12}*1/4={doz*3}>>{doz*3} oranges for his friend.
+Ha had {doz*12} - {doz*3} = <<{doz*12}-{doz*3}={doz*9}>>{doz*9} oranges to be sold yesterday.
+But only {doz*9} x 3/7 = <<{doz*9}*3/7={doz*27//7}>>{doz*27//7} oranges were sold yesterday.
+So, he had {doz*9} - {doz*27//7} = <<{doz*9}-{doz*27//7}={doz*36//7}>>{doz*36//7} oranges left.
+Since {rotw} oranges are rotten, then only {doz*36//7} - {rot} = <<{doz*36//7}-{rot}={doz*36//7-rot}>>{doz*36//7-rot} oranges are left to be sold today.
+#### {doz*36//7 - rot}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

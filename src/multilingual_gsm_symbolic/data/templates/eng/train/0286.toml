@@ -1,0 +1,51 @@
+question = """
+You can buy 4 apples or 1 watermelon for the same price. You bought 36 fruits evenly split between oranges, apples and watermelons, and the price of 1 orange is $0.50. How much does 1 apple cost if your total bill was $66?
+"""
+
+answer = """
+If 36 fruits were evenly split between 3 types of fruits, then I bought 36/3 = <<36/3=12>>12 units of each fruit
+If 1 orange costs $0.50 then 12 oranges will cost $0.50 * 12 = $<<0.5*12=6>>6
+If my total bill was $66 and I spent $6 on oranges then I spent $66 - $6 = $<<66-6=60>>60 on the other 2 fruit types.
+Assuming the price of watermelon is W, and knowing that you can buy 4 apples for the same price and that the price of one apple is A, then 1W=4A
+If we know we bought 12 watermelons and 12 apples for $60, then we know that $60 = 12W + 12A
+Knowing that 1W=4A, then we can convert the above to $60 = 12(4A) + 12A
+$60 = 48A + 12A
+$60 = <<60=60>>60A
+Then we know the price of one apple (A) is $60/60= $<<60/60=1>>1
+#### 1
+"""
+
+id_orig = 261
+id_shuffled = 286
+
+question_annotated = """
+You can buy {r,4} apples or 1 watermelon for the same price. You bought {n,36} fruits evenly split between oranges, apples and watermelons, and the price of 1 orange is $0.50. How much does 1 apple cost if your total bill was ${t,66}?
+
+#init:
+- $r = range(2, 13)
+- $n = range(36, 240, 6)
+- $t = range(20, 300)
+
+#conditions:
+- t - n//3//2 > 0
+- divides(t - n//3//2, (n//3) * (r+1))
+
+#answer: (t - n//3//2) // ((n//3) * (r+1))
+"""
+
+answer_annotated = """
+If {n} fruits were evenly split between 3 types of fruits, then I bought {n}/3 = <<{n}/3={n//3}>>{n//3} units of each fruit
+If 1 orange costs $0.50 then {n//3} oranges will cost $0.50 * {n//3} = $<<0.5*{n//3}={n//3//2}>>{n//3//2}
+If my total bill was ${t} and I spent ${n//3//2} on oranges then I spent ${t} - ${n//3//2} = $<<{t}-{n//3//2}={t-n//3//2}>>{t-n//3//2} on the other 2 fruit types.
+Assuming the price of watermelon is W, and knowing that you can buy {r} apples for the same price and that the price of one apple is A, then 1W={r}A
+If we know we bought {n//3} watermelons and {n//3} apples for ${t-n//3//2}, then we know that ${t-n//3//2} = {n//3}W + {n//3}A
+Knowing that 1W={r}A, then we can convert the above to ${t-n//3//2} = {n//3}({r}A) + {n//3}A
+${t-n//3//2} = {n//3*r}A + {n//3}A
+${t-n//3//2} = <<{t-n//3//2}={t-n//3//2}>>{(n//3)*(r+1)}A
+Then we know the price of one apple (A) is ${t-n//3//2}/{(n//3)*(r+1)}= $<<{t-n//3//2}/{(n//3)*(r+1)}={(t-n//3//2)//((n//3)*(r+1))}>>{(t-n//3//2)//((n//3)*(r+1))}
+#### {(t-n//3//2)//((n//3)*(r+1))}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

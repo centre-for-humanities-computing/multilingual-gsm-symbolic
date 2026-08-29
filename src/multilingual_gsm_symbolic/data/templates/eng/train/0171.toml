@@ -1,0 +1,42 @@
+question = """
+Tim's cat bit him.  He decided to get himself and the cat checked out.  His doctor's visits $300 and insurance covered 75%.  His cat's visit cost $120 and his pet insurance covered $60.  How much did he pay?
+"""
+
+answer = """
+The insurance covers 300*.75=$<<300*.75=225>>225
+So he had to pay 300-225=$<<300-225=75>>75
+The cats visit cost 120-60=$<<120-60=60>>60
+So in total he paid 75+60=$<<75+60=135>>135
+#### 135
+"""
+
+id_orig = 153
+id_shuffled = 171
+
+question_annotated = """
+{name,Tim}'s cat bit him.  He decided to get himself and the cat checked out.  His doctor's visits ${d,300} and insurance covered 75%.  His cat's visit cost ${c,120} and his pet insurance covered ${i,60}.  How much did he pay?
+
+#init:
+- name = sample(names_male)
+- $d = range(120, 520, 20)
+- $c = range(40, 240, 2)
+- $i = range(10, 110, 2)
+
+#conditions:
+- divides(d * 75, 100)
+- c > i
+
+#answer: d - d*75//100 + c - i
+"""
+
+answer_annotated = """
+The insurance covers {d}*.75=$<<{d}*.75={d*75//100}>>{d*75//100}
+So he had to pay {d}-{d*75//100}=$<<{d}-{d*75//100}={d-d*75//100}>>{d-d*75//100}
+The cats visit cost {c}-{i}=$<<{c}-{i}={c-i}>>{c-i}
+So in total he paid {d-d*75//100}+{c-i}=$<<{d-d*75//100}+{c-i}={d-d*75//100+c-i}>>{d-d*75//100+c-i}
+#### {d-d*75//100+c-i}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

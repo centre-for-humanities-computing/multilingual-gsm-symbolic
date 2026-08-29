@@ -1,0 +1,48 @@
+question = """
+Piazzanos Pizzeria has a buy-1-get-1-free special on triple cheese pizzas, and a buy-2-get-1-free special on meat lovers pizzas.  If the standard price for a pizza is $5, how much does it cost, in dollars, to purchase 10 triple cheese and 9 meat lovers pizzas using the special pricing?
+"""
+
+answer = """
+Using buy-1-get-1-free pricing, it costs 1*$5=$<<1*5=5>>5 to buy 2 triple cheese pizzas.
+At $5 per 2 pizzas, it costs $5/2=$<<5/2=2.5>>2.5 per triple cheese pizza.
+Using buy-2-get-1-free pricing, it costs 2*$5=$<<2*5=10>>10 to buy 3 meat lovers pizzas.
+At $10 per three pizzas, it cost $10/3=$3 and $1/3 per meat lovers pizza.
+With the buy-1-get-1-free pricing, 10 triple cheese pizzas are 10*$2.5=$<<10*2.5=25>>25.
+With the buy-2-get-1-free pricing, 9 meat lovers pizzas are 9*($3+$1/3)=$30.
+In total, for 10 triple cheese and 9 meat lovers pizzas, it will cost $25+$30=$55.
+#### 55
+"""
+
+id_orig = 3390
+id_shuffled = 4025
+
+question_annotated = """
+Piazzanos Pizzeria has a buy-1-get-1-free special on triple cheese pizzas, and a buy-2-get-1-free special on meat lovers pizzas.  If the standard price for a pizza is ${p,5}, how much does it cost, in dollars, to purchase {t,10} triple cheese and {m,9} meat lovers pizzas using the special pricing?
+
+#init:
+- $p = range(3, 40, 2)
+- $t = range(2, 100, 2)
+- $m = range(1, 60)
+
+#conditions:
+- divides(t * p, 2)
+- divides(m * 2 * p, 3)
+- (2 * p) % 3 > 0
+
+#answer: int(t * p / 2) + int(m * 2 * p / 3)
+"""
+
+answer_annotated = """
+Using buy-1-get-1-free pricing, it costs 1*${p}=$<<1*{p}={p}>>{p} to buy 2 triple cheese pizzas.
+At ${p} per 2 pizzas, it costs ${p}/2=$<<{p}/2={p/2}>>{p/2} per triple cheese pizza.
+Using buy-2-get-1-free pricing, it costs 2*${p}=$<<2*{p}={2*p}>>{2*p} to buy 3 meat lovers pizzas.
+At ${2*p} per three pizzas, it cost ${2*p}/3=${int(2*p/3)} and ${(2*p)%3}/3 per meat lovers pizza.
+With the buy-1-get-1-free pricing, {t} triple cheese pizzas are {t}*${p/2}=$<<{t}*{p/2}={int(t*p/2)}>>{int(t*p/2)}.
+With the buy-2-get-1-free pricing, {m} meat lovers pizzas are {m}*(${int(2*p/3)}+${(2*p)%3}/3)=${int(m*2*p/3)}.
+In total, for {t} triple cheese and {m} meat lovers pizzas, it will cost ${int(t*p/2)}+${int(m*2*p/3)}=${int(t*p/2)+int(m*2*p/3)}.
+#### {int(t*p/2) + int(m*2*p/3)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

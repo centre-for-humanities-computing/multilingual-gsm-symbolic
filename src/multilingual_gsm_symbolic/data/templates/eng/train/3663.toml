@@ -1,0 +1,43 @@
+question = """
+Barbi lost 1.5 kilograms each month for a year. Luca lost 9 kilograms every year for 11 years. How many more kilograms did Luca lose than Barbi?
+"""
+
+answer = """
+Barbi = 1.5 * 12 months = <<1.5*12=18>>18 kg
+Luca = 9 * 11 = <<9*11=99>>99 kg
+99 - 18 = <<99-18=81>>81 kg
+Luca lost 81 kg more than Barbi.
+#### 81
+"""
+
+id_orig = 3078
+id_shuffled = 3663
+
+question_annotated = """
+{name_b,Barbi} lost {b,1.5} kilograms each month for a year. {name_l,Luca} lost {l,9} kilograms every year for {y,11} years. How many more kilograms did {name_l,Luca} lose than {name_b,Barbi}?
+
+#init:
+- name_b = sample(names_female)
+- name_l = sample(names_male)
+- $b = arange(0.5, 15.5, 0.5)
+- $l = range(2, 50)
+- $y = range(2, 30)
+
+#conditions:
+- is_int(b * 12)
+- l * y > b * 12
+
+#answer: l*y - b*12
+"""
+
+answer_annotated = """
+{name_b} = {b} * 12 months = <<{b}*12={b*12}>>{b*12} kg
+{name_l} = {l} * {y} = <<{l}*{y}={l*y}>>{l*y} kg
+{l*y} - {b*12} = <<{l*y}-{b*12}={l*y-b*12}>>{l*y-b*12} kg
+{name_l} lost {l*y-b*12} kg more than {name_b}.
+#### {l*y-b*12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

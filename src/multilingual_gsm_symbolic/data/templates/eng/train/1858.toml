@@ -1,0 +1,52 @@
+question = """
+A waterpark opens up and charges $30 for admission.  Kids' tickets are half price.  If a group of people brings a soda, they can get 20% off the total price of admission.  Janet gets tickets for 10 people and 4 of them are children.  She buys a soda for $5 to take advantage of the discount for her group.  How much did she pay for everything?
+"""
+
+answer = """
+She bought 10-4=<<10-4=6>>6 adult tickets
+So 6*30=$<<6*30=180>>180 was the cost for adult tickets
+Children tickets cost 30/2=$<<30/2=15>>15 each
+So the children tickets cost 15*4=$<<15*4=60>>60
+So the total cost of tickets is 60+180=$<<60+180=240>>240
+They get a 240*.2=$<<240*.2=48>>48 discount
+So the tickets cost 240-48=$<<240-48=192>>192
+So in total she paid 192+5=$<<192+5=197>>197
+#### 197
+"""
+
+id_orig = 1711
+id_shuffled = 1858
+
+question_annotated = """
+A waterpark opens up and charges ${p,30} for admission.  Kids' tickets are half price.  If a group of people brings a soda, they can get 20% off the total price of admission.  {name,Janet} gets tickets for {n,10} people and {c,4} of them are children.  She buys a soda for ${s,5} to take advantage of the discount for her group.  How much did she pay for everything?
+
+#init:
+- name = sample(names_female)
+- $p = range(10, 62, 2)
+- $n = range(3, 20)
+- $c = range(1, 12)
+- $s = range(2, 22)
+
+#conditions:
+- c < n
+- divides(p, 2)
+- is_int(((n - c) * p + p // 2 * c) * 20 / 100)
+
+#answer: (n - c) * p + p // 2 * c - ((n - c) * p + p // 2 * c) * 20 // 100 + s
+"""
+
+answer_annotated = """
+She bought {n}-{c}=<<{n}-{c}={n-c}>>{n-c} adult tickets
+So {n-c}*{p}=$<<{n-c}*{p}={(n-c)*p}>>{(n-c)*p} was the cost for adult tickets
+Children tickets cost {p}/2=$<<{p}/2={p//2}>>{p//2} each
+So the children tickets cost {p//2}*{c}=$<<{p//2}*{c}={p//2*c}>>{p//2*c}
+So the total cost of tickets is {p//2*c}+{(n-c)*p}=$<<{p//2*c}+{(n-c)*p}={p//2*c+(n-c)*p}>>{p//2*c+(n-c)*p}
+They get a {p//2*c+(n-c)*p}*.2=$<<{p//2*c+(n-c)*p}*.2={(p//2*c+(n-c)*p)*20//100}>>{(p//2*c+(n-c)*p)*20//100} discount
+So the tickets cost {p//2*c+(n-c)*p}-{(p//2*c+(n-c)*p)*20//100}=$<<{p//2*c+(n-c)*p}-{(p//2*c+(n-c)*p)*20//100}={p//2*c+(n-c)*p-(p//2*c+(n-c)*p)*20//100}>>{p//2*c+(n-c)*p-(p//2*c+(n-c)*p)*20//100}
+So in total she paid {p//2*c+(n-c)*p-(p//2*c+(n-c)*p)*20//100}+{s}=$<<{p//2*c+(n-c)*p-(p//2*c+(n-c)*p)*20//100}+{s}={p//2*c+(n-c)*p-(p//2*c+(n-c)*p)*20//100+s}>>{p//2*c+(n-c)*p-(p//2*c+(n-c)*p)*20//100+s}
+#### {p//2*c+(n-c)*p-(p//2*c+(n-c)*p)*20//100+s}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

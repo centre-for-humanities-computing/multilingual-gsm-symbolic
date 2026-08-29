@@ -1,0 +1,40 @@
+question = """
+Melanie does her weekly shopping at the farmer's market.  She starts with an 8-ounce wheel of brie cheese.  Next is a 1 pound loaf of bread.  She grabs a pound of tomatoes and 2 pounds of zucchini.  After that, she grabs 1 1/2 pounds of chicken breasts and treats herself to 8 ounces of fresh raspberries and 8 ounces of fresh blueberries.  How many pounds of food does she buy?
+"""
+
+answer = """
+She bought 8ounces of cheese, 8-ounce raspberries, 8 ounces of blueberries for a total of 8*3 = <<8*3=24>>24 ounces
+16 ounces are in 1 pound and she has 24 ounces of food so she has 24/16 = <<24/16=1.5>>1.5 pounds of food
+Those items are 1.5 pounds and she bought 1 pound of bread, 1 pound of tomatoes, 2 pounds of zucchini and 1.5 pounds of chicken for a total of 1.5+1+1+2+1.5 = <<1.5+1+1+2+1.5=7>>7 pounds of food
+#### 7
+"""
+
+id_orig = 1549
+id_shuffled = 1674
+
+question_annotated = """
+{name,Melanie} does her weekly shopping at the farmer's market.  She starts with an {o,8}-ounce wheel of brie cheese.  Next is a {b,1} pound loaf of bread.  She grabs a pound of tomatoes and {z,2} pounds of zucchini.  After that, she grabs {c_txt,1 1/2} pounds of chicken breasts and treats herself to {o,8} ounces of fresh raspberries and {o,8} ounces of fresh blueberries.  How many pounds of food does she buy?
+
+#init:
+- name = sample(names_female)
+- c_txt, c = sample([("1/2", 0.5), ("1 1/2", 1.5), ("2 1/2", 2.5), ("1/4", 0.25), ("3/4", 0.75), ("1 3/4", 1.75)])
+- $o = range(2, 22, 2)
+- $b = range(1, 9)
+- $z = range(1, 16)
+
+#conditions:
+- is_int(o*3/16 + b + z + c + 1)
+
+#answer: int(o*3/16+b+1+z+c)
+"""
+
+answer_annotated = """
+She bought {o}ounces of cheese, {o}-ounce raspberries, {o} ounces of blueberries for a total of {o}*3 = <<{o}*3={o*3}>>{o*3} ounces
+16 ounces are in 1 pound and she has {o*3} ounces of food so she has {o*3}/16 = <<{o*3}/16={o*3/16}>>{o*3/16} pounds of food
+Those items are {o*3/16} pounds and she bought {b} pound of bread, 1 pound of tomatoes, {z} pounds of zucchini and {c} pounds of chicken for a total of {o*3/16}+{b}+1+{z}+{c} = <<{o*3/16}+{b}+1+{z}+{c}={int(o*3/16+b+1+z+c)}>>{int(o*3/16+b+1+z+c)} pounds of food
+#### {int(o*3/16+b+1+z+c)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

@@ -1,0 +1,40 @@
+question = """
+In a Zoo, there are different animals. There are 5 giraffes and twice as many penguins. Penguins make up 20% of all the animals in the Zoo. How many elephants are there in the Zoo if they make up 4% of all the animals?
+"""
+
+answer = """
+There are twice as many penguins as giraffes, so there are 5 * 2 = <<5*2=10>>10 penguins.
+The penguins make up 20% of all animals, so there are 100/20 * 10 = <<100/20*10=50>>50 animals in the whole Zoo.
+4% of animals are elephants, so there are 4/100 * 50 = <<4/100*50=2>>2 elephants at the Zoo.
+#### 2
+"""
+
+id_orig = 3095
+id_shuffled = 3680
+
+question_annotated = """
+In a Zoo, there are different animals. There are {g,5} giraffes and {multi_txt,twice} as many penguins. Penguins make up {p,20}% of all the animals in the Zoo. How many elephants are there in the Zoo if they make up {e,4}% of all the animals?
+
+#init:
+- $g = range(1, 21)
+- multi_txt, m = sample([("twice", 2), ("thrice", 3), ("four times", 4), ("five times", 5)])
+- $p = range(2, 51)
+- $e = range(1, 26)
+
+#conditions:
+- divides(100 * g * m, p)
+- divides(e * g * m, p)
+
+#answer: e * g * m // p
+"""
+
+answer_annotated = """
+There are {multi_txt} as many penguins as giraffes, so there are {g} * {m} = <<{g}*{m}={g*m}>>{g*m} penguins.
+The penguins make up {p}% of all animals, so there are 100/{p} * {g*m} = <<100/{p}*{g*m}={100*g*m//p}>>{100*g*m//p} animals in the whole Zoo.
+{e}% of animals are elephants, so there are {e}/100 * {100*g*m//p} = <<{e}/100*{100*g*m//p}={e*g*m//p}>>{e*g*m//p} elephants at the Zoo.
+#### {e*g*m//p}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

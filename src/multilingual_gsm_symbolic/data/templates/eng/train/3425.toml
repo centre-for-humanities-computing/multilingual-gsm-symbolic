@@ -1,0 +1,42 @@
+question = """
+Stuart is going on a cross-country trip and wants to find the fastest route. On one route the total distance is 1500 miles and the average speed is 75 MPH. On the second trip, the total distance is 750 but the average speed is 25 MPH. How long does his trip take if he goes on the fastest route?
+"""
+
+answer = """
+The first route will take 20 hours because 1,500 / 75 = <<1500/75=20>>20
+The second route will take 30 hours because 750 / 25 = <<750/25=30>>30
+The fastest route takes 20 hours because 20 < 30
+#### 20
+"""
+
+id_orig = 2877
+id_shuffled = 3425
+
+question_annotated = """
+{name,Stuart} is going on a cross-country trip and wants to find the fastest route. On one route the total distance is {d1,1500} miles and the average speed is {s1,75} MPH. On the second trip, the total distance is {d2,750} but the average speed is {s2,25} MPH. How long does his trip take if he goes on the fastest route?
+
+#init:
+- name = sample(names_male)
+- d1_txt, d1 = sample([("500", 500), ("1,000", 1000), ("1,500", 1500), ("2,000", 2000), ("2,500", 2500)])
+- $s1 = range(50, 105, 5)
+- $d2 = range(400, 1200, 50)
+- $s2 = range(15, 40, 5)
+
+#conditions:
+- divides(d1, s1)
+- divides(d2, s2)
+- d1 // s1 < d2 // s2
+
+#answer: d1 // s1
+"""
+
+answer_annotated = """
+The first route will take {d1//s1} hours because {d1_txt} / {s1} = <<{d1}/{s1}={d1//s1}>>{d1//s1}
+The second route will take {d2//s2} hours because {d2} / {s2} = <<{d2}/{s2}={d2//s2}>>{d2//s2}
+The fastest route takes {d1//s1} hours because {d1//s1} < {d2//s2}
+#### {d1//s1}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

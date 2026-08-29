@@ -1,0 +1,43 @@
+question = """
+A store gives a 10% discount for the amount of the sell that was over $1000.  John buys 7 items that each cost $200.  What does his order cost after the discount?
+"""
+
+answer = """
+His order came out to 7*200=$<<7*200=1400>>1400
+So there was 1400-1000=$<<1400-1000=400>>400 that qualified for the discount
+So his discount saved 400*.1=$<<400*.1=40>>40
+So his purchase came out to 1400-40=$<<1400-40=1360>>1360
+#### 1360
+"""
+
+id_orig = 2993
+id_shuffled = 3567
+
+question_annotated = """
+A store gives a 10% discount for the amount of the sell that was over ${limit,1000}.  {name,John} buys {n,7} items that each cost ${price,200}.  What does his order cost after the discount?
+
+#init:
+- name = sample(names_male)
+- $n = range(2, 30)
+- $price = range(10, 500, 10)
+- $limit = range(100, 2100, 100)
+
+#conditions:
+- n * price > limit
+- divides(n * price - limit, 10)
+- is_int((n * price - limit) * 0.1)
+
+#answer: n * price - (n * price - limit)//10
+"""
+
+answer_annotated = """
+His order came out to {n}*{price}=$<<{n}*{price}={n*price}>>{n*price}
+So there was {n*price}-{limit}=$<<{n*price}-{limit}={n*price-limit}>>{n*price-limit} that qualified for the discount
+So his discount saved {n*price-limit}*.1=$<<{n*price-limit}*.1={(n*price-limit)//10}>>{(n*price-limit)//10}
+So his purchase came out to {n*price}-{(n*price-limit)//10}=$<<{n*price}-{(n*price-limit)//10}={n*price-(n*price-limit)//10}>>{n*price-(n*price-limit)//10}
+#### {n*price-(n*price-limit)//10}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

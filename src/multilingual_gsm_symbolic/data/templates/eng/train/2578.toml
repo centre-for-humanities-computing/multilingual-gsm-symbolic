@@ -1,0 +1,46 @@
+question = """
+Shannon bought 5 pints of frozen yogurt, two packs of chewing gum, and five trays of jumbo shrimp from The Food Place for a total of  $55 If the price of a tray of jumbo shrimp is $5 and a pack of chewing gum costs half as much as a pint of frozen yogurt, what is the price of a pint of frozen yogurt?
+"""
+
+answer = """
+5 trays of jumbo shrimp cost 5 x 5 = $<<5*5=25>>25
+5 pints of frozen yogurt and 2 packs of gum in total cost 55 - 25 = $30.
+2 packs of gum cost as much 2 / 2 = <<2/2=1>>1 pint of frozen yogurt
+Therefore 5 + 1 = <<5+1=6>>6 pints of frozen yogurt costs $30.
+A pint of frozen yogurt costs 30 / 6 = $<<30/6=5>>5
+#### 5
+"""
+
+id_orig = 2240
+id_shuffled = 2578
+
+question_annotated = """
+{name,Shannon} bought {p,5} pints of frozen yogurt, {g_txt,two} packs of chewing gum, and {t_txt,five} trays of jumbo shrimp from The Food Place for a total of  ${T,55} If the price of a tray of jumbo shrimp is ${s,5} and a pack of chewing gum costs half as much as a pint of frozen yogurt, what is the price of a pint of frozen yogurt?
+
+#init:
+- name = sample(names_female)
+- g_txt, g = sample([("two", 2), ("four", 4), ("six", 6)])
+- t_txt, t = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $p = range(2, 17)
+- $s = range(2, 11)
+- $T = range(35, 90)
+
+#conditions:
+- T - t*s > 0
+- divides(T - t*s, p + g//2)
+
+#answer: (T - t*s)//(p + g//2)
+"""
+
+answer_annotated = """
+{t} trays of jumbo shrimp cost {t} x {s} = $<<{t}*{s}={t*s}>>{t*s}
+{p} pints of frozen yogurt and {g} packs of gum in total cost {T} - {t*s} = ${T-t*s}.
+{g} packs of gum cost as much {g} / 2 = <<{g}/2={g//2}>>{g//2} pint of frozen yogurt
+Therefore {p} + {g//2} = <<{p}+{g//2}={p+g//2}>>{p+g//2} pints of frozen yogurt costs ${T-t*s}.
+A pint of frozen yogurt costs {T-t*s} / {p+g//2} = $<<{T-t*s}/{p+g//2}={(T-t*s)//(p+g//2)}>>{(T-t*s)//(p+g//2)}
+#### {(T-t*s)//(p + g//2)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

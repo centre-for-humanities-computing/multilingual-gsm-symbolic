@@ -1,0 +1,43 @@
+question = """
+Jack goes up three flights of stairs, then down six flights of stairs. If each flight of stairs has 12 steps that each each 8 inches high, how many feet further down is Jack than when he started?
+"""
+
+answer = """
+First find the number of inches in each flight of stairs: 12 steps * 8 inches/step = <<12*8=96>>96 inches
+Then find the net number of flights of stairs Jack went down: 6 flights - 3 flights = <<6-3=3>>3 flights
+Then multiply than number by the number of inches per flight to find how many inches further down he is: 96 inches/flight * 3 flights = <<96*3=288>>288 inches
+Then divide that number by 12 to find the number of feet down he is: 288 inches / 12 inches/foot = <<288/12=24>>24 feet
+#### 24
+"""
+
+id_orig = 1465
+id_shuffled = 1572
+
+question_annotated = """
+{name,Jack} goes up {up_txt,three} flights of stairs, then down {down_txt,six} flights of stairs. If each flight of stairs has {steps,12} steps that each each {h,8} inches high, how many feet further down is {name,Jack} than when he started?
+
+#init:
+- name = sample(names_male)
+- up_txt, up = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- down_txt, down = sample([("three", 3), ("four", 4), ("five", 5), ("six", 6), ("seven", 7), ("eight", 8)])
+- $steps = range(4, 20)
+- $h = range(4, 16)
+
+#conditions:
+- down > up
+- divides(steps * h * (down - up), 12)
+
+#answer: steps*h*(down-up)//12
+"""
+
+answer_annotated = """
+First find the number of inches in each flight of stairs: {steps} steps * {h} inches/step = <<{steps}*{h}={steps*h}>>{steps*h} inches
+Then find the net number of flights of stairs {name} went down: {down} flights - {up} flights = <<{down}-{up}={down-up}>>{down-up} flights
+Then multiply than number by the number of inches per flight to find how many inches further down he is: {steps*h} inches/flight * {down-up} flights = <<{steps*h}*{down-up}={steps*h*(down-up)}>>{steps*h*(down-up)} inches
+Then divide that number by 12 to find the number of feet down he is: {steps*h*(down-up)} inches / 12 inches/foot = <<{steps*h*(down-up)}/12={steps*h*(down-up)//12}>>{steps*h*(down-up)//12} feet
+#### {steps*h*(down-up)//12}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

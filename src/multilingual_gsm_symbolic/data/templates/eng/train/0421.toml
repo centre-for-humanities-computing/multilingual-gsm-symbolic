@@ -1,0 +1,49 @@
+question = """
+It costs $.10 to print one page. Jenny wants to print 7 copies of her 25-page essay. She also wants to buy 7 pens that each cost $1.50. If she pays the store with 2 twenty dollar bills, how much money should she get in change?
+"""
+
+answer = """
+Jenny needs to print 7*25= <<7*25=175>>175 pages.
+This will cost 175*$.10 =$<<175*.10=17.5>>17.5.
+The pens will cost 7*$1.50=$<<7*1.5=10.50>>10.50.
+In total, she will spend $17.5+$10.5=$<<17.5+10.5=28>>28.
+Since she pays with 2 twenty dollar bills she pays with 2*20=<<2*20=40>>40 dollars.
+Thus, she will get $40-$28=$<<40-28=12>>12 in change.
+#### 12
+"""
+
+id_orig = 300
+id_shuffled = 421
+
+question_annotated = """
+It costs $.10 to print one page. {name,Jenny} wants to print {c,7} copies of her {p,25}-page essay. She also wants to buy {q,7} pens that each cost $1.50. If she pays the store with {nb,2} {bill_txt,twenty} dollar bills, how much money should she get in change?
+
+#init:
+- name = sample(names)
+- $c = range(2, 13)
+- $p = range(15, 36)
+- $q = range(2, 13)
+- $nb = range(2, 5)
+- bill_txt, bill_val = sample([("twenty", 20), ("fifty", 50), ("hundred", 100)])
+
+#conditions:
+- divides(c * p, 5)
+- divides(c * p + 15 * q, 10)
+- 10 * nb * bill_val > c * p + 15 * q
+
+#answer: nb*bill_val - int((c*p + 15*q)/10)
+"""
+
+answer_annotated = """
+{name} needs to print {c}*{p}= <<{c}*{p}={c*p}>>{c*p} pages.
+This will cost {c*p}*$.10 =$<<{c*p}*.10={c*p*0.1}>>{c*p*0.1}.
+The pens will cost {q}*$1.50=$<<{q}*1.5={str(q*1.5)+"0"}>>{str(q*1.5)+"0"}.
+In total, she will spend ${c*p*0.1}+${q*1.5}=$<<{c*p*0.1}+{q*1.5}={int((c*p + 15*q)/10)}>>{int((c*p + 15*q)/10)}.
+Since she pays with {nb} {bill_txt} dollar bills she pays with {nb}*{bill_val}=<<{nb}*{bill_val}={nb*bill_val}>>{nb*bill_val} dollars.
+Thus, she will get ${nb*bill_val}-${int((c*p + 15*q)/10)}=$<<{nb*bill_val}-{int((c*p + 15*q)/10)}={nb*bill_val - int((c*p + 15*q)/10)}>>{nb*bill_val - int((c*p + 15*q)/10)} in change.
+#### {nb*bill_val - int((c*p + 15*q)/10)}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

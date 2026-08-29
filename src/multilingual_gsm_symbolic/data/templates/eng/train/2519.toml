@@ -1,0 +1,43 @@
+question = """
+John's camera broke so he decided to rent one for 4 weeks.  It was a $5000 camera and the rental fee was 10% of the value per week.  His friend who was there when it broke agreed to pay 40% of the rental fee.  How much did John pay?
+"""
+
+answer = """
+The rental fee is 5000*.1=$<<5000*.1=500>>500 per week
+So it cost 500*4=$<<500*4=2000>>2000
+His friend pays 2000*.4=$<<2000*.4=800>>800
+So he pays 2000-800=$<<2000-800=1200>>1200
+#### 1200
+"""
+
+id_orig = 2181
+id_shuffled = 2519
+
+question_annotated = """
+{name,John}'s camera broke so he decided to rent one for {weeks,4} weeks.  It was a ${value,5000} camera and the rental fee was {q,10}% of the value per week.  His friend who was there when it broke agreed to pay {p,40}% of the rental fee.  How much did {name,John} pay?
+
+#init:
+- name = sample(names_male)
+- $weeks = range(2, 9)
+- $value = range(1000, 11000, 100)
+- $q = range(10, 91, 10)
+- $p = range(10, 91, 10)
+
+#conditions:
+- divides(value*q, 100)
+- divides(value*q//100*weeks*p, 100)
+
+#answer: value*q//100*weeks - value*q//100*weeks*p//100
+"""
+
+answer_annotated = """
+The rental fee is {value}*.{q//10}=$<<{value}*.{q//10}={value*q//100}>>{value*q//100} per week
+So it cost {value*q//100}*{weeks}=$<<{value*q//100}*{weeks}={value*q//100*weeks}>>{value*q//100*weeks}
+His friend pays {value*q//100*weeks}*.{p//10}=$<<{value*q//100*weeks}*.{p//10}={value*q//100*weeks*p//100}>>{value*q//100*weeks*p//100}
+So he pays {value*q//100*weeks}-{value*q//100*weeks*p//100}=$<<{value*q//100*weeks}-{value*q//100*weeks*p//100}={value*q//100*weeks - value*q//100*weeks*p//100}>>{value*q//100*weeks - value*q//100*weeks*p//100}
+#### {value*q//100*weeks - value*q//100*weeks*p//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

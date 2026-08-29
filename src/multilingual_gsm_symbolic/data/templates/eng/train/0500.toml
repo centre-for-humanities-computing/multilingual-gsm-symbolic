@@ -1,0 +1,43 @@
+question = """
+Ever since she was a little girl, Sheila has dreamed of traveling the world. To help fund her dream, she bought a large piggy bank in December and started saving. By last week, she had saved $3,000. Pleased with her progress, she has decided to continue saving $276 per month, for 4 years. Today, Sheila’s family secretly added $7,000 into the piggy bank. At the end of 4 years, how much money will be in Sheila’s piggy bank?
+"""
+
+answer = """
+Today, Sheila’s piggy bank has $3000 + $7000 = $<<3000+7000=10000>>10,000
+Sheila will be saving for 4 years which is equivalent to 12 months/year * 4 years = <<12*4=48>>48 months
+In 4 years, she will save $276/month * 48 months = $<<276*48=13248>>13,248
+The piggy bank will have a total of $10,000 + $13,248 = $<<10000+13248=23248>>23,248
+#### 23248
+"""
+
+id_orig = 427
+id_shuffled = 500
+
+question_annotated = """
+Ever since she was a little girl, {name,Sheila} has dreamed of traveling the world. To help fund her dream, she bought a large piggy bank in December and started saving. By last week, she had saved ${th,3},000. Pleased with her progress, she has decided to continue saving ${m,276} per month, for {y,4} years. Today, {name,Sheila}’s family secretly added ${tu,7},000 into the piggy bank. At the end of {y,4} years, how much money will be in {name,Sheila}’s piggy bank?
+
+#init:
+- name = sample(names_female)
+- $th = range(1, 6)
+- $tu = range(2, 11)
+- $m = range(120, 384, 12)
+- $y = range(2, 6)
+
+#conditions:
+- (m * 12 * y) % 1000 >= 100
+- ((th + tu) * 1000 + m * 12 * y) % 1000 >= 100
+
+#answer: (th + tu) * 1000 + m * 12 * y
+"""
+
+answer_annotated = """
+Today, {name}’s piggy bank has ${th*1000} + ${tu*1000} = $<<{th*1000}+{tu*1000}={(th+tu)*1000}>>{th+tu},000
+{name} will be saving for {y} years which is equivalent to 12 months/year * {y} years = <<12*{y}={12*y}>>{12*y} months
+In {y} years, she will save ${m}/month * {12*y} months = $<<{m}*{12*y}={m*12*y}>>{m*12*y//1000},{m*12*y%1000}
+The piggy bank will have a total of ${th+tu},000 + ${m*12*y//1000},{m*12*y%1000} = $<<{(th+tu)*1000}+{m*12*y}={(th+tu)*1000+m*12*y}>>{((th+tu)*1000+m*12*y)//1000},{((th+tu)*1000+m*12*y)%1000}
+#### {(th + tu) * 1000 + m * 12 * y}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"

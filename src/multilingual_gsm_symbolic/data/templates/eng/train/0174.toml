@@ -1,0 +1,41 @@
+question = """
+George bought some food for his trip: a bottle of juice, a sandwich, and a bottle of milk. The sandwich was for $4, and the juice was two times more expensive. The bottle of milk cost was 75% of the total cost of the sandwich and juice. How much did George pay for his food?
+"""
+
+answer = """
+The juice was two times more expensive than the sandwich, so it was 4 * 2 = $<<2*4=8>>8.
+The juice and the sandwich in total were a cost of 4 + 8 = $<<4+8=12>>12.
+So the cost of one bottle of milk was 75/100 * 12 = $<<75/100*12=9>>9.
+In total for all the food, George paid 12 + 9 = $<<12+9=21>>21.
+#### 21
+"""
+
+id_orig = 156
+id_shuffled = 174
+
+question_annotated = """
+{name,George} bought some food for his trip: a bottle of juice, a sandwich, and a bottle of milk. The sandwich was for ${p,4}, and the juice was {m_txt,two} times more expensive. The bottle of milk cost was {r,75}% of the total cost of the sandwich and juice. How much did {name,George} pay for his food?
+
+#init:
+- name = sample(names_male)
+- m_txt, m = sample([("two", 2), ("three", 3), ("four", 4), ("five", 5)])
+- $p = range(2, 52, 2)
+- $r = range(25, 100, 25)
+
+#conditions:
+- divides(r * (p + m * p), 100)
+
+#answer: p + m*p + r*(p+m*p)//100
+"""
+
+answer_annotated = """
+The juice was {m_txt} times more expensive than the sandwich, so it was {p} * {m} = $<<{m}*{p}={m*p}>>{m*p}.
+The juice and the sandwich in total were a cost of {p} + {m*p} = $<<{p}+{m*p}={p+m*p}>>{p+m*p}.
+So the cost of one bottle of milk was {r}/100 * {p+m*p} = $<<{r}/100*{p+m*p}={r*(p+m*p)//100}>>{r*(p+m*p)//100}.
+In total for all the food, {name} paid {p+m*p} + {r*(p+m*p)//100} = $<<{p+m*p}+{r*(p+m*p)//100}={p+m*p+r*(p+m*p)//100}>>{p+m*p+r*(p+m*p)//100}.
+#### {p + m*p + r*(p+m*p)//100}
+"""
+
+creation = "machine-generated from GSM8K using opencode/x-preview-f-free via opencode"
+
+language = "eng"
