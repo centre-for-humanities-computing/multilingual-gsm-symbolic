@@ -1,10 +1,45 @@
-question = "{name,Pat} har en blomsterbädd som är {length,111} {unit_length,meter} lång. {name,Pat} vill fylla sin blomsterbädd med växter. {name,Pat}s blommor växer {plant_width,12} centimeter breda, och odlingsriktlinjer säger att man ska plantera en blomma var {space,1.5} {unit_length,meter} längs bädden. {name,Pat} äger redan {owned,17} blommor. Varje blommande växt kostar {cur,$}{cost,6} i affären. Hur mycket pengar kommer {name,Pat} att lägga ut i affären för att fylla sin blomsterbädd?"
-answer = "{name}s blomsterbädd är {length} {unit_length} / {space} {unit_length} per växt = <<{length}/{space}={int(length/space)}>>{int(length/space)} växter behövs.\n{name} behöver köpa {int(length/space)} växter - {owned} växter = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} växter att köpa.\n{name} kommer att spendera {int(length/space)-owned} växter * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}.\n#### {int((length/space - owned) * cost)}\n"
-id_orig = 984
-id_shuffled = 45
-question_annotated = "{name,Pat} har en blomsterbädd som är {length,111} {unit_length,meter} lång. {name,Pat} vill fylla sin blomsterbädd med växter. {name,Pat}s blommor växer {plant_width,12} centimeter breda, och odlingsriktlinjer säger att man ska plantera en blomma var {space,1.5} {unit_length,meter} längs bädden. {name,Pat} äger redan {owned,17} blommor. Varje blommande växt kostar {cur,$}{cost,6} i affären. Hur mycket pengar kommer {name,Pat} att lägga ut i affären för att fylla sin blomsterbädd?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)\n"
-answer_annotated = "{name}s blomsterbädd är {length} {unit_length} / {space} {unit_length} per växt = <<{length}/{space}={int(length/space)}>>{int(length/space)} växter behövs.\n{name} behöver köpa {int(length/space)} växter - {owned} växter = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} växter att köpa.\n{name} kommer att spendera {int(length/space)-owned} växter * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}.\n#### {int((length/space - owned) * cost)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Sofia har en blomsterrabatt som är 28,8 m lång. Sofia vill fylla rabatten med plantor. Hennes blommor blir 30 cm breda, och odlingsanvisningarna säger att man ska plantera en blomma med 45 cm mellanrum längs rabatten. Sofia äger redan 17 blommor. Varje planta kostar 40 kronor i butiken. Hur mycket pengar kommer Sofia att behöva spendera i butiken för att fylla rabatten?"
 
-ignore = true
+answer = """
+Rabatten är 28,8 m lång, alltså 2880 cm / 45 cm per planta = <<2880/45=64>>64 plantor.
+Sofia behöver köpa 64 plantor - 17 plantor = <<64-17=47>>47 plantor.
+Sofia betalar 47 plantor * 40 kronor = <<47*40=1880>>1880 kronor.
+#### 1880
+"""
+
+id_orig = 984
+
+id_shuffled = 45
+
+question_annotated = """
+{name,Sofia} har en blomsterrabatt som är {length_txt,28.8} m lång. {name,Sofia} vill fylla rabatten med plantor. Hennes blommor blir {plant_width,30} cm breda, och odlingsanvisningarna säger att man ska plantera en blomma med {space,45} cm mellanrum längs rabatten. {name,Sofia} äger redan {owned,17} blommor. Varje planta kostar {cost,40} {cur,kronor} i butiken. Hur mycket pengar kommer {name,Sofia} att behöva spendera i butiken för att fylla rabatten?
+
+#init:
+- name = sample(names_female)
+- cur = sample(currencies_sym)
+- $length = arange(25, 40, 0.2)
+- length_txt = int(length) if is_int(length) else length
+- $plant_width = range(20, 40)
+- $space = range(20, 60)
+- $owned = range(5, 20)
+- $cost = range(20, 100)
+
+#conditions:
+- plant_width * 3 < length*100
+- plant_width < space
+- is_int(length*100 / space)
+- length*100 / space > owned
+
+#answer: int((length*100 / space - owned) * cost)
+"""
+
+answer_annotated = """
+Rabatten är {length} m lång, alltså {int(length*100)} cm / {space} cm per planta = <<{int(length*100)}/{space}={int(length*100/space)}>>{int(length*100/space)} plantor.
+{name} behöver köpa {int(length*100/space)} plantor - {owned} plantor = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} plantor.
+{name} betalar {int(length*100/space)-owned} plantor * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
+#### {int(length*100/space - owned) * cost}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

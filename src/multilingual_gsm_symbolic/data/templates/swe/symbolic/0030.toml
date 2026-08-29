@@ -1,10 +1,46 @@
-question = "David har 12,48 $ och vill köpa 16 bultar från en burk på byggvaruhuset. Varje bult kostar 0,03 $. Hur mycket pengar har David kvar efter att ha betalat för bultarna?"
-answer = "David betalade 16 * 0,03 $ = $<<16*0.03=0.48>>0.48 för bultarna.\nDavid har 12,48 $ - 0,48 $ = 12 $ kvar.\n#### 12\n"
-id_orig = 873
-id_shuffled = 30
-question_annotated = "{name,David} har {cur,$}{initial_amount,12.48} och vill köpa {quantity,16} {item,bolt}s från en burk på {store_type,byggvaru} store. Varje {item,bolt} kostar {cur,$}{unit_price,0.03}. Hur mycket pengar har {name,David} kvar efter att ha betalat för {item,bolt}s?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item = sample([\"screw\", \"nail\", \"washer\", \"nut\", \"anchor\"])\n- store_type = sample([\"hardware\", \"home improvement\", \"construction supply\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(12.48, 105, 0.48)\n- $unit_price = arange(0.01, 1, 0.01)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: round(initial_amount - quantity * unit_price)\n"
-answer_annotated = "{name} betalade {quantity} * {cur}{round(unit_price} = {cur}<<{quantity}*{round(unit_price}={round(quantity*unit_price}>>{round(quantity*unit_price} för {item}s.\n{name} har {cur}{initial_amount} - {cur}{round(quantity*unit_price} = {cur}{round(initial_amount - quantity * unit_price)} kvar.\n#### {round(initial_amount - quantity * unit_price)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Erik har 130,2 kronor och vill köpa 16 bultar ur en låda på byggmarknaden. Varje bult kostar 0,2 kronor. Hur mycket pengar har Erik kvar efter att ha betalat för bultarna?"
 
-ignore = true
+answer = """
+Erik betalade 16*0,2 kronor = <<16*0,2=3,2>>3,2 kronor för bultarna.
+Erik har 130,2 kronor - 3,2 kronor = 127 kronor kvar.
+#### 127
+"""
+
+id_orig = 873
+
+id_shuffled = 30
+
+question_annotated = """
+{name,Erik} har {initial_txt,130.2} {cur,kronor} och vill köpa {quantity,16} {item_plural,bultar} ur en låda på {store_type,byggmarknaden}. Varje {item,bult} kostar {unit_price_txt,0.2} {unit_price_cur,kronor}. Hur mycket pengar har {name,Erik} kvar efter att ha betalat för {item_plural,bultar}na?
+
+#init:
+- name = sample(names)
+- cur = sample(currencies_sym)
+- cur_sing = "krona" if cur == "kronor" else cur
+- item, item_plural = sample([("bult", "bultar"), ("skruv", "skruvar"), ("bricka", "brickor"), ("mutter", "muttrar"), ("expanderplugg", "expanderpluggar")])
+- store_type = sample(["byggmarknaden", "järnhandeln", "byggvaruhuset"])
+- $quantity = range(15, 60)
+- $initial_amount = arange(85.5, 175, 5.5)
+- $unit_price = arange(0.2, 4.8, 0.1)
+- initial_txt = int(initial_amount) if is_int(initial_amount) else round(initial_amount, 2)
+- unit_price_txt = int(unit_price) if is_int(unit_price) else round(unit_price, 2)
+- unit_price_cur = plural(unit_price, cur_sing, cur)
+
+#conditions:
+- initial_amount > quantity * unit_price
+- round(initial_amount - quantity * unit_price) > 0
+- int(quantity * unit_price * 1000) % 10 == 0
+- is_int((initial_amount - quantity * unit_price))
+
+#answer: round(initial_amount - quantity * unit_price)
+"""
+
+answer_annotated = """
+{name} betalade {quantity}*{round(unit_price,2)} {cur} = <<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} {cur} för {item_plural}na.
+{name} har {initial_txt} {cur} - {round(quantity*unit_price,2)} {cur} = {round(initial_amount - quantity * unit_price)} {plural(round(initial_amount - quantity * unit_price), cur_sing, cur)} kvar.
+#### {round(initial_amount - quantity * unit_price)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

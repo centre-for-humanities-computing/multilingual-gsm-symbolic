@@ -1,8 +1,47 @@
-question = "Prins Thaddeus dödade 100 drakar med sitt mäktiga svärd, medan Prins Arthur, med en spjut, dödade tre fjärdedelar så många drakar som Prins Thaddeus. Med en rostig järnyxa, dödade Prins Walter två gånger så många drakar som Prins Arthur. Men Prins Bruce, som glömt sitt svärd hemma, dödade en femtedel så många drakar som Prins Walter med en nagelfil. Hur många drakar har Prins Bruce dödat?"
-answer = "Prins Arthur dödade tre fjärdedelar så många drakar som Prins Thaddeus, eller 100*3/4=<<100*3/4=75>>75 drakar.\nPrins Walter dödade två gånger så många drakar som Prins Arthur, eller 2*75=<<2*75=150>>150 drakar.\nPrins Bruce dödade en femtedel så många drakar som Prins Walter, eller 150*1/5=<<150*1/5=30>>30 drakar.\n#### 30\n"
+question = "Prins Erik dödade 100 drakar med sitt mäktiga svärd, medan prins Nils, som använde ett spjut, dödade tre fjärdedelar så många drakar som prins Erik. Med en rostig järnyxa dödade prins Magnus två gånger så många drakar som prins Nils. Men prins Emil, som hade glömt sitt svärd hemma, dödade en femtedel så många drakar som prins Magnus med hjälp av en nagelfil. Hur många drakar har prins Emil dödat?"
+
+answer = """
+Prins Nils dödade tre fjärdedelar så många drakar som prins Erik, alltså 100*3/4=<<100*3/4=75>>75 drakar.
+Prins Magnus dödade två gånger så många drakar som prins Nils, alltså 2*75=<<2*75=150>>150 drakar.
+Prins Emil dödade en femtedel så många drakar som prins Magnus, alltså 150*1/5=<<150*1/5=30>>30 drakar.
+#### 30
+"""
+
 id_orig = 432
+
 id_shuffled = 92
-question_annotated = "Prins {name1,Thaddeus} dödade {n1,100} {creature,drakar} med sitt mäktiga {weapon1,svärd}, medan Prins {name2,Arthur}, med en {weapon2,spjut}, dödade {frac1_txt,tre fjärdedelar} så många {creature,drakar} som Prins {name1,Thaddeus}. Med en {weapon3,rostig järnyxa}, dödade Prins {name3,Walter} {mult1_txt,två gånger} så många {creature,drakar} som Prins {name2,Arthur}. Men Prins {name4,Bruce}, som glömt sitt {weapon4,svärd} hemma, dödade {frac2_txt,en femtedel} så många {creature,drakar} som Prins {name3,Walter} med en {weapon5,nagelfil}. Hur många {creature,drakar} har Prins {name4,Bruce} dödat?\n\n#init:\n- name1, name2, name3, name4 = sample(names_male, 4)\n- creature = sample([\"ogres\", \"trolls\", \"goblins\", \"orcs\", \"giants\"])\n- weapon1 = sample([\"sword\", \"mace\", \"battle axe\", \"war hammer\"])\n- weapon2 = sample([\"spear\", \"lance\", \"javelin\", \"halberd\"])\n- weapon3 = sample([\"rusty iron axe\", \"wooden club\", \"stone hammer\", \"bone dagger\"])\n- weapon4 = sample([\"sword\", \"axe\", \"mace\", \"hammer\"])\n- weapon5 = sample([\"nail file\", \"butter knife\", \"wooden spoon\", \"feather\"])\n- $n1 = range(50, 501, 50)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = sample(multi_times)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n1 * frac1_val * mult1_val)\n- is_int(n1 * frac1_val * mult1_val * frac2_val)\n\n#answer: int(n1 * frac1_val * mult1_val * frac2_val)\n"
-answer_annotated = "Prins {name2} dödade {frac1_txt} så många {creature} som Prins {name1}, eller {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.\nPrins {name3} dödade {mult1_txt} så många {creature} som Prins {name2}, eller {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.\nPrins {name4} dödade {frac2_txt} så många {creature} som Prins {name3}, eller {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.\n#### {int(n1*frac1_val*mult1_val*frac2_val)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+Prins {name1,Erik} dödade {n1,100} {creature,drakar} med {weapon1_poss,sitt} mäktiga {weapon1,svärd}, medan prins {name2,Nils}, som använde {weapon2_article,ett} {weapon2,spjut}, dödade {frac1_txt,tre fjärdedelar} så många {creature,drakar} som prins {name1,Erik}. Med {weapon3,en rostig järnyxa} dödade prins {name3,Magnus} {mult1_txt,två gånger} så många {creature,drakar} som prins {name2,Nils}. Men prins {name4,Emil}, som hade glömt {weapon4_poss,sitt} {weapon4,svärd} hemma, dödade {frac2_txt,en femtedel} så många {creature,drakar} som prins {name3,Magnus} med hjälp av en {weapon5,nagelfil}. Hur många {creature,drakar} har prins {name4,Emil} dödat?
+
+#init:
+- name1, name2, name3, name4 = sample(names_male, 4)
+- creature = sample(["drakar", "troll", "vättar", "jättar", "orcher"])
+- weapon1_poss, weapon1 = sample([("sitt", "svärd"), ("sin", "stridsyxa"), ("sin", "krigshammare")])
+- weapon2_article, weapon2 = sample([("ett", "spjut"), ("en", "lans"), ("en", "hillebard")])
+- weapon3 = sample(["en rostig järnyxa", "en stenhammare", "en träklubba"])
+- weapon4_poss, weapon4 = sample([("sitt", "svärd"), ("sin", "yxa"), ("sin", "hammare")])
+- weapon5 = sample(["nagelfil", "smörkniv", "sked", "fjäder"])
+- $n1 = range(50, 501, 50)
+- frac1_txt, frac1_val = sample(fraction_alnum)
+- mult1_txt, mult1_val = sample(multi_times)
+- frac2_txt, frac2_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n1 * frac1_val)
+- is_int(n1 * frac1_val * mult1_val)
+- is_int(n1 * frac1_val * mult1_val * frac2_val)
+
+#answer: int(n1 * frac1_val * mult1_val * frac2_val)
+"""
+
+answer_annotated = """
+Prins {name2} dödade {frac1_txt} så många {creature} som prins {name1}, alltså {n1}*{frac1_val}=<<{n1}*{frac1_val}={int(n1*frac1_val)}>>{int(n1*frac1_val)} {creature}.
+Prins {name3} dödade {mult1_txt} så många {creature} som prins {name2}, alltså {mult1_val}*{int(n1*frac1_val)}=<<{mult1_val}*{int(n1*frac1_val)}={int(n1*frac1_val*mult1_val)}>>{int(n1*frac1_val*mult1_val)} {creature}.
+Prins {name4} dödade {frac2_txt} så många {creature} som prins {name3}, alltså {int(n1*frac1_val*mult1_val)}*{frac2_val}=<<{int(n1*frac1_val*mult1_val)}*{frac2_val}={int(n1*frac1_val*mult1_val*frac2_val)}>>{int(n1*frac1_val*mult1_val*frac2_val)} {creature}.
+#### {int(n1*frac1_val*mult1_val*frac2_val)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
 language = "swe"

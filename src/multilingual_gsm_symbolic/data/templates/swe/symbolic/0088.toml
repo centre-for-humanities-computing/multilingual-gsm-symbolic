@@ -1,8 +1,55 @@
-question = "Dana kan springa fyra gånger snabbare än hon kan gå, men hon kan hoppa i en hastighet som är hälften så snabb som hon kan springa. Om hon kan hoppa i 3 kilometer i timmen, hur många kilometer kan hon färdas på sex timmar om hon spenderar en tredjedel av tiden på att springa och två tredjedelar av tiden på att gå?"
-answer = "Om Dana kan hoppa i hälften av den hastighet hon kan springa, kan hon springa i 3*2=<<3*2=6>>6 kilometer i timmen.\nOch eftersom hon kan springa i en hastighet som är fyra gånger snabbare än hon kan gå, betyder det att hon kan gå i 6/4=1,5 kilometer i timmen.\nOm två tredjedelar av tiden spenderas på att gå, går hon i 6*2/3=<<6*2/3=4>>4 timmar.\nOm en tredjedel av tiden spenderas på att springa, springer hon i 6-4=<<6-4=2>>2 timmar.\nSå hon springer i 2 timmar i 6 kilometer i timmen, eller 2*6=<<2*6=12>>12 kilometer.\nHon går i 4 timmar i 1,5 kilometer i timmen, eller 4*1,5=<<4*1,5=6>>6 kilometer.\nSå totalt färdas hon 12+6=<<12+6=18>>18 kilometer.\n#### 18\n"
+question = "Signe kan springa fyra gånger så fort som hon kan gå, men hon kan skutta i en hastighet som är hälften av den hastighet hon kan springa i. Om hon kan skutta i 3 km i timmen, hur långt kan hon färdas på sex timmar om hon ägnar en tredjedel av tiden åt att springa och två tredjedelar av tiden åt att gå?"
+
+answer = """
+Om Signe kan skutta i hälften av den hastighet hon kan springa i, kan hon springa i 3*2=<<3*2=6>>6 km i timmen.
+Och eftersom hon kan springa fyra gånger så fort som hon kan gå kan hon gå i 6/4=1,5 km i timmen.
+Om två tredjedelar av tiden går åt till att gå, går hon i 6*2/3=<<6*2/3=4>>4 timmar.
+Om en tredjedel av tiden går åt till att springa, springer hon i 6-4=<<6-4=2>>2 timmar.
+Alltså springer hon i 2 timmar i 6 km i timmen, vilket blir 2*6=<<2*6=12>>12 km.
+Hon går i 4 timmar i 1,5 km i timmen, vilket blir 4*1,5=<<4*1,5=6>>6 km.
+Sammanlagt färdas hon alltså 12+6=<<12+6=18>>18 km.
+#### 18
+"""
+
 id_orig = 39
+
 id_shuffled = 88
-question_annotated = "{name,Dana} kan springa {mult_run_txt,fyra gånger} snabbare än hon kan gå, men hon kan hoppa i en hastighet som är {frac_skip_txt,hälften} så snabb som hon kan springa. Om hon kan hoppa i {skip_speed,3} kilometer i timmen, hur många kilometer kan hon färdas på {total_time_txt,sex} timmar om hon spenderar {frac_run_txt,en tredjedel} av tiden på att springa och {frac_walk_txt,två tredjedelar} av tiden på att gå?\n\n#init:\n- name = sample(names_female)\n- mult_run_txt, mult_run_val = sample(multi_times)\n- frac_skip_txt, frac_skip_val = sample(fraction_alnum)\n- $skip_speed = range(2, 10)\n- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)\n- frac_run_txt, frac_run_val = sample(fraction_alnum)\n- frac_walk_txt, frac_walk_val = sample(fraction_alnum)\n\n#conditions:\n- frac_run_val + frac_walk_val == 1\n- skip_speed / frac_skip_val < 13\n- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))\n- is_int(skip_speed / frac_skip_val)\n- is_int(total_time_val * frac_run_val)\n- is_int(total_time_val * frac_walk_val)\n\n#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))\n"
-answer_annotated = "Om {name} kan hoppa i {frac_skip_txt} av den hastighet hon kan springa, kan hon springa i {skip_speed}*{1/frac_skip_val}=<<{skip_speed}*{1/frac_skip_val}={skip_speed / frac_skip_val}>>{float(skip_speed / frac_skip_val)} kilometer i timmen.\nOch eftersom hon kan springa i en hastighet som är {mult_run_txt} snabbare än hon kan gå, betyder det att hon kan gå i {skip_speed / frac_skip_val}/{mult_run_val}={float(skip_speed / frac_skip_val / mult_run_val)} kilometer i timmen.\nOm {frac_walk_txt} av tiden spenderas på att gå, går hon i {total_time_val}*{frac_walk_val}=<<{total_time_val}*{frac_walk_val}={total_time_val * frac_walk_val}>>{total_time_val * frac_walk_val} timmar.\nOm {frac_run_txt} av tiden spenderas på att springa, springer hon i {total_time_val}-{total_time_val * frac_walk_val}=<<{total_time_val}-{total_time_val * frac_walk_val}={total_time_val * frac_run_val}>>{total_time_val * frac_run_val} timmar.\nSå hon springer i {total_time_val * frac_run_val} timmar i {skip_speed / frac_skip_val} kilometer i timmen, eller {total_time_val * frac_run_val}*{skip_speed / frac_skip_val}=<<{total_time_val * frac_run_val}*{skip_speed / frac_skip_val}={total_time_val * frac_run_val * (skip_speed / frac_skip_val)}>>{total_time_val * frac_run_val * (skip_speed / frac_skip_val)} kilometer.\nHon går i {total_time_val * frac_walk_val} timmar i {float(skip_speed / frac_skip_val / mult_run_val)} kilometer i timmen, eller {total_time_val * frac_walk_val}*{float(skip_speed / frac_skip_val / mult_run_val)}=<<{total_time_val * frac_walk_val}*{float(skip_speed / frac_skip_val / mult_run_val)}={total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}>>{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)} kilometer.\nSå totalt färdas hon {total_time_val * frac_run_val * (skip_speed / frac_skip_val)}+{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}=<<{total_time_val * frac_run_val * (skip_speed / frac_skip_val)}+{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}={int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))}>>{ int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))} kilometer.\n#### {int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+
+question_annotated = """
+{name,Signe} kan springa {mult_run_txt,fyra gånger} så fort som hon kan gå, men hon kan skutta i en hastighet som är {frac_skip_txt,hälften} av den hastighet hon kan springa i. Om hon kan skutta i {skip_speed,3} km i timmen, hur långt kan hon färdas på {total_time_txt,sex} timmar om hon ägnar {frac_run_txt,en tredjedel} av tiden åt att springa och {frac_walk_txt,två tredjedelar} av tiden åt att gå?
+
+#init:
+- name = sample(names_female)
+- mult_run_txt, mult_run_val = sample(multi_times)
+- frac_skip_txt, frac_skip_val = sample(fraction_alnum)
+- $skip_speed = range(2, 10)
+- total_time_txt, total_time_val = range_str(4, 12, 2, numbers)
+- frac_run_txt, frac_run_val = sample(fraction_alnum)
+- frac_walk_txt, frac_walk_val = sample(fraction_alnum)
+
+#conditions:
+- frac_run_val + frac_walk_val == 1
+- skip_speed / frac_skip_val < 13
+- is_int(10 * skip_speed / frac_skip_val / mult_run_val)
+- is_int(total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val))
+- is_int(skip_speed / frac_skip_val)
+- is_int(total_time_val * frac_run_val)
+- is_int(total_time_val * frac_walk_val)
+
+#answer: int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))
+"""
+
+answer_annotated = """
+Om {name} kan skutta i {frac_skip_txt} av den hastighet hon kan springa i, kan hon springa i {skip_speed}*{1/frac_skip_val}=<<{skip_speed}*{1/frac_skip_val}={skip_speed / frac_skip_val}>>{skip_speed / frac_skip_val} km i timmen.
+Och eftersom hon kan springa {mult_run_txt} så fort som hon kan gå kan hon gå i {skip_speed / frac_skip_val}/{mult_run_val}={float(skip_speed / frac_skip_val / mult_run_val)} km i timmen.
+Om {frac_walk_txt} av tiden går åt till att gå, går hon i {total_time_val}*{frac_walk_val}=<<{total_time_val}*{frac_walk_val}={total_time_val * frac_walk_val}>>{total_time_val * frac_walk_val} {plural(total_time_val * frac_walk_val, "timme", "timmar")}.
+Om {frac_run_txt} av tiden går åt till att springa, springer hon i {total_time_val}-{total_time_val * frac_walk_val}=<<{total_time_val}-{total_time_val * frac_walk_val}={total_time_val * frac_run_val}>>{total_time_val * frac_run_val} {plural(total_time_val * frac_run_val, "timme", "timmar")}.
+Alltså springer hon i {total_time_val * frac_run_val} {plural(total_time_val * frac_run_val, "timme", "timmar")} i {skip_speed / frac_skip_val} km i timmen, vilket blir {total_time_val * frac_run_val}*{skip_speed / frac_skip_val}=<<{total_time_val * frac_run_val}*{skip_speed / frac_skip_val}={total_time_val * frac_run_val * (skip_speed / frac_skip_val)}>>{total_time_val * frac_run_val * (skip_speed / frac_skip_val)} km.
+Hon går i {total_time_val * frac_walk_val} {plural(total_time_val * frac_walk_val, "timme", "timmar")} i {float(skip_speed / frac_skip_val / mult_run_val)} km i timmen, vilket blir {total_time_val * frac_walk_val}*{float(skip_speed / frac_skip_val / mult_run_val)}=<<{total_time_val * frac_walk_val}*{float(skip_speed / frac_skip_val / mult_run_val)}={total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}>>{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)} km.
+Sammanlagt färdas hon alltså {total_time_val * frac_run_val * (skip_speed / frac_skip_val)}+{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}=<<{total_time_val * frac_run_val * (skip_speed / frac_skip_val)}+{total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)}={int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))}>>{int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))} km.
+#### {int((total_time_val * frac_run_val * (skip_speed / frac_skip_val)) + (total_time_val * frac_walk_val * (skip_speed / frac_skip_val / mult_run_val)))}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
 language = "swe"

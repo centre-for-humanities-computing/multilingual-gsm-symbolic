@@ -1,10 +1,51 @@
-question = "{name,Artie} har ett {product,blomma}stånd på {location,Lantmarknaden}. Han säljer tre sorter av {product,blomma}or: {item1,guldnycklar}, {item2,petunior} och {item3,begonior}. Han säljer vanligtvis {item1,guldnycklar} för {cur,$}{p1,2.74} per {unit,kruka}, {item2,petunior} för {cur,$}{p2,1.87} per {unit,kruka} och {item3,begonior} för {cur,$}{p3,2.12} per {unit,kruka}. {name,Artie} har ingen växel idag, så han har bestämt sig för att avrunda alla sina priser till närmaste dollar. Om {name,Artie} säljer {n1,12} {unit,krukor} av {item1,guldnycklar}, {n2,9} {unit,krukor} av {item2,petunior} och {n3,17} {unit,krukor} av {item3,begonior}, hur mycket kommer han att tjäna?"
-answer = "{name} kommer att avrunda sina {item1} upp från {cur}{p1} till {cur}{round(p1)}, eftersom siffran efter {int(p1)} är 5 eller högre.\n{name} kommer att avrunda sina {item2} {'upp' if round(p2) > p2 else 'ner'} från {cur}{p2} till {cur}{round(p2)}, eftersom siffran efter {int(p2)} är {'5 eller högre' if round(p2) > p2 else 'mindre än 5'}.\n{name} kommer att avrunda sina {item3} {'upp' if round(p3) > p3 else 'ner'} från {cur}{p3} till {cur}{round(p3)}, eftersom siffran efter {int(p3)} är {'5 eller högre' if round(p3) > p3 else 'mindre än 5'}.\n{name} säljer {n1} {item1}*{cur}{round(p1)} = {cur}<<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)}\n{name} säljer {n2} {item2}*{cur}{round(p2)} = {cur}<<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)}\n{name} säljer {n3} {item3}*{cur}{round(p3)} = {cur}<<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)}\nSammanlagt kommer {name} att tjäna {cur}{n1*round(p1)} + {cur}{n2*round(p2)} + {cur}{n3*round(p3)} = {cur}<<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)}\n#### {n1*round(p1) + n2*round(p2) + n3*round(p3)}\n"
-id_orig = 74
-id_shuffled = 51
-question_annotated = "{name,Artie} har ett {product,blomma}stånd på {location,Lantmarknaden}. Han säljer tre sorter av {product,blomma}or: {item1,guldnycklar}, {item2,petunior} och {item3,begonior}. Han säljer vanligtvis {item1,guldnycklar} för {cur,$}{p1,2.74} per {unit,kruka}, {item2,petunior} för {cur,$}{p2,1.87} per {unit,kruka} och {item3,begonior} för {cur,$}{p3,2.12} per {unit,kruka}. {name,Artie} har ingen växel idag, så han har bestämt sig för att avrunda alla sina priser till närmaste dollar. Om {name,Artie} säljer {n1,12} {unit,krukor} av {item1,guldnycklar}, {n2,9} {unit,krukor} av {item2,petunior} och {n3,17} {unit,krukor} av {item3,begonior}, hur mycket kommer han att tjäna?\n\n#init:\n- name = sample(names_male)\n- product = sample([\"grönsak\", \"blomma\", \"ört\", \"växt\"])\n- location = sample([\"lokal mässa\", \"gemenskapsmarknad\", \"gathandel\", \"torg\"])\n- item1, item2, item3 = sample([\"rosor\", \"margretor\", \"tulpaner\", \"liljor\", \"solrosor\", \"orkidéer\"], 3)\n- unit = sample([\"knippa\", \"korg\", \"bukett\", \"bunt\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)\n"
-answer_annotated = "{name} kommer att avrunda sina {item1} {'upp' if round(p1) > p1 else 'ner'} från {cur}{p1} till {cur}{round(p1)}, eftersom siffran efter {int(p1)} är {'5 eller högre' if round(p1) > p1 else 'mindre än 5'}.\n{name} kommer att avrunda sina {item2} {'upp' if round(p2) > p2 else 'ner'} från {cur}{p2} till {cur}{round(p2)}, eftersom siffran efter {int(p2)} är {'5 eller högre' if round(p2) > p2 else 'mindre än 5'}.\n{name} kommer att avrunda sina {item3} {'upp' if round(p3) > p3 else 'ner'} från {cur}{p3} till {cur}{round(p3)}, eftersom siffran efter {int(p3)} är {'5 eller högre' if round(p3) > p3 else 'mindre än 5'}.\n{name} säljer {n1} {item1}*{cur}{round(p1)} = {cur}<<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)}\n{name} säljer {n2} {item2}*{cur}{round(p2)} = {cur}<<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)}\n{name} säljer {n3} {item3}*{cur}{round(p3)} = {cur}<<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)}\nSammanlagt kommer {name} att tjäna {cur}{n1*round(p1)} + {cur}{n2*round(p2)} + {cur}{n3*round(p3)} = {cur}<<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)}\n#### {n1*round(p1) + n2*round(p2) + n3*round(p3)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Albert har ett blomsterstånd på marknaden. Han säljer tre sorters blommor: tulpaner, liljor och solrosor. Han säljer vanligtvis tulpaner för 18,1 kronor per kruka, liljor för 12,3 kronor per kruka och solrosor för 14,9 kronor per kruka. Albert har inga småmynt i dag, så han har bestämt sig för att avrunda alla priser till närmaste krona. Om han säljer 12 krukor med tulpaner, 9 krukor med liljor och 17 krukor med solrosor, hur mycket tjänar han?"
 
-ignore = true
+answer = """
+Albert avrundar priset på tulpaner från 18,1 kronor till närmaste krona, alltså 18 kronor.
+Albert avrundar priset på liljor från 12,3 kronor till närmaste krona, alltså 12 kronor.
+Albert avrundar priset på solrosor från 14,9 kronor till närmaste krona, alltså 15 kronor.
+Albert säljer 12 krukor med tulpaner för 18 kronor styck = <<12*18=216>>216 kronor.
+Albert säljer 9 krukor med liljor för 12 kronor styck = <<9*12=108>>108 kronor.
+Albert säljer 17 krukor med solrosor för 15 kronor styck = <<17*15=255>>255 kronor.
+Sammanlagt tjänar Albert 216 kronor + 108 kronor + 255 kronor = <<216+108+255=579>>579 kronor.
+#### 579
+"""
+
+id_orig = 74
+
+id_shuffled = 51
+
+question_annotated = """
+{name,Albert} har ett {product_stem,blomster}stånd på {location,marknaden}. Han säljer tre sorters {product,blommor}: {item1,tulpaner}, {item2,liljor} och {item3,solrosor}. Han säljer vanligtvis {item1,tulpaner} för {p1,18.1} {cur,kronor} per {unit,kruka}, {item2,liljor} för {p2,12.3} {cur,kronor} per {unit,kruka} och {item3,solrosor} för {p3,14.9} {cur,kronor} per {unit,kruka}. {name,Albert} har inga småmynt i dag, så han har bestämt sig för att avrunda alla priser till närmaste krona. Om han säljer {n1,12} {unit_plural,krukor} med {item1,tulpaner}, {n2,9} {unit_plural,krukor} med {item2,liljor} och {n3,17} {unit_plural,krukor} med {item3,solrosor}, hur mycket tjänar han?
+
+#init:
+- name = sample(names_male)
+- product, product_stem = sample([("blommor", "blomster"), ("grönsaker", "grönsaks"), ("örter", "ört"), ("plantor", "plant")])
+- location = sample(["marknaden", "torget", "bondens marknad", "gatan"])
+- item1, item2, item3 = sample(["rosor", "tusenskönor", "orkidéer", "pioner", "anemoner", "blåklintar"], 3)
+- unit, unit_plural = sample([("kruka", "krukor"), ("bukett", "buketter"), ("korg", "korgar"), ("knippe", "knippen")])
+- cur = sample(currencies_sym)
+- $p1 = arange(8.1, 23.3, 2.7)
+- $p2 = arange(14.9, 36.4, 1.7)
+- $p3 = arange(31.9, 42.8, 2.2)
+- $n1 = range(5, 21)
+- $n2 = range(15, 31)
+- $n3 = range(35, 41)
+
+#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)
+"""
+
+answer_annotated = """
+{name} avrundar priset på {item1} från {p1} {cur} till närmaste krona, alltså {round(p1)} {cur}.
+{name} avrundar priset på {item2} från {p2} {cur} till närmaste krona, alltså {round(p2)} {cur}.
+{name} avrundar priset på {item3} från {p3} {cur} till närmaste krona, alltså {round(p3)} {cur}.
+{name} säljer {n1} {unit_plural} med {item1} för {round(p1)} {cur} styck = <<{n1}*{round(p1)}={n1*round(p1)}>>{n1*round(p1)} {cur}.
+{name} säljer {n2} {unit_plural} med {item2} för {round(p2)} {cur} styck = <<{n2}*{round(p2)}={n2*round(p2)}>>{n2*round(p2)} {cur}.
+{name} säljer {n3} {unit_plural} med {item3} för {round(p3)} {cur} styck = <<{n3}*{round(p3)}={n3*round(p3)}>>{n3*round(p3)} {cur}.
+Sammanlagt tjänar {name} {n1*round(p1)} {cur} + {n2*round(p2)} {cur} + {n3*round(p3)} {cur} = <<{n1*round(p1)}+{n2*round(p2)}+{n3*round(p3)}={n1*round(p1) + n2*round(p2) + n3*round(p3)}>>{n1*round(p1) + n2*round(p2) + n3*round(p3)} {cur}.
+#### {n1*round(p1) + n2*round(p2) + n3*round(p3)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

@@ -1,10 +1,52 @@
-question = "Craig has 2 $20 bills. He buys six squirt guns for $2 each. He also buys 3 packs of water balloons for $3 each. How much money does he have left?"
-answer = "Craig starts off with 2 * $20 = $<<2*20=40>>40.\nCraig spends 6*$2 = $<<6*2=12>>12 on squirt guns.\nCraig spends 3 packs of water balloons * $3 = $<<3*3=9>>9 on water balloons.\nTotal Craig has spent $12 + $9 = $<<12+9=21>>21.\nCraig has $40 - $21 = $<<40-21=19>>19 remaining.\n#### 19\n"
-id_orig = 843
-id_shuffled = 52
-question_annotated = "{name,Craig} has {n,2} {cur,$}{bill,20} bills. He buys {m_txt,six} {item1,squirt gun}s for {cur,$}{p1,2} each. He also buys {k,3} packs of {item2,water balloon}s for {cur,$}{p2,3} each. How much money does he have left?\n\n#init:\n- name = sample(names_male)\n- $bill = sample([5, 10, 20, 50, 100])\n- item1 = sample([\"toy car\", \"action figure\", \"coloring book\", \"puzzle\", \"board game\"])\n- item2 = sample([\"sticker\", \"candy bar\", \"trading card\", \"pencil\", \"eraser\"])\n- cur = sample(currencies_sym)\n- $n = range(1, 10)\n- m_txt, m_val = range_str(2, 15, 1, numbers)\n- $k = range(2, 10)\n- $p1 = range(1, 10)\n- $p2 = range(1, 10)\n\n#conditions:\n- n * int(bill) > m_val * p1 + k * p2\n\n#answer: n * int(bill) - (m_val * p1 + k * p2)\n"
-answer_annotated = "{name} starts off with {n} * {cur}{bill} = {cur}<<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)}.\n{name} spends {m_val}*{cur}{p1} = {cur}<<{m_val}*{p1}={m_val*p1}>>{m_val*p1} on {item1}s.\n{name} spends {k} packs of {item2}s * {cur}{p2} = {cur}<<{k}*{p2}={k*p2}>>{k*p2} on {item2}s.\nTotal {name} has spent {cur}{m_val*p1} + {cur}{k*p2} = {cur}<<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2}.\n{name} has {cur}{n*int(bill)} - {cur}{m_val*p1+k*p2} = {cur}<<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} remaining.\n#### {n*int(bill)-(m_val*p1+k*p2)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Carl har två 50-kronorssedlar. Han köper sex vattenpistoler för 5 kronor styck. Han köper också 3 paket vattenballonger för 8 kronor styck. Hur mycket pengar har han kvar?"
 
-ignore = true
+answer = """
+Carl börjar med 2*50 = <<2*50=100>>100 kronor.
+Carl köper sex vattenpistoler för 5 kronor styck = <<6*5=30>>30 kronor.
+Carl köper 3 paket vattenballonger för 8 kronor styck = <<3*8=24>>24 kronor.
+Sammanlagt har Carl gjort av med 30 kronor + 24 kronor = <<30+24=54>>54 kronor.
+Carl har 100 kronor - 54 kronor = <<100-54=46>>46 kronor kvar.
+#### 46
+"""
+
+id_orig = 843
+
+id_shuffled = 52
+
+question_annotated = """
+{name,Carl} har {n_txt,två} {bill,50}-{cur_compound,kronors}sedlar. Han köper {m_txt,sex} {item1,vattenpistoler} för {p1,5} {p1_cur,kronor} styck. Han köper också {k,3} paket {item2,vattenballonger} för {p2,8} {p2_cur,kronor} styck. Hur mycket pengar har han kvar?
+
+#init:
+- name = sample(names_male)
+- $bill = sample([50, 100, 200])
+- item1 = sample(["vattenpistoler", "leksaksbilar", "actionfigurer", "målarböcker", "pussel", "sällskapsspel"])
+- item2 = sample(["vattenballonger", "klistermärken", "chokladkakor", "samlarkort", "blyertspennor", "suddgummin"])
+- cur = sample(currencies_sym)
+- cur_sing = "krona" if cur == "kronor" else cur
+- cur_compound = "kronors" if cur == "kronor" else cur + "-"
+- n_txt, n_val = range_str(1, 10, 1, numbers)
+- m_txt, m_val = range_str(2, 15, 1, numbers)
+- $k = range(2, 10)
+- $p1 = range(1, 10)
+- $p2 = range(1, 10)
+- p1_cur = plural(p1, cur_sing, cur)
+- p2_cur = plural(p2, cur_sing, cur)
+
+#conditions:
+- n_val * int(bill) > m_val * p1 + k * p2
+
+#answer: n_val * int(bill) - (m_val * p1 + k * p2)
+"""
+
+answer_annotated = """
+{name} börjar med {n_val}*{bill} = <<{n_val}*{int(bill)}={n_val*int(bill)}>>{n_val*int(bill)} {cur}.
+{name} köper {m_txt} {item1} för {p1} {plural(p1, cur_sing, cur)} styck = <<{m_val}*{p1}={m_val*p1}>>{m_val*p1} {cur}.
+{name} köper {k} paket {item2} för {p2} {plural(p2, cur_sing, cur)} styck = <<{k}*{p2}={k*p2}>>{k*p2} {cur}.
+Sammanlagt har {name} gjort av med {m_val*p1} {cur} + {k*p2} {cur} = <<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} {cur}.
+{name} har {n_val*int(bill)} {cur} - {m_val*p1+k*p2} {cur} = <<{n_val*int(bill)}-{m_val*p1+k*p2}={n_val*int(bill)-(m_val*p1+k*p2)}>>{n_val*int(bill)-(m_val*p1+k*p2)} {plural(n_val*int(bill)-(m_val*p1+k*p2), cur_sing, cur)} kvar.
+#### {n_val*int(bill)-(m_val*p1+k*p2)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

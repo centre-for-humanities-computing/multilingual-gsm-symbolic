@@ -1,10 +1,44 @@
-question = "Brendan har en påse med marbles med 10 inuti. Han snubblade över en pebble medan han bar den och tappade half av dem. Han letade efter dem men hittade bara 3. När han kom hem inspekterade han marbles närmare. Two av de han plockade upp var inte marbles, utan faktiskt beads så han blev av med dem. Hur många marbles hade Brendan kvar till slut?"
-answer = "Brendan tappade sina marbles och hade 10*1/2=<<10*1/2=5>>5 marbles kvar.\nHan letade och hittade några av sina förlorade marbles, vilket gav honom tillbaka 5+3=<<5+3=8>>8 marbles.\nHan gick hem och tog bort two beads, vilket lämnade honom med 8-2=<<8-2=6>>6 marbles.\n#### 6\n"
-id_orig = 1247
-id_shuffled = 61
-question_annotated = "{name,Brendan} har en påse med {objects,marbles} med {n,10} inuti. Han snubblade över en {obstacle,pebble} medan han bar den och tappade {frac_txt,half} av dem. Han letade efter dem men hittade bara {k,3}. När han kom hem inspekterade han {objects,marbles} närmare. {fake_num_txt,two} av de han plockade upp var inte {objects,marbles}, utan faktiskt {fake_object,beads} så han blev av med dem. Hur många {objects,marbles} hade {name,Brendan} kvar till slut?\n\n#init:\n- name = sample(names_male)\n- objects = sample(['marbles', 'coins', 'buttons', 'beads', 'pebbles'])\n- obstacle = sample(['rock', 'stick', 'toy', 'root'])\n- fake_object = sample(['buttons', 'coins', 'pebbles', 'beads'])\n- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(10, 101, 2)\n- $k = range(3, 20)\n\n#conditions:\n- is_int(n * frac_val)\n- k < n * frac_val\n- k > fake_num_val\n\n#answer: int(n * (1-frac_val)) + k - fake_num_val\n"
-answer_annotated = "{name} tappade sina {objects} och hade {n}*{1-frac_val}=<<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects} kvar.\nHan letade och hittade några av sina förlorade {objects}, vilket gav honom tillbaka {int(n*(1-frac_val))}+{k}=<<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects}.\nHan gick hem och tog bort {fake_num_txt} {fake_object}, vilket lämnade honom med {int(n*(1-frac_val))+k}-{fake_num_val}=<<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects}.\n#### {int(n*(1-frac_val))+k-fake_num_val}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Alfred hade en kulpåse med 10 kulor i. Han snubblade på en sten medan han bar den och tappade hälften av kulorna. Han letade febrilt efter dem men hittade bara 3. När han kom hem undersökte han kulorna närmare. Två av dem han plockat upp var inte kulor, utan träpärlor, så han slängde dem. Hur många kulor hade Alfred kvar till slut?"
 
-ignore = true
+answer = """
+Alfred tappade sina kulor och hade 10*1/2 = <<10*1/2=5>>5 kulor kvar.
+Han letade och hittade några av de tappade kulorna, så han var uppe i 5+3 = <<5+3=8>>8 kulor.
+Hemma tog han bort de två träpärlorna, och hade då 8-2 = <<8-2=6>>6 kulor.
+#### 6
+"""
+
+id_orig = 1247
+
+id_shuffled = 61
+
+question_annotated = """
+{name,Alfred} hade en {objects_bag,kulpåse} med {n,10} {objects,kulor} i. Han snubblade på {obstacle,en sten} medan han bar den och tappade {frac_txt,hälften} av {objects_definite,kulorna}. Han letade febrilt efter dem men hittade bara {k,3}. När han kom hem undersökte han {objects_definite,kulorna} närmare. {fake_num_txt,två} av dem han plockat upp var inte {objects,kulor}, utan {fake_object,träpärlor}, så han slängde dem. Hur många {objects,kulor} hade {name,Alfred} kvar till slut?
+
+#init:
+- name = sample(names_male)
+- objects, objects_definite, objects_bag = sample([("kulor", "kulorna", "kulpåse"), ("mynt", "mynten", "myntpåse"), ("knappar", "knapparna", "knappburk"), ("pärlor", "pärlorna", "pärlpåse")])
+- obstacle = sample(["en sten", "en gren", "en rot", "en käpp"])
+- fake_object, fake_object_definite = sample([("glaskulor", "glaskulorna"), ("träpärlor", "träpärlorna"), ("småstenar", "småstenarna")])
+- fake_num_txt, fake_num_val = range_str(2, 10, 1, numbers)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $n = range(10, 101, 2)
+- $k = range(3, 20)
+
+#conditions:
+- is_int(n * frac_val)
+- k < n * frac_val
+- k > fake_num_val
+
+#answer: int(n * (1-frac_val)) + k - fake_num_val
+"""
+
+answer_annotated = """
+{name} tappade sina {objects} och hade {n}*{1-frac_val} = <<{n}*{1-frac_val}={int(n*(1-frac_val))}>>{int(n*(1-frac_val))} {objects} kvar.
+Han letade och hittade några av de tappade {objects_definite}, så han var uppe i {int(n*(1-frac_val))}+{k} = <<{int(n*(1-frac_val))}+{k}={int(n*(1-frac_val))+k}>>{int(n*(1-frac_val))+k} {objects}.
+Hemma tog han bort de {fake_num_txt} {fake_object_definite}, och hade då {int(n*(1-frac_val))+k}-{fake_num_val} = <<{int(n*(1-frac_val))+k}-{fake_num_val}={int(n*(1-frac_val))+k-fake_num_val}>>{int(n*(1-frac_val))+k-fake_num_val} {objects}.
+#### {int(n*(1-frac_val))+k-fake_num_val}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

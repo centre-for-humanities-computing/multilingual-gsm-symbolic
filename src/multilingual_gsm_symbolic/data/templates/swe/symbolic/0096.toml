@@ -1,10 +1,48 @@
-question = "Morgans pappa sa att hon hade {budget,90} {cur,$} budgeterade till sin födelsedagsfest. Hon vill se till att hon och hennes vänner alla får spela en omgång {activity1,minigolf}, ha {tokens,5} {cur,$} i {activity2,spelautomat} jetoner, och få åka {activity3,gokart} {times_txt,två gånger}. En omgång {activity1,minigolf} kostar {cost1,5} {cur,$}. {activity3,gokart} kostar {cost2,10} {cur,$} per åktur. Hur många vänner kan hon bjuda in?"
-answer = "Gokarten kommer att kosta {cost2*times_val} {cur} per person eftersom {cost2}*{times_val} = <<{cost2}*{times_val}={cost2*times_val}>>{cost2*times_val}\nVarje person kostar {tokens + cost1 + cost2*times_val} {cur} eftersom {tokens} + {cost1} + {cost2*times_val} = <<{tokens}+{cost1}+{cost2*times_val}={tokens + cost1 + cost2*times_val}>>{tokens + cost1 + cost2*times_val}\n{budget // (tokens + cost1 + cost2 * times_val)} personer totalt kan delta eftersom {budget} / {tokens + cost1 + cost2*times_val} = <<{budget}/{tokens + cost1 + cost2*times_val}={budget // (tokens + cost1 + cost2 * times_val)}>>{budget // (tokens + cost1 + cost2 * times_val)}\nHon kan bjuda in {budget // (tokens + cost1 + cost2 * times_val) - 1} vänner eftersom {budget // (tokens + cost1 + cost2 * times_val)} - 1 =<<{budget // (tokens + cost1 + cost2 * times_val)}-1={budget // (tokens + cost1 + cost2 * times_val) - 1}>>{budget // (tokens + cost1 + cost2 * times_val) - 1}\n#### {budget // (tokens + cost1 + cost2 * times_val) - 1}\n"
-id_orig = 357
-id_shuffled = 96
-question_annotated = "{name,Morgan}s {parent,pappa} sa att hon hade {cur,$}{budget,90} budgeterade till sin födelsedagsfest. Hon vill se till att hon och hennes vänner alla får spela en omgång {activity1,minigolf}, ha {cur,$}{tokens,5} i {activity2,spelautomat} jetoner, och få åka {activity3,gokart} {times_txt,två gånger}. En omgång {activity1,minigolf} kostar {cur,$}{cost1,5}. {activity3,gokart} kostar {cur,$}{cost2,10} per åktur. Hur många vänner kan hon bjuda in?\n\n#init:\n- name = sample(names_female)\n- parent = sample([\"mamma\", \"pappa\", \"tant\", \"farbror\"])\n- activity1 = sample([\"minigolf\", \"bowling\", \"laser tag\"])\n- activity2 = sample([\"spelautomat\", \"spelrum\", \"pinball\"])\n- activity3 = sample([\"gokart\", \"bumperbilar\", \"berg-och-dalbana\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1\n"
-answer_annotated = "{activity3} kommer att kosta {cur}{cost2 * times_val} per person eftersom {cost2}*{times_val} = <<{cost2}*{times_val}={cost2*times_val}>>{cost2*times_val}\nVarje person kostar {cur}{tokens + cost1 + cost2*times_val} eftersom {tokens} + {cost1} + {cost2*times_val} = <<{tokens}+{cost1}+{cost2*times_val}={tokens + cost1 + cost2*times_val}>>{tokens + cost1 + cost2*times_val}\n{budget // (tokens + cost1 + cost2 * times_val)} personer totalt kan delta eftersom {budget} / {tokens + cost1 + cost2*times_val} = <<{budget}/{tokens + cost1 + cost2*times_val}={budget // (tokens + cost1 + cost2 * times_val)}>>{budget // (tokens + cost1 + cost2 * times_val)}\nHon kan bjuda in {budget // (tokens + cost1 + cost2 * times_val) - 1} vänner eftersom {budget // (tokens + cost1 + cost2 * times_val)} - 1 =<<{budget // (tokens + cost1 + cost2 * times_val)}-1={budget // (tokens + cost1 + cost2 * times_val) - 1}>>{budget // (tokens + cost1 + cost2 * times_val) - 1}\n#### {budget // (tokens + cost1 + cost2 * times_val) - 1}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Maja fick veta av sin pappa att hon hade 90 kronor budgeterade till sitt födelsedagskalas. Hon vill se till att hon och hennes vänner alla får spela en runda minigolf, få 5 kronor i arkadmynt och åka go-kart två gånger. En runda minigolf kostar 5 kronor. En tur med go-kart kostar 10 kronor. Hur många vänner kan hon bjuda in?"
 
-ignore = true
+answer = """
+Att åka go-kart kommer att kosta 20 kronor per person, eftersom 10*2=<<10*2=20>>20
+Varje person kostar 30 kronor, eftersom 5 + 5 + 20 = <<5+5+20=30>>30
+3 personer kan vara med sammanlagt, eftersom 90 / 30 = <<90/30=3>>3
+Hon kan bjuda in 2 vänner, eftersom 3 - 1 =<<3-1=2>>2
+#### 2
+"""
+
+id_orig = 357
+
+id_shuffled = 96
+
+question_annotated = """
+{name,Maja} fick veta av sin {parent,pappa} att hon hade {budget,90} {cur,kronor} budgeterade till sitt födelsedagskalas. Hon vill se till att hon och hennes vänner alla får spela en runda {activity1,minigolf}, få {tokens,5} {cur,kronor} i {activity2,arkad}mynt och åka {activity3,go-kart} {times_txt,två gånger}. En runda {activity1,minigolf} kostar {cost1,5} {cur,kronor}. En tur med {activity3,go-kart} kostar {cost2,10} {cur,kronor}. Hur många vänner kan hon bjuda in?
+
+#init:
+- name = sample(names_female)
+- parent = sample(["mamma", "pappa", "moster", "faster", "morbror"])
+- activity1 = sample(["minigolf", "bowling", "dart"])
+- activity2 = sample(["arkad", "spel"])
+- activity3 = sample(["go-kart", "radiobil", "elbil"])
+- cur = sample(currencies_sym)
+- times_txt, times_val = sample(multi_times)
+- $budget = range(50, 301, 10)
+- $tokens = range(3, 11)
+- $cost1 = range(3, 11)
+- $cost2 = range(5, 21)
+
+#conditions:
+- budget % (tokens + cost1 + cost2 * times_val) == 0
+- budget // (tokens + cost1 + cost2 * times_val) > 1
+
+#answer: budget // (tokens + cost1 + cost2 * times_val) - 1
+"""
+
+answer_annotated = """
+Att åka {activity3} kommer att kosta {cost2 * times_val} {cur} per person, eftersom {cost2}*{times_val}=<<{cost2}*{times_val}={cost2*times_val}>>{cost2*times_val}
+Varje person kostar {tokens + cost1 + cost2*times_val} {cur}, eftersom {tokens} + {cost1} + {cost2*times_val} = <<{tokens}+{cost1}+{cost2*times_val}={tokens + cost1 + cost2*times_val}>>{tokens + cost1 + cost2*times_val}
+{budget // (tokens + cost1 + cost2 * times_val)} personer kan vara med sammanlagt, eftersom {budget} / {tokens + cost1 + cost2*times_val} = <<{budget}/{tokens + cost1 + cost2*times_val}={budget // (tokens + cost1 + cost2 * times_val)}>>{budget // (tokens + cost1 + cost2 * times_val)}
+Hon kan bjuda in {budget // (tokens + cost1 + cost2 * times_val) - 1} {plural(budget // (tokens + cost1 + cost2 * times_val) - 1, "vän", "vänner")}, eftersom {budget // (tokens + cost1 + cost2 * times_val)} - 1 =<<{budget // (tokens + cost1 + cost2 * times_val)}-1={budget // (tokens + cost1 + cost2 * times_val) - 1}>>{budget // (tokens + cost1 + cost2 * times_val) - 1}
+#### {budget // (tokens + cost1 + cost2 * times_val) - 1}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

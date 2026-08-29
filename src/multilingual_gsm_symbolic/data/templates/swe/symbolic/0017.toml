@@ -1,10 +1,34 @@
-question = "Mormor går 3 kilometer varje dag på sin favoritpromenadväg, som inkluderar 2 kilometer promenad på stranden och 1 kilometer promenad på trottoaren. På trottoaren går mormor i dubbelt så snabb takt som på stranden. Om 40 minuter av hennes promenad spenderas på stranden, hur lång tid tar det för henne att slutföra hela 3-kilometerspromenaden, i minuter?"
-answer = "På stranden går mormor i en takt av 2 kilometer per 40 minuter, eller 2/40 = 1/20 kilometer per minut.\nPå trottoaren går hon i dubbelt så snabb takt som när hon är på sanden, eller 2*1/20 = 0.1 kilometer per minut.\nFör att gå 1 kilometer på trottoaren tar det henne 1/0.1 = <<1/0.1=10>>10 minuter.\nSå totalt tar det mormor 40+10 = <<40+10=50>>50 minuter att gå sin favoritsträcka.\n#### 50\n"
-id_orig = 1133
-id_shuffled = 17
-question_annotated = "{name,mormor} går {n,3} {unit,kilometer} varje dag på sin favoritpromenadväg, som inkluderar {m,2} {unit,kilometer} promenad på stranden och {k,1} {k_unit,kilometer} promenad på trottoaren. På trottoaren går {name,mormor} i {mult_txt,dubbelt} så snabb takt som på stranden. Om {t,40} minuter av hennes promenad spenderas på stranden, hur lång tid tar det för henne att slutföra hela {n,3}-{unit,kilometers}promenaden, i minuter?\n\n#init:\n- name = sample(names_female)\n- unit = sample([\"kilometer\", \"km\"])\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 40)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n- k_unit = plural(k, unit, unit + \"s\")\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: t+(k/(mult_val*m/t))\n"
-answer_annotated = "På stranden går {name} i en takt av {m} {unit} per {t} minuter, eller {m}/{t} = {Fraction(m/t)} {unit} per minut.\nPå trottoaren går hon i {mult_txt} så snabb takt som när hon är på sanden, eller {mult_val}*{Fraction(m/t)} = {mult_val*m/t} {unit} per minut.\nFör att gå {k} {k_unit} på trottoaren tar det henne {k}/{mult_val*m/t} = <<{k}/{mult_val*m/t}={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minuter.\nSå totalt tar det {name} {t}+{k/(mult_val*m/t)} = <<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minuter att gå sin favoritsträcka.\n#### {t+(k/(mult_val*m/t))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Mormor går 3 kilometer varje dag på sin favoritpromenad, som inkluderar 2 kilometer på stranden och 1 kilometer på trottoaren. På trottoaren går Mormor två gånger så snabbt som hon gör på stranden. Om 40 minuter av hennes promenad tillbringas på stranden, hur lång tid tar det henne att slutföra hela 3-kilometerspromenaden, i minuter?"
 
-ignore = true
+answer = "På stranden går Mormor med en hastighet på 2 kilometer per 40 minuter, eller 2/40 = 1/20 kilometer per minut. På trottoaren går hon två gånger så snabbt som när hon är på sanden, eller 2*1/20 = 1/10 kilometer per minut. För att gå 1 kilometer på trottoaren tar det henne 1/(1/10)=<<1/(1/10)=10>>10 minuter. Så totalt tar det Mormor 40+10=<<40+10=50>>50 minuter att gå sin favoritrunda. #### 50"
+
+id_orig = 1133
+
+id_shuffled = 17
+
+question_annotated = """
+{name,Mormor} går {n,3} {unit,kilometer} varje dag på sin favoritpromenad, som inkluderar {m,2} {unit,kilometer} på stranden och {k,1} {unit,kilometer} på trottoaren. På trottoaren går {name,Mormor} {mult_txt,två gånger} så snabbt som hon gör på stranden. Om {t,40} minuter av hennes promenad tillbringas på stranden, hur lång tid tar det henne att slutföra hela {n,3}-{unit,kilometer}{unit_join,s}promenaden, i minuter?
+
+#init:
+- name = sample(names_female)
+- unit = sample(length_lg)
+- unit_join = "-" if unit == "m" or unit == "km" else "s"
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(3, 40)
+- $m = range(2, 20)
+- $k = range(1, 20)
+- $t = range(40, 70)
+#conditions:
+- m + k == n
+- m < t
+- mult_val *m < t
+- divides(t, m)
+- is_int(k / (mult_val*m/t))
+#answer: {t+(k/(mult_val*m/t))}
+"""
+
+answer_annotated = "På stranden går {name} med en hastighet på {m} {unit} per {t} minuter, eller {m}/{t} = {Fraction(m/t)} {unit} per minut. På trottoaren går hon {mult_txt} så snabbt som när hon är på sanden, eller {mult_val}*{Fraction(m/t)} = {Fraction(mult_val*m/t)} {unit} per minut. För att gå {k} {unit} på trottoaren tar det henne {k}/({Fraction(mult_val*m/t)})=<<{k}/({Fraction(mult_val*m/t)})={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} minuter. Så totalt tar det {name} {t}+{k/(mult_val*m/t)}=<<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} minuter att gå sin favoritrunda. #### {t+(k/(mult_val*m/t))}"
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

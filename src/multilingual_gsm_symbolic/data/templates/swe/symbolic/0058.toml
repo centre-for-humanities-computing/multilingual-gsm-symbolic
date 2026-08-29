@@ -1,10 +1,47 @@
-question = "En gnom kan bryta 12 kilogram malm per dag med sina blotta händer. Han kan bryta dubbelt så mycket med en bronspickaxe och 50% mer med en stålpickaxe än med en bronspickaxe. Hur många kilogram malm kan 40 gnomer med stålpickaxar bryta på en månad med 30 dagar?"
-answer = "Först ta reda på hur mycket malm en gnom kan bryta med en bronspickaxe: 12 kilogram/dag*2=<<12*2=24>>24 kilogram/dag\nDärefter multiplicera den mängden med 150% för att ta reda på hur mycket en gnom kan bryta med en stålpickaxe: 24 kilogram/dag * 150% = <<24*150*.01=36>>36 kilogram/dag\nDärefter multiplicera mängden en gnom kan bryta på en dag med en stålpickaxe med antalet gnomer: 36 kilogram/dag/gnom * 40 gnomer = <<36*40=1440>>1440 kilogram/dag\nDärefter multiplicera den dagliga mängden malm med antalet dagar för att ta reda på den totala malmen som bryts på en månad: 1440 kilogram/dag * 30 dagar = <<1440*30=43200>>43,200 kilogram/dag\n#### 43200\n"
-id_orig = 1026
-id_shuffled = 58
-question_annotated = "En {worker,gnom} kan bryta {base,12} {unit,kilogram} malm per dag med {tool1,sina blotta händer}. Han kan bryta {mult1_txt,dubbelt} så mycket med en {tool2,bronspickaxe} och {mult2,50}% mer med en {tool3,stålpickaxe} än med en {tool2,bronspickaxe}. Hur många {unit,kilogram} malm kan {n,40} {worker,gnomer} med {tool3,stålpickaxar} bryta på en månad med {days,30} dagar?\n\n#init:\n- worker = sample([\"grävare\", \"goblin\", \"gnom\", \"troll\"])\n- tool1 = sample([\"blotta händer\", \"grundskopa\", \"träpickaxe\"])\n- unit = sample([\"kilogram\", \"kgs\"])\n- tool2 = sample([\"nickelpickaxe\", \"bronspickaxe\", \"silverpickaxe\"])\n- tool3 = sample([\"bronspickaxe\", \"stålpickaxe\", \"diamantpickaxe\", \"mithrilpickaxe\", \"titanpickaxe\"])\n- $base = range(5, 20)\n- mult1_txt, mult1_val = sample(multi_times)\n- $mult2 = range(30, 80, 5)\n- $n = range(20, 50)\n- $days = range(28, 32)\n\n#conditions:\n- is_int(mult2/100*base*mult1_val)\n- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000\n\n#answer: int(base * mult1_val * (1 + mult2/100) * n * days)\n"
-answer_annotated = "Först ta reda på hur mycket malm en {worker} kan bryta med en {tool2}: {base} kilogram/dag*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/dag\nDärefter multiplicera den mängden med {100+mult2}% för att ta reda på hur mycket en {worker} kan bryta med en {tool3}: {base*mult1_val} {unit}/dag * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/dag\nDärefter multiplicera mängden en {worker} kan bryta på en dag med en {tool3} med antalet {worker}s: {int(base*mult1_val*(1+mult2/100))} {unit}/dag/{worker} * {n} {worker}s = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag\nDärefter multiplicera den dagliga mängden malm med antalet dagar för att ta reda på den totala malmen som bryts på en månad: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag * {days} dagar = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}/dag\n#### {int(base*mult1_val*(1+mult2/100)*n*days)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "En dvärg kan bryta 12 kg malm om dagen med sina bara händer. Han kan bryta två gånger så mycket med en järnhacka och 50% mer med en stålhacka än med en järnhacka. Hur många kg malm kan 40 dvärgar med stålhackor bryta på en månad med 30 dagar?"
 
-ignore = true
+answer = """
+Räkna först ut hur mycket malm en dvärg kan bryta med en järnhacka: 12 kg/dag*2 = <<12*2=24>>24 kg/dag.
+Multiplicera sedan med 150% för att få reda på hur mycket en dvärg kan bryta med en stålhacka: 24 kg/dag * 150% = <<24*150*.01=36>>36 kg/dag.
+Multiplicera det en dvärg bryter på en dag med antalet dvärgar: 36 kg/dag/dvärg * 40 dvärgar = <<36*40=1440>>1440 kg/dag.
+Multiplicera den dagliga mängden med antalet dagar för att få reda på hela månadens mängd: 1440 kg/dag * 30 dagar = <<1440*30=43200>>43 200 kg.
+#### 43200
+"""
+
+id_orig = 1026
+
+id_shuffled = 58
+
+question_annotated = """
+En {worker,dvärg} kan bryta {base,12} {unit,kg} malm om dagen med {tool1,sina bara händer}. Han kan bryta {mult1_txt,två gånger} så mycket med en {tool2,järnhacka} och {mult2,50}% mer med en {tool3,stålhacka} än med en {tool2,järnhacka}. Hur många {unit,kg} malm kan {n,40} {worker_plural,dvärgar} med {tool3_plural,stålhackor} bryta på en månad med {days,30} dagar?
+
+#init:
+- worker, worker_plural = sample([("dvärg", "dvärgar"), ("goblin", "gobliner"), ("gnom", "gnomer"), ("gruvarbetare", "gruvarbetare")])
+- tool1 = sample(["sina bara händer", "en spade", "en trähacka"])
+- unit = sample(["kg", "g"])
+- tool2 = sample(["nickelhacka", "bronshacka", "silverhacka"])
+- tool3, tool3_plural = sample([("stålhacka", "stålhackor"), ("diamanthacka", "diamanthackor"), ("mithrilhacka", "mithrilhackor"), ("titanhacka", "titanhackor")])
+- $base = range(5, 20)
+- mult1_txt, mult1_val = sample(multi_times)
+- $mult2 = range(30, 80, 5)
+- $n = range(20, 50)
+- $days = range(28, 32)
+
+#conditions:
+- is_int(mult2/100*base*mult1_val)
+- int(base * mult1_val * (1 + mult2/100) * n * days) < 15000
+
+#answer: int(base * mult1_val * (1 + mult2/100) * n * days)
+"""
+
+answer_annotated = """
+Räkna först ut hur mycket malm en {worker} kan bryta med en {tool2}: {base} {unit}/dag*{mult1_val} = <<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/dag.
+Multiplicera sedan med {100+mult2}% för att få reda på hur mycket en {worker} kan bryta med en {tool3}: {base*mult1_val} {unit}/dag * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/dag.
+Multiplicera det en {worker} bryter på en dag med antalet {worker_plural}: {int(base*mult1_val*(1+mult2/100))} {unit}/dag/{worker} * {n} {worker_plural} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag.
+Multiplicera den dagliga mängden med antalet dagar för att få reda på hela månadens mängd: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag * {days} dagar = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}.
+#### {int(base*mult1_val*(1+mult2/100)*n*days)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

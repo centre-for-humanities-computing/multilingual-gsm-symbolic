@@ -1,10 +1,37 @@
-question = "Shiela måste lämna in en 15-sidors uppsats. Hon har redan skrivit klart 1/3 av uppsatsen. Hur många sidor har hon kvar att skriva?"
-answer = "Shiela har redan skrivit 1/3 av uppsatsen vilket är 15 sidor*1/3 = <<15*1/3=5>>5 sidor.\nSå, hon behöver fortfarande skriva 15 sidor - 5 sidor = <<15-5=10>>10 sidor.\n#### 10\n"
-id_orig = 655
-id_shuffled = 77
-question_annotated = "{name,Shiela} måste lämna in en {n,15}-sidors {document,uppsats}. Hon har redan skrivit klart {frac,1/3} av {document,uppsatsen}. Hur många sidor har hon kvar att skriva?\n\n#init:\n- name = sample(names_female)\n- document = sample([\"uppsats\", \"rapport\", \"avhandling\", \"dissertation\", \"uppgift\"])\n- $n = range(10, 325)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int(n * frac)\n- n * frac < n\n\n#answer: n - int(n * frac)\n"
-answer_annotated = "{name} har redan skrivit {frac} av {document} vilket är {n} sidor*{frac} = <<{n}*{frac}={int(n*frac)}>>{int(n*frac)} sidor.\nSå, hon behöver fortfarande skriva {n} sidor - {int(n*frac)} sidor = <<{n}-{int(n*frac)}={n-int(n*frac)}>>{n-int(n*frac)} sidor.\n#### {n-int(n*frac)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Sofia ska lämna in en uppsats på 15 sidor. Hon har redan skrivit en tredjedel av uppsatsen. Hur många sidor har hon kvar att skriva?"
 
-ignore = true
+answer = """
+Sofia har redan skrivit en tredjedel av uppsatsen, vilket är 15 sidor*1/3=<<15*1/3=5>>5 sidor.
+Alltså har hon 15 sidor - 5 sidor = <<15-5=10>>10 sidor kvar att skriva.
+#### 10
+"""
+
+id_orig = 655
+
+id_shuffled = 77
+
+question_annotated = """
+{name,Sofia} ska lämna in en {document,uppsats} på {n,15} sidor. Hon har redan skrivit {frac_txt,en tredjedel} av {document_definite,uppsatsen}. Hur många sidor har hon kvar att skriva?
+
+#init:
+- name = sample(names_female)
+- document, document_definite = sample([("uppsats", "uppsatsen"), ("rapport", "rapporten"), ("avhandling", "avhandlingen"), ("uppgift", "uppgiften"), ("artikel", "artikeln")])
+- $n = range(10, 325)
+- frac_txt, frac_val = sample(fraction_alnum)
+
+#conditions:
+- is_int(n * frac_val)
+- n * frac_val < n
+
+#answer: n - int(n * frac_val)
+"""
+
+answer_annotated = """
+{name} har redan skrivit {frac_txt} av {document_definite}, vilket är {n} sidor*{frac_val}=<<{n}*{frac_val}={int(n*frac_val)}>>{int(n*frac_val)} sidor.
+Alltså har hon {n} sidor - {int(n*frac_val)} sidor = <<{n}-{int(n*frac_val)}={n-int(n*frac_val)}>>{n-int(n*frac_val)} sidor kvar att skriva.
+#### {n-int(n*frac_val)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

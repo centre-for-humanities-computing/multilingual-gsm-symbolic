@@ -1,10 +1,46 @@
-question = "Herr Tan sålde sitt hus för $400,000. Han betalade överföringsavgifterna som uppgår till 3% av försäljningspriset och betalade också en mäklaravgift som är 5% av försäljningspriset. Om han också betalade $250,000 för den återstående låneskulden på huset, hur mycket är Herr Tans nettoinkomst från försäljningen av huset?"
-answer = "Herr Tan betalade $400,000*3/100 = <<400000*3/100=12000>>$12,000 för överföringsavgifterna.\nHan betalade $400,000*5/100 = <<400000*5/100=20000>>$20,000 för mäklaravgiften.\nSå, Herr Tan betalade totalt $12,000 + $20,000 + $250,000 = <<12000+20000+250000=282000>>$282,000 för överföring, mäklare och låneavgifter.\nDärmed är Herr Tans nettoinkomst $400,000 - $282,000 = <<400000-282000=118000>>$118,000.\n#### 118000\n"
-id_orig = 266
-id_shuffled = 34
-question_annotated = "{title,Herr} {name,Tan} sålde sitt {property,hus} för ${price,400000}. Han betalade {fee1_name,överföring} avgifterna som uppgår till {fee1_percent,3}% av försäljningspriset och betalade också en {fee2_name,mäklar} avgift som är {fee2_percent,5}% av försäljningspriset. Om han också betalade ${loan,250000} för den återstående låneskulden på {property,huset}, hur mycket är {title,Herr} {name,Tan}s nettoinkomst från försäljningen av {property,huset}?\n\n#init:\n- title = sample(['Herr', 'Prof.', 'Dr.'])\n- name = sample(['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'])\n- property = sample(['hus', 'lägenhet', 'villa', 'stuga', 'sommarstuga'])\n- fee1_name = sample(['överföring', 'registrering', 'juridisk'])\n- fee2_name = sample(['mäklar', 'agent', 'mäklare'])\n- $price = range(200000, 1000000, 10000)\n- $fee1_percent = range(1, 5)\n- $fee2_percent = range(2, 7)\n- $loan = range(100000, 700000, 10000)\n\n#conditions:\n- price > loan\n- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1\n\n#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)\n"
-answer_annotated = "{title} {name} betalade ${price}*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>${price * fee1_percent // 100} för {fee1_name} avgifterna.\nHan betalade ${price}*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>${price * fee2_percent // 100} för {fee2_name} avgiften.\nSå, {title} {name} betalade totalt ${price * fee1_percent // 100} + ${price * fee2_percent // 100} + ${loan} = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>${price * (fee1_percent + fee2_percent) // 100 + loan} för {fee1_name}, {fee2_name} och låneavgifter.\nDärmed är {title} {name}s nettoinkomst ${price} - ${price * (fee1_percent + fee2_percent) // 100 + loan} = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>${price - (price * (fee1_percent + fee2_percent) // 100 + loan)}.\n#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Herr Karlsson sålde sitt hus för 2 700 000 kronor. Han betalade en överlåtelseavgift som motsvarar 3% av försäljningspriset och betalade också ett mäklararvode som är 5% av försäljningspriset. Om han dessutom betalade 1 700 000 kronor för husets kvarvarande lån, hur stor är herr Karlssons nettobehållning från försäljningen av huset?"
 
-ignore = true
+answer = """
+Herr Karlsson betalade 2 700 000 kronor*3/100 = <<2700000*3/100=81000>>81 000 kronor för överlåtelseavgiften.
+Han betalade 2 700 000 kronor*5/100 = <<2700000*5/100=135000>>135 000 kronor för mäklararvodet.
+Alltså betalade herr Karlsson sammanlagt 81 000 kronor + 135 000 kronor + 1 700 000 kronor = <<81000+135000+1700000=1916000>>1 916 000 kronor för överlåtelseavgiften, mäklararvodet och lånet.
+Därför är herr Karlssons nettobehållning 2 700 000 kronor - 1 916 000 kronor = <<2700000-1916000=784000>>784 000 kronor.
+#### 784000
+"""
+
+id_orig = 266
+
+id_shuffled = 34
+
+question_annotated = """
+{title,herr} {name,Karlsson} sålde sitt {property,hus} för {price,2700000} kronor. Han betalade en {fee1,överlåtelseavgift} som motsvarar {fee1_percent,3}% av försäljningspriset och betalade också ett {fee2,mäklararvode} som är {fee2_percent,5}% av försäljningspriset. Om han dessutom betalade {loan,1700000} kronor för {property,hus}ets kvarvarande lån, hur stor är {title,herr} {name,Karlsson}s nettobehållning från försäljningen av {property,hus}et?
+
+#init:
+- title = sample(["herr", "professor", "doktor"])
+- name = sample(["Karlsson", "Lindgren", "Bergman", "Öberg", "Sundström", "Hedlund", "Vikström", "Ohlin"])
+- property = sample(["hus", "sommarhus", "fritidshus"])
+- fee1, fee1_definite = sample([("överlåtelseavgift", "överlåtelseavgiften"), ("registreringsavgift", "registreringsavgiften"), ("lagfartsavgift", "lagfartsavgiften")])
+- fee2, fee2_definite = sample([("mäklararvode", "mäklararvodet"), ("förmedlingsarvode", "förmedlingsarvodet"), ("agentarvode", "agentarvodet")])
+- $price = range(1300000, 6700000, 70000)
+- $fee1_percent = range(1, 5)
+- $fee2_percent = range(2, 7)
+- $loan = range(700000, 4700000, 100000)
+
+#conditions:
+- price > loan
+- price - (price * (fee1_percent + fee2_percent) / 100 + loan) > 1
+
+#answer: price - (price * (fee1_percent + fee2_percent) / 100 + loan)
+"""
+
+answer_annotated = """
+{title} {name} betalade {price} kronor*{fee1_percent}/100 = <<{price}*{fee1_percent}/100={price * fee1_percent // 100}>>{price * fee1_percent // 100} kronor för {fee1_definite}.
+Han betalade {price} kronor*{fee2_percent}/100 = <<{price}*{fee2_percent}/100={price * fee2_percent // 100}>>{price * fee2_percent // 100} kronor för {fee2_definite}.
+Alltså betalade {title} {name} sammanlagt {price * fee1_percent // 100} kronor + {price * fee2_percent // 100} kronor + {loan} kronor = <<{price * fee1_percent // 100}+{price * fee2_percent // 100}+{loan}={price * (fee1_percent + fee2_percent) // 100 + loan}>>{price * (fee1_percent + fee2_percent) // 100 + loan} kronor för {fee1_definite}, {fee2_definite} och lånet.
+Därför är {title} {name}s nettobehållning {price} kronor - {price * (fee1_percent + fee2_percent) // 100 + loan} kronor = <<{price}-{price * (fee1_percent + fee2_percent) // 100 + loan}={price - (price * (fee1_percent + fee2_percent) // 100 + loan)}>>{price - (price * (fee1_percent + fee2_percent) // 100 + loan)} kronor.
+#### {price - (price * (fee1_percent + fee2_percent) // 100 + loan)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

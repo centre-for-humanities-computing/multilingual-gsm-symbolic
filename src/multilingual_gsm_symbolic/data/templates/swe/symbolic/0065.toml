@@ -1,10 +1,40 @@
-question = "Jackie försöker avgöra om hon ska göra sina skatter själv eller anlita en redovisningskonsult. Om hon gör det själv kommer hon att kunna arbeta 3 färre timmar med frilansarbete och förlora 35 $/timme i utebliven inkomst. Redovisningskonsulten tar ut 90 $. Hur mycket mer pengar kommer hon att ha om hon anlitar redovisningskonsulten?"
-answer = "Först beräkna den totala uteblivna intäkten om Jackie gör sina skatter själv: 35 $/timme * 3 timmar = $<<35*3=105>>105\nDärefter subtrahera redovisningskonsultens avgift för att beräkna hur mycket pengar Jackie sparar: $105 - $90 = $<<105-90=15>>15\n#### 15\n"
-id_orig = 164
-id_shuffled = 65
-question_annotated = "{name,Jackie} försöker avgöra om hon ska göra {task,sina skatter} själv eller anlita en {profession,redovisningskonsult}. Om hon gör det själv kommer hon att kunna arbeta {n,3} färre timmar med {work_type,frilans}arbete och förlora {rate,35} {cur,$}/timme i utebliven inkomst. {profession,redovisningskonsulten} tar ut {fee,90} {cur,$}. Hur mycket mer pengar kommer hon att ha om hon anlitar {profession,redovisningskonsulten}?\n\n#init:\n- name = sample(names_female)\n- task = sample([\"her taxes\", \"her financial planning\", \"her business accounting\"])\n- profession = sample([\"accountant\", \"financial advisor\", \"tax consultant\", \"bookkeeper\"])\n- work_type = sample([\"freelance\", \"consulting\", \"part-time\", \"contract\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 14)\n- $rate = range(20, 100)\n- $fee = range(50, 200)\n\n#conditions:\n- n * rate > fee\n\n#answer: n * rate - fee\n"
-answer_annotated = "Först beräkna den totala uteblivna intäkten om {name} gör {task} själv: {rate} {cur}/timme * {n} timmar = {cur}<<{rate}*{n}={rate*n}>>{rate*n}\nDärefter subtrahera {profession}s avgift för att beräkna hur mycket pengar {name} sparar: {cur}{rate*n} - {cur}{fee} = {cur}<<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee}\n#### {rate*n-fee}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Signe funderar på om hon ska göra sin deklaration själv eller anlita en revisor. Om hon gör det själv hinner hon med 3 timmar mindre frilansarbete, vilket innebär en förlorad inkomst på 35 kronor i timmen. Revisorn tar 90 kronor. Hur mycket mer pengar har hon om hon anlitar revisorn?"
 
-ignore = true
+answer = """
+Räkna först ut den totala förlorade inkomsten om Signe gör sin deklaration själv: 35 kronor i timmen * 3 timmar = <<35*3=105>>105 kronor.
+Dra sedan bort arvodet till revisorn för att få reda på hur mycket Signe sparar: 105 kronor - 90 kronor = <<105-90=15>>15 kronor.
+#### 15
+"""
+
+id_orig = 164
+
+id_shuffled = 65
+
+question_annotated = """
+{name,Signe} funderar på om hon ska göra {task,sin deklaration} själv eller anlita en {profession,revisor}. Om hon gör det själv hinner hon med {n,3} timmar mindre {work_type,frilans}arbete, vilket innebär en förlorad inkomst på {rate,35} {cur,kronor} i timmen. {profession_definite,Revisorn} tar {fee,90} {cur,kronor}. Hur mycket mer pengar har hon om hon anlitar {profession_definite,revisorn}?
+
+#init:
+- name = sample(names_female)
+- task = sample(["sin deklaration", "sin ekonomiska planering", "sin bokföring"])
+- profession, profession_definite = sample([("revisor", "revisorn"), ("ekonomisk rådgivare", "den ekonomiska rådgivaren"), ("skattekonsult", "skattekonsulten"), ("bokförare", "bokföraren")])
+- work_type = sample(["frilans", "konsult", "deltids", "kontrakts"])
+- cur = sample(currencies_sym)
+- $n = range(3, 14)
+- $rate = range(20, 100)
+- $fee = range(50, 200)
+
+#conditions:
+- n * rate > fee
+
+#answer: n * rate - fee
+"""
+
+answer_annotated = """
+Räkna först ut den totala förlorade inkomsten om {name} gör {task} själv: {rate} {cur} i timmen * {n} timmar = <<{rate}*{n}={rate*n}>>{rate*n} {cur}.
+Dra sedan bort arvodet till {profession_definite} för att få reda på hur mycket {name} sparar: {rate*n} {cur} - {fee} {cur} = <<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee} {cur}.
+#### {rate*n-fee}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

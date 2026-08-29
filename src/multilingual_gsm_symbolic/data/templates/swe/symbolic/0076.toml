@@ -1,10 +1,55 @@
-question = "Deandre fångade 3 tonfiskar förra måndagen, den första tonfisken han fångade vägde 56 kilogram, den andra tonfisken han fångade vägde 46 kilogram, och de återstående tonfiskarna han fångade vägde 26 kilogram. Om en kilogram tonfisk kostar $0,5, hur mycket kommer han att tjäna efter att ha sålt alla tonfiskarna till marknaden?"
-answer = "Deandre kommer att tjäna 56*$0,5 = $<<56*0.5=28>>28 från den första tonfisken.\nHan kommer att tjäna 46*$0,5 = $<<46*0.5=23>>23 för den andra tonfisken.\nDe återstående tonfiskarna är 3-2 = <<3-2=1>>1. Han kommer att tjäna 26*$0,5 = $<<26*0.5=13>>13 för var och en av dem. Så han kommer att tjäna 1 * 13 = <<1*13>>=13\nDärför är det totala beloppet han kommer att tjäna för alla tonfiskarna $28 + $23 + $13= $<<28+23+13=64>>64.\n#### 64\n"
-id_orig = 1207
-id_shuffled = 76
-question_annotated = "{name,Deandre} fångade {n,3} {fish,tonfisk}ar förra {day,måndagen}, den första {fish,tonfisk}en han fångade vägde {w1,56} {unit,kilogram}, den andra {fish,tonfisk}en han fångade vägde {w2,46} {unit,kilogram}, och de återstående {fish,tonfisk}arna han fångade vägde {w3,26} {unit,kilogram}. Om en {unit,kilogram} {fish,tonfisk} kostar {cur,$}{price,0.5}, hur mycket kommer han att tjäna efter att ha sålt alla {fish,tonfisk}arna till marknaden?\n\n#init:\n- name = sample(names_male)\n- fish = sample([\"tuna\",\"salmon\", \"cod\", \"trout\", \"steelhead\"])\n- day = sample(weekdays)\n- unit = sample([\"kilogram\", \"kg\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)\n"
-answer_annotated = "{name} kommer att tjäna {w1}*{cur}{price} = {cur}<<{w1}*{price}={w1*price}>>{w1*price} från den första {fish}en.\nHan kommer att tjäna {w2}*{cur}{price} = {cur}<<{w2}*{price}={w2*price}>>{w2*price} för den andra {fish}en.\nDe återstående {fish}arna är {n}-2 = <<{n}-2={n-2}>>{n-2}. Han kommer att tjäna {w3}*{cur}{price} = {cur}<<{w3}*{price}={w3*price}>>{w3*price} för var och en av dem. Så han kommer att tjäna {n-2} * {w3*price} = <<{n-2}*{w3*price}>>={((n-2)*w3*price)}\nDärför är det totala beloppet han kommer att tjäna för alla {fish}arna {cur}{w1*price} + {cur}{w2*price} + {cur}{((n-2)*w3*price)}= {cur}<<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)}.\n#### {int((w1 + w2 + (n-2)*w3) * price)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Mikael fångade 3 tonfiskar i måndags. Den första tonfisken han fångade väger 56 kilogram, den andra väger 46 kilogram och den återstående väger 26 kilogram. Om ett kilogram tonfisk kostar 0,5 kronor, hur mycket tjänar han på att sälja alla tonfiskarna på marknaden?"
 
-ignore = true
+answer = """
+Mikael tjänar 56*0,5 kronor = <<56*0,5=28>>28 kronor på den första tonfisken.
+Han tjänar 46*0,5 kronor = <<46*0,5=23>>23 kronor på den andra.
+Och han tjänar 26*0,5 kronor = <<26*0,5=13>>13 kronor på den återstående.
+Sammanlagt tjänar han alltså 28 kronor + 23 kronor + 13 kronor = <<28+23+13=64>>64 kronor för alla tonfiskarna.
+#### 64
+"""
+
+id_orig = 1207
+
+id_shuffled = 76
+
+question_annotated = """
+{name,Mikael} fångade {n,3} {fish_plural,tonfiskar} i {day,måndag}s. Den första {fish_definite,tonfisken} han fångade väger {w1,56} {unit,kilogram}, den andra väger {w2,46} {unit,kilogram} och {rest_subject,den återstående} väger {w3,26} {unit_each,kilogram}. Om ett {unit,kilogram} {fish,tonfisk} kostar {price_txt,0.5} {price_cur,kronor}, hur mycket tjänar han på att sälja alla {fish_plural_definite,tonfiskarna} på marknaden?
+
+#init:
+- name = sample(names_male)
+- fish, fish_definite, fish_plural, fish_plural_definite = sample([("tonfisk", "tonfisken", "tonfiskar", "tonfiskarna"), ("lax", "laxen", "laxar", "laxarna"), ("torsk", "torsken", "torskar", "torskarna"), ("öring", "öringen", "öringar", "öringarna"), ("piggvar", "piggvaren", "piggvarar", "piggvararna")])
+- day = sample(weekdays)
+- unit = sample(["kilogram", "kilo", "kg"])
+- cur = sample(currencies_sym)
+- $n = range(3, 8)
+- $w1 = range(40, 80)
+- $w2 = range(30, 60)
+- $w3 = range(20, 40)
+- $price = arange(0.25, 2.5, 0.25)
+- price_txt = int(price) if is_int(price) else price
+- cur_sing = "krona" if cur == "kronor" else cur
+- price_cur = plural(price, cur_sing, cur)
+- rest_subject = "den återstående" if n - 2 == 1 else "de återstående"
+- unit_each = unit if n - 2 == 1 else unit + " var"
+- rest_object = "den återstående" if n - 2 == 1 else "var och en av de återstående"
+- rest_amount = ensure_int(w3*price) if is_int(w3*price) else w3*price
+- rest_sum_txt = str(rest_amount) if n - 2 == 1 else str(n-2) + "*" + str(rest_amount)
+
+#conditions:
+- n > 2
+- is_int((w1 + w2) * price + (n-2) * w3 * price)
+
+#answer: int((w1 + w2) * price + (n-2)*w3*price)
+"""
+
+answer_annotated = """
+{name} tjänar {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} på den första {fish_definite}.
+Han tjänar {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} på den andra.
+Och han tjänar {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} på {rest_object}.
+Sammanlagt tjänar han alltså {w1*price} {cur} + {w2*price} {cur} + {rest_sum_txt} {cur} = <<{w1*price}+{w2*price}+{rest_sum_txt}={int((w1 + w2 + (n-2)*w3) * price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur} för alla {fish_plural_definite}.
+#### {int((w1 + w2 + (n-2)*w3) * price)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

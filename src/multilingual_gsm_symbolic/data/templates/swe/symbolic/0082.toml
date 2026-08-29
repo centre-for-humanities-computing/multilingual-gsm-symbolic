@@ -1,10 +1,46 @@
-question = "Vid början av fest, fanns det 25 män och 15 kvinnor. Efter en timme, lämnade 1/4 av det totala antalet människor. Hur många kvinnor finns kvar om 22 män stannade på fest?"
-answer = "Det fanns totalt 25 män + 15 kvinnor = <<25+15=40>>40 personer som deltog på festen.\nEfter en timme, 40 personer * 1/4 = <<40*1/4=10>>10 personer lämnade festen.\nDetta innebär 40 personer - 10 personer = <<40-10=30>>30 personer stannade.\nAv de 30 som stannade, 30 personer - 22 män = <<30-22=8>>8 var kvinnor.\n#### 8\n"
-id_orig = 320
-id_shuffled = 82
-question_annotated = "Vid början av {event,fest}, fanns det {m,25} {group1,män} och {w,15} {group2,kvinnor}. Efter {t,en timme}, lämnade {frac,1/4} av det totala antalet människor. Hur många {group2,kvinnor} finns kvar om {m_left,22} {group1,män} stannade på {event,fest}?\n\n#init:\n- event = sample(['party', 'meeting', 'conference', 'gathering', 'celebration'])\n- group1, group2 = sample([ \"teachers\", \"doctors\", \"engineers\", \"nurses\", \"artists\", \"lawyers\",], 2)\n- t = sample(['an hour', 'two hours', 'half an hour', '45 minutes'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left\n"
-answer_annotated = "Det fanns totalt {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} personer som deltog på {event}.\nEfter {t}, {m+w} personer * {frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} personer lämnade {event}.\nDetta innebär {m+w} personer - {int((m+w)*frac)} personer = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} personer stannade.\nAv de {m+w-int((m+w)*frac)} som stannade, {m+w-int((m+w)*frac)} personer - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} var {group2}.\n#### {m+w-int((m+w)*frac)-m_left}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "I början av festen var det 25 lärare och 15 läkare. Efter en timme gick 1/4 av alla närvarande. Hur många läkare är kvar om 22 lärare stannade på festen?"
 
-ignore = true
+answer = """
+Sammanlagt var det 25 lärare + 15 läkare = <<25+15=40>>40 personer på festen.
+Efter en timme gick 40 personer*1/4 = <<40*1/4=10>>10 personer.
+Det betyder att 40 personer - 10 personer = <<40-10=30>>30 personer stannade.
+Av de 30 som stannade var 30 personer - 22 lärare = <<30-22=8>>8 läkare.
+#### 8
+"""
+
+id_orig = 320
+
+id_shuffled = 82
+
+question_annotated = """
+I början av {event,festen} var det {m,25} {group1,lärare} och {w,15} {group2,läkare}. Efter {t,en timme} gick {frac,1/4} av alla närvarande. Hur många {group2,läkare} är kvar om {m_left,22} {group1,lärare} stannade på {event,festen}?
+
+#init:
+- event = sample(["festen", "firandet", "födelsedagsfesten", "konferensen", "samlingen", "evenemanget"])
+- group1, group2 = sample(["lärare", "läkare", "ingenjörer", "sjuksköterskor", "konstnärer", "jurister"], 2)
+- t = sample(["en timme", "två timmar", "en halvtimme", "45 minuter"])
+- $frac = sample(fractions)
+- $m = range(20, 75)
+- $w = range(10, 80)
+- $m_left = range(15, 35)
+
+#conditions:
+- m_left < m
+- is_int((m + w) * frac)
+- (m + w) * (1-frac) > m_left
+- m + w - (m + w) * frac > m_left
+
+#answer: m + w - int((m + w) * frac) - m_left
+"""
+
+answer_annotated = """
+Sammanlagt var det {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} personer på {event}.
+Efter {t} gick {m+w} personer*{frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} personer.
+Det betyder att {m+w} personer - {int((m+w)*frac)} personer = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} personer stannade.
+Av de {m+w-int((m+w)*frac)} som stannade var {m+w-int((m+w)*frac)} personer - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {group2}.
+#### {m+w-int((m+w)*frac)-m_left}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"
