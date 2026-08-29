@@ -4,5 +4,8 @@ id_orig = 320
 id_shuffled = 82
 question_annotated = "{event,விருந்து} தொடக்கத்தில், {m,25} {group1,ஆண்கள்} மற்றும் {w,15} {group2,பெண்கள்} இருந்தனர். {t,ஒரு மணிநேரம்} கழிந்த பிறகு, மொத்தம் இருந்தவர்களில் {frac,1/4} பங்கு சென்றுவிட்டனர். {m_left,22} {group1,ஆண்கள்} {event,விருந்து} இல் தங்கியிருந்தால், {group2,பெண்கள்} எத்தனை பேர் மீதமுள்ளனர்?\n\n#init:\n- event = sample(['விருந்து', 'கூட்டம்', 'கருத்தரங்கு', 'சந்திப்பு', 'விழா'])\n- group1, group2 = sample([ \"ஆசிரியர்கள்\", \"மருத்துவர்கள்\", \"பொறியாளர்கள்\", \"செவிலியர்கள்\", \"கலைஞர்கள்\", \"வழக்கறிஞர்கள்\",], 2)\n- t = sample(['ஒரு மணிநேரம்', 'இரண்டு மணிநேரம்', 'அரை மணிநேரம்', '45 நிமிடங்கள்'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left\n"
 answer_annotated = "மொத்தம் {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} பேர் {event} க்கு வந்தனர்.\n{t} கழிந்த பிறகு, {m+w} பேரில் {frac} பங்கு = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} பேர் {event} இலிருந்து சென்றுவிட்டனர்.\nஇதன் மூலம் {m+w} பேர் - {int((m+w)*frac)} பேர் = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} பேர் மீதமுள்ளனர்.\nமீதமுள்ள {m+w-int((m+w)*frac)} பேரில், {m+w-int((m+w)*frac)} பேர் - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {group2} ஆவார்கள்.\n#### {m+w-int((m+w)*frac)-m_left}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "tam"

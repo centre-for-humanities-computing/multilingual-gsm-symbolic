@@ -4,5 +4,8 @@ id_orig = 336
 id_shuffled = 84
 question_annotated = "{name,ماریا} اسٽاک جي {n,8} شيئرز في {cur,روپے}{p,8} خریدي ٿي. اسٽاک جي قيمت {r1,50}% وڌي ٿي پهريون سال {name,ماریا} جي وٽ رهندي، پوءِ {r2,25}% گهٽجي ٿي ٻئي سال ۾. سڀني {name,ماریا} جي شيئرز جي آخري قيمت ڇا آهي؟\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))\n"
 answer_annotated = "پهرين {name} جي خريداري جي شروعاتي ڪل قيمت معلوم ڪريو: {n} شيئرز * {cur}{p}/شيئر = {cur}<<{n}*{p}={n*p}>>{n*p}\nپوءِ پهريون قيمت وڌاءُ معلوم ڪريو: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}\nان رقم کي شروعاتي قيمت ۾ شامل ڪريو پهرين سال کان پوءِ قيمت معلوم ڪرڻ لاءِ: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}\nپوءِ ان رقم کي {r2}% سان ضرب ڏيو ٻئي سال ۾ گهٽتائي معلوم ڪرڻ لاءِ: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}\nپوءِ ان رقم کي پهرين سال کان پوءِ قيمت مان منفي ڪريو ته جيئن آخري قيمت معلوم ٿئي: {cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "snd"

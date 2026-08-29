@@ -4,5 +4,8 @@ id_orig = 1223
 id_shuffled = 10
 question_annotated = "किसी {dev,टेलीफोन} सँ बात करे के लेल, तेंकरा आपक बात के हर मिनट खातिर {currency,₹}{frac1,0.25} भुगतान करे के पड़त। {t,16} मिनट के बाद, उहाँ के कीमत घट के {currency,₹}{frac2,0.2} प्रति मिनट रहल। {total,36}-मिनट के बात के कितना लागत?\n\n#init:\n- dev = sample(['फोन बुथ', 'होटल कमरा फोन'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))\n"
 answer_annotated = "पहिले {t} मिनट के लागत {t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} रहत।\nउसके बाद, बात के {total} - {t} = <<{total}-{t}={total-t}>>{total-t} मिनट बचल रहल।\nआर एह {total-t} मिनट के लागत {total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)}।\nतो कुल मिला के, {total}-मिनट के बात के लागत {int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))}।\n#### {int((frac1 * t) + frac2*(total-t))}\n"
-creation = "machine-translated from eng_metric using Qwen/Qwen3.5-122B-A10B-FP8, based on eng_metric templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng_metric"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "bho"

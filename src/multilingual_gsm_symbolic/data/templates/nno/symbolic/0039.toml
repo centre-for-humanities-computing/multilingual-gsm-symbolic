@@ -4,7 +4,9 @@ id_orig = 1239
 id_shuffled = 39
 question_annotated = "Ein {job,vaktmeister} må reingjere ein {building,skule} med {n,80} {room,klasserom}. Dei har {d,5} dagar på seg å gjere det ferdig. Det tek dei {t,15} minutt per {room,klasserom}. Dersom dei arbeider {h,8} timar kvar dag, kva prosent av dagen, i snitt, blir brukt på å reingjere {room,klasserom}?\n\n#init:\n- job = sample([\"vaktmeister\", \"reingjeringsarbeidar\", \"vedlikehaldsarbeidar\"])\n- building = sample([\"kontorbygg\", \"sykehus\", \"universitet\"])\n- room = sample([\"rom\", \"etasje\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))\n"
 answer_annotated = "Dei må reingjere {n//d} {room} per dag fordi {n} / {d} = <<{n}/{d}={n//d}>>{n//d}\nDei bruker {(n//d)*t} minutt på reingjering per dag fordi {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}\nDei bruker {(n//d)*t/60} timar per dag fordi {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}\nDei bruker {Fraction((n//d)*t/(h*60))} av dagen på å reingjere {room} fordi {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}\nDei bruker {int(100 * (n/d) * t / (h * 60))}% av dagen på å reingjere {room} fordi {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}\n#### {int(100 * (n/d) * t / (h * 60))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
 language = "nno"
 
 ignore = true

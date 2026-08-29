@@ -4,5 +4,8 @@ id_orig = 737
 id_shuffled = 11
 question_annotated = "{name, 彼得} 想要用 {n,32} {unit, 盎司} 的水製作不同大小的冰塊。他可以製作巨型冰塊，每塊用 {w1,4} {unit, 盎司}，中型冰塊用 {w2,2} {unit, 盎司}，小型冰塊用 {w3,1/2} {unit, 盎司}。如果他製作 {n1,3} 個巨型冰塊、{n2,7} 個中型冰塊和 {n3,8} 個小型冰塊，他還剩下多少 {unit, 盎司} 的水？\n\n#init:\n- name = sample(names_male)\n- unit = sample(weights_sm)\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))\n"
 answer_annotated = "巨型冰塊用掉 {n1*w1} {unit} 的水，因為 {n1} 乘以 {w1} 等於 <<{n1}*{w1}={n1*w1}>>{n1*w1}。\n中型冰塊用掉 {n2*w2} {unit} 的水，因為 {n2} 乘以 {w2} 等於 <<{n2}*{w2}={n2*w2}>>{n2*w2}。\n小型冰塊用掉 {int(w3*n3)} {unit} 的水，因為 {n3} 乘以 {w3} 等於 {int(n3*w3)}。\n這意味著 {name} 總共用掉 {int(n3*w3+n2*w2+n1*w1)} {unit} 的水，因為 {n1*w1} 加 {n2*w2} 加 {int(w3*n3)} 等於 {int(n3*w3+n2*w2+n1*w1)}。\n{name} 還剩下 {n - (n1*w1) - (n2*w2) - int(n3*w3)} {unit} 的水，因為 {n} 減 {int(n3*w3+n2*w2+n1*w1)} 等於 <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{n - (n1*w1) - (n2*w2) - int(n3*w3)}。\n#### {n - (n1*w1) - (n2*w2) - int(n3*w3)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "yue"

@@ -4,7 +4,9 @@ id_orig = 1133
 id_shuffled = 17
 question_annotated = "{name,দাদি} প্রতিদিন তার প্রিয় হাঁটার পথে {n,3} {unit,কিলোমিটার} হাঁটেন, যার মধ্যে {m,2} {unit,কিলোমিটার} সমুদ্র সৈকতে এবং {k,1} {k_unit,কিলোমিটার} ফুটপাতে হাঁটা আছে। ফুটপাতে, {name,দাদি} সমুদ্র সৈকতে যে গতিতে হাঁটেন তার {mult_txt,দুই গুণ} গতিতে হাঁটেন। যদি তার হাঁটার {t,40} মিনিট সমুদ্র সৈকতে অতিবাহিত হয়, তবে তার পুরো {n,3}-{unit,কিলোমিটার} হাঁটা শেষ করতে কত সময় লাগবে, মিনিটে?\n\n#init:\n- name = sample(names_female)\n- unit = sample([\"kilometer\", \"km\"])\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(3, 40)\n- $m = range(2, 20)\n- $k = range(1, 20)\n- $t = range(40, 70)\n- k_unit = plural(k, unit, unit + \"s\")\n#conditions:\n- m + k == n\n- m < t\n- mult_val *m < t\n- divides(t, m)\n- is_int(k / (mult_val*m/t))\n#answer: t+(k/(mult_val*m/t))\n"
 answer_annotated = "সমুদ্র সৈকতে, {name} প্রতি {t} মিনিটে {m} {unit} হার হাঁটেন, অথবা {m}/{t} = {Fraction(m/t)} {unit} প্রতি মিনিটে।\nফুটপাতে, তিনি বালিতে থাকার সময়ের তুলনায় {mult_txt} গতিতে হাঁটেন, অথবা {mult_val}*{Fraction(m/t)} = {mult_val*m/t} {unit} প্রতি মিনিটে।\nফুটপাতে {k} {k_unit} হাঁটতে তার সময় লাগে {k}/{mult_val*m/t} = <<{k}/{mult_val*m/t}={k/(mult_val*m/t)}>>{k/(mult_val*m/t)} মিনিট।\nসুতরাং, মোটামুটি, {name} তার প্রিয় রুটে হাঁটতে {t}+{k/(mult_val*m/t)} = <<{t}+{k/(mult_val*m/t)}={t+(k/(mult_val*m/t))}>>{t+(k/(mult_val*m/t))} মিনিট সময় নেন।\n#### {t+(k/(mult_val*m/t))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
 language = "ben"
 
 ignore = true

@@ -4,5 +4,8 @@ id_orig = 1239
 id_shuffled = 39
 question_annotated = "{job,સફાઈ કર્મચારી} ને {n,80} {room,કક્ષ}ઓ ધરાવતી {building,શાળા} ની સફાઈ કરવી પડે છે. તેમને તે પૂર્ણ કરવા માટે {d,5} દિવસ છે. દરેક {room,કક્ષ} માટે તેમને {t,15} મિનિટો લાગે છે. જો તેઓ દરેક દિવસે {h,8} કલાક કામ કરે, તો સરેરાશ તેમના દિવસના કેટલા ટકા સમય {room,કક્ષ}ઓ ની સફાઈ કરવામાં ખર્ચાય છે?\n\n#init:\n- job = sample([\"સફાઈ કર્મચારી\", \"સફાઈ કરનાર\", \"માંટિનન્સ વર્કર\"])\n- building = sample([\"ઓફિસ બિલ્ડિંગ\", \"હોસ્પિટલ\", \"યુનિવર્સિટી\",])\n- room = sample([\"રૂમ\", \"મજલું\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))\n"
 answer_annotated = "તેમને દિવસે {n//d} {room}ઓ સફાઈ કરવી પડે છે કારણ કે {n} / {d} = <<{n}/{d}={n//d}>>{n//d}\nતેઓ દિવસે {(n//d)*t} મિનિટો સફાઈમાં ખર્ચે છે કારણ કે {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}\nતેઓ દિવસે {(n//d)*t/60} કલાક ખર્ચે છે કારણ કે {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}\nતેઓ તેમના દિવસનો {Fraction((n//d)*t/(h*60))} ભાગ {room}ઓ ની સફાઈ કરવામાં ખર્ચે છે કારણ કે {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}\nતેઓ તેમના દિવસનો {int(100 * (n/d) * t / (h * 60))}% ભાગ {room}ઓ ની સફાઈ કરવામાં ખર્ચે છે કારણ કે {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}\n#### {int(100 * (n/d) * t / (h * 60))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "guj"

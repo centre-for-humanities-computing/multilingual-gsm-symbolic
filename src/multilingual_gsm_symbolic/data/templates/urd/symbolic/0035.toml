@@ -4,5 +4,10 @@ id_orig = 788
 id_shuffled = 35
 question_annotated = "{name,جان} ایک {event,اسکول کے سفر} کے لیے پیسے جمع کر رہا ہے۔ اس نے {organization,اسکول} سے مدد کے لیے درخواست دی ہے، اور {organization,اسکول} نے {event,اسکول کے سفر} کی لاگت کا {fraction_txt,آدھا} حصہ ادا کرنے کا فیصلہ کیا ہے۔ اگر {name,جان} کے پاس {cur,$}{current,50} ہیں اور {event,اسکول کے سفر} کی لاگت {cur,$}{total,300} ہے، تو {name,جان} کے پاس کتنے پیسے کم ہیں؟\n\n#init:\n- name = sample(names_male)\n- event = sample([\"اسکول کے سفر\", \"تعلیمی دورے\", \"کھیلوں کا ٹورنامنٹ\", \"کانفرنس\", \"موسیقی کا میلہ\", \"سائنس میلہ\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"اسکول\", \"کمیونٹی سینٹر\", \"مقامی خیراتی ادارہ\", \"یوتھ کلب\", \"والدین کی انجمن\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)\n"
 answer_annotated = "{name} کے {organization} نے اس کے {event} کے لیے {total}*{fraction_val}={cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} ادا کرنے کا فیصلہ کیا ہے۔\nمجموعی طور پر {name} نے اپنے {event} کے لیے {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} جمع کر لیے ہیں۔\nلہٰذا، {name} کو {event} کے لیے مزید {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} کی ضرورت ہے۔\n#### {total-(total*fraction_val+current)}\n"
-creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; also validated by a native speaker"
+creation = "machine-translated"
+source-language = "eng"
+model = "gpt-5.4"
+computationally-validated = "test suite passes"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "urd"

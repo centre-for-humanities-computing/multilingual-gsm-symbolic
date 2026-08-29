@@ -4,5 +4,8 @@ id_orig = 1223
 id_shuffled = 10
 question_annotated = "Na uskutočnenie hovoru z {dev,telefónna búdka}, musíte zaplatiť {currency,$}{frac1,0.25} za každú minútu hovoru. Po {t,16} minútach cena klesne na {currency,$}{frac2,0.2} za minútu. Koľko by stál {total,36}-minútový hovor?\n\n#init:\n- dev = sample(['telefónna búdka', 'telefón v hotelovom pokoji'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))\n"
 answer_annotated = "Prvých {t} minút by stálo {t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)}.\nPo tom zostáva {total} - {t} = <<{total}-{t}={total-t}>>{total-t} minút hovoru.\nA týchto {total-t} minút stojí {total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)}.\nCelkovo by teda {total}-minútový hovor stál {int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))}.\n#### {int((frac1 * t) + frac2*(total-t))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "slk"

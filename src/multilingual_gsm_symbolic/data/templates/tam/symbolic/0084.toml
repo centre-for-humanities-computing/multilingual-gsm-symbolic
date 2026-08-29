@@ -4,5 +4,8 @@ id_orig = 336
 id_shuffled = 84
 question_annotated = "{name,மரியா} {n,8} பங்குகளை {cur,₹}{p,8} ஒவ்வொன்றிற்கும் வாங்குகிறார். பங்கு விலை {name,மரியா} வாங்கிய முதல் ஆண்டில் {r1,50}% அதிகரிக்கிறது, அதன் பிறகு இரண்டாவது ஆண்டில் {r2,25}% குறையிறது. {name,மரியா} வாங்கிய அனைத்து பங்குகளின் இறுதி மதிப்பு என்ன?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))\n"
 answer_annotated = "முதலில் {name} வாங்கிய ஆரம்ப மொத்த மதிப்பைக் கண்டறியவும்: {n} பங்குகள் * {cur}{p}/பங்கு = {cur}<<{n}*{p}={n*p}>>{n*p}\nஅடுத்து முதல் விலை அதிகரிப்பின் அளவைக் கண்டறியவும்: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}\nஅந்தத் தொகையை ஆரம்ப மதிப்பில் சேர்த்து முதல் ஆண்டிற்குப் பிறகுள்ள மதிப்பைக் கண்டறியவும்: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}\nஅடுத்து அந்தத் தொகையை {r2}% ஆல் பெருக்கி இரண்டாவது ஆண்டில் குறைப்பின் அளவைக் கண்டறியவும்: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}\nஅடுத்து அந்தத் தொகையை முதல் ஆண்டிற்குப் பிறகுள்ள மதிப்பிலிருந்து கழித்து இறுதி மதிப்பைக் கண்டறியவும்: {cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "tam"

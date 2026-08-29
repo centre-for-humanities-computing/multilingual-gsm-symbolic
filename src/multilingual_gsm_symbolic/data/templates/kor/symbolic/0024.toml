@@ -4,5 +4,8 @@ id_orig = 43
 id_shuffled = 24
 question_annotated = "영양 정보에 따르면, {food,감자칩} 한 봉지에는 포션당 {cal,250} 칼로리가 있습니다. 만약 {size,300} {unit,그램} 한 봉지에 {n,5} 포션이 있다면, 일일 칼로리 목표가 {total,2000}이고 이미 {spent,1800} 칼로리를 섭취했다면 몇 {unit,그램}을 먹을 수 있나요?\n\n#init:\n- food = sample([\"팝콘\", \"빵\",  \"쿠키\"])\n- unit = sample([\"그램\", \"온스\", \"oz\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)\n"
 answer_annotated = "총 칼로리 목표가 {total}이고 {spent} 칼로리를 섭취했다면, 먹을 수 있는 칼로리는 {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} 칼로리입니다\n{food} 한 포션당 {cal} 칼로리가 있고 먹을 수 있는 칼로리가 {total-spent}뿐이라면, 한 포션의 {total-spent}/{cal}만큼만 먹을 수 있습니다 = {Fraction((total-spent)/cal)} 포션\n{food} {size} {unit} 한 봉지에는 {n} 포션이 들어있으므로, 한 포션당 {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit}입니다\n한 포션의 {Fraction((total-spent)/cal)}만큼만 먹을 수 있다면, {size//n} {unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit}만 먹을 수 있습니다\n#### {size//n * (total-spent)/cal}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "kor"

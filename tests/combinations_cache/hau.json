@@ -1,57 +1,7 @@
 [
   {
-    "id": 8,
-    "question_annotated": "Mai jujjuya kwallaye zai iya jujjuya {n, 16} kwallaye. {frac_1_txt,rabi} na kwallayen {ball_type,golf} ne, kuma {frac_2_txt,rabi} na kwallayen {ball_type,golf} suna da launin {color, shuɗi}. Yaushe kwallaye masu launin {color, shuɗi} na {ball_type,golf} akwai?\n\n#init:\n- ball_type = sample([\"golf\", \"tennis\"])\n- color = sample(colors)\n- frac_1_txt, frac_1_val = sample(fraction_alnum)\n- frac_2_txt, frac_2_val = sample(fraction_alnum)\n- $n = range(16, 100, 2)\n\n#conditions:\n- is_int(n * frac_1_val)\n- is_int(n * frac_1_val * frac_2_val)\n\n#answer:  int(n * frac_1_val * frac_2_val)",
-    "count": 100
-  },
-  {
-    "id": 10,
-    "question_annotated": "Don yin kira daga {dev,wayar gada}, dole ne ka biya {currency,$}{frac1,0.25} ga kowane minti na kiranka. Bayan mintuna {t,16}, wannan farashin yana raguwa zuwa {currency,$}{frac2,0.2} a kowane minti. Nawa ne zai kashe kira na mintuna {total,36}?\n\n#init:\n- dev = sample(['phone booth', 'hotel room phone'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
-    "count": 100
-  },
-  {
-    "id": 11,
-    "question_annotated": "{name, Peter} yana son yin kubu ɗan ƙanƙara masu girma daban-daban ta amfani da {n,32} {unit,gram} na ruwa. Zai iya yin kubu masu girma waɗanda ke amfani da {w1,4} {unit,gram} a kowane cube, kubu na tsakiya waɗanda ke amfani da {w2,2} {unit,gram}, da kubu ƙanana waɗanda ke amfani da {w3,1/2} {unit,gram}. Idan ya yi {n1,3} kubu masu girma, {n2,7} kubu na tsakiya, da {n3,8} kubu ƙanana, me yake da gram nawa na ruwa ya rage?\n\n#init:\n- name = sample(names_male)\n- unit = sample([\"gram\", \"g\"])\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
-    "count": 100
-  },
-  {
-    "id": 16,
-    "question_annotated": "{name, Sunny} yana sayar da {food,gingerbread} da {fruit,apple} pie don taron taimako. A {d1,Saturday}, ya sayar da {n1,10} akwati na {food,gingerbread} da {m1,4} akwati kaɗan na {fruit,apple} pie, fiye da {d2,Sunday}. A {d2,Sunday}, ya sayar da {n2,5} akwati na {food,gingerbread} fiye da {d1,Saturday} da {m2,15} akwati na {fruit,apple} pie. Idan {food,gingerbread} yana da ƙimar {cur,$}{cn,6} kuma {fruit,apple} pie yana da ƙimar {cur,$}{cm,15}, nawa ne {name,Sunny} ya samu a cikin kwanaki biyu?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- cur = sample(currencies_sym)\n- food = sample([\"gingerbread\", \"cookies\", \"brownies\", \"muffins\", \"cupcakes\"])\n- d1, d2 = sample_sequential(weekdays, 2)\n- $n1 = range(21, 30)\n- $n2 = range(11, 15)\n- $m1 = range(4, 20)\n- $m2 = range(15, 30)\n- $cn = range(7, 13)\n- $cm = range(20, 33)\n\n#conditions:\n- m1 < m2\n\n#answer: (2*n1+n2)*cn + (2*m2-m1)*cm",
-    "count": 100
-  },
-  {
-    "id": 18,
-    "question_annotated": "{name,Raphael} ya tafi siyan kayan makaranta. Ya sayi {n1,4} {obj1,alamomi} waɗanda suka kudi {cur,$}{c1,1.5} kowanne, {n2,2} {obj2,tututun rubutu} waɗanda suka kudi {cur,$}{c2,4} kowanne, da kuma katin bond da ya kudi {cur,$}{c3,20}. Nawa ne {name,Raphael} ya kashe a duk abubuwan?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"notebooks\", \"pencils\", \"erasers\", \"crayons\", \"colored pencils\", \"markers\", \"rulers\", \"folders\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
-    "count": 100
-  },
-  {
-    "id": 21,
-    "question_annotated": "{name,Frankie} yana kallo talabijin bayan ya kammala aikin gida kowace dare. A {d1,Litinin} da {d2,Talata}, ya kallo {h1,1}-awa shirin shirinsa na kowane dare. A {d3,Laraba}, ya kallo wasu shirye-shiryen na {m1,30}-minti. A {d4,Alhamis}, ya kammala aikin gida da wuri kuma ya kallo {h2,1}-awa shiri da {m2,30}-minti shiri. A {d5,Juma'a}, ya yi iya zama da dare, don haka ya kallo {n2_txt,biyu} {h3,1}-awa shirye-shiryen. Idan ya kallo {total,7} awa na talabijin a duka, nawa {m1,30}-minti shirye-shiryen ya kallo a {d3,Laraba}?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)\n- $total = range(7, 33)\n- $h1 = range(1, 7)\n- $h3 = range(1, 6)\n- $m1 = range(5, 61, 5)\n- $m2 = range(5, 61, 5)\n- $h2 = range(1, 7)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n\n#conditions: \n- divides(m1, 15)\n- divides(m2, 15)\n- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 \n\n#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)",
-    "count": 100
-  },
-  {
     "id": 25,
     "question_annotated": "A cikin darajar {teacher,Mr. Roper} mai dalibai {total,30}, kashi {p1,20}% na darajar su ne {group1,'yan wasan kwallon kafa}. Daga sauran dalibai, kashi {p2,25}% na dalibai ne {group2,'yan kungiyar taimako} ko na {group3,ƙungiyar kiɗa}. Waɗannan rukunoni uku na dalibai za su buƙaci fita da wuri a yau don tafiya zuwa {event,wasa} a waje. Yaushe dalibai ne za su fita da wuri?\n\n#init:\n- teacher = sample(['Ms. Johnson', 'Mr. Smith', 'Dr. Lee', 'Mrs. Garcia'])\n- group1 = sample(['yan wasan kwallon kafa', 'yan wasan kwallon kwando', 'yan wasan kwallon ƙwallon ƙafa', 'yan wanki'])\n- group2, group3 = sample(['yan rawa', 'mambobin kungiyar murya', 'mambobin ƙungiyar muhawara', 'mambobin ƙungiyar robot'],  2)\n- event = sample(['gasar', 'gasar cin kofin', 'wasan kwaikwayo', 'taron'])\n- $total = range(20, 150)\n- $p1 = range(10, 50)\n- $p2 = range(15, 45)\n\n#conditions:\n- p1 < 100\n- p2 < 100\n- is_int(total * p1 / 100)\n- is_int((total - total * p1 / 100) * p2 / 100)\n\n#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)",
-    "count": 100
-  },
-  {
-    "id": 28,
-    "question_annotated": "A {facility,hospital} yana da karfin karbar {total,1000} {item,bed}s tare da {frac,1/5} an cika. Saboda {event,coronavirus outbreak}, {daily,50} marasa lafiya ana shigar su cikin {facility,hospital} kowace rana. Lissafa jimlar adadin {item,bed}s da ba a cika a {facility,hospital} bayan {period,2} makonni.\n\n#init:\n- facility = sample([\"hospital\", \"clinic\", \"medical center\", \"care facility\"])\n- item = sample([\"bed\", \"room\", \"ward\"])\n- event = sample([\"flu season\", \"natural disaster\", \"major accident\", \"pandemic\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
-    "count": 100
-  },
-  {
-    "id": 44,
-    "question_annotated": "Akwai 'yan mata {n,6} a cikin {place,park}. Idan akwai {mult_txt,sau biyu} adadin 'yan maza a cikin {place,park}, me yawa ne 'yan yara a cikin {place,park}?\n\n#init:\n- place = sample(['park', 'yard', 'field', 'playground', 'garden'])\n- $n = range(5, 51)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- is_int(n * mult_val + 1)\n- n * (mult_val + 1) <= 200\n\n#answer: n * (mult_val + 1)",
-    "count": 100
-  },
-  {
-    "id": 62,
-    "question_annotated": "A cikin taron takardun {item,mai sihir}, akwai takardun {c1,ja} {n1,15}, kuma takardun {c2,kore} sun fi haka da kashi {p,60}%. Takardun {c3,rawaya} suna da yawa kamar jimlar takardun {c1,ja} da {c2,kore}. Yawan takardun dukkan launukan da aka ambata guda nawa ne?\n\n#init:\n- item = sample([\"mai sihir\", \"mai zane\", \"mai dafa abinci\", \"masani\", \"mai wasanni\"])\n- c1, c2, c3 = sample([\"ja\", \"shuɗi\", \"kore\", \"rawaya\", \"launin ruwan kasa\", \"kumfa\"], 3)\n- $n1 = range(15, 81)\n- $p = range(20, 90)\n\n#conditions:\n- p < 100\n- is_int(p/100 * n1)\n\n#answer: 2 * (n1 + (p/100 * n1))",
-    "count": 100
-  },
-  {
-    "id": 72,
-    "question_annotated": "{name,Mike} ya kasance abokin wargaje da {n1,5} mutane. Ya tsaya zama abokin wargaje da {n2,2} daga cikinsu. Kowannensu yana aika {l,2} wasiƙa a mako waɗanda suke da {p,5} shafuka. Yana amsa da kama. Zai iya rubuta shafi ɗaya a kowace {t,6} mintuna. Yawanne awanni yake cika rubutu a mako?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 15)\n- $n2 = range(1, 5)\n- $l = range(2, 5)\n- $p = range(5, 12)\n- $t = range(4, 15)\n\n#conditions:\n- n2 < n1\n- is_int(((n1 - n2) * l * p * t) / 60)\n\n#answer: ((n1 - n2) * l * p * t) // 60",
     "count": 100
   },
   {
@@ -62,11 +12,6 @@
   {
     "id": 77,
     "question_annotated": "{name,Shiela} tana buƙatar gabatar da takardar bincike mai shafuka {n,15}. Ta riga ta kammala rubuta {frac,1/3} na {document,takardar binciken}. Yaushe shafuka ce ta rage ta rubuta?\n\n#init:\n- name = sample(names_female)\n- document = sample([\"essay\", \"report\", \"thesis\", \"dissertation\", \"assignment\"])\n- $n = range(10, 325)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int(n * frac)\n- n * frac < n\n\n#answer: n - int(n * frac)",
-    "count": 100
-  },
-  {
-    "id": 85,
-    "question_annotated": "Idan {name1,Sam} da {name2,Harry} suna da {total,100} {unit,santimita} na fence tsakaninsu, kuma sun yarda su raba shi tare da {name2,Harry} ya samu {diff,60} {unit,santimita} fiye da {name1,Sam}, nawa yake rage ga {name1,Sam}?\n\n#init:\n- name1, name2 = sample(names, 2)\n- unit = sample([\"centimeters\", \"meters\"])\n- $total = range(100, 1000, 20)\n- $diff = range(20, 200, 10)\n\n#conditions:\n- total - diff > 10\n- is_int((total - diff) / 2)\n\n#answer: (total - diff) // 2",
     "count": 100
   },
   {

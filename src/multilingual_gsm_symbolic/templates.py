@@ -63,6 +63,11 @@ class AnnotatedQuestion:
     answer_annotated: str
     language: str = "eng"
     creation: str = ""
+    source_language: str | None = None
+    model: str | None = None
+    computationally_validated: str | None = None
+    human_validated: str | None = None
+    error_analysis: str | None = None
 
     def __post_init__(self) -> None:
         constrained_derived = [v for v in self.derived_variables if is_variable_mentioned(v, self.conditions)]
@@ -88,6 +93,7 @@ class AnnotatedQuestion:
         """
         with filepath.open("r", encoding="utf-8") as f:
             data = json.load(f)
+        cls._normalize_metadata_keys(data)
         return cls(**data)
 
     @classmethod
@@ -107,6 +113,7 @@ class AnnotatedQuestion:
         """
         with Path(filepath).open("rb") as f:
             data = tomllib.load(f)
+        cls._normalize_metadata_keys(data)
         # TOML multiline basic strings strip the first newline, but may keep a
         # trailing newline before the closing \"\"\". Strip both ends to match
         # the JSON values which have no surrounding whitespace.
@@ -115,6 +122,20 @@ class AnnotatedQuestion:
                 data[key] = data[key].strip("\n")
         data.pop("ignore", None)
         return cls(**data)
+
+    @staticmethod
+    def _normalize_metadata_keys(data: dict[str, Any]) -> None:
+        """Map documented hyphenated TOML/JSON tags to Python attribute names."""
+        for serialized, attribute in (
+            ("source-language", "source_language"),
+            ("computationally-validated", "computationally_validated"),
+            ("human-validated", "human_validated"),
+            ("error-analysis", "error_analysis"),
+        ):
+            if serialized in data:
+                if attribute in data:
+                    raise ValueError(f"Template contains both {serialized!r} and {attribute!r}")
+                data[attribute] = data.pop(serialized)
 
     @cached_property
     def question_template(self) -> str:

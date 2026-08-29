@@ -4,5 +4,8 @@ id_orig = 336
 id_shuffled = 84
 question_annotated = "{name,Maria} {cur,$}{p,8} fiyatından {n,8} adet hisse senedi satın alır. Hisse fiyatı {name,Maria} elinde tuttuğu ilk yıl {r1,50}% artar, ardından ikinci yıl {r2,25}% düşer. Tüm {name,Maria}'a ait hisselerin son değeri nedir?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))"
 answer_annotated = "{name}'ın satın alımının ilk toplam değerini bulun: {n} hisse * {cur}{p}/hisse = {cur}<<{n}*{p}={n*p}>>{n*p}\nSonra ilk fiyat artış miktarını bulun: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}\nİlk yıl sonrasındaki değeri bulmak için bu miktarı ilk değere ekleyin: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}\nSonra bu miktarı {r2}% ile çarparak ikinci yıldaki düşüş miktarını bulun: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}\nSon değeri bulmak için bu miktarı ilk yıl sonrasındaki değerden çıkarın: {cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "tur"

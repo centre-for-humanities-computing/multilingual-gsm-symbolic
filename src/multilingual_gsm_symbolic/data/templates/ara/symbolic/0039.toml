@@ -4,5 +4,10 @@ id_orig = 1239
 id_shuffled = 39
 question_annotated = "يجب على {job,عامل نظافة} تنظيف {building,مدرسة} تضمّ {n,80} {room,فصلًا دراسيًا}. لديه {d,5} أيام لإنجاز ذلك. ويستغرق تنظيف كل {room,فصل دراسي} {t,15} دقيقة. فإذا كان يعمل {h,8} ساعات يوميًا، فما النسبة المئوية من يومه التي يقضيها في المتوسط في تنظيف {room,فصل دراسي}؟\n\n#init:\n- job = sample([\"عامل نظافة\", \"عامل صيانة\", \"منظِّف\"])\n- building = sample([\"مبنى مكاتب\", \"مستشفى\", \"جامعة\",])\n- room = sample([\"غرفة\", \"طابق\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))\n"
 answer_annotated = "عليه أن ينظّف {n//d} {room} يوميًا لأن {n} / {d} = <<{n}/{d}={n//d}>>{n//d}\nيقضي {(n//d)*t} دقيقة في التنظيف يوميًا لأن {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}\nيقضي {(n//d)*t/60} ساعة يوميًا لأن {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}\nيقضي {Fraction((n//d)*t/(h*60))} من يومه في تنظيف {room} لأن {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}\nيقضي {int(100 * (n/d) * t / (h * 60))}% من يومه في تنظيف {room} لأن {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}\n#### {int(100 * (n/d) * t / (h * 60))}\n"
-creation = "machine-translated from English using anthropic/claude-opus-4-8, based on English templates; computationally validated; validated by a native speaker."
+creation = "machine-translated"
+source-language = "eng"
+model = "anthropic/claude-opus-4-8"
+computationally-validated = "test suite passes"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "ara"

@@ -4,5 +4,10 @@ id_orig = 788
 id_shuffled = 35
 question_annotated = "يجمع {name,محمد} المال من أجل {event,رحلة مدرسية}. وقد تقدّم بطلب مساعدة من {organization,المدرسة}، التي قرّرت تغطية {fraction_txt,نصف} تكلفة {event,الرحلة المدرسية}. فكم يبلغ المبلغ الناقص لدى {name,محمد} إذا كان لديه {current,50} {cur,ريال} وكانت تكلفة {event,الرحلة المدرسية} {total,300} {cur,ريال}؟\n\n#init:\n- name = sample(names_male)\n- event = sample([\"رحلة مدرسية\", \"رحلة ميدانية\", \"بطولة رياضية\", \"مؤتمر\", \"مهرجان موسيقي\", \"معرض علمي\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"المدرسة\", \"المركز المجتمعي\", \"جمعية خيرية محلية\", \"نادي الشباب\", \"جمعية أولياء الأمور\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)\n"
 answer_annotated = "قرّرت {organization} الخاصة ب{name} دفع {total}*{fraction_val}=<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} {cur} مقابل {event}.\nوبذلك يكون {name} قد غطّى إجمالًا {total*fraction_val} + {current} = <<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} {cur} مقابل {event}\nولذلك يحتاج {name} إلى {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} {cur} إضافية من أجل {event}.\n#### {total-(total*fraction_val+current)}\n"
-creation = "machine-translated from English using anthropic/claude-opus-4-8, based on English templates; computationally validated; validated by a native speaker."
+creation = "machine-translated"
+source-language = "eng"
+model = "anthropic/claude-opus-4-8"
+computationally-validated = "test suite passes"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "ara"

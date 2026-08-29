@@ -4,5 +4,10 @@ id_orig = 43
 id_shuffled = 24
 question_annotated = "اس کی غذائی معلومات کے مطابق، {food,چپس} کے ایک پیکٹ میں فی سرونگ {cal,250} کیلوریز ہیں۔ اگر {size,300} {unit,گرام} کے ایک پیکٹ میں {n,5} سرونگز ہوں، تو اگر آپ کا روزانہ کیلوری ہدف {total,2000} ہے اور آپ پہلے ہی {spent,1800} کیلوریز استعمال کر چکے ہیں، تو آپ کتنے {unit,گرام} کھا سکتے ہیں؟\n\n#init:\n- food = sample([\"پاپ کارن\", \"بریڈ\",  \"کوکیز\"])\n- unit = sample([\"گرام\", \"اونس\", \"اوز\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)\n"
 answer_annotated = "اگر کل کیلوری ہدف {total} ہے اور میں {spent} کیلوریز استعمال کر چکا ہوں، تو میرے پاس کھانے کے لیے {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} کیلوریز باقی ہیں\nاگر {food} کی ہر سرونگ میں {cal} کیلوریز ہیں اور میرے پاس کھانے کے لیے صرف {total-spent} کیلوریز باقی ہیں، تو میں صرف {total-spent}/{cal} سرونگ کھا سکتا ہوں = ایک سرونگ کا {Fraction((total-spent)/cal)} حصہ\nہم یہ بھی جانتے ہیں کہ {size} {unit} کے ایک {food} کے پیکٹ میں {n} سرونگز ہیں، لہٰذا ہر سرونگ میں {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit} ہیں\nاگر میں صرف ایک سرونگ کا {Fraction((total-spent)/cal)} حصہ کھا سکتا ہوں، تو میں صرف {size//n} {unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit} کھا سکتا ہوں\n#### {size//n * (total-spent)/cal}\n"
-creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; also validated by a native speaker"
+creation = "machine-translated"
+source-language = "eng"
+model = "gpt-5.4"
+computationally-validated = "test suite passes"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "urd"

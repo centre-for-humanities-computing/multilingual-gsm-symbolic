@@ -4,5 +4,10 @@ id_orig = 984
 id_shuffled = 45
 question_annotated = "لدى {name,سارة} حوض زهور طوله {length,111} {unit_length,متر}. تريد {name,سارة} أن تملأ حوض الزهور بالنباتات. تنمو زهور {name,سارة} بعرض {plant_width,12} سنتيمتر، وتنصّ إرشادات البستنة بزراعة زهرة واحدة كل {space,1.5} {unit_length,متر} على امتداد الحوض. تملك {name,سارة} بالفعل {owned,17} زهرة. وتكلّف كل نبتة مزهرة {cost,6} {cur,ريال} في المتجر. فكم من المال ستنفق {name,سارة} في المتجر لملء حوض الزهور؟\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['متر'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)\n"
 answer_annotated = "حوض زهور {name} طوله {length} {unit_length} / {space} {unit_length} لكل نبتة = <<{length}/{space}={int(length/space)}>>{int(length/space)} نبتة مطلوبة.\nتحتاج {name} إلى شراء {int(length/space)} نبتة - {owned} نبتة = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} نبتة يلزم شراؤها.\nستنفق {name} {int(length/space)-owned} نبتة * {cost} {cur} = <<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)} {cur}.\n#### {int((length/space - owned) * cost)}\n"
-creation = "machine-translated from English using anthropic/claude-opus-4-8, based on English templates; computationally validated; validated by a native speaker."
+creation = "machine-translated"
+source-language = "eng"
+model = "anthropic/claude-opus-4-8"
+computationally-validated = "test suite passes"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "ara"

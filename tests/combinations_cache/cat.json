@@ -1,30 +1,5 @@
 [
   {
-    "id": 15,
-    "question_annotated": "El gos de {name1, Jennifer} té {n1, 8} cadells, {k1,3} dels quals tenen taques. El gos de {name2, Brandon} té {n2,12} cadells, {k2,4} dels quals tenen taques. Quin percentatge de tots els cadells tenen taques?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $n1 = range(4, 16)\n- $n2 = range(4, 20)\n- $k1 = range(2, 12)\n- $k2 = range(2, 12)\n\n#conditions:\n- k1 < n1\n- k2 < n2\n- divides(n1 + n2, k1 + k2)\n- is_int(100 * (k1+k2) / (n1+n2))\n\n#answer: int(100 * (k1+k2) / (n1+n2))",
-    "count": 100
-  },
-  {
-    "id": 16,
-    "question_annotated": "{name, Sunny} ven {food,pa de gingebre} i pastís de {fruit,poma} per a una recaptació de fons. El {d1,dissabte}, va vendre {n1,10} caixes de {food,pa de gingebre} i {m1,4} caixes menys de pastís de {fruit,poma} que el {d2,diumenge}. El {d2,diumenge}, va vendre {n2,5} caixes més de {food,pa de gingebre} que el {d1,dissabte} i {m2,15} caixes de pastís de {fruit,poma}. Si el {food,pa de gingebre} costa {cn,6} {cur,$} i el pastís de {fruit,poma} costa {cm,15} {cur,$}, quant va guanyar {name,Sunny} en dos dies?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- cur = sample(currencies_sym)\n- food = sample([\"pa de gingebre\", \"galetes\", \"brownies\", \"muffins\", \"pastissos\"])\n- d1, d2 = sample_sequential(weekdays, 2)\n- $n1 = range(21, 30)\n- $n2 = range(11, 15)\n- $m1 = range(4, 20)\n- $m2 = range(15, 30)\n- $cn = range(7, 13)\n- $cm = range(20, 33)\n\n#conditions:\n- m1 < m2\n\n#answer: (2*n1+n2)*cn + (2*m2-m1)*cm",
-    "count": 100
-  },
-  {
-    "id": 18,
-    "question_annotated": "{name,Raphaël} va anar a comprar alguns material escolar. Va comprar {n1,4} {obj1,llapis} que costaven {cur,$}{c1,1.5} cadascun, {n2,2} {obj2,llibretes} que costaven {cur,$}{c2,4} cadascun, i un bloc de paper de carta que costava {cur,$}{c3,20}. Quant va gastar {name,Raphaël} en total?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"llibretes\", \"llapis\", \"gomes\", \"retoladors\", \"regles\", \"carpetes\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
-    "count": 100
-  },
-  {
-    "id": 20,
-    "question_annotated": "En {name,John} recull {n1,4} {fruit,plàtan}s el {d1,dimecres}. Després en recull {n2,6} el {d2,dijous}. El {d3,divendres}, en recull {mult_txt,tres} vegades el nombre de {fruit,plàtan}s que va recollir el {d1,dimecres}. Quants {fruit,plàtan}s té en {name,John}?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3 = sample_sequential(weekdays, 3)\n- fruit = sample(fruits)\n- $n1 = range(30, 400)\n- $n2 = range(50, 400)\n- mult_txt, mult_val = range_str(2,6,1,numbers)\n\n#answer: n1 + n2 + mult_val * n1",
-    "count": 100
-  },
-  {
-    "id": 21,
-    "question_annotated": "{name,Frankie} mira la televisió després de fer els deures cada nit. El {d1,dilluns} i el {d2,dimarts}, va veure un episodi de {h1,1} hora del seu programa favorit cada nit. El {d3,dimecres}, va veure uns quants episodis d'un programa de {m1,30} minuts. El {d4,dijous}, va acabar els deures aviat i va veure un episodi de {h2,1} hora i un programa de {m2,30} minuts. El {d5,divendres}, es va poder quedar despert tard, així que va veure {n2_txt,dos} episodis de {h3,1} hora. Si va veure {total,7} hores de televisió en total, quants episodis de {m1,30} minuts va veure el {d3,dimecres}?\n\n#init:\n- name = sample(names_male)\n- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)\n- $total = range(7, 33)\n- $h1 = range(1, 7)\n- $h3 = range(1, 6)\n- $m1 = range(5, 61, 5)\n- $m2 = range(5, 61, 5)\n- $h2 = range(1, 7)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n\n#conditions: \n- divides(m1, 15)\n- divides(m2, 15)\n- divides(total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60, m1)\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 > 0\n- (total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1 < 8 \n\n#answer: int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)",
-    "count": 100
-  },
-  {
     "id": 22,
     "question_annotated": "{name,Julia} estava preparant una {event,festa de sopar} a casa seva, on tenia la intenció de servir {food,estofat}. Va notar que no tenia {obj,culleres} de plàstic, així que va comprar un paquet nou de {obj,culleres}. Més tard, el seu marit també va comprar un paquet de {n1,5} {obj,culleres} noves i les va donar a {name,Julia}. Mentre {name,Julia} preparava l'{food,estofat}, va utilitzar {n2_txt,tres} de les {obj,culleres} per tastar l'{food,estofat}. Més tard, quan va anar a posar la taula, tenia un total de {total,12} {obj,culleres}. Quantes {obj,culleres} hi havia al paquet que va comprar {name,Julia}?\n\n#init:\n- name = sample(names_female)\n- event = sample([\"festa de dinar\", \"festa d'aniversari\", \"festa compartida\", \"bany de nadó\", \"nit de jocs\"])\n- food = sample([\"pollastre rost\", \"salmó a la graella\", \"estofat de vedella\", \"llassanya de verdures\", \"pebrots farcits\", \"gambes a la salsa\", \"crema cremada\"])\n- obj = sample([\"culleres\", \"forquilles\", \"plats\"])\n- $n1 = range(5, 20)\n- n2_txt, n2_val = range_str(3, 10, 1, numbers)\n- $total = range(12, 40)\n\n#conditions:\n- total+n2_val-n1 > 0\n\n#answer: total+n2_val-n1",
     "count": 100
@@ -32,16 +7,6 @@
   {
     "id": 23,
     "question_annotated": "{name,Martha} està teixint roba d'hivern per als seus {count,3} nets. Són {children,bessons}, així que tots tenen la mateixa mida. Vol fer un {c1,barret}, una {c2,bufanda}, un {c3,jersei}, uns {c4,mitens} i uns {c5,mitjons} per a cadascun d'ells. Es necessiten {n1,2} gomes de llana per fer un {c1,barret}, {n2,4} per a una {c2,bufanda}, {n3,12} per a un {c3,jersei}, {n4,1} per a un parell de {c4,mitens} i {n5,2} per a un parell de {c5,mitjons}. Quantes gomes de llana haurà de comprar?\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"sweater\", \"shawl\", \"hat\", \"cardigan\", \"poncho\", \"vest\", \"beanie\", \"tunic\"],3)\n- c4, c5 = sample([ \"mittens\", \"booties\", \"socks\",  \"leg warmers\", \"gloves\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"twins\",2), (\"triplets\",3), (\"quadruplets\", 4),  (\"quintuplets\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
-    "count": 100
-  },
-  {
-    "id": 24,
-    "question_annotated": "Segons la seva informació nutricional, una bossa de {food,patates fregides} té {cal,250} calories per ració. Si una bossa de {size,300} {unit,gram} té {n,5} raciones, quantes {unit,gram}s pots menjar si el teu objectiu diari de calories és {total,2000} i ja has consumit {spent,1800} calories?\n\n#init:\n- food = sample([\"popcorn\", \"pa\", \"galetes\"])\n- unit = sample([\"gram\", \"g\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
-    "count": 100
-  },
-  {
-    "id": 25,
-    "question_annotated": "A la classe del {teacher,Sr. Roper} de {total,30} estudiants, {p1,20}% de la classe són {group1,jugadors de futbol}. De la resta de la classe, {p2,25}% dels estudiants són {group2,animadores} o formen part de {group3,banda}. Aquests 3 grups d'estudiants hauran de marxar avui d'hora per viatjar a un {event,partit} fora. Quants estudiants marxaran d'hora?\n\n#init:\n- teacher = sample(['Sra. Johnson', 'Sr. Smith', 'Dr. Lee', 'Sra. Garcia'])\n- group1 = sample(['jugadors de futbol', 'jugadors de bàsquet', 'jugadors de voleibol', 'natació'])\n- group2, group3 = sample(['ballarines', 'membres del cor', 'membres del equip de debat', 'membres del club de robòtica'],  2)\n- event = sample(['competició', 'torneig', 'actuació', 'trobada'])\n- $total = range(20, 150)\n- $p1 = range(10, 50)\n- $p2 = range(15, 45)\n\n#conditions:\n- p1 < 100\n- p2 < 100\n- is_int(total * p1 / 100)\n- is_int((total - total * p1 / 100) * p2 / 100)\n\n#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)",
     "count": 100
   },
   {
@@ -55,78 +20,13 @@
     "count": 100
   },
   {
-    "id": 36,
-    "question_annotated": "{name,Toula} va anar a la {shop,pastisseria} i va comprar diversos tipus de {item,pastissos}. Va comprar {n1,3} dotzenes de {item1,donuts} que costaven ${p1,68} per dotzena, {n2,2} dotzenes de {item2,mini cupcakes} que costaven ${p2,80} per dotzena, i {n3,6} dotzenes de {item3,mini cheesecakes} per ${p3,55} per dotzena. Quant va ser el cost total?\n\n#init:\n- name = sample(names_female)\n- shop = sample([\"bakery\", \"patisserie\", \"confectionery\", \"cafe\"])\n- item = sample([\"pastries\", \"baked goods\", \"desserts\", \"treats\"])\n- item1 = sample([\"donuts\", \"croissants\", \"eclairs\", \"danishes\"])\n- item2 = sample([\"mini cupcakes\", \"macarons\", \"cookies\", \"tarts\"])\n- item3 = sample([\"mini cheesecakes\", \"brownies\", \"muffins\", \"scones\"])\n- $n1 = range(1, 10)\n- $n2 = range(4, 10)\n- $n3 = range(2, 10)\n- $p1 = range(11, 21)\n- $p2 = range(73, 90)\n- $p3 = range(112, 120)\n\n#answer: n1 * p1 + n2 * p2 + n3 * p3",
-    "count": 100
-  },
-  {
-    "id": 40,
-    "question_annotated": "{name,Sally} va anar a la platja de vacances. Els seus pares li van donar ${total,15} per comprar el que volgués. A la botiga de souvenirs, el caramel estava en oferta per \"Compra {n1,500} grams per ${p1,3}, obté {n2,500} grams per {discount,1/2} preu.\" Va agafar {n12,2000} grams. També va comprar una bossa mixta de closques per ${p2,1.5} i {n3,4} imants que eren de ${p3,0.25} cadascun. Quanta diners li queda a {name,Sally}?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(500, 3000, 500)\n- $n2 = range(500, 3000, 500)\n- $n12 = range(1000, 6000, 500)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)\n- p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3 < total\n\n#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)",
-    "count": 100
-  },
-  {
-    "id": 48,
-    "question_annotated": "{name,Emily} pot pelar {n1,6} {food,gambes} per minut i sofregir {n2,30} {food,gambes} en {t,10} minuts. Quant temps li costarà pelar i sofregir {total,90} {food,gambes}? {name,Emily} no pot pelar i sofregir al mateix temps.\n\n#init:\n- name = sample(names_female)\n- food = sample([\"gambes\", \"cibes\", \"pastanagues\", \"bolets\", \"cloïsses\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
-    "count": 100
-  },
-  {
     "id": 54,
     "question_annotated": "{name,Doxa} va tallar una {fruit,poma} sencera en {total,18} trossos. Va menjar {n1,3} trossos, la seva {sibling1,germana} en va menjar {n2,2} més que ella, i el seu {sibling2,germà} en va menjar {n3,3} més que la seva {sibling1,germana}. Quants trossos de {fruit,poma} van menjar tots plegats?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"orange\", \"pear\", \"peach\", \"mango\", \"kiwi\"])\n- sibling1, sibling2 = sample([\"brother\", \"sister\", \"cousin\", \"friend\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
     "count": 100
   },
   {
-    "id": 59,
-    "question_annotated": "Tinc {n1,10} litres de beguda de {fruit1,taronja} que són {frac1_txt,dos terços} aigua i vull afegir-ho a {n2,15} litres de beguda de {fruit2,pinya} que és {frac2_txt,tres cinquens} aigua. Però mentre l'aboco, derramo {spill_txt,quatre} litres de la beguda de {fruit1,taronja}. Quanta aigua hi ha en els {total,21} litres restants?\n\n#init:\n- fruit1, fruit2 = sample([\"apple\", \"grape\", \"mango\", \"peach\", \"lemon\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(2, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)",
-    "count": 100
-  },
-  {
-    "id": 60,
-    "question_annotated": "{name,Watson} treballa un torn de {h,10} hores cada dia, {d_txt,cinc} dies a la setmana. Guanya {r,10} {cur,$} per hora i rep una bonificació de {b,300} {cur,$} cada setmana si la companyia ho fa bé. Quant diners va guanyar {name,Watson} a l'{month,abril} si la companyia ho va fer molt bé durant tot el mes?\n\n#init:\n- name = sample(names_male)\n- month = sample([\"January\", \"February\", \"March\", \"April\", \"May\", \"June\", \"July\", \"August\", \"September\", \"October\", \"November\", \"December\"])\n- cur = sample(currencies_sym)\n- $h = range(6, 13)\n- d_txt, d_val = range_str(3, 7, 1, numbers)\n- $r = range(8, 31)\n- $b = range(100, 601)\n\n#conditions:\n- is_int(h * r)\n\n#answer: h * r * d_val * 4 + b * 4",
-    "count": 100
-  },
-  {
-    "id": 62,
-    "question_annotated": "En un conjunt de cartes de {item,magí}, hi ha {n1,15} cartes {c1,vermell}, i {p,60}% més cartes {c2,verd}. Les cartes {c3,Groc} són tantes com la suma de les cartes {c1,vermell} i {c2,verd}. Quantes cartes hi ha de tots els colors esmentats?\n\n#init:\n- item = sample([\"magician\", \"artist\", \"chef\", \"scientist\", \"athlete\"])\n- c1, c2, c3 = sample([\"red\", \"blue\", \"green\", \"yellow\", \"purple\", \"orange\"], 3)\n- $n1 = range(15, 81)\n- $p = range(20, 90)\n\n#conditions:\n- p < 100\n- is_int(p/100 * n1)\n\n#answer: 2 * (n1 + (p/100 * n1))",
-    "count": 100
-  },
-  {
-    "id": 72,
-    "question_annotated": "{name,Mike} era un amic per correspondència amb {n1,5} persones. Va deixar de ser amic per correspondència amb {n2,2} d'elles. Cada un envia {l,2} cartes a la setmana que tenen {p,5} pàgines de llargada. Ell respon de manera similar. Pot escriure una pàgina cada {t,6} minuts. Quantes hores passa escrivint a la setmana?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 15)\n- $n2 = range(1, 5)\n- $l = range(2, 5)\n- $p = range(5, 12)\n- $t = range(4, 15)\n\n#conditions:\n- n2 < n1\n- is_int(((n1 - n2) * l * p * t) / 60)\n\n#answer: ((n1 - n2) * l * p * t) // 60",
-    "count": 100
-  },
-  {
-    "id": 73,
-    "question_annotated": "El cometa {comet_name,Halley} orbita el Sol cada {orbit_period,75} anys. El {relative,pare} de {name,Bill} va veure el cometa quan tenia {relative_age,30} anys. {name,Bill} va veure el cometa per segona vegada quan tenia {multiple_txt,tres} vegades l'edat que tenia el seu {relative,pare} quan va veure el cometa. Quants anys tenia {name,Bill} quan va veure el cometa per primera vegada?\n\n#init:\n- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])\n- name = sample(names_male)\n- relative = sample(['pare', 'pare', 'oncle', 'avi'])\n- $orbit_period = range(50, 101, 5)\n- $relative_age = range(20, 51)\n- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)\n\n#conditions:\n- multiple_val * relative_age < 100\n- multiple_val * relative_age > orbit_period\n- is_int(multiple_val * relative_age - orbit_period)\n\n#answer: multiple_val * relative_age - orbit_period",
-    "count": 100
-  },
-  {
-    "id": 74,
-    "question_annotated": "Hi ha {total,96} estudiants de {grade,quart} a l'escola {school_name,Small Tree}. {num_girls,43} d'ells són noies. El {day,divendres}, {absent_girls,5} noies de {grade,quart} i {absent_boys,4} nois de {grade,quart} van faltar. Quants nois de {grade,quart} van assistir a l'escola {school_name,Small Tree} el {day,divendres}?\n\n#init:\n- school_name = sample([\"Maple Grove\", \"Sunny Hill\", \"Oak Ridge\", \"Pine Valley\"])\n- grade = sample([\"primer\", \"segon\", \"tercer\", \"quart\", \"cinquè\"])\n- day = sample([\"dilluns\", \"dimarts\", \"dimecres\", \"dijous\", \"divendres\"])\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys",
-    "count": 100
-  },
-  {
-    "id": 75,
-    "question_annotated": "Actualment hi ha {n1,3} pilotes {c1,vermelles}, {n2,11} pilotes {c2,blaves} i {n3,25} pilotes {c3,verdes} a la {place,botiga}. Les pilotes {c1,vermelles} costen {p1,9}{cur,$}, les pilotes {c2,blaves} costen {p2,5}{cur,$} i les pilotes {c3,verdes} costen {p3,3}{cur,$}. Quants diners rebrà la {place,botiga} després que totes les pilotes es venguin?\n\n#init:\n- place = sample([\"store\", \"shop\", \"market\", \"warehouse\"])\n- c1, c2, c3 = sample([\"red\", \"blue\", \"green\", \"yellow\", \"purple\", \"orange\", \"pink\"], 3)\n- cur = sample(currencies_sym)\n- $n1 = range(3, 20)\n- $n2 = range(5, 30)\n- $n3 = range(15, 50)\n- $p1 = range(5, 15)\n- $p2 = range(3, 10)\n- $p3 = range(2, 8)\n\n\n#answer: n1*p1 + n2*p2 + n3*p3",
-    "count": 100
-  },
-  {
-    "id": 80,
-    "question_annotated": "Les màquines expenedores venen {item1,patates fregides} per {price1,40} cèntims i {item2,barres de xocolata} per {price2,75} cèntims. {name,George} va gastar {total,5}{cur,$} i va obtenir {n1,3} bosses de {item1,patates fregides} i va tenir {p,1}% del seu diners restants en canvi. Quantes {item2,barres de xocolata} va comprar?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['pretzels', 'popcorn', 'gum', 'cookies', 'crackers'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: int((total * (100 - p) - n1 * price1) / price2)",
-    "count": 100
-  },
-  {
     "id": 81,
     "question_annotated": "L'equip de la {event,cerca d'ous de Pasqua} va amagar {total,100} {item,ous}. Els bessons {family,Smith} van trobar {n,30} {item,ous} cadascun. Tots els altres {item,ous}, excepte {m,10}, van ser trobats pels seus amics. Quants {item,ous} van trobar els amics?\n\n#init:\n- event = sample([\"Cerca de dolços de Halloween\", \"Cerca del tresor\", \"Cerca d'objectes\", \"Recaptació de fons benèfica\"])\n- item = sample([\"ous\", \"dolços\", \"joguines\", \"monedes\", \"fichers\", \"pilotes\", \"caramels\", \"regals\"])\n- family = sample([\"Johnson\", \"Williams\", \"Mirzakhani\", \"Lopez\", \"Garcia\", \"Lee\", ])\n- $total = range(50, 201, 10)\n- $n = range(10, 51)\n- $m = range(5, 21)\n\n#conditions:\n- 2*n + m < total\n\n#answer: total - 2*n - m",
-    "count": 100
-  },
-  {
-    "id": 94,
-    "question_annotated": "{n,100} persones sol·liciten una feina a {company,Google}. Dels que sol·liciten, només el {p1,30}% reben una entrevista. Dels que reben una entrevista, el {p2,20}% reben una oferta de feina. Dels que reben una oferta de feina, {frac_txt,un terç} de les persones accepten el càrrec. Quantes persones accepten el càrrec?\n\n#init:\n- company = sample([\"Microsoft\", \"Apple\", \"Amazon\", \"Facebook\", \"Netflix\", \"Tesla\", \"Microsoft\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: int(n * (p1/100) * (p2/100) * frac_val)",
-    "count": 100
-  },
-  {
-    "id": 99,
-    "question_annotated": "Si {name,Chester} menja {n1,3} ous al dia durant {d1,30} dies i després augmenta a {n2,5} ous al dia durant {d2,30} dies, quantes dotzenes d'ous necessitarà {name,Chester} per a {d3,60} dies?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
     "count": 100
   }
 ]

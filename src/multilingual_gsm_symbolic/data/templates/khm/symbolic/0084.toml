@@ -4,5 +4,8 @@ id_orig = 336
 id_shuffled = 84
 question_annotated = "{name,ម៉ារីា} ទិញ {n,8} ភាគហ៊ុននៃភាគហ៊ុនមួយក្នុងតម្លៃ {cur,៛}{p,8} មួយ។ តម្លៃភាគហ៊ុនកើនឡើង {r1,50}% នៅឆ្នាំដំបូងដែល {name,ម៉ារីា} កាន់កាប់វា បន្ទាប់មកថយចុះ {r2,25}% នៅឆ្នាំទីពីរ។ តម្លៃចុងក្រោយនៃភាគហ៊ុនទាំងអស់របស់ {name,ម៉ារីា} គឺជាអ្វី?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))\n"
 answer_annotated = "ដំបូង រកតម្លៃសរុបដើមនៃការទិញរបស់ {name}: {n} ភាគហ៊ុន * {cur}{p}/ភាគហ៊ុន = {cur}<<{n}*{p}={n*p}>>{n*p}\nបន្ទាប់មក រកចំនួននៃការកើនឡើងតម្លៃដំបូង: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}\nបូកចំនួននោះទៅនឹងតម្លៃដើមដើម្បីរកតម្លៃបន្ទាប់ពីឆ្នាំដំបូង: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}\nបន្ទាប់មក គុណចំនួននោះនឹង {r2}% ដើម្បីរកចំនួននៃការថយចុះនៅឆ្នាំទីពីរ: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}\nបន្ទាប់មក ដកចំនួននោះចេញពីតម្លៃបន្ទាប់ពីឆ្នាំដំបូងដើម្បីរកតម្លៃចុងក្រោយ: {cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "khm"

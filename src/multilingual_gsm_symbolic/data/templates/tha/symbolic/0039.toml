@@ -4,5 +4,8 @@ id_orig = 1239
 id_shuffled = 39
 question_annotated = "{job,ภารโรง} ต้องทำความสะอาด {building,โรงเรียน} ซึ่งมี {n,80} {room,ห้องเรียน}. พวกเขาได้รับ {d,5} วันเพื่อให้ทำเสร็จ. พวกเขาใช้เวลา {t,15} นาทีต่อ {room,ห้องเรียน}. หากพวกเขาทำงาน {h,8} ชั่วโมงทุกวัน สัดส่วนเปอร์เซ็นต์ของวันโดยเฉลี่ยที่ใช้ในการทำความสะอาด {room,ห้องเรียน} คือเท่าใด\n\n#init:\n- job = sample([\"ภารโรง\", \"คนทำความสะอาด\", \"ช่างซ่อมบำรุง\"])\n- building = sample([\"ตึกสำนักงาน\", \"โรงพยาบาล\", \"มหาวิทยาลัย\",])\n- room = sample([\"ห้อง\", \"ชั้น\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))"
 answer_annotated = "พวกเขาต้องทำความสะอาด {n//d} {room} ต่อวัน เพราะ {n} / {d} = <<{n}/{d}={n//d}>>{n//d}\nพวกเขาใช้เวลา {(n//d)*t} นาทีในการทำความสะอาดต่อวัน เพราะ {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}\nพวกเขาใช้เวลา {(n//d)*t/60} ชั่วโมงต่อวัน เพราะ {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}\nพวกเขาใช้เวลา {Fraction((n//d)*t/(h*60))} ของวันในการทำความสะอาด {room} เพราะ {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}\nพวกเขาใช้เวลา {int(100 * (n/d) * t / (h * 60))}% ของวันในการทำความสะอาด {room} เพราะ {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}\n#### {int(100 * (n/d) * t / (h * 60))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "tha"

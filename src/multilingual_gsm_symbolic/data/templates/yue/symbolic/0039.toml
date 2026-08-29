@@ -4,5 +4,8 @@ id_orig = 1239
 id_shuffled = 39
 question_annotated = "一位{job, 校工}需要清潔一座{building, 學校}，裡面有{n,80}個{room, 課室}。他們有{d,5}天時間完成。每個{room, 課室}需要花費{t,15}分鐘。如果他們每天工作{h,8}小時，平均而言，他們一天中有多少百分比的時間用於清潔{room, 課室}？\n\n#init:\n- job = sample([\"看更\", \"清潔員\", \"維修人員\"])\n- building = sample([\"辦公大樓\", \"醫院\", \"大學\",])\n- room = sample([\"房間\", \"樓層\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))"
 answer_annotated = "他們每天必須清潔{n//d}個{room}，因為{n} / {d} = <<{n}/{d}={n//d}>>{n//d}\n他們每天花費{(n//d)*t}分鐘清潔，因為{n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}\n他們每天花費{(n//d)*t/60}小時，因為{(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}\n他們一天中花費{Fraction((n//d)*t/(h*60))}的時間清潔{room}，因為{(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}\n他們一天中花費{int(100 * (n/d) * t / (h * 60))}%的時間清潔{room}，因為{((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}\n#### {int(100 * (n/d) * t / (h * 60))}"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "yue"

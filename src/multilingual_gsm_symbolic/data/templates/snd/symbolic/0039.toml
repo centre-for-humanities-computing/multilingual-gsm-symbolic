@@ -4,5 +4,8 @@ id_orig = 1239
 id_shuffled = 39
 question_annotated = "{job,صفائی کرنے والا} کو {building,سکول} کو صاف کرنا ہے جس میں {n,80} {room,کلاس روم}وں ہیں۔ انہیں کام مکمل کرنے کے لیے {d,5} دن ملتے ہیں۔ اس میں ہر {room,کلاس روم} کے لیے {t,15} منٹ لگتے ہیں۔ اگر وہ روزانہ {h,8} گھنٹے کام کرتے ہیں، تو اوسطاً اپنے دن کا کتنا فیصد {room,کلاس روم}وں صاف کرنے میں گزارتے ہیں؟\n\n#init:\n- job = sample([\"صفائی نگہبان\", \"صفائی کرنے والا\", \"مینٹیننس ورکر\"])\n- building = sample([\"آفس بلڈنگ\", \"ہسپتال\", \"یونیورسٹی\",])\n- room = sample([\"کمرہ\", \"منزل\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))\n"
 answer_annotated = "انہیں روزانہ {n//d} {room}وں صاف کرنے ہوتے ہیں کیونکہ {n} / {d} = <<{n}/{d}={n//d}>>{n//d}\nوہ روزانہ {(n//d)*t} منٹ صاف کرنے میں گزارتے ہیں کیونکہ {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}\nوہ روزانہ {(n//d)*t/60} گھنٹے گزارتے ہیں کیونکہ {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}\nوہ اپنے دن کا {Fraction((n//d)*t/(h*60))} حصہ {room}وں صاف کرنے میں گزارتے ہیں کیونکہ {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}\nوہ اپنے دن کا {int(100 * (n/d) * t / (h * 60))}% حصہ {room}وں صاف کرنے میں گزارتے ہیں کیونکہ {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}\n#### {int(100 * (n/d) * t / (h * 60))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "snd"
