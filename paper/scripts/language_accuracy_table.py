@@ -123,7 +123,7 @@ def render_table(
         r"\shortstack{Synthetic\\accuracy} & \shortstack{Synthetic\\variance} \\"
     )
     lines = [
-        r"% Requires \usepackage{booktabs,longtable}",
+        r"% Requires \usepackage{longtable}; all other commands use packages already in the paper.",
         r"\begingroup",
         r"\scriptsize",
         r"\setlength{\tabcolsep}{3pt}",
