@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
+from itertools import zip_longest
 from pathlib import Path
 
 import pandas as pd
@@ -118,45 +119,64 @@ def render_table(
         f"Original and synthetic exact-answer accuracy by model and language for {scope}. "
         "Variance is the sample variance of the scored examples within each split."
     )
-    header = (
-        r"Model & Language & \shortstack{Original\\accuracy} & \shortstack{Original\\variance} & "
-        r"\shortstack{Synthetic\\accuracy} & \shortstack{Synthetic\\variance} \\"
+    panel_header = (
+        r"Model & Language & \shortstack{Orig.\\acc.} & \shortstack{Orig.\\var.} & "
+        r"\shortstack{Synth.\\acc.} & \shortstack{Synth.\\var.}"
     )
+    header = f"{panel_header} & {panel_header} \\\\"
+
+    midpoint = (len(models) + 1) // 2
+    left_models = set(models[:midpoint])
+    right_models = set(models[midpoint:])
+    left_rows = [row for row in rows if row.model in left_models]
+    right_rows = [row for row in rows if row.model in right_models]
+
+    def format_panel(row: TableRow | None, previous_model: str | None) -> str:
+        if row is None:
+            return " &  &  &  &  & "
+        model = latex_escape(row.model) if row.model != previous_model else ""
+        language = latex_escape(LANGUAGE_LABELS.get(row.language, row.language))
+        return (
+            f"{model} & {language} & {row.original_accuracy * 100:.1f}\\% & "
+            f"{row.original_variance:.4f} & {row.synthetic_accuracy * 100:.1f}\\% & "
+            f"{row.synthetic_variance:.4f}"
+        )
+
     lines = [
         r"% Requires \usepackage{longtable}; all other commands use packages already in the paper.",
         r"\begingroup",
-        r"\scriptsize",
-        r"\setlength{\tabcolsep}{3pt}",
-        r"\renewcommand{\arraystretch}{0.92}",
-        r"\begin{longtable}{p{0.27\linewidth}lrrrr}",
+        r"\tiny",
+        r"\setlength{\tabcolsep}{1.25pt}",
+        r"\renewcommand{\arraystretch}{0.9}",
+        r"\begin{longtable}{p{0.145\linewidth}lrrrr@{\hspace{4pt}}p{0.145\linewidth}lrrrr}",
         f"\\caption{{{latex_escape(caption_text)}}}\\label{{{label}}}" + r" \\",
         r"\toprule",
         header,
         r"\midrule",
         r"\endfirsthead",
-        r"\multicolumn{6}{c}{\tablename\ \thetable{} -- continued from previous page} \\",
+        r"\multicolumn{12}{c}{\tablename\ \thetable{} -- continued from previous page} \\",
         r"\toprule",
         header,
         r"\midrule",
         r"\endhead",
         r"\midrule",
-        r"\multicolumn{6}{r}{Continued on next page} \\",
+        r"\multicolumn{12}{r}{Continued on next page} \\",
         r"\endfoot",
         r"\bottomrule",
         r"\endlastfoot",
     ]
-    previous_model: str | None = None
-    for row in rows:
-        if previous_model is not None and row.model != previous_model:
+    previous_left_model: str | None = None
+    previous_right_model: str | None = None
+    for left, right in zip_longest(left_rows, right_rows):
+        left_changed = left is not None and previous_left_model is not None and left.model != previous_left_model
+        right_changed = right is not None and previous_right_model is not None and right.model != previous_right_model
+        if left_changed or right_changed:
             lines.append(r"\addlinespace[2pt]")
-        model = latex_escape(row.model) if row.model != previous_model else ""
-        lines.append(
-            f"{model} & {latex_escape(LANGUAGE_LABELS.get(row.language, row.language))} & "
-            f"{row.original_accuracy * 100:.1f}\\% & "
-            f"{row.original_variance:.4f} & {row.synthetic_accuracy * 100:.1f}\\% & "
-            f"{row.synthetic_variance:.4f} \\\\"
-        )
-        previous_model = row.model
+        lines.append(f"{format_panel(left, previous_left_model)} & {format_panel(right, previous_right_model)} \\\\")
+        if left is not None:
+            previous_left_model = left.model
+        if right is not None:
+            previous_right_model = right.model
     lines.extend([r"\end{longtable}", r"\endgroup", ""])
     return "\n".join(lines)
 
