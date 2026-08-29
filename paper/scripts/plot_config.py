@@ -22,6 +22,7 @@ LANGUAGE_LABELS = {
     "isl": "Icelandic",
     "mar": "Marathi",
     "hin": "Hindi",
+    "urd": "Urdu",
     "ara": "Arabic",
     "nld": "Dutch",
     "est": "Estonian",

@@ -79,7 +79,7 @@ uv run --with scipy paper/scripts/collect_transfer_tables.py \
 uv run paper/scripts/visualizegrid.py --workers "$artifact_workers"
 uv run paper/scripts/visualize_results.py
 uv run paper/scripts/numbercoverage.py --workers "$artifact_workers"
-uv run paper/scripts/ridgeline.py --workers "$artifact_workers"
+uv run paper/scripts/language_accuracy_table.py
 uv run paper/scripts/qwen_compute_budget.py --workers "$artifact_workers"
 uv run paper/scripts/transferfeatures.py
 uv run paper/scripts/isl_translation_tost.py
