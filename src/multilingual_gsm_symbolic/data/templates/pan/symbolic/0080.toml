@@ -1,8 +1,44 @@
-question = "ਵੈਂਡਿੰਗ ਮਸ਼ੀਨਾਂ ਚਿਪਸ ਲਈ 40 ਸੈਂਟ ਅਤੇ ਕੈਂਡੀ ਬਾਰ ਲਈ 75 ਸੈਂਟ ਵੇਚਦੀਆਂ ਹਨ। ਜਾਰਜ ਨੇ $5 ਖਰਚ ਕੀਤੇ ਅਤੇ 3 ਬੈਗ ਚਿਪਸ ਲਏ ਅਤੇ ਉਸਦੇ ਪੈਸਿਆਂ ਦਾ 1% ਬਦਲੇ ਵਿੱਚ ਬਚਿਆ। ਉਸਨੇ ਕਿੰਨੇ ਕੈਂਡੀ ਬਾਰ ਖਰੀਦੇ?"
-answer = "ਜਾਰਜ ਨੂੰ $0.05 ਬਦਲੇ ਵਿੱਚ ਮਿਲੇ ਕਿਉਂਕਿ $5*1/100 = <<5*1/100=0.05>>0.05\nਜਾਰਜ ਨੇ $4.95 ਖਰਚੇ ਕਿਉਂਕਿ 5 - 0.05 = <<5-0.05=4.95>>4.95\nਜਾਰਜ ਨੇ ਚਿਪਸ 'ਤੇ $1.2 ਖਰਚੇ ਕਿਉਂਕਿ 3*0.4 = <<3*0.4=1.2>>1.2\nਜਾਰਜ ਨੇ ਕੈਂਡੀ ਬਾਰ 'ਤੇ 3.75 ਖਰਚੇ ਕਿਉਂਕਿ 4.95 - 1.2 = <<4.95-1.2=3.75>>3.75\nਜਾਰਜ ਨੇ 5 ਕੈਂਡੀ ਬਾਰ ਖਰੀਦੇ ਕਿਉਂਕਿ 3.75 / 0.75 = <<5=5>>5\n#### 5\n"
+question = """
+ਵੇਂਡਿੰਗ ਮਸ਼ੀਨਾਂ ਚਿਪਸ ਲਈ 40 ਸੈਂਟ ਅਤੇ ਕੈਂਡੀ ਬਾਰ ਲਈ 75 ਸੈਂਟ ਵੇਚਦੀਆਂ ਹਨ। ਜਾਰਜ ਨੇ $5 ਖਰਚ ਕੀਤੇ ਅਤੇ 3 ਬੈਗ ਚਿਪਸ ਲਏ। ਉਸਦੇ ਪੈਸਿਆਂ ਦਾ 1% ਬਦਲੇ ਵਿੱਚ ਬਚ ਗਿਆ। ਉਸਨੇ ਕਿੰਨੇ ਕੈਂਡੀ ਬਾਰ ਖਰੀਦੇ?
+"""
+answer = """
+$5 ਦਾ 1% = <<5*1/100=0.05>>$0.05।
+ਬਚੀ ਰਕਮ $5 - $0.05 = <<5-0.05=4.95>>$4.95।
+3 ਬੈਗ ਚਿਪਸ ਲਈ 3 * $0.40 = <<3*0.4=1.2>>$1.20।
+ਬਾਕੀ ਰਕਮ $4.95 - $1.20 = <<4.95-1.2=3.75>>$3.75।
+ਹਰ ਕੈਂਡੀ ਬਾਰ $0.75 ਹੈ, ਇਸ ਲਈ 3.75 / 0.75 = <<3.75/0.75=5>>5 ਕੈਂਡੀ ਬਾਰ।
+#### 5
+"""
 id_orig = 434
 id_shuffled = 80
-question_annotated = "ਵੈਂਡਿੰਗ ਮਸ਼ੀਨਾਂ {item1,ਚਿਪਸ} ਲਈ {price1,40} ਸੈਂਟ ਅਤੇ {item2,ਕੈਂਡੀ ਬਾਰ} ਲਈ {price2,75} ਸੈਂਟ ਵੇਚਦੀਆਂ ਹਨ। {name,ਜਾਰਜ} ਨੇ {cur,$}{total,5} ਖਰਚ ਕੀਤੇ ਅਤੇ {n1,3} ਬੈਗ {item1,ਚਿਪਸ} ਲਏ ਅਤੇ ਉਸਦੇ ਪੈਸਿਆਂ ਦਾ {p,1}% ਬਦਲੇ ਵਿੱਚ ਬਚਿਆ। ਉਸਨੇ ਕਿੰਨੇ {item2,ਕੈਂਡੀ ਬਾਰ} ਖਰੀਦੇ?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['ਪ੍ਰੈਟਜ਼ਲਸ', 'ਪੌਪਕਾਰਨ', 'ਗਮ', 'ਕੁਕੀਜ਼', 'ਕਰੈਕਰਸ'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)\n"
-answer_annotated = "{name} ਨੂੰ {cur}{total * p / 100} ਬਦਲੇ ਵਿੱਚ ਮਿਲੇ ਕਿਉਂਕਿ {cur}{total}*{p}/100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}\n{name} ਨੇ {cur}{total * (100 - p) / 100} ਖਰਚੇ ਕਿਉਂਕਿ {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}\n{name} ਨੇ {item1} 'ਤੇ {cur}{n1 * price1 / 100} ਖਰਚੇ ਕਿਉਂਕਿ {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}\n{name} ਨੇ {item2} 'ਤੇ {(total * (100 - p) / 100 - n1 * price1 / 100)} ਖਰਚੇ ਕਿਉਂਕਿ {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}\n{name} ਨੇ {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} {item2} ਖਰੀਦੇ ਕਿਉਂਕਿ {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}={ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}>>{ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}\n#### {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}\n"
+question_annotated = """
+ਵੈਂਡਿੰਗ ਮਸ਼ੀਨਾਂ {item1} ਲਈ {price1} ਸੈਂਟ ਅਤੇ {item2} ਲਈ {price2} ਸੈਂਟ ਵੇਚਦੀਆਂ ਹਨ। {name} ਨੇ {cur}{total} ਖਰਚ ਕੀਤੇ ਅਤੇ {n1} ਬੈਗ {item1} ਲਏ ਅਤੇ ਉਸਦੇ ਪੈਸਿਆਂ ਦਾ {p}% ਬਦਲੇ ਵਿੱਚ ਬਚਿਆ। ਉਸਨੇ ਕਿੰਨੇ {item2} ਖਰੀਦੇ?
+
+#init:
+- name = sample(names_male)
+- item1, item2 = sample(['ਪ੍ਰੈਟਜ਼ਲਸ', 'ਪੌਪਕਾਰਨ', 'ਗਮ', 'ਕੁਕੀਜ਼', 'ਕਰੈਕਰਸ'], 2)
+- cur = sample(currencies_sym)
+- $price1 = range(25, 100, 5)
+- $price2 = range(50, 150, 5)
+- $total = range(5, 21)
+- $n1 = range(1, 10)
+- $p = range(1, 10)
+
+#conditions:
+- price2 > price1
+- is_int(total * p / 100)
+- total * (100 - p) > n1 * price1
+- (total * (100 - p) - n1 * price1) % price2 == 0
+
+#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)
+"""
+answer_annotated = """
+{name} ਨੂੰ {cur}{total * p / 100} ਬਦਲੇ ਵਿੱਚ ਮਿਲੇ: {cur}{total} * {p} / 100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}।
+ਉਸਨੇ {cur}{total * (100 - p) / 100} ਖਰਚੇ: {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}।
+{name} ਨੇ {item1} 'ਤੇ {cur}{n1 * price1 / 100} ਖਰਚੇ: {n1} * {price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}।
+ਬਚੀ ਰਕਮ {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}।
+ਇਸ ਲਈ ਖਰੀਦੇ ਕੈਂਡੀ ਬਾਰ {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))} ਹਨ।
+#### {ensure_int((total * (100 - p) / 100 - n1 * price1 / 100) / (price2 / 100))}
+"""
 creation = "manual Punjabi translation from English templates; computationally validated; validated by two native speaker"
 language = "pan"
