@@ -4,5 +4,10 @@ id_orig = 336
 id_shuffled = 84
 question_annotated = "{name,Мария} покупает {n,8} акций по {p,8} руб. за каждую. В первый год владения курс акций растёт на {r1,50}%, а затем во второй год падает на {r2,25}%. Какова конечная стоимость всех этих акций?\n\n#init:\n- name = sample(names_female)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))\n"
 answer_annotated = "Сначала найдём первоначальную общую стоимость покупки: {n} акций * {p} руб. за акцию = <<{n}*{p}={n*p}>>{n*p} руб.\nЗатем найдём величину первого повышения цены: {n*p} руб.*{r1/100} = <<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)} руб.\nПрибавим эту сумму к первоначальной стоимости, чтобы найти стоимость после первого года: {n*p} руб. + {n*p*r1/100} руб. = <<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))} руб.\nЗатем умножим эту сумму на {r2}%, чтобы найти падение во второй год: {n*p*(1+r1/100)} руб. * {r2}% = <<{n*p*(1+r1/100)}*{r2}*0.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)} руб.\nЗатем вычтем эту сумму из стоимости после первого года, чтобы найти конечную стоимость: {int(n*p*(1+r1/100))} руб. - {int(n*p*(1+r1/100)*r2/100)} руб. = <<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))} руб.\n#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n"
-creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
+creation = "machine-translated"
+source-language = "dan"
+model = "gpt-5.4"
+computationally-validated = "test suite passes"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "rus"

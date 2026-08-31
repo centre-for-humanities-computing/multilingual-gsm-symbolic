@@ -4,5 +4,8 @@ id_orig = 737
 id_shuffled = 11
 question_annotated = "{name, Peter} বিভিন্ন আকারের বরফের টুকরো তৈরি করতে চায় {n,32} {unit,গ্রাম} পানি দিয়ে। সে বড় কুচি তৈরি করতে পারে যেগুলো প্রতিটিতে {w1,4} {unit,গ্রাম} পানি লাগে, মাঝারি কুচি যেগুলোতে {w2,2} {unit,গ্রাম} পানি লাগে, এবং ছোট কুচি যেগুলোতে {w3,1/2} {unit,গ্রাম} পানি লাগে। যদি সে {n1,3} বড় কুচি, {n2,7} মাঝারি কুচি, এবং {n3,8} ছোট কুচি বানায়, তবে কত {unit,গ্রাম} পানি তার কাছে অবশিষ্ট থাকে?\n\n#init:\n- name = sample(names_male)\n- unit = sample([\"গ্রাম\", \"g\"])\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))"
 answer_annotated = "বড় কুচিগুলোতে {n1*w1} {unit} পানি খরচ হয়েছে কারণ {n1} বার {w1} সমান <<{n1}*{w1}={n1*w1}>>{n1*w1}।\nমাঝারি কুচিগুলোতে {n2*w2} {unit} পানি খরচ হয়েছে কারণ {n2} বার {w2} সমান <<{n2}*{w2}={n2*w2}>>{n2*w2}।\nছোট কুচিগুলোতে {int(w3*n3)} {unit} পানি খরচ হয়েছে কারণ {n3} বার {w3} সমান {int(n3*w3)}।\nএর মানে হলো {name} মোট {int(n3*w3+n2*w2+n1*w1)} {unit} পানি খরচ করেছে কারণ {n1*w1} যোগ {n2*w2} যোগ {int(w3*n3)} সমান {int(n3*w3+n2*w2+n1*w1)}।\n{name} এর কাছে {n - (n1*w1) - (n2*w2) - int(n3*w3)} {unit} পানি অবশিষ্ট আছে কারণ {n} বিয়োগ {int(n3*w3+n2*w2+n1*w1)} সমান <<{n}-{int(n3*w3+n2*w2+n1*w1)}={n - (n1*w1) - (n2*w2) - int(n3*w3)}>>{n - (n1*w1) - (n2*w2) - int(n3*w3)}।\n#### {n - (n1*w1) - (n2*w2) - int(n3*w3)}"
-creation = "machine-translated from eng_metric using Qwen/Qwen3.5-122B-A10B-FP8, based on eng_metric templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng_metric"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "ctg"

@@ -4,5 +4,8 @@ id_orig = 788
 id_shuffled = 35
 question_annotated = "{name,จอห์น} กำลังหาเงินสำหรับ {event,การทัศนศึกษา}. เขาได้ขอความช่วยเหลือจาก {organization,โรงเรียน}, ซึ่งได้ตัดสินใจรับผิดชอบ {fraction_txt,ครึ่ง} ของค่าใช้จ่ายของ {event,การทัศนศึกษา}. เงินจำนวนเท่าไหร่ที่ {name,จอห์น} ขาดหากเขาถือ {cur,฿}{current,50} และ {event,การทัศนศึกษา} มีค่าใช้จ่าย {cur,฿}{total,300}?\n\n#init:\n- name = sample(names_male)\n- event = sample([\"การทัศนศึกษา\", \"การทัศนศึกษาภาคสนาม\", \"การแข่งขันกีฬา\", \"การประชุม\", \"เทศกาลดนตรี\", \"งานแสดงวิทยาศาสตร์\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"โรงเรียน\", \"ศูนย์ชุมชน\", \"องค์กรการกุศลท้องถิ่น\", \"ชมรมเยาวชน\", \"สมาคมผู้ปกครอง\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)\n"
 answer_annotated = "{organization} ของ {name} ได้ตัดสินใจจ่าย {total}*{fraction_val}={cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} สำหรับ {event} ของเขา.\nรวมทั้งหมด {name} ได้ชำระไปแล้ว {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} สำหรับ {event} ของเขา\nดังนั้น, {name} ต้องการ {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} เพิ่มเติมสำหรับ {event}.\n#### {total-(total*fraction_val+current)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "tha"

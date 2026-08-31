@@ -4,5 +4,8 @@ id_orig = 320
 id_shuffled = 82
 question_annotated = "{event,പാർട്ടി} തുടക്കത്തിൽ, {m,25} {group1,പുരുഷന്മാരും}, {w,15} {group2,സ്ത്രീകളും} ഉണ്ടായിരുന്നു. {t,ഒരു മണിക്കൂർ} കഴിഞ്ഞ്, ആകെ ആളുകളിൽ {frac,1/4} പേർ പോയി. {m_left,22} {group1,പുരുഷന്മാർ} {event,പാർട്ടി}യിൽ തങ്ങി എങ്കിൽ, എത്ര {group2,സ്ത്രീകൾ} ശേഷിക്കുന്നു?\n\n#init:\n- event = sample(['പാർട്ടി', 'മീറ്റിംഗ്', 'കോൺഫറൻസ്', 'കൂട്ടായ്മ', 'ആഘോഷം'])\n- group1, group2 = sample([ \"അധ്യാപകർ\", \"ഡോക്ടർമാർ\", \"എഞ്ചിനീയർമാർ\", \"നഴ്സുമാർ\", \"കലാകാരന്മാർ\", \"അഭിഭാഷകർ\",], 2)\n- t = sample(['ഒരു മണിക്കൂർ', 'രണ്ട് മണിക്കൂർ', 'അര മണിക്കൂർ', '45 മിനിറ്റ്'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left\n"
 answer_annotated = "{event}യിൽ എത്തിയ ആകെ ആളുകൾ {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} പേർ ആയിരുന്നു.\n{t} കഴിഞ്ഞ്, {m+w} ആളുകൾ * {frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} പേർ {event}യിൽ നിന്ന് പോയി.\nഇതിനർത്ഥം {m+w} ആളുകൾ - {int((m+w)*frac)} ആളുകൾ = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} പേർ തങ്ങി.\nതങ്ങിയ {m+w-int((m+w)*frac)} പേരിൽ, {m+w-int((m+w)*frac)} ആളുകൾ - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} പേർ {group2} ആയിരുന്നു.\n#### {m+w-int((m+w)*frac)-m_left}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "mal"

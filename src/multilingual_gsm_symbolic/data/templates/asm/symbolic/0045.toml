@@ -4,5 +4,8 @@ id_orig = 984
 id_shuffled = 45
 question_annotated = "{name,প্যাট} এর একটি ফুলের গাদা আছে যা {length,111} {unit_length,মিটার} দীর্ঘ। {name,প্যাট} তার ফুলের গাদা গাছে পূর্ণ করতে চান। {name,প্যাট}-এর ফুলগুলো {plant_width,12} সেন্টিমিটার প্রশস্ত হয়, এবং বাগান করার নির্দেশিকা বলে বেডের ধারে প্রতি {space,1.5} {unit_length,মিটার} অন্তর একটি ফুল রোপণ করতে হবে। {name,প্যাট} আগে থেকেই {owned,17}টি ফুলের গাছের মালিক। প্রতিটি ফুলের গাছ দোকানে {cur,$}{cost,6} দামে পাওয়া যায়। তার ফুলের গাদা পূর্ণ করতে দোকানে {name,প্যাট} কত টাকা খরচ করবে?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['মিটার'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)\n"
 answer_annotated = "{name}-এর ফুলের গাদা {length} {unit_length} / {space} {unit_length} প্রতি গাছ = <<{length}/{space}={int(length/space)}>>{int(length/space)} গাছ প্রয়োজন।\n{name} কিনতে হবে {int(length/space)} গাছ - {owned} গাছ = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} গাছ কিনার জন্য প্রয়োজন।\n{name} খরচ করবে {int(length/space)-owned} গাছ * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}।\n#### {int((length/space - owned) * cost)}\n"
-creation = "machine-translated from eng_metric using Qwen/Qwen3.5-122B-A10B-FP8, based on eng_metric templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng_metric"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "asm"

@@ -4,5 +4,8 @@ id_orig = 43
 id_shuffled = 24
 question_annotated = "അതിന്റെ പോഷകാഹാര വിവരങ്ങൾ പ്രകാരം, ഒരു {food,ചിപ്പ്സ്} ബാഗിന് ഒരു സേവിംഗിന് {cal,250} കാലറി അടങ്ങിയിരിക്കുന്നു. ഒരു {size,300} {unit,ഗ്രാം} ബാഗിൽ {n,5} സേവിംഗുകൾ ഉണ്ടെങ്കിൽ, നിങ്ങളുടെ ദൈനംദിന കാലറി ലക്ഷ്യം {total,2000} ആണെങ്കിലും നിങ്ങൾ ഇതിനകം {spent,1800} കാലറി കഴിച്ചു കഴിഞ്ഞു എങ്കിൽ എത്ര {unit,ഗ്രാം} നിങ്ങൾക്ക് ഭക്ഷിക്കാൻ സാധിക്കും?\n\n#init:\n- food = sample([\"പോപ്പ്കോൺ\", \"ബ്രെഡുകൾ\",  \"കൂക്കീസ്\"])\n- unit = sample([\"ഗ്രാമുകൾ\", \"ഔൺസുകൾ\", \"ഔൺസ്\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)\n"
 answer_annotated = "ആകെ കാലറി ലക്ഷ്യം {total} ആണെങ്കിലും ഞാൻ {spent} കാലറി കഴിച്ചു കഴിഞ്ഞാൽ, എനിക്ക് {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} കാലറി ബാക്കി ഉണ്ട്\nഓരോ സേവിംഗ് {food} ലും {cal} കാലറി ഉണ്ടെങ്കിലും, എനിക്ക് {total-spent} കാലറി മാത്രമേ ബാക്കിയുള്ളൂ, അപ്പോൾ ഞാൻ {total-spent}/{cal} സേവിംഗ് മാത്രമേ കഴിക്കാൻ കഴിയൂ = {Fraction((total-spent)/cal)} സേവിംഗ്\nനമുക്കറിയാം ഒരു {size} {unit} ബാഗ് {food} ല് {n} സേവിംഗുകൾ ഉണ്ട്, അതിനാൽ ഓരോ സേവിംഗിനും {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit} ഉണ്ട്\nഞാൻ {Fraction((total-spent)/cal)} സേവിംഗ് മാത്രമേ കഴിക്കാൻ കഴിയൂ എങ്കിൽ, ഞാൻ {size//n} {unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit} മാത്രമേ കഴിക്കാൻ കഴിയൂ\n#### {size//n * (total-spent)/cal}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "mal"

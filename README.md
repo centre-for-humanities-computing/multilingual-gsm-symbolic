@@ -72,6 +72,12 @@ Templates are TOML files with the following fields:
 | `answer`             | Concrete answer with calculation steps                                               |
 | `question_annotated` | Template with variable placeholders and `#init` / `#conditions` / `#answer` sections |
 | `answer_annotated`   | Answer template with inline expressions                                              |
+| `creation`           | Method or other provenance describing how the template was created                   |
+| `source-language`    | Source language code for a translated template, or omitted for an original template  |
+| `model`              | Model used to translate the template, or omitted when no model was recorded            |
+| `computationally-validated` | Computational validation performed, or omitted if not validated               |
+| `human-validated`    | Human validation performed, or omitted if not validated                              |
+| `error-analysis`     | Error analysis performed, or omitted if not performed                                |
 
 ### Annotated question syntax
 
@@ -236,29 +242,122 @@ print(available_languages())
 # {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
 ```
 
-And 
+Validation metadata is generated from the structured tags in the active templates. Run
+`make update-readme-table` after changing these tags.
 
+<!-- LANGUAGE TABLE START -->
+The following languages are computationally validated:
 
-The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
-The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
-
-
-```python
-from multilingual_gsm_symbolic import load_data, available_languages
-
-# see possible languages
-print(available_languages())
-# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
-
-# example creation strategy:
-templates = load_data("dan")
-templates[0].creation
-# machine-translated from English, localized and validated by humans, computationally validated
-
-templates = load_data("isl")
-templates[0].creation
-# machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated
-```
+| Language | Source language | Model | Computationally validated | Human validated | Error analysis |
+| --- | --- | --- | --- | --- | --- |
+| `afr` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `amh` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ara` | eng | anthropic/claude-opus-4-8 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `arz` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `asm` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `azb` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `bam` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `bar` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `bel` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ben` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `bho` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `bos` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `bul` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `cat` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ceb` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ces` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ctg` | eng_metric | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `dan` | eng | — | test suite passes | by native speakers | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `deu` | dan | gpt-5.4 | test suite passes | Partial (99/100 templates): by two native speakers | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `dyu` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ell` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `eng` | original-derived | not applicable | test suite passes | — | — |
+| `eng_metric` | original-derived | not applicable | test suite passes | — | — |
+| `est` | eng_metric | gpt-5.4-nano | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `fin` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `fra` | dan | anthropic/claude-opus-4-8 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `fuv` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `gaz` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `gle` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `guj` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `hat` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `hau` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `hin` | eng | gpt-5.4 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `hne` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `hrv` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `hun` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ibo` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ind` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `isl` | dan | gpt-5.4 | test suite passes | by native speakers | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `ita` | Mixed: dan (38/100), eng (62/100) | Mixed: gpt-5.4 (38/100), gpt-5.4-nano (62/100) | test suite passes | — | — |
+| `jav` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `jpn` | eng | gpt-5.4 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `kan` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `kaz` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `khm` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `kin` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `kmr` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `kor` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ktu` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `lav` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `lin` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `lit` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `lug` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `mag` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `mai` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `mal` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `mar` | eng | gpt-5.4 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `mlt` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `mos` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `mya` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `nld` | dan | Mixed: gpt-5.4 (51/100), gpt-5.4-nano (49/100) | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `nno` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `nob` | dan | gpt-5.4 | test suite passes | — | — |
+| `npi` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `nso` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `nya` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ory` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `pbu` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `pcm` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `pes` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `pnb` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `pol` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `por` | Mixed: dan (23/38), eng (15/38) | Mixed: gpt-5.4 (23/38), gpt-5.4-nano (15/38) | test suite passes | — | — |
+| `ron` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `run` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `rus` | dan | gpt-5.4 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `sck` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `sin` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `skr` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `slk` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `slv` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `sna` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `snd` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `som` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `spa` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `sun` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `swe` | dan | Claude Opus 5 (manual) | test suite passes | by native speakers | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `swh` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `tam` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `tel` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `tgl` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `tha` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `tsn` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `tur` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `uig` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `ukr` | Mixed: dan (98/100), original-derived (2/100) | Mixed: gpt-5.4 (98/100), not applicable (2/100) | test suite passes | Partial (99/100 templates): by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `urd` | eng | gpt-5.4 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `uzn` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `vie` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `vjk` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `wol` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `xho` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `yor` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `yue` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `zho` | eng | openai/gpt-5.4-2026-03-05 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
+| `zlm` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+| `zul` | eng | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes | — | — |
+<!-- LANGUAGE TABLE END -->
 
 ### Want to add a new language?
 

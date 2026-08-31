@@ -4,5 +4,8 @@ id_orig = 984
 id_shuffled = 45
 question_annotated = "{name,ፓት} የራሷ የዕፅዋት ማቆያ {length,111} {unit_length,ሜትር} ርዝመት አለው። {name,ፓት} የዕፅዋት ማቆዋን በዕፅዋት ለመሙላት ትፈልጋለች። {name,ፓት} ያላት ዕፅዋት {plant_width,12} ሴንቲሜትር ስፋት አለው፣ እና የግብርና መመሪያዎች በእያንዳንዱ {space,1.5} {unit_length,ሜትር} ውስጥ አንድ ዕፅዋት እንዲቀመጥ ይመክራሉ። {name,ፓት} በተጨማሪ {owned,17} ዕፅዋት አላት። በመደብሩ ላይ እያንዳንዱ ዕፅዋት {cur,$}{cost,6} ይወስዳል። የዕፅዋት ማቆዋን ለመሙላት በመደብሩ ላይ ምን ያህል ገንዘብ ያወጣላታለች?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['ሜትር'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)\n"
 answer_annotated = "{name} የዕፅዋት ማቆያ {length} {unit_length} / {space} {unit_length} በአንድ ዕፅዋት ላይ = <<{length}/{space}={int(length/space)}>>{int(length/space)} ዕፅዋት ያስፈልጋል።\n{name} ማግኘት ያለባት {int(length/space)} ዕፅዋት - {owned} ዕፅዋት = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} ዕፅዋት ለመግዛት ያስፈልጋል።\n{name} ያወጣለች {int(length/space)-owned} ዕፅዋት * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}።\n#### {int((length/space - owned) * cost)}\n"
-creation = "machine-translated from eng_metric using Qwen/Qwen3.5-122B-A10B-FP8, based on eng_metric templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng_metric"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "amh"

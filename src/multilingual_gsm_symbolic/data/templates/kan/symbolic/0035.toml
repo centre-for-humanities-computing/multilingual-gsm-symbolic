@@ -4,5 +4,8 @@ id_orig = 788
 id_shuffled = 35
 question_annotated = "{name,ಜಾನ್} ಒಂದು {event,ಶಾಲಾ ಪ್ರವಾಸ} ಗಾಗಿ ಹಣ ಸಂಗ್ರಹಿಸುತ್ತಿದ್ದಾನೆ. ಅವರು {organization,ಶಾಲೆ} ನಿಂದ ಸಹಾಯಕ್ಕಾಗಿ ಅರ್ಜಿ ಸಲ್ಲಿಸಿದ್ದಾರೆ, ಇದು {event,ಶಾಲಾ ಪ್ರವಾಸ} ಖರ್ಚಿನ {fraction_txt,ಅರ್ಧ} ಭಾಗವನ್ನು ವಹಿಸಿಕೊಳ್ಳಲು ನಿರ್ಧರಿಸಿದೆ. {name,ಜಾನ್} {cur,ರೂ}{current,50} ಹೊಂದಿದ್ದರೆ ಮತ್ತು {event,ಶಾಲಾ ಪ್ರವಾಸ} ಖರ್ಚು {cur,ರೂ}{total,300} ಆದರೆ, ಅವನಿಗೆ ಎಷ್ಟು ಹಣ ಕೊರತೆಯಾಗಿದೆ?\n\n#init:\n- name = sample(names_male)\n- event = sample([\"ಶಾಲಾ ಪ್ರವಾಸ\", \"ಕ್ಷೇತ್ರ ಪ್ರವಾಸ\", \"ಕ್ರೀಡಾ ಸ್ಪರ್ಧೆ\", \"ಸಮ್ಮೇಳನ\", \"ಸಂಗೀತ ಹಬ್ಬ\", \"ವಿಜ್ಞಾನ ಪ್ರದರ್ಶನ\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"ಶಾಲೆ\", \"ಸಮುದಾಯ ಕೇಂದ್ರ\", \"ಸ್ಥಳೀಯ ದಾನ ಸಂಸ್ಥೆ\", \"ಯುವ ಕ್ಲಬ್\", \"ಪೋಷಕರ ಸಂಘ\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)\n"
 answer_annotated = "{name}ನ {organization} ನಿರ್ಧರಿಸಿದೆ ಪಾವತಿಸಲು {total}*{fraction_val}={cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} ಅವನ {event} ಗಾಗಿ.\nಒಟ್ಟಾರೆಯಾಗಿ {name} ವಹಿಸಿದೆ {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} ಅವನ {event} ಗಾಗಿ\nಆದ್ದರಿಂದ, {name} ಅಗತ್ಯವಿದೆ {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} ಹೆಚ್ಚು {event} ಗಾಗಿ.\n#### {total-(total*fraction_val+current)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "kan"

@@ -4,5 +4,8 @@ id_orig = 20
 id_shuffled = 59
 question_annotated = "{n1,10} ሊትር {fruit1,ብርቱካን} መጠጥ አለኝ፤ ይህም {frac1_txt,ሁለት ሶስተኛ} ውሃ ነው። ይህንን ወደ {n2,15} ሊትር {fruit2,ፓይናፕል} መጠጥ ማከል እፈልጋለሁ፤ ይህም {frac2_txt,ሶስት አምስተኛ} ውሃ ነው። ነገር ግን ስጥላው፣ {spill_txt,አራት} ሊትር {fruit1,ብርቱካን} መጠጥ ይፈሳል። በቀሪው {total,21} ሊትር ውስጥ ስንት ውሃ አለ?\n\n#init:\n- fruit1, fruit2 = sample([\"ቆርቆሮ\", \"ግሬፕ\", \"ማንጎ\", \"ፒች\", \"ሊሞን\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(2, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n"
 answer_annotated = "ከ{n2} ሊትር {fruit2} መጠጥ {n2}*{frac2_val} = <<{n2}*{frac2_val}={n2*frac2_val}>>{n2*frac2_val} ሊትር ውሃ አለ።\n{spill_txt} ሊትር {fruit1} መጠጥ ከተፈሰሰ በኋላ፣ {n1}-{spill_val} = <<{n1}-{spill_val}={n1-spill_val}>>{n1-spill_val} ሊትር {fruit1} መጠጥ ቀርቷል።\nከ{n1-spill_val} ሊትር ውስጥ፣ {n1-spill_val}*{frac1_val} = <<{n1-spill_val}*{frac1_val}={(n1-spill_val)*frac1_val}>>{(n1-spill_val)*frac1_val} ሊትር ውሃ ነው።\nስለዚህ፣ ከ{total} ሊትር ውስጥ ጠቅላላው {n2*frac2_val} + {(n1-spill_val)*frac1_val} = <<{n2*frac2_val}+{(n1-spill_val)*frac1_val}={n2*frac2_val + (n1-spill_val)*frac1_val}>>{n2*frac2_val + (n1-spill_val)*frac1_val} ሊትር ውሃ አለ።\n#### {int(n2 * frac2_val + (n1 - spill_val) * frac1_val)}\n"
-creation = "machine-translated from eng_metric using Qwen/Qwen3.5-122B-A10B-FP8, based on eng_metric templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng_metric"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "amh"

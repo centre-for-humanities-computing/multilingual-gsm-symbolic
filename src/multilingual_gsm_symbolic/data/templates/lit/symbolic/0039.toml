@@ -4,5 +4,8 @@ id_orig = 1239
 id_shuffled = 39
 question_annotated = "{job,valytojas} turi išvalyti {building,mokyklą} su {n,80} {room,kambarys}. Jie turi {d,5} dienas tai atlikti. Tai užtrunka jiems {t,15} minučių už {room,kambarys}. Jei jie dirba {h,8} valandų per dieną, kokia procentinė dalis jų dienos, vidutiniškai, yra skiriama {room,kambarys} valymui?\n\n#init:\n- job = sample([\"valytojas\", \"valytoja\", \"priežiūros darbuotojas\"])\n- building = sample([\"biuro pastatas\", \"ligoninė\", \"universitetas\",])\n- room = sample([\"kambarys\", \"aukštas\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))\n"
 answer_annotated = "Jie turi išvalyti {n//d} {room} per dieną, nes {n} / {d} = <<{n}/{d}={n//d}>>{n//d}\nJie praleidžia {(n//d)*t} minučių valydami per dieną, nes {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}\nJie praleidžia {(n//d)*t/60} valandų per dieną, nes {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}\nJie praleidžia {Fraction((n//d)*t/(h*60))} savo dienos valydami {room}, nes {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}\nJie praleidžia {int(100 * (n/d) * t / (h * 60))}% savo dienos valydami {room}, nes {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}\n#### {int(100 * (n/d) * t / (h * 60))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "lit"

@@ -56,7 +56,7 @@ def get_creation_method(lang: str, templates_dir: Path) -> str:
 
     if "derived from GSM-Symbolic" in creation:
         return "original"
-    if "human" in creation.lower():
+    if data.get("human-validated") or "human" in creation.lower():
         return "human_validated"
     return "machine_translated"
 

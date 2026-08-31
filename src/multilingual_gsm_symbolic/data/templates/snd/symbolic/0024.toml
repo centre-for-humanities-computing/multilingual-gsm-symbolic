@@ -4,5 +4,8 @@ id_orig = 43
 id_shuffled = 24
 question_annotated = "ان جي غذائي معلومات مطابق، {food,چپس} جي هڪ تھيل ۾ هر حصي لاءِ {cal,250} ڪيلوريز آهن. جيڪڏهن {size,300} {unit,گرام} واري تھيل ۾ {n,5} حصا آهن، تم ڪيترا {unit,گرام} کائي سگهو ٿا جيڪڏهن توھان جو روزانو ڪيلوري جو هدف {total,2000} آهي ۽ توھان اڳ ۾ ئي {spent,1800} ڪيلوريز کائي چڪا آھيو؟\n\n#init:\n- food = sample([\"پاپڪارن\", \"بريڊ\", \"ڪڪيز\"])\n- unit = sample([\"گرام\", \"آونس\", \"اونس\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)\n"
 answer_annotated = "جيڪڏهن ڪل ڪيلوري جو هدف {total} آهي ۽ مان {spent} ڪيلوريز کائي چڪو آهيان ته مان کائڻ لاءِ {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} ڪيلوريز باقي رکن ٿو\nجيڪڏهن {food} جو هر حصو {cal} ڪيلوريز رکي ٿو ۽ مان کائڻ لاءِ صرف {total-spent} ڪيلوريز رکي سگهان ٿو، ته مان صرف {total-spent}/{cal} حصو کائي سگهان ٿو = {Fraction((total-spent)/cal)} حصو\nاسان کي اهو به خبر آهي ته {food} جي {size} {unit} واري تھيل ۾ {n} حصا آهن، تنهنڪري هر حصي ۾ {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit} آهن\nجيڪڏهن مان صرف {Fraction((total-spent)/cal)} حصو کائي سگهان ٿو، ته مان صرف {size//n} {unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit} کائي سگهان ٿو\n#### {size//n * (total-spent)/cal}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "snd"

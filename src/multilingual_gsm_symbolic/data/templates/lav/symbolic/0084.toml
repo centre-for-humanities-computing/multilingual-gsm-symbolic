@@ -4,5 +4,8 @@ id_orig = 336
 id_shuffled = 84
 question_annotated = "{name,Marja} pērk {n,8} akcijas par {cur,€}{p,8} gabalā. Akciju cena pieaug {r1,50}% pirmajā gadā, kad {name,Marja} to patur, tad samazinās {r2,25}% otrajā gadā. Kāda ir visu {name,Marja} akciju galīgā vērtība?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))\n"
 answer_annotated = "Vispirms aprēķiniet {name} pirkuma sākotnējo kopējo vērtību: {n} akcijas * {cur}{p}/akcija = {cur}<<{n}*{p}={n*p}>>{n*p}\nTad aprēķiniet pirmās cenas pieauguma summu: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}\nPievienojiet šo summu sākotnējai vērtībai, lai atrastu vērtību pēc pirmā gada: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}\nTad reiziniet šo summu ar {r2}%, lai atrastu samazinājuma summu otrajā gadā: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}\nTad atņemiet šo summu no vērtības pēc pirmā gada, lai atrastu galīgo vērtību: {cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "lav"

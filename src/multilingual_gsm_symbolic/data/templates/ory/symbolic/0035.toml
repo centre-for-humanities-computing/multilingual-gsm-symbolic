@@ -4,5 +4,8 @@ id_orig = 788
 id_shuffled = 35
 question_annotated = "{name,ଜନ} ଏକ {event,ସ୍କୁଲ ଟ୍ରିପ} ପାଇଁ ଟଙ୍କା ସଂଗ୍ରହ କରୁଛି। ସେ {organization,ସ୍କୁଲ} ଠାରୁ ସାହାଯ୍ୟ ପାଇଁ ଆବେଦନ କରିଛି, ଯାହା ନିର୍ଣ୍ଣୟ କରିଛି {event,ସ୍କୁଲ ଟ୍ରିପ} ର ଖର୍ଚ୍ଚର {fraction_txt,ଅଧା} ଆବରଣ କରିବା। {name,ଜନ} ଠାରୁ କେତେ ଟଙ୍କା ଅଭାବ ଯଦି ତାଙ୍କ ପାଖରେ {cur,$}{current,50} ଅଛି ଏବଂ {event,ସ୍କୁଲ ଟ୍ରିପ} ର ଖର୍ଚ୍ଚ {cur,$}{total,300}?\n\n#init:\n- name = sample(names_male)\n- event = sample([\"ସ୍କୁଲ ଟ୍ରିପ\", \"ଫିଲ୍ଡ ଟ୍ରିପ\", \"ଖେଳ ପ୍ରତିଯୋଗିତା\", \"ସମ୍ମିଳନୀ\", \"ସଙ୍ଗୀତ ମହୋତ୍ସବ\", \"ବିଜ୍ଞାନ ପ୍ରଦର୍ଶନୀ\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"ସ୍କୁଲ\", \"ସାମୁଦାୟିକ କେନ୍ଦ୍ର\", \"ସ୍ଥାନୀୟ ଦାନାଳୟ\", \"ଯୁବକ୍ଳବ\", \"ପିତାମାତା ସଂଘ\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)\n"
 answer_annotated = "{name}ଙ୍କ {organization} ତାଙ୍କ {event} ପାଇଁ {total}*{fraction_val}={cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} ଦେବା ନିର୍ଣ୍ଣୟ କରିଛି।\nସମୁଦାୟ {name} ତାଙ୍କ {event} ପାଇଁ {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} ଦେଇଛନ୍ତି\nତେଣୁ, {name}ଙ୍କୁ {event} ପାଇଁ {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} ଅଧିକ ଆବଶ୍ୟକ।\n#### {total-(total*fraction_val+current)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "ory"

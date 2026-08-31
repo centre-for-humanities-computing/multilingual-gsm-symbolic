@@ -4,7 +4,9 @@ id_orig = 955
 id_shuffled = 28
 question_annotated = "একটি {facility,hospital} এর ক্ষমতা {total,1000} {item,bed} যার {frac,1/5} অংশ দখলকৃত। {event,coronavirus outbreak} এর কারণে, প্রতিদিন {daily,50} জন রোগী {facility,hospital} এ ভর্তি হন। {period,2} সপ্তাহ পর {facility,hospital} এ মোট কতগুলা খালি {item,bed} আছে তা গণনা করুন।\n\n#init:\n- facility = sample([\"hospital\", \"clinic\", \"medical center\", \"care facility\"])\n- item = sample([\"bed\", \"room\", \"ward\"])\n- event = sample([\"flu season\", \"natural disaster\", \"major accident\", \"pandemic\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)\n"
 answer_annotated = "যদি {frac} অংশ {facility} এর মোট {item} এর ক্ষমতা দখলকৃত হয়, এর অর্থ {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)}টি {item} রোগী দ্বারা ব্যবহৃত হচ্ছে।\nনতুন ভর্তি ছাড়া {facility} এ মোট {item} সংখ্যা {total}টি {item} - {int(total*frac)}টি {item} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)}টি {item}।\nযদি প্রতিদিন {daily} জন ভর্তি হয়, এক সপ্তাহ পর {facility} এ মোট রোগী সংখ্যা {daily} জন/দিন * 7 দিন/সপ্তাহ = {daily*7} জন রোগী।\n{period} সপ্তাহ পর, {facility} এ ভর্তি মোট রোগী সংখ্যা {daily*7} জন/সপ্তাহ * {period} সপ্তাহ = <<{daily*7}*{period}={daily*period*7}>>{daily*period*7} জন রোগী, যারা প্রত্যেকে একটি {item} ব্যবহার করে।\nযদি নতুন ভর্তির আগে {facility} এ {total-int(total*frac)}টি খালি {item} ছিল, মোট সংখ্যা কমে {total-int(total*frac)}টি {item} - {daily*period*7}টি {item} = <<{total-int(total*frac)}-{daily*period*7}={total - (total * frac + daily * period * 7)}>>{total - (total * frac + daily * period * 7)}টি খালি {item}।\n#### {total - (total * frac + daily * period * 7)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
 language = "ben"
 
 ignore = true

@@ -4,5 +4,8 @@ id_orig = 43
 id_shuffled = 24
 question_annotated = "จากข้อมูลโภชนาการ ถุง {food,มันฝรั่งทอด} มี {cal,250} แคลอรี ต่อหน่วยบริโภค หากถุง {size,300} {unit,กรัม} มี {n,5} หน่วยบริโภค คุณจะกินได้กี่ {unit,กรัม} หากเป้าหมายแคลอรีรายวันของคุณคือ {total,2000} และคุณบริโภคไปแล้ว {spent,1800} แคลอรี?\n\n#init:\n- food = sample([\"ข้าวโพดคั่ว\", \"ขนมปัง\", \"คุกกี้\"])\n- unit = sample([\"กรัม\", \"ออนซ์\", \"oz\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)\n"
 answer_annotated = "หากเป้าหมายแคลอรีรวมคือ {total} และฉันบริโภคไปแล้ว {spent} แคลอรี ดังนั้นฉันเหลือ {total}-{spent} = <<{total}-{spent}={total-spent}>>{total-spent} แคลอรี ที่จะกิน\nหากแต่ละหน่วยบริโภคของ {food} มี {cal} แคลอรี และฉันเหลือ {total-spent} แคลอรี ที่จะกินได้ ดังนั้นฉันกินได้เพียง {total-spent}/{cal} ของหนึ่งหน่วยบริโภค = {Fraction((total-spent)/cal)} ของหนึ่งหน่วยบริโภค\nเรายังทราบว่าถุง {food} ขนาด {size} {unit} มี {n} หน่วยบริโภค ดังนั้นแต่ละหน่วยบริโภคมี {size} {unit}/{n} = <<{size}/{n}={size//n}>>{size//n} {unit}\nหากฉันกินได้เพียง {Fraction((total-spent)/cal)} ของหนึ่งหน่วยบริโภค ดังนั้นฉันกินได้เพียง {size//n} {unit} * {Fraction((total-spent)/cal)} = {size//n * (total-spent)/cal} {unit}\n#### {size//n * (total-spent)/cal}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "tha"

@@ -4,5 +4,8 @@ id_orig = 984
 id_shuffled = 45
 question_annotated = "{name,Pat} 有一個花床，長達 {length,111} {unit_length,呎}。{name,Pat} 想用植物填滿她的花床。{name,Pat} 的花長 {plant_width,12} 吋寬，園藝準則建議沿著花床每 {space,1.5} {unit_length,呎} 種植一朵花。{name,Pat} 已經擁有 {owned,17} 朵花。每株開花植物在商店售價 {cur,$}{cost,6}。{name,Pat} 要花多少錢在商店填滿她的花床？\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['呎', '米'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)\n"
 answer_annotated = "{name} 的花床是 {length} {unit_length} / {space} {unit_length} 每株植物 = <<{length}/{space}={int(length/space)}>>{int(length/space)} 株植物所需。\n{name} 需要購買 {int(length/space)} 株植物 - {owned} 株植物 = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} 株植物需要購買。\n{name} 將花費 {int(length/space)-owned} 株 * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}。\n#### {int((length/space - owned) * cost)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "yue"

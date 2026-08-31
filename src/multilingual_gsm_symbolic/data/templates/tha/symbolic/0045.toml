@@ -4,5 +4,8 @@ id_orig = 984
 id_shuffled = 45
 question_annotated = "{name,แพท} มีแปลงดอกไม้ที่มีความยาว {length,111} {unit_length,ฟุต}. {name,แพท} ต้องการปลูกต้นไม้ให้เต็มแปลงดอกไม้ของเธอ ดอกไม้ของ{name,แพท} เติบโตกว้าง {plant_width,12} นิ้ว และแนวทางการทำสวนแนะนำให้ปลูกดอกไม้หนึ่งดอกทุกๆ {space,1.5} {unit_length,ฟุต} ตามแนวแปลง {name,แพท} มีดอกไม้อยู่แล้ว {owned,17} ดอก ต้นไม้ดอกแต่ละต้นมีราคา {cur,฿}{cost,6} ที่ร้านค้า {name,แพท} จะต้องใช้เงินเท่าไหร่ที่ร้านค้าเพื่อเติมเต็มแปลงดอกไม้ของเธอ?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['ฟุต', 'เมตร'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)\n"
 answer_annotated = "แปลงดอกไม้ของ{name} คือ {length} {unit_length} / {space} {unit_length} ต่อต้น = <<{length}/{space}={int(length/space)}>>{int(length/space)} ต้นที่ต้องการ\n{name} ต้องซื้อ {int(length/space)} ต้น - {owned} ต้น = <<{int(length/space)}-{owned}={int(length/space)-owned}>>{int(length/space)-owned} ต้นที่ต้องซื้อ\n{name} จะใช้จ่าย {int(length/space)-owned} ต้น * {cur}{cost} = {cur}<<{int(length/space)-owned}*{cost}={int((length/space - owned) * cost)}>>{int((length/space - owned) * cost)}\n#### {int((length/space - owned) * cost)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "tha"

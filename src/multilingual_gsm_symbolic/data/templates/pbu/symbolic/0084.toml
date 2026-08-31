@@ -4,5 +4,8 @@ id_orig = 336
 id_shuffled = 84
 question_annotated = "{name,ماریا} د یوې اسانسه {n,۸} سهمونه د هر یو لپاره {cur,ډالر}{p,۸} خریدوي. د سهم قیمت لومړي کال چې {name,ماریا} لري {r1,۵۰}% زیاتیږي، بیا په دویم کال کې {r2,۲۵}% کمیږي. د {name,ماریا} د ټولو سهمونو وروستی ارزښت څه دی؟\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))"
 answer_annotated = "لومړی د {name} د پیرود لومړنی ټول ارزښت پیدا کړئ: {n} سهمونه * {cur}{p}/سهم = {cur}<<{n}*{p}={n*p}>>{n*p}\nبیا د لومړي قیمت زیاتوالي مقدار پیدا کړئ: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}\nد لومړي کال وروسته د ارزښت د موندلو لپاره هغه مقدار د لومړني ارزښت سره جمع کړئ: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}\nبیا هغه مقدار د {r2}% سره ضرب کړئ ترڅو د دویم کال د کمی مقدار پیدا کړئ: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}\nبیا هغه مقدار د لومړي کال د ارزښت څخه کم کړئ ترڅو وروستی ارزښت پیدا کړئ: {cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+creation = "machine-translated"
+source-language = "eng"
+model = "Qwen/Qwen3.5-122B-A10B-FP8"
+computationally-validated = "test suite passes"
 language = "pbu"
