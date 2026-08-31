@@ -8,7 +8,9 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 from itertools import zip_longest
+from math import sqrt
 from pathlib import Path
+from statistics import NormalDist
 
 import pandas as pd
 from plot_config import LANGUAGE_LABELS, language_order, model_sort_key
@@ -23,9 +25,22 @@ class TableRow:
     model: str
     language: str
     original_accuracy: float
-    original_variance: float
+    original_ci: tuple[float, float]
     synthetic_accuracy: float
-    synthetic_variance: float
+    synthetic_ci: tuple[float, float]
+
+
+def wilson_interval(correct: pd.Series, confidence: float = 0.95) -> tuple[float, float]:
+    """Return a Wilson score interval for a binary accuracy series."""
+    n = len(correct)
+    if n == 0:
+        raise ValueError("At least one scored example is required.")
+    proportion = float(correct.mean())
+    z = NormalDist().inv_cdf(0.5 + confidence / 2)
+    denominator = 1 + z**2 / n
+    center = (proportion + z**2 / (2 * n)) / denominator
+    margin = z * sqrt(proportion * (1 - proportion) / n + z**2 / (4 * n**2)) / denominator
+    return max(0.0, center - margin), min(1.0, center + margin)
 
 
 def collect_model_rows(
@@ -33,7 +48,7 @@ def collect_model_rows(
     model: str,
     languages: list[str] | None,
 ) -> list[TableRow]:
-    """Collect split-level accuracy and sample variance by language for one model."""
+    """Collect split-level accuracy and 95% confidence intervals by language for one model."""
     matching_models = [name for name in problems["model"].unique() if name.lower() == model.lower()]
     if not matching_models:
         available = ", ".join(sorted(problems["model"].unique()))
@@ -59,9 +74,9 @@ def collect_model_rows(
                 model=resolved_model,
                 language=language,
                 original_accuracy=float(original["correct"].mean()),
-                original_variance=float(original["correct"].var(ddof=1)),
+                original_ci=wilson_interval(original["correct"]),
                 synthetic_accuracy=float(synthetic["correct"].mean()),
-                synthetic_variance=float(synthetic["correct"].var(ddof=1)),
+                synthetic_ci=wilson_interval(synthetic["correct"]),
             )
         )
     return rows
@@ -117,11 +132,11 @@ def render_table(
     scope = models[0] if len(models) == 1 else f"all {len(models)} models"
     caption_text = caption or (
         f"Original and synthetic exact-answer accuracy by model and language for {scope}. "
-        "Variance is the sample variance of the scored examples within each split."
+        "The 95% confidence intervals are Wilson score intervals over scored examples within each split."
     )
     panel_header = (
-        r"Model & Language & \shortstack{Orig.\\acc.} & \shortstack{Orig.\\var.} & "
-        r"\shortstack{Synth.\\acc.} & \shortstack{Synth.\\var.}"
+        r"Model & Language & \shortstack{Orig.\\acc.} & \shortstack{Orig.\\95\% CI} & "
+        r"\shortstack{Synth.\\acc.} & \shortstack{Synth.\\95\% CI}"
     )
     header = f"{panel_header} & {panel_header} \\\\"
 
@@ -136,10 +151,13 @@ def render_table(
             return " &  &  &  &  & "
         model = latex_escape(row.model) if row.model != previous_model else ""
         language = latex_escape(LANGUAGE_LABELS.get(row.language, row.language))
+        original_low, original_high = row.original_ci
+        synthetic_low, synthetic_high = row.synthetic_ci
         return (
             f"{model} & {language} & {row.original_accuracy * 100:.1f}\\% & "
-            f"{row.original_variance:.4f} & {row.synthetic_accuracy * 100:.1f}\\% & "
-            f"{row.synthetic_variance:.4f}"
+            f"{original_low * 100:.1f}--{original_high * 100:.1f}\\% & "
+            f"{row.synthetic_accuracy * 100:.1f}\\% & "
+            f"{synthetic_low * 100:.1f}--{synthetic_high * 100:.1f}\\%"
         )
 
     lines = [
