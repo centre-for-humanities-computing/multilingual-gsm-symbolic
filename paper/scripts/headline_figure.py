@@ -1,384 +1,417 @@
 # /// script
-# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "resvg-py", "scipy", "uharfbuzz"]
+# dependencies = [
+#   "freetype-py",
+#   "inspect-ai",
+#   "numpy",
+#   "pandas",
+#   "pillow",
+#   "pyarrow",
+#   "scipy",
+#   "uharfbuzz",
+# ]
 # ///
-"""Generate the editable HTML, curve assets, and Overleaf PNG headline figure."""
+"""Render the paper's headline figure without a browser."""
 
 from __future__ import annotations
 
-import json
+import re
 import shutil
-from html import escape
 from pathlib import Path
+from typing import Any
 
-import uharfbuzz as hb
+import freetype
 import numpy as np
 import pandas as pd
-from resvg_py import svg_to_bytes
-from ridgeline import collect_plot_data, save_distribution_asset
-
+import uharfbuzz as hb
+from eval_log_utils import normal_curve, sample_synthetic_sets
+from PIL import Image, ImageDraw, ImageFont
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DATA_PATH = Path(__file__).with_suffix(".json")
 ANALYSIS = REPO_ROOT / "paper/artifacts/transfer_tables/analysis.parquet"
-HTML_PATH = Path(__file__).with_suffix(".html")
-OUTPUT = REPO_ROOT / "images/example.png"
-CURVE_DIR = REPO_ROOT / "images"
-ARTIFACTS = REPO_ROOT / "paper/artifacts/figures"
-ARCHIVE = ARTIFACTS / "headline_figure.png"
-WIDTH, HEIGHT, SCALE = 1440, 725, 2
+OUTPUT = REPO_ROOT / "paper/artifacts/figures/headline_figure.png"
+MODEL = "Qwen2.5-7B-Instruct"
+N_SETS = 2_000
+SEED = 42
+SCALE = 2
+WIDTH, HEIGHT = 1440, 725
 
-REGULAR = Path(r"C:\Windows\Fonts\times.ttf")
-BOLD = Path(r"C:\Windows\Fonts\timesbd.ttf")
-MONO_BOLD = Path(r"C:\Windows\Fonts\consolab.ttf")
-DEVANAGARI = Path(r"C:\Windows\Fonts\Nirmala.ttf")
-DEVANAGARI_BOLD = Path(r"C:\Windows\Fonts\NirmalaB.ttf")
-FONT_FILES = [REGULAR, BOLD, MONO_BOLD, DEVANAGARI, DEVANAGARI_BOLD]
+FONT_DIR = Path("C:/Windows/Fonts")
+REGULAR = FONT_DIR / "times.ttf"
+BOLD = FONT_DIR / "timesbd.ttf"
+MONO_BOLD = FONT_DIR / "consolab.ttf"
+DEVANAGARI = FONT_DIR / "Nirmala.ttf"
+DEVANAGARI_BOLD = FONT_DIR / "NirmalaB.ttf"
 
-CHIP_CLASSES = {
-    "name1": ("name-1-box", "name-1-text"),
-    "name2": ("name-2-box", "name-2-text"),
-    "count": ("count-box", "count-text"),
-    "spot": ("spot-box", "spot-text"),
+INK = "#152238"
+MUTED = "#475467"
+LINE = "#D7DEE8"
+BLUE = "#173B75"
+BLUE_FILL = "#AFC0DD"
+BLUE_WASH = "#DCE5F2"
+RED = "#C61B3C"
+GRID = "#E7EBF1"
+AXIS = "#8B97A8"
+
+CHIPS = {
+    "name1": ("#285F9E", "#E8F1FB"),
+    "name2": ("#A94F18", "#FFF0E8"),
+    "count": ("#2F7F45", "#E8F5EC"),
+    "spot": ("#82328A", "#F6E9F7"),
 }
 
 
-class Font:
-    def __init__(self, path: Path, size: float):
-        data = path.read_bytes()
-        self.font = hb.Font(hb.Face(data))
-        self.font.scale = (round(size * 64), round(size * 64))
-        hb.ot_font_set_funcs(self.font)
+def p(value: float) -> int:
+    return round(value * SCALE)
 
-    def measure(self, text: str) -> float:
+
+def pil_font(path: Path, size: float) -> ImageFont.FreeTypeFont:
+    return ImageFont.truetype(str(path), p(size))
+
+
+class ShapedFont:
+    """Small HarfBuzz/FreeType adapter for correctly shaped Devanagari."""
+
+    def __init__(self, path: Path, size: float):
+        self.data = path.read_bytes()
+        self.hb_font = hb.Font(hb.Face(self.data))
+        self.hb_font.scale = (p(size) * 64, p(size) * 64)
+        hb.ot_font_set_funcs(self.hb_font)
+        self.face = freetype.Face(str(path))
+        self.face.set_pixel_sizes(0, p(size))
+        self.ascender = self.face.size.ascender / 64
+        self.height = self.face.size.height / 64
+
+    def shape(self, text: str) -> tuple[list[Any], list[Any]]:
         buffer = hb.Buffer()
         buffer.add_str(text)
         buffer.guess_segment_properties()
-        hb.shape(self.font, buffer)
-        return sum(position.x_advance for position in buffer.glyph_positions) / 64
+        hb.shape(self.hb_font, buffer)
+        return buffer.glyph_infos, buffer.glyph_positions
+
+    def measure(self, text: str) -> float:
+        _infos, positions = self.shape(text)
+        return sum(position.x_advance for position in positions) / 64
+
+    def draw(self, image: Image.Image, xy: tuple[float, float], text: str, fill: str) -> None:
+        infos, positions = self.shape(text)
+        pen_x = float(xy[0])
+        baseline = float(xy[1]) + self.ascender
+        color = ImageColor.getrgb(fill)
+        for info, position in zip(infos, positions, strict=True):
+            self.face.load_glyph(info.codepoint, freetype.FT_LOAD_RENDER | freetype.FT_LOAD_TARGET_NORMAL)
+            slot = self.face.glyph
+            bitmap = slot.bitmap
+            if bitmap.width and bitmap.rows:
+                mask = Image.frombytes("L", (bitmap.width, bitmap.rows), bytes(bitmap.buffer))
+                glyph = Image.new("RGBA", mask.size, (*color, 255))
+                glyph.putalpha(mask)
+                x = round(pen_x + position.x_offset / 64 + slot.bitmap_left)
+                y = round(baseline - position.y_offset / 64 - slot.bitmap_top)
+                image.alpha_composite(glyph, (x, y))
+            pen_x += position.x_advance / 64
 
 
-def text(x: float, y: float, value: str, css: str, *, anchor: str | None = None) -> str:
-    anchor_attr = f' text-anchor="{anchor}"' if anchor else ""
-    return f'<text class="{css}" x="{x:.1f}" y="{y:.1f}"{anchor_attr}>{escape(value)}</text>'
+class ImageColor:
+    @staticmethod
+    def getrgb(value: str) -> tuple[int, int, int]:
+        value = value.lstrip("#")
+        return tuple(int(value[index : index + 2], 16) for index in (0, 2, 4))  # type: ignore[return-value]
 
 
-def rich_text(
+def measure(font: ImageFont.FreeTypeFont | ShapedFont, text: str) -> float:
+    return font.measure(text) if isinstance(font, ShapedFont) else font.getlength(text)
+
+
+def draw_text(
+    image: Image.Image,
+    draw: ImageDraw.ImageDraw,
+    xy: tuple[float, float],
+    text: str,
+    font: ImageFont.FreeTypeFont | ShapedFont,
+    fill: str = INK,
+    anchor: str = "lt",
+) -> None:
+    if isinstance(font, ShapedFont):
+        if anchor != "lt":
+            raise ValueError("Shaped text currently supports only left-top anchoring.")
+        font.draw(image, xy, text, fill)
+    else:
+        draw.text(xy, text, font=font, fill=fill, anchor=anchor)
+
+
+def draw_rich_text(
+    image: Image.Image,
+    draw: ImageDraw.ImageDraw,
     spans: list[tuple[str, str | None]],
-    *,
-    x: float,
-    top: float,
-    max_width: float,
-    line_height: float,
-    regular: Font,
-    chip_font: Font,
-    text_class: str,
-    chip_text_class: str,
-) -> tuple[str, float]:
-    output: list[str] = []
-    x0 = cursor = x
-    line_top = top
-    space = regular.measure(" ")
-    baseline_offset = line_height * 0.72
-    chip_height = line_height - 3
-
-    def newline() -> None:
-        nonlocal cursor, line_top
-        cursor = x0
-        line_top += line_height
-
-    for value, style in spans:
-        if style == "nowrap":
-            width = regular.measure(value)
-            if cursor > x0 and cursor + width > x0 + max_width:
-                newline()
-            output.append(text(cursor, line_top + baseline_offset, value, text_class))
-            cursor += width + space
-            continue
-
-        if style:
-            width = chip_font.measure(value) + 10
-            if cursor > x0 and cursor + width > x0 + max_width:
-                newline()
-            box_class, color_class = CHIP_CLASSES[style]
-            output.append(
-                f'<rect class="chip-box {box_class}" x="{cursor:.1f}" y="{line_top:.1f}" '
-                f'width="{width:.1f}" height="{chip_height:.1f}"/>'
-            )
-            output.append(
-                text(
-                    cursor + width / 2,
-                    line_top + chip_height / 2,
-                    value,
-                    f"{chip_text_class} {color_class}",
-                    anchor="middle",
+    xy: tuple[int, int],
+    max_width: int,
+    regular: ImageFont.FreeTypeFont | ShapedFont,
+    bold: ImageFont.FreeTypeFont | ShapedFont,
+    line_height: int,
+) -> int:
+    x0, x = xy[0], xy[0]
+    y = xy[1]
+    for text, style in spans:
+        pieces = [text] if style else re.findall(r"\S+\s*|\s+", text)
+        for piece in pieces:
+            font = bold if style else regular
+            padding_x = p(5) if style else 0
+            width = measure(font, piece) + 2 * padding_x
+            if x > x0 and x + width > x0 + max_width:
+                x = x0
+                y += line_height
+                piece = piece.lstrip()
+                width = measure(font, piece) + 2 * padding_x
+            if not piece:
+                continue
+            if style:
+                color, background = CHIPS[style]
+                draw.rounded_rectangle(
+                    (x, y - p(1), x + width, y + line_height - p(4)),
+                    radius=p(4),
+                    fill=background,
+                    outline=color,
+                    width=p(1),
                 )
-            )
-            cursor += width + 2
-            continue
-
-        for word in value.split():
-            width = regular.measure(word)
-            if cursor > x0 and cursor + width > x0 + max_width:
-                newline()
-            output.append(text(cursor, line_top + baseline_offset, word, text_class))
-            cursor += width + space
-
-    return "\n".join(output), line_top + line_height
+                draw_text(image, draw, (x + padding_x, y), piece, font, color)
+            else:
+                draw_text(image, draw, (x, y), piece, font, INK)
+            x += width
+    return y + line_height
 
 
-def answer(values: dict[str, object], *, devanagari: bool = False) -> str:
-    formula = (
-        f"({values['k1']} + {values['k2']}) / "
-        f"({values['n1']} + {values['n2']}) × 100 = "
-        f"{round((int(values['k1']) + int(values['k2'])) / (int(values['n1']) + int(values['n2'])) * 100)}%"
-    )
-    if not devanagari:
-        return formula
-    return formula.translate(str.maketrans("0123456789", "०१२३४५६७८९"))
+def load_distributions() -> dict[str, np.ndarray]:
+    columns = ["source_id", "language", "correct", "model", "split"]
+    rows = pd.read_parquet(ANALYSIS, columns=columns)
+    rows = rows[rows["model"] == MODEL]
+    rng = np.random.default_rng(SEED)
+    original = rows[(rows["language"] == "eng") & (rows["split"] == "original")]["correct"].to_numpy(dtype=float)
+    if len(original) != 100:
+        raise ValueError(f"Expected 100 original English problems, found {len(original)}")
+    distributions = {"original": rng.choice(original, size=(N_SETS, len(original)), replace=True).mean(axis=1)}
+    for key, language in (("english", "eng"), ("marathi", "mar")):
+        synthetic = rows[(rows["language"] == language) & (rows["split"] == "synthetic")]
+        if synthetic["source_id"].nunique() != 100:
+            raise ValueError(f"Expected 100 {language} templates, found {synthetic['source_id'].nunique()}")
+        distributions[key], _ = sample_synthetic_sets(synthetic, N_SETS, rng)
+    return distributions
 
 
-def card(
-    *,
-    x: float,
-    stage: str,
-    spans: list[tuple[str, str | None]],
-    answer_label: str,
-    answer_text: str,
-    max_width: float,
-    line_height: float,
-    regular: Font,
-    chip_font: Font,
-    text_class: str,
-    chip_text_class: str,
-    answer_class: str = "latin answer",
-) -> str:
-    body, body_bottom = rich_text(
-        spans,
-        x=x + 26,
-        top=104,
-        max_width=max_width,
-        line_height=line_height,
-        regular=regular,
-        chip_font=chip_font,
-        text_class=text_class,
-        chip_text_class=chip_text_class,
-    )
-    divider = body_bottom + 6
-    return "\n".join(
-        [
-            f'<rect class="card" x="{x}" y="25" width="432" height="335" rx="12"/>',
-            f'<rect x="{x + 12}" y="25" width="408" height="7" fill="#173b75"/>',
-            text(x + 26, 76, stage, "latin stage"),
-            body,
-            f'<line class="divider" x1="{x + 26}" y1="{divider:.1f}" x2="{x + 406}" y2="{divider:.1f}"/>',
-            text(x + 26, divider + 24, answer_label, "latin answer-label"),
-            text(x + 26, divider + 54, answer_text, answer_class),
-        ]
-    )
+def draw_card(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int]) -> None:
+    draw.rounded_rectangle(box, radius=p(12), fill="white", outline=LINE, width=p(1.5))
+    draw.line((box[0] + p(12), box[1] + p(4), box[2] - p(12), box[1] + p(4)), fill=BLUE, width=p(7))
 
 
-SVG_STYLE = """
-.latin { font-family: "Times New Roman", Times, serif; fill: #152238; }
-.devanagari { font-family: "Nirmala UI", "Noto Serif Devanagari", serif; fill: #152238; }
-.stage { font-size: 28px; font-weight: 700; }
-.body { font-size: 20px; }
-.template-body { font-size: 18px; }
-.chip-template { font-family: Consolas, "Courier New", monospace; font-size: 16px; font-weight: 700; dominant-baseline: middle; }
-.chip-body { font-size: 20px; font-weight: 700; dominant-baseline: middle; }
-.answer-label { font-size: 18px; font-weight: 700; fill: #475467; }
-.answer { font-size: 20px; font-weight: 700; }
-.performance-title { font-size: 29px; font-weight: 700; }
-.model-note { font-size: 20px; fill: #475467; }
-.accuracy { font-size: 29px; font-weight: 700; text-anchor: middle; }
-.drop { font-size: 21px; font-weight: 700; fill: #c61b3c; text-anchor: middle; }
-.chart-title { font-size: 25px; font-weight: 700; }
-.card { fill: white; stroke: #d7dee8; stroke-width: 1.5; }
-.divider { stroke: #d7dee8; stroke-width: 1; }
-.name-1-box { fill: #e8f1fb; stroke: #285f9e; }
-.name-1-text { fill: #285f9e; }
-.name-2-box { fill: #fff0e8; stroke: #a94f18; }
-.name-2-text { fill: #a94f18; }
-.count-box { fill: #e8f5ec; stroke: #2f7f45; }
-.count-text { fill: #2f7f45; }
-.spot-box { fill: #f6e9f7; stroke: #82328a; }
-.spot-text { fill: #82328a; }
-.chip-box { stroke-width: 1; rx: 5; }
-"""
+def draw_plot(
+    draw: ImageDraw.ImageDraw,
+    box: tuple[int, int, int, int],
+    values: np.ndarray,
+    tick_font: ImageFont.FreeTypeFont,
+) -> None:
+    left, top, right, bottom = box
+    baseline = bottom - p(30)
+    curve_x, curve_density, mean, _std = normal_curve(values)
+    hist_density, hist_edges = np.histogram(values, bins=18, density=True)
+    peak = max(float(curve_density.max()), float(hist_density.max())) * 1.08
 
+    def xscale(value: float) -> int:
+        return round(left + value * (right - left))
 
-def load_series(performance: dict[str, object]) -> list[dict[str, object]]:
-    model = str(performance["model"])
-    n_sets = int(performance["resampled_sets"])
-    seed = int(performance.get("seed", 42))
-    problems = pd.read_parquet(ANALYSIS, columns=["model", "language", "split", "source_id", "correct"])
-    problems = problems[problems["model"] == model]
-    curves, stats = collect_plot_data(problems, ["eng", "mar"], n_sets, seed)
-    stats_by_language = {row.language: row for row in stats}
+    def yscale(value: float) -> int:
+        return round(baseline - value / peak * (baseline - top))
 
-    original = problems[(problems["language"] == "eng") & (problems["split"] == "original")]["correct"].to_numpy(float)
-    original_sets = np.random.default_rng(seed).choice(original, size=(n_sets, len(original)), replace=True).mean(axis=1)
-    return [
-        {"key": "original", "title": "Original English benchmark", "values": original_sets, "mean": float(original_sets.mean())},
-        {"key": "english", "title": "Sampled English variants", "values": curves["eng"][0], "mean": stats_by_language["eng"].synthetic_mean},
-        {"key": "marathi", "title": "Matched Marathi variants", "values": curves["mar"][0], "mean": stats_by_language["mar"].synthetic_mean},
-    ]
+    for tick in np.linspace(0, 1, 5):
+        x = xscale(float(tick))
+        draw.line((x, top, x, baseline), fill=GRID, width=p(1))
 
+    points = [(xscale(float(x)), yscale(float(y))) for x, y in zip(curve_x, curve_density, strict=True)]
+    draw.polygon([*points, (points[-1][0], baseline), (points[0][0], baseline)], fill=BLUE_WASH)
+    for density, x0, x1 in zip(hist_density, hist_edges[:-1], hist_edges[1:], strict=True):
+        draw.rectangle(
+            (xscale(float(x0)), yscale(float(density)), xscale(float(x1)), baseline),
+            fill=BLUE_FILL,
+            outline="white",
+            width=p(1),
+        )
+    draw.line(points, fill=BLUE, width=p(2.4), joint="curve")
+    mean_x = xscale(mean)
+    draw.line((mean_x, top, mean_x, baseline), fill=RED, width=p(2.6))
+    mean_y = yscale(float(curve_density.max()))
+    draw.ellipse((mean_x - p(6), mean_y - p(6), mean_x + p(6), mean_y + p(6)), fill=BLUE)
+    draw.line((left, baseline, right, baseline), fill=AXIS, width=p(1.2))
 
-def build_html(data: dict[str, object], series: list[dict[str, object]]) -> tuple[str, str]:
-    template = data["template"]
-    sample = data["sample"]
-    performance = data["performance"]
-
-    template_spans = [
-        (f"{{name1={template['name1']}}}", "name1"),
-        ("'s dog has", "nowrap"),
-        (f"{{n1={template['n1']}}}", "count"),
-        (" puppies, ", None),
-        (f"{{k1={template['k1']}}}", "spot"),
-        (" of which have spots. ", None),
-        (f"{{name2={template['name2']}}}", "name2"),
-        ("'s dog has", "nowrap"),
-        (f"{{n2={template['n2']}}}", "count"),
-        (" puppies, ", None),
-        (f"{{k2={template['k2']}}}", "spot"),
-        (" of which have spots. What percentage of all the puppies have spots?", None),
-    ]
-    sample_spans = [
-        (str(sample["name1"]), "name1"),
-        ("'s dog has", "nowrap"),
-        (str(sample["n1"]), "count"),
-        (" puppies, ", None),
-        (str(sample["k1"]), "spot"),
-        (" of which have spots. ", None),
-        (str(sample["name2"]), "name2"),
-        ("'s dog has", "nowrap"),
-        (str(sample["n2"]), "count"),
-        (" puppies, ", None),
-        (str(sample["k2"]), "spot"),
-        (" of which have spots. What percentage of all the puppies have spots?", None),
-    ]
-    marathi_spans = [
-        (str(sample["translated_name1"]), "name1"),
-        ("च्या कुत्रीला", "nowrap"),
-        (str(sample["n1"]).translate(str.maketrans("0123456789", "०१२३४५६७८९")), "count"),
-        (" पिल्ले आहेत, त्यापैकी ", None),
-        (str(sample["k1"]).translate(str.maketrans("0123456789", "०१२३४५६७८९")), "spot"),
-        (" पिल्ल्यांवर ठिपके आहेत. ", None),
-        (str(sample["translated_name2"]), "name2"),
-        ("च्या कुत्रीला", "nowrap"),
-        (str(sample["n2"]).translate(str.maketrans("0123456789", "०१२३४५६७८९")), "count"),
-        (" पिल्ले आहेत, त्यापैकी ", None),
-        (str(sample["k2"]).translate(str.maketrans("0123456789", "०१२३४५६७८९")), "spot"),
-        (" पिल्ल्यांवर ठिपके आहेत. सर्व पिल्ल्यांपैकी किती टक्के पिल्ल्यांवर ठिपके आहेत?", None),
-    ]
-
-    cards = "\n".join(
-        [
-            card(
-                x=38,
-                stage="1 · ORIGINAL → TEMPLATE",
-                spans=template_spans,
-                answer_label="ORIGINAL ANSWER",
-                answer_text=answer(template),
-                max_width=380,
-                line_height=30,
-                regular=Font(REGULAR, 18),
-                chip_font=Font(MONO_BOLD, 16),
-                text_class="latin template-body",
-                chip_text_class="chip-template",
-            ),
-            card(
-                x=504,
-                stage="2 · SAMPLE NEW VALUES",
-                spans=sample_spans,
-                answer_label="RENDERED ANSWER",
-                answer_text=answer(sample),
-                max_width=350,
-                line_height=34,
-                regular=Font(REGULAR, 20),
-                chip_font=Font(BOLD, 20),
-                text_class="latin body",
-                chip_text_class="latin chip-body",
-            ),
-            card(
-                x=970,
-                stage="3 · TRANSLATE",
-                spans=marathi_spans,
-                answer_label="SAME RENDERED ANSWER",
-                answer_text=answer(sample, devanagari=True),
-                max_width=380,
-                line_height=34,
-                regular=Font(DEVANAGARI, 20),
-                chip_font=Font(DEVANAGARI_BOLD, 20),
-                text_class="devanagari body",
-                chip_text_class="devanagari chip-body",
-                answer_class="devanagari answer",
-            ),
-        ]
-    )
-
-    means = [float(item["mean"]) for item in series]
-    accuracies = "\n".join(
-        text(center, 477, f"{mean:.1%}", "latin accuracy", anchor="middle")
-        for center, mean in zip((254, 720, 1186), means, strict=True)
-    )
-    drops = "\n".join(
-        text(center, 475, f"−{(left - right) * 100:.1f} pp →", "latin drop", anchor="middle")
-        for center, left, right in zip((487, 953), means[:-1], means[1:], strict=True)
-    )
-    charts = "\n".join(
-        text(x, 536, str(item["title"]), "latin chart-title")
-        + f'\n<image x="{x + 12}" y="555" width="408" height="170" href="../../images/headline_curve_{item["key"]}.png"/>'
-        for x, item in zip((38, 504, 970), series, strict=True)
-    )
-    svg = f'''<svg id="headline-figure" xmlns="http://www.w3.org/2000/svg" width="1440" height="725" viewBox="0 0 1440 725" role="img">
-<title>Multilingual GSM-Symbolic generation and performance</title>
-<style>{SVG_STYLE}</style>
-<rect width="1440" height="725" fill="white"/>
-{cards}
-{text(487, 188, "→", "latin", anchor="middle").replace('class="latin"', 'class="latin" font-size="30" font-weight="700" fill="#475467"')}
-{text(953, 188, "→", "latin", anchor="middle").replace('class="latin"', 'class="latin" font-size="30" font-weight="700" fill="#475467"')}
-<line x1="38" y1="380" x2="1402" y2="380" stroke="#152238" stroke-width="2"/>
-{text(38, 425, "Exact-answer accuracy across matched 100-problem sets", "latin performance-title")}
-{text(1402, 424, f'{performance["model"]} · {int(performance["resampled_sets"]):,} resampled sets per stage', "latin model-note", anchor="end")}
-<line class="divider" x1="38" y1="440" x2="1402" y2="440"/>
-{accuracies}
-{drops}
-<line class="divider" x1="38" y1="500" x2="1402" y2="500"/>
-{charts}
-</svg>'''
-    html = f'''<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Multilingual GSM-Symbolic headline figure</title>
-<style>html,body{{width:100%;height:100%;margin:0;background:white}}body{{display:grid;place-items:start center}}#headline-figure{{display:block;width:min(100vw,1440px);height:auto}}</style>
-</head><body>{svg}</body></html>'''
-    return html, svg
+    for index, tick in enumerate(np.linspace(0, 1, 5)):
+        x = xscale(float(tick))
+        draw.line((x, baseline, x, baseline + p(6)), fill=AXIS, width=p(1.2))
+        anchor = "la" if index == 0 else "ra" if index == 4 else "ma"
+        draw.text((x, baseline + p(9)), f"{tick:.0%}", font=tick_font, fill=MUTED, anchor=anchor)
 
 
 def render() -> None:
-    data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
-    series = load_series(data["performance"])
-    ARTIFACTS.mkdir(parents=True, exist_ok=True)
-    CURVE_DIR.mkdir(parents=True, exist_ok=True)
+    distributions = load_distributions()
+    image = Image.new("RGBA", (p(WIDTH), p(HEIGHT)), "white")
+    draw = ImageDraw.Draw(image)
 
-    for item in series:
-        save_distribution_asset(np.asarray(item["values"]), CURVE_DIR / f"headline_curve_{item['key']}.png")
+    stage_font = pil_font(BOLD, 28)
+    body = pil_font(REGULAR, 20)
+    body_bold = pil_font(BOLD, 20)
+    small_bold = pil_font(BOLD, 18)
+    template_body = pil_font(REGULAR, 18)
+    template_bold = pil_font(MONO_BOLD, 16)
+    answer = pil_font(BOLD, 20)
+    performance_title = pil_font(BOLD, 29)
+    model_font = pil_font(REGULAR, 20)
+    sequence_value = pil_font(BOLD, 29)
+    drop_font = pil_font(BOLD, 21)
+    chart_title = pil_font(BOLD, 25)
+    tick_font = pil_font(REGULAR, 22)
+    marathi = ShapedFont(DEVANAGARI, 20)
+    marathi_bold = ShapedFont(DEVANAGARI_BOLD, 20)
 
-    html, svg = build_html(data, series)
-    HTML_PATH.write_text(html, encoding="utf-8")
-    png = svg_to_bytes(
-        svg_string=svg,
-        width=WIDTH * SCALE,
-        height=HEIGHT * SCALE,
-        background="#ffffff",
-        font_files=[str(font) for font in FONT_FILES],
-        resources_dir=str(HTML_PATH.parent),
-        text_rendering="optimize_legibility",
-        shape_rendering="geometric_precision",
+    card_y, card_h, card_w, gap = p(25), p(335), p(432), p(34)
+    card_x = [p(38) + index * (card_w + gap) for index in range(3)]
+    for x in card_x:
+        draw_card(draw, (x, card_y, x + card_w, card_y + card_h))
+    for x in (p(487), p(953)):
+        draw_text(image, draw, (x, p(176)), "→", pil_font(BOLD, 30), MUTED, "mm")
+
+    stages = ["1 · ORIGINAL → TEMPLATE", "2 · SAMPLE NEW VALUES", "3 · TRANSLATE"]
+    for x, stage in zip(card_x, stages, strict=True):
+        draw_text(image, draw, (x + p(26), p(57)), stage, stage_font)
+
+    original_spans = [
+        ("{name1=Jennifer}", "name1"),
+        ("'s dog has ", None),
+        ("{n1=8}", "count"),
+        (" puppies, ", None),
+        ("{k1=3}", "spot"),
+        (" of which have spots. ", None),
+        ("{name2=Brandon}", "name2"),
+        ("'s dog has ", None),
+        ("{n2=12}", "count"),
+        (" puppies, ", None),
+        ("{k2=4}", "spot"),
+        (" of which have spots. What percentage of all the puppies have spots?", None),
+    ]
+    variant_spans = [
+        ("Olivia", "name1"),
+        ("'s dog has ", None),
+        ("15", "count"),
+        (" puppies, ", None),
+        ("5", "spot"),
+        (" of which have spots. ", None),
+        ("Marcus", "name2"),
+        ("'s dog has ", None),
+        ("10", "count"),
+        (" puppies, ", None),
+        ("2", "spot"),
+        (" of which have spots. What percentage of all the puppies have spots?", None),
+    ]
+    marathi_spans = [
+        ("सई", "name1"),
+        ("च्या कुत्रीला ", None),
+        ("१५", "count"),
+        (" पिल्ले आहेत, त्यापैकी ", None),
+        ("५", "spot"),
+        (" पिल्ल्यांवर ठिपके आहेत. ", None),
+        ("रोहन", "name2"),
+        ("च्या कुत्रीला ", None),
+        ("१०", "count"),
+        (" पिल्ले आहेत, त्यापैकी ", None),
+        ("२", "spot"),
+        (" पिल्ल्यांवर ठिपके आहेत. सर्व पिल्ल्यांपैकी किती टक्के पिल्ल्यांवर ठिपके आहेत?", None),
+    ]
+    body_ends = [
+        draw_rich_text(
+            image,
+            draw,
+            original_spans,
+            (card_x[0] + p(26), p(105)),
+            p(380),
+            template_body,
+            template_bold,
+            p(30),
+        ),
+        draw_rich_text(image, draw, variant_spans, (card_x[1] + p(26), p(105)), p(350), body, body_bold, p(34)),
+        draw_rich_text(image, draw, marathi_spans, (card_x[2] + p(26), p(105)), p(380), marathi, marathi_bold, p(34)),
+    ]
+
+    answer_dividers = [end + p(6) for end in body_ends]
+    for index, divider_y in enumerate(answer_dividers):
+        draw.line(
+            (card_x[index] + p(26), divider_y, card_x[index] + card_w - p(26), divider_y),
+            fill=LINE,
+            width=p(1),
+        )
+    answer_labels = ["ORIGINAL ANSWER", "RENDERED ANSWER", "SAME RENDERED ANSWER"]
+    for index, label in enumerate(answer_labels):
+        draw_text(image, draw, (card_x[index] + p(26), answer_dividers[index] + p(9)), label, small_bold, MUTED)
+    draw_text(
+        image,
+        draw,
+        (card_x[0] + p(26), answer_dividers[0] + p(37)),
+        "(3 + 4) / (8 + 12) × 100 = 35%",
+        answer,
     )
-    OUTPUT.write_bytes(png)
-    shutil.copy2(OUTPUT, ARCHIVE)
-    print(f"Written: {HTML_PATH}")
+    draw_text(
+        image,
+        draw,
+        (card_x[1] + p(26), answer_dividers[1] + p(37)),
+        "(5 + 2) / (15 + 10) × 100 = 28%",
+        answer,
+    )
+    marathi_bold.draw(
+        image,
+        (card_x[2] + p(26), answer_dividers[2] + p(37)),
+        "(५ + २) / (१५ + १०) × १०० = २८%",
+        INK,
+    )
+
+    draw.line((p(38), p(380), p(1402), p(380)), fill=INK, width=p(2))
+    draw_text(image, draw, (p(38), p(404)), "Exact-answer accuracy across matched 100-problem sets", performance_title)
+    draw_text(
+        image,
+        draw,
+        (p(1402), p(411)),
+        "Qwen2.5-7B-Instruct · 2,000 resampled sets per stage",
+        model_font,
+        MUTED,
+        "rt",
+    )
+    draw.line((p(38), p(440), p(1402), p(440)), fill=LINE, width=p(1))
+    draw.line((p(38), p(500), p(1402), p(500)), fill=LINE, width=p(1))
+
+    means = {key: float(values.mean()) for key, values in distributions.items()}
+    centers = [x + card_w // 2 for x in card_x]
+    for center, key in zip(centers, ("original", "english", "marathi"), strict=True):
+        draw_text(image, draw, (center, p(455)), f"{means[key]:.1%}", sequence_value, anchor="mt")
+    draw_text(
+        image,
+        draw,
+        (p(487), p(457)),
+        f"−{(means['original'] - means['english']) * 100:.1f} pp →",
+        drop_font,
+        RED,
+        "mt",
+    )
+    draw_text(
+        image,
+        draw,
+        (p(953), p(457)),
+        f"−{(means['english'] - means['marathi']) * 100:.1f} pp →",
+        drop_font,
+        RED,
+        "mt",
+    )
+
+    chart_titles = ["Original English benchmark", "Sampled English variants", "Matched Marathi variants"]
+    for x, label in zip(card_x, chart_titles, strict=True):
+        draw_text(image, draw, (x, p(519)), label, chart_title)
+    for x, key in zip(card_x, ("original", "english", "marathi"), strict=True):
+        draw_plot(draw, (x + p(12), p(555), x + card_w - p(12), p(699)), distributions[key], tick_font)
+
+    image.convert("RGB").save(OUTPUT, optimize=True)
+    shutil.copy2(OUTPUT, REPO_ROOT / "images/example.png")
     print(f"Written: {OUTPUT}")
 
 
