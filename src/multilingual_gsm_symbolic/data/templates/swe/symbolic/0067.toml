@@ -1,10 +1,44 @@
-question = "Johns bil går sönder. Bilen väger 1200 kilogram och han har bagage i den som väger 250 kilogram. Han har också sina två unga barn som väger 75 kilogram var i den. Om kraften för att flytta bilen är 1% av vikten, hur mycket kraft behöver han för att skjuta bilen?"
-answer = "Hans två barn väger 75*2=<<75*2=150>>150 kilogram\nSå den totala vikten av bilen och allt är 1200+250+150=<<1200+250+150=1600>>1600 kilogram\nSå han behöver generera 1600*0.01=<<1600*0.01=16>>16 kilogram\n#### 16\n"
-id_orig = 1275
-id_shuffled = 67
-question_annotated = "{name,John}s {vehicle,bil} går sönder. {vehicle,bilen} väger {weight_vehicle,1200} {unit,kilogram} och han har {item,bagage} i den som väger {weight_item,250} {unit,kilogram}. Han har också sina {num_passengers_txt,två} unga {passenger_type,barn} som väger {weight_passenger,75} {unit,kilogram} var i den. Om kraften för att flytta {vehicle,bilen} är {force_percent,1}% av vikten, hur mycket kraft behöver han för att skjuta {vehicle,bilen}?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample(['bil', 'van', 'truck', 'SUV'])\n- item = sample(['bagage', 'matvaror', 'utrustning', 'möbler'])\n- passenger_type = sample(['barn', 'vänner', 'kollegor', 'lagkamrater'])\n- unit = sample(['kilogram', 'kg'])\n- $weight_vehicle = range(1000, 3000, 50)\n- $weight_item = range(100, 500, 25)\n- $weight_passenger = range(50, 100, 5)\n- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)\n- $force_percent = range(1, 6)\n\n#conditions:\n- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n\n#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)\n"
-answer_annotated = "Hans {num_passengers_txt} {passenger_type} väger {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}\nSå den totala vikten av {vehicle} och allt är {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}\nSå han behöver generera {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}\n#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Erik får motorstopp med sin bil. Bilen väger 1200 kg och han har bagage i den som väger 250 kg. Han har också sina två barn i den, och de väger 75 kg var. Om kraften som krävs för att flytta bilen är 1% av vikten, hur stor kraft behöver han för att skjuta bilen?"
 
-ignore = true
+answer = """
+Hans två barn väger 75*2 = <<75*2=150>>150 kg.
+Alltså är den sammanlagda vikten av bilen och allt i den 1200+250+150 = <<1200+250+150=1600>>1600 kg.
+Alltså behöver han 1600*0,01 = <<1600*0,01=16>>16 kg.
+#### 16
+"""
+
+id_orig = 1275
+
+id_shuffled = 67
+
+question_annotated = """
+{name,Erik} får motorstopp med sin {vehicle,bil}. {vehicle_definite,Bilen} väger {weight_vehicle,1200} {unit,kg} och han har {item,bagage} i den som väger {weight_item,250} {unit,kg}. Han har också sina {num_passengers_txt,två} {passenger_type,barn} i den, och de väger {weight_passenger,75} {unit,kg} var. Om kraften som krävs för att flytta {vehicle_definite,bilen} är {force_percent,1}% av vikten, hur stor kraft behöver han för att skjuta {vehicle_definite,bilen}?
+
+#init:
+- name = sample(names_male)
+- vehicle, vehicle_definite = sample([("bil", "bilen"), ("skåpbil", "skåpbilen"), ("lastbil", "lastbilen"), ("husbil", "husbilen")])
+- item = sample(["bagage", "matvaror", "utrustning", "möbler"])
+- passenger_type = sample(["barn", "vänner", "kollegor", "syskon"])
+- unit = sample(["kg", "kilogram"])
+- $weight_vehicle = range(1000, 3000, 50)
+- $weight_item = range(100, 500, 25)
+- $weight_passenger = range(50, 100, 5)
+- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- $force_percent = range(1, 6)
+
+#conditions:
+- is_int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+
+#answer: int((weight_vehicle + weight_item + num_passengers_val * weight_passenger) * force_percent / 100)
+"""
+
+answer_annotated = """
+Hans {num_passengers_txt} {passenger_type} väger {weight_passenger}*{num_passengers_val} = <<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}.
+Alltså är den sammanlagda vikten av {vehicle_definite} och allt i den {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val} = <<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}.
+Alltså behöver han {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100} = <<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}.
+#### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

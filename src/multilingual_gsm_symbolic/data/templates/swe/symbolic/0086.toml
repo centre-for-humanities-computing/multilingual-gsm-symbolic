@@ -1,10 +1,53 @@
-question = "Alison qualified for a spot on the running team, so she went shopping for some athletic gear. She bought a tank top for $10, a pair of running shorts for $5 more than the tank top cost, and a pair of tennis shoes that were originally $48 but were on sale for half price. She had a coupon for $2 off the package of $8 athletic socks that she also bought. How much did she spend on athletic gear?"
-answer = "The shorts were $5 more than the tank top, so they cost $5 + $10 = $<<5+10=15>>15.\nHer tennis shoes were half the original $48 price, so they cost $48*1/2=$24.\nWith her coupon, the socks were $8 - $2 = $<<8-2=6>>6.\nThe tank top, shorts, tennis shoes, and socks together cost $10 + $15 + $24 + $6 = $<<10+15+24+6=55>>55.\n#### 55\n"
-id_orig = 1053
-id_shuffled = 86
-question_annotated = "{name,Alison} qualified for a spot on the {sport,running} team, so she went shopping for some athletic gear. She bought a {item1,tank top} for {cur,$}{p1,10}, a pair of {sport, running} {item2,shorts} for {cur,$}{p2,5} more than the {item1, tank top} cost, and a pair of {item3,tennis shoes} that were originally {cur,$}{p3,48} but were on sale for {frac_txt,half} price. She had a coupon for {cur,$}{d,2} off the package of {cur,$}{p4,8} athletic {item4,socks} that she also bought. How much did she spend on athletic gear?\n\n#init:\n- name = sample(names_female)\n- sport = sample([\"swimming\", \"cycling\", \"basketball\", \"soccer\", \"volleyball\"])\n- item1 = sample([\"t-shirt\", \"jersey\", \"sports bra\"])\n- item2 = sample([\"shorts\", \"leggings\", \"sweatpants\"])\n- item3 = sample([\"sneakers\", \"cleats\", \"athletic shoes\"])\n- item4 = sample([\"socks\", \"headbands\", \"wristbands\"])\n- cur = sample(currencies_sym)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(8, 25)\n- $p2 = range(3, 15)\n- $p3 = range(30, 80, 2)\n- $p4 = range(5, 15)\n- $d = range(1, 5)\n\n#conditions:\n- is_int(p3*frac_val)\n- p3 % 2 == 0\n- p4 > d\n\n#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)\n"
-answer_annotated = "The {item2} were {cur}{p2} more than the {item1}, so they cost {cur}{p2} + {cur}{p1} = {cur}<<{p2}+{p1}={p1+p2}>>{p1+p2}.\nHer {item3} were {frac_txt} the original {cur}{p3} price, so they cost {cur}{p3}*{frac_val}={cur}{p3*frac_val}.\nWith her coupon, the {item4} were {cur}{p4} - {cur}{d} = {cur}<<{p4}-{d}={p4-d}>>{p4-d}.\nThe {item1}, {item2}, {item3}, and {item4} together cost {cur}{p1} + {cur}{p1+p2} + {cur}{p3*frac_val} + {cur}{p4-d} = {cur}<<{p1}+{p1+p2}+{p3*frac_val}+{p4-d}={p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}>>{p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}.\n#### {p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Alma kvalificerade sig till en plats i simlaget, så hon gick ut och handlade träningskläder. Hon köpte ett linne för 10 kronor, ett par simshorts för 5 kronor mer än linnet kostade och ett par sneakers som ursprungligen kostade 48 kronor men var på rea till hälften av priset. Hon hade en kupong på 2 kronor rabatt på förpackningen med sportstrumpor för 8 kronor, som hon också köpte. Hur mycket handlade hon för?"
 
-ignore = true
+answer = """
+Shortsen kostade 5 kronor mer än linnet, alltså kostade de 5 kronor + 10 kronor = <<5+10=15>>15 kronor.
+Hennes sneakers kostade hälften av det ursprungliga priset på 48 kronor, alltså kostade de 48 kronor*1/2=24 kronor.
+Med kupongen kostade sportstrumporna 8 kronor - 2 kronor = <<8-2=6>>6 kronor.
+Linnet, shortsen, sneakersen och sportstrumporna kostade tillsammans 10 kronor + 15 kronor + 24 kronor + 6 kronor = <<10+15+24+6=55>>55 kronor.
+#### 55
+"""
+
+id_orig = 1053
+
+id_shuffled = 86
+
+question_annotated = """
+{name,Alma} kvalificerade sig till en plats i {sport,sim}laget, så hon gick ut och handlade träningskläder. Hon köpte {item1_article,ett} {item1,linne} för {p1,10} {cur,kronor}, ett par {sport,sim}{item2,shorts} för {p2,5} {cur,kronor} mer än {item1_definite,linnet} kostade och ett par {item3,sneakers} som ursprungligen kostade {p3,48} {cur,kronor} men var på rea till {frac_txt,hälften} av priset. Hon hade en kupong på {d,2} {d_cur,kronor} rabatt på förpackningen med {item4,sportstrumpor} för {p4,8} {cur,kronor}, som hon också köpte. Hur mycket handlade hon för?
+
+#init:
+- name = sample(names_female)
+- sport = sample(["sim", "cykel", "basket", "fotbolls", "handbolls"])
+- item1_article, item1, item1_definite = sample([("ett", "linne", "linnet"), ("en", "t-shirt", "t-shirten"), ("en", "tröja", "tröjan"), ("en", "sport-bh", "sport-bh:n")])
+- item2, item2_definite = sample([("shorts", "shortsen"), ("tights", "tightsen"), ("mjukisbyxor", "mjukisbyxorna")])
+- item3, item3_definite = sample([("sneakers", "sneakersen"), ("tennisskor", "tennisskorna"), ("träningsskor", "träningsskorna")])
+- item4, item4_definite = sample([("sportstrumpor", "sportstrumporna"), ("sportsockor", "sportsockorna"), ("svettband", "svettbanden"), ("pannband", "pannbanden")])
+- cur = sample(currencies_sym)
+- cur_sing = "krona" if cur == "kronor" else cur
+- d_cur = plural(d, cur_sing, cur)
+- frac_txt, frac_val = sample(fraction_alnum)
+- $p1 = range(8, 25)
+- $p2 = range(3, 15)
+- $p3 = range(30, 80, 2)
+- $p4 = range(5, 15)
+- $d = range(1, 5)
+
+#conditions:
+- is_int(p3*frac_val)
+- p3 % 2 == 0
+- p4 > d
+
+#answer: p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)
+"""
+
+answer_annotated = """
+{item2_definite} kostade {p2} {cur} mer än {item1_definite}, alltså kostade de {p2} {cur} + {p1} {cur} = <<{p2}+{p1}={p1+p2}>>{p1+p2} {cur}.
+Hennes {item3} kostade {frac_txt} av det ursprungliga priset på {p3} {cur}, alltså kostade de {p3} {cur}*{frac_val}={p3*frac_val} {cur}.
+Med kupongen kostade {item4_definite} {p4} {cur} - {d} {plural(d, cur_sing, cur)} = <<{p4}-{d}={p4-d}>>{p4-d} {plural(p4-d, cur_sing, cur)}.
+{item1_definite}, {item2_definite}, {item3_definite} och {item4_definite} kostade tillsammans {p1} {cur} + {p1+p2} {cur} + {p3*frac_val} {cur} + {p4-d} {plural(p4-d, cur_sing, cur)} = <<{p1}+{p1+p2}+{p3*frac_val}+{p4-d}={p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}>>{p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)} {cur}.
+#### {p1 + (p1 + p2) + (p3 * frac_val) + (p4 - d)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

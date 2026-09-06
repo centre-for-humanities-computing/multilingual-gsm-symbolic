@@ -1,10 +1,44 @@
-question = "Raphael gick och köpte några skolmaterial. Han köpte 4 pennor som kostade $1.5 styck, 2 anteckningsböcker som kostade $4 styck, och en rulle kopieringspapper som kostade $20. Hur mycket spenderade Raphael på allt?"
-answer = "Raphael spenderade 4*$1.5 = $<<4*1.5=6>>6 för pennor.\nHan spenderade också 2*$4 = $<<2*4=8>>8 för anteckningsböcker.\nDärför spenderade Raphael totalt $6 + $8 + $20 = $<<6+8+20=34>>34 på skolmaterialen.\n#### 34\n"
-id_orig = 158
-id_shuffled = 18
-question_annotated = "{name,Raphael} gick och köpte några skolmaterial. Han köpte {n1,4} {obj1,pennor} som kostade {cur,$}{c1,1.5} styck, {n2,2} {obj2,anteckningsböcker} som kostade {cur,$}{c2,4} styck, och en rulle kopieringspapper som kostade {cur,$}{c3,20}. Hur mycket spenderade {name,Raphael} på allt?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"anteckningsböcker\", \"pennor\", \"radergummin\", \"kritor\", \"färgkritor\", \"markörer\", \"linjaler\", \"mappor\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)\n"
-answer_annotated = "{name} spenderade {n1}*{cur}{c1} = {cur}<<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} för {obj1}.\nHan spenderade också {n2}*{cur}{c2} = {cur}<<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} för {obj2}.\nDärför spenderade {name} totalt {cur}{int(n1*c1)} + {cur}{int(n2*c2)} + {cur}{c3} = {cur}<<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} på skolmaterialen.\n#### {int(n1*c1+n2*c2+c3)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Rasmus gick för att köpa skolmaterial. Han köpte 4 kulspetspennor som kostade 1,5 kronor styck, 2 anteckningsböcker som kostade 4 kronor styck och ett paket papper som kostade 20 kronor. Hur mycket spenderade Rasmus totalt?"
 
-ignore = true
+answer = """
+Rasmus spenderade 4*1,5 kronor = <<4*1,5=6>>6 kronor på kulspetspennorna.
+Han spenderade också 2*4 kronor = <<2*4=8>>8 kronor på anteckningsböckerna.
+Därför spenderade Rasmus totalt 6 kronor + 8 kronor + 20 kronor = <<6+8+20=34>>34 kronor på skolmaterial.
+#### 34
+"""
+
+id_orig = 158
+
+id_shuffled = 18
+
+question_annotated = """
+{name,Rasmus} gick för att köpa skolmaterial. Han köpte {n1,4} {obj1,kulspetspennor} som kostade {c1_txt,1.5} {cur,kronor} styck, {n2,2} {obj2,anteckningsböcker} som kostade {c2_txt,4} {cur,kronor} styck och ett paket papper som kostade {c3,20} {cur,kronor}. Hur mycket spenderade {name,Rasmus} totalt?
+
+#init:
+- name = sample(names_male)
+- obj1, obj2 = sample(["anteckningsböcker", "blyertspennor", "färgpennor", "tuschpennor", "linjaler", "mappar"], 2)
+- cur = sample(currencies_sym)
+- $n1 = range(4, 25, 2)
+- $c1 = arange(1.5, 11.5, 0.25)
+- $n2 = range(2, 15, 2)
+- $c2 = arange(4, 19.5, 0.25)
+- $c3 = range(10, 25)
+- c1_txt = int(c1) if is_int(c1) else c1
+- c2_txt = int(c2) if is_int(c2) else c2
+
+#conditions:
+- is_int(n1 * c1)
+- is_int(n2 * c2)
+#answer: int(n1*c1 + n2*c2 + c3)
+"""
+
+answer_annotated = """
+{name} spenderade {n1}*{c1} {cur} = <<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} {cur} på {obj1}na.
+Han spenderade också {n2}*{c2} {cur} = <<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} {cur} på {obj2}na.
+Därför spenderade {name} totalt {int(n1*c1)} {cur} + {int(n2*c2)} {cur} + {c3} {cur} = <<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} {cur} på skolmaterial.
+#### {int(n1*c1+n2*c2+c3)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

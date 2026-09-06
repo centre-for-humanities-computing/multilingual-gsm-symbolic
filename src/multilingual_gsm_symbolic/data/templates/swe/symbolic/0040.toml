@@ -1,10 +1,58 @@
-question = "{name,Sally} åkte till havsstrand för semester. Hennes föräldrar gav henne ${total,15} att köpa vad hon ville. På souvenirbutiken var taffy på rea för \"Köp {n1,500} gram för ${p1,3}, få {n2,500} gram för {discount,1/2} pris.\" Hon skrapade upp {n12,2000} gram. Hon köpte också en blandad påse med havsskal för ${p2,1.5} och {n3,4} magneter som kostade ${p3,0.25} styck. Hur mycket pengar har {name,Sally} kvar?"
-answer = "Taffyn kostar $3 för 500 gram och hon får 500 gram för 1/2 pris. Så 1/2 av priset för 500 gram är 500/500*1/2*$3 = $1.5.\nTillsammans kostar det $1.5 + $3 = $4.5.\nDe återstående 1000 grammen har ingen rabatt och kostar $6, så totalpriset är $3 + $1.5 + $6 = $<<3 + 1.5 + 6 = 10.5>>10.5\n4 magneter för $0.25 styck är 4*$0.25=$<<4*0.25=1>>1\nNär du lägger ihop alla hennes inköp, $10.5 + $1.5 + $1 = $<<10.5+1.5+1=13>>13\nHon hade $15 och spenderade $13, så hon har $15 - $13 = $<<15-13=2>>2 kvar\n#### 2\n"
-id_orig = 410
-id_shuffled = 40
-question_annotated = "{name,Sally} åkte till havsstrand för semester. Hennes föräldrar gav henne ${total,15} att köpa vad hon ville. På souvenirbutiken var taffy på rea för \"Köp {n1,500} gram för ${p1,3}, få {n2,500} gram för {discount,1/2} pris.\" Hon skrapade upp {n12,2000} gram. Hon köpte också en blandad påse med havsskal för ${p2,1.5} och {n3,4} magneter som kostade ${p3,0.25} styck. Hur mycket pengar har {name,Sally} kvar?\n\n#init:\n- name = sample(names_female)\n- $total = range(10, 40, 5)\n- $n1 = range(500, 3000, 500)\n- $n2 = range(500, 3000, 500)\n- $n12 = range(1000, 6000, 500)\n- $n3 = range(4, 12, 4)\n- $p1 = range(1, 10)\n- $p2 = arange(1, 3.5, 0.5)\n- $p3 = arange(0.25, 1.5, 0.25)\n- $discount = sample(fractions)\n\n#conditions:\n- n2 <= n1\n- n12 - n1 - n2 > 0\n- n12 - n1 - n2 < n1\n- is_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)\n- p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3 < total\n\n#answer: total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)\n"
-answer_annotated = "Taffyn kostar ${p1} för {n1} gram och hon får {n2} gram för {discount} pris. Så {discount} av priset för {n2} gram är {n2}/{n1}*{discount}*${p1} = ${(n2/n1)*discount*p1}.\nTillsammans kostar det ${(n2/n1)*discount*p1} + ${p1} = ${(n2/n1)*discount*p1 + p1}.\nDe återstående {n12 - n1 - n2} grammen har ingen rabatt och kostar ${(n12 - n1 - n2)/n1*p1}, så totalpriset är ${p1} + ${n2/n1*discount*p1} + ${(n12 - n1 - n2)/n1*p1} = $<<{p1} + {n2/n1*discount*p1} + {(n12 - n1 - n2)/n1*p1} = {p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}>>{p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}\n{n3} magneter för ${p3} styck är {n3}*${p3}=$<<{n3}*{p3}={n3*p3}>>{n3*p3}\nNär du lägger ihop alla hennes inköp, ${p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1} + ${p2} + ${n3*p3} = $<<{p1+(n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1}+{p2}+{n3*p3}={int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}>>{int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}\nHon hade ${total} och spenderade ${int((p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)+p2+n3*p3)}, så hon har ${total} - ${int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} = $<<{total}-{int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kvar\n#### {total-int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Frida åkte till kusten på semester. Hennes föräldrar gav henne 75 kronor att köpa vad hon ville för. I souvenirbutiken såldes kola med erbjudandet \"Köp 500 gram för 20 kronor, få nästa 500 gram till 1/2 av priset.\" Hon tog 1100 gram. Hon köpte också en blandad påse med snäckskal för 17 kronor och 4 magneter som kostade 2 kronor styck. Hur mycket pengar har Frida kvar?"
 
-ignore = true
+answer = """
+Kolan kostar 20 kronor för 500 gram, och nästa 500 gram kostar 1/2 av priset. De grammen för halva priset kostar alltså 1/2*20 kronor = 10 kronor.
+Tillsammans kostar de första 1000 grammen 20 kronor + 10 kronor = 30 kronor.
+De sista 100 grammen har inget prisavdrag och kostar alltså (20/500)*100 = 4 kronor, så hela kolan kostar 20 kronor + 10 kronor + 4 kronor = <<20 + 10 + 4 = 34>>34 kronor.
+4 magneter för 2 kronor styck kostar 4*2 = <<4*2=8>>8 kronor.
+Sammanlagt handlar hon för 34 kronor + 17 kronor + 8 kronor = <<34+17+8=59>>59 kronor.
+Hon hade 75 kronor och handlade för 59 kronor, så hon har 75 kronor - 59 kronor = <<75-59=16>>16 kronor kvar.
+#### 16
+"""
+
+id_orig = 410
+
+id_shuffled = 40
+
+question_annotated = """
+{name,Frida} åkte till kusten på semester. Hennes föräldrar gav henne {total,75} kronor att köpa vad hon ville för. I souvenirbutiken såldes kola med erbjudandet "Köp {n1,500} gram för {p1,20} kronor, få nästa {n2,500} gram till {discount,1/2} av priset." Hon tog {n12,1100} gram. Hon köpte också en blandad påse med snäckskal för {p2,17} kronor och {n3,4} magneter som kostade {p3,2} kronor styck. Hur mycket pengar har {name,Frida} kvar?
+
+#init:
+- name = sample(names_female)
+- $total = range(30, 100, 15)
+- $n1 = range(200, 651, 150)
+- $n2 = range(200, 651, 150)
+- $n12 = range(650, 1301, 150)
+- $n3 = range(4, 15, 2)
+- $p1 = range(20, 55, 5)
+- $p2 = range(17, 40, 4)
+- $p3 = range(2, 35, 3)
+- $discount = sample(fractions)
+- discount_txt = "halva priset" if discount == 1/2 else "det nedsatta priset"
+
+#conditions:
+- n2 == n1
+- n12 - n1 - n2 > 0
+- n12 - n1 - n2 < n1
+- is_int((n2/n1)*discount*p1)
+- is_int((n12 - n1 - n2)/n1*p1)
+- is_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3)
+- p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1 + p2 + n3*p3 < total
+- total - ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3) > 0
+
+#answer: total-ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)
+"""
+
+answer_annotated = """
+Kolan kostar {p1} kronor för {n1} gram, och nästa {n2} gram kostar {discount} av priset. De grammen för {discount_txt} kostar alltså {discount}*{p1} kronor = {ensure_int((n2/n1)*discount*p1)} kronor.
+Tillsammans kostar de första {n1+n2} grammen {p1} kronor + {ensure_int((n2/n1)*discount*p1)} kronor = {ensure_int(p1 + (n2/n1)*discount*p1)} kronor.
+De sista {n12 - n1 - n2} grammen har inget prisavdrag och kostar alltså ({p1}/{n1})*{n12 - n1 - n2} = {ensure_int((n12 - n1 - n2)/n1*p1)} kronor, så hela kolan kostar {p1} kronor + {ensure_int((n2/n1)*discount*p1)} kronor + {ensure_int((n12 - n1 - n2)/n1*p1)} kronor = <<{p1} + {ensure_int((n2/n1)*discount*p1)} + {ensure_int((n12 - n1 - n2)/n1*p1)} = {ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)}>>{ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)} kronor.
+{n3} magneter för {p3} kronor styck kostar {n3}*{p3} = <<{n3}*{p3}={n3*p3}>>{n3*p3} kronor.
+Sammanlagt handlar hon för {ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)} kronor + {p2} kronor + {n3*p3} kronor = <<{ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1)}+{p2}+{n3*p3}={ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kronor.
+Hon hade {total} kronor och handlade för {ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kronor, så hon har {total} kronor - {ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} kronor = <<{total}-{ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}={total-ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}>>{total-ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)} {plural(total-ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3), "krona", "kronor")} kvar.
+#### {total-ensure_int(p1 + (n2/n1)*discount*p1 + (n12 - n1 - n2)/n1*p1+p2+n3*p3)}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

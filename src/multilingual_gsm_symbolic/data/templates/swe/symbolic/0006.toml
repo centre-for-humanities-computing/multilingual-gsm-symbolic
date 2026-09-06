@@ -1,10 +1,40 @@
-question = "{name,John} har {x,10} {area,hektar} av {fruit,ananas}fält. Det finns {k,100} {fruit,ananas}ar per {area,hektar}. {name,John} kan skörda sina {fruit,ananas}ar varje {n,3} månad. Hur många {fruit,ananas}ar kan {name,John} skörda inom ett år?"
-answer = "{name} har {k}*{x}= <<{k}*{x}={k*x}>>{k*x} {fruit}ar på sitt fält.\n{name} kan skörda sina {fruit}ar 12 / {n} = <<12/{n}={12//n}>>{12//n} gånger per år\nDärför kan {name} skörda {k*x}*{12//n} = <<{k*x}*{12//n}={k*x*12//n}>>{k*x*12//n} {fruit}ar per år.\n#### {k*x*12//n}\n"
-id_orig = 145
-id_shuffled = 6
-question_annotated = "{name,John} har {x,10} {area,hektar} av {fruit,ananas}fält. Det finns {k,100} {fruit,ananas}ar per {area,hektar}. {name,John} kan skörda sina {fruit,ananas}ar varje {n,3} månad. Hur många {fruit,ananas}ar kan {name,John} skörda inom ett år?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- area = sample(['hectare', 'square meter'])\n- $x = range(5, 100, 5)\n- $k = range(2, 101)\n- $n = sample([1, 2, 3, 4, 6, 12])\n\n#answer: x * k * (12//n)\n"
-answer_annotated = "{name} har {k}*{x}= <<{k}*{x}={k*x}>>{k*x} {fruit}ar på sitt fält.\n{name} kan skörda sina {fruit}ar 12 / {n} = <<12/{n}={12//n}>>{12//n} gånger per år\nDärför kan {name} skörda {k*x}*{12//n} = <<{k*x}*{12//n}={k*x*12//n}>>{k*x*12//n} {fruit}ar per år.\n#### {k*x*12//n}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Martin har en ananasplantage på 10 hektar. Det finns 100 ananas per hektar. Martin kan skörda sin ananas var 3:e månad. Hur många ananas kan Martin skörda under ett år?"
 
-ignore = true
+answer = """
+Martin har 100*10= <<100*10=1000>>1000 ananas på sin plantage.
+Martin kan skörda sin ananas 12 / 3 = <<12/3=4>>4 gånger om året
+Därför kan Martin skörda 1000*4 = <<1000*4=4000>>4000 ananas om året.
+#### 4000
+"""
+
+id_orig = 145
+
+id_shuffled = 6
+
+question_annotated = """
+{name,Martin} har en {fruit_stem,ananas}plantage på {x,10} {area,hektar}. Det finns {k,100} {fruit_plural,ananas} per {area,hektar}. {name, Martin} kan skörda {poss,sin} {fruit_plural,ananas} var {n,3}:{n_suffix,e} månad. Hur många {fruit_plural,ananas} kan {name,Martin} skörda under ett år?
+
+#init:
+- name = sample(names_male)
+- fruit, fruit_plural = sample(fruits)
+- fruit_stem = "äppel" if fruit == "äpple" else ("vindruvs" if fruit == "vindruva" else ("jordgubbs" if fruit == "jordgubbe" else ("blåbärs" if fruit == "blåbär" else fruit)))
+- poss = "sin" if fruit == fruit_plural else "sina"
+- area = sample(['hektar', 'kvadratmeter'])
+- $x = range(5, 100, 5)
+- $k = range(2, 101)
+- $n = sample([1, 2, 3, 4, 6, 12])
+- n_suffix = "a" if n < 3 else "e"
+
+#answer: x * k * (12//n)
+"""
+
+answer_annotated = """
+{name} har {k}*{x}= <<{k}*{x}={k*x}>>{k*x} {fruit_plural} på sin plantage.
+{name} kan skörda {poss} {fruit_plural} 12 / {n} = <<12/{n}={12//n}>>{12//n} gånger om året
+Därför kan {name} skörda {k*x}*{12//n} = <<{k*x}*{12//n}={k*x*12//n}>>{k*x*12//n} {fruit_plural} om året.
+#### {k*x*12//n}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

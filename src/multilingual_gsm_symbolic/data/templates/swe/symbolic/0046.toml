@@ -1,10 +1,40 @@
-question = "{school,Apple High School} håller sin avslutningsceremoni i deras {venue,Konstcentrum} i år som har plats för {total,6000} personer. Efter att ha tagit hänsyn till {graduates,950} platser för studenter och {faculty,300} platser för lärare, hur många biljetter skulle varje student få att ge till sina vänner och familj om biljetterna delas lika?"
-answer = "Lägg ihop student- och lärarplatser. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} platser för lärare och studenter\nSubtrahera platser för lärare och studenter från totalt tillåtna platser. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} återstående platser.\nDela återstående platser med antalet studenter. {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} biljetter\n#### {(total-(graduates+faculty))//graduates}\n"
-id_orig = 1031
-id_shuffled = 46
-question_annotated = "{school,Apple High School} håller sin avslutningsceremoni i deras {venue,Konstcentrum} i år som har plats för {total,6000} personer. Efter att ha tagit hänsyn till {graduates,950} platser för studenter och {faculty,300} platser för lärare, hur många biljetter skulle varje student få att ge till sina vänner och familj om biljetterna delas lika?\n\n#init:\n- school = sample([\"Oakwood High School\", \"Riverside Academy\", \"Sunnyside High\", \"Greenville High School\"])\n- venue = sample([\"Auditorium\", \"Gymnasium\", \"Sportarena\", \"Mässcentrum\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates\n"
-answer_annotated = "Lägg ihop student- och lärarplatser. {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} platser för lärare och studenter\nSubtrahera platser för lärare och studenter från totalt tillåtna platser. {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} återstående platser.\nDela återstående platser med antalet studenter. {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} biljetter\n#### {(total-(graduates+faculty))//graduates}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Katedralskolan håller studentexamen i aulan i år, som har plats för 1900 personer. Efter att 450 platser har reserverats för studenterna och 100 platser för lärarna, hur många biljetter kan varje student ge till sina vänner och sin familj om biljetterna fördelas lika?"
 
-ignore = true
+answer = """
+Lägg ihop platserna för studenter och lärare: 450 + 100 = <<450+100=550>>550 platser.
+Dra bort dem från det totala antalet platser: 1900 - 550 = <<1900-550=1350>>1350 platser återstår.
+Dela de återstående platserna med antalet studenter: 1350/450 = <<1350/450=3>>3 biljetter.
+#### 3
+"""
+
+id_orig = 1031
+
+id_shuffled = 46
+
+question_annotated = """
+{school,Katedralskolan} håller studentexamen i {venue,aulan} i år, som har plats för {total,1900} personer. Efter att {graduates,450} platser har reserverats för studenterna och {faculty,100} platser för lärarna, hur många biljetter kan varje student ge till sina vänner och sin familj om biljetterna fördelas lika?
+
+#init:
+- school = sample(["Katedralskolan", "Norra Real", "Hvitfeldtska gymnasiet", "Fredrikshovs gymnasium"])
+- venue = sample(["aulan", "idrottshallen", "konserthuset", "festsalen"])
+- $total = range(1500, 10000, 100)
+- $graduates = range(400, 1500, 50)
+- $faculty = range(100, 1500, 50)
+
+#conditions:
+- total > graduates + faculty
+- is_int((total - graduates - faculty) / graduates)
+
+#answer: (total - graduates - faculty) // graduates
+"""
+
+answer_annotated = """
+Lägg ihop platserna för studenter och lärare: {graduates} + {faculty} = <<{graduates}+{faculty}={graduates+faculty}>>{graduates+faculty} platser.
+Dra bort dem från det totala antalet platser: {total} - {graduates+faculty} = <<{total}-{graduates+faculty}={total-(graduates+faculty)}>>{total-(graduates+faculty)} platser återstår.
+Dela de återstående platserna med antalet studenter: {total-(graduates+faculty)}/{graduates} = <<{total-(graduates+faculty)}/{graduates}={(total-(graduates+faculty))//graduates}>>{(total-(graduates+faculty))//graduates} biljetter.
+#### {(total-(graduates+faculty))//graduates}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

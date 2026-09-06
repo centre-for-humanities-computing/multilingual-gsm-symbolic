@@ -1,10 +1,48 @@
-question = "När vattnet är kallt simmar Ray en kilometer på 16 minuter. När vattnet är varmt simmar Ray en kilometer på 2 minuter mer än dubbelt så lång. Hur mycket längre tar det för Ray att simma 3 kilometer på en varm dag än en kall dag?"
-answer = "Kallt vatten kilometer = <<16=16>>16 minuter\nVarmt vatten kilometer = 2+2*16=34 minuter\n3 kilometer i kallt vatten: 3(16)=<<3*16=48>>48 minuter\n3 kilometer i varmt vatten: 3(34)=<<3*34=102>>102 minuter\nRay tar 102-48=<<102-48=54>>54 minuter längre\n#### 54\n"
-id_orig = 554
-id_shuffled = 93
-question_annotated = "När vattnet är kallt simmar {name,Ray} en {unit,kilometer} på {t1,16} minuter. När vattnet är varmt simmar {name,Ray} en {unit,kilometer} på {n,2} minuter mer än {mult_txt,dubbelt} så lång. Hur mycket längre tar det för {name,Ray} att simma {d,3} {unit,kilometer} på en varm dag än en kall dag?\n\n#init:\n- name = sample(names)\n- unit = sample(['kilometer'])\n- $t1 = range(10, 50)\n- $n = range(1, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $d = range(2, 10)\n\n#conditions:\n- t1 < 60\n- n + mult_val * t1 < 60\n- d * (n + mult_val * t1) - d * t1 > 0\n\n#answer: d * (n + mult_val * t1) - d * t1\n"
-answer_annotated = "Kallt vatten {unit} = <<{t1}={t1}>>{t1} minuter\nVarmt vatten {unit} = {n}+{mult_val}*{t1}={n + mult_val * t1} minuter\n{d} {unit} i kallt vatten: {d}({t1})=<<{d}*{t1}={d*t1}>>{d*t1} minuter\n{d} {unit} i varmt vatten: {d}({n + mult_val * t1})=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minuter\n{name} tar {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} minuter längre\n#### {d * (n + mult_val * t1) - d * t1}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "När vattnet är kallt simmar Ester en km på 16 minuter. När vattnet är varmt tar det 2 minuter längre än den dubbla tiden för Ester att simma en km. Hur mycket längre tid tar det för Ester att simma 3 km en varm dag än en kall dag?"
 
-ignore = true
+answer = """
+Kallt vatten, en km: 16 minuter
+Varmt vatten, en km: 2+2*16=34 minuter
+3 km i kallt vatten: 3*16=<<3*16=48>>48 minuter
+3 km i varmt vatten: 3*34=<<3*34=102>>102 minuter
+För Ester tar det 102-48=<<102-48=54>>54 minuter längre
+#### 54
+"""
+
+id_orig = 554
+
+id_shuffled = 93
+
+question_annotated = """
+När vattnet är kallt simmar {name,Ester} en {unit,km} på {t1,16} minuter. När vattnet är varmt tar det {n,2} {n_word,minuter} längre än den {mult_multiple,dubbla} tiden för {name,Ester} att simma en {unit,km}. Hur mycket längre tid tar det för {name,Ester} att simma {d,3} {unit,km} en varm dag än en kall dag?
+
+#init:
+- name = sample(names)
+- unit = sample(["km", "kilometer"])
+- $t1 = range(10, 50)
+- $n = range(1, 10)
+- n_word = plural(n, "minut", "minuter")
+- mult_txt, mult_val = sample(multi_times)
+- mult_multiple = "dubbla" if mult_val == 2 else ("tredubbla" if mult_val == 3 else ("fyrdubbla" if mult_val == 4 else "femdubbla"))
+- $d = range(2, 10)
+
+#conditions:
+- t1 < 60
+- n + mult_val * t1 < 60
+- d * (n + mult_val * t1) - d * t1 > 0
+
+#answer: d * (n + mult_val * t1) - d * t1
+"""
+
+answer_annotated = """
+Kallt vatten, en {unit}: {t1} minuter
+Varmt vatten, en {unit}: {n}+{mult_val}*{t1}={n + mult_val * t1} minuter
+{d} {unit} i kallt vatten: {d}*{t1}=<<{d}*{t1}={d*t1}>>{d*t1} minuter
+{d} {unit} i varmt vatten: {d}*{n + mult_val * t1}=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} minuter
+För {name} tar det {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} minuter längre
+#### {d * (n + mult_val * t1) - d * t1}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

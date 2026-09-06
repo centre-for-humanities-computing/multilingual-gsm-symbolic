@@ -1,10 +1,45 @@
-question = "At Allan's house, there are twice as many corns as cannolis. He has a total of 40 cannolis in his house. Allan bought 60 more cannolis at the store and 40 fewer corns than the number of cannolis. Find the combined total of the number of corns and cannolis Allan has in the house?"
-answer = "Before buying any corn and cannoli, Allan had twice as many corns as cannolis, which is 40 cannolis*2 corn/cannoli = <<40*2=80>>80 corns\nThe total number of corns and cannolis that Allan had before is 80 corns + 40 cannolis = <<80+40=120>>120 items\nWhen he bought 40 fewer corns than cannolis, he bought 60 corns - 40 corns = <<60-40=20>>20 corns\nIn total, he bought 20 corns + 60 cannolis = <<20+60=80>>80 items\nAfter the purchases, Allan has 120 items + 80 items = <<120+80=200>>200 total corns and cannolis combined.\n#### 200\n"
-id_orig = 406
-id_shuffled = 91
-question_annotated = "At {name,Allan}'s house, there are {mult_txt,twice} as many {food1,corn}s as {food2,cannoli}s. He has a total of {n,40} {food2,cannoli}s in his house. {name,Allan} bought {m,60} more {food2,cannoli}s at the store and {k,40} fewer {food1,corn}s than the number of {food2,cannoli}s. Find the combined total of the number of {food1,corn}s and {food2,cannoli}s {name,Allan} has in the house?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"cannoli\",\"corn\", \"apple\", \"banana\", \"orange\", \"pear\", \"grape\", \"fig\", \"persimmon\", \"plum\", \"kiwi\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)\n"
-answer_annotated = "Before buying any {food1} and {food2}, {name} had {mult_txt} as many {food1}s as {food2}s, which is {n} {food2}s*{mult_val} {food1}/{food2} = <<{n}*{mult_val}={n*mult_val}>>{n*mult_val} {food1}s\nThe total number of {food1}s and {food2}s that {name} had before is {n*mult_val} {food1}s + {n} {food2}s = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} items\nWhen he bought {k} fewer {food1}s than {food2}s, he bought {m} {food1}s - {k} {food1}s = <<{m}-{k}={m-k}>>{m-k} {food1}s\nIn total, he bought {m-k} {food1}s + {m} {food2}s = <<{m-k}+{m}={2*m-k}>>{2*m-k} items\nAfter the purchases, {name} has {n*mult_val+n} items + {2*m-k} items = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} total {food1}s and {food2}s combined.\n#### {n*mult_val+n+2*m-k}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "Hemma hos Assar finns det två gånger så många päron som äpplen. Han har sammanlagt 40 äpplen hemma. Assar köpte 60 fler äpplen i affären och 40 färre päron än antalet äpplen. Hur många päron och äpplen har Assar sammanlagt?"
 
-ignore = true
+answer = """
+Innan han köpte några päron och äpplen hade Assar två gånger så många päron som äpplen, alltså 2*40 = <<2*40=80>>80 päron
+Sammanlagt hade Assar 80 päron + 40 äpplen = <<80+40=120>>120 frukter
+Eftersom han köpte 40 färre päron än äpplen köpte han 60 - 40 = <<60-40=20>>20 päron
+Sammanlagt köpte han 20 päron + 60 äpplen = <<20+60=80>>80 frukter
+Efter inköpen har Assar 120 frukter + 80 frukter = <<120+80=200>>200 päron och äpplen sammanlagt.
+#### 200
+"""
+
+id_orig = 406
+
+id_shuffled = 91
+
+question_annotated = """
+Hemma hos {name,Assar} finns det {mult_txt,två gånger} så många {food1,päron} som {food2,äpplen}. Han har sammanlagt {n,40} {food2,äpplen} hemma. {name,Assar} köpte {m,60} fler {food2,äpplen} i affären och {k,40} färre {food1,päron} än antalet {food2,äpplen}. Hur många {food1,päron} och {food2,äpplen} har {name,Assar} sammanlagt?
+
+#init:
+- name = sample(names_male)
+- food1, food2 = sample(["päron", "äpplen", "apelsiner", "citroner", "fikon", "nektariner", "plommon", "jordgubbar", "kiwifrukter", "blåbär"], 2)
+- mult_txt, mult_val = sample(multi_times)
+- $n = range(20, 100)
+- $m = range(30, 100)
+- $k = range(10, 50)
+
+#conditions:
+- m > k
+- m - k > 1
+
+#answer: mult_val*n + n + m + (m-k)
+"""
+
+answer_annotated = """
+Innan han köpte några {food1} och {food2} hade {name} {mult_txt} så många {food1} som {food2}, alltså {mult_val}*{n} = <<{mult_val}*{n}={n*mult_val}>>{n*mult_val} {food1}
+Sammanlagt hade {name} {n*mult_val} {food1} + {n} {food2} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} frukter
+Eftersom han köpte {k} färre {food1} än {food2} köpte han {m} - {k} = <<{m}-{k}={m-k}>>{m-k} {food1}
+Sammanlagt köpte han {m-k} {food1} + {m} {food2} = <<{m-k}+{m}={2*m-k}>>{2*m-k} frukter
+Efter inköpen har {name} {n*mult_val+n} frukter + {2*m-k} frukter = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} {food1} och {food2} sammanlagt.
+#### {n*mult_val+n+2*m-k}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

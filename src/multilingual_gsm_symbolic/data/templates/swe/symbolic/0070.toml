@@ -1,10 +1,37 @@
-question = "En byggare arbetar 4 veckor varje månad och 6 dagar varje vecka. Om han får betalt $50 varje dag, hur mycket tjänar han om han arbetar i ett år?"
-answer = "Byggaren arbetar 6 dagar varje vecka och 4 veckor varje månad så han arbetar 6 dagar/vecka * 4 veckor/månad = <<6*4=24>>24 dagar/månad\nOm han tjänar $50 varje dag tjänar han då $50/dag * 24 dagar/månad = $<<50*24=1200>>1200/månad\nEtt år är lika med 12 månader så varje år tjänar han $1200/månad * 12 månader/år = $<<1200*12=14400>>14,400\n#### 14400\n"
-id_orig = 401
-id_shuffled = 70
-question_annotated = "En {occupation,bbyggare} arbetar {w,4} veckor varje månad och {d,6} dagar varje vecka. Om han får betalt {cur,$}{p,50} varje dag, hur mycket tjänar han om han arbetar i ett år?\n\n#init:\n- occupation = sample([\"rörläggare\", \"elektriker\", \"målare\", \"snickare\", \"trädgårdsmästare\"])\n- cur = sample(currencies_sym)\n- $w = range(2, 5)\n- $d = range(4, 7)\n- $p = range(40, 200, 5)\n\n\n#answer: w * d * p * 12\n"
-answer_annotated = "{occupation} arbetar {d} dagar varje vecka och {w} veckor varje månad så han arbetar {d} dagar/vecka * {w} veckor/månad = <<{d}*{w}={d*w}>>{d*w} dagar/månad\nOm han tjänar {cur}{p} varje dag tjänar han då {cur}{p}/dag * {d*w} dagar/månad = {cur}<<{p}*{d*w}={p*d*w}>>{p*d*w}/månad\nEtt år är lika med 12 månader så varje år tjänar han {cur}{p*d*w}/månad * 12 månader/år = {cur}<<{p*d*w}*12={p*d*w*12}>>{p*d*w*12}\n#### {p*d*w*12}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "En rörmokare arbetar 4 veckor varje månad och 6 dagar varje vecka. Om han får betalt 50 kronor per dag, hur mycket tjänar han om han arbetar i ett år?"
 
-ignore = true
+answer = """
+Rörmokaren arbetar 6 dagar varje vecka och 4 veckor varje månad, alltså arbetar han 6 dagar/vecka * 4 veckor/månad = <<6*4=24>>24 dagar/månad
+Om han tjänar 50 kronor per dag tjänar han 50 kronor/dag * 24 dagar/månad = <<50*24=1200>>1200 kronor/månad
+Ett år är 12 månader, så varje år tjänar han 1200 kronor/månad * 12 månader/år = <<1200*12=14400>>14 400 kronor
+#### 14400
+"""
+
+id_orig = 401
+
+id_shuffled = 70
+
+question_annotated = """
+En {occupation,rörmokare} arbetar {w,4} veckor varje månad och {d,6} dagar varje vecka. Om han får betalt {p,50} {cur,kronor} per dag, hur mycket tjänar han om han arbetar i ett år?
+
+#init:
+- occupation, occupation_definite = sample([("rörmokare", "rörmokaren"), ("elektriker", "elektrikern"), ("målare", "målaren"), ("snickare", "snickaren"), ("trädgårdsmästare", "trädgårdsmästaren")])
+- cur = sample(currencies_sym)
+- $w = range(2, 5)
+- $d = range(4, 7)
+- $p = range(40, 200, 5)
+
+
+#answer: w * d * p * 12
+"""
+
+answer_annotated = """
+{occupation_definite} arbetar {d} dagar varje vecka och {w} veckor varje månad, alltså arbetar han {d} dagar/vecka * {w} veckor/månad = <<{d}*{w}={d*w}>>{d*w} dagar/månad
+Om han tjänar {p} {cur} per dag tjänar han {p} {cur}/dag * {d*w} dagar/månad = <<{p}*{d*w}={p*d*w}>>{p*d*w} {cur}/månad
+Ett år är 12 månader, så varje år tjänar han {p*d*w} {cur}/månad * 12 månader/år = <<{p*d*w}*12={p*d*w*12}>>{p*d*w*12} {cur}
+#### {p*d*w*12}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"

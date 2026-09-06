@@ -1,10 +1,49 @@
-question = "En städare måste städa en skola med 80 klassrum. De har 5 dagar på sig att få det gjort. Det tar dem 15 minuter per klassrum. Om de arbetar 8 timmar varje dag, vilken procentandel av sin tid, i genomsnitt, spenderar de på att städa klassrum?"
-answer = "De måste städa 16 klassrum per dag eftersom 80 / 5 = <<80/5=16>>16\nDe spenderar 240 minuter på städning per dag eftersom 16*15 = <<16*15=240>>240\nDe spenderar 4 timmar per dag eftersom 240 / 60 = <<240/60=4>>4\nDe spenderar 1/2 av sin tid på att städa klassrum eftersom 4 / 8 = <<4/8=0.5>>0.5\nDe spenderar 50% av sin tid på att städa klassrum eftersom 0.5*100 = <<0.5*100=50>>50\n#### 50\n"
-id_orig = 1239
-id_shuffled = 39
-question_annotated = "En {job,städare} måste städa en {building,skola} med {n,80} {room,klassrum}. De har {d,5} dagar på sig att få det gjort. Det tar dem {t,15} minuter per {room,klassrum}. Om de arbetar {h,8} timmar varje dag, vilken procentandel av sin tid, i genomsnitt, spenderar de på att städa {room,klassrum}?\n\n#init:\n- job = sample([\"janitor\", \"cleaner\", \"maintenance worker\"])\n- building = sample([\"office building\", \"hospital\", \"university\",])\n- room = sample([\"room\", \"floor\"])\n- $n = range(50, 221, 5)\n- $d = range(3, 12)\n- $t = range(10, 46, 5)\n- $h = range(6, 17)\n\n#conditions:\n- divides(n, d)\n- divides(60, t)\n- (n/d) * t < h * 60\n- is_int( 10 * (n/d) * t / (h * 60))\n- is_int(100 * (n/d) * t / (h * 60))\n\n#answer: int(100 * (n/d) * t / (h * 60))\n"
-answer_annotated = "De måste städa {n//d} {room} per dag eftersom {n} / {d} = <<{n}/{d}={n//d}>>{n//d}\nDe spenderar {(n//d)*t} minuter på städning per dag eftersom {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}\nDe spenderar {(n//d)*t/60} timmar per dag eftersom {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}\nDe spenderar {Fraction((n//d)*t/(h*60))} av sin tid på att städa {room} eftersom {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}\nDe spenderar {int(100 * (n/d) * t / (h * 60))}% av sin tid på att städa {room} eftersom {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}\n#### {int(100 * (n/d) * t / (h * 60))}\n"
-creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; validation failed"
-language = "swe"
+question = "En vaktmästare ska städa en skola med 80 klassrum. Vaktmästaren har 5 dagar på sig. Det tar 15 minuter per klassrum. Om vaktmästaren arbetar 8 timmar om dagen, hur många procent av arbetsdagen går i genomsnitt åt till att städa klassrum?"
 
-ignore = true
+answer = """
+Vaktmästaren måste städa 16 klassrum om dagen, eftersom 80/5 = <<80/5=16>>16.
+Vaktmästaren ägnar 240 minuter om dagen åt städning, eftersom 16*15 = <<16*15=240>>240.
+Det blir 4 timmar om dagen, eftersom 240 / 60 = <<240/60=4>>4.
+Det motsvarar 1/2 av arbetsdagen, eftersom 4 / 8 = <<4/8=0,5>>0,5.
+Alltså går 50% av arbetsdagen åt till att städa klassrum, eftersom 0,5*100 = <<0,5*100=50>>50.
+#### 50
+"""
+
+id_orig = 1239
+
+id_shuffled = 39
+
+question_annotated = """
+En {job,vaktmästare} ska städa {building_article,en} {building,skola} med {n,80} {room_plural,klassrum}. {job_definite,vaktmästaren} har {d,5} dagar på sig. Det tar {t,15} minuter per {room,klassrum}. Om {job_definite,vaktmästaren} arbetar {h,8} timmar om dagen, hur många procent av arbetsdagen går i genomsnitt åt till att städa {room_plural,klassrum}?
+
+#init:
+- job, job_definite = sample([("vaktmästare", "vaktmästaren"), ("lokalvårdare", "lokalvårdaren"), ("städare", "städaren")])
+- building_article, building = sample([("en", "skola"), ("en", "kontorsbyggnad"), ("ett", "sjukhus"), ("ett", "universitet")])
+- room, room_plural = sample([("klassrum", "klassrum"), ("rum", "rum"), ("våning", "våningar")])
+- $n = range(50, 221, 5)
+- $d = range(3, 12)
+- $t = range(10, 46, 5)
+- $h = range(6, 17)
+
+#conditions:
+- divides(n, d)
+- divides(60, t)
+- (n/d) * t < h * 60
+- is_int( 10 * (n/d) * t / (h * 60))
+- is_int(100 * (n/d) * t / (h * 60))
+
+#answer: int(100 * (n/d) * t / (h * 60))
+"""
+
+answer_annotated = """
+{job_definite} måste städa {n//d} {room_plural} om dagen, eftersom {n}/{d} = <<{n}/{d}={n//d}>>{n//d}.
+{job_definite} ägnar {(n//d)*t} minuter om dagen åt städning, eftersom {n//d}*{t} = <<{n//d}*{t}={(n//d)*t}>>{(n//d)*t}.
+Det blir {(n//d)*t/60} timmar om dagen, eftersom {(n//d)*t} / 60 = <<{(n//d)*t}/60={(n//d)*t/60}>>{(n//d)*t/60}.
+Det motsvarar {Fraction((n//d)*t/(h*60))} av arbetsdagen, eftersom {(n//d)*t/60} / {h} = <<{(n//d)*t/60}/{h}={((n//d)*t/60)/h}>>{((n//d)*t/60)/h}.
+Alltså går {int(100 * (n/d) * t / (h * 60))}% av arbetsdagen åt till att städa {room_plural}, eftersom {((n/d)*t/60)/h}*100 = <<{((n/d)*t/60)/h}*100={int(100 * (n/d) * t / (h * 60))}>>{int(100 * (n/d) * t / (h * 60))}.
+#### {int(100 * (n/d) * t / (h * 60))}
+"""
+
+creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
+
+language = "swe"
