@@ -1,8 +1,8 @@
-question = "65 ਲੋਕਾਂ ਨੇ ਨੌਕਰੀ ਲਈ ਅਰਜ਼ੀ ਦਿੱਤੀ। 40 ਫੀਸਦੀ ਨੂੰ ਇੰਟਰਵਿਊ ਮਿਲਿਆ। ਕਿੰਨੇ ਲੋਕਾਂ ਦਾ ਇੰਟਰਵਿਊ ਹੋਇਆ?"
-answer = "65 ਦਾ 40 ਫੀਸਦੀ ਕੱਢੋ।\n65 * 40 / 100 = <<65*40/100=26>>26 ਲੋਕਾਂ ਦਾ ਇੰਟਰਵਿਊ ਹੋਇਆ।\n#### 26\n"
-id_orig = 2010
+question = "ਪੇਅਫੋਨ ਤੋਂ ਕਾਲ ਕਰਨ ਲਈ, ਤੁਹਾਨੂੰ ਆਪਣੀ ਹਰੇਕ ਮਿੰਟ ਦੀ ਕਾਲ ਲਈ $0.25 ਦੇਣੇ ਪੈਣਗੇ। 16 ਮਿੰਟਾਂ ਤੋਂ ਬਾਅਦ, ਉਹ ਕੀਮਤ ਪ੍ਰਤੀ ਮਿੰਟ $0.2 ਤੱਕ ਘਟ ਜਾਂਦੀ ਹੈ। 36-ਮਿੰਟ ਦੀ ਕਾਲ ਦੀ ਕੀਮਤ ਕਿੰਨੀ ਹੋਵੇਗੀ?"
+answer = "ਪਹਿਲੇ 16 ਮਿੰਟਾਂ ਦੀ ਕੀਮਤ 16 * 0.25 = $<<16*0.25=4>>4 ਹੋਵੇਗੀ।\nਉਸ ਤੋਂ ਬਾਅਦ, ਕਾਲ ਦੇ 36 - 16 = <<36-16=20>>20 ਮਿੰਟ ਬਾਕੀ ਬਚੇ ਹਨ।\nਅਤੇ ਇਹਨਾਂ 20 ਮਿੰਟਾਂ ਦੀ ਕੀਮਤ 20 * 0.2 = $<<20*0.2=4>>4 ਹੈ।\nਇਸ ਲਈ ਕੁੱਲ ਮਿਲਾ ਕੇ, 36-ਮਿੰਟ ਦੀ ਕਾਲ ਦੀ ਕੀਮਤ 4 + 4 = $8 ਹੋਵੇਗੀ।\n#### 8\n"
+id_orig = 1223
 id_shuffled = 10
-question_annotated = "{n,65} ਲੋਕਾਂ ਨੇ ਨੌਕਰੀ ਲਈ ਅਰਜ਼ੀ ਦਿੱਤੀ। {p,40} ਫੀਸਦੀ ਨੂੰ ਇੰਟਰਵਿਊ ਮਿਲਿਆ। ਕਿੰਨੇ ਲੋਕਾਂ ਦਾ ਇੰਟਰਵਿਊ ਹੋਇਆ?\n\n#init:\n- $n = range(20, 200)\n- $p = range(10, 90)\n\n#conditions:\n- is_int(n * p / 100)\n\n#answer: int(n * p / 100)\n"
-answer_annotated = "{n} ਦਾ {p} ਫੀਸਦੀ ਕੱਢੋ।\n{n} * {p} / 100 = <<{n}*{p}/100={int(n*p/100)}>>{int(n*p/100)} ਲੋਕਾਂ ਦਾ ਇੰਟਰਵਿਊ ਹੋਇਆ।\n#### {int(n*p/100)}\n"
+question_annotated = "{dev,ਪੇਅਫੋਨ} ਤੋਂ ਕਾਲ ਕਰਨ ਲਈ, ਤੁਹਾਨੂੰ ਆਪਣੀ ਹਰੇਕ ਮਿੰਟ ਦੀ ਕਾਲ ਲਈ {currency,$}{frac1,0.25} ਦੇਣੇ ਪੈਣਗੇ। {t,16} ਮਿੰਟਾਂ ਤੋਂ ਬਾਅਦ, ਉਹ ਕੀਮਤ ਪ੍ਰਤੀ ਮਿੰਟ {currency,$}{frac2,0.2} ਤੱਕ ਘਟ ਜਾਂਦੀ ਹੈ। {total,36}-ਮਿੰਟ ਦੀ ਕਾਲ ਦੀ ਕੀਮਤ ਕਿੰਨੀ ਹੋਵੇਗੀ?\n\n#init:\n- dev = sample(['ਫੋਨ ਬੂਥ', 'ਹੋਟਲ ਰੂਮ ਫੋਨ'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))\n"
+answer_annotated = "ਪਹਿਲੇ {t} ਮਿੰਟਾਂ ਦੀ ਕੀਮਤ {t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} ਹੋਵੇਗੀ।\nਉਸ ਤੋਂ ਬਾਅਦ, ਕਾਲ ਦੇ {total} - {t} = <<{total}-{t}={total-t}>>{total-t} ਮਿੰਟ ਬਾਕੀ ਬਚੇ ਹਨ।\nਅਤੇ ਇਹਨਾਂ {total-t} ਮਿੰਟਾਂ ਦੀ ਕੀਮਤ {total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)} ਹੈ।\nਇਸ ਲਈ ਕੁੱਲ ਮਿਲਾ ਕੇ, {total}-ਮਿੰਟ ਦੀ ਕਾਲ ਦੀ ਕੀਮਤ {int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))} ਹੋਵੇਗੀ।\n#### {int((frac1 * t) + frac2*(total-t))}\n"
 creation = "manual Punjabi translation from English templates; computationally validated; validated by two native speaker"
 language = "pan"
