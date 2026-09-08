@@ -9,7 +9,8 @@ answer = """Кави, що він купив, була на 35*0.2=<<35*0.2=7>>7
 """
 id_orig = 661
 id_shuffled = 42
-question_annotated = """{name,Расмус} іде до магазину, щоб купити трохи {item_definite,кави}. Звичайна марка {item_definite,кави}, яку він купує, коштує {price,35} {p_cur,крон} за 500 {unit_500,грамів}. Йому довелося купити дорожчу марку, яка коштувала на {percent,20}% більше, оскільки його улюблена марка була розпродана. Він вирішує купити {item_definite,кави} на тиждень, і він використовує {usage,500} {unit_usage,грамів} {item_definite,кави} на день. Він також вирішив купити {extra_item,пончик} за {extra_price,15} {extra_price_cur,крон}. Скільки всього грошей він витратив ?
+question_annotated = """
+{name,Расмус} іде до магазину, щоб купити трохи {item_definite,кави}. Звичайна марка {item_definite,кави}, яку він купує, коштує {price,35} {p_cur,крон} за 500 {unit_500,грамів}. Йому довелося купити дорожчу марку, яка коштувала на {percent,20}% більше, оскільки його улюблена марка була розпродана. Він вирішує купити {item_definite,кави} на тиждень, і він використовує {usage,500} {unit_usage,грамів} {item_definite,кави} на день. Він також вирішив купити {extra_item,пончик} за {extra_price,15} {extra_price_cur,крон}. Скільки всього грошей він витратив ?
 
 #init:
 - cur_s, cur_pl1, cur_pl2 = sample(currencies_sym)
@@ -29,21 +30,22 @@ question_annotated = """{name,Расмус} іде до магазину, щоб
 - pp_price_cur = ukr_plural_measurements(price*percent//100, cur_s, cur_pl1, cur_pl2)
 - ppp_price_cur = ukr_plural_measurements(price+price*percent//100, cur_s, cur_pl1, cur_pl2)
 - u7_price_unit = ukr_plural_measurements(usage*7, unit_s,unit_pl1, unit_pl2)
-- paid_price_cur = ukr_plural_measurements(int((price+price*percent/100)*7), cur_s, cur_pl1, cur_pl2)
-- t_price_cur = ukr_plural_measurements(int((price+price*percent/100)*7)+extra_price, cur_s, cur_pl1, cur_pl2)
+- paid_price_cur = ukr_plural_measurements(((price+price*percent/100)*7*usage/500), cur_s, cur_pl1, cur_pl2)
+- t_price_cur = ukr_plural_measurements(((price+price*percent/100)*7*usage/500)+extra_price, cur_s, cur_pl1, cur_pl2)
 
 
 #conditions:
 - is_int(price * percent / 100)
 
-#answer: (price + price * percent / 100) * 7 * usage + extra_price
+#answer: (price + price * percent / 100) * 7 * usage / 500 + extra_price
 """
-answer_annotated = """{item_definite_up}, що він купив, була на {price}*{percent/100}=<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {pp_price_cur} дорожча за 500 {unit_500}, аніж марка, яку він зазвичай купує
+answer_annotated = """
+{item_definite_up}, що він купив, була на {price}*{percent/100}=<<{price}*{percent/100}={price*percent//100}>>{price*percent//100} {pp_price_cur} дорожча за 500 {unit_500}, аніж марка, яку він зазвичай купує
 Отже, ця марка коштувала {price}+{price*percent//100}=<<{price}+{price*percent//100}={price+price*percent//100}>>{price+price*percent//100} {ppp_price_cur} за 500 {unit_500}
 Він використовує {usage}*7=<<{usage}*7={usage*7}>>{usage*7} {u7_price_unit} на тиждень
-Отже, він заплатив {price+price*percent/100}*7=<<{price+price*percent/100}*7={int((price+price*percent/100)*7)}>>{int((price+price*percent/100)*7)} {paid_price_cur} за каву
-Це означає, що його загальний рахунок становив {int((price+price*percent/100)*7)}+{extra_price}=<<{int((price+price*percent/100)*7)}+{extra_price}={int((price+price*percent/100)*7)+extra_price}>>{int((price+price*percent/100)*7)+extra_price} {t_price_cur}
-#### {int((price+price*percent/100)*7)+extra_price}
+Отже, він заплатив {price+price*percent/100}*{usage*7/500}=<<{price+price*percent/100}*{usage*7/500}={((price+price*percent/100)*7*usage/500)}>>{((price+price*percent/100)*7*usage/500)} {paid_price_cur} за каву
+Це означає, що його загальний рахунок становив {((price+price*percent/100)*7*usage/500)}+{extra_price}=<<{((price+price*percent/100)*7*usage/500)}+{extra_price}={((price+price*percent/100)*7*usage/500)+extra_price}>>{((price+price*percent/100)*7*usage/500)+extra_price} {t_price_cur}
+#### {((price+price*percent/100)*7*usage/500)+extra_price}
 """
 creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"
