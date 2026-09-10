@@ -1,0 +1,7 @@
+## Proposed section text
+
+Figure 11 compares reasoning-enabled and reasoning-disabled models in terms of estimated inference compute and the fraction of English accuracy recovered across the evaluated non-English languages. Enabling reasoning reduces the relative transfer gap by 30.6% on average across paired model variants, while increasing estimated inference FLOPs per question by 248.7%. These are averages of within-model relative changes; improvements at a fixed model size therefore do not necessarily imply better transfer at a fixed compute budget. For example, Qwen3-4B with reasoning disabled recovers 85.8% of English accuracy at approximately 4.45 trillion FLOPs per question, compared with 82.1% at 8.67 trillion FLOPs for Qwen3-1.7B with reasoning enabled. The choice between model size and reasoning should thus account for their joint compute cost. Lines connect evaluated models within each family and reasoning mode to guide comparison; they do not represent measurements at intermediate budgets.
+
+## Proposed caption
+
+Figure 11: Reasoning on/off under an estimated inference compute budget. Solid and dotted lines denote reasoning enabled and disabled, respectively; labels indicate model size in billions of parameters. The vertical axis reports mean non-English accuracy divided by English accuracy. Higher values at lower compute are preferable. Error bars show 95% bootstrap confidence intervals over questions.

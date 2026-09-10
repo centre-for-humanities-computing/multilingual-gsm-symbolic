@@ -397,22 +397,22 @@ def _plot_compute_budget_table(
             group = group.sort_values("inference_flops")
             color = mode_color(family, reasoning)
             linestyle = ":" if reasoning == "off" else "-"
-            ax.plot(group["inference_flops"], group[gap_column], color=color, linestyle=linestyle, linewidth=1.8, zorder=1)
+            ax.plot(
+                group["inference_flops"], group[gap_column], color=color, linestyle=linestyle,
+                linewidth=1.8, marker=marker_by_family.get(family, "o"), markersize=5,
+                markeredgecolor="white", markeredgewidth=0.7, zorder=3,
+            )
             ax.errorbar(
                 group["inference_flops"], group[gap_column], yerr=group[ci_column], fmt="none",
                 ecolor=color, elinewidth=1, capsize=2, alpha=0.55, zorder=2,
-            )
-            ax.scatter(
-                group["inference_flops"], group[gap_column],
-                s=38 + group["params_b"].clip(upper=72) * 1.6,
-                marker=marker_by_family.get(family, "o"), color=color, edgecolor="white",
-                linewidth=0.7, alpha=0.9, label="_nolegend_", zorder=3,
             )
 
         for row in panel_table.itertuples(index=False):
             ax.annotate(
                 f"{row.params_b:g}B", (row.inference_flops, getattr(row, gap_column)),
-                xytext=(4, 4), textcoords="offset points", fontsize=7, color="#374151",
+                xytext=(-5, -12) if row.reasoning == "off" else (5, 6),
+                ha="right" if row.reasoning == "off" else "left",
+                textcoords="offset points", fontsize=7, color="#374151",
             )
 
         ax.set_xscale("log")
@@ -420,7 +420,8 @@ def _plot_compute_budget_table(
         ax.yaxis.set_major_formatter(PercentFormatter(1))
         ax.grid(axis="both", color="#E5E7EB", linewidth=0.7)
         ax.set_axisbelow(True)
-        ax.set_title(panel_family if panel_family is not None else "Reasoning on vs. off under a fixed compute budget")
+        if panel_family is not None:
+            ax.set_title(panel_family)
 
     axes[0, 0].set_ylabel("Percentage of English performance recovered")
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
@@ -439,10 +440,9 @@ def _plot_compute_budget_table(
             for family in families
         )
     if combined and faceted:
-        fig.suptitle("Reasoning on vs. off under a fixed compute budget")
-        fig.legend(handles=handles, frameon=False, fontsize=8, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 0.94))
+        fig.legend(handles=handles, frameon=False, fontsize=8, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 1.0))
         fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
-        fig.tight_layout(rect=(0, 0.035, 1, 0.9))
+        fig.tight_layout(rect=(0, 0.035, 1, 0.95))
     else:
         axes[0, 0].legend(handles=handles, frameon=False, fontsize=7, loc="upper right")
         axes[0, 0].text(
