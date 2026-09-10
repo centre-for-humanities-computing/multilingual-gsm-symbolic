@@ -1026,7 +1026,7 @@ def plot_correction_comparison(
     ]
     axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
     fig.suptitle(
-        title or f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
+        title or f"{LANGUAGE_LABELS.get(language, language)}: uncorrected vs corrected translations",
         x=0.08,
         ha="left",
         fontsize=17,
@@ -1043,7 +1043,7 @@ def plot_correction_comparison_selected(
     language: str,
     out: Path,
     target_models: list[str] | None = None,
-    legend_labels: tuple[str, str] = ("Unvalidated", "Validated"),
+    legend_labels: tuple[str, str] = ("Uncorrected", "Corrected"),
 ) -> None:
     if not target_models:
         target_models = [
@@ -1061,7 +1061,7 @@ def plot_correction_comparison_selected(
     # after LaTeX scales the image to the column width.
     fig, ax = plt.subplots(figsize=(7.6, 3.2))
 
-    # Distinct colour per model; unvalidated = solid, validated = dashed
+    # Distinct colour per model; uncorrected = solid, corrected = dashed
     MODEL_COLORS = [
         "#1B365D",  # deep navy
         "#C0392B",  # crimson
@@ -1107,7 +1107,7 @@ def plot_correction_comparison_selected(
         )
         all_peaks.append(peak)
 
-        # Unvalidated — solid line
+        # Uncorrected — solid line
         ax.plot(
             old_x,
             old_density,
@@ -1127,7 +1127,7 @@ def plot_correction_comparison_selected(
             zorder=4,
         )
 
-        # Validated — dashed line
+        # Corrected — dashed line
         ax.plot(
             new_x,
             new_density,
