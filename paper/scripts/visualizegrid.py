@@ -951,7 +951,6 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     first_legend = ax.legend(handles=family_handles, title="Model family", frameon=False, loc="upper left")
     ax.add_artist(first_legend)
     ax.legend(handles=mode_handles, title="Variant", frameon=False, loc="upper right")
-    fig.suptitle("Percentage of English performance recovered by model size and reasoning mode")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
