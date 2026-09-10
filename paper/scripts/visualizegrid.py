@@ -962,7 +962,7 @@ def plot_correction_comparison(
     rows: list[CorrectionComparisonRow],
     language: str,
     out: Path,
-    legend_labels: tuple[str, str] = ("Uncorrected", "Corrected"),
+    legend_labels: tuple[str, str] = ("Machine translated", "Verified"),
     title: str | None = None,
 ) -> None:
     fig, axes = plt.subplots(
@@ -1011,28 +1011,24 @@ def plot_correction_comparison(
         ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8, zorder=3)
         ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2, zorder=4)
 
-        ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=11)
+        ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=13)
+        ax.tick_params(axis="x", labelsize=12)
         ax.set_yticks([])
         ax.set_ylim(0, peak * 1.2)
         ax.grid(axis="x", color="#D8DEE8", linewidth=0.7, alpha=0.6)
 
     axes[-1, 0].set_xlim(0, 1)
     axes[-1, 0].xaxis.set_major_formatter(PercentFormatter(1))
-    axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
+    axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=14, labelpad=8)
 
     legend = [
         Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label=legend_labels[0]),
         Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label=legend_labels[1]),
     ]
-    axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
-    fig.suptitle(
-        title or f"{LANGUAGE_LABELS.get(language, language)}: uncorrected vs corrected translations",
-        x=0.08,
-        ha="left",
-        fontsize=17,
-        fontweight="bold",
-    )
-    fig.tight_layout(rect=(0.06, 0.02, 1, 0.94))
+    axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=2, bbox_to_anchor=(1, 1.65), fontsize=14)
+    if title:
+        fig.suptitle(title, x=0.08, ha="left", fontsize=17, fontweight="bold")
+    fig.tight_layout(rect=(0.06, 0.02, 1, 0.94 if title else 1))
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -1043,7 +1039,7 @@ def plot_correction_comparison_selected(
     language: str,
     out: Path,
     target_models: list[str] | None = None,
-    legend_labels: tuple[str, str] = ("Uncorrected", "Corrected"),
+    legend_labels: tuple[str, str] = ("Machine translated", "Verified"),
 ) -> None:
     if not target_models:
         target_models = [
