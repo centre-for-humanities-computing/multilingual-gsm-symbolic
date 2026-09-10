@@ -18,6 +18,11 @@ from plot_config import LANGUAGE_LABELS, language_order, model_sort_key
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 DEFAULT_OUTPUT = REPO_ROOT / "paper" / "artifacts" / "tables" / "original_vs_synthetic_accuracy.tex"
+# The 16 analysis languages, plus the English metric variant.
+DEFAULT_LANGUAGES = [
+    "zho", "hin", "eng", "eng_metric", "ara", "jpn", "rus", "deu", "mar",
+    "fra", "ita", "ukr", "nld", "dan", "nob", "est", "isl",
+]
 
 
 @dataclass(frozen=True)
@@ -132,11 +137,11 @@ def render_table(
     scope = models[0] if len(models) == 1 else f"all {len(models)} models"
     caption_text = caption or (
         f"Original and synthetic exact-answer accuracy by model and language for {scope}. "
-        "The 95% confidence intervals are Wilson score intervals over scored examples within each split."
+        "Bracketed values are 95% confidence intervals (CI), computed using Wilson score intervals "
+        "over scored examples within each split."
     )
     panel_header = (
-        r"Model & Language & \shortstack{Orig.\\acc.} & \shortstack{Orig.\\95\% CI} & "
-        r"\shortstack{Synth.\\acc.} & \shortstack{Synth.\\95\% CI}"
+        r"Model & Language & \shortstack{Original\\Accuracy} & \shortstack{Synthetic\\Accuracy}"
     )
     header = f"{panel_header} & {panel_header} \\\\"
 
@@ -148,16 +153,16 @@ def render_table(
 
     def format_panel(row: TableRow | None, previous_model: str | None) -> str:
         if row is None:
-            return " &  &  &  &  & "
+            return " &  &  & "
         model = latex_escape(row.model) if row.model != previous_model else ""
         language = latex_escape(LANGUAGE_LABELS.get(row.language, row.language))
         original_low, original_high = row.original_ci
         synthetic_low, synthetic_high = row.synthetic_ci
         return (
-            f"{model} & {language} & {row.original_accuracy * 100:.1f}\\% & "
-            f"{original_low * 100:.1f}--{original_high * 100:.1f}\\% & "
-            f"{row.synthetic_accuracy * 100:.1f}\\% & "
-            f"{synthetic_low * 100:.1f}--{synthetic_high * 100:.1f}\\%"
+            f"{model} & {language} & {row.original_accuracy * 100:.1f}\\% "
+            f"[{original_low * 100:.1f}-{original_high * 100:.1f}] & "
+            f"{row.synthetic_accuracy * 100:.1f}\\% "
+            f"[{synthetic_low * 100:.1f}-{synthetic_high * 100:.1f}]"
         )
 
     lines = [
@@ -166,19 +171,19 @@ def render_table(
         r"\tiny",
         r"\setlength{\tabcolsep}{1.25pt}",
         r"\renewcommand{\arraystretch}{0.9}",
-        r"\begin{longtable}{p{0.145\linewidth}lrrrr@{\hspace{4pt}}p{0.145\linewidth}lrrrr}",
+        r"\begin{longtable}{p{0.145\linewidth}lrr@{\hspace{4pt}}p{0.145\linewidth}lrr}",
         f"\\caption{{{latex_escape(caption_text)}}}\\label{{{label}}}" + r" \\",
         r"\toprule",
         header,
         r"\midrule",
         r"\endfirsthead",
-        r"\multicolumn{12}{c}{\tablename\ \thetable{} -- continued from previous page} \\",
+        r"\multicolumn{8}{c}{\tablename\ \thetable{} -- continued from previous page} \\",
         r"\toprule",
         header,
         r"\midrule",
         r"\endhead",
         r"\midrule",
-        r"\multicolumn{12}{r}{Continued on next page} \\",
+        r"\multicolumn{8}{r}{Continued on next page} \\",
         r"\endfoot",
         r"\bottomrule",
         r"\endlastfoot",
@@ -207,7 +212,10 @@ def main() -> None:
         nargs="+",
         help="Optional model names; defaults to every available model.",
     )
-    parser.add_argument("--languages", nargs="+", help="Optional language codes; defaults to every available language.")
+    parser.add_argument(
+        "--languages", nargs="+", default=DEFAULT_LANGUAGES,
+        help="Optional language codes; defaults to the 16 analysis languages plus English metric.",
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--caption", help="Optional replacement table caption.")
     parser.add_argument("--label", default="tab:original-vs-synthetic-accuracy")
