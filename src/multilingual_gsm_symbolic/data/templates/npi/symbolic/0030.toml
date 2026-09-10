@@ -1,0 +1,10 @@
+question = "ड्याभिड को रू12.48 छ र हार्डवेयर पसलको डिब्बाबाट 16 bोल्टहरू किन्न चाहन्छ। प्रत्येक bोल्ट को मूल्य रू0.03 छ। bोल्टहरूको भुक्तानी गरपछि ड्याभिड को कति पैसा बाँकी रहन्छ?"
+answer = "David paid 16 * $0.03 = $<<16*0.03=0.48>>0.48 for the bolts.\nDavid has $12.48 - $0.48 = $12 left.\n#### 12\n"
+id_orig = 873
+id_shuffled = 30
+question_annotated = "{name,ड्याभिड} को {cur,रू}{initial_amount,12.48} छ र {store_type,हार्डवेयर} पसलको डिब्बाबाट {quantity,16} {item,bोल्ट}हरू किन्न चाहन्छ। प्रत्येक {item,bोल्ट} को मूल्य {cur,रू}{unit_price,0.03} छ। {item,bोल्ट}हरूको भुक्तानी गरपछि {name,ड्याभिड} को कति पैसा बाँकी रहन्छ?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item = sample([\"सक्रू\", \"मेख\", \"वासर\", \"नट\", \"एन्कर\"])\n- store_type = sample([\"हार्डवेयर\", \"घर सुधार\", \"निर्माण सामग्री\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(12.48, 105, 0.48)\n- $unit_price = arange(0.01, 1, 0.01)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: round(initial_amount - quantity * unit_price)\n"
+answer_annotated = "{name} ले {quantity} * {cur}{round(unit_price} = {cur}<<{quantity}*{round(unit_price}={round(quantity*unit_price}>>{round(quantity*unit_price} {item}हरूको लागि भुक्तानी गर्यो।\n{name} को {cur}{initial_amount} - {cur}{round(quantity*unit_price} = {cur}{round(initial_amount - quantity * unit_price)} बाँकी छ।\n#### {round(initial_amount - quantity * unit_price)}\n"
+creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+language = "npi"
+
+ignore = true

@@ -1,0 +1,8 @@
+question = "공중전화에서 전화를 걸려면 달러0.25를 1 분당 지불해야 합니다. 16분 이후에는 분당 달러0.2로 요금이 인하됩니다. 36분짜리 통화 비용은 얼마일까요?"
+answer = "처음 16분은 16 * 0.25 = 달러<<16*0.25=4>>4의 비용이 듭니다.\n그 이후에는 통화에 36 - 16 = <<36-16=20>>20분이 남습니다.\n이 20분은 20 * 0.2 = 달러<<20*0.2=4>>4의 비용이 듭니다.\n따라서 총 36분짜리 통화 비용은 4 + 4 = 달러8입니다.\n#### 8\n"
+id_orig = 1223
+id_shuffled = 10
+question_annotated = "{dev,공중전화}에서 전화를 걸려면 {currency,달러}{frac1,0.25}를 1 분당 지불해야 합니다. {t,16}분 이후에는 분당 {currency,달러}{frac2,0.2}로 요금이 인하됩니다. {total,36}분짜리 통화 비용은 얼마일까요?\n\n#init:\n- dev = sample(['전화부스', '호텔 객실 전화'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))\n"
+answer_annotated = "처음 {t}분은 {t} * {frac1} = {currency}<<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)}의 비용이 듭니다.\n그 이후에는 통화에 {total} - {t} = <<{total}-{t}={total-t}>>{total-t}분이 남습니다.\n이 {total-t}분은 {total-t} * {frac2} = {currency}<<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)}의 비용이 듭니다.\n따라서 총 {total}분짜리 통화 비용은 {int(t*frac1)} + {int((total-t)*frac2)} = {currency}{int(frac1 * t) + int(frac2*(total-t))}입니다.\n#### {int((frac1 * t) + frac2*(total-t))}\n"
+creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+language = "kor"
