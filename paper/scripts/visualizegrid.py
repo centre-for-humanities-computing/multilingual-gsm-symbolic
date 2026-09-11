@@ -21,6 +21,10 @@ The script reads Inspect ``.eval`` logs and writes:
 Only successful logs are included by default. Repeated/resumed logs with the same
 evaluation id are deduplicated, preferring a successful and then newer log.
 
+English-metric figures are written under ``--ablations-out-dir/eng_vs_eng_metric``;
+correction comparisons go under ``--ablations-out-dir/correction_comparison``.
+Other outputs continue to use ``--out-dir``.
+
 Example:
     uv run paper/scripts/visualizegrid.py --workers 8
 """
@@ -72,6 +76,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_CORRECTED_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+DEFAULT_ABLATIONS_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "ablations"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 CORRECTION_COMPARISON_WIDTH = 3.35
 
@@ -1336,6 +1341,12 @@ def main() -> None:
         default=DEFAULT_OUT_DIR,
     )
     parser.add_argument(
+        "--ablations-out-dir",
+        type=Path,
+        default=DEFAULT_ABLATIONS_DIR,
+        help="Root for English-metric and correction-comparison figures.",
+    )
+    parser.add_argument(
         "--corrected-log-dir",
         type=Path,
         default=DEFAULT_CORRECTED_LOG_DIR,
@@ -1380,6 +1391,8 @@ def main() -> None:
     summary = filter_summary_models(summarize(samples))
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    metric_dir = args.ablations_out_dir / "eng_vs_eng_metric"
+    metric_dir.mkdir(parents=True, exist_ok=True)
 
     summary_path = args.out_dir / "run_summary.csv"
     sort_summary(summary).to_csv(summary_path, index=False)
@@ -1393,7 +1406,7 @@ def main() -> None:
     )
     made_metric = plot_eng_metric_comparison(
         summary,
-        args.out_dir / "eng_vs_eng_metric.png",
+        metric_dir / "eng_vs_eng_metric.png",
     )
     eng_metric_selected = False
     eng_metric_full = False
@@ -1409,7 +1422,7 @@ def main() -> None:
             args.correction_seed,
         )
         if metric_rows:
-            metric_full_out = args.out_dir / "eng_vs_eng_metric_full.png"
+            metric_full_out = metric_dir / "eng_vs_eng_metric_full.png"
             plot_correction_comparison(
                 metric_rows,
                 "eng",
@@ -1417,7 +1430,7 @@ def main() -> None:
                 legend_labels=("English", "English metric"),
             )
             eng_metric_full = True
-            metric_out = args.out_dir / "eng_vs_eng_metric_selected.png"
+            metric_out = metric_dir / "eng_vs_eng_metric_selected.png"
             plot_correction_comparison_selected(
                 metric_rows,
                 "eng",
@@ -1464,11 +1477,11 @@ def main() -> None:
                 if not rows:
                     print(f"Skipping {language}: no paired corrected models.")
                     continue
-                out = args.out_dir / "correction_comparison" / f"{path_slug(language)}.png"
+                out = args.ablations_out_dir / "correction_comparison" / f"{path_slug(language)}.png"
                 plot_correction_comparison(rows, language, out)
                 correction_outputs.append(out)
 
-                out_selected = args.out_dir / "correction_comparison" / f"{path_slug(language)}_selected.png"
+                out_selected = args.ablations_out_dir / "correction_comparison" / f"{path_slug(language)}_selected.png"
                 plot_correction_comparison_selected(rows, language, out_selected)
                 correction_outputs.append(out_selected)
 
@@ -1491,13 +1504,13 @@ def main() -> None:
         print("Skipped english_normalized_transfer.png: paired English/non-English results are required.")
 
     if made_metric:
-        print(f"Saved {args.out_dir / 'eng_vs_eng_metric.png'}")
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric.png'}")
     else:
         print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
     if eng_metric_selected:
-        print(f"Saved {args.out_dir / 'eng_vs_eng_metric_selected.png'}")
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric_selected.png'}")
     if eng_metric_full:
-        print(f"Saved {args.out_dir / 'eng_vs_eng_metric_full.png'}")
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric_full.png'}")
 
     if made_robustness:
         print(f"Saved {args.out_dir / 'transfer_robustness.png'}")

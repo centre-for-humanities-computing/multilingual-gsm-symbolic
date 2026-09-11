@@ -8,6 +8,8 @@ It intentionally lives only on the `paper-content` branch.
 - `eval.yaml`: Inspect task definitions used by `scripts/ucloudeval`.
 - `scripts/`: evaluation and analysis entry points.
 - `artifacts/figures/`: general plots, model-grid outputs, and transfer-feature outputs.
+- `artifacts/figures/ablations/eng_vs_eng_metric/`: English versus metric ablation figures.
+- `artifacts/figures/ablations/correction_comparison/`: machine-translated versus verified figures.
 - `artifacts/tables/`: paper-ready LaTeX tables.
 - `artifacts/prompt_number_coverage/`: number-coverage plots and analysis tables.
 
