@@ -11,8 +11,11 @@ year-specific style and copy only the figure blocks into it.
 
 The new PNGs are `eng_vs_eng_metric_full_fullpage.png` and
 `correction_comparison/isl_fullpage.png`. Both are generated alongside the
-original compact PNGs by the command below. Full-page labels are 8 points;
-complete reasoning suffixes fit on one line. Palettes and data are unchanged.
+original compact PNGs by the command below. Full-page labels are 6.5 points;
+complete reasoning suffixes fit on one line. Most row height is reserved for
+curves. Full-page plots omit histogram bars and set the vertical scale from
+the fitted curves, preventing tall histogram bins from flattening the curves.
+Palettes, sampled data, and the fitted curves themselves are unchanged.
 
 Compile from `paper/latex`:
 
