@@ -1067,7 +1067,9 @@ def plot_correction_comparison(
                bbox_to_anchor=(0.5, 1), columnspacing=1, handlelength=2)
     # No embedded heading: the LaTeX caption identifies the comparison.
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=450, facecolor="white")
+    # Keep curves as vectors and embed TrueType text for PDF output.
+    with plt.rc_context({"pdf.fonttype": 42}):
+        fig.savefig(out, dpi=450, facecolor="white")
     plt.close(fig)
 
 

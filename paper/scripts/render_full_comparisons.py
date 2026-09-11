@@ -25,7 +25,7 @@ def main():
         before["language"] = after["language"] = language
         rows = collect_correction_comparison_rows(before, after, language, 2000, 0)
         plot_correction_comparison(rows, language, DEFAULT_OUT_DIR / path, legend_labels=labels)
-        full_page_path = (DEFAULT_OUT_DIR / path).with_stem((DEFAULT_OUT_DIR / path).stem + "_fullpage")
+        full_page_path = (DEFAULT_OUT_DIR / path).with_stem((DEFAULT_OUT_DIR / path).stem + "_fullpage").with_suffix(".pdf")
         plot_correction_comparison(rows, language, full_page_path, legend_labels=labels, full_page=True)
         print(f"{path}: {len(rows)} models", flush=True)
 
