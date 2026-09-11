@@ -73,7 +73,7 @@ DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_CORRECTED_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
-CORRECTION_COMPARISON_WIDTH = 13.5
+CORRECTION_COMPARISON_WIDTH = 3.35
 
 
 FAMILY_MARKERS = {
@@ -962,35 +962,59 @@ def plot_correction_comparison(
     language: str,
     out: Path,
     legend_labels: tuple[str, str] = ("Machine translated", "Verified"),
-    title: str | None = None,
+    full_page: bool = False,
 ) -> None:
-    fig, axes = plt.subplots(
-        len(rows),
-        1,
-        figsize=(CORRECTION_COMPARISON_WIDTH, 1.45 * len(rows) + 1.35),
-        sharex=True,
-        squeeze=False,
+    # Physical size matches a half-page-width appendix figure. Full model
+    # slugs sit above panels so they do not steal horizontal curve space.
+    if not rows:
+        raise ValueError("A full comparison requires at least one model")
+    nrows = math.ceil(len(rows) / 2)
+    old_color, new_color = (
+        ("#2166AC", "#C66B16") if language == "eng" else ("#7860A8", "#17806D")
     )
+    label_size = 8 if full_page else 6
+    fig = plt.figure(figsize=(5.5, 8.0) if full_page else (CORRECTION_COMPARISON_WIDTH, 8.0))
+    columns = fig.add_gridspec(1, 2, left=0.025, right=0.965,
+                              bottom=0.05, top=0.96, wspace=0.18)
+    axes = np.empty((nrows, 2), dtype=object)
+    for col in range(2):
+        column_rows = rows[col * nrows:(col + 1) * nrows]
+        if not column_rows:
+            continue
+        # Reserve actual text height, including reasoning suffixes, separately
+        # from the curve. Uniform subplot spacing clips two-line full slugs.
+        heights = []
+        for row in column_rows:
+            heights.extend([10 if full_page else (14 if " (reasoning" in row.model else 8), 12, 3])
+        grid = columns[col].subgridspec(len(heights), 1, height_ratios=heights, hspace=0)
+        for panel_row, row in enumerate(column_rows):
+            label_ax = fig.add_subplot(grid[3 * panel_row])
+            label_ax.set_axis_off()
+            label_ax.text(0, 0.12, row.model if full_page else row.model.replace(" (reasoning", "\n(reasoning"),
+                          fontsize=label_size, va="bottom", linespacing=1.05)
+            axes[panel_row, col] = fig.add_subplot(grid[3 * panel_row + 1])
 
-    for ax, row in zip(axes[:, 0], rows, strict=True):
+    for index, row in enumerate(rows):
+        col, panel_row = divmod(index, nrows)
+        ax = axes[panel_row, col]
         old_counts, _, _ = ax.hist(
             row.uncorrected_sets,
             bins=18,
             density=True,
-            color=UNCORRECTED_FILL,
+            color=old_color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.38,
+            alpha=0.15,
             zorder=1,
         )
         new_counts, _, _ = ax.hist(
             row.corrected_sets,
             bins=18,
             density=True,
-            color=CORRECTED_FILL,
+            color=new_color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.38,
+            alpha=0.15,
             zorder=1,
         )
         old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
@@ -1002,34 +1026,41 @@ def plot_correction_comparison(
             float(new_density.max()),
         )
 
-        ax.fill_between(old_x, 0, old_density, color=UNCORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
-        ax.plot(old_x, old_density, color=UNCORRECTED_COLOR, linewidth=1.8, zorder=3)
-        ax.axvline(old_mean, color=UNCORRECTED_COLOR, linewidth=1.2, zorder=4)
+        ax.plot(old_x, old_density, color=old_color, linewidth=0.9, zorder=3)
+        ax.axvline(old_mean, color=old_color, linewidth=0.45, alpha=0.65, zorder=2)
 
-        ax.fill_between(new_x, 0, new_density, color=CORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
-        ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8, zorder=3)
-        ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2, zorder=4)
+        ax.plot(new_x, new_density, color=new_color, linewidth=0.9, linestyle="--", zorder=3)
+        ax.axvline(new_mean, color=new_color, linewidth=0.45, linestyle="--", alpha=0.65, zorder=2)
 
-        ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=13)
-        ax.tick_params(axis="x", labelsize=12)
         ax.set_yticks([])
         ax.set_ylim(0, peak * 1.2)
-        ax.grid(axis="x", color="#D8DEE8", linewidth=0.7, alpha=0.6)
+        ax.grid(axis="x", color="#D8DEE8", linewidth=0.35, alpha=0.6)
+        ax.tick_params(axis="x", labelsize=label_size, length=2, width=0.4, pad=2)
+        ax.set_xlim(0, 1)
+        ax.set_xticks([0, 0.5, 1])
+        ax.tick_params(labelbottom=False, bottom=False)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
 
-    axes[-1, 0].set_xlim(0, 1)
-    axes[-1, 0].xaxis.set_major_formatter(PercentFormatter(1))
-    axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=14, labelpad=8)
+    for col in range(2):
+        count = min(nrows, max(0, len(rows) - col * nrows))
+        if count:
+            ax = axes[count - 1, col]
+            ax.set_xlim(0, 1)
+            ax.set_xticks([0, 0.5, 1])
+            ax.xaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+            ax.tick_params(labelbottom=True, bottom=True)
+            ax.set_xlabel("Exact-answer accuracy", fontsize=8 if full_page else 6.5, labelpad=3)
 
     legend = [
-        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label=legend_labels[0]),
-        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label=legend_labels[1]),
+        Line2D([0], [0], color=old_color, lw=1, label=legend_labels[0]),
+        Line2D([0], [0], color=new_color, lw=1, linestyle="--", label=legend_labels[1]),
     ]
-    axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=2, bbox_to_anchor=(1, 1.65), fontsize=14)
-    if title:
-        fig.suptitle(title, x=0.08, ha="left", fontsize=17, fontweight="bold")
-    fig.tight_layout(rect=(0.06, 0.02, 1, 0.94 if title else 1))
+    fig.legend(handles=legend, loc="upper center", frameon=False, ncol=2, fontsize=9 if full_page else 7,
+               bbox_to_anchor=(0.5, 1), columnspacing=1, handlelength=2)
+    # No embedded heading: the LaTeX caption identifies the comparison.
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
+    fig.savefig(out, dpi=450, facecolor="white")
     plt.close(fig)
 
 
@@ -1375,7 +1406,6 @@ def main() -> None:
                 "eng",
                 metric_full_out,
                 legend_labels=("English", "English metric"),
-                title="English vs English metric comparison",
             )
             eng_metric_full = True
             metric_out = args.out_dir / "eng_vs_eng_metric_selected.png"
