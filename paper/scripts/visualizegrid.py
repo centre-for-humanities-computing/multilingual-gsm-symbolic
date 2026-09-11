@@ -972,10 +972,11 @@ def plot_correction_comparison(
     old_color, new_color = (
         ("#2166AC", "#C66B16") if language == "eng" else ("#7860A8", "#17806D")
     )
-    label_size = 6.5 if full_page else 6
-    fig = plt.figure(figsize=(5.5, 8.35) if full_page else (CORRECTION_COMPARISON_WIDTH, 8.0))
+    label_size = 6
+    fig = plt.figure(figsize=(5.5, 8.55) if full_page else (CORRECTION_COMPARISON_WIDTH, 8.0))
     columns = fig.add_gridspec(1, 2, left=0.025, right=0.965,
-                              bottom=0.05, top=0.96, wspace=0.18)
+                              bottom=0.035 if full_page else 0.05,
+                              top=0.96, wspace=0.18)
     axes = np.empty((nrows, 2), dtype=object)
     for col in range(2):
         column_rows = rows[col * nrows:(col + 1) * nrows]
@@ -985,7 +986,7 @@ def plot_correction_comparison(
         # from the curve. Uniform subplot spacing clips two-line full slugs.
         heights = []
         for row in column_rows:
-            heights.extend([8, 22, 2] if full_page else [14 if " (reasoning" in row.model else 8, 12, 3])
+            heights.extend([8, 28, 1] if full_page else [14 if " (reasoning" in row.model else 8, 12, 3])
         grid = columns[col].subgridspec(len(heights), 1, height_ratios=heights, hspace=0)
         for panel_row, row in enumerate(column_rows):
             label_ax = fig.add_subplot(grid[3 * panel_row])
@@ -1039,7 +1040,7 @@ def plot_correction_comparison(
         ax.axvline(new_mean, color=new_color, linewidth=0.45, linestyle="--", alpha=0.65, zorder=2)
 
         ax.set_yticks([])
-        ax.set_ylim(0, peak * (1.05 if full_page else 1.2))
+        ax.set_ylim(0, peak * (1.02 if full_page else 1.2))
         ax.grid(axis="x", color="#D8DEE8", linewidth=0.35, alpha=0.6)
         ax.tick_params(axis="x", labelsize=label_size, length=2, width=0.4, pad=2)
         ax.set_xlim(0, 1)

@@ -11,11 +11,14 @@ year-specific style and copy only the figure blocks into it.
 
 The new PNGs are `eng_vs_eng_metric_full_fullpage.png` and
 `correction_comparison/isl_fullpage.png`. Both are generated alongside the
-original compact PNGs by the command below. Full-page labels are 6.5 points;
+original compact PNGs by the command below. Full-page labels are 6 points;
 complete reasoning suffixes fit on one line. Most row height is reserved for
 curves. Full-page plots omit histogram bars and set the vertical scale from
 the fitted curves, preventing tall histogram bins from flattening the curves.
 Palettes, sampled data, and the fitted curves themselves are unchanged.
+The full-page canvas is 8.55 inches tall, with tighter spacing and approximately
+20% taller curves than the previous 8.35-inch layout. ICLR margins and caption
+formatting remain unchanged.
 
 Compile from `paper/latex`:
 
