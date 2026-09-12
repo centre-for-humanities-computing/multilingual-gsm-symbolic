@@ -24,7 +24,7 @@ import pandas as pd
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-MODEL = "Qwen2.5-7B-Instruct"
+MODEL = "Qwen3-1.7B (reasoning off)"
 LANGS = {"eng": ("English", "#104281"), "dan": ("Danish", "#2a78d6"), "mar": ("Marathi", "#86b6ef")}
 # languages excluded from the paper's analysis set: metric variants, the pre-correction
 # Icelandic subset, and Urdu (evaluated on only 26 of the 48 models)
@@ -84,6 +84,8 @@ def main(parquet: Path, out: Path) -> None:
         if lang == "eng":
             ax.plot([static, static], [0, 0.272], color=RED, lw=1.4)
         lift = 8 if lang == "eng" else 0
+        # nudge the Danish label only when it would crowd the English peak
+        shift = -13 if lang == "dan" and means["eng"] - drawn.mean() < 15 else 0
         ax.annotate(
             label,
             (drawn.mean(), y.max()),
@@ -91,7 +93,7 @@ def main(parquet: Path, out: Path) -> None:
             fontsize=8.5,
             fontweight="bold",
             ha="center",
-            xytext=(0, 12 + lift),
+            xytext=(shift, 12 + lift),
             textcoords="offset points",
         )
         ax.annotate(
@@ -100,7 +102,7 @@ def main(parquet: Path, out: Path) -> None:
             color=colour,
             fontsize=8,
             ha="center",
-            xytext=(0, 3 + lift),
+            xytext=(shift, 3 + lift),
             textcoords="offset points",
         )
 
