@@ -5,96 +5,172 @@
 <title>Multilingual GSM-Symbolic Headline Figure</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700&display=swap">
 <style>
-  :root { --text: #152238; --muted: #475467; --border: #d7dee8; }
+  /* The pipeline runs left to right; the translation fan-out spreads down into one
+     row per language, so translation is visibly an operation on the *template* and
+     sampling is what each translated template does afterwards, on its own.
+     Type is sized so that at the paper's 5.50in textwidth the card text prints at
+     about 7.5pt; that is what sets the canvas width, and the cells wrap to suit.
+     Wording that would be a caption lives in the paper, not in the figure. */
+  :root {
+    --ink: #0b0b0b; --muted: #52514e; --faint: #8a8984;
+    --rule: #d9d8d3; --line: #b9b8b3; --panel: #f7f7f5;
+    --v1: #2a78d6; --v2: #eb6834; --v3: #1baf7a; --v4: #4a3aa7;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "Times New Roman", Times, serif; color: var(--text); background: white; display: flex; justify-content: center; }
-  .devanagari { font-family: "Nirmala UI", "Noto Serif Devanagari", serif; }
-  #headline-figure { width: 1440px; padding: 24px 38px; display: flex; flex-direction: column; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr; align-items: stretch; }
-  .arrow { display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; color: var(--muted); }
-  .card { border: 1.5px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; min-height: 335px; overflow: hidden; }
-  .card::before { content: ""; height: 7px; background: #173b75; margin: 0 12px; }
-  .card-body { padding: 16px 26px 20px; display: flex; flex-direction: column; flex: 1; }
-  .card-title { font-size: 26px; font-weight: 700; margin-bottom: 12px; }
-  .card-text { font-size: 20px; line-height: 1.55; flex: 1; }
-  .card-text.tpl { font-size: 18px; line-height: 1.6; }
-  .divider { height: 1px; background: var(--border); margin: 12px 0 8px; }
-  .divider.thick { height: 2px; background: var(--text); margin: 0; }
-  .ans-label { font-size: 18px; font-weight: 700; color: var(--muted); margin-bottom: 3px; }
-  .ans-val { font-size: 20px; font-weight: 700; }
-  .chip { display: inline-block; padding: 1px 6px; border-radius: 5px; font-weight: 700; }
-  .chip.tpl { font-family: Consolas, monospace; font-size: 16px; }
-  .v1 { background: #e8f1fb; color: #285f9e; border: 1px solid #285f9e; }
-  .v2 { background: #fff0e8; color: #a94f18; border: 1px solid #a94f18; }
-  .v3 { background: #e8f5ec; color: #2f7f45; border: 1px solid #2f7f45; }
-  .v4 { background: #f6e9f7; color: #82328a; border: 1px solid #82328a; }
-  .perf-header { display: flex; justify-content: space-between; align-items: baseline; }
-  .perf-metrics { text-align: center; align-items: center; padding: 4px 0; font-size: 29px; font-weight: 700; }
-  .drop { font-size: 21px; color: #c61b3c; }
-  .chart-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-  .chart-img { width: 100%; height: auto; display: block; border-radius: 4px; }
+  body { font-family: "Times New Roman", Times, serif; color: var(--ink); background: #fff; }
+
+  #headline-figure { width: 2160px; background: #fff; padding: 40px 48px 44px; }
+
+  .devanagari { font-family: "Noto Serif Devanagari", "Nirmala UI", serif; }
+  .mono { font-family: "SF Mono", Menlo, Consolas, monospace; }
+
+  /* rows size to their content, so no box carries dead space */
+  .flow {
+    display: grid;
+    grid-template-columns: 360px 34px 1fr 34px 1fr 34px 600px;
+    grid-template-rows: auto auto auto;
+    column-gap: 8px; row-gap: 24px;
+  }
+
+  /* ── connectors ──
+     Each takes the parent's row tracks as a subgrid, so arrows stay centred on their
+     row whatever height the content settles at. A spine runs between the first and
+     last row centres; stubs meet it, and the single arrow leaves it. */
+  .conn { grid-row: 1 / 4; display: grid; grid-template-rows: subgrid; position: relative; }
+  .conn > div { position: relative; }
+  .conn .arw, .conn .out { position: absolute; top: 50%; transform: translateY(-50%); display: block; }
+
+  .spine > div::before {
+    content: ""; position: absolute; left: 14px; width: 2px; background: var(--line);
+  }
+  .spine > div:nth-of-type(1)::before { top: 50%; bottom: -24px; }
+  .spine > div:nth-of-type(2)::before { top: -24px; bottom: -24px; }
+  .spine > div:nth-of-type(3)::before { top: -24px; bottom: 50%; }
+
+  /* one line in at the block's centre, one arrow out per row */
+  .fan .lead {
+    position: absolute; top: 50%; left: -8px; width: 23px; height: 2px;
+    background: var(--line); transform: translateY(-50%);
+  }
+  .fan .arw { left: 16px; }
+
+  .step .arw { left: -8px; }
+
+  /* one stub in per row, one arrow out at the block's centre */
+  .conv > div::after {
+    content: ""; position: absolute; top: 50%; left: -8px; width: 23px; height: 2px;
+    background: var(--line);
+  }
+  .conv .out { left: 16px; }
+
+  /* ── the source template, centred against the rows it feeds ── */
+  .card { border: 2px solid var(--rule); border-radius: 22px; background: #fff; padding: 27px 32px; }
+  .origin { grid-column: 1; grid-row: 1 / 4; align-self: center; }
+  .origin .card { font-size: 31px; line-height: 1.5; }
+
+  /* label column and value column align; wrapped clauses keep their indent */
+  .prog {
+    margin-top: 20px;
+    background: var(--panel); border-radius: 15px; padding: 20px 24px;
+    font-size: 21px; line-height: 1.6; color: var(--muted);
+  }
+  /* the slot chips are the widest thing in this narrow column */
+  .prog .slot { padding: 0 4px; font-size: .68em; }
+  .prog dt { font-size: 24px; letter-spacing: .06em; text-transform: uppercase;
+             color: var(--faint); font-weight: 700; margin-bottom: 4px; }
+  .prog dt + dd { margin-bottom: 14px; }
+  .prog dd { margin: 0; }
+  .prog dd:last-child { margin-bottom: 0; }
+  .prog .cl { display: block; }
+  .prog b { color: var(--ink); }
+
+  /* ── per-language cells ── */
+  .cell { display: flex; }
+  .cell .card { padding: 22px 29px; font-size: 31px; line-height: 1.5; width: 100%; }
+  .name { font-size: 33px; font-weight: 700; margin-bottom: 10px; }
+  .name em { font-style: normal; font-weight: 400; color: var(--faint); font-size: 27px; }
+  .ans { font-size: 28px; color: var(--muted); margin-top: 7px; }
+  .ans b { color: var(--ink); }
+
+  /* ── variable slots, and the values sampled into them ── */
+  .slot { display: inline-block; padding: 0 12px; border-radius: 10px; font-weight: 700;
+          font-family: "SF Mono", Menlo, Consolas, monospace; font-size: .86em; line-height: 1.5; }
+  .s1 { color: var(--v1); background: #e8f1fc; }
+  .s2 { color: var(--v2); background: #fdeee7; }
+  .s3 { color: #0f7a55; background: #e4f6ef; }
+  .s4 { color: var(--v4); background: #ecebf7; }
+  .val { font-weight: 700; }
+  .f1 { color: var(--v1); } .f2 { color: var(--v2); } .f3 { color: #0f7a55; } .f4 { color: var(--v4); }
+
+  /* absolutely positioned so the plot never stretches the rows beside it */
+  .chart { grid-column: 7; grid-row: 1 / 4; position: relative; }
+  .chart img { position: absolute; top: 50%; left: 0; transform: translateY(-50%);
+               display: block; width: 100%; height: auto; }
 </style>
 </head>
 <body>
 <div id="headline-figure">
-  <div class="grid-3">
-    <div class="card">
-      <div class="card-body">
-        <div class="card-title">1 · ORIGINAL → TEMPLATE</div>
-        <p class="card-text tpl"><span class="chip tpl v1">{name1=Jennifer}</span>&#x27;s dog has <span class="chip tpl v3">{n1=8}</span> puppies, <span class="chip tpl v4">{k1=3}</span> of which have spots. <span class="chip tpl v2">{name2=Brandon}</span>&#x27;s dog has <span class="chip tpl v3">{n2=12}</span> puppies, <span class="chip tpl v4">{k2=4}</span> of which have spots. What percentage of all the puppies have spots?</p>
-        <div class="divider"></div>
-        <div class="ans-label">ORIGINAL ANSWER</div>
-        <div class="ans-val">(3 + 4) / (8 + 12) × 100 = 35%</div>
-      </div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="card">
-      <div class="card-body">
-        <div class="card-title">2 · SAMPLE NEW VALUES</div>
-        <p class="card-text"><span class="chip v1">Olivia</span>&#x27;s dog has <span class="chip v3">15</span> puppies, <span class="chip v4">5</span> of which have spots. <span class="chip v2">Marcus</span>&#x27;s dog has <span class="chip v3">10</span> puppies, <span class="chip v4">2</span> of which have spots. What percentage of all the puppies have spots?</p>
-        <div class="divider"></div>
-        <div class="ans-label">RENDERED ANSWER</div>
-        <div class="ans-val">(5 + 2) / (15 + 10) × 100 = 28%</div>
-      </div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="card">
-      <div class="card-body">
-        <div class="card-title">3 · TRANSLATE</div>
-        <p class="card-text devanagari"><span class="chip v1">सई</span> च्या कुत्रीला <span class="chip v3">१५</span> पिल्ले आहेत, त्यापैकी <span class="chip v4">५</span> पिल्ल्यांवर ठिपके आहेत. <span class="chip v2">रोहन</span> च्या कुत्रीला <span class="chip v3">१०</span> पिल्ले आहेत, त्यापैकी <span class="chip v4">२</span> पिल्ल्यांवर ठिपके आहेत. सर्व पिल्ल्यांपैकी किती टक्के पिल्ल्यांवर ठिपके आहेत?</p>
-        <div class="divider"></div>
-        <div class="ans-label">SAME RENDERED ANSWER</div>
-        <div class="ans-val devanagari">(५ + २) / (१५ + १०) × १०० = २८%</div>
-      </div>
-    </div>
-  </div>
+  <div class="flow">
 
-  <div class="divider thick"></div>
-  <div class="perf-header">
-    <span style="font-size:28px;font-weight:700">Exact-answer accuracy across matched 100-problem sets</span>
-    <span style="font-size:20px;color:var(--muted)">Qwen2.5-7B-Instruct · 2,000 resampled sets per stage</span>
-  </div>
-  <div class="divider"></div>
-  <div class="grid-3 perf-metrics">
-    <div>98.0%</div><div class="drop">−5.9 pp →</div><div>92.1%</div><div class="drop">−60.0 pp →</div><div>32.0%</div>
-  </div>
-  <div class="divider"></div>
+    <!-- ── the program every language shares ── -->
+    <div class="origin">
+      <div class="card">A <span class="slot s1">occupation</span> works for <span class="slot s3">w</span> weeks every month and for <span class="slot s3">d</span> days every week. If he gets paid <span class="slot s2">cur</span><span class="slot s4">p</span> every day, how much does he earn if he works for a year?
+        <dl class="prog">
+          <dt>sample</dt>
+          <dd><span class="cl"><b class="mono"><span class="s1">occupation</span></b>=sample(&hellip;)</span><span class="cl"><b class="mono"><span class="s2">cur</span></b>=sample(&hellip;)</span><span class="cl"><b class="mono">$<span class="s3">w</span></b>=range(2,5)</span><span class="cl"><b class="mono">$<span class="s3">d</span></b>=range(4,7)</span><span class="cl"><b class="mono">$<span class="s4">p</span></b>=range(40,200,5)</span></dd>
+          <dt>answer</dt>
+          <dd>w &middot; d &middot; p &middot; 12</dd>
+        </dl>
+      </div>
+    </div>
 
-  <div class="grid-3">
-    <div>
-      <div class="chart-title">Original English benchmark</div>
-      <img class="chart-img" src="headline_curve_original.png" alt="Original English benchmark">
+    <!-- fan-out: the template is translated, once per language -->
+    <div class="conn spine fan" style="grid-column:2">
+      <span class="lead"></span>
+      <div><svg class="arw" width="26" height="12" viewBox="0 0 26 12"><path d="M0 6 H17" stroke="#b9b8b3" stroke-width="2" fill="none"/><path d="M16 2 L25 6 L16 10 Z" fill="#b9b8b3"/></svg></div>
+      <div><svg class="arw" width="26" height="12" viewBox="0 0 26 12"><path d="M0 6 H17" stroke="#b9b8b3" stroke-width="2" fill="none"/><path d="M16 2 L25 6 L16 10 Z" fill="#b9b8b3"/></svg></div>
+      <div><svg class="arw" width="26" height="12" viewBox="0 0 26 12"><path d="M0 6 H17" stroke="#b9b8b3" stroke-width="2" fill="none"/><path d="M16 2 L25 6 L16 10 Z" fill="#b9b8b3"/></svg></div>
     </div>
-    <div></div>
-    <div>
-      <div class="chart-title">Sampled English variants</div>
-      <img class="chart-img" src="headline_curve_english.png" alt="Sampled English variants">
+
+    <!-- ── one template per language ── -->
+    <div class="cell" style="grid-column:3;grid-row:1">
+      <div class="card"><div class="name">English <em>source</em></div>A <span class="slot s1">occupation</span> works for <span class="slot s3">w</span> weeks every month &hellip; if he gets paid <span class="slot s2">cur</span><span class="slot s4">p</span> every day &hellip;</div>
     </div>
-    <div></div>
-    <div>
-      <div class="chart-title">Matched Marathi variants</div>
-      <img class="chart-img" src="headline_curve_marathi.png" alt="Matched Marathi variants">
+    <div class="cell" style="grid-column:3;grid-row:2">
+      <div class="card"><div class="name">Danish</div>En <span class="slot s1">occupation</span> arbejder i <span class="slot s3">w</span> uger hver m&aring;ned &hellip; hvis han f&aring;r <span class="slot s4">p</span> <span class="slot s2">cur</span> hver dag &hellip;</div>
     </div>
+    <div class="cell" style="grid-column:3;grid-row:3">
+      <div class="card devanagari"><div class="name">Marathi</div>एक <span class="slot s1">occupation</span> दर महिन्याला <span class="slot s3">w</span> आठवडे &hellip; जर त्याला दररोज <span class="slot s2">cur</span><span class="slot s4">p</span> मिळत असतील &hellip;</div>
+    </div>
+
+    <!-- each language samples its own slots -->
+    <div class="conn step" style="grid-column:4">
+      <div><svg class="arw" width="50" height="12" viewBox="0 0 50 12"><path d="M0 6 H40" stroke="#b9b8b3" stroke-width="2" fill="none"/><path d="M39 2 L49 6 L39 10 Z" fill="#b9b8b3"/></svg></div>
+      <div><svg class="arw" width="50" height="12" viewBox="0 0 50 12"><path d="M0 6 H40" stroke="#b9b8b3" stroke-width="2" fill="none"/><path d="M39 2 L49 6 L39 10 Z" fill="#b9b8b3"/></svg></div>
+      <div><svg class="arw" width="50" height="12" viewBox="0 0 50 12"><path d="M0 6 H40" stroke="#b9b8b3" stroke-width="2" fill="none"/><path d="M39 2 L49 6 L39 10 Z" fill="#b9b8b3"/></svg></div>
+    </div>
+
+    <!-- ── sampled variants, drawn independently per language ── -->
+    <div class="cell" style="grid-column:5;grid-row:1">
+      <div class="card">A <span class="val f1">carpenter</span> works for <span class="val f3">3</span> weeks every month &hellip; if he gets paid <span class="val f2">$</span><span class="val f4">80</span> every day &hellip;<div class="ans">answer <b>14,400</b></div></div>
+    </div>
+    <div class="cell" style="grid-column:5;grid-row:2">
+      <div class="card">En <span class="val f1">elektriker</span> arbejder i <span class="val f3">4</span> uger hver m&aring;ned &hellip; hvis han f&aring;r <span class="val f4">155</span> <span class="val f2">kr</span> hver dag &hellip;<div class="ans">answer <b>29,760</b></div></div>
+    </div>
+    <div class="cell" style="grid-column:5;grid-row:3">
+      <div class="card devanagari">एक <span class="val f1">सुतार</span> दर महिन्याला <span class="val f3">२</span> आठवडे &hellip; जर त्याला दररोज <span class="val f2">₹</span><span class="val f4">१९५</span> मिळत असतील &hellip;<div class="ans">answer <b class="devanagari">२३४००</b></div></div>
+    </div>
+
+    <!-- converge: one variant per template makes a 100-problem benchmark set -->
+    <div class="conn spine conv" style="grid-column:6">
+      <svg class="out" width="26" height="12" viewBox="0 0 26 12"><path d="M0 6 H17" stroke="#b9b8b3" stroke-width="2" fill="none"/><path d="M16 2 L25 6 L16 10 Z" fill="#b9b8b3"/></svg>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <div class="chart"><img src="headline_curve_overlay.png" alt="Accuracy distributions for English, Danish and Marathi with the static original-item accuracy marked"></div>
+
   </div>
 </div>
 </body>
