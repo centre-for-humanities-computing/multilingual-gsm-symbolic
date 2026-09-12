@@ -23,16 +23,16 @@ than a hand-written list, so the map stays in sync as languages are added:
 """
 
 import json
+import re
 import tomllib
 import urllib.request
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 import pycountry
-from matplotlib.colors import to_hex
 
 from multilingual_gsm_symbolic.load_data import available_languages
 
@@ -70,52 +70,68 @@ EXTRA_TERRITORIES = {
     "vjk": ["IN"],  # Bajjika
 }
 
-NO_COVERAGE_COLOR = "#E0E0E0"
+NO_COVERAGE_COLOR = "#E3E3E3"
+
+# Ordered quality ramp; see build_category_colors.
+METHOD_COLORS = {
+    "original": "#08519C",
+    "human_validated": "#3182BD",
+    "machine_translated": "#A8CDE5",
+}
 
 CATEGORY_LABELS = {
     "original": "Original",
-    "human_validated": "Human-translated, localized, validated",
+    "human_validated": "Translated and human-validated",
     "machine_translated": "Machine-translated and machine-validated",
 }
 
 
-def get_creation_method(lang: str, templates_dir: Path) -> str:
-    """Determine the creation method for a language based on its templates."""
-    lang_dir = templates_dir / lang / "symbolic"
-    if not lang_dir.exists():
-        return "none"
+# "validated by a native speaker", "human validated", "manually corrected by ..." etc.
+HUMAN_VALIDATED = re.compile(r"human|native speaker|fluent speaker|manually corrected", re.IGNORECASE)
 
-    first_template = sorted(lang_dir.glob("*.toml"))[0]
-    with first_template.open("rb") as f:
-        data = tomllib.load(f)
-    creation = data.get("creation", "")
 
+def classify_creation(creation: str) -> str:
+    """Classify a single template's `creation` string."""
     if "derived from GSM-Symbolic" in creation:
         return "original"
-    if "human" in creation.lower():
+    if HUMAN_VALIDATED.search(creation):
         return "human_validated"
     return "machine_translated"
 
 
-def build_category_colors(methods: list[str]) -> dict[str, str]:
-    """Assign colors from derived categories with an ordered quality palette.
+def get_creation_method(lang: str, templates_dir: Path) -> str:
+    """Determine the creation method for a language from its active templates.
 
-    Colors still come from the parsed creation categories, but are mapped so that:
-    - original = blue
-    - human_validated = green
-    - machine_translated = orange/red
+    Languages are mixed (e.g. Ukrainian has a couple of templates derived straight
+    from GSM-Symbolic among otherwise human-validated ones), so the language takes
+    the method of the majority of its templates rather than of the first one.
     """
-    colors: dict[str, str] = {}
-    present = set(methods)
+    lang_dir = templates_dir / lang / "symbolic"
+    if not lang_dir.exists():
+        return "none"
 
-    if "original" in present:
-        colors["original"] = to_hex(plt.get_cmap("Blues")(0.75))
-    if "human_validated" in present:
-        colors["human_validated"] = to_hex(plt.get_cmap("RdYlGn")(0.92))
-    if "machine_translated" in present:
-        colors["machine_translated"] = to_hex(plt.get_cmap("RdYlGn")(0.22))
+    methods = Counter()
+    for template in sorted(lang_dir.glob("*.toml")):
+        with template.open("rb") as f:
+            data = tomllib.load(f)
+        if data.get("ignore"):
+            continue
+        methods[classify_creation(data.get("creation", ""))] += 1
 
-    return colors
+    if not methods:
+        return "none"
+    return methods.most_common(1)[0][0]
+
+
+def build_category_colors(methods: list[str]) -> dict[str, str]:
+    """Assign colors from derived categories along an ordered quality ramp.
+
+    Colors still come from the parsed creation categories, but are mapped onto a
+    single-hue ramp so the map reads as a quality scale: no coverage (light grey)
+    -> machine-translated (light blue, deliberately closer to "no coverage") ->
+    human-validated -> original (two adjacent dark blues, close but distinct).
+    """
+    return {method: color for method, color in METHOD_COLORS.items() if method in set(methods)}
 
 
 def _load_cldr(name: str) -> dict:
@@ -252,9 +268,8 @@ def main() -> None:
             subset.plot(
                 ax=ax,
                 facecolor=color,
-                edgecolor="black",
-                linewidth=0.5,
-                alpha=0.8,
+                edgecolor="#3D3D3D",
+                linewidth=0.4,
             )
 
     rest_of_world = world[world["method"] == "none"]
@@ -262,9 +277,8 @@ def main() -> None:
         rest_of_world.plot(
             ax=ax,
             facecolor=NO_COVERAGE_COLOR,
-            edgecolor="#CCCCCC",
+            edgecolor="#C4C4C4",
             linewidth=0.3,
-            alpha=0.5,
         )
 
     ax.set_xlim(-180, 180)
@@ -280,10 +294,10 @@ def main() -> None:
 
     legend_elements = [
         *[
-            plt.Rectangle((0, 0), 1, 1, facecolor=color, label=CATEGORY_LABELS[method])
+            plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor="#3D3D3D", linewidth=0.4, label=CATEGORY_LABELS[method])
             for method, color in category_colors.items()
         ],
-        plt.Rectangle((0, 0), 1, 1, facecolor=NO_COVERAGE_COLOR, label="No coverage"),
+        plt.Rectangle((0, 0), 1, 1, facecolor=NO_COVERAGE_COLOR, edgecolor="#C4C4C4", linewidth=0.4, label="No coverage"),
     ]
     ax.legend(handles=legend_elements, loc="lower left", frameon=True, fancybox=True, fontsize=9)
 
