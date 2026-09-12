@@ -412,18 +412,19 @@ def _plot_compute_budget_table(
                 f"{row.params_b:g}B", (row.inference_flops, getattr(row, gap_column)),
                 xytext=(-5, -12) if row.reasoning == "off" else (5, 6),
                 ha="right" if row.reasoning == "off" else "left",
-                textcoords="offset points", fontsize=7, color="#374151",
+                textcoords="offset points", fontsize=11, color="#374151",
             )
 
         ax.set_xscale("log")
-        ax.set_xlabel("Estimated inference FLOPs per sample (log scale)")
+        ax.set_xlabel("Estimated inference FLOPs per sample (log scale)", fontsize=12)
+        ax.tick_params(axis="both", which="both", labelsize=11)
         ax.yaxis.set_major_formatter(PercentFormatter(1))
         ax.grid(axis="both", color="#E5E7EB", linewidth=0.7)
         ax.set_axisbelow(True)
         if panel_family is not None:
-            ax.set_title(panel_family)
+            ax.set_title(panel_family, fontsize=16)
 
-    axes[0, 0].set_ylabel("Percentage of English performance recovered")
+    axes[0, 0].set_ylabel("Percentage of English performance recovered", fontsize=14)
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
         Line2D([0], [0], color="#374151", linestyle=":" if reasoning == "off" else "-", linewidth=1.8,
@@ -440,14 +441,14 @@ def _plot_compute_budget_table(
             for family in families
         )
     if combined and faceted:
-        fig.legend(handles=handles, frameon=False, fontsize=8, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 1.0))
-        fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
-        fig.tight_layout(rect=(0, 0.035, 1, 0.95))
+        fig.legend(handles=handles, frameon=False, fontsize=12, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 1.0))
+        fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=11, color="#4B5563")
+        fig.tight_layout(rect=(0, 0.065, 1, 0.92))
     else:
-        axes[0, 0].legend(handles=handles, frameon=False, fontsize=7, loc="upper right")
+        axes[0, 0].legend(handles=handles, frameon=False, fontsize=12, loc="upper right")
         axes[0, 0].text(
             0.01, 0.02, "Upper-left is better. Bars are 95% bootstrap CIs over questions.",
-            transform=axes[0, 0].transAxes, fontsize=8, color="#4B5563",
+            transform=axes[0, 0].transAxes, fontsize=11, color="#4B5563",
         )
         fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
