@@ -442,14 +442,9 @@ def _plot_compute_budget_table(
         )
     if combined and faceted:
         fig.legend(handles=handles, frameon=False, fontsize=16, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 1.0))
-        fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=14, color="#4B5563")
-        fig.tight_layout(rect=(0, 0.065, 1, 0.92))
+        fig.tight_layout(rect=(0, 0, 1, 0.92))
     else:
         axes[0, 0].legend(handles=handles, frameon=False, fontsize=16, loc="upper right")
-        axes[0, 0].text(
-            0.01, 0.02, "Upper-left is better. Bars are 95% bootstrap CIs over questions.",
-            transform=axes[0, 0].transAxes, fontsize=14, color="#4B5563",
-        )
         fig.tight_layout()
     # Separate neighboring model labels after the final axes layout is known.
     fig.canvas.draw()
