@@ -256,7 +256,9 @@ def main() -> None:
     world["color"] = world["method"].map(category_colors).fillna(NO_COVERAGE_COLOR)
 
     matched = world[world["method"] != "none"]
-    print(f"Colored {len(matched)} countries; {len(set(territory_method) - set(world['iso_a2']))} territories unmatched")
+    print(
+        f"Colored {len(matched)} countries; {len(set(territory_method) - set(world['iso_a2']))} territories unmatched"
+    )
     for method, count in world["method"].value_counts().items():
         print(f"  {method}: {count} countries")
 
@@ -294,10 +296,14 @@ def main() -> None:
 
     legend_elements = [
         *[
-            plt.Rectangle((0, 0), 1, 1, facecolor=color, edgecolor="#3D3D3D", linewidth=0.4, label=CATEGORY_LABELS[method])
+            plt.Rectangle(
+                (0, 0), 1, 1, facecolor=color, edgecolor="#3D3D3D", linewidth=0.4, label=CATEGORY_LABELS[method]
+            )
             for method, color in category_colors.items()
         ],
-        plt.Rectangle((0, 0), 1, 1, facecolor=NO_COVERAGE_COLOR, edgecolor="#C4C4C4", linewidth=0.4, label="No coverage"),
+        plt.Rectangle(
+            (0, 0), 1, 1, facecolor=NO_COVERAGE_COLOR, edgecolor="#C4C4C4", linewidth=0.4, label="No coverage"
+        ),
     ]
     ax.legend(handles=legend_elements, loc="lower left", frameon=True, fancybox=True, fontsize=9)
 
