@@ -991,7 +991,7 @@ def plot_correction_comparison(
         # from the curve. Uniform subplot spacing clips two-line full slugs.
         heights = []
         for row in column_rows:
-            heights.extend([8, 28, 1] if full_page else [14 if " (reasoning" in row.model else 8, 12, 3])
+            heights.extend([13, 23, 3] if full_page else [14 if " (reasoning" in row.model else 8, 12, 3])
         grid = columns[col].subgridspec(len(heights), 1, height_ratios=heights, hspace=0)
         for panel_row, row in enumerate(column_rows):
             label_ax = fig.add_subplot(grid[3 * panel_row])
@@ -1010,7 +1010,7 @@ def plot_correction_comparison(
             color=old_color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.15,
+            alpha=0.25,
             zorder=1,
         )
         new_counts, _, _ = ax.hist(
@@ -1020,7 +1020,7 @@ def plot_correction_comparison(
             color=new_color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.15,
+            alpha=0.25,
             zorder=1,
         )
         old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
@@ -1031,13 +1031,6 @@ def plot_correction_comparison(
             float(old_density.max()),
             float(new_density.max()),
         )
-        if full_page:
-            # Histograms can have isolated tall bins that flatten the fitted
-            # curves. The larger paper version focuses on the curves alone.
-            for patch in ax.patches:
-                patch.set_visible(False)
-            peak = max(float(old_density.max()), float(new_density.max()))
-
         ax.plot(old_x, old_density, color=old_color, linewidth=0.9, zorder=3)
         ax.axvline(old_mean, color=old_color, linewidth=0.45, alpha=0.65, zorder=2)
 
@@ -1045,7 +1038,7 @@ def plot_correction_comparison(
         ax.axvline(new_mean, color=new_color, linewidth=0.45, linestyle="--", alpha=0.65, zorder=2)
 
         ax.set_yticks([])
-        ax.set_ylim(0, peak * (1.02 if full_page else 1.2))
+        ax.set_ylim(0, peak * 1.2)
         ax.grid(axis="x", color="#D8DEE8", linewidth=0.35, alpha=0.6)
         ax.tick_params(axis="x", labelsize=label_size, length=2, width=0.4, pad=2)
         ax.set_xlim(0, 1)
@@ -1053,6 +1046,9 @@ def plot_correction_comparison(
         ax.tick_params(labelbottom=False, bottom=False)
         for spine in ax.spines.values():
             spine.set_visible(False)
+        ax.spines["bottom"].set_visible(True)
+        ax.spines["bottom"].set_color("#737373")
+        ax.spines["bottom"].set_linewidth(0.45)
 
     for col in range(2):
         count = min(nrows, max(0, len(rows) - col * nrows))
