@@ -230,40 +230,21 @@ The original concrete problems are from [GSM8k](https://huggingface.co/datasets/
 
 You can see the available languages as follows:
 ```python
-from multilingual_gsm_symbolic import available_languages
-
-# see possible languages
-print(available_languages())
-# {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
-```
-
-And 
-
-
-The Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
-The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
-
-
-```python
 from multilingual_gsm_symbolic import load_data, available_languages
 
 # see possible languages
 print(available_languages())
 # {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
 
-# example creation strategy:
+# examine creation strategy:
 templates = load_data("dan")
 templates[0].creation
 # machine-translated from English, localized and validated by humans, computationally validated
-
-templates = load_data("isl")
-templates[0].creation
-# machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated
 ```
 
 ### Want to add a new language?
 
-Want to add a new language or validate an existing one? Great to hear. `src/data/**` folder contains all the templates for a specific languages and `scripts/translate_templates.py` can be used to translate the templates from one language to another. We have already pre-generated few language, see the data folder for which ones, but if you need the translation for validation. Once you have validated the examples you can submit a PR with the changes.
+Want to add a new language or validate an existing one? Great to hear. `src/data/**` folder contains all the templates for a specific languages and `scripts/translate_templates.py` can be used to translate the templates from one language to another. We have already pre-generated few language, see the data folder for which ones. Once you have validated the examples you can submit a PR with the changes.
 
 ## 📖 API reference
 
