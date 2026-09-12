@@ -1,10 +1,10 @@
 # /// script
 # dependencies = ["playwright"]
 # ///
-"""Export example.html to a transparent PNG.
+"""Export example.html and headline_figure.html to PNG.
 
 Usage:
-    uv run figures/export_png.py
+    uv run images/export_png.py
 """
 
 import asyncio
@@ -13,20 +13,19 @@ from pathlib import Path
 from playwright.async_api import async_playwright
 
 
-async def export():
-    html_path = Path(__file__).parent / "example.html"
-    out_path = Path(__file__).parent / "example.png"
+async def export(stem: str = "example"):
+    html_path = Path(__file__).parent / f"{stem}.html"
+    out_path = Path(__file__).parent / f"{stem}.png"
 
     async with async_playwright() as p:
         browser = await p.chromium.launch()
-        page = await browser.new_page()
+        page = await browser.new_page(device_scale_factor=2)
         await page.goto(html_path.resolve().as_uri())
 
-        # Size the viewport to the container width; height auto-fits
-        await page.set_viewport_size({"width": 920, "height": 100})
-        container = await page.query_selector(".container")
+        container = await page.query_selector(".container, #headline-figure")
         box = await container.bounding_box()
-        await page.set_viewport_size({"width": 920, "height": int(box["height"] + box["y"] * 2)})
+        width = 920 if "example" in stem else int(box["width"])
+        await page.set_viewport_size({"width": width, "height": int(box["height"] + box["y"] * 2)})
 
         await page.screenshot(
             path=str(out_path),
@@ -38,4 +37,5 @@ async def export():
     print(f"Written: {out_path}")
 
 
-asyncio.run(export())
+for name in ["example", "headline_figure"]:
+    asyncio.run(export(name))
