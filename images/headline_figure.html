@@ -86,6 +86,18 @@
 
   /* ── per-language cells ── */
   .cell { display: flex; }
+
+  /* sampled variants are drawn as a stack: 20 are generated per template, one shown.
+     The layers sit behind the card by DOM order, so no z-index juggling is needed. */
+  .cell.samp { position: relative; }
+  .samp .layer {
+    position: absolute; inset: 0; background: #fff;
+    border: 2px solid var(--rule); border-radius: 22px;
+  }
+  .samp .layer.back { transform: translate(15px, -15px); }
+  .samp .layer.mid { transform: translate(7.5px, -7.5px); }
+  /* positioned, so it paints above the layers that precede it */
+  .samp .card { position: relative; }
   .cell .card { padding: 22px 29px; font-size: 31px; line-height: 1.5; width: 100%; }
   .name { font-size: 33px; font-weight: 700; margin-bottom: 10px; }
   .name em { font-style: normal; font-weight: 400; color: var(--faint); font-size: 27px; }
@@ -151,14 +163,14 @@
     </div>
 
     <!-- ── sampled variants, drawn independently per language ── -->
-    <div class="cell" style="grid-column:5;grid-row:1">
-      <div class="card">A <span class="val f1">carpenter</span> works for <span class="val f3">3</span> weeks every month &hellip; if he gets paid <span class="val f2">$</span><span class="val f4">80</span> every day &hellip;<div class="ans">answer <b>14,400</b></div></div>
+    <div class="cell samp" style="grid-column:5;grid-row:1">
+      <span class="layer back"></span><span class="layer mid"></span>      <div class="card">A <span class="val f1">carpenter</span> works for <span class="val f3">3</span> weeks every month &hellip; if he gets paid <span class="val f2">$</span><span class="val f4">80</span> every day &hellip;<div class="ans">answer <b>14,400</b></div></div>
     </div>
-    <div class="cell" style="grid-column:5;grid-row:2">
-      <div class="card">En <span class="val f1">elektriker</span> arbejder i <span class="val f3">4</span> uger hver m&aring;ned &hellip; hvis han f&aring;r <span class="val f4">155</span> <span class="val f2">kr</span> hver dag &hellip;<div class="ans">answer <b>29,760</b></div></div>
+    <div class="cell samp" style="grid-column:5;grid-row:2">
+      <span class="layer back"></span><span class="layer mid"></span>      <div class="card">En <span class="val f1">elektriker</span> arbejder i <span class="val f3">4</span> uger hver m&aring;ned &hellip; hvis han f&aring;r <span class="val f4">155</span> <span class="val f2">kr</span> hver dag &hellip;<div class="ans">answer <b>29,760</b></div></div>
     </div>
-    <div class="cell" style="grid-column:5;grid-row:3">
-      <div class="card devanagari">एक <span class="val f1">सुतार</span> दर महिन्याला <span class="val f3">२</span> आठवडे &hellip; जर त्याला दररोज <span class="val f2">₹</span><span class="val f4">१९५</span> मिळत असतील &hellip;<div class="ans">answer <b class="devanagari">२३४००</b></div></div>
+    <div class="cell samp" style="grid-column:5;grid-row:3">
+      <span class="layer back"></span><span class="layer mid"></span>      <div class="card devanagari">एक <span class="val f1">सुतार</span> दर महिन्याला <span class="val f3">२</span> आठवडे &hellip; जर त्याला दररोज <span class="val f2">₹</span><span class="val f4">१९५</span> मिळत असतील &hellip;<div class="ans">answer <b class="devanagari">२३४००</b></div></div>
     </div>
 
     <!-- converge: one variant per template makes a 100-problem benchmark set -->
