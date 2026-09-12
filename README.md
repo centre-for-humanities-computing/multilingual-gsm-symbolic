@@ -10,7 +10,8 @@
 A Python package for generating synthetic multilingual math problems from symbolic templates. Allows you to create more than a thousand examples from just one problem and allows you to test if the LLMs actually understand the problem or whether it was just lucky pattern-matching.
 
 
-![Example of a symbolic template and generated questions](https://raw.githubusercontent.com/centre-for-humanities-computing/multilingual-gsm-symbolic/main/images/example.png)
+![](https://raw.githubusercontent.com/centre-for-humanities-computing/multilingual-gsm-symbolic/main/images/headline_figure.png)
+
 
 ## ⏳ Installation
 
