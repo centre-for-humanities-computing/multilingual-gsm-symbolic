@@ -410,21 +410,21 @@ def _plot_compute_budget_table(
         for row in panel_table.itertuples(index=False):
             ax.annotate(
                 f"{row.params_b:g}B", (row.inference_flops, getattr(row, gap_column)),
-                xytext=(-5, -12) if row.reasoning == "off" else (5, 6),
+                xytext=(-5, -17) if row.reasoning == "off" else (5, 6),
                 ha="right" if row.reasoning == "off" else "left",
-                textcoords="offset points", fontsize=11, color="#374151",
+                textcoords="offset points", fontsize=14, color="#374151",
             )
 
         ax.set_xscale("log")
-        ax.set_xlabel("Estimated inference FLOPs per sample (log scale)", fontsize=12)
-        ax.tick_params(axis="both", which="both", labelsize=11)
+        ax.set_xlabel("Estimated inference FLOPs\nper sample (log scale)", fontsize=16)
+        ax.tick_params(axis="both", which="both", labelsize=14)
         ax.yaxis.set_major_formatter(PercentFormatter(1))
         ax.grid(axis="both", color="#E5E7EB", linewidth=0.7)
         ax.set_axisbelow(True)
         if panel_family is not None:
-            ax.set_title(panel_family, fontsize=16)
+            ax.set_title(panel_family, fontsize=22)
 
-    axes[0, 0].set_ylabel("Percentage of English performance recovered", fontsize=14)
+    axes[0, 0].set_ylabel("Percentage of English\nperformance recovered", fontsize=18)
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
         Line2D([0], [0], color="#374151", linestyle=":" if reasoning == "off" else "-", linewidth=1.8,
@@ -441,16 +441,29 @@ def _plot_compute_budget_table(
             for family in families
         )
     if combined and faceted:
-        fig.legend(handles=handles, frameon=False, fontsize=12, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 1.0))
-        fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=11, color="#4B5563")
+        fig.legend(handles=handles, frameon=False, fontsize=16, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 1.0))
+        fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=14, color="#4B5563")
         fig.tight_layout(rect=(0, 0.065, 1, 0.92))
     else:
-        axes[0, 0].legend(handles=handles, frameon=False, fontsize=12, loc="upper right")
+        axes[0, 0].legend(handles=handles, frameon=False, fontsize=16, loc="upper right")
         axes[0, 0].text(
             0.01, 0.02, "Upper-left is better. Bars are 95% bootstrap CIs over questions.",
-            transform=axes[0, 0].transAxes, fontsize=11, color="#4B5563",
+            transform=axes[0, 0].transAxes, fontsize=14, color="#4B5563",
         )
         fig.tight_layout()
+    # Separate neighboring model labels after the final axes layout is known.
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    for ax in axes[0]:
+        placed = []
+        for label in sorted(ax.texts, key=lambda text: text.xy[0]):
+            for _ in range(30):
+                bounds = label.get_window_extent(renderer).expanded(1.08, 1.15)
+                if not any(bounds.overlaps(other) for other in placed):
+                    break
+                x, y = label.get_position()
+                label.set_position((x, y + (5 if y >= 0 else -5)))
+            placed.append(label.get_window_extent(renderer).expanded(1.08, 1.15))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
