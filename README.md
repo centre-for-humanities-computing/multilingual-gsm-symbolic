@@ -10,7 +10,8 @@
 A Python package for generating synthetic multilingual math problems from symbolic templates. Allows you to create more than a thousand examples from just one problem and allows you to test if the LLMs actually understand the problem or whether it was just lucky pattern-matching.
 
 
-![Example of a symbolic template and generated questions](https://raw.githubusercontent.com/centre-for-humanities-computing/multilingual-gsm-symbolic/main/images/example.png)
+![](https://raw.githubusercontent.com/centre-for-humanities-computing/multilingual-gsm-symbolic/main/images/headline_figure.png)
+
 
 ## ⏳ Installation
 
@@ -306,7 +307,7 @@ The following languages are fully computationally and human validated:
 | `hin` | gpt-5.4 | test suite passes | by a native speaker | performed using anthropic/claude-opus-4-8, with errors manually inspected |
 | `hne` | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes |  |  |
 | `hrv` | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes |  |  |
-| `hun` | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes |  |  |
+| `hun` | Qwen/Qwen3.5-122B-A10B-FP8 |  |  |  |
 | `ibo` | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes |  |  |
 | `ind` | Qwen/Qwen3.5-122B-A10B-FP8 | test suite passes |  |  |
 | `isl` | gpt-5.4 | test suite passes | by native speakers | performed using anthropic/claude-opus-4-8, with errors manually inspected |
@@ -384,7 +385,7 @@ The following languages are fully computationally and human validated:
 
 ### Want to add a new language?
 
-Want to add a new language or validate an existing one? Great to hear. `src/data/**` folder contains all the templates for a specific languages and `scripts/translate_templates.py` can be used to translate the templates from one language to another. We have already pre-generated few language, see the data folder for which ones, but if you need the translation for validation. Once you have validated the examples you can submit a PR with the changes.
+Want to add a new language or validate an existing one? Great to hear. `src/data/**` folder contains all the templates for a specific languages and `scripts/translate_templates.py` can be used to translate the templates from one language to another. We have already pre-generated few language, see the data folder for which ones. Once you have validated the examples you can submit a PR with the changes.
 
 ## 📖 API reference
 
