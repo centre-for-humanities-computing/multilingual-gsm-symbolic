@@ -42,8 +42,10 @@ def test_tables_only_report_whole_language_validation(tmp_path: Path) -> None:
     assert "Source language" not in overview and "Source language" in full
     assert "Initial translation model" not in overview and "Initial translation model" in full
     latex = render_latex_table(languages)
-    assert r"eng\_metric & Yes &  & " in latex
-    assert "spa & Yes &  & " in latex
+    assert r"eng\_metric" not in latex
+    assert r"$\checkmark$" in latex
+    assert "spa" in latex
+    assert "dan" in latex
     # Missing translation provenance is an error, not a blank/unknown table entry.
     (tmp_path / "spa/symbolic/0000.toml").write_text('language = "spa"\n', encoding="utf-8")
     with pytest.raises(KeyError, match="initial_translation_model"):
