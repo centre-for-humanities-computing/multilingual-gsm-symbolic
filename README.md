@@ -269,7 +269,7 @@ The following languages are validated:
 | `zho` | ✓ | by a native speaker | ✓ |
 
 <details>
-<summary>Unvalidated languages</summary>
+<summary>Full details</summary>
 
 | Language | Computationally validated | Human validated | Error analysis |
 | --- | --- | --- | --- |

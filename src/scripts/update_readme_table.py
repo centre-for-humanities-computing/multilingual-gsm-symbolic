@@ -83,7 +83,7 @@ def render_language_tables(languages: list[LanguageValidation]) -> str:
             _table(validated),
             "",
             "<details>",
-            "<summary>Unvalidated languages</summary>",
+            "<summary>Full details</summary>",
             "",
             _table(unvalidated),
             "",
