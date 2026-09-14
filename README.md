@@ -251,21 +251,21 @@ The following languages are fully computationally and human validated:
 
 | Language | Computationally validated | Human validated | Error analysis |
 | --- | --- | --- | --- |
-| `ara` | Yes | Yes | Yes |
-| `dan` | Yes | Yes | Yes |
-| `deu` | Yes | Yes | Yes |
-| `est` | Yes | Yes | Yes |
-| `fra` | Yes | Yes | Yes |
-| `hin` | Yes | Yes | Yes |
-| `isl` | Yes | Yes | Yes |
-| `jpn` | Yes | Yes | Yes |
-| `mar` | Yes | Yes | Yes |
-| `nld` | Yes | Yes | Yes |
-| `rus` | Yes | Yes | Yes |
-| `swe` | Yes | Yes | Yes |
-| `ukr` | Yes | Yes | Yes |
-| `urd` | Yes | Yes | Yes |
-| `zho` | Yes | Yes | Yes |
+| `ara` | ✓ | ✓ | ✓ |
+| `dan` | ✓ | ✓ | ✓ |
+| `deu` | ✓ | ✓ | ✓ |
+| `est` | ✓ | ✓ | ✓ |
+| `fra` | ✓ | ✓ | ✓ |
+| `hin` | ✓ | ✓ | ✓ |
+| `isl` | ✓ | ✓ | ✓ |
+| `jpn` | ✓ | ✓ | ✓ |
+| `mar` | ✓ | ✓ | ✓ |
+| `nld` | ✓ | ✓ | ✓ |
+| `rus` | ✓ | ✓ | ✓ |
+| `swe` | ✓ | ✓ | ✓ |
+| `ukr` | ✓ | ✓ | ✓ |
+| `urd` | ✓ | ✓ | ✓ |
+| `zho` | ✓ | ✓ | ✓ |
 
 <details>
 <summary>Full validation details for all languages</summary>

@@ -68,7 +68,7 @@ def _table(languages: list[LanguageValidation], *, overview: bool = False) -> st
     for lang in languages:
         values = [lang.computational, lang.human, lang.error]
         if overview:
-            values = ["Yes" if value else "" for value in values]
+            values = ["✓" if value else "" for value in values]
         else:
             values.insert(0, lang.model)
         lines.append("| " + " | ".join([f"`{lang.language}`", *map(_markdown_cell, values)]) + " |")
