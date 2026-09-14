@@ -38,8 +38,8 @@ NO_COVERAGE_COLOR = "#E0E0E0"
 
 CATEGORY_LABELS = {
     "original": "Original",
-    "human_validated": "Human-translated, localized, validated",
-    "machine_translated": "Machine-translated and machine-validated",
+    "human_validated": "Human validated",
+    "machine_translated": "Machine translated",
 }
 
 
@@ -49,14 +49,15 @@ def get_creation_method(lang: str, templates_dir: Path) -> str:
     if not lang_dir.exists():
         return "none"
 
-    first_template = sorted(lang_dir.glob("*.toml"))[0]
-    with first_template.open("rb") as f:
-        data = tomllib.load(f)
-    creation = data.get("creation", "")
-
-    if "derived from GSM-Symbolic" in creation:
+    if lang in {"eng", "eng_metric"}:
         return "original"
-    if data.get("human-validated") or "human" in creation.lower():
+    records = []
+    for path in sorted(lang_dir.glob("*.toml")):
+        with path.open("rb") as file:
+            record = tomllib.load(file)
+        if not record.get("ignore"):
+            records.append(record)
+    if records and all(record.get("human-validated") for record in records):
         return "human_validated"
     return "machine_translated"
 

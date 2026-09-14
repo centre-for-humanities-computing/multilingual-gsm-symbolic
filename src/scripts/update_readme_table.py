@@ -1,153 +1,158 @@
 #!/usr/bin/env python
-"""Update README language validation tables from structured template metadata."""
+"""Generate README and LaTeX language validation tables from template metadata."""
 
 import argparse
 import tomllib
-from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
 START_MARKER = "<!-- LANGUAGE TABLE START -->"
 END_MARKER = "<!-- LANGUAGE TABLE END -->"
-VALIDATION_KEYS = {
-    "computational": "computationally-validated",
-    "human": "human-validated",
-    "error": "error-analysis",
-}
 
 
 @dataclass(frozen=True)
 class LanguageValidation:
     language: str
-    template_count: int
-    source_language: str
     model: str
     computational: str
     human: str
     error: str
-    fully_computationally_validated: bool
 
 
-def _display_value(values: list[str | None]) -> str:
-    present = [value for value in values if value]
-    if not present:
-        return "—"
-    unique = sorted(set(present))
-    if len(present) == len(values) and len(unique) == 1:
-        return unique[0]
-    if len(unique) == 1:
-        return f"Partial ({len(present)}/{len(values)} templates): {unique[0]}"
-    counts = Counter(present)
-    summary = ", ".join(f"{value} ({count}/{len(values)})" for value, count in sorted(counts.items()))
-    return f"Mixed: {summary}"
+def _completed_value(records: list[dict], key: str) -> str:
+    values = [record.get(key) for record in records]
+    return "; ".join(sorted(set(values))) if all(values) else ""
 
 
 def collect_language_validation(templates_root: Path) -> list[LanguageValidation]:
-    """Collect validation metadata from active templates, grouped by language."""
+    """Summarize each validation only when it covers every active template."""
     languages = []
     for lang_dir in sorted(path for path in templates_root.iterdir() if path.is_dir()):
-        symbolic_dir = lang_dir / "symbolic"
-        if not symbolic_dir.exists() or (lang_dir / "ignore").exists():
+        if (lang_dir / "ignore").exists():
             continue
-
         records = []
-        for template_path in sorted(symbolic_dir.glob("*.toml")):
-            with template_path.open("rb") as file:
+        for path in sorted((lang_dir / "symbolic").glob("*.toml")):
+            with path.open("rb") as file:
                 record = tomllib.load(file)
             if not record.get("ignore"):
                 records.append(record)
         if not records:
             continue
-
-        computational = [record.get(VALIDATION_KEYS["computational"]) for record in records]
-        human = [record.get(VALIDATION_KEYS["human"]) for record in records]
-        error = [record.get(VALIDATION_KEYS["error"]) for record in records]
-        original_derived = [record.get("creation", "").startswith("derived from GSM-Symbolic") for record in records]
-        source_languages = [
-            record.get("source-language") or ("original-derived" if original else None)
-            for record, original in zip(records, original_derived)
-        ]
-        models = [
-            record.get("model") or ("not applicable" if original else None)
-            for record, original in zip(records, original_derived)
-        ]
+        for record in records:
+            assert "creation" not in record and "model" not in record, f"{lang_dir.name}: obsolete metadata"
+            assert record["language"] == lang_dir.name, f"{lang_dir.name}: incorrect language"
+            if lang_dir.name not in {"eng", "eng_metric"}:
+                assert record["initial_translation_model"], f"{lang_dir.name}: missing translation model"
+                assert record["source-language"], f"{lang_dir.name}: missing source language"
         languages.append(
             LanguageValidation(
                 language=lang_dir.name,
-                template_count=len(records),
-                source_language=_display_value(source_languages),
-                model=_display_value(models),
-                computational=_display_value(computational),
-                human=_display_value(human),
-                error=_display_value(error),
-                fully_computationally_validated=all(computational),
+                model=_completed_value(records, "initial_translation_model"),
+                computational=_completed_value(records, "computationally-validated"),
+                human=_completed_value(records, "human-validated"),
+                error=_completed_value(records, "error-analysis"),
             )
         )
     return languages
-
-
-def _table(languages: list[LanguageValidation]) -> str:
-    lines = [
-        "| Language | Source language | Model | Computationally validated | Human validated | Error analysis |",
-        "| --- | --- | --- | --- | --- | --- |",
-    ]
-    lines.extend(
-        f"| `{lang.language}` | {_markdown_cell(lang.source_language)} | {_markdown_cell(lang.model)} | "
-        f"{_markdown_cell(lang.computational)} | {_markdown_cell(lang.human)} | {_markdown_cell(lang.error)} |"
-        for lang in languages
-    )
-    return "\n".join(lines)
 
 
 def _markdown_cell(value: str) -> str:
     return value.replace("|", "\\|").replace("\n", "<br>")
 
 
+def _table(languages: list[LanguageValidation], *, overview: bool = False) -> str:
+    headings = ["Language", "Computationally validated", "Human validated", "Error analysis"]
+    if not overview:
+        headings.insert(1, "Initial translation model")
+    lines = ["| " + " | ".join(headings) + " |", "| " + " | ".join(["---"] * len(headings)) + " |"]
+    for lang in languages:
+        values = [lang.computational, lang.human, lang.error]
+        if overview:
+            values = ["Yes" if value else "" for value in values]
+        else:
+            values.insert(0, lang.model)
+        lines.append("| " + " | ".join([f"`{lang.language}`", *map(_markdown_cell, values)]) + " |")
+    return "\n".join(lines)
+
+
 def render_language_tables(languages: list[LanguageValidation]) -> str:
-    """Render complete and incomplete language validation tables as Markdown."""
-    validated = [lang for lang in languages if lang.fully_computationally_validated]
-    incomplete = [lang for lang in languages if not lang.fully_computationally_validated]
-    sections = ["The following languages are computationally validated:", "", _table(validated)]
-    if incomplete:
-        sections.extend(
-            [
-                "",
-                "<details>",
-                "<summary>Languages with incomplete computational validation</summary>",
-                "",
-                _table(incomplete),
-                "",
-                "</details>",
-            ]
-        )
-    return "\n".join(sections)
+    validated = [lang for lang in languages if lang.human and lang.computational]
+    return "\n".join(
+        [
+            "The following languages are fully computationally and human validated:",
+            "",
+            _table(validated, overview=True),
+            "",
+            "<details>",
+            "<summary>Full validation details for all languages</summary>",
+            "",
+            _table(languages),
+            "",
+            "</details>",
+        ]
+    )
+
+
+def _latex_cell(value: str) -> str:
+    escapes = {
+        "\\": r"\textbackslash{}",
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+        "{": r"\{",
+        "}": r"\}",
+        "~": r"\textasciitilde{}",
+        "^": r"\textasciicircum{}",
+        "\n": " ",
+    }
+    return "".join(escapes.get(char, char) for char in value)
+
+
+def render_latex_table(languages: list[LanguageValidation]) -> str:
+    """A compact, multipage paper table; requires the longtable package."""
+    lines = [
+        "% Generated by src/scripts/update_readme_table.py; do not edit.",
+        r"\begin{longtable}{llll}",
+        r"\caption{Language validation. A status is shown only when all active templates have that validation.}\label{tab:language-validation}\\",
+        r"\hline",
+        r"Language & Computational & Human & Error analysis \\",
+        r"\hline",
+        r"\endfirsthead",
+        r"\hline",
+        r"Language & Computational & Human & Error analysis \\",
+        r"\hline",
+        r"\endhead",
+        r"\hline",
+        r"\endfoot",
+    ]
+    for lang in languages:
+        values = [lang.language, *["Yes" if value else "" for value in (lang.computational, lang.human, lang.error)]]
+        lines.append(" & ".join(map(_latex_cell, values)) + r" \\")
+    lines.append(r"\end{longtable}")
+    return "\n".join(lines) + "\n"
 
 
 def update_readme(readme: Path, table_content: str) -> None:
-    """Replace the content between the README language-table markers."""
     text = readme.read_text(encoding="utf-8")
-    if text.count(START_MARKER) != 1 or text.count(END_MARKER) != 1:
-        raise ValueError("README must contain exactly one start marker and one end marker")
-    before, remainder = text.split(START_MARKER, 1)
-    _, after = remainder.split(END_MARKER, 1)
-    readme.write_text(
-        f"{before}{START_MARKER}\n{table_content}\n{END_MARKER}{after}",
-        encoding="utf-8",
-    )
+    assert text.count(START_MARKER) == text.count(END_MARKER) == 1, "README table markers must occur once"
+    before, remainder = text.split(START_MARKER)
+    _, after = remainder.split(END_MARKER)
+    readme.write_text(f"{before}{START_MARKER}\n{table_content}\n{END_MARKER}{after}", encoding="utf-8", newline="\n")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--readme", type=Path, default=Path("README.md"))
-    parser.add_argument(
-        "--templates-root",
-        type=Path,
-        default=Path("src/multilingual_gsm_symbolic/data/templates"),
-    )
+    parser.add_argument("--templates-root", type=Path, default=Path("src/multilingual_gsm_symbolic/data/templates"))
+    parser.add_argument("--latex", type=Path, default=Path("docs/language_validation.tex"))
     args = parser.parse_args()
     languages = collect_language_validation(args.templates_root)
     update_readme(args.readme, render_language_tables(languages))
-    print(f"Updated {args.readme} with validation metadata for {len(languages)} languages")
+    args.latex.parent.mkdir(parents=True, exist_ok=True)
+    args.latex.write_text(render_latex_table(languages), encoding="utf-8", newline="\n")
+    print(f"Updated {args.readme} and {args.latex} for {len(languages)} languages")
 
 
 if __name__ == "__main__":

@@ -62,9 +62,8 @@ class AnnotatedQuestion:
     question_annotated: str
     answer_annotated: str
     language: str = "eng"
-    creation: str = ""
     source_language: str | None = None
-    model: str | None = None
+    initial_translation_model: str | None = None
     computationally_validated: str | None = None
     human_validated: str | None = None
     error_analysis: str | None = None

@@ -180,9 +180,8 @@ def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model
     tgt_data.update(translated_fields)
     tgt_data = _strip_answer_annotated_defaults(tgt_data)
     tgt_data["language"] = tgt
-    tgt_data["creation"] = "machine-translated"
     tgt_data["source-language"] = src
-    tgt_data["model"] = model
+    tgt_data["initial_translation_model"] = model
     tgt_data.pop("computationally-validated", None)
     tgt_data.pop("human-validated", None)
     tgt_data.pop("error-analysis", None)

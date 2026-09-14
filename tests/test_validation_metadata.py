@@ -1,5 +1,4 @@
 import json
-import tomllib
 from pathlib import Path
 
 import pytest
@@ -11,6 +10,7 @@ from scripts.update_readme_table import (
     START_MARKER,
     collect_language_validation,
     render_language_tables,
+    render_latex_table,
     update_readme,
 )
 
@@ -27,127 +27,65 @@ def _template_data(**metadata: str) -> dict:
     }
 
 
-def test_json_loader_accepts_documented_hyphenated_validation_keys(tmp_path: Path) -> None:
+def test_loader_reads_current_schema_and_rejects_obsolete_fields(tmp_path: Path) -> None:
     path = tmp_path / "template.json"
-    path.write_text(
-        json.dumps(
-            _template_data(
-                **{
-                    "source-language": "eng",
-                    "model": "example/model",
-                    "computationally-validated": "test suite passes",
-                    "human-validated": "by a native speaker",
-                    "error-analysis": "performed using anthropic/claude-opus-4-8, with errors manually inspected",
-                }
-            )
-        ),
-        encoding="utf-8",
+    data = _template_data(
+        **{
+            "source-language": "eng",
+            "initial_translation_model": "example/model",
+            "computationally-validated": "test suite passes",
+            "human-validated": "by a native speaker",
+            "error-analysis": "reviewed with Claude Opus",
+        }
     )
-
+    path.write_text(json.dumps(data), encoding="utf-8")
     template = AnnotatedQuestion.from_json(path)
-
     assert template.source_language == "eng"
-    assert template.model == "example/model"
+    assert template.initial_translation_model == "example/model"
     assert template.computationally_validated == "test suite passes"
     assert template.human_validated == "by a native speaker"
-    assert template.error_analysis == "performed using anthropic/claude-opus-4-8, with errors manually inspected"
+    assert template.error_analysis == "reviewed with Claude Opus"
+    for key in ("model", "creation"):
+        path.write_text(json.dumps({**data, key: "obsolete"}), encoding="utf-8")
+        with pytest.raises(TypeError, match=key):
+            AnnotatedQuestion.from_json(path)
 
 
-def test_loader_rejects_duplicate_serialized_and_python_validation_keys(tmp_path: Path) -> None:
-    path = tmp_path / "template.json"
-    path.write_text(
-        json.dumps(
-            _template_data(
-                **{
-                    "computationally-validated": "test suite passes",
-                    "computationally_validated": "other value",
-                }
-            )
-        ),
-        encoding="utf-8",
-    )
-
-    with pytest.raises(ValueError, match="both"):
-        AnnotatedQuestion.from_json(path)
+def test_repository_metadata() -> None:
+    languages = collect_language_validation(_DATA_ROOT)
+    assert languages
 
 
-def test_repository_templates_have_complete_validation_metadata() -> None:
-    records: dict[str, list[tuple[Path, dict]]] = {}
-    for language_dir in sorted(path for path in _DATA_ROOT.iterdir() if path.is_dir()):
-        symbolic_dir = language_dir / "symbolic"
-        if symbolic_dir.is_dir():
-            records[language_dir.name] = [
-                (path, tomllib.load(path.open("rb"))) for path in sorted(symbolic_dir.glob("*.toml"))
-            ]
-
-    human_validated_languages = {
-        language
-        for language, templates in records.items()
-        if any(template.get("human-validated") for _, template in templates)
-    }
-    errors = []
-    for language, templates in records.items():
-        for path, template in templates:
-            creation = template.get("creation", "")
-            ignored_machine_translation = template.get("ignore") and (
-                creation == "machine-translated" or set(template) == {"ignore"}
-            )
-            if ignored_machine_translation:
-                continue
-
-            required = {"creation", "language", "computationally-validated"}
-            if creation == "machine-translated" or creation.startswith("derived from GSM-Symbolic"):
-                required.update({"source-language", "model"})
-            if language in human_validated_languages:
-                required.update({"human-validated", "error-analysis"})
-
-            missing = sorted(field for field in required if not template.get(field))
-            if missing:
-                errors.append(f"{path.relative_to(_DATA_ROOT)}: missing {', '.join(missing)}")
-
-    assert not errors, "Incomplete template validation metadata:\n" + "\n".join(errors)
-
-
-def test_readme_table_separates_complete_and_partial_validation(tmp_path: Path) -> None:
-    root = tmp_path / "templates"
-    for language, validation_values in {"eng": [True, True], "spa": [True, False]}.items():
-        symbolic = root / language / "symbolic"
+def test_tables_only_report_whole_language_validation(tmp_path: Path) -> None:
+    for language in ("eng", "eng_metric", "spa", "dan"):
+        symbolic = tmp_path / language / "symbolic"
         symbolic.mkdir(parents=True)
-        for index, validated in enumerate(validation_values):
-            metadata = (
-                'source-language = "eng"\n'
-                'model = "example/model"\n'
-                'human-validated = "by a native speaker"\n'
-                'error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"\n'
-            )
-            if validated:
-                metadata += 'computationally-validated = "test suite passes"\n'
-            (symbolic / f"{index:04}.toml").write_text(metadata, encoding="utf-8")
-    original = root / "original" / "symbolic"
-    original.mkdir(parents=True)
-    (original / "0000.toml").write_text(
-        'creation = "derived from GSM-Symbolic (Apple) templates"\ncomputationally-validated = "test suite passes"\n',
-        encoding="utf-8",
-    )
-
-    rendered = render_language_tables(collect_language_validation(root))
-
-    assert (
-        "| `eng` | eng | example/model | test suite passes | by a native speaker | "
-        "performed using anthropic/claude-opus-4-8, with errors manually inspected |" in rendered
-    )
-    assert "| `original` | original-derived | not applicable | test suite passes | — | — |" in rendered
-    assert "Languages with incomplete computational validation" in rendered
-    assert (
-        "| `spa` | eng | example/model | Partial (1/2 templates): test suite passes | by a native speaker | "
-        "performed using anthropic/claude-opus-4-8, with errors manually inspected |" in rendered
-    )
+        for index in range(2):
+            text = f'language = "{language}"\ncomputationally-validated = "test suite passes"\n'
+            if language not in {"eng", "eng_metric"}:
+                text += 'source-language = "eng"\ninitial_translation_model = "example/model"\n'
+            if language == "dan" or (language == "spa" and index == 0):
+                text += 'human-validated = "by a native speaker"\nerror-analysis = "inspected"\n'
+            (symbolic / f"{index:04}.toml").write_text(text, encoding="utf-8")
+    # Ignored templates do not affect a language's completion.
+    (tmp_path / "dan/symbolic/0002.toml").write_text("ignore = true\n", encoding="utf-8")
+    languages = collect_language_validation(tmp_path)
+    rendered = render_language_tables(languages)
+    overview, full = rendered.split("<details>")
+    assert "`dan`" in overview and "`spa`" not in overview
+    assert "| `spa` | example/model | test suite passes |  |  |" in full
+    assert "Partial" not in rendered and "Source language" not in rendered
+    latex = render_latex_table(languages)
+    assert r"eng\_metric & Yes &  & " in latex
+    assert "spa & Yes &  & " in latex
+    # Missing translation provenance is an error, not a blank/unknown table entry.
+    (tmp_path / "spa/symbolic/0000.toml").write_text('language = "spa"\n', encoding="utf-8")
+    with pytest.raises(KeyError, match="initial_translation_model"):
+        collect_language_validation(tmp_path)
 
 
-def test_update_readme_replaces_only_marker_contents(tmp_path: Path) -> None:
+def test_update_readme_preserves_surrounding_content(tmp_path: Path) -> None:
     readme = tmp_path / "README.md"
     readme.write_text(f"before\n{START_MARKER}\nold\n{END_MARKER}\nafter\n", encoding="utf-8")
-
     update_readme(readme, "new")
-
     assert readme.read_text(encoding="utf-8") == f"before\n{START_MARKER}\nnew\n{END_MARKER}\nafter\n"

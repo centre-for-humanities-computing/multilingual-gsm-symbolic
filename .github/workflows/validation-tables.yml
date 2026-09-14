@@ -1,0 +1,41 @@
+name: Generate validation tables
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'src/multilingual_gsm_symbolic/data/templates/**'
+      - 'src/scripts/update_readme_table.py'
+      - 'README.md'
+      - 'docs/language_validation.tex'
+      - '.github/workflows/validation-tables.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: validation-tables-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate README and LaTeX tables
+        run: python src/scripts/update_readme_table.py
+      - name: Commit generated tables
+        run: |
+          git add README.md docs/language_validation.tex
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'docs: regenerate language validation tables'
+            git push
+          fi
