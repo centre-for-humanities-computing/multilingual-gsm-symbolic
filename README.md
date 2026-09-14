@@ -242,10 +242,6 @@ print(available_languages())
 # {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
 ```
 
-Validation tables are generated from the structured tags in active templates. A validation status is shown only when every active template in that language has that validation; blank cells mean it is not complete. Translation metadata is omitted for English originals. Source language is recorded in templates but hidden in the tables.
-
-CI automatically updates this README and `docs/language_validation.tex`. Run `make update-readme-table` to regenerate both locally. The LaTeX file uses `longtable` and can be included in the paper with `\input{docs/language_validation.tex}`.
-
 <!-- LANGUAGE TABLE START -->
 The following languages are validated:
 
