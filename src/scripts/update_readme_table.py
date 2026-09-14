@@ -13,6 +13,7 @@ END_MARKER = "<!-- LANGUAGE TABLE END -->"
 @dataclass(frozen=True)
 class LanguageValidation:
     language: str
+    source_language: str
     model: str
     computational: str
     human: str
@@ -47,6 +48,7 @@ def collect_language_validation(templates_root: Path) -> list[LanguageValidation
         languages.append(
             LanguageValidation(
                 language=lang_dir.name,
+                source_language=_completed_value(records, "source-language"),
                 model=_completed_value(records, "initial_translation_model"),
                 computational=_completed_value(records, "computationally-validated"),
                 human=_completed_value(records, "human-validated"),
@@ -60,32 +62,56 @@ def _markdown_cell(value: str) -> str:
     return value.replace("|", "\\|").replace("\n", "<br>")
 
 
-def _table(languages: list[LanguageValidation]) -> str:
+def _format_source_language(source: str) -> str:
+    if not source:
+        return ""
+    langs = [s.strip() for s in source.split(";")]
+    return ", ".join(f"`{l}`" for l in langs)
+
+
+def _table(languages: list[LanguageValidation], *, overview: bool = False) -> str:
     headings = ["Language", "Computationally validated", "Human validated", "Error analysis"]
+    if not overview:
+        headings = [
+            "Language",
+            "Source language",
+            "Initial translation model",
+            "Computationally validated",
+            "Human validated",
+            "Error analysis",
+        ]
     lines = ["| " + " | ".join(headings) + " |", "| " + " | ".join(["---"] * len(headings)) + " |"]
     for lang in languages:
         comp = "✓" if lang.computational else ""
         human = lang.human
         error = "✓" if lang.error else ""
-        values = [f"`{lang.language}`", comp, _markdown_cell(human), error]
-        lines.append("| " + " | ".join(values) + " |")
+        if overview:
+            values = [comp, _markdown_cell(human), error]
+        else:
+            values = [
+                _format_source_language(lang.source_language),
+                _markdown_cell(lang.model),
+                comp,
+                _markdown_cell(human),
+                error,
+            ]
+        lines.append("| " + " | ".join([f"`{lang.language}`", *values]) + " |")
     return "\n".join(lines)
 
 
 def render_language_tables(languages: list[LanguageValidation]) -> str:
     filtered_languages = [lang for lang in languages if lang.language != "eng_metric"]
     validated = [lang for lang in filtered_languages if lang.human or lang.language == "eng"]
-    unvalidated = [lang for lang in filtered_languages if lang not in validated]
     return "\n".join(
         [
             "The following languages are validated:",
             "",
-            _table(validated),
+            _table(validated, overview=True),
             "",
             "<details>",
             "<summary>Full details</summary>",
             "",
-            _table(unvalidated),
+            _table(filtered_languages, overview=False),
             "",
             "</details>",
         ]

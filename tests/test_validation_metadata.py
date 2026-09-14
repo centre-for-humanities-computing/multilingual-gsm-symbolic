@@ -73,9 +73,12 @@ def test_tables_only_report_whole_language_validation(tmp_path: Path) -> None:
     rendered = render_language_tables(languages)
     overview, full = rendered.split("<details>")
     assert "`dan`" in overview and "`spa`" not in overview
-    assert "| `spa` | ✓ |  |  |" in full
+    assert "| `spa` | `eng` | example/model | ✓ |  |  |" in full
+    assert "| `dan` | `eng` | example/model | ✓ | by a native speaker | ✓ |" in full
     assert "eng_metric" not in overview and "eng_metric" not in full
-    assert "Partial" not in rendered and "Source language" not in rendered
+    assert "Partial" not in rendered
+    assert "Source language" not in overview and "Source language" in full
+    assert "Initial translation model" not in overview and "Initial translation model" in full
     latex = render_latex_table(languages)
     assert r"eng\_metric & Yes &  & " in latex
     assert "spa & Yes &  & " in latex

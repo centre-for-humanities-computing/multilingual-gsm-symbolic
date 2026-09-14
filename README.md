@@ -267,98 +267,114 @@ The following languages are validated:
 <details>
 <summary>Full details</summary>
 
-| Language | Computationally validated | Human validated | Error analysis |
-| --- | --- | --- | --- |
-| `afr` | ✓ |  |  |
-| `amh` | ✓ |  |  |
-| `arz` | ✓ |  |  |
-| `asm` | ✓ |  |  |
-| `azb` | ✓ |  |  |
-| `bam` | ✓ |  |  |
-| `bar` | ✓ |  |  |
-| `bel` | ✓ |  |  |
-| `ben` | ✓ |  |  |
-| `bho` | ✓ |  |  |
-| `bos` | ✓ |  |  |
-| `bul` | ✓ |  |  |
-| `cat` | ✓ |  |  |
-| `ceb` | ✓ |  |  |
-| `ces` | ✓ |  |  |
-| `ctg` | ✓ |  |  |
-| `dyu` | ✓ |  |  |
-| `ell` | ✓ |  |  |
-| `fin` | ✓ |  |  |
-| `fuv` | ✓ |  |  |
-| `gaz` | ✓ |  |  |
-| `gle` | ✓ |  |  |
-| `guj` | ✓ |  |  |
-| `hat` | ✓ |  |  |
-| `hau` | ✓ |  |  |
-| `hne` | ✓ |  |  |
-| `hrv` | ✓ |  |  |
-| `hun` |  |  |  |
-| `ibo` | ✓ |  |  |
-| `ind` | ✓ |  |  |
-| `ita` | ✓ |  |  |
-| `jav` | ✓ |  |  |
-| `kan` | ✓ |  |  |
-| `kaz` | ✓ |  |  |
-| `khm` | ✓ |  |  |
-| `kin` | ✓ |  |  |
-| `kmr` | ✓ |  |  |
-| `kor` | ✓ |  |  |
-| `ktu` | ✓ |  |  |
-| `lav` | ✓ |  |  |
-| `lin` | ✓ |  |  |
-| `lit` | ✓ |  |  |
-| `lug` | ✓ |  |  |
-| `mag` | ✓ |  |  |
-| `mai` | ✓ |  |  |
-| `mal` | ✓ |  |  |
-| `mlt` | ✓ |  |  |
-| `mos` | ✓ |  |  |
-| `mya` | ✓ |  |  |
-| `nno` | ✓ |  |  |
-| `nob` | ✓ |  |  |
-| `npi` | ✓ |  |  |
-| `nso` | ✓ |  |  |
-| `nya` | ✓ |  |  |
-| `ory` | ✓ |  |  |
-| `pbu` | ✓ |  |  |
-| `pcm` | ✓ |  |  |
-| `pes` | ✓ |  |  |
-| `pnb` | ✓ |  |  |
-| `pol` | ✓ |  |  |
-| `por` | ✓ |  |  |
-| `ron` | ✓ |  |  |
-| `run` | ✓ |  |  |
-| `sck` | ✓ |  |  |
-| `sin` | ✓ |  |  |
-| `skr` | ✓ |  |  |
-| `slk` | ✓ |  |  |
-| `slv` | ✓ |  |  |
-| `sna` | ✓ |  |  |
-| `snd` | ✓ |  |  |
-| `som` | ✓ |  |  |
-| `spa` | ✓ |  |  |
-| `sun` | ✓ |  |  |
-| `swh` | ✓ |  |  |
-| `tam` | ✓ |  |  |
-| `tel` | ✓ |  |  |
-| `tgl` | ✓ |  |  |
-| `tha` | ✓ |  |  |
-| `tsn` | ✓ |  |  |
-| `tur` | ✓ |  |  |
-| `uig` | ✓ |  |  |
-| `uzn` | ✓ |  |  |
-| `vie` | ✓ |  |  |
-| `vjk` | ✓ |  |  |
-| `wol` | ✓ |  |  |
-| `xho` | ✓ |  |  |
-| `yor` | ✓ |  |  |
-| `yue` | ✓ |  |  |
-| `zlm` | ✓ |  |  |
-| `zul` | ✓ |  |  |
+| Language | Source language | Initial translation model | Computationally validated | Human validated | Error analysis |
+| --- | --- | --- | --- | --- | --- |
+| `afr` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `amh` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ara` | `eng` | anthropic/claude-opus-4-8 | ✓ | by a native speaker | ✓ |
+| `arz` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `asm` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `azb` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `bam` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `bar` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `bel` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ben` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `bho` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `bos` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `bul` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `cat` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ceb` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ces` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ctg` | `eng_metric` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `dan` | `eng` | gpt-5.4 | ✓ | by native speakers | ✓ |
+| `deu` | `dan` | gpt-5.4 | ✓ | by two native speakers | ✓ |
+| `dyu` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ell` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `eng` |  |  | ✓ | by a native speaker | ✓ |
+| `est` | `eng_metric` | gpt-5.4-nano | ✓ | by a native speaker | ✓ |
+| `fin` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `fra` | `dan` | anthropic/claude-opus-4-8 | ✓ | by a native speaker | ✓ |
+| `fuv` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `gaz` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `gle` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `guj` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `hat` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `hau` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `hin` | `eng` | gpt-5.4 | ✓ | by a native speaker | ✓ |
+| `hne` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `hrv` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `hun` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 |  |  |  |
+| `ibo` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ind` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `isl` | `dan` | gpt-5.4 | ✓ | by native speakers | ✓ |
+| `ita` | `dan`, `eng` | gpt-5.4; gpt-5.4-nano | ✓ |  |  |
+| `jav` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `jpn` | `eng` | gpt-5.4 | ✓ | by a native speaker | ✓ |
+| `kan` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `kaz` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `khm` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `kin` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `kmr` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `kor` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ktu` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `lav` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `lin` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `lit` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `lug` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `mag` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `mai` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `mal` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `mar` | `eng` | gpt-5.4 | ✓ | by a native speaker | ✓ |
+| `mlt` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `mos` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `mya` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `nld` | `dan` | gpt-5.4; gpt-5.4-nano | ✓ | by a native speaker | ✓ |
+| `nno` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `nob` | `dan` | gpt-5.4 | ✓ |  |  |
+| `npi` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `nso` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `nya` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ory` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `pbu` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `pcm` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `pes` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `pnb` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `pol` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `por` | `dan`, `eng` | gpt-5.4; gpt-5.4-nano | ✓ |  |  |
+| `ron` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `run` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `rus` | `dan` | gpt-5.4 | ✓ | by a native speaker | ✓ |
+| `sck` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `sin` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `skr` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `slk` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `slv` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `sna` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `snd` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `som` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `spa` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `sun` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `swe` | `dan` | Claude Opus 5 (manual) | ✓ | by native speakers | ✓ |
+| `swh` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `tam` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `tel` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `tgl` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `tha` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `tsn` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `tur` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `uig` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `ukr` | `dan` | gpt-5.4 | ✓ | by a native speaker | ✓ |
+| `urd` | `eng` | gpt-5.4 | ✓ | by a native speaker | ✓ |
+| `uzn` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `vie` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `vjk` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `wol` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `xho` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `yor` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `yue` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `zho` | `eng` | openai/gpt-5.4-2026-03-05 | ✓ | by a native speaker | ✓ |
+| `zlm` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
+| `zul` | `eng` | Qwen/Qwen3.5-122B-A10B-FP8 | ✓ |  |  |
 
 </details>
 <!-- LANGUAGE TABLE END -->
