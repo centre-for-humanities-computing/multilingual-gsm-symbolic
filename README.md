@@ -247,7 +247,7 @@ Validation tables are generated from the structured tags in active templates. A 
 CI automatically updates this README and `docs/language_validation.tex`. Run `make update-readme-table` to regenerate both locally. The LaTeX file uses `longtable` and can be included in the paper with `\input{docs/language_validation.tex}`.
 
 <!-- LANGUAGE TABLE START -->
-The following languages are fully computationally and human validated:
+Validation overview (CI regeneration check):
 
 | Language | Computationally validated | Human validated | Error analysis |
 | --- | --- | --- | --- |
