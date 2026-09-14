@@ -25,3 +25,12 @@ uv run paper/scripts/language_accuracy_table.py
 uv run paper/scripts/transferfeatures.py
 uv run paper/scripts/ucloudeval --help
 ```
+
+## Figure language exclusions
+
+Norwegian (`nob`, `nno`, `nor`) is not human validated and is excluded before
+figure aggregation by `plot_config.figure_rows`. Raw evaluation data is retained.
+Regenerate plots with `visualizegrid.py`, `visualize_results.py`, `ridgeline.py`,
+`qwen_compute_budget.py`, and `numbercoverage.py`.
+Use `transferfeatures.py --cached-features` to redraw feature plots from saved
+feature measurements without downloading tokenizers.

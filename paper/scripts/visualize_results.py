@@ -17,7 +17,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, language_order
+from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, figure_rows, language_order
 from scipy.stats import gaussian_kde
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -151,6 +151,7 @@ def main() -> None:
     args.out_dir.mkdir(exist_ok=True)
     samples = pd.read_parquet(args.analysis, columns=["id", "source_id", "language", "split", "correct"])
     samples = samples.rename(columns={"id": "sample_id"})
+    samples = figure_rows(samples)
     tables = build_tables(samples)
     print("Languages:", list(tables.keys()))
 

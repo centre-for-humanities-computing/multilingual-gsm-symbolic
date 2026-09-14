@@ -63,6 +63,7 @@ from plot_config import (
     LANGUAGE_LABELS,
     PLOT_STYLE,
     SPLIT_LABELS,
+    figure_rows,
     heatmap_language_label,
     language_order,
     model_sort_key,
@@ -98,7 +99,6 @@ FAMILY_MARKERS = {
 }
 EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
 SPLIT_PAIR_LABELS = {
-    ("Qwen2.5-1.5B-Instruct", "nob"): "Qwen2.5 1.5B (Norwegian)",
     ("Apertus-8B-Instruct-2509", "zho"): "Apertus 8B (Chinese)",
     ("granite-3.2-2b-instruct (reasoning on)", "zho"): "Granite 2B (Chinese)",
     ("gemma-3-4b-it", "isl"): "Gemma 3 4B (Icelandic)",
@@ -1377,6 +1377,7 @@ def main() -> None:
         parser.error("--correction-samples must be at least 2")
 
     samples = pd.read_parquet(args.analysis).rename(columns={"id": "sample_id"})
+    samples = figure_rows(samples)
     samples["model_raw"] = samples["model"]
 
     if samples.empty:

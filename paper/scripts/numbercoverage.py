@@ -18,8 +18,8 @@ import csv
 import json
 import multiprocessing
 import re
-from collections.abc import Iterator
 from collections import defaultdict
+from collections.abc import Iterator
 from concurrent.futures import ProcessPoolExecutor
 from itertools import islice
 from pathlib import Path
@@ -36,6 +36,7 @@ from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_ORDER,
     PLOT_STYLE,
+    figure_rows,
     heatmap_language_label,
     language_order,
     model_name,
@@ -419,6 +420,7 @@ def main() -> None:
                "prompt_number_count", "retrieved_prompt_number_count", "lhs_count", "lhs_retrieved", "rhs_count",
                "rhs_retrieved", "all_prompt_numbers_present"]
     frame = pd.read_parquet(args.analysis, columns=columns)
+    frame = figure_rows(frame)
     frame = frame[frame["language"] != "uncorrected_isl"].copy()
     if args.max_samples:
         frame = frame.groupby(["model", "language", "split"], observed=True).head(args.max_samples)
@@ -454,6 +456,8 @@ def main() -> None:
     wrote_heatmap = plot_number_coverage_heatmap(sample_rows, heatmap_path)
     correlation_path = args.out_dir / "coverage_accuracy_correlation.png"
     wrote_correlation = plot_coverage_accuracy_correlation(summaries, correlation_path)
+    if wrote_correlation:
+        plot_coverage_accuracy_correlation(summaries, correlation_path.with_suffix(".pdf"))
 
     for summary in summaries:
         breakdown = summary["number_coverage_breakdown"]

@@ -32,7 +32,7 @@ from inspect_ai.log import read_eval_log
 from matplotlib.colors import to_hex, to_rgb
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
-from plot_config import PLOT_STYLE, path_slug
+from plot_config import PLOT_STYLE, figure_rows, path_slug
 from scipy.stats import bootstrap
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -185,6 +185,7 @@ def load_qwen_summary_parquet(path: Path) -> pd.DataFrame:
     rows = pd.read_parquet(
         path, columns=["model", "family", "params_b", "language", "split", "id", "correct", "total_tokens"]
     )
+    rows = figure_rows(rows)
     rows["model_raw"] = rows["model"].str.replace(r" \(reasoning (?:on|off)\)$", "", regex=True)
     rows = rows[(rows["split"] == "synthetic") & (rows["language"] != "uncorrected_isl")]
     rows = rows.dropna(subset=["correct", "total_tokens"])
@@ -581,6 +582,7 @@ def main() -> None:
         print(f"Saved {png_out}")
 
     table = qwen_compute_budget_table(summary)
+    table.to_csv(args.out_dir / "qwen_compute_budget_transfer" / "figure_11_data.csv", index=False)
     summary_out = save_reasoning_budget_summary(table, args.out_dir)
     if summary_out:
         print(f"Saved {summary_out}")

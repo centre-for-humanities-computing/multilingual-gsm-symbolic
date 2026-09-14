@@ -43,7 +43,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
-from plot_config import FAMILY_COLORS, LANGUAGE_LABELS, PLOT_STYLE, language_order, ordered_families
+from plot_config import FAMILY_COLORS, LANGUAGE_LABELS, PLOT_STYLE, figure_rows, language_order, ordered_families
 from scipy.spatial import distance
 from transformers import AutoTokenizer
 
@@ -650,6 +650,7 @@ def main() -> None:
         type=Path,
         default=REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet",
     )
+    parser.add_argument("--cached-features", action="store_true", help="Reuse saved language features and tokenizer fertility when redrawing figures.")
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "hf_dataset" / "data")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument(
@@ -661,6 +662,7 @@ def main() -> None:
     args = parser.parse_args()
 
     samples = pd.read_parquet(args.analysis)
+    samples = figure_rows(samples)
     samples = samples[samples["language"] != "uncorrected_isl"]
     group_cols = ["model", "family", "params_b", "vocab_size", "language", "split"]
     summary = samples.groupby(group_cols, dropna=False)["correct"].agg(accuracy="mean", n_problems="size", stderr="sem").reset_index()
@@ -671,33 +673,39 @@ def main() -> None:
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     language_features_path = args.out_dir / "language_features.csv"
-    common_crawl_resources = load_common_crawl_pages(args.common_crawl_csv, languages)
-    feature_languages = common_crawl_resources["language"].tolist()
-
-    print(f"Collecting language features for: {', '.join(feature_languages)} (Common Crawl)")
-    language_features = collect_language_features(
-        feature_languages,
-        common_crawl_resources,
-    )
-    language_features.to_csv(language_features_path, index=False)
-
-    questions = load_questions(args.data_dir, languages)
-    fertility = collect_tokenizer_fertility(
-        summary,
-        questions,
-    )
     fertility_path = args.out_dir / "tokenizer_fertility.csv"
-    fertility.to_csv(fertility_path, index=False)
+    if args.cached_features:
+        language_features = figure_rows(pd.read_csv(language_features_path))
+        fertility = figure_rows(pd.read_csv(fertility_path))
+    else:
+        common_crawl_resources = load_common_crawl_pages(args.common_crawl_csv, languages)
+        feature_languages = common_crawl_resources["language"].tolist()
+
+        print(f"Collecting language features for: {', '.join(feature_languages)} (Common Crawl)")
+        language_features = collect_language_features(
+            feature_languages,
+            common_crawl_resources,
+        )
+        language_features.to_csv(language_features_path, index=False)
+
+        questions = load_questions(args.data_dir, languages)
+        fertility = collect_tokenizer_fertility(
+            summary,
+            questions,
+        )
+        fertility_path = args.out_dir / "tokenizer_fertility.csv"
+        fertility.to_csv(fertility_path, index=False)
 
     transfer = build_transfer_table(summary, language_features, fertility)
     transfer_path = args.out_dir / "transfer_feature_data.csv"
     transfer.to_csv(transfer_path, index=False)
 
     metadata_path = args.out_dir / "feature_sources.json"
-    metadata_path.write_text(
-        json.dumps(SOURCE_METADATA, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    if not args.cached_features:
+        metadata_path.write_text(
+            json.dumps(SOURCE_METADATA, indent=2) + "\n",
+            encoding="utf-8",
+        )
 
     plots = [
         (

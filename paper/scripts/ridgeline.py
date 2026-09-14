@@ -11,8 +11,8 @@ every source template, then averages correctness across the selected problems.
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
 import gc
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +35,7 @@ from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_LABELS,
     LANGUAGE_SPEAKERS,
+    figure_rows,
     format_speaker_count,
     language_order,
     model_family,
@@ -613,6 +614,7 @@ def main() -> None:
     problems = pd.read_parquet(
         args.analysis, columns=["model", "language", "split", "id", "source_id", "correct"]
     ).rename(columns={"id": "sample_id"})
+    problems = figure_rows(problems)
     problems = problems[problems["language"] != "uncorrected_isl"]
     if args.model:
         problems = problems[problems["model"].str.lower().isin({model.lower() for model in args.model})]
