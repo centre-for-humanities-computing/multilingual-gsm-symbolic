@@ -105,25 +105,25 @@ EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
 SPLIT_PAIR_ANNOTATIONS = {
     ("Qwen3.5-0.8B (reasoning off)", "eng"): {
         "text": "Qwen3.5 0.8B (English)\n+42.8 pp",
-        "xytext": (6, 0),
+        "xytext": (8, 0),
         "ha": "left",
         "va": "center",
     },
     ("Qwen3-0.6B", "dan"): {
         "text": "Qwen3 0.6B (Danish)\n+11.5 pp",
-        "xytext": (0, 6),
+        "xytext": (0, 8),
         "ha": "center",
         "va": "bottom",
     },
     ("OLMo-2-0425-1B-Instruct", "eng_metric"): {
         "text": "OLMo 2 1B (Eng. metric)\n−18.0 pp",
-        "xytext": (0, -8),
+        "xytext": (0, -10),
         "ha": "center",
         "va": "top",
     },
     ("Qwen3-0.6B (reasoning off)", "eng"): {
         "text": "Qwen3 0.6B (English)\n−26.0 pp",
-        "xytext": (0, -8),
+        "xytext": (0, -10),
         "ha": "center",
         "va": "top",
     },
@@ -517,7 +517,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     if paired.empty:
         return False
 
-    fig, ax = plt.subplots(figsize=(6.8, 6.4))
+    fig, ax = plt.subplots(figsize=(7.5, 7.2))
     sized = paired.reset_index()
     sized = sized[~((sized["model"] == EXCLUDED_SPLIT_PAIR[0]) & (sized["language"] == EXCLUDED_SPLIT_PAIR[1]))]
     finite_sizes = sized["params_b"].dropna()
@@ -539,7 +539,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
                 cmap=cmap,
                 norm=norm,
                 marker=marker,
-                s=58,
+                s=64,
                 alpha=0.9,
                 edgecolors="white",
                 linewidths=0.5,
@@ -552,7 +552,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
                 unknown_size["synthetic"],
                 color="#888888",
                 marker=marker,
-                s=58,
+                s=64,
                 alpha=0.8,
                 edgecolors="white",
                 linewidths=0.5,
@@ -566,22 +566,23 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
                 (row.original, row.synthetic),
                 xytext=config["xytext"],
                 textcoords="offset points",
-                fontsize=7.5,
+                fontsize=10.5,
                 color="black",
                 ha=config["ha"],
                 va=config["va"],
                 bbox=dict(
-                    boxstyle="round,pad=0.2",
+                    boxstyle="round,pad=0.25",
                     facecolor="white",
                     edgecolor="none",
-                    alpha=0.5,
+                    alpha=0.6,
                 ),
             )
 
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable.set_array([])
     colorbar = fig.colorbar(mappable, ax=ax, shrink=0.82)
-    colorbar.set_label("Model parameters (billions)")
+    colorbar.set_label("Model parameters (billions)", fontsize=14, labelpad=10)
+    colorbar.ax.tick_params(labelsize=12)
 
     legend_handles = [
         Line2D(
@@ -591,7 +592,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
             linestyle="none",
             markerfacecolor="#777777",
             markeredgecolor="white",
-            markersize=7,
+            markersize=8.5,
         )
         for family in ordered_families(sized["family"])
     ]
@@ -600,21 +601,22 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
             legend_handles,
             ordered_families(sized["family"]),
             loc="lower center",
-            ncol=min(6, len(legend_handles)),
+            ncol=min(5, len(legend_handles)),
             frameon=False,
             title="Model family",
+            fontsize=11.5,
+            title_fontsize=12.5,
         )
 
     ax.plot([0, 1], [0, 1], linestyle="--", color="black", linewidth=1, alpha=0.6)
-    ax.set(
-        xlim=(0, 1),
-        ylim=(0, 1),
-        xlabel="Accuracy on original benchmark questions",
-        ylabel="Accuracy on synthetic numerical variants",
-    )
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("Accuracy on original benchmark questions", fontsize=14, labelpad=8)
+    ax.set_ylabel("Accuracy on synthetic numerical variants", fontsize=14, labelpad=8)
+    ax.tick_params(axis="both", labelsize=12)
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.yaxis.set_major_formatter(PercentFormatter(1))
-    fig.tight_layout(rect=(0, 0.09, 1, 1))
+    fig.tight_layout(rect=(0, 0.12, 1, 1))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
 
