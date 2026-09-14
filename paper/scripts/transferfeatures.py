@@ -362,7 +362,7 @@ def combined_relationship_plot(data: pd.DataFrame, plots: list[tuple[Any, ...]],
     fig.tight_layout(rect=(0.04, 0.15, 1, 1), h_pad=1.5)
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    output = out.with_suffix(".png")
+    output = out.with_suffix(".pdf")
     fig.savefig(output, bbox_inches="tight")
     plt.close(fig)
     return [output]
@@ -718,7 +718,7 @@ def main() -> None:
         (
             "normalized_fertility",
             "Tokenizer fertility ratio",
-            args.out_dir / "tokenizer_fertility_vs_transfer.png",
+            args.out_dir / "tokenizer_fertility_vs_transfer.pdf",
             True,
             "Ratio of target-language to English tokens per character, computed on GSM8K templates.",
             False,
@@ -726,7 +726,7 @@ def main() -> None:
         (
             "typological_distance_from_english",
             "Typological distance",
-            args.out_dir / "typological_distance_vs_transfer.png",
+            args.out_dir / "typological_distance_vs_transfer.pdf",
             False,
             "Typological distance is cosine distance from English using URIEL syntax features.",
             True,
@@ -734,7 +734,7 @@ def main() -> None:
         (
             "log10_common_crawl_pages",
             "Language resources",
-            args.out_dir / "resource_quantity_vs_transfer.png",
+            args.out_dir / "resource_quantity_vs_transfer.pdf",
             False,
             "Language resources are measured as log10 Common Crawl page count.",
             True,

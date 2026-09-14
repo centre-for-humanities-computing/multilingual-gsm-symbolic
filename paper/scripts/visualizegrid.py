@@ -6,17 +6,17 @@
 The script reads Inspect ``.eval`` logs and writes:
 
 * ``run_summary.csv``: tidy accuracy table for downstream analysis.
-* ``accuracy_heatmaps.png``: accuracy on original and synthetic benchmark splits.
-* ``original_vs_synthetic.png``: paired split performance for each model/language.
-* ``family_scaling.png``: within-family accuracy as a function of parameter count.
-* ``english_normalized_transfer.png``: language accuracy relative to English.
-* ``eng_vs_eng_metric.png``: paired English and English-metric accuracy by model.
-* ``eng_vs_eng_metric_selected.png``: selected-model English/English-metric distributions.
-* ``eng_vs_eng_metric_full.png``: all paired-model English/English-metric distributions.
-* ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
-* ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
-* ``reasoning_delta_heatmap.png``: English-vs-non-English synthetic gap by reasoning mode.
-* ``correction_comparison/*.png``: uncorrected vs corrected synthetic distributions when corrected logs exist.
+* ``accuracy_heatmaps.pdf``: accuracy on original and synthetic benchmark splits.
+* ``original_vs_synthetic.pdf``: paired split performance for each model/language.
+* ``family_scaling.pdf``: within-family accuracy as a function of parameter count.
+* ``english_normalized_transfer.pdf``: language accuracy relative to English.
+* ``eng_vs_eng_metric.pdf``: paired English and English-metric accuracy by model.
+* ``eng_vs_eng_metric_selected.pdf``: selected-model English/English-metric distributions.
+* ``eng_vs_eng_metric_full.pdf``: all paired-model English/English-metric distributions.
+* ``transfer_robustness.pdf``: transfer penalty and cross-language dispersion by size.
+* ``split_degradation_heatmaps.pdf``: absolute and relative original-to-synthetic drop.
+* ``reasoning_delta_heatmap.pdf``: English-vs-non-English synthetic gap by reasoning mode.
+* ``correction_comparison/*.pdf``: uncorrected vs corrected synthetic distributions when corrected logs exist.
 
 Only successful logs are included by default. Repeated/resumed logs with the same
 evaluation id are deduplicated, preferring a successful and then newer log.
@@ -1454,30 +1454,30 @@ def main() -> None:
     summary_path = analysis_dir / "run_summary.csv"
     sort_summary(summary).to_csv(summary_path, index=False)
 
-    plot_heatmaps(summary, accuracy_dir / "accuracy_heatmaps.png")
-    made_pairs = plot_split_pairs(summary, accuracy_dir / "original_vs_synthetic.png")
-    made_scaling = plot_family_scaling(summary, accuracy_dir / "family_scaling.png")
+    plot_heatmaps(summary, accuracy_dir / "accuracy_heatmaps.pdf")
+    made_pairs = plot_split_pairs(summary, accuracy_dir / "original_vs_synthetic.pdf")
+    made_scaling = plot_family_scaling(summary, accuracy_dir / "family_scaling.pdf")
     made_degradation = plot_split_degradation(
         summary,
-        accuracy_dir / "split_degradation_heatmaps.png",
+        accuracy_dir / "split_degradation_heatmaps.pdf",
     )
 
     made_transfer = plot_english_normalized_transfer(
         summary,
-        transfer_dir / "english_normalized_transfer.png",
+        transfer_dir / "english_normalized_transfer.pdf",
     )
     made_robustness = plot_transfer_robustness(
         summary,
-        transfer_dir / "transfer_robustness.png",
+        transfer_dir / "transfer_robustness.pdf",
     )
     made_reasoning = plot_reasoning_delta(
         summary,
-        transfer_dir / "reasoning_delta_heatmap.png",
+        transfer_dir / "reasoning_delta_heatmap.pdf",
     )
 
     made_metric = plot_eng_metric_comparison(
         summary,
-        metric_dir / "eng_vs_eng_metric.png",
+        metric_dir / "eng_vs_eng_metric.pdf",
     )
     eng_metric_selected = False
     eng_metric_full = False
@@ -1493,7 +1493,7 @@ def main() -> None:
             args.correction_seed,
         )
         if metric_rows:
-            metric_full_out = metric_dir / "eng_vs_eng_metric_full.png"
+            metric_full_out = metric_dir / "eng_vs_eng_metric_full.pdf"
             plot_correction_comparison(
                 metric_rows,
                 "eng",
@@ -1501,7 +1501,7 @@ def main() -> None:
                 legend_labels=("English", "English metric"),
             )
             eng_metric_full = True
-            metric_out = metric_dir / "eng_vs_eng_metric_selected.png"
+            metric_out = metric_dir / "eng_vs_eng_metric_selected.pdf"
             plot_correction_comparison_selected(
                 metric_rows,
                 "eng",
@@ -1537,57 +1537,57 @@ def main() -> None:
                 if not rows:
                     print(f"Skipping {language}: no paired corrected models.")
                     continue
-                out = icelandic_dir / f"{path_slug(language)}.png"
+                out = icelandic_dir / f"{path_slug(language)}.pdf"
                 plot_correction_comparison(rows, language, out)
                 correction_outputs.append(out)
 
-                out_selected = icelandic_dir / f"{path_slug(language)}_selected.png"
+                out_selected = icelandic_dir / f"{path_slug(language)}_selected.pdf"
                 plot_correction_comparison_selected(rows, language, out_selected)
                 correction_outputs.append(out_selected)
 
     print(f"Saved {summary_path}")
-    print(f"Saved {accuracy_dir / 'accuracy_heatmaps.png'}")
+    print(f"Saved {accuracy_dir / 'accuracy_heatmaps.pdf'}")
 
     if made_pairs:
-        print(f"Saved {accuracy_dir / 'original_vs_synthetic.png'}")
+        print(f"Saved {accuracy_dir / 'original_vs_synthetic.pdf'}")
     else:
-        print("Skipped original_vs_synthetic.png: no model/language has both splits.")
+        print("Skipped original_vs_synthetic.pdf: no model/language has both splits.")
 
     if made_scaling:
-        print(f"Saved {accuracy_dir / 'family_scaling.png'}")
+        print(f"Saved {accuracy_dir / 'family_scaling.pdf'}")
     else:
-        print("Skipped family_scaling.png: no recognized model parameter counts.")
+        print("Skipped family_scaling.pdf: no recognized model parameter counts.")
 
     if made_degradation:
-        print(f"Saved {accuracy_dir / 'split_degradation_heatmaps.png'}")
+        print(f"Saved {accuracy_dir / 'split_degradation_heatmaps.pdf'}")
     else:
-        print("Skipped split_degradation_heatmaps.png: paired original/synthetic results are required.")
+        print("Skipped split_degradation_heatmaps.pdf: paired original/synthetic results are required.")
 
     if made_transfer:
-        print(f"Saved {transfer_dir / 'english_normalized_transfer.png'}")
+        print(f"Saved {transfer_dir / 'english_normalized_transfer.pdf'}")
     else:
-        print("Skipped english_normalized_transfer.png: paired English/non-English results are required.")
+        print("Skipped english_normalized_transfer.pdf: paired English/non-English results are required.")
 
     if made_robustness:
-        print(f"Saved {transfer_dir / 'transfer_robustness.png'}")
+        print(f"Saved {transfer_dir / 'transfer_robustness.pdf'}")
     else:
-        print("Skipped transfer_robustness.png: paired transfer results with model sizes are required.")
+        print("Skipped transfer_robustness.pdf: paired transfer results with model sizes are required.")
 
     if made_reasoning:
-        print(f"Saved {transfer_dir / 'reasoning_delta_heatmap.png'}")
+        print(f"Saved {transfer_dir / 'reasoning_delta_heatmap.pdf'}")
     else:
         print(
-            "Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results with model sizes are required."
+            "Skipped reasoning_delta_heatmap.pdf: paired synthetic English/non-English reasoning results with model sizes are required."
         )
 
     if made_metric:
-        print(f"Saved {metric_dir / 'eng_vs_eng_metric.png'}")
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric.pdf'}")
     else:
-        print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
+        print("Skipped eng_vs_eng_metric.pdf: paired English and English-metric results are required.")
     if eng_metric_selected:
-        print(f"Saved {metric_dir / 'eng_vs_eng_metric_selected.png'}")
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric_selected.pdf'}")
     if eng_metric_full:
-        print(f"Saved {metric_dir / 'eng_vs_eng_metric_full.png'}")
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric_full.pdf'}")
 
     for out in correction_outputs:
         print(f"Saved {out}")

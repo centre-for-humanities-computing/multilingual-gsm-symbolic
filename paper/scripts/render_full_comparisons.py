@@ -17,8 +17,8 @@ def main():
     samples = pd.read_parquet(DEFAULT_ANALYSIS).rename(columns={"id": "sample_id"})
     samples["model_raw"] = samples["model"]
     for old, new, language, path, labels in [
-        ("eng", "eng_metric", "eng", "english_units/eng_vs_eng_metric_full.png", ("English", "English metric")),
-        ("uncorrected_isl", "isl", "isl", "icelandic_validation/isl.png", ("Machine translated", "Verified")),
+        ("eng", "eng_metric", "eng", "english_units/eng_vs_eng_metric_full.pdf", ("English", "English metric")),
+        ("uncorrected_isl", "isl", "isl", "icelandic_validation/isl.pdf", ("Machine translated", "Verified")),
     ]:
         before = samples[samples.language == old].copy()
         after = samples[samples.language == new].copy()

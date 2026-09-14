@@ -28,7 +28,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ANALYSIS = REPO_ROOT / "paper/artifacts/transfer_tables/analysis.parquet"
-OUTPUT = REPO_ROOT / "paper/artifacts/figures/headline_figure.png"
+OUTPUT = REPO_ROOT / "paper/artifacts/figures/overview/example.pdf"
 MODEL = "Qwen2.5-7B-Instruct"
 N_SETS = 2_000
 SEED = 42
@@ -410,8 +410,8 @@ def render() -> None:
     for x, key in zip(card_x, ("original", "english", "marathi"), strict=True):
         draw_plot(draw, (x + p(12), p(555), x + card_w - p(12), p(699)), distributions[key], tick_font)
 
-    image.convert("RGB").save(OUTPUT, optimize=True)
-    shutil.copy2(OUTPUT, REPO_ROOT / "images/example.png")
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    image.convert("RGB").save(OUTPUT, "PDF", resolution=SCALE * 100)
     print(f"Written: {OUTPUT}")
 
 

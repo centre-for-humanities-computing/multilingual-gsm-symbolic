@@ -5,7 +5,7 @@
 
 The script reads Inspect ``.eval`` logs directly and writes:
 
-* one ``qwen_compute_budget_transfer.png`` per model family with paired
+* one ``qwen_compute_budget_transfer.pdf`` per model family with paired
   reasoning-on/off variants.
 """
 
@@ -499,7 +499,7 @@ def plot_qwen_compute_budget_family_transfers(summary: pd.DataFrame, out_dir: Pa
     root = out_dir / "absolute"
     for family, family_table in table.groupby("family", sort=True):
         family_dir = root / path_slug(family)
-        family_out = family_dir / "qwen_compute_budget_transfer.png"
+        family_out = family_dir / "qwen_compute_budget_transfer.pdf"
         family_dir.mkdir(parents=True, exist_ok=True)
         _plot_compute_budget_table(family_table, family_out)
         outputs.append(family_out)
@@ -516,7 +516,7 @@ def plot_qwen_compute_budget_relative_family_transfers(summary: pd.DataFrame, ou
     root = out_dir / "relative"
     for family, family_table in table.groupby("family", sort=True):
         family_dir = root / path_slug(family)
-        family_out = family_dir / "qwen_compute_budget_transfer_relative.png"
+        family_out = family_dir / "qwen_compute_budget_transfer_relative.pdf"
         family_dir.mkdir(parents=True, exist_ok=True)
         _plot_compute_budget_table(family_table, family_out, relative=True)
         outputs.append(family_out)
@@ -549,26 +549,26 @@ def main() -> None:
         raise SystemExit("No scored synthetic samples with generation timings found.")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    combined_out = args.out_dir / "absolute" / "qwen_compute_budget_transfer.png"
+    combined_out = args.out_dir / "absolute" / "qwen_compute_budget_transfer.pdf"
     combined_out.parent.mkdir(parents=True, exist_ok=True)
     if not plot_qwen_compute_budget_transfer(summary, combined_out):
         raise SystemExit("No combined model transfer rows found.")
     print(f"Saved {combined_out}")
 
-    overlay_out = args.out_dir / "absolute" / "qwen_compute_budget_transfer_overlay.png"
+    overlay_out = args.out_dir / "absolute" / "qwen_compute_budget_transfer_overlay.pdf"
     if not plot_qwen_compute_budget_overlay(summary, overlay_out):
         raise SystemExit("No combined overlay model transfer rows found.")
     print(f"Saved {overlay_out}")
 
-    png_outputs = plot_qwen_compute_budget_family_transfers(summary, args.out_dir)
-    if not png_outputs:
+    pdf_outputs = plot_qwen_compute_budget_family_transfers(summary, args.out_dir)
+    if not pdf_outputs:
         raise SystemExit("No model transfer rows found.")
 
-    for png_out in png_outputs:
-        print(f"Saved {png_out}")
+    for pdf_out in pdf_outputs:
+        print(f"Saved {pdf_out}")
 
     relative_combined_out = (
-        args.out_dir / "relative" / "qwen_compute_budget_transfer_relative.png"
+        args.out_dir / "relative" / "qwen_compute_budget_transfer_relative.pdf"
     )
     relative_combined_out.parent.mkdir(parents=True, exist_ok=True)
     if not plot_qwen_compute_budget_relative_transfer(summary, relative_combined_out):
@@ -578,15 +578,15 @@ def main() -> None:
     relative_overlay_out = (
         args.out_dir
         / "relative"
-        / "qwen_compute_budget_transfer_relative_overlay.png"
+        / "qwen_compute_budget_transfer_relative_overlay.pdf"
     )
     if not plot_qwen_compute_budget_overlay(summary, relative_overlay_out, relative=True):
         raise SystemExit("No combined relative overlay model transfer rows found.")
     print(f"Saved {relative_overlay_out}")
 
     relative_outputs = plot_qwen_compute_budget_relative_family_transfers(summary, args.out_dir)
-    for png_out in relative_outputs:
-        print(f"Saved {png_out}")
+    for pdf_out in relative_outputs:
+        print(f"Saved {pdf_out}")
 
     table = qwen_compute_budget_table(summary)
     args.analysis_out_dir.mkdir(parents=True, exist_ok=True)

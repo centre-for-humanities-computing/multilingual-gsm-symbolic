@@ -4,7 +4,7 @@
 """Generate evaluation visualisations for multilingual-gsm-symbolic.
 
 Produces figures under ``paper/artifacts/figures/distributions`` by default:
-  1. distribution.png  — 20 set-level accuracy dots + KDE, with memorisation gap arrow
+  1. distribution.pdf  — 20 set-level accuracy dots + KDE, with memorisation gap arrow
 
 Usage:
     uv run paper/scripts/visualize_results.py
@@ -155,7 +155,7 @@ def main() -> None:
     tables = build_tables(samples)
     print("Languages:", list(tables.keys()))
 
-    plot_distribution(tables, args.out_dir / "distribution.png")
+    plot_distribution(tables, args.out_dir / "distribution.pdf")
 
 
 if __name__ == "__main__":

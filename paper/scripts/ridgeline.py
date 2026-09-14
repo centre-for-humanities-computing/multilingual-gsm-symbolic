@@ -283,7 +283,7 @@ def draw_distribution(
     return peak_density
 
 
-def save_distribution_asset(set_means: np.ndarray, out_png: Path) -> float:
+def save_distribution_asset(set_means: np.ndarray, out_path: Path) -> float:
     """Save one compact headline curve using the ridgeline treatment."""
     x, density, mean, _ = normal_curve(set_means)
     with plt.rc_context({"font.family": "serif", "font.serif": ["Times New Roman"]}):
@@ -301,8 +301,8 @@ def save_distribution_asset(set_means: np.ndarray, out_png: Path) -> float:
         ax.grid(axis="x", color="#E7EBF1", linewidth=0.8)
         ax.spines["bottom"].set_color("#8B97A8")
         ax.spines["bottom"].set_linewidth(1.2)
-        out_png.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(out_png, dpi=200, facecolor="white")
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out_path, dpi=200, facecolor="white")
         plt.close(fig)
     return mean
 
@@ -311,7 +311,7 @@ def plot_distributions(
     distributions: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]],
     stats: list[PlotStats],
     scope_label: str,
-    out_png: Path,
+    out_path: Path,
 ) -> None:
     if not stats:
         raise ValueError("No languages have paired original and synthetic results.")
@@ -491,7 +491,7 @@ def plot_distributions(
         bottom=bottom_margin,
         hspace=hspace,
     )
-    fig.savefig(out_png, dpi=200, bbox_inches="tight", facecolor="white")
+    fig.savefig(out_path, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
 
@@ -542,10 +542,10 @@ def plot_headline_figure(
     if not stats:
         return
 
-    out_png = out_root / "ridgeline_selected.png"
+    out_pdf = out_root / "ridgeline_selected.pdf"
     out_root.mkdir(parents=True, exist_ok=True)
-    plot_distributions(curves, stats, headline_model, out_png)
-    print(f"Saved headline figure {out_png}")
+    plot_distributions(curves, stats, headline_model, out_pdf)
+    print(f"Saved headline figure {out_pdf}")
 
 
 def main() -> None:
@@ -584,7 +584,7 @@ def main() -> None:
     parser.add_argument(
         "--headline-model",
         default="Qwen2.5-7B-Instruct",
-        help="Model to use for the compact 3-curve headline figure (ridgeline_selected.png).",
+        help="Model to use for the compact 3-curve headline figure (ridgeline_selected.pdf).",
     )
     parser.add_argument(
         "--headline-languages",
@@ -655,10 +655,10 @@ def main() -> None:
         out_dir.mkdir(parents=True, exist_ok=True)
         model_slug = path_slug(model)
         base_name = f"{path_slug(args.output_name)}-{model_slug}" if args.output_name else model_slug
-        out_png = out_dir / f"{base_name}.png"
+        out_pdf = out_dir / f"{base_name}.pdf"
 
-        plot_distributions(curves, stats, model, out_png)
-        print(f"Saved {out_png}")
+        plot_distributions(curves, stats, model, out_pdf)
+        print(f"Saved {out_pdf}")
 
         del curves, stats, model_problems
         gc.collect()

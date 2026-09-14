@@ -460,12 +460,10 @@ def main() -> None:
         encoding="utf-8",
     )
     write_csv(args.analysis_out_dir / "samples.csv", sample_rows)
-    heatmap_path = args.out_dir / "number_coverage_heatmap.png"
+    heatmap_path = args.out_dir / "number_coverage_heatmap.pdf"
     wrote_heatmap = plot_number_coverage_heatmap(sample_rows, heatmap_path)
-    correlation_path = args.out_dir / "coverage_accuracy_correlation.png"
+    correlation_path = args.out_dir / "coverage_accuracy_correlation.pdf"
     wrote_correlation = plot_coverage_accuracy_correlation(summaries, correlation_path)
-    if wrote_correlation:
-        plot_coverage_accuracy_correlation(summaries, correlation_path.with_suffix(".pdf"))
 
     for summary in summaries:
         breakdown = summary["number_coverage_breakdown"]

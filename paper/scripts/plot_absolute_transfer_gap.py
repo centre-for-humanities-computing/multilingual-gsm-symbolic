@@ -28,7 +28,7 @@ DEFAULT_OUT = (
     / "artifacts"
     / "figures"
     / "transfer"
-    / "absolute_transfer_gap.png"
+    / "absolute_transfer_gap.pdf"
 )
 
 PLOT_STYLE = {
@@ -153,11 +153,7 @@ def plot_absolute_gap_line(
     fig.tight_layout()
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=300, bbox_inches="tight")
-
-    # Also save a PDF version for vector graphics in papers
-    pdf_path = out_path.with_suffix(".pdf")
-    fig.savefig(pdf_path, bbox_inches="tight")
+    fig.savefig(out_path, bbox_inches="tight")
     plt.close(fig)
 
     return out_path
