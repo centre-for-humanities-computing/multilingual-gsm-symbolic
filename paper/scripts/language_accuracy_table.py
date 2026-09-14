@@ -13,15 +13,15 @@ from pathlib import Path
 from statistics import NormalDist
 
 import pandas as pd
-from plot_config import LANGUAGE_LABELS, language_order, model_sort_key
+from plot_config import EXCLUDED_FIGURE_LANGUAGES, LANGUAGE_LABELS, language_order, model_sort_key
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 DEFAULT_OUTPUT = REPO_ROOT / "paper" / "artifacts" / "tables" / "original_vs_synthetic_accuracy.tex"
-# The 16 analysis languages, plus the English metric variant.
+# The analysis languages, plus the English metric variant (Norwegian excluded).
 DEFAULT_LANGUAGES = [
     "zho", "hin", "eng", "eng_metric", "ara", "jpn", "rus", "deu", "mar",
-    "fra", "ita", "ukr", "nld", "dan", "nob", "est", "isl",
+    "fra", "ita", "ukr", "nld", "dan", "est", "isl",
 ]
 
 
@@ -226,6 +226,7 @@ def main() -> None:
         columns=["model", "language", "split", "source_id", "correct"],
     )
     problems = problems[problems["language"] != "uncorrected_isl"]
+    problems = problems[~problems["language"].isin(EXCLUDED_FIGURE_LANGUAGES)]
     rows = collect_rows(problems, args.model, args.languages)
     output = render_table(rows, args.caption, args.label)
 
