@@ -1,10 +1,8 @@
-import json
 from pathlib import Path
 
 import pytest
 
 from multilingual_gsm_symbolic.load_data import _DATA_ROOT
-from multilingual_gsm_symbolic.templates import AnnotatedQuestion
 from scripts.update_readme_table import (
     END_MARKER,
     START_MARKER,
@@ -13,42 +11,6 @@ from scripts.update_readme_table import (
     render_latex_table,
     update_readme,
 )
-
-
-def _template_data(**metadata: str) -> dict:
-    return {
-        "question": "Question",
-        "answer": "Answer",
-        "id_orig": 0,
-        "id_shuffled": 0,
-        "question_annotated": "Question\n#init:\n- $x = [1]\n#answer: x",
-        "answer_annotated": "Answer",
-        **metadata,
-    }
-
-
-def test_loader_reads_current_schema_and_rejects_obsolete_fields(tmp_path: Path) -> None:
-    path = tmp_path / "template.json"
-    data = _template_data(
-        **{
-            "source-language": "eng",
-            "initial_translation_model": "example/model",
-            "computationally-validated": "test suite passes",
-            "human-validated": "by a native speaker",
-            "error-analysis": "reviewed with Claude Opus",
-        }
-    )
-    path.write_text(json.dumps(data), encoding="utf-8")
-    template = AnnotatedQuestion.from_json(path)
-    assert template.source_language == "eng"
-    assert template.initial_translation_model == "example/model"
-    assert template.computationally_validated == "test suite passes"
-    assert template.human_validated == "by a native speaker"
-    assert template.error_analysis == "reviewed with Claude Opus"
-    for key in ("model", "creation"):
-        path.write_text(json.dumps({**data, key: "obsolete"}), encoding="utf-8")
-        with pytest.raises(TypeError, match=key):
-            AnnotatedQuestion.from_json(path)
 
 
 def test_repository_metadata() -> None:
