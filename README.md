@@ -250,7 +250,7 @@ The following languages are validated:
 | `ara` | ✓ | by a native speaker | ✓ |
 | `dan` | ✓ | by native speakers | ✓ |
 | `deu` | ✓ | by two native speakers | ✓ |
-| `eng` | ✓ |  |  |
+| `eng` | ✓ | by a native speaker | ✓ |
 | `est` | ✓ | by a native speaker | ✓ |
 | `fra` | ✓ | by a native speaker | ✓ |
 | `hin` | ✓ | by a native speaker | ✓ |
