@@ -60,33 +60,32 @@ def _markdown_cell(value: str) -> str:
     return value.replace("|", "\\|").replace("\n", "<br>")
 
 
-def _table(languages: list[LanguageValidation], *, overview: bool = False) -> str:
+def _table(languages: list[LanguageValidation]) -> str:
     headings = ["Language", "Computationally validated", "Human validated", "Error analysis"]
-    if not overview:
-        headings.insert(1, "Initial translation model")
     lines = ["| " + " | ".join(headings) + " |", "| " + " | ".join(["---"] * len(headings)) + " |"]
     for lang in languages:
-        values = [lang.computational, lang.human, lang.error]
-        if overview:
-            values = ["✓" if value else "" for value in values]
-        else:
-            values.insert(0, lang.model)
-        lines.append("| " + " | ".join([f"`{lang.language}`", *map(_markdown_cell, values)]) + " |")
+        comp = "✓" if lang.computational else ""
+        human = lang.human
+        error = "✓" if lang.error else ""
+        values = [f"`{lang.language}`", comp, _markdown_cell(human), error]
+        lines.append("| " + " | ".join(values) + " |")
     return "\n".join(lines)
 
 
 def render_language_tables(languages: list[LanguageValidation]) -> str:
-    validated = [lang for lang in languages if lang.human and lang.computational]
+    filtered_languages = [lang for lang in languages if lang.language != "eng_metric"]
+    validated = [lang for lang in filtered_languages if lang.human or lang.language == "eng"]
+    unvalidated = [lang for lang in filtered_languages if lang not in validated]
     return "\n".join(
         [
-            "The following languages are fully computationally and human validated:",
+            "The following languages are validated:",
             "",
-            _table(validated, overview=True),
+            _table(validated),
             "",
             "<details>",
-            "<summary>Full validation details for all languages</summary>",
+            "<summary>Unvalidated languages</summary>",
             "",
-            _table(languages),
+            _table(unvalidated),
             "",
             "</details>",
         ]
