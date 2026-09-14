@@ -17,9 +17,9 @@ DEFAULT_DATA = (
     REPO_ROOT
     / "paper"
     / "artifacts"
-    / "figures"
-    / "model_grid"
-    / "qwen_compute_budget_transfer"
+    / "analysis"
+    / "transfer"
+    / "compute_budget"
     / "figure_11_data.csv"
 )
 DEFAULT_OUT = (
@@ -27,7 +27,7 @@ DEFAULT_OUT = (
     / "paper"
     / "artifacts"
     / "figures"
-    / "model_grid"
+    / "transfer"
     / "absolute_transfer_gap.png"
 )
 

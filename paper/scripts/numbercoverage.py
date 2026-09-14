@@ -45,7 +45,8 @@ from plot_config import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "prompt_number_coverage"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "number_coverage"
+DEFAULT_ANALYSIS_DIR = REPO_ROOT / "paper" / "artifacts" / "analysis" / "number_coverage"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 plt.rcParams.update(PLOT_STYLE)
 
@@ -400,6 +401,12 @@ def main() -> None:
     )
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument(
+        "--analysis-out-dir",
+        type=Path,
+        default=DEFAULT_ANALYSIS_DIR,
+        help="Directory for number coverage summary.json and samples.csv.",
+    )
+    parser.add_argument(
         "--max-samples",
         type=int,
         help="Maximum samples to analyze per log. Defaults to all samples.",
@@ -447,11 +454,12 @@ def main() -> None:
         })
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    (args.out_dir / "summary.json").write_text(
+    args.analysis_out_dir.mkdir(parents=True, exist_ok=True)
+    (args.analysis_out_dir / "summary.json").write_text(
         json.dumps(summaries, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    write_csv(args.out_dir / "samples.csv", sample_rows)
+    write_csv(args.analysis_out_dir / "samples.csv", sample_rows)
     heatmap_path = args.out_dir / "number_coverage_heatmap.png"
     wrote_heatmap = plot_number_coverage_heatmap(sample_rows, heatmap_path)
     correlation_path = args.out_dir / "coverage_accuracy_correlation.png"

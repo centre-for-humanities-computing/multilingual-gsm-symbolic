@@ -368,11 +368,11 @@ def combined_relationship_plot(data: pd.DataFrame, plots: list[tuple[Any, ...]],
     return [output]
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-ARTIFACTS_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
-DEFAULT_OUT_DIR = ARTIFACTS_DIR / "transfer_features"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer" / "language_features"
+DEFAULT_ANALYSIS_DIR = REPO_ROOT / "paper" / "artifacts" / "analysis" / "transfer" / "language_features"
 
 COMMON_CRAWL_LANGUAGE_CODES = {"nob": "nor"}
-DEFAULT_COMMON_CRAWL_CSV = ARTIFACTS_DIR / "transfer_features" / "languages.csv"
+DEFAULT_COMMON_CRAWL_CSV = DEFAULT_ANALYSIS_DIR / "languages.csv"
 SOURCE_METADATA = {
     "definitions": {
         "transfer_gap": "English accuracy minus target-language accuracy for the same model and split",
@@ -654,6 +654,12 @@ def main() -> None:
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "hf_dataset" / "data")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument(
+        "--analysis-out-dir",
+        type=Path,
+        default=DEFAULT_ANALYSIS_DIR,
+        help="Directory for language features and tokenizer fertility data files.",
+    )
+    parser.add_argument(
         "--common-crawl-csv",
         type=Path,
         default=DEFAULT_COMMON_CRAWL_CSV,
@@ -672,8 +678,9 @@ def main() -> None:
     languages = language_order(summary["language"].unique())
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    language_features_path = args.out_dir / "language_features.csv"
-    fertility_path = args.out_dir / "tokenizer_fertility.csv"
+    args.analysis_out_dir.mkdir(parents=True, exist_ok=True)
+    language_features_path = args.analysis_out_dir / "language_features.csv"
+    fertility_path = args.analysis_out_dir / "tokenizer_fertility.csv"
     if args.cached_features:
         language_features = figure_rows(pd.read_csv(language_features_path))
         fertility = figure_rows(pd.read_csv(fertility_path))
@@ -693,14 +700,14 @@ def main() -> None:
             summary,
             questions,
         )
-        fertility_path = args.out_dir / "tokenizer_fertility.csv"
+        fertility_path = args.analysis_out_dir / "tokenizer_fertility.csv"
         fertility.to_csv(fertility_path, index=False)
 
     transfer = build_transfer_table(summary, language_features, fertility)
-    transfer_path = args.out_dir / "transfer_feature_data.csv"
+    transfer_path = args.analysis_out_dir / "transfer_feature_data.csv"
     transfer.to_csv(transfer_path, index=False)
 
-    metadata_path = args.out_dir / "feature_sources.json"
+    metadata_path = args.analysis_out_dir / "feature_sources.json"
     if not args.cached_features:
         metadata_path.write_text(
             json.dumps(SOURCE_METADATA, indent=2) + "\n",

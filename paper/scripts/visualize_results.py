@@ -3,7 +3,7 @@
 # ///
 """Generate evaluation visualisations for multilingual-gsm-symbolic.
 
-Produces figures under ``paper/artifacts/figures`` by default:
+Produces figures under ``paper/artifacts/figures/distributions`` by default:
   1. distribution.png  — 20 set-level accuracy dots + KDE, with memorisation gap arrow
 
 Usage:
@@ -22,7 +22,7 @@ from scipy.stats import gaussian_kde
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "distributions"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 
 plt.rcParams.update(

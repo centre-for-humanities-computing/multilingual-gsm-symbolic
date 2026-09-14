@@ -76,8 +76,12 @@ from scipy.stats import norm
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_CORRECTED_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
-DEFAULT_ABLATIONS_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "ablations"
+DEFAULT_FIGURES_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
+DEFAULT_ACCURACY_DIR = DEFAULT_FIGURES_DIR / "accuracy"
+DEFAULT_TRANSFER_DIR = DEFAULT_FIGURES_DIR / "transfer"
+DEFAULT_ANALYSIS_DIR = REPO_ROOT / "paper" / "artifacts" / "analysis" / "accuracy"
+DEFAULT_ABLATIONS_DIR = DEFAULT_FIGURES_DIR / "ablations"
+DEFAULT_OUT_DIR = DEFAULT_ACCURACY_DIR
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 CORRECTION_COMPARISON_WIDTH = 3.35
 
@@ -98,12 +102,33 @@ FAMILY_MARKERS = {
     "OpenAI": "X",
 }
 EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
-SPLIT_PAIR_LABELS = {
-    ("Apertus-8B-Instruct-2509", "zho"): "Apertus 8B (Chinese)",
-    ("granite-3.2-2b-instruct (reasoning on)", "zho"): "Granite 2B (Chinese)",
-    ("gemma-3-4b-it", "isl"): "Gemma 3 4B (Icelandic)",
-    ("OLMo-2-0425-1B-Instruct", "eng"): "OLMo 2 1B (English)",
+SPLIT_PAIR_ANNOTATIONS = {
+    ("Qwen3.5-0.8B (reasoning off)", "eng"): {
+        "text": "Qwen3.5 0.8B (English, +42.8 pp)",
+        "xytext": (0.04, 0.56),
+        "ha": "left",
+        "va": "bottom",
+    },
+    ("Qwen3-0.6B", "dan"): {
+        "text": "Qwen3 0.6B (Danish, +11.5 pp)",
+        "xytext": (0.32, 0.66),
+        "ha": "center",
+        "va": "bottom",
+    },
+    ("OLMo-2-0425-1B-Instruct", "eng_metric"): {
+        "text": "OLMo 2 1B (English metric, −18.0 pp)",
+        "xytext": (0.56, 0.34),
+        "ha": "right",
+        "va": "top",
+    },
+    ("Qwen3-0.6B (reasoning off)", "eng"): {
+        "text": "Qwen3 0.6B (English, −26.0 pp)",
+        "xytext": (0.76, 0.46),
+        "ha": "center",
+        "va": "top",
+    },
 }
+SPLIT_PAIR_LABELS = {k: v["text"] for k, v in SPLIT_PAIR_ANNOTATIONS.items()}
 
 PROBLEM_KEYS = [
     "model_raw",
@@ -534,15 +559,30 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
             )
 
     for row in sized.itertuples():
-        label = SPLIT_PAIR_LABELS.get((row.model, row.language))
-        if label:
+        config = SPLIT_PAIR_ANNOTATIONS.get((row.model, row.language))
+        if config:
             ax.annotate(
-                label,
+                config["text"],
                 (row.original, row.synthetic),
-                xytext=(5, 0),
-                textcoords="offset points",
-                fontsize=7,
-                bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.72, "pad": 1},
+                xytext=config["xytext"],
+                textcoords="data",
+                fontsize=7.5,
+                ha=config["ha"],
+                va=config["va"],
+                arrowprops=dict(
+                    arrowstyle="-",
+                    color="#4B5563",
+                    lw=0.8,
+                    shrinkA=3,
+                    shrinkB=3,
+                ),
+                bbox=dict(
+                    boxstyle="round,pad=0.25",
+                    facecolor="white",
+                    edgecolor="#D1D5DB",
+                    alpha=0.88,
+                    lw=0.6,
+                ),
             )
 
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
@@ -1334,13 +1374,32 @@ def main() -> None:
     parser.add_argument(
         "--out-dir",
         type=Path,
-        default=DEFAULT_OUT_DIR,
+        default=DEFAULT_ACCURACY_DIR,
+        help="Default output directory for accuracy figures (backwards compatibility).",
+    )
+    parser.add_argument(
+        "--accuracy-out-dir",
+        type=Path,
+        default=DEFAULT_ACCURACY_DIR,
+        help="Directory for accuracy figures.",
+    )
+    parser.add_argument(
+        "--transfer-out-dir",
+        type=Path,
+        default=DEFAULT_TRANSFER_DIR,
+        help="Directory for transfer figures.",
+    )
+    parser.add_argument(
+        "--analysis-out-dir",
+        type=Path,
+        default=DEFAULT_ANALYSIS_DIR,
+        help="Directory for analysis run summary.",
     )
     parser.add_argument(
         "--ablations-out-dir",
         type=Path,
         default=DEFAULT_ABLATIONS_DIR,
-        help="Root for English-metric and correction-comparison figures.",
+        help="Root for English-units and Icelandic-validation figures.",
     )
     parser.add_argument(
         "--corrected-log-dir",
@@ -1387,20 +1446,42 @@ def main() -> None:
     samples = corrected
     summary = filter_summary_models(summarize(samples))
 
-    args.out_dir.mkdir(parents=True, exist_ok=True)
-    metric_dir = args.ablations_out_dir / "eng_vs_eng_metric"
-    metric_dir.mkdir(parents=True, exist_ok=True)
+    accuracy_dir = args.accuracy_out_dir if args.accuracy_out_dir != DEFAULT_ACCURACY_DIR else args.out_dir
+    transfer_dir = args.transfer_out_dir
+    analysis_dir = args.analysis_out_dir
+    accuracy_dir.mkdir(parents=True, exist_ok=True)
+    transfer_dir.mkdir(parents=True, exist_ok=True)
+    analysis_dir.mkdir(parents=True, exist_ok=True)
 
-    summary_path = args.out_dir / "run_summary.csv"
+    metric_dir = args.ablations_out_dir / "english_units"
+    metric_dir.mkdir(parents=True, exist_ok=True)
+    icelandic_dir = args.ablations_out_dir / "icelandic_validation"
+    icelandic_dir.mkdir(parents=True, exist_ok=True)
+
+    summary_path = analysis_dir / "run_summary.csv"
     sort_summary(summary).to_csv(summary_path, index=False)
 
-    plot_heatmaps(summary, args.out_dir / "accuracy_heatmaps.png")
-    made_pairs = plot_split_pairs(summary, args.out_dir / "original_vs_synthetic.png")
-    made_scaling = plot_family_scaling(summary, args.out_dir / "family_scaling.png")
+    plot_heatmaps(summary, accuracy_dir / "accuracy_heatmaps.png")
+    made_pairs = plot_split_pairs(summary, accuracy_dir / "original_vs_synthetic.png")
+    made_scaling = plot_family_scaling(summary, accuracy_dir / "family_scaling.png")
+    made_degradation = plot_split_degradation(
+        summary,
+        accuracy_dir / "split_degradation_heatmaps.png",
+    )
+
     made_transfer = plot_english_normalized_transfer(
         summary,
-        args.out_dir / "english_normalized_transfer.png",
+        transfer_dir / "english_normalized_transfer.png",
     )
+    made_robustness = plot_transfer_robustness(
+        summary,
+        transfer_dir / "transfer_robustness.png",
+    )
+    made_reasoning = plot_reasoning_delta(
+        summary,
+        transfer_dir / "reasoning_delta_heatmap.png",
+    )
+
     made_metric = plot_eng_metric_comparison(
         summary,
         metric_dir / "eng_vs_eng_metric.png",
@@ -1440,18 +1521,7 @@ def main() -> None:
                 legend_labels=("English", "English metric"),
             )
             eng_metric_selected = True
-    made_robustness = plot_transfer_robustness(
-        summary,
-        args.out_dir / "transfer_robustness.png",
-    )
-    made_degradation = plot_split_degradation(
-        summary,
-        args.out_dir / "split_degradation_heatmaps.png",
-    )
-    made_reasoning = plot_reasoning_delta(
-        summary,
-        args.out_dir / "reasoning_delta_heatmap.png",
-    )
+
     correction_outputs: list[Path] = []
     if "uncorrected_isl" in set(pd.read_parquet(args.analysis, columns=["language"])["language"]):
         all_samples = pd.read_parquet(args.analysis).rename(columns={"id": "sample_id"})
@@ -1474,31 +1544,48 @@ def main() -> None:
                 if not rows:
                     print(f"Skipping {language}: no paired corrected models.")
                     continue
-                out = args.ablations_out_dir / "correction_comparison" / f"{path_slug(language)}.png"
+                out = icelandic_dir / f"{path_slug(language)}.png"
                 plot_correction_comparison(rows, language, out)
                 correction_outputs.append(out)
 
-                out_selected = args.ablations_out_dir / "correction_comparison" / f"{path_slug(language)}_selected.png"
+                out_selected = icelandic_dir / f"{path_slug(language)}_selected.png"
                 plot_correction_comparison_selected(rows, language, out_selected)
                 correction_outputs.append(out_selected)
 
     print(f"Saved {summary_path}")
-    print(f"Saved {args.out_dir / 'accuracy_heatmaps.png'}")
+    print(f"Saved {accuracy_dir / 'accuracy_heatmaps.png'}")
 
     if made_pairs:
-        print(f"Saved {args.out_dir / 'original_vs_synthetic.png'}")
+        print(f"Saved {accuracy_dir / 'original_vs_synthetic.png'}")
     else:
         print("Skipped original_vs_synthetic.png: no model/language has both splits.")
 
     if made_scaling:
-        print(f"Saved {args.out_dir / 'family_scaling.png'}")
+        print(f"Saved {accuracy_dir / 'family_scaling.png'}")
     else:
         print("Skipped family_scaling.png: no recognized model parameter counts.")
 
+    if made_degradation:
+        print(f"Saved {accuracy_dir / 'split_degradation_heatmaps.png'}")
+    else:
+        print("Skipped split_degradation_heatmaps.png: paired original/synthetic results are required.")
+
     if made_transfer:
-        print(f"Saved {args.out_dir / 'english_normalized_transfer.png'}")
+        print(f"Saved {transfer_dir / 'english_normalized_transfer.png'}")
     else:
         print("Skipped english_normalized_transfer.png: paired English/non-English results are required.")
+
+    if made_robustness:
+        print(f"Saved {transfer_dir / 'transfer_robustness.png'}")
+    else:
+        print("Skipped transfer_robustness.png: paired transfer results with model sizes are required.")
+
+    if made_reasoning:
+        print(f"Saved {transfer_dir / 'reasoning_delta_heatmap.png'}")
+    else:
+        print(
+            "Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results with model sizes are required."
+        )
 
     if made_metric:
         print(f"Saved {metric_dir / 'eng_vs_eng_metric.png'}")
@@ -1508,23 +1595,6 @@ def main() -> None:
         print(f"Saved {metric_dir / 'eng_vs_eng_metric_selected.png'}")
     if eng_metric_full:
         print(f"Saved {metric_dir / 'eng_vs_eng_metric_full.png'}")
-
-    if made_robustness:
-        print(f"Saved {args.out_dir / 'transfer_robustness.png'}")
-    else:
-        print("Skipped transfer_robustness.png: paired transfer results with model sizes are required.")
-
-    if made_degradation:
-        print(f"Saved {args.out_dir / 'split_degradation_heatmaps.png'}")
-    else:
-        print("Skipped split_degradation_heatmaps.png: paired original/synthetic results are required.")
-
-    if made_reasoning:
-        print(f"Saved {args.out_dir / 'reasoning_delta_heatmap.png'}")
-    else:
-        print(
-            "Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results with model sizes are required."
-        )
 
     for out in correction_outputs:
         print(f"Saved {out}")

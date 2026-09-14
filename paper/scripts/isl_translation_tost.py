@@ -15,7 +15,7 @@ from scipy.stats import ttest_1samp
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_INPUT = REPO_ROOT / "paper/artifacts/transfer_tables/analysis.parquet"
-DEFAULT_OUTPUT = REPO_ROOT / "paper/artifacts/equivalence/isl_translation_tost.txt"
+DEFAULT_OUTPUT = REPO_ROOT / "paper/artifacts/analysis/equivalence/isl_translation_tost.txt"
 
 
 def model_scores(

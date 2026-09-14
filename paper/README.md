@@ -7,11 +7,21 @@ It intentionally lives only on the `paper-content` branch.
 
 - `eval.yaml`: Inspect task definitions used by `scripts/ucloudeval`.
 - `scripts/`: evaluation and analysis entry points.
-- `artifacts/figures/`: general plots, model-grid outputs, and transfer-feature outputs.
-- `artifacts/figures/ablations/eng_vs_eng_metric/`: English versus metric ablation figures.
-- `artifacts/figures/ablations/correction_comparison/`: machine-translated versus verified figures.
+- `artifacts/figures/`: topic-organized publication figures:
+  - `overview/`: introductory and example figures.
+  - `accuracy/`: accuracy heatmaps, original vs. synthetic, split degradation, and family scaling plots.
+  - `distributions/`: overall distribution, selected ridgeline overview, and `by_model/<family>/` ridgelines.
+  - `transfer/`: English-normalized transfer, transfer robustness, reasoning deltas, absolute transfer gaps, compute budget curves (`compute_budget/absolute/` and `compute_budget/relative/`), and `language_features/`.
+  - `ablations/`: unit ablations (`english_units/`) and Icelandic human-verification comparisons (`icelandic_validation/`).
+  - `number_coverage/`: number-coverage heatmaps and correlation figures.
+- `artifacts/analysis/`: supporting CSVs, JSON summaries, and measurements matched by topic:
+  - `accuracy/`: model evaluation run summaries (`run_summary.csv`).
+  - `transfer/`: compute budget data tables and transfer feature measurements.
+  - `number_coverage/`: coverage summary and sample records.
+  - `subset_size/`: subset-size stability draws and summaries.
+  - `equivalence/`: TOST equivalence test outputs.
 - `artifacts/tables/`: paper-ready LaTeX tables.
-- `artifacts/prompt_number_coverage/`: number-coverage plots and analysis tables.
+- `artifacts/transfer_tables/`: canonical evaluation parquets (`analysis.parquet`).
 
 The scripts read evaluation logs from `hf_dataset/logs` by default. That directory
 is retained locally and is not copied into this branch.

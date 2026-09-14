@@ -46,7 +46,7 @@ from plot_config import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "language_ridgeline"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "distributions"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 
 SYNTHETIC_COLOR = "#173B75"
@@ -547,12 +547,6 @@ def plot_headline_figure(
     plot_distributions(curves, stats, headline_model, out_png)
     print(f"Saved headline figure {out_png}")
 
-    fig_out = REPO_ROOT / "paper" / "artifacts" / "figures" / "ridgeline_selected.png"
-    fig_out.parent.mkdir(parents=True, exist_ok=True)
-    import shutil
-    shutil.copy(out_png, fig_out)
-    print(f"Saved headline figure {fig_out}")
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -657,7 +651,7 @@ def main() -> None:
             continue
 
         family = model_family(model)
-        out_dir = output_root / path_slug(family)
+        out_dir = output_root / "by_model" / path_slug(family)
         out_dir.mkdir(parents=True, exist_ok=True)
         model_slug = path_slug(model)
         base_name = f"{path_slug(args.output_name)}-{model_slug}" if args.output_name else model_slug

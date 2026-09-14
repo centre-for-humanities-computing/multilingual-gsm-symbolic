@@ -37,7 +37,8 @@ from scipy.stats import bootstrap
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer" / "compute_budget"
+DEFAULT_ANALYSIS_DIR = REPO_ROOT / "paper" / "artifacts" / "analysis" / "transfer" / "compute_budget"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 REASONING_LABELS = {"off": "reasoning off", "on": "reasoning on"}
 FAMILY_COLORS = ["#2563EB", "#DC2626", "#059669", "#7C3AED", "#D97706", "#0891B2"]
@@ -357,7 +358,7 @@ def save_reasoning_budget_summary(table: pd.DataFrame, out_dir: Path) -> Path | 
     if not sentence:
         return None
 
-    out = out_dir / "qwen_compute_budget_transfer" / "reasoning_budget_summary.txt"
+    out = out_dir / "reasoning_budget_summary.txt"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(f"{sentence}\n", encoding="utf-8")
     return out
@@ -495,7 +496,7 @@ def plot_qwen_compute_budget_family_transfers(summary: pd.DataFrame, out_dir: Pa
         return []
 
     outputs: list[Path] = []
-    root = out_dir / "qwen_compute_budget_transfer"
+    root = out_dir / "absolute"
     for family, family_table in table.groupby("family", sort=True):
         family_dir = root / path_slug(family)
         family_out = family_dir / "qwen_compute_budget_transfer.png"
@@ -512,7 +513,7 @@ def plot_qwen_compute_budget_relative_family_transfers(summary: pd.DataFrame, ou
         return []
 
     outputs: list[Path] = []
-    root = out_dir / "qwen_compute_budget_transfer_relative"
+    root = out_dir / "relative"
     for family, family_table in table.groupby("family", sort=True):
         family_dir = root / path_slug(family)
         family_out = family_dir / "qwen_compute_budget_transfer_relative.png"
@@ -532,6 +533,12 @@ def main() -> None:
         help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument(
+        "--analysis-out-dir",
+        type=Path,
+        default=DEFAULT_ANALYSIS_DIR,
+        help="Directory for compute budget analysis tables and summary text.",
+    )
     parser.add_argument("--scorer", help="Inspect scorer name to use; defaults to math, pattern, then first score.")
     parser.add_argument("--include-incomplete", action="store_true", help="Include readable samples from failed logs.")
     parser.add_argument("--workers", type=int, default=32, help="Workers used for log selection and full log loading.")
@@ -542,13 +549,13 @@ def main() -> None:
         raise SystemExit("No scored synthetic samples with generation timings found.")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    combined_out = args.out_dir / "qwen_compute_budget_transfer" / "qwen_compute_budget_transfer.png"
+    combined_out = args.out_dir / "absolute" / "qwen_compute_budget_transfer.png"
     combined_out.parent.mkdir(parents=True, exist_ok=True)
     if not plot_qwen_compute_budget_transfer(summary, combined_out):
         raise SystemExit("No combined model transfer rows found.")
     print(f"Saved {combined_out}")
 
-    overlay_out = args.out_dir / "qwen_compute_budget_transfer" / "qwen_compute_budget_transfer_overlay.png"
+    overlay_out = args.out_dir / "absolute" / "qwen_compute_budget_transfer_overlay.png"
     if not plot_qwen_compute_budget_overlay(summary, overlay_out):
         raise SystemExit("No combined overlay model transfer rows found.")
     print(f"Saved {overlay_out}")
@@ -561,7 +568,7 @@ def main() -> None:
         print(f"Saved {png_out}")
 
     relative_combined_out = (
-        args.out_dir / "qwen_compute_budget_transfer_relative" / "qwen_compute_budget_transfer_relative.png"
+        args.out_dir / "relative" / "qwen_compute_budget_transfer_relative.png"
     )
     relative_combined_out.parent.mkdir(parents=True, exist_ok=True)
     if not plot_qwen_compute_budget_relative_transfer(summary, relative_combined_out):
@@ -570,7 +577,7 @@ def main() -> None:
 
     relative_overlay_out = (
         args.out_dir
-        / "qwen_compute_budget_transfer_relative"
+        / "relative"
         / "qwen_compute_budget_transfer_relative_overlay.png"
     )
     if not plot_qwen_compute_budget_overlay(summary, relative_overlay_out, relative=True):
@@ -582,8 +589,9 @@ def main() -> None:
         print(f"Saved {png_out}")
 
     table = qwen_compute_budget_table(summary)
-    table.to_csv(args.out_dir / "qwen_compute_budget_transfer" / "figure_11_data.csv", index=False)
-    summary_out = save_reasoning_budget_summary(table, args.out_dir)
+    args.analysis_out_dir.mkdir(parents=True, exist_ok=True)
+    table.to_csv(args.analysis_out_dir / "figure_11_data.csv", index=False)
+    summary_out = save_reasoning_budget_summary(table, args.analysis_out_dir)
     if summary_out:
         print(f"Saved {summary_out}")
         print(summary_out.read_text(encoding="utf-8").strip())
