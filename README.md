@@ -266,7 +266,6 @@ The following languages are human validated or in progress, alongside the Englis
 | `zho` | ✓ | by a native speaker | ✓ |
 <!-- LANGUAGE TABLE END -->
 
-CI regenerates this table and `docs/language_validation.tex`; run `make update-readme-table` to generate both locally. The LaTeX table requires `amssymb` and uses one row per language with human review, computational validation, error analysis, and the initial translation model. Source language remains available in the templates.
 
 ### Want to add a new language?
 
