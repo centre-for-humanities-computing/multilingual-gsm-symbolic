@@ -13,6 +13,7 @@ END_MARKER = "<!-- LANGUAGE TABLE END -->"
 @dataclass(frozen=True)
 class LanguageValidation:
     language: str
+    source_language: str
     model: str
     human: str
     error: str
@@ -54,6 +55,7 @@ def collect_language_validation(templates_root: Path) -> list[LanguageValidation
         languages.append(
             LanguageValidation(
                 language=lang_dir.name,
+                source_language=_completed_value(records, "source-language"),
                 model=_completed_value(records, "initial_translation_model"),
                 human=human,
                 error=_completed_value(records, "error-analysis"),
@@ -108,9 +110,9 @@ def render_latex_table(languages: list[LanguageValidation]) -> str:
         r"\centering",
         r"\small",
         r"\setlength{\tabcolsep}{4pt}",
-        r"\begin{tabular}{llccl}",
+        r"\begin{tabular}{llccll}",
         r"\hline",
-        r"Language & Human review & Comp. & Error analysis & Initial translation model \\",
+        r"Language & Human review & Comp. validated & Error analysis & Initial translation model & Source lang. \\",
         r"\hline",
     ]
     for lang in _included_languages(languages):
@@ -120,6 +122,7 @@ def render_latex_table(languages: list[LanguageValidation]) -> str:
             r"$\checkmark$",
             r"$\checkmark$" if lang.error else "",
             _latex_cell(lang.model),
+            _latex_cell(lang.source_language),
         ]
         lines.append(" & ".join(values) + r" \\")
     lines.extend(

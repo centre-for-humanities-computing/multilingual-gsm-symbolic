@@ -53,8 +53,9 @@ def test_tables_distinguish_none_in_progress_and_complete(tmp_path: Path) -> Non
     latex = render_latex_table(languages)
     assert latex.count("Language &") == 1
     assert "three native speakers" in latex and "In progress" in latex
-    assert "Src" not in latex and "deu &" not in latex
-    assert r"\begin{tabular}{llccl}" in latex
+    assert "Source lang." in latex and "deu &" not in latex
+    assert "Comp. validated" in latex
+    assert r"\begin{tabular}{llccll}" in latex
     (tmp_path / "spa/symbolic/0000.toml").write_text('language = "spa"\n', encoding="utf-8")
     with pytest.raises(KeyError, match="initial_translation_model"):
         collect_language_validation(tmp_path)
