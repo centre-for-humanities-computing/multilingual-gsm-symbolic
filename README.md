@@ -73,6 +73,12 @@ Templates are TOML files with the following fields:
 | `answer`             | Concrete answer with calculation steps                                               |
 | `question_annotated` | Template with variable placeholders and `#init` / `#conditions` / `#answer` sections |
 | `answer_annotated`   | Answer template with inline expressions                                              |
+| `source-language`    | Source language code; omitted for English originals |
+| `initial_translation_model` | Initial translation model; omitted for English originals |
+| `human-validated`    | Human review description or `"in progress"`; omitted if unreviewed |
+| `error-analysis`     | Error analysis performed; omitted if absent |
+
+Computational validation is enforced by CI and is not stored in templates. Absent metadata fields are omitted from TOML and load as `None` in Python.
 
 ### Annotated question syntax
 
@@ -225,22 +231,47 @@ for q in questions:
 ## 🗃️ Data
 
 The English templates are derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper, from which the remainder is derived.
-E.g. the Danish templates are manual translations and localizations of the English set, validated both computationally and manually.
+For example, the Danish templates were initially translated using GPT-5.4, localized and reviewed by native speakers, and validated computationally and using Claude Opus.
 The original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
 
 You can see the available languages as follows:
 ```python
-from multilingual_gsm_symbolic import load_data, available_languages
+from multilingual_gsm_symbolic import available_languages, load_data
 
 # see possible languages
 print(available_languages())
 # {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
 
-# examine creation strategy:
-templates = load_data("dan")
-templates[0].creation
-# machine-translated from English, localized and validated by humans, computationally validated
+# Inspect template metadata:
+template = load_data("dan")[0]
+template.source_language  # 'eng'
+template.initial_translation_model  # 'gpt-5.4'
+template.human_validated  # 'by three native speakers'
+template.error_analysis
 ```
+
+The following table shows the list of validated languages:
+
+<!-- LANGUAGE TABLE START -->
+| Language | Computationally validated | Human validated | Error analysis |
+| --- | --- | --- | --- |
+| `ara` | ✓ | by a native speaker | ✓ |
+| `dan` | ✓ | by three native speakers | ✓ |
+| `deu` | ✓ | by two native speakers | ✓ |
+| `eng` | ✓ | by a native speaker | ✓ |
+| `est` | ✓ | by a native speaker | ✓ |
+| `fra` | ✓ | by a native speaker | ✓ |
+| `hin` | ✓ | by a native speaker | ✓ |
+| `isl` | ✓ | by native speakers | ✓ |
+| `jpn` | ✓ | by a native speaker | ✓ |
+| `mar` | ✓ | by a native speaker | ✓ |
+| `nld` | ✓ | by a native speaker | ✓ |
+| `rus` | ✓ | by a native speaker | ✓ |
+| `swe` | ✓ | by native speakers | ✓ |
+| `ukr` | ✓ | by a native speaker | ✓ |
+| `urd` | ✓ | by a native speaker | ✓ |
+| `zho` | ✓ | by a native speaker | ✓ |
+<!-- LANGUAGE TABLE END -->
 
 ### Want to add a new language?
 

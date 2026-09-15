@@ -5,83 +5,8 @@
     "count": 100
   },
   {
-    "id": 5,
-    "question_annotated": "{name,Katy} φτιάχνει {drink,καφέ} χρησιμοποιώντας κουταλάκια ζάχαρης και κούπες νερού σε αναλογία {m,7}:{n,13}. Αν χρησιμοποίησε συνολικά {x,120} κουταλάκια ζάχαρης και κούπες νερού, υπολογίστε τον αριθμό των κουταλακιών ζάχαρης που χρησιμοποίησε.\n\n#init:\n- name = sample(names_female)\n- drink = sample(['coffee', 'tea'])\n- $m = range(7, 101, 3)\n- $n = range(4, 61, 3)\n- $x = range(5, 500, 5)\n\n#conditions: \n- divides(x, m+n)\n\n#answer: ((m*x)//(m+n))",
-    "count": 100
-  },
-  {
-    "id": 9,
-    "question_annotated": "Όταν η {name, Σοφία} φροντίζει τον {family,ανιψιό} της, βγάζει διάφορα παιχνίδια για εκείνον. Η σακούλα με τα τουβλάκια κατασκευής έχει {x,31} τουβλάκια μέσα. Το δοχείο με τα μαλακά παιχνίδια έχει {y,8} μαλακά παιχνίδια μέσα. Ο πύργος με τις στοίβες δαχτυλιδιών έχει {z,9} πολύχρωμα δαχτυλίδια πάνω του. Η {name, Σοφία} πρόσφατα αγόρασε έναν σωλήνα με αναπηδητικά μπαλάκια, φέρνοντας τον συνολικό αριθμό παιχνιδιών για τον {family,ανιψιό} της στα {total,62}. Πόσα αναπηδητικά μπαλάκια υπήρχαν στον σωλήνα?\n\n#init:\n- name = sample(names_female)\n- family = sample([\"ανιψιός\", \"ξάδερφος\", \"αδερφός\"])\n- $x = range(31, 75)\n- $y = range(8, 50)\n- $z = range(9, 35)\n- $total = range(60, 250)\n\n#conditions:\n- total - (x + y + z) >= 20 \n- total - (x + y + z) < 100\n\n#answer: total - (x + y + z)",
-    "count": 100
-  },
-  {
-    "id": 10,
-    "question_annotated": "Για να κάνετε μια κλήση από μια {dev,τηλεφωνική συσκευή δημόσιας χρήσης}, πρέπει να πληρώσετε {currency,€}{frac1,0.25} για κάθε λεπτό της κλήσης σας. Μετά από {t,16} λεπτά, η τιμή αυτή πέφτει στα {currency,€}{frac2,0.2} ανά λεπτό. Πόσο θα κόστιζε μια κλήση {total,36} λεπτών;\n\n#init:\n- dev = sample(['phone booth', 'hotel room phone'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
-    "count": 100
-  },
-  {
-    "id": 23,
-    "question_annotated": "{name,Μάρθα} πλέκει χειμωνιάτικα ρούχα για τα {count,3} εγγόνια της. Είναι {children,τριδύματα}, οπότε έχουν όλα το ίδιο μέγεθος. Θέλει να φτιάξει ένα {c1,καπέλο}, {c2,μάντιλα}, {c3,πουλόβερ}, {c4,γάντια}, και {c5,κάλτσες} για το καθένα. Χρειάζονται {n1,2} μπαλάκια μαλλιού για να φτιαχτεί ένα {c1,καπέλο}, {n2,4} για ένα {c2,μάντιλα}, {n3,12} για ένα {c3,πουλόβερ}, {n4,1} για ένα ζευγάρι {c4,γάντια}, και {n5,2} για ένα ζευγάρι {c5,κάλτσες}. Πόσα μπαλάκια μαλλιού θα χρειαστεί να αγοράσει;\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"sweater\", \"shawl\", \"hat\", \"cardigan\", \"poncho\", \"vest\", \"beanie\", \"tunic\"],3)\n- c4, c5 = sample([ \"mittens\", \"booties\", \"socks\",  \"leg warmers\", \"gloves\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"twins\",2), (\"triplets\",3), (\"quadruplets\", 4),  (\"quintuplets\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
-    "count": 100
-  },
-  {
-    "id": 42,
-    "question_annotated": "Ο {name,Roger} πηγαίνει στο κατάστημα για να αγοράσει λίγο {item,καφές}. Το φυσιολογικό brand {item,καφές} που αγοράζει κοστίζει {cur,€}{price,5} ανά {unit,κιλό}. Ήταν να αγοράσει ένα πιο ακριβό brand που κοστίζει {percent,20}% περισσότερο καθώς το αγαπημένο του brand είχε εξαντληθεί. Αποφασίζει να αγοράσει μια εβδομαδιαία ποσότητα {item,καφές} και χρησιμοποιεί {usage,1} {unit,κιλό} {item,καφές} την ημέρα. Επίσης αποφάσισε να αγοράσει για τον εαυτό του ένα {extra_item,ντόνατ} για {cur,€}{extra_price,2}. Πόσο κόστισε όλα;\n\n#init:\n- name = sample(names_male)\n- item = sample(['tea', 'sugar', 'flour', 'rice'])\n- cur = sample(currencies_sym)\n- unit = sample(['kilogram', 'kg'])\n- extra_item = sample(['cookie', 'muffin', 'bagel'])\n- $price = range(3, 25)\n- $percent = range(10, 50, 5)\n- $usage = range(1, 3)\n- $extra_price = range(1, 5)\n\n#conditions:\n- is_int(price * percent / 100)\n\n#answer: (price + price * percent / 100) * 7 * usage + extra_price",
-    "count": 100
-  },
-  {
     "id": 46,
     "question_annotated": "Το {school,Λύκειο Apple} διοργανώνει αποφοίτηση στο {venue,Κέντρο Καλών Τεχνών} φέτος, το οποίο έχει χωρητικότητα {total,6000} ατόμων. Μετά την αφαίρεση των {graduates,950} θέσεων για τους αποφοίτους και των {faculty,300} θέσεων για το διδακτικό προσωπικό που παρίσταται, πόσα εισιτήρια θα λάβει κάθε απόφοιτος για να δώσει στους φίλους και την οικογένειά του, αν τα εισιτήρια μοιραστούν εξίσου;\n\n#init:\n- school = sample([\"Λύκειο Oakwood\", \"Ακαδημία Riverside\", \"Λύκειο Sunnyside\", \"Λύκειο Greenville\"])\n- venue = sample([\"Αίθουσα\", \"Γυμναστήριο\", \"Αθλητική Αρένα\", \"Κέντρο Συνεδρίων\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
-    "count": 100
-  },
-  {
-    "id": 50,
-    "question_annotated": "Η επιφάνεια του ορθογωνικού {room_type,υπνοδωματίου} του {name,Billie} είναι {area,360} τετραγωνικά πόδια. Αν το μήκος του δωματίου είναι {length,3} γιάρδα(ες), ποια είναι η περίμετρος του δωματίου σε πόδια?\n\n#init:\n- name = sample(names_male)\n- room_type = sample([\"καθιστικό\", \"μελέτη\", \"γραφείο\", \"κουζίνα\"])\n- $area = range(200, 1200)\n- $length = range(3, 44)\n\n#conditions:\n- is_int(area / (length * 3))\n- area / (length * 3) > length * 3\n\n#answer: 2 * (area // (length * 3) + length * 3)",
-    "count": 100
-  },
-  {
-    "id": 59,
-    "question_annotated": "Έχω {n1,10} λίτρα {fruit1,πορτοκαλί} ποτό που είναι {frac1_txt,δύο τρίτα} νερό και θέλω να το προσθέσω σε {n2,15} λίτρα {fruit2,ανανά} ποτό που είναι {frac2_txt,τρία πέμπτα} νερό. Αλλά καθώς το ρίχνω, χύνω {spill_txt,τέσσερα} λίτρα του {fruit1,πορτοκαλί} ποτού. Πόσο νερό υπάρχει στα υπόλοιπα {total,21} λίτρα?\n\n#init:\n- fruit1, fruit2 = sample([\"μήλο\", \"σταφύλι\", \"μανγκό\", \"ροδάκινο\", \"λεμόνι\"], 2)\n- $n1 = range(9, 21)\n- $n2 = range(12, 31)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- frac2_txt, frac2_val = sample(fraction_alnum)\n- spill_txt, spill_val = range_str(2, 7, 1, numbers)\n- $total = range(20, 51)\n\n#conditions:\n- spill_val < n1\n- n1 + n2 - spill_val == total\n- is_int(n2 * frac2_val)\n- is_int((n1 - spill_val) * frac1_val)\n- is_int(n2 * frac2_val + (n1 - spill_val) * frac1_val)\n\n#answer: int(n2 * frac2_val + (n1 - spill_val) * frac1_val)",
-    "count": 100
-  },
-  {
-    "id": 66,
-    "question_annotated": "Η {name,Candy} έχει {n1,15} ανοιχτόχρωμα {c1,μπλε} καρούλια νήματος, {n2,45} σκούρα {c1,μπλε} καρούλια νήματος, {n3,40} ανοιχτόχρωμα {c2,πράσινα} καρούλια νήματος και {n4,50} σκούρα {c2,πράσινα} καρούλια νήματος. Ποιο ποσοστό των καρουλιών της είναι {c1,μπλε};\n\n#init:\n- name = sample(names)\n- c1, c2 = sample(colors, 2)\n- $n1 = range(15, 100, 5)\n- $n2 = range(45, 150, 5)\n- $n3 = range(20, 80, 5)\n- $n4 = range(50, 100, 5)\n\n#conditions:\n- is_int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))\n\n#answer: int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))",
-    "count": 100
-  },
-  {
-    "id": 70,
-    "question_annotated": "Ένας {occupation,κατασκευαστής} εργάζεται για {w,4} εβδομάδες κάθε μήνα και για {d,6} ημέρες κάθε εβδομάδα. Αν λαμβάνει {cur,€}{p,50} κάθε ημέρα, πόσα κερδίζει αν εργάζεται για ένα έτος;\n\n#init:\n- occupation = sample([\"plumber\", \"electrician\", \"painter\", \"carpenter\", \"landscaper\"])\n- cur = sample(currencies_sym)\n- $w = range(2, 5)\n- $d = range(4, 7)\n- $p = range(40, 200, 5)\n\n\n#answer: w * d * p * 12",
-    "count": 100
-  },
-  {
-    "id": 72,
-    "question_annotated": "{name,Ο Μάικ} ήταν φίλος αλληλογραφίας με {n1,5} άτομα. Σταμάτησε να είναι φίλοι αλληλογραφίας με {n2,2} από αυτούς. Κάθε ένας στέλνει {l,2} γράμματα την εβδομάδα που είναι {p,5} σελίδες. Απαντά με τον ίδιο τρόπο. Μπορεί να γράψει μια σελίδα κάθε {t,6} λεπτά. Πόσες ώρες περνά γράφοντας την εβδομάδα;\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 15)\n- $n2 = range(1, 5)\n- $l = range(2, 5)\n- $p = range(5, 12)\n- $t = range(4, 15)\n\n#conditions:\n- n2 < n1\n- is_int(((n1 - n2) * l * p * t) / 60)\n\n#answer: ((n1 - n2) * l * p * t) // 60",
-    "count": 100
-  },
-  {
-    "id": 75,
-    "question_annotated": "Υπάρχουν επί του παρόντος {n1,3} {c1,κόκκινα} μπαλόνια, {n2,11} {c2,μπλε} μπαλόνια και {n3,25} {c3,πράσινα} μπαλόνια στο {place,κατάστημα}. Τα {c1,κόκκινα} μπαλόνια κοστίζουν {cur,$}{p1,9}, τα {c2,μπλε} μπαλόνια κοστίζουν {cur,$}{p2,5} και τα {c3,πράσινα} μπαλόνια κοστίζουν {cur,$}{p3,3}. Πόσα χρήματα θα έχει λάβει το {place,κατάστημα} μετά την πώληση όλων των μπαλονιών;\n\n#init:\n- place = sample([\"store\", \"shop\", \"market\", \"warehouse\"])\n- c1, c2, c3 = sample([\"red\", \"blue\", \"green\", \"yellow\", \"purple\", \"orange\", \"pink\"], 3)\n- cur = sample(currencies_sym)\n- $n1 = range(3, 20)\n- $n2 = range(5, 30)\n- $n3 = range(15, 50)\n- $p1 = range(5, 15)\n- $p2 = range(3, 10)\n- $p3 = range(2, 8)\n\n\n#answer: n1*p1 + n2*p2 + n3*p3",
-    "count": 100
-  },
-  {
-    "id": 87,
-    "question_annotated": "Η μεγαλύτερη τσουλήθρα νερού στο {park_name,Five Flags} είναι {l1,300} {unit,μέτρα} μήκος, και οι άνθρωποι κατεβαίνουν με {s1,60} {unit,μέτρα}/λεπτό. Η δεύτερη μεγαλύτερη τσουλήθρα νερού είναι {l2,240} {unit,μέτρα} μήκος, αλλά πιο απότομη, οπότε οι άνθρωποι κατεβαίνουν με {s2,80} {unit,μέτρα}/λεπτό. Πόσο περισσότερο χρόνο παίρνει να κατεβείς την μεγαλύτερη τσουλήθρα σε σχέση με τη δεύτερη μεγαλύτερη;\n\n#init:\n- park_name = sample([\"Splash World\", \"Aqua Adventure\", \"Water Wonderland\", \"Neptunes Kingdom\"])\n- unit = sample(['μέτρα'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
-    "count": 100
-  },
-  {
-    "id": 94,
-    "question_annotated": "{n,100} άτομα υποβάλλουν αίτηση για εργασία στην {company,Google}. Από τους ανθρώπους που υποβάλλουν αίτηση, μόνο το {p1,30}% λαμβάνει συνεντεύξεις. Από αυτούς που λαμβάνουν συνεντεύξεις, το {p2,20}% λαμβάνει προσφορά εργασίας. Από αυτούς που λαμβάνουν προσφορά εργασίας, το {frac_txt,ένα τρίτο} των ανθρώπων αποδέχεται τη θέση. Πόσα άτομα αποδέχονται τη θέση?\n\n#init:\n- company = sample([\"Microsoft\", \"Apple\", \"Amazon\", \"Facebook\", \"Netflix\", \"Tesla\", \"Microsoft\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: ensure_int(n * (p1/100) * (p2/100) * frac_val)",
-    "count": 100
-  },
-  {
-    "id": 96,
-    "question_annotated": "Ο {parent,πατέρας} της {name,Μόργκαν} είπε ότι είχε {cur,$}{budget,90} προϋπολογισμένα για το πάρτι γενεθλίων της. Θέλει να βεβαιωθεί ότι αυτή και οι φίλοι της θα παίξουν έναν γύρο {activity1,μίνι-γκολφ}, θα έχουν {cur,$}{tokens,5} σε {activity2,arcade} κέρματα, και θα οδηγήσουν τα {activity3,γκο-καρτ} {times_txt,δύο φορές}. Ένας γύρος {activity1,μίνι-γκολφ} κοστίζει {cur,$}{cost1,5}. Τα {activity3,γκο-καρτ} κοστίζουν {cur,$}{cost2,10} την φορά. Πόσους φίλους μπορεί να καλέσει?\n\n#init:\n- name = sample(names_female)\n- parent = sample([\"mom\", \"dad\", \"aunt\", \"uncle\"])\n- activity1 = sample([\"mini-golf\", \"bowling\", \"laser tag\"])\n- activity2 = sample([\"arcade\", \"game room\", \"pinball\"])\n- activity3 = sample([\"go-karts\", \"bumper cars\", \"roller coaster\"])\n- cur = sample(currencies_sym)\n- times_txt, times_val = sample(multi_times)\n- $budget = range(50, 301, 10)\n- $tokens = range(3, 11)\n- $cost1 = range(3, 11)\n- $cost2 = range(5, 21)\n\n#conditions:\n- budget % (tokens + cost1 + cost2 * times_val) == 0\n- budget // (tokens + cost1 + cost2 * times_val) > 1\n\n#answer: budget // (tokens + cost1 + cost2 * times_val) - 1",
-    "count": 100
-  },
-  {
-    "id": 99,
-    "question_annotated": "Αν ο {name,Chester} τρώει {n1,3} αυγά την ημέρα για {d1,30} ημέρες και μετά αυξάνει σε {n2,5} αυγά την ημέρα για {d2,30} ημέρες, πόσες δωδεκάδες αυγών θα χρειαστεί ο {name,Chester} για {d3,60} ημέρες?\n\n#init:\n- name = sample(names)\n- $n1 = range(2, 6)\n- $n2 = range(4, 8)\n- $d1 = range(20, 110, 2)\n- $d2 = range(20, 110, 2)\n- $d3 = range(50, 200, 5)\n\n#conditions:\n- d3 == d1 + d2\n- n2 > n1\n- divides(n1*d1 + n2*d2, 12)\n\n#answer: (n1*d1 + n2*d2) // 12",
     "count": 100
   }
 ]
