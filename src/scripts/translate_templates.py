@@ -182,9 +182,8 @@ def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model
     tgt_data["language"] = tgt
     tgt_data["source-language"] = src
     tgt_data["initial_translation_model"] = model
-    tgt_data.pop("computationally-validated", None)
-    tgt_data.pop("human-validated", None)
-    tgt_data.pop("error-analysis", None)
+    tgt_data["human-validated"] = "none"
+    tgt_data["error-analysis"] = "none"
     return tgt_data, messages
 
 
@@ -360,12 +359,10 @@ def main() -> None:
         if issues:
             logger.warning("  Unresolved issues in %s: %s", src_file.name, "; ".join(issues))
             errors.append((src_file.name, issues))
-            tgt_data.pop("computationally-validated", None)
             tgt_data["ignore"] = True
         else:
             logger.info("  OK")
             tgt_data.pop("ignore", None)
-            tgt_data["computationally-validated"] = "test suite passes"
 
         with tgt_file.open("wb") as f:
             f.write(tomli_w.dumps(tgt_data).encode("utf-8"))

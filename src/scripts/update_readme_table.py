@@ -4,7 +4,6 @@
 import argparse
 import tomllib
 from dataclasses import dataclass
-from math import ceil
 from pathlib import Path
 
 START_MARKER = "<!-- LANGUAGE TABLE START -->"
@@ -14,16 +13,14 @@ END_MARKER = "<!-- LANGUAGE TABLE END -->"
 @dataclass(frozen=True)
 class LanguageValidation:
     language: str
-    source_language: str
     model: str
-    computational: str
     human: str
     error: str
 
 
 def _completed_value(records: list[dict], key: str) -> str:
-    values = [record.get(key) for record in records]
-    return "; ".join(sorted(set(values))) if all(values) else ""
+    values = [record[key] for record in records]
+    return "; ".join(sorted(set(values))) if all(value != "none" for value in values) else ""
 
 
 def collect_language_validation(templates_root: Path) -> list[LanguageValidation]:
@@ -41,18 +38,24 @@ def collect_language_validation(templates_root: Path) -> list[LanguageValidation
         if not records:
             continue
         for record in records:
-            assert "creation" not in record and "model" not in record, f"{lang_dir.name}: obsolete metadata"
+            assert not {"creation", "model", "computationally-validated"}.intersection(record), (
+                f"{lang_dir.name}: obsolete metadata"
+            )
             assert record["language"] == lang_dir.name, f"{lang_dir.name}: incorrect language"
             if lang_dir.name not in {"eng", "eng_metric"}:
-                assert record["initial_translation_model"], f"{lang_dir.name}: missing translation model"
-                assert record["source-language"], f"{lang_dir.name}: missing source language"
+                assert record["initial_translation_model"] != "none", f"{lang_dir.name}: missing translation model"
+                assert record["source-language"] != "none", f"{lang_dir.name}: missing source language"
+        human_values = [record["human-validated"] for record in records]
+        human = _completed_value(records, "human-validated")
+        if any("in progress" in value.lower() for value in human_values) or (
+            not human and any(value != "none" for value in human_values)
+        ):
+            human = "In progress"
         languages.append(
             LanguageValidation(
                 language=lang_dir.name,
-                source_language=_completed_value(records, "source-language"),
                 model=_completed_value(records, "initial_translation_model"),
-                computational=_completed_value(records, "computationally-validated"),
-                human=_completed_value(records, "human-validated"),
+                human=human,
                 error=_completed_value(records, "error-analysis"),
             )
         )
@@ -63,60 +66,21 @@ def _markdown_cell(value: str) -> str:
     return value.replace("|", "\\|").replace("\n", "<br>")
 
 
-def _format_source_language(source: str) -> str:
-    if not source:
-        return ""
-    langs = [s.strip() for s in source.split(";")]
-    return ", ".join(f"`{l}`" for l in langs)
-
-
-def _table(languages: list[LanguageValidation], *, overview: bool = False) -> str:
-    headings = ["Language", "Computationally validated", "Human validated", "Error analysis"]
-    if not overview:
-        headings = [
-            "Language",
-            "Source language",
-            "Initial translation model",
-            "Computationally validated",
-            "Human validated",
-            "Error analysis",
-        ]
-    lines = ["| " + " | ".join(headings) + " |", "| " + " | ".join(["---"] * len(headings)) + " |"]
-    for lang in languages:
-        comp = "✓" if lang.computational else ""
-        human = lang.human
-        error = "✓" if lang.error else ""
-        if overview:
-            values = [comp, _markdown_cell(human), error]
-        else:
-            values = [
-                _format_source_language(lang.source_language),
-                _markdown_cell(lang.model),
-                comp,
-                _markdown_cell(human),
-                error,
-            ]
-        lines.append("| " + " | ".join([f"`{lang.language}`", *values]) + " |")
-    return "\n".join(lines)
+def _included_languages(languages: list[LanguageValidation]) -> list[LanguageValidation]:
+    return [lang for lang in languages if lang.language != "eng_metric" and (lang.human or lang.language == "eng")]
 
 
 def render_language_tables(languages: list[LanguageValidation]) -> str:
-    filtered_languages = [lang for lang in languages if lang.language != "eng_metric"]
-    validated = [lang for lang in filtered_languages if lang.human or lang.language == "eng"]
-    return "\n".join(
-        [
-            "The following languages are validated:",
-            "",
-            _table(validated, overview=True),
-            "",
-            "<details>",
-            "<summary>Full details</summary>",
-            "",
-            _table(filtered_languages, overview=False),
-            "",
-            "</details>",
-        ]
-    )
+    lines = [
+        "The following languages are human validated or in progress, alongside the English originals. Computational validation is enforced by CI.",
+        "",
+        "| Language | Computationally validated | Human validated | Error analysis |",
+        "| --- | --- | --- | --- |",
+    ]
+    for lang in _included_languages(languages):
+        error = "✓" if lang.error else ""
+        lines.append(f"| `{lang.language}` | ✓ | {_markdown_cell(lang.human)} | {error} |")
+    return "\n".join(lines)
 
 
 def _latex_cell(value: str) -> str:
@@ -137,44 +101,36 @@ def _latex_cell(value: str) -> str:
 
 
 def render_latex_table(languages: list[LanguageValidation]) -> str:
-    """A compact 2-column multipage paper table; requires longtable and amssymb."""
-    filtered = [l for l in languages if l.language != "eng_metric"]
-    mid = ceil(len(filtered) / 2)
-    left = filtered[:mid]
-    right = filtered[mid:]
-
-    def format_half(lang: LanguageValidation | None) -> list[str]:
-        if not lang:
-            return ["", "", "", "", "", ""]
-        src = _latex_cell(lang.source_language.replace(";", ", "))
-        model = _latex_cell(lang.model)
-        comp = r"$\checkmark$" if lang.computational else ""
-        human = _latex_cell(lang.human)
-        error = _latex_cell(lang.error)
-        return [_latex_cell(lang.language), src, model, comp, human, error]
-
+    """One row per language, with single-line cells; requires amssymb."""
     lines = [
         "% Generated by src/scripts/update_readme_table.py; do not edit.",
-        r"\begin{longtable}{llp{2.3cm}cp{1.6cm}p{1.8cm}@{\quad}|@{\quad}llp{2.3cm}cp{1.6cm}p{1.8cm}}",
-        r"\caption{Language validation metadata across all languages.}\label{tab:language-validation}\\",
+        r"\begin{table*}[t]",
+        r"\centering",
+        r"\small",
+        r"\setlength{\tabcolsep}{4pt}",
+        r"\begin{tabular}{llccl}",
         r"\hline",
-        r"Lang & Src & Model & Comp & Human & Error & Lang & Src & Model & Comp & Human & Error \\",
+        r"Language & Human review & Comp. & Error analysis & Initial translation model \\",
         r"\hline",
-        r"\endfirsthead",
-        r"\hline",
-        r"Lang & Src & Model & Comp & Human & Error & Lang & Src & Model & Comp & Human & Error \\",
-        r"\hline",
-        r"\endhead",
-        r"\hline",
-        r"\endfoot",
-        r"\hline",
-        r"\endlastfoot",
     ]
-    for i in range(mid):
-        l_entry = format_half(left[i])
-        r_entry = format_half(right[i] if i < len(right) else None)
-        lines.append(" & ".join(l_entry + r_entry) + r" \\")
-    lines.append(r"\end{longtable}")
+    for lang in _included_languages(languages):
+        values = [
+            _latex_cell(lang.language),
+            _latex_cell(lang.human.removeprefix("by ")),
+            r"$\checkmark$",
+            r"$\checkmark$" if lang.error else "",
+            _latex_cell(lang.model),
+        ]
+        lines.append(" & ".join(values) + r" \\")
+    lines.extend(
+        [
+            r"\hline",
+            r"\end{tabular}",
+            r"\caption{Human-validated languages and reviews in progress, alongside the English originals. Computational validation is enforced by CI. Error analysis is marked only when complete for all active templates.}",
+            r"\label{tab:language-validation}",
+            r"\end{table*}",
+        ]
+    )
     return "\n".join(lines) + "\n"
 
 

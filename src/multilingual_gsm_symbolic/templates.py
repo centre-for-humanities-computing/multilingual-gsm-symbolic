@@ -62,11 +62,10 @@ class AnnotatedQuestion:
     question_annotated: str
     answer_annotated: str
     language: str = "eng"
-    source_language: str | None = None
-    initial_translation_model: str | None = None
-    computationally_validated: str | None = None
-    human_validated: str | None = None
-    error_analysis: str | None = None
+    source_language: str = "none"
+    initial_translation_model: str = "none"
+    human_validated: str = "none"
+    error_analysis: str = "none"
 
     def __post_init__(self) -> None:
         constrained_derived = [v for v in self.derived_variables if is_variable_mentioned(v, self.conditions)]
@@ -127,7 +126,6 @@ class AnnotatedQuestion:
         """Map documented hyphenated TOML/JSON tags to Python attribute names."""
         for serialized, attribute in (
             ("source-language", "source_language"),
-            ("computationally-validated", "computationally_validated"),
             ("human-validated", "human_validated"),
             ("error-analysis", "error_analysis"),
         ):

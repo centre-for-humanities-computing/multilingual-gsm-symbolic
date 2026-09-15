@@ -97,7 +97,10 @@ def get_creation_method(lang: str, templates_dir: Path) -> str:
         return "none"
     if lang in {"eng", "eng_metric"}:
         return "original"
-    if all(record.get("human-validated") for record in records):
+    if all(
+        record["human-validated"] != "none" and "in progress" not in record["human-validated"].lower()
+        for record in records
+    ):
         return "human_validated"
     return "machine_translated"
 
