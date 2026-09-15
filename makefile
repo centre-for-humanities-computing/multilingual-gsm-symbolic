@@ -26,6 +26,9 @@ update-readme-table:
 	@echo "--- 📋 Updating language validation table ---"
 	uv run src/scripts/update_readme_table.py
 
+update-paper-table:
+	uv run python paper/update_language_table.py
+
 test:
 	@echo "--- 🧪 Running tests ---"
 	uv run pytest -vv

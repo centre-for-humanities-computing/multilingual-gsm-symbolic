@@ -1,5 +1,6 @@
 from dataclasses import asdict
 from pathlib import Path
+from runpy import run_path
 
 import pytest
 
@@ -10,16 +11,17 @@ from scripts.update_readme_table import (
     START_MARKER,
     collect_language_validation,
     render_language_tables,
-    render_latex_table,
     update_readme,
 )
+
+render_latex_table = run_path(str(Path(__file__).parents[1] / "paper/update_language_table.py"))["render_latex_table"]
 
 
 def test_repository_metadata() -> None:
     languages = collect_language_validation(_DATA_ROOT)
     assert next(lang.human for lang in languages if lang.language == "dan") == "by three native speakers"
     template = AnnotatedQuestion.from_toml(_DATA_ROOT / "afr/symbolic/0000.toml")
-    assert template.human_validated == template.error_analysis == "none"
+    assert template.human_validated is template.error_analysis is None
     assert "computationally_validated" not in asdict(template)
 
 
@@ -29,17 +31,20 @@ def test_tables_distinguish_none_in_progress_and_complete(tmp_path: Path) -> Non
         symbolic.mkdir(parents=True)
         for index in range(2):
             original = language in {"eng", "eng_metric"}
-            source, model = ("none", "none") if original else ("eng", "example/model")
-            human = "none"
+            source, model = ("", "") if original else ("eng", "example/model")
+            human = ""
             if language == "dan" or (language == "spa" and index == 0):
                 human = "by three native speakers"
             if language == "fra":
                 human = "in progress"
-            text = (
-                f'language = "{language}"\nsource-language = "{source}"\n'
-                f'initial_translation_model = "{model}"\nhuman-validated = "{human}"\n'
-                'error-analysis = "none"\n'
-            )
+            text = f'language = "{language}"\n'
+            for key, value in (
+                ("source-language", source),
+                ("initial_translation_model", model),
+                ("human-validated", human),
+            ):
+                if value:
+                    text += f'{key} = "{value}"\n'
             (symbolic / f"{index:04}.toml").write_text(text, encoding="utf-8")
     (tmp_path / "dan/symbolic/0002.toml").write_text("ignore = true\n", encoding="utf-8")
     languages = collect_language_validation(tmp_path)
@@ -57,7 +62,7 @@ def test_tables_distinguish_none_in_progress_and_complete(tmp_path: Path) -> Non
     assert "Comp. validated" in latex
     assert r"\begin{tabular}{llccll}" in latex
     (tmp_path / "spa/symbolic/0000.toml").write_text('language = "spa"\n', encoding="utf-8")
-    with pytest.raises(KeyError, match="initial_translation_model"):
+    with pytest.raises(AssertionError, match="missing translation model"):
         collect_language_validation(tmp_path)
 
 

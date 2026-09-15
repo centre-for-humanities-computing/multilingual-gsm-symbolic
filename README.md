@@ -73,12 +73,12 @@ Templates are TOML files with the following fields:
 | `answer`             | Concrete answer with calculation steps                                               |
 | `question_annotated` | Template with variable placeholders and `#init` / `#conditions` / `#answer` sections |
 | `answer_annotated`   | Answer template with inline expressions                                              |
-| `source-language`    | Source language code, or the text `"none"` for English originals |
-| `initial_translation_model` | Initial translation model, or the text `"none"` for English originals |
-| `human-validated`    | Human review description, `"in progress"`, or the text `"none"` |
-| `error-analysis`     | Error analysis performed, or the text `"none"` |
+| `source-language`    | Source language code; omitted for English originals |
+| `initial_translation_model` | Initial translation model; omitted for English originals |
+| `human-validated`    | Human review description or `"in progress"`; omitted if unreviewed |
+| `error-analysis`     | Error analysis performed; omitted if absent |
 
-Computational validation is enforced by CI and is not stored in templates. The text `"none"` explicitly indicates absent metadata; it does not count as validation.
+Computational validation is enforced by CI and is not stored in templates. Absent metadata fields are omitted from TOML and load as `None` in Python.
 
 ### Annotated question syntax
 
@@ -236,16 +236,23 @@ The original concrete problems are from [GSM8k](https://huggingface.co/datasets/
 
 You can see the available languages as follows:
 ```python
-from multilingual_gsm_symbolic import available_languages
+from multilingual_gsm_symbolic import available_languages, load_data
 
 # see possible languages
 print(available_languages())
 # {'eng': {'number of samples': 100}, 'dan': {'number of samples': 100}, ...}
+
+# Inspect template metadata:
+template = load_data("dan")[0]
+template.source_language  # 'eng'
+template.initial_translation_model  # 'gpt-5.4'
+template.human_validated  # 'by three native speakers'
+template.error_analysis
 ```
 
-<!-- LANGUAGE TABLE START -->
-The following languages are human validated or in progress, alongside the English originals. Computational validation is enforced by CI.
+The following table shows the list of validated languages:
 
+<!-- LANGUAGE TABLE START -->
 | Language | Computationally validated | Human validated | Error analysis |
 | --- | --- | --- | --- |
 | `ara` | ✓ | by a native speaker | ✓ |
@@ -265,8 +272,6 @@ The following languages are human validated or in progress, alongside the Englis
 | `urd` | ✓ | by a native speaker | ✓ |
 | `zho` | ✓ | by a native speaker | ✓ |
 <!-- LANGUAGE TABLE END -->
-
-CI regenerates this table and `docs/language_validation.tex`; run `make update-readme-table` to generate both locally. The LaTeX table requires `amssymb` and uses one row per language with human review, computational validation, error analysis, and the initial translation model. Source language remains available in the templates.
 
 ### Want to add a new language?
 
