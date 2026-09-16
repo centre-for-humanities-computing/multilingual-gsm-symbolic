@@ -1,0 +1,240 @@
+---
+title: "Predicting performance on an unseen language"
+subtitle: "Section 4.4 and Appendix E"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache.path = "_cache/predict_new_language/")
+suppressPackageStartupMessages({ library(dplyr); library(tidyr); library(lme4); library(parallel) })
+```
+
+Two questions, both answered by holding each language out in turn:
+
+1. **With no evaluation at all**, how well can we forecast a language we have
+   never run? Every predictor is obtainable without touching the target
+   language, so this is a forecast rather than a fit statistic.
+2. **With a little evaluation**, how much does running $k$ templates in the
+   target language buy?
+
+```{r shared, cache=TRUE}
+cells <- readRDS("../../artifacts/analysis/model_cells.rds")
+out_dir <- "../../artifacts/analysis"
+ctrl <- glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 3e5))
+
+RE <- paste("(1 | family/base_model) + (1 | model) + (1 | template) +",
+            "(1 | language) + (1 | model:language)")
+FEAT <- "(relative_fertility_within_z + typological_distance_z + log_resource_z)"
+RHS <- paste(FEAT, "* log_params_z +",
+             "reasoning * (relative_fertility_within_z +",
+             "typological_distance_z + log_resource_z + log_params_z) +", RE)
+Y <- "cbind(n_correct, n_total - n_correct) ~"
+
+## Standardise on the training fold only, then apply those constants to the
+## held-out language, so the target's own mean and spread never leak in.
+apply_z <- function(train, test) {
+  for (p in list(c("relative_fertility_within", "relative_fertility_within_z"),
+                 c("typological_distance_from_english", "typological_distance_z"),
+                 c("log10_common_crawl_pages", "log_resource_z"),
+                 c("log2_params", "log_params_z"))) {
+    s <- c(mean(train[[p[1]]]), sd(train[[p[1]]]))
+    train[[p[2]]] <- (train[[p[1]]] - s[1]) / s[2]
+    test[[p[2]]]  <- (test[[p[1]]] - s[1]) / s[2]
+  }
+  list(train = train, test = test)
+}
+
+langs <- levels(droplevels(cells$language))
+truth <- cells %>% group_by(language, model) %>%
+  summarise(truth = sum(n_correct) / sum(n_total), .groups = "drop")
+cat("languages:", length(langs), "|", paste(langs, collapse = " "), "\n")
+```
+
+# No evaluation at all
+
+Prediction excludes the `language` and `model:language` random effects, which are
+by definition unknown for a language never evaluated. The model, family and
+template effects *are* known from the other languages and are kept. The excluded
+components are therefore irreducible error --- which is exactly what the variance
+decomposition in the results predicts.
+
+Baselines, in increasing order of what a practitioner would actually do:
+
+| baseline | is |
+|---|---|
+| `grand_mean` | the training-set accuracy, ignoring everything |
+| `model_mean` | this model's average over the languages already evaluated --- the one the feature model has to beat to be worth anything |
+| `size_only` | a fitted model with size but no language features |
+| `features` | the full model |
+
+```{r lolo-fits, cache=TRUE, dependson='shared', cache.extra=RHS}
+## a novel language has no language or model:language intercept to borrow
+KNOWN_RE <- ~ (1 | family/base_model) + (1 | model) + (1 | template)
+
+rows <- lapply(langs, function(L) {
+  z <- apply_z(cells %>% filter(language != L) %>% droplevels(),
+               cells %>% filter(language == L) %>% droplevels())
+  train <- z$train; test <- z$test
+
+  fit_feat <- glmer(as.formula(paste(Y, RHS)), data = train, family = binomial(), control = ctrl)
+  fit_size <- glmer(as.formula(paste(Y, "log_params_z + reasoning +", RE)),
+                    data = train, family = binomial(), control = ctrl)
+
+  p_feat <- plogis(predict(fit_feat, newdata = test, re.form = KNOWN_RE, allow.new.levels = TRUE))
+  p_size <- plogis(predict(fit_size, newdata = test, re.form = KNOWN_RE, allow.new.levels = TRUE))
+
+  model_mean <- train %>% group_by(model) %>%
+    summarise(p = sum(n_correct) / sum(n_total), .groups = "drop")
+
+  test %>%
+    transmute(language = L, model, template, n_correct, n_total,
+              observed = n_correct / n_total,
+              features = p_feat, size_only = p_size,
+              grand_mean = sum(train$n_correct) / sum(train$n_total)) %>%
+    left_join(model_mean %>% rename(model_mean = p), by = "model")
+})
+pred <- bind_rows(rows)
+write.csv(pred, file.path(out_dir, "lolo_predictions.csv"), row.names = FALSE)
+```
+
+```{r lolo-scores}
+METHODS <- c("features", "size_only", "model_mean", "grand_mean")
+score <- function(d, by) {
+  d %>% group_by(across(all_of(by))) %>%
+    summarise(across(all_of(c("observed", METHODS)), ~ weighted.mean(., n_total)), .groups = "drop") %>%
+    pivot_longer(all_of(METHODS), names_to = "method", values_to = "pred") %>%
+    group_by(method) %>%
+    summarise(MAE = 100 * mean(abs(pred - observed)),
+              RMSE = 100 * sqrt(mean((pred - observed)^2)),
+              pearson = cor(pred, observed),
+              spearman = cor(pred, observed, method = "spearman"), .groups = "drop") %>%
+    arrange(MAE) %>% mutate(across(where(is.numeric), ~round(., 3)))
+}
+```
+
+Predicting a **novel language's mean difficulty**. Note that `model_mean` and
+`grand_mean` coincide here: averaging each model's own training mean over all
+models recovers the overall training mean, so the per-model baseline does no work
+at this level.
+
+```{r lolo-language}
+score(pred, "language")
+```
+
+Predicting a **specific model in a novel language**, where the per-model baseline
+does separate from the grand mean:
+
+```{r lolo-model}
+score(pred, c("language", "model"))
+```
+
+```{r lolo-per-language}
+pred %>% group_by(language) %>%
+  summarise(observed = weighted.mean(observed, n_total),
+            predicted = weighted.mean(features, n_total), .groups = "drop") %>%
+  mutate(error_pp = 100 * (predicted - observed)) %>%
+  arrange(error_pp) %>% mutate(across(where(is.numeric), ~round(., 3)))
+```
+
+# With a few evaluated templates
+
+Now the $k$ chosen templates from the target language are **added to the training
+data and the model is refitted from scratch**. Nothing is frozen, so there is no
+approximation to defend --- only compute.
+
+Design notes:
+
+- **nested draws**: within a replicate the template sets are prefixes of one
+  shuffle ($S_1 \subset S_2 \subset \dots \subset S_{20}$), so movement along the
+  curve is not confounded with which templates were drawn;
+- **replicates**: `R` independent shuffles per language, since a single draw of
+  one template is extremely noisy;
+- **scoring**: primary is the $100 - k$ templates *not* used in training, which
+  is the honest forecast. The all-100 figure is reported too, since scoring on
+  templates you trained on flatters large $k$;
+- **$k = 0$** is the leave-one-language-out fit above.
+
+The specification is the paper's, with no template-by-language term. That matters
+at small $k$: with no such term the model must charge a single template's
+idiosyncrasy to the language effect, so very small $k$ can be *worse* than not
+evaluating at all. That is a property of the model rather than of the method (see
+`model_ablations.Rmd`), and it is reported rather than smoothed over --- watch
+`sd_language` inflate at $k = 1$.
+
+```{r fewshot-fits, cache=TRUE, dependson='shared', cache.extra=RHS}
+KS <- c(1, 2, 5, 10, 20)
+R <- 3
+WORKERS <- 4          # 10 cores, 16 GB; each glmer peaks around 1-2 GB
+set.seed(20260916)
+
+tpls <- unique(cells$template)
+draws <- expand.grid(language = langs, rep = seq_len(R), stringsAsFactors = FALSE)
+draws$order <- lapply(seq_len(nrow(draws)), function(i) sample(tpls))
+jobs <- do.call(rbind, lapply(seq_len(nrow(draws)), function(i)
+  data.frame(i = i, language = draws$language[i], rep = draws$rep[i], k = KS)))
+cat(sprintf("%d languages x %d replicates x %d k-values = %d fits, %d at a time\n",
+            length(langs), R, length(KS), nrow(jobs), WORKERS))
+
+one <- function(j) {
+  L <- jobs$language[j]; k <- jobs$k[j]
+  keep <- head(draws$order[[jobs$i[j]]], k)
+  t0 <- Sys.time()
+  z <- apply_z(cells %>% filter(language != L | template %in% keep) %>% droplevels(),
+               cells %>% filter(language == L) %>% droplevels())
+  fit <- tryCatch(glmer(as.formula(paste(Y, RHS)), data = z$train,
+                        family = binomial(), control = ctrl),
+                  error = function(e) NULL)
+  if (is.null(fit)) return(NULL)
+  ## every random effect that exists: for k > 0 the target's language and
+  ## model:language levels are now estimated from the k templates
+  p <- plogis(predict(fit, newdata = z$test, re.form = NULL, allow.new.levels = TRUE))
+  tr <- truth %>% filter(language == L)
+  sc <- function(sel) {
+    d <- z$test[sel, ] %>% mutate(p = p[sel]) %>% group_by(model) %>%
+      summarise(pred = mean(p), .groups = "drop") %>% inner_join(tr, by = "model")
+    c(mae = mean(abs(d$pred - d$truth)), err = mean(d$pred) - mean(d$truth))
+  }
+  seen <- z$test$template %in% keep
+  a <- sc(rep(TRUE, nrow(z$test))); h <- sc(!seen)
+  data.frame(language = L, k = k, rep = jobs$rep[j],
+             mae_all = a[["mae"]], err_all = a[["err"]],
+             mae_heldout = h[["mae"]], err_heldout = h[["err"]],
+             sd_language = attr(VarCorr(fit)$language, "stddev")[[1]],
+             mins = as.numeric(difftime(Sys.time(), t0, units = "mins")))
+}
+
+few <- bind_rows(mclapply(seq_len(nrow(jobs)), one,
+                          mc.cores = WORKERS, mc.preschedule = FALSE))
+write.csv(few, file.path(out_dir, "few_shot_refit.csv"), row.names = FALSE)
+cat("fits completed:", nrow(few), "of", nrow(jobs), "\n")
+```
+
+```{r fewshot-curve}
+b <- pred %>% group_by(language, model) %>%
+  summarise(truth = sum(n_correct) / sum(n_total),
+            feat = weighted.mean(features, n_total), .groups = "drop") %>%
+  group_by(language) %>%
+  summarise(mae = mean(abs(feat - truth)), err = mean(feat) - mean(truth), .groups = "drop")
+
+few %>% group_by(k) %>%
+  summarise(model_heldout = 100 * mean(mae_heldout),
+            language_mean = 100 * mean(abs(err_heldout)),
+            model_all = 100 * mean(mae_all), .groups = "drop") %>%
+  bind_rows(tibble(k = 0, model_heldout = 100 * mean(b$mae),
+                   language_mean = 100 * mean(abs(b$err)),
+                   model_all = 100 * mean(b$mae))) %>%
+  arrange(k) %>% mutate(across(where(is.numeric), ~round(., 2)))
+```
+
+`sd(language)` by $k$. Inflation at small $k$ is the model charging a single
+template's idiosyncrasy to the language effect:
+
+```{r fewshot-sd}
+few %>% group_by(k) %>%
+  summarise(sd_language = round(mean(sd_language), 4),
+            core_minutes = round(sum(mins), 1), .groups = "drop")
+```
