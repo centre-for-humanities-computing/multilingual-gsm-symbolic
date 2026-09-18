@@ -18,7 +18,7 @@ from plot_config import EXCLUDED_FIGURE_LANGUAGES, LANGUAGE_LABELS, language_ord
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 DEFAULT_OUTPUT = REPO_ROOT / "paper" / "artifacts" / "tables" / "original_vs_synthetic_accuracy.tex"
-# The analysis languages, plus the English metric variant (Norwegian excluded).
+# The 15 analysis languages, plus the English metric variant.
 DEFAULT_LANGUAGES = [
     "zho", "hin", "eng", "eng_metric", "ara", "jpn", "rus", "deu", "mar",
     "fra", "ita", "ukr", "nld", "dan", "est", "isl",
@@ -214,7 +214,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--languages", nargs="+", default=DEFAULT_LANGUAGES,
-        help="Optional language codes; defaults to the 16 analysis languages plus English metric.",
+        help="Optional language codes; defaults to the 15 analysis languages plus English metric.",
     )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--caption", help="Optional replacement table caption.")
