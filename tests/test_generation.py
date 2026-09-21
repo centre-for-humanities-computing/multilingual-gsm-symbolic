@@ -293,6 +293,38 @@ def test_example_94_uses_ensure_int_for_integral_float_answer():
     assert final_str == "21", f"Expected clean integer '21' but got {final_str!r}; full answer:\n{questions[0].answer}"
 
 
+@pytest.mark.parametrize(
+    ("template_path", "fixed", "expected"),
+    [
+        (
+            "nld/symbolic/0045.toml",
+            {"length": "32.8", "plant_width": 20, "space": 40, "owned": 5, "cost": 20},
+            "1540",
+        ),
+        (
+            "ukr/symbolic/0094.toml",
+            {"n": 360, "p1": 35, "p2": 50, "frac_txt": "одна третя", "frac_val": "1/3"},
+            "21",
+        ),
+        (
+            "jpn/symbolic/0080.toml",
+            {"price1": 100, "price2": 110, "total": 1000, "n1": 1, "p": 2},
+            "8",
+        ),
+    ],
+)
+def test_residual_rounding_regressions(template_path: str, fixed: dict, expected: str):
+    """Adversarial examples stay aligned across conditions, explanations, and final answers."""
+
+    template = AnnotatedQuestion.from_toml(
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates" / template_path
+    )
+    questions = template.generate_questions(n=1, fixed=fixed, verbose=False)
+    assert len(questions) == 1
+    final_str = questions[0].answer.split("####")[-1].strip()
+    assert final_str == expected, f"Expected {expected!r} but got {final_str!r}; full answer:\n{questions[0].answer}"
+
+
 def test_example_19_uses_ensure_int_for_integral_float_answer():
     """Regression PR #26: 60 * 0.45 * (1/3) can evaluate to 8.999999999999998."""
 
