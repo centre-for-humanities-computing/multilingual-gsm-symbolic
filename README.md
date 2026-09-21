@@ -263,6 +263,7 @@ The following table shows the list of validated languages:
 | `fra` | ✓ | by a native speaker | ✓ |
 | `hin` | ✓ | by a native speaker | ✓ |
 | `isl` | ✓ | by native speakers | ✓ |
+| `ita` | ✓ | by two native speakers | ✓ |
 | `jpn` | ✓ | by a native speaker | ✓ |
 | `mar` | ✓ | by a native speaker | ✓ |
 | `nld` | ✓ | by a native speaker | ✓ |
