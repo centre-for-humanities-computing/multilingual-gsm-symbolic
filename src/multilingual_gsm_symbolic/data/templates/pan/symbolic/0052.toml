@@ -1,0 +1,10 @@
+question = "ਮਨਦੀਪ ਕੋਲ ₹20 ਦੇ 2 ਨੋਟ ਹਨ। ਉਹ ਛੇ ਪਿਚਕਾਰੀਆਂ ਖਰੀਦਦਾ ਹੈ, ਹਰੇਕ ਦੀ ਕੀਮਤ ₹2 ਹੈ। ਉਹ ਪਾਣੀ ਦੇ ਗੁਬਾਰਿਆਂ ਦੇ 3 ਪੈਕਟ ਵੀ ਖਰੀਦਦਾ ਹੈ, ਹਰੇਕ ਦੀ ਕੀਮਤ ₹3 ਹੈ। ਉਸ ਕੋਲ ਕਿੰਨੇ ਪੈਸੇ ਬਚੇ ਹਨ?"
+answer = "ਮਨਦੀਪ ਕੋਲ ਸ਼ੁਰੂ ਵਿੱਚ 2 * ₹20 = ₹<<2*20=40>>40 ਹਨ।\nਮਨਦੀਪ ਪਿਚਕਾਰੀਆਂ 'ਤੇ 6*₹2 = ₹<<6*2=12>>12 ਖਰਚ ਕਰਦਾ ਹੈ।\nਮਨਦੀਪ ਪਾਣੀ ਦੇ ਗੁਬਾਰਿਆਂ ਦੇ 3 ਪੈਕਟ * ₹3 = ₹<<3*3=9>>9 ਪਾਣੀ ਦੇ ਗੁਬਾਰਿਆਂ 'ਤੇ ਖਰਚ ਕਰਦਾ ਹੈ।\nਕੁੱਲ ਮਨਦੀਪ ਨੇ ₹12 + ₹9 = ₹<<12+9=21>>21 ਖਰਚ ਕੀਤੇ ਹਨ।\nਮਨਦੀਪ ਕੋਲ ₹40 - ₹21 = ₹<<40-21=19>>19 ਬਚੇ ਹਨ।\n#### 19"
+id_orig = 843
+id_shuffled = 52
+question_annotated = "{name,ਮਨਦੀਪ} ਕੋਲ {cur,₹}{bill,20} ਦੇ {n,2} ਨੋਟ ਹਨ। ਉਹ {m_txt,ਛੇ} {item1,ਪਿਚਕਾਰੀਆਂ} ਖਰੀਦਦਾ ਹੈ, ਹਰੇਕ ਦੀ ਕੀਮਤ {cur,₹}{p1,2} ਹੈ। ਉਹ {item2,ਪਾਣੀ ਦੇ ਗੁਬਾਰਿਆਂ} ਦੇ {k,3} ਪੈਕਟ ਵੀ ਖਰੀਦਦਾ ਹੈ, ਹਰੇਕ ਦੀ ਕੀਮਤ {cur,₹}{p2,3} ਹੈ। ਉਸ ਕੋਲ ਕਿੰਨੇ ਪੈਸੇ ਬਚੇ ਹਨ?\n\n#init:\n- name = sample(names_male)\n- $bill = sample([5, 10, 20, 50, 100])\n- item1 = sample([\"ਖਿਡੌਣਾ ਕਾਰਾਂ\", \"ਐਕਸ਼ਨ ਫਿਗਰ\", \"ਰੰਗ ਭਰਨ ਵਾਲੀਆਂ ਕਿਤਾਬਾਂ\", \"ਪਹੇਲੀਆਂ\", \"ਬੋਰਡ ਗੇਮਾਂ\"])\n- item2 = sample([\"ਸਟਿੱਕਰਾਂ\", \"ਟੌਫ਼ੀਆਂ\", \"ਟਰੇਡਿੰਗ ਕਾਰਡਾਂ\", \"ਪੈਂਸਿਲਾਂ\", \"ਰਬੜਾਂ\"])\n- cur = sample(currencies_sym)\n- $n = range(1, 10)\n- m_txt, m_val = range_str(2, 15, 1, numbers)\n- $k = range(2, 10)\n- $p1 = range(1, 10)\n- $p2 = range(1, 10)\n\n#conditions:\n- n * int(bill) > m_val * p1 + k * p2\n\n#answer: n * int(bill) - (m_val * p1 + k * p2)"
+answer_annotated = "{name} ਕੋਲ ਸ਼ੁਰੂ ਵਿੱਚ {n} * {cur}{bill} = {cur}<<{n}*{int(bill)}={n*int(bill)}>>{n*int(bill)} ਹਨ।\n{name} {item1} 'ਤੇ {m_val}*{cur}{p1} = {cur}<<{m_val}*{p1}={m_val*p1}>>{m_val*p1} ਖਰਚ ਕਰਦਾ ਹੈ।\n{name} {item2} ਦੇ {k} ਪੈਕਟ * {cur}{p2} = {cur}<<{k}*{p2}={k*p2}>>{k*p2} {item2} 'ਤੇ ਖਰਚ ਕਰਦਾ ਹੈ।\nਕੁੱਲ {name} ਨੇ {cur}{m_val*p1} + {cur}{k*p2} = {cur}<<{m_val*p1}+{k*p2}={m_val*p1+k*p2}>>{m_val*p1+k*p2} ਖਰਚ ਕੀਤੇ ਹਨ।\n{name} ਕੋਲ {cur}{n*int(bill)} - {cur}{m_val*p1+k*p2} = {cur}<<{n*int(bill)}-{m_val*p1+k*p2}={n*int(bill)-(m_val*p1+k*p2)}>>{n*int(bill)-(m_val*p1+k*p2)} ਬਚੇ ਹਨ।\n#### {n*int(bill)-(m_val*p1+k*p2)}"
+source-language = "eng"
+initial_translation_model = "manual"
+human-validated = "by two native speakers"
+language = "pan"

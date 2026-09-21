@@ -1,0 +1,10 @@
+question = "ਜਦੋਂ ਪਾਣੀ ਠੰਡਾ ਹੁੰਦਾ ਹੈ ਤਾਂ ਗੁਰਪ੍ਰੀਤ ਨੂੰ ਇੱਕ ਮੀਲ ਤੈਰਨ ਵਿੱਚ 16 ਮਿੰਟ ਲੱਗਦੇ ਹਨ। ਜਦੋਂ ਪਾਣੀ ਗਰਮ ਹੁੰਦਾ ਹੈ ਤਾਂ ਗੁਰਪ੍ਰੀਤ ਨੂੰ ਇੱਕ ਮੀਲ ਤੈਰਨ ਵਿੱਚ ਇਸ ਤੋਂ ਦੋ ਗੁਣਾ ਸਮੇਂ ਨਾਲੋਂ 2 ਮਿੰਟ ਵੱਧ ਸਮਾਂ ਲੱਗਦਾ ਹੈ। ਗੁਰਪ੍ਰੀਤ ਨੂੰ ਠੰਡੇ ਦਿਨ ਨਾਲੋਂ ਗਰਮ ਦਿਨ 3 ਮੀਲ ਤੈਰਨ ਵਿੱਚ ਕਿੰਨਾ ਵੱਧ ਸਮਾਂ ਲੱਗਦਾ ਹੈ?"
+answer = "ਠੰਡੇ ਪਾਣੀ ਵਿੱਚ ਮੀਲ = <<16=16>>16 ਮਿੰਟ।\nਗਰਮ ਪਾਣੀ ਵਿੱਚ ਮੀਲ = 2+2*16 = <<2+2*16=34>>34 ਮਿੰਟ।\nਠੰਡੇ ਪਾਣੀ ਵਿੱਚ 3 ਮੀਲ: 3(16)=<<3*16=48>>48 ਮਿੰਟ।\nਗਰਮ ਪਾਣੀ ਵਿੱਚ 3 ਮੀਲ: 3(34)=<<3*34=102>>102 ਮਿੰਟ।\nਗੁਰਪ੍ਰੀਤ ਨੂੰ 102-48=<<102-48=54>>54 ਮਿੰਟ ਵੱਧ ਲੱਗਦੇ ਹਨ।\n#### 54"
+id_orig = 554
+id_shuffled = 93
+question_annotated = "ਜਦੋਂ ਪਾਣੀ ਠੰਡਾ ਹੁੰਦਾ ਹੈ ਤਾਂ {name,ਗੁਰਪ੍ਰੀਤ} ਨੂੰ ਇੱਕ {unit,ਮੀਲ} ਤੈਰਨ ਵਿੱਚ {t1,16} ਮਿੰਟ ਲੱਗਦੇ ਹਨ। ਜਦੋਂ ਪਾਣੀ ਗਰਮ ਹੁੰਦਾ ਹੈ ਤਾਂ {name,ਗੁਰਪ੍ਰੀਤ} ਨੂੰ ਇੱਕ {unit,ਮੀਲ} ਤੈਰਨ ਵਿੱਚ ਇਸ ਤੋਂ {mult_txt,ਦੋ ਗੁਣਾ} ਸਮੇਂ ਨਾਲੋਂ {n,2} ਮਿੰਟ ਵੱਧ ਸਮਾਂ ਲੱਗਦਾ ਹੈ। {name,ਗੁਰਪ੍ਰੀਤ} ਨੂੰ ਠੰਡੇ ਦਿਨ ਨਾਲੋਂ ਗਰਮ ਦਿਨ {d,3} {unit,ਮੀਲ} ਤੈਰਨ ਵਿੱਚ ਕਿੰਨਾ ਵੱਧ ਸਮਾਂ ਲੱਗਦਾ ਹੈ?\n\n#init:\n- name = sample(names)\n- unit = sample(['ਮੀਲ', 'ਕਿਲੋਮੀਟਰ'])\n- $t1 = range(10, 50)\n- $n = range(1, 10)\n- mult_txt, mult_val = sample(multi_times)\n- $d = range(2, 10)\n\n#conditions:\n- t1 < 60\n- n + mult_val * t1 < 60\n- d * (n + mult_val * t1) - d * t1 > 0\n\n#answer: d * (n + mult_val * t1) - d * t1"
+answer_annotated = "ਠੰਡੇ ਪਾਣੀ ਵਿੱਚ {unit} = <<{t1}={t1}>>{t1} ਮਿੰਟ।\nਗਰਮ ਪਾਣੀ ਵਿੱਚ {unit} = {n}+{mult_val}*{t1} = <<{n}+{mult_val}*{t1}={n + mult_val * t1}>>{n + mult_val * t1} ਮਿੰਟ।\nਠੰਡੇ ਪਾਣੀ ਵਿੱਚ {d} {unit}: {d}({t1})=<<{d}*{t1}={d*t1}>>{d*t1} ਮਿੰਟ।\nਗਰਮ ਪਾਣੀ ਵਿੱਚ {d} {unit}: {d}({n + mult_val * t1})=<<{d}*{n + mult_val * t1}={d*(n + mult_val * t1)}>>{d*(n + mult_val * t1)} ਮਿੰਟ।\n{name} ਨੂੰ {d*(n + mult_val * t1)}-{d*t1}=<<{d*(n + mult_val * t1)}-{d*t1}={d * (n + mult_val * t1) - d * t1}>>{d * (n + mult_val * t1) - d * t1} ਮਿੰਟ ਵੱਧ ਲੱਗਦੇ ਹਨ।\n#### {d * (n + mult_val * t1) - d * t1}"
+source-language = "eng"
+initial_translation_model = "manual"
+human-validated = "by two native speakers"
+language = "pan"

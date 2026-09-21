@@ -266,6 +266,7 @@ The following table shows the list of validated languages:
 | `jpn` | ✓ | by a native speaker | ✓ |
 | `mar` | ✓ | by a native speaker | ✓ |
 | `nld` | ✓ | by a native speaker | ✓ |
+| `pan` | ✓ | by two native speakers |  |
 | `rus` | ✓ | by a native speaker | ✓ |
 | `swe` | ✓ | by 5 native speakers | ✓ |
 | `ukr` | ✓ | by a native speaker | ✓ |
