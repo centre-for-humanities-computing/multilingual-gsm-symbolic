@@ -96,7 +96,7 @@
   },
   {
     "id": 19,
-    "question_annotated": "在一份有 {n,60} 題的測驗中，{p1,40}% 的題目是{s1,簡單題}，其餘的題目平均分成{s2,普通題}和{s3,困難題}。如果 {name,欣怡} 確定能答對 {r1,75}% 的{s1,簡單題}，並且能答對{frac_txt,一半}的{s2,普通題}和{s3,困難題}，那麼她確定能得到多少分？\n\n#init:\n- s1, s2, s3 = sample([\"歷史\", \"地理\", \"生物\", \"化學\", \"物理\", \"經濟\", \"文學\", \"代數\", \"幾何\" ], 3)\n- name = sample(names_female)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)",
+    "question_annotated": "在一份有 {n,60} 題的測驗中，{p1,40}% 的題目是{s1,簡單題}，其餘的題目平均分成{s2,普通題}和{s3,困難題}。如果 {name,欣怡} 確定能答對 {r1,75}% 的{s1,簡單題}，並且能答對{frac_txt,一半}的{s2,普通題}和{s3,困難題}，那麼她確定能得到多少分？\n\n#init:\n- s1, s2, s3 = sample([\"歷史\", \"地理\", \"生物\", \"化學\", \"物理\", \"經濟\", \"文學\", \"代數\", \"幾何\" ], 3)\n- name = sample(names_female)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)",
     "count": 100
   },
   {
@@ -246,7 +246,7 @@
   },
   {
     "id": 49,
-    "question_annotated": "{name,約翰}從 {n,3} 個不同的公寓社區收垃圾。前 {n_first_txt,兩} 個社區各有 {a,200} 間公寓，最後一個比其他 {n_first_txt,兩} 個合起來的總數多 {p,60}%。他每週從每個地方收垃圾 {f,3} 次，而且每收一次、每間公寓可獲得 {cur,$}{r,0.4} 的報酬。他一週賺多少錢？\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "question_annotated": "{name,約翰}從 {n,3} 個不同的公寓社區收垃圾。前 {n_first_txt,兩} 個社區各有 {a,200} 間公寓，最後一個比其他 {n_first_txt,兩} 個合起來的總數多 {p,60}%。他每週從每個地方收垃圾 {f,3} 次，而且每收一次、每間公寓可獲得 {cur,$}{r,0.4} 的報酬。他一週賺多少錢？\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: round(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {
@@ -256,7 +256,7 @@
   },
   {
     "id": 51,
-    "question_annotated": "{name,冠宇} 在{location,農夫市集}有一個{product,花}攤。他賣三種{product,花}：{item1,萬壽菊}、{item2,矮牽牛}和{item3,秋海棠}。他平常賣{item1,萬壽菊}每{unit,盆} {cur,$}{p1,2.74}、{item2,矮牽牛}每{unit,盆} {cur,$}{p2,1.87}，以及{item3,秋海棠}每{unit,盆} {cur,$}{p3,2.12}。{name,冠宇} 今天沒有零錢，所以他決定把所有價格四捨五入到最接近的整數美元。如果 {name,冠宇} 賣出 {n1,12} {unit,盆}{item1,萬壽菊}、{n2,9} {unit,盆}{item2,矮牽牛}和 {n3,17} {unit,盆}{item3,秋海棠}，他會賺多少錢？\n\n#init:\n- name = sample(names_male)\n- product = sample([\"蔬菜\", \"花\", \"香草\", \"植物\"])\n- location = sample([\"地方市集\", \"社區市場\", \"街頭市集\", \"城鎮廣場\"])\n- item1, item2, item3 = sample([\"玫瑰\", \"雛菊\", \"鬱金香\", \"百合\", \"向日葵\", \"蘭花\"], 3)\n- unit = sample([\"束\", \"籃\", \"花束\", \"捆\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
+    "question_annotated": "{name,冠宇} 在{location,農夫市集}有一個{product,花}攤。他賣三種{product,花}：{item1,萬壽菊}、{item2,矮牽牛}和{item3,秋海棠}。他平常賣{item1,萬壽菊}每{unit,盆} {cur,$}{p1,2.74}、{item2,矮牽牛}每{unit,盆} {cur,$}{p2,1.87}，以及{item3,秋海棠}每{unit,盆} {cur,$}{p3,2.12}。{name,冠宇} 今天沒有零錢，所以他決定把所有價格四捨五入到最接近的整數美元。如果 {name,冠宇} 賣出 {n1,12} {unit,盆}{item1,萬壽菊}、{n2,9} {unit,盆}{item2,矮牽牛}和 {n3,17} {unit,盆}{item3,秋海棠}，他會賺多少錢？\n\n#init:\n- name = sample(names_male)\n- product = sample([\"蔬菜\", \"花\", \"香草\", \"植物\"])\n- location = sample([\"地方市集\", \"社區市場\", \"街頭市集\", \"城鎮廣場\"])\n- item1, item2, item3 = sample([\"玫瑰\", \"雛菊\", \"鬱金香\", \"百合\", \"向日葵\", \"蘭花\"], 3)\n- unit = sample([\"束\", \"籃\", \"花束\", \"捆\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*int(round(p1, 2) + 0.5) + n2*int(round(p2, 2) + 0.5) + n3*int(round(p3, 2) + 0.5)",
     "count": 100
   },
   {
@@ -401,7 +401,7 @@
   },
   {
     "id": 80,
-    "question_annotated": "自動販賣機出售每包{item1,洋芋片} {price1,40} 美分，每條{item2,糖果棒} {price2,75} 美分。{name,冠霖} 花了 {cur,$}{total,5}，買了 {n1,3} 包{item1,洋芋片}，並且找回了他金額的 {p,1}% 作為零錢。他買了多少條{item2,糖果棒}？\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['椒鹽捲餅', '爆米花', '口香糖', '餅乾', '蘇打餅乾'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: int((total * (100 - p) - n1 * price1) / price2)",
+    "question_annotated": "自動販賣機出售每包{item1,洋芋片} {price1,40} 美分，每條{item2,糖果棒} {price2,75} 美分。{name,冠霖} 花了 {cur,$}{total,5}，買了 {n1,3} 包{item1,洋芋片}，並且找回了他金額的 {p,1}% 作為零錢。他買了多少條{item2,糖果棒}？\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['椒鹽捲餅', '爆米花', '口香糖', '餅乾', '蘇打餅乾'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)",
     "count": 100
   },
   {
@@ -421,7 +421,7 @@
   },
   {
     "id": 84,
-    "question_annotated": "{name,宜庭} 以每股 {cur,$}{p,8} 買了 {n,8} 股股票。{name,宜庭} 持有的第一年，股價上漲了 {r1,50}%，然後在第二年下跌了 {r2,25}%。{name,宜庭} 所有股票的最終價值是多少？\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: int(n * p * (1 + r1/100) * (1 - r2/100))",
+    "question_annotated": "{name,宜庭} 以每股 {cur,$}{p,8} 買了 {n,8} 股股票。{name,宜庭} 持有的第一年，股價上漲了 {r1,50}%，然後在第二年下跌了 {r2,25}%。{name,宜庭} 所有股票的最終價值是多少？\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))",
     "count": 100
   },
   {
@@ -471,7 +471,7 @@
   },
   {
     "id": 94,
-    "question_annotated": "有 {n,100} 人申請 {company,谷歌} 的一份工作。在申請的人當中，只有 {p1,30}% 會收到面試。在收到面試的人當中，{p2,20}% 會收到錄用通知。在收到錄用通知的人當中，有{frac_txt,三分之一}的人接受這個職位。有多少人接受這個職位？\n\n#init:\n- company = sample([\"微軟\", \"蘋果\", \"亞馬遜\", \"臉書\", \"網飛\", \"特斯拉\", \"微軟\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: int(n * (p1/100) * (p2/100) * frac_val)",
+    "question_annotated": "有 {n,100} 人申請 {company,谷歌} 的一份工作。在申請的人當中，只有 {p1,30}% 會收到面試。在收到面試的人當中，{p2,20}% 會收到錄用通知。在收到錄用通知的人當中，有{frac_txt,三分之一}的人接受這個職位。有多少人接受這個職位？\n\n#init:\n- company = sample([\"微軟\", \"蘋果\", \"亞馬遜\", \"臉書\", \"網飛\", \"特斯拉\", \"微軟\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: ensure_int(n * (p1/100) * (p2/100) * frac_val)",
     "count": 100
   },
   {
