@@ -267,7 +267,7 @@ The following table shows the list of validated languages:
 | `mar` | ✓ | by a native speaker | ✓ |
 | `nld` | ✓ | by a native speaker | ✓ |
 | `rus` | ✓ | by a native speaker | ✓ |
-| `swe` | ✓ | by native speakers | ✓ |
+| `swe` | ✓ | by 5 native speakers | ✓ |
 | `ukr` | ✓ | by a native speaker | ✓ |
 | `urd` | ✓ | by a native speaker | ✓ |
 | `zho` | ✓ | by a native speaker | ✓ |
