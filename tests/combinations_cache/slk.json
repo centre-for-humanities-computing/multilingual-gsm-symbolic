@@ -51,7 +51,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "Na uskutočnenie hovoru z {dev,telefónna búdka}, musíte zaplatiť {currency,$}{frac1,0.25} za každú minútu hovoru. Po {t,16} minútach cena klesne na {currency,$}{frac2,0.2} za minútu. Koľko by stál {total,36}-minútový hovor?\n\n#init:\n- dev = sample(['telefónna búdka', 'telefón v hotelovom pokoji'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "Na uskutočnenie hovoru z {dev,telefónna búdka}, musíte zaplatiť {currency,$}{frac1,0.25} za každú minútu hovoru. Po {t,16} minútach cena klesne na {currency,$}{frac2,0.2} za minútu. Koľko by stál {total,36}-minútový hovor?\n\n#init:\n- dev = sample(['telefónna búdka', 'telefón v hotelovom pokoji'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -221,7 +221,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,Pat} má záhon, ktorý je {length,111} {unit_length,stopa} dlhý. {name,Pat} chce naplniť svoj záhon rastlinami. Kvety {name,Pat} rastú {plant_width,12} palcov široké, a záhradnícke pokyny hovoria, že treba vysadiť jeden kvet každých {space,1.5} {unit_length,stopa} po dĺžke záhonu. {name,Pat} už vlastní {owned,17} kvetov. Každá kvitnúca rastlina stojí {cur,$}{cost,6} v obchode. Koľko peňazí bude {name,Pat} míňať v obchode, aby naplnila svoj záhon?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['stopa', 'meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "{name,Pat} má záhon, ktorý je {length,111} {unit_length,stopa} dlhý. {name,Pat} chce naplniť svoj záhon rastlinami. Kvety {name,Pat} rastú {plant_width,12} palcov široké, a záhradnícke pokyny hovoria, že treba vysadiť jeden kvet každých {space,1.5} {unit_length,stopa} po dĺžke záhonu. {name,Pat} už vlastní {owned,17} kvetov. Každá kvitnúca rastlina stojí {cur,$}{cost,6} v obchode. Koľko peňazí bude {name,Pat} míňať v obchode, aby naplnila svoj záhon?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['stopa', 'meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {

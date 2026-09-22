@@ -51,7 +51,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "För att ringa ett samtal från en {dev,telefonkiosk} måste du betala {frac1,0.25} {currency,kronor} för varje minut av ditt samtal. Efter {t,16} minuter sänks priset till {frac2,0.2} {currency,kronor} per minut. Hur mycket skulle ett {total,36}-minuters samtal kosta?\n\n#init:\n- dev = sample(['telefonkiosk', 'hotellrumstelefon'])\n- currency = sample(currencies_sym)\n- currency_sing = \"krona\" if currency == \"kronor\" else currency\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "För att ringa ett samtal från en {dev,telefonkiosk} måste du betala {frac1,0.25} {currency,kronor} för varje minut av ditt samtal. Efter {t,16} minuter sänks priset till {frac2,0.2} {currency,kronor} per minut. Hur mycket skulle ett {total,36}-minuters samtal kosta?\n\n#init:\n- dev = sample(['telefonkiosk', 'hotellrumstelefon'])\n- currency = sample(currencies_sym)\n- currency_sing = \"krona\" if currency == \"kronor\" else currency\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -226,7 +226,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,Sofia} har en blomsterrabatt som är {length_txt,28.8} m lång. {name,Sofia} vill fylla rabatten med plantor. Hennes blommor blir {plant_width,30} cm breda, och odlingsanvisningarna säger att man ska plantera en blomma med {space,45} cm mellanrum längs rabatten. {name,Sofia} äger redan {owned,17} blommor. Varje planta kostar {cost,40} {cur,kronor} i butiken. Hur mycket pengar kommer {name,Sofia} att behöva spendera i butiken för att fylla rabatten?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $length = arange(25, 40, 0.2)\n- length_txt = int(length) if is_int(length) else length\n- $plant_width = range(20, 40)\n- $space = range(20, 60)\n- $owned = range(5, 20)\n- $cost = range(20, 100)\n\n#conditions:\n- plant_width * 3 < length*100\n- plant_width < space\n- is_int(round(length*100) / space)\n- round(length*100) // space > owned\n\n#answer: (round(length*100) // space - owned) * cost",
+    "question_annotated": "{name,Sofia} har en blomsterrabatt som är {length_txt,28.8} m lång. {name,Sofia} vill fylla rabatten med plantor. Hennes blommor blir {plant_width,30} cm breda, och odlingsanvisningarna säger att man ska plantera en blomma med {space,45} cm mellanrum längs rabatten. {name,Sofia} äger redan {owned,17} blommor. Varje planta kostar {cost,40} {cur,kronor} i butiken. Hur mycket pengar kommer {name,Sofia} att behöva spendera i butiken för att fylla rabatten?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $length = arange(25, 40, 0.2)\n- length_txt = ensure_int(length) if is_int(length) else length\n- $plant_width = range(20, 40)\n- $space = range(20, 60)\n- $owned = range(5, 20)\n- $cost = range(20, 100)\n\n#conditions:\n- plant_width * 3 < length*100\n- plant_width < space\n- is_int(round(length*100) / space)\n- round(length*100) // space > owned\n\n#answer: (round(length*100) // space - owned) * cost",
     "count": 100
   },
   {

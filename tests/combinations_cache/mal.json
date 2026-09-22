@@ -46,7 +46,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "ഒരു {dev,ഫോൺ ബൂത്ത്} വഴി കോൾ ചെയ്യാൻ, നിങ്ങളുടെ കോളിന്റെ ഓരോ മിനിറ്റിനും നിങ്ങൾ {currency,₹}{frac1,0.25} അടയ്ക്കണം. {t,16} മിനിറ്റിന് ശേഷം, ആ വില ഓരോ മിനിറ്റിനും {currency,₹}{frac2,0.2} ആയി കുറയുന്നു. {total,36} മിനിറ്റ് ദൈർഘ്യമുള്ള ഒരു കോളിന് എത്ര ചിലവ് വരും?\n\n#init:\n- dev = sample(['ഫോൺ ബൂത്ത്', 'ഹോട്ടൽ മുറി ഫോൺ'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "ഒരു {dev,ഫോൺ ബൂത്ത്} വഴി കോൾ ചെയ്യാൻ, നിങ്ങളുടെ കോളിന്റെ ഓരോ മിനിറ്റിനും നിങ്ങൾ {currency,₹}{frac1,0.25} അടയ്ക്കണം. {t,16} മിനിറ്റിന് ശേഷം, ആ വില ഓരോ മിനിറ്റിനും {currency,₹}{frac2,0.2} ആയി കുറയുന്നു. {total,36} മിനിറ്റ് ദൈർഘ്യമുള്ള ഒരു കോളിന് എത്ര ചിലവ് വരും?\n\n#init:\n- dev = sample(['ഫോൺ ബൂത്ത്', 'ഹോട്ടൽ മുറി ഫോൺ'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -211,7 +211,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,പത്}-ന് {length,111} {unit_length,അടി} നീളമുള്ള ഒരു പൂന്തോട്ടമുണ്ട്. {name,പത്}-ന് തന്റെ പൂന്തോട്ടം ചെടികൾ കൊണ്ട് നിറയ്ക്കണം. {name,പത്}-ന്റെ പൂക്കൾ {plant_width,12} ഇഞ്ച് വീതിയിൽ വളരുന്നു, തോട്ടം പരിപാലന മാർഗ്ഗനിർദ്ദേശങ്ങൾ പ്രകാരം ഓരോ {space,1.5} {unit_length,അടി} ഇടവേളയിൽ ഒരു പൂവ് നട്ടുപിടിപ്പിക്കണം. {name,പത്}-ന് ഇതിനകം തന്നെ {owned,17} പൂക്കൾ ഉണ്ട്. ഓരോ പൂച്ചെടിയുടെയും വില കടയിൽ {cur,₹}{cost,6} ആണ്. തന്റെ പൂന്തോട്ടം നിറയ്ക്കാൻ {name,പത്}-ന് കടയിൽ എത്ര പണം ചെലവഴിക്കേണ്ടി വരും?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['അടി', 'മീറ്റർ'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "{name,പത്}-ന് {length,111} {unit_length,അടി} നീളമുള്ള ഒരു പൂന്തോട്ടമുണ്ട്. {name,പത്}-ന് തന്റെ പൂന്തോട്ടം ചെടികൾ കൊണ്ട് നിറയ്ക്കണം. {name,പത്}-ന്റെ പൂക്കൾ {plant_width,12} ഇഞ്ച് വീതിയിൽ വളരുന്നു, തോട്ടം പരിപാലന മാർഗ്ഗനിർദ്ദേശങ്ങൾ പ്രകാരം ഓരോ {space,1.5} {unit_length,അടി} ഇടവേളയിൽ ഒരു പൂവ് നട്ടുപിടിപ്പിക്കണം. {name,പത്}-ന് ഇതിനകം തന്നെ {owned,17} പൂക്കൾ ഉണ്ട്. ഓരോ പൂച്ചെടിയുടെയും വില കടയിൽ {cur,₹}{cost,6} ആണ്. തന്റെ പൂന്തോട്ടം നിറയ്ക്കാൻ {name,പത്}-ന് കടയിൽ എത്ര പണം ചെലവഴിക്കേണ്ടി വരും?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['അടി', 'മീറ്റർ'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {

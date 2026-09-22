@@ -51,7 +51,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "{dev,ಪೇಫೋನ್} ನಿಂದ ಕರೆ ಮಾಡಲು, ನಿಮ್ಮ ಕರೆಯ ಪ್ರತಿ ನಿಮಿಷಕ್ಕೆ {currency,₹}{frac1,0.25} ಪಾವತಿಸಬೇಕು. {t,16} ನಿಮಿಷಗಳ ನಂತರ, ಆ ಬೆಲೆ ಪ್ರತಿ ನಿಮಿಷಕ್ಕೆ {currency,₹}{frac2,0.2} ಕ್ಕೆ ಇಳಿಯುತ್ತದೆ. {total,36} ನಿಮಿಷಗಳ ಕರೆ ಎಷ್ಟು ವೆಚ್ಚವಾಗುತ್ತದೆ?\n\n#init:\n- dev = sample(['ದೂರವಾಣಿ ಬೂತ್', 'ಹೋಟೆಲ್ ಕೋಣೆಯ ದೂರವಾಣಿ'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "{dev,ಪೇಫೋನ್} ನಿಂದ ಕರೆ ಮಾಡಲು, ನಿಮ್ಮ ಕರೆಯ ಪ್ರತಿ ನಿಮಿಷಕ್ಕೆ {currency,₹}{frac1,0.25} ಪಾವತಿಸಬೇಕು. {t,16} ನಿಮಿಷಗಳ ನಂತರ, ಆ ಬೆಲೆ ಪ್ರತಿ ನಿಮಿಷಕ್ಕೆ {currency,₹}{frac2,0.2} ಕ್ಕೆ ಇಳಿಯುತ್ತದೆ. {total,36} ನಿಮಿಷಗಳ ಕರೆ ಎಷ್ಟು ವೆಚ್ಚವಾಗುತ್ತದೆ?\n\n#init:\n- dev = sample(['ದೂರವಾಣಿ ಬೂತ್', 'ಹೋಟೆಲ್ ಕೋಣೆಯ ದೂರವಾಣಿ'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -221,7 +221,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,ಪಾಟ್} ಬಳಿ {length,111} {unit_length,ಅಡಿ} ಉದ್ದದ ಒಂದು ಹೂವಿನ ಹಾಸಿಗೆ ಇದೆ. {name,ಪಾಟ್} ತನ್ನ ಹೂವಿನ ಹಾಸಿಗೆಯನ್ನು ಗಿಡಗಳಿಂದ ತುಂಬಲು ಬಯಸುತ್ತಾಳೆ. {name,ಪಾಟ್} ನ ಹೂವುಗಳು {plant_width,12} ಇಂಚು ಅಗಲದಲ್ಲಿ ಬೆಳೆಯುತ್ತವೆ, ಮತ್ತು ತೋಟಗಾರಿಕೆ ಮಾರ್ಗಸೂಚಿಗಳ ಪ್ರಕಾರ ಹಾಸಿಗೆಯುದ್ದಕ್ಕೂ ಪ್ರತಿ {space,1.5} {unit_length,ಅಡಿ} ಗೆ ಒಂದು ಹೂವನ್ನು ನೆಡಬೇಕು. {name,ಪಾಟ್} ಈಗಾಗಲೇ {owned,17} ಹೂವುಗಳನ್ನು ಹೊಂದಿದ್ದಾಳೆ. ಪ್ರತಿ ಹೂಬಿಡುವ ಗಿಡವು ದೋಕಾನದಲ್ಲಿ {cur,₹}{cost,6} ಬೆಲೆ ಬೀಳುತ್ತದೆ. ತನ್ನ ಹೂವಿನ ಹಾಸಿಗೆಯನ್ನು ತುಂಬಲು {name,ಪಾಟ್} ದೋಕಾನದಲ್ಲಿ ಎಷ್ಟು ಹಣ ಖರ್ಚು ಮಾಡುತ್ತಾಳೆ?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['ಅಡಿ', 'ಮೀಟರ್'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "{name,ಪಾಟ್} ಬಳಿ {length,111} {unit_length,ಅಡಿ} ಉದ್ದದ ಒಂದು ಹೂವಿನ ಹಾಸಿಗೆ ಇದೆ. {name,ಪಾಟ್} ತನ್ನ ಹೂವಿನ ಹಾಸಿಗೆಯನ್ನು ಗಿಡಗಳಿಂದ ತುಂಬಲು ಬಯಸುತ್ತಾಳೆ. {name,ಪಾಟ್} ನ ಹೂವುಗಳು {plant_width,12} ಇಂಚು ಅಗಲದಲ್ಲಿ ಬೆಳೆಯುತ್ತವೆ, ಮತ್ತು ತೋಟಗಾರಿಕೆ ಮಾರ್ಗಸೂಚಿಗಳ ಪ್ರಕಾರ ಹಾಸಿಗೆಯುದ್ದಕ್ಕೂ ಪ್ರತಿ {space,1.5} {unit_length,ಅಡಿ} ಗೆ ಒಂದು ಹೂವನ್ನು ನೆಡಬೇಕು. {name,ಪಾಟ್} ಈಗಾಗಲೇ {owned,17} ಹೂವುಗಳನ್ನು ಹೊಂದಿದ್ದಾಳೆ. ಪ್ರತಿ ಹೂಬಿಡುವ ಗಿಡವು ದೋಕಾನದಲ್ಲಿ {cur,₹}{cost,6} ಬೆಲೆ ಬೀಳುತ್ತದೆ. ತನ್ನ ಹೂವಿನ ಹಾಸಿಗೆಯನ್ನು ತುಂಬಲು {name,ಪಾಟ್} ದೋಕಾನದಲ್ಲಿ ಎಷ್ಟು ಹಣ ಖರ್ಚು ಮಾಡುತ್ತಾಳೆ?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['ಅಡಿ', 'ಮೀಟರ್'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {

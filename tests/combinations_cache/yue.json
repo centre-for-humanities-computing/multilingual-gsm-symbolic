@@ -41,7 +41,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "使用 {dev,公話亭} 打電話，每分鐘需支付 {currency,元}{frac1,0.25}。{t,16} 分鐘後，價格降至每分鐘 {currency,元}{frac2,0.2}。{total,36} 分鐘的通話需要多少錢？\n\n#init:\n- dev = sample(['公話亭', '酒店房間電話'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "使用 {dev,公話亭} 打電話，每分鐘需支付 {currency,元}{frac1,0.25}。{t,16} 分鐘後，價格降至每分鐘 {currency,元}{frac2,0.2}。{total,36} 分鐘的通話需要多少錢？\n\n#init:\n- dev = sample(['公話亭', '酒店房間電話'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -191,7 +191,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,Pat} 有一個花床，長達 {length,111} {unit_length,呎}。{name,Pat} 想用植物填滿她的花床。{name,Pat} 的花長 {plant_width,12} 吋寬，園藝準則建議沿著花床每 {space,1.5} {unit_length,呎} 種植一朵花。{name,Pat} 已經擁有 {owned,17} 朵花。每株開花植物在商店售價 {cur,$}{cost,6}。{name,Pat} 要花多少錢在商店填滿她的花床？\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['呎', '米'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "{name,Pat} 有一個花床，長達 {length,111} {unit_length,呎}。{name,Pat} 想用植物填滿她的花床。{name,Pat} 的花長 {plant_width,12} 吋寬，園藝準則建議沿著花床每 {space,1.5} {unit_length,呎} 種植一朵花。{name,Pat} 已經擁有 {owned,17} 朵花。每株開花植物在商店售價 {cur,$}{cost,6}。{name,Pat} 要花多少錢在商店填滿她的花床？\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['呎', '米'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {

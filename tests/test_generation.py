@@ -341,6 +341,54 @@ def test_example_19_uses_ensure_int_for_integral_float_answer():
     assert value == 42
 
 
+def test_rounding_regressions_render_consistent_worked_solutions():
+    """Every displayed step must use tolerant integer conversion, not only the final answer."""
+
+    template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic"
+    cases = [
+        (
+            "0010.toml",
+            {"t": 36, "total": 40, "frac1": "0.75", "frac2": "0.5", "currency": "$"},
+            "29",
+            "27 + 2 = $29",
+        ),
+        (
+            "0019.toml",
+            {"n": 90, "p1": 70, "r1": 100, "frac_txt": "one third", "frac_val": "1/3"},
+            "72",
+            "63 points + 9 points",
+        ),
+        (
+            "0084.toml",
+            {"n": 5, "p": 20, "r1": 15, "r2": 20},
+            "92",
+            "115 - ",
+        ),
+    ]
+
+    for filename, fixed, expected, worked_step in cases:
+        template = AnnotatedQuestion.from_toml(template_root / filename)
+        question = template.generate_questions(n=1, fixed=fixed, verbose=False)[0]
+        assert question.answer.split("####")[-1].strip() == expected, (filename, question.question, question.answer)
+        assert worked_step in question.answer
+
+
+def test_integral_float_templates_never_use_truncating_int():
+    """The affected template families must use ensure_int in every language and solution step."""
+
+    import re
+
+    template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
+    affected_ids = {"0010.toml", "0019.toml", "0045.toml", "0049.toml", "0084.toml", "0094.toml"}
+    truncating_int = re.compile(r"(?<![\w])int\(")
+    offenders = [
+        path
+        for path in template_root.glob("*/symbolic/*.toml")
+        if path.name in affected_ids and truncating_int.search(path.read_text(encoding="utf-8"))
+    ]
+    assert offenders == []
+
+
 @pytest.mark.skip(reason="Slow: generates 30 questions with rejection sampling. Re-enable for regression testing.")
 def test_example_40_never_produces_negative_answer():
     """Regression: example 40 had a condition/answer formula mismatch that allowed
