@@ -26,7 +26,7 @@ question_annotated = """Автомати продають {item1_nom,чипси}
 - n_cur_spent = ukr_plural_measurements(total * (100 - p) / 100, cur_s, cur_pl1, cur_pl2)
 - n_cur_chips = ukr_plural_measurements(n1 * price1 / 100, cur_s, cur_pl1, cur_pl2)
 - n_cur_choc = ukr_plural_measurements(total * (100 - p) / 100 - n1 * price1 / 100, cur_s, cur_pl1, cur_pl2)
-- n2_item2 = ukr_plural_measurements(int((total * (100 - p) - n1 * price1) / price2), item2_nom, item2_pl1, item2_pl2)
+- n2_item2 = ukr_plural_measurements(ensure_int((total * (100 - p) - n1 * price1) / price2), item2_nom, item2_pl1, item2_pl2)
 - pr1_cur = ukr_plural_measurements(price1, "копійка", "копійки", "копійок")
 - pr2_cur = ukr_plural_measurements(price2, "копійка", "копійки", "копійок")
 
@@ -36,14 +36,14 @@ question_annotated = """Автомати продають {item1_nom,чипси}
 - total * (100 - p) > n1 * price1
 - (total * (100 - p) - n1 * price1) % price2 == 0
 
-#answer: int((total * (100 - p) - n1 * price1) / price2)
+#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)
 """
 answer_annotated = """{name} отримав {total * p / 100} {n_cur_change} решти, бо {total}*{p}/100 = <<{total}*{p}/100={total * p / 100}>>{total * p / 100}
 {name} витратив {total * (100 - p) / 100} {n_cur_spent}, бо {total} - {total * p / 100} = <<{total}-{total * p / 100}={total * (100 - p) / 100}>>{total * (100 - p) / 100}
 {name} витратив {n1 * price1 / 100} {n_cur_chips} на {item1_nom}, бо {n1}*{price1/100} = <<{n1}*{price1/100}={n1 * price1 / 100}>>{n1 * price1 / 100}
 {name} витратив {total * (100 - p) / 100 - n1 * price1 / 100} {n_cur_choc} на {item2_nom}, бо {total * (100 - p) / 100} - {n1 * price1 / 100} = <<{total * (100 - p) / 100}-{n1 * price1 / 100}={total * (100 - p) / 100 - n1 * price1 / 100}>>{total * (100 - p) / 100 - n1 * price1 / 100}
-{name} купив {int((total * (100 - p) - n1 * price1) / price2)} {n2_item2}, бо {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{int((total * (100 - p) - n1 * price1) / price2)}={int((total * (100 - p) - n1 * price1) / price2)}>>{int((total * (100 - p) - n1 * price1) / price2)}
-#### {int((total * (100 - p) - n1 * price1) / price2)}
+{name} купив {ensure_int((total * (100 - p) - n1 * price1) / price2)} {n2_item2}, бо {total * (100 - p) / 100 - n1 * price1 / 100} / {price2/100} = <<{ensure_int((total * (100 - p) - n1 * price1) / price2)}={ensure_int((total * (100 - p) - n1 * price1) / price2)}>>{ensure_int((total * (100 - p) - n1 * price1) / price2)}
+#### {ensure_int((total * (100 - p) - n1 * price1) / price2)}
 """
 creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
 language = "ukr"

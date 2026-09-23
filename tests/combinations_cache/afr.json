@@ -46,7 +46,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "Om 'n oproep te doen vanaf 'n {dev,betaaltelefoon}, moet jy {currency,$}{frac1,0.25} vir elke minuut van jou oproep betaal. Na {t,16} minute, daal daardie prys na {currency,$}{frac2,0.2} per minuut. Hoeveel sou 'n {total,36}-minuut oproep kos?\n\n#init:\n- dev = sample(['telefoonhokkie', 'hotelkamerfoon'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "Om 'n oproep te doen vanaf 'n {dev,betaaltelefoon}, moet jy {currency,$}{frac1,0.25} vir elke minuut van jou oproep betaal. Na {t,16} minute, daal daardie prys na {currency,$}{frac2,0.2} per minuut. Hoeveel sou 'n {total,36}-minuut oproep kos?\n\n#init:\n- dev = sample(['telefoonhokkie', 'hotelkamerfoon'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -176,7 +176,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,Pat} het 'n blombedding wat {length,111} {unit_length,meter} lank is. {name,Pat} wil haar blombedding met plante vul. {name,Pat}'s blomme groei {plant_width,12} sentimeter breed, en tuinbouriglyne sê om een blom elke {space,1.5} {unit_length,meter} langs die bedding te plant. {name,Pat} het reeds {owned,17} blomme. Elke blomplant kos {cur,$}{cost,6} in die winkel. Hoeveel geld sal {name,Pat} in die winkel bestee om haar blombedding vol te maak?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "{name,Pat} het 'n blombedding wat {length,111} {unit_length,meter} lank is. {name,Pat} wil haar blombedding met plante vul. {name,Pat}'s blomme groei {plant_width,12} sentimeter breed, en tuinbouriglyne sê om een blom elke {space,1.5} {unit_length,meter} langs die bedding te plant. {name,Pat} het reeds {owned,17} blomme. Elke blomplant kos {cur,$}{cost,6} in die winkel. Hoeveel geld sal {name,Pat} in die winkel bestee om haar blombedding vol te maak?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {
@@ -191,7 +191,7 @@
   },
   {
     "id": 49,
-    "question_annotated": "{name,Jan} versamel afval van {n,3} verskillende woonstelkomplekse. Die eerste {n_first_txt,twee} het {a,200} woonstelle elk en die laaste een is {p,60}% groter as die ander {n_first_txt,twee} saam. Hy versamel afval {f,3} keer per week van elke plek en hy kry {cur,$}{r,0.4} per versameling vir elke woonstel. Hoeveel geld maak hy in 'n week?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "question_annotated": "{name,Jan} versamel afval van {n,3} verskillende woonstelkomplekse. Die eerste {n_first_txt,twee} het {a,200} woonstelle elk en die laaste een is {p,60}% groter as die ander {n_first_txt,twee} saam. Hy versamel afval {f,3} keer per week van elke plek en hy kry {cur,$}{r,0.4} per versameling vir elke woonstel. Hoeveel geld maak hy in 'n week?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: round(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {

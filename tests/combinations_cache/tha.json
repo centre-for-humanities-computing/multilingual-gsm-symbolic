@@ -51,7 +51,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "ในการโทรออกจาก {dev,โทรศัพท์สาธารณะ} คุณต้องจ่าย {currency,฿}{frac1,0.25} ต่อแต่ละนาทีของการโทร หลังจาก {t,16} นาที ราคานั้นจะลดลงเหลือ {currency,฿}{frac2,0.2} ต่อนาที การโทร {total,36} นาทีจะมีค่าใช้จ่ายเท่าไหร่?\n\n#init:\n- dev = sample(['ตู้โทรศัพท์', 'โทรศัพท์ในห้องโรงแรม'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "ในการโทรออกจาก {dev,โทรศัพท์สาธารณะ} คุณต้องจ่าย {currency,฿}{frac1,0.25} ต่อแต่ละนาทีของการโทร หลังจาก {t,16} นาที ราคานั้นจะลดลงเหลือ {currency,฿}{frac2,0.2} ต่อนาที การโทร {total,36} นาทีจะมีค่าใช้จ่ายเท่าไหร่?\n\n#init:\n- dev = sample(['ตู้โทรศัพท์', 'โทรศัพท์ในห้องโรงแรม'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -221,7 +221,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,แพท} มีแปลงดอกไม้ที่มีความยาว {length,111} {unit_length,ฟุต}. {name,แพท} ต้องการปลูกต้นไม้ให้เต็มแปลงดอกไม้ของเธอ ดอกไม้ของ{name,แพท} เติบโตกว้าง {plant_width,12} นิ้ว และแนวทางการทำสวนแนะนำให้ปลูกดอกไม้หนึ่งดอกทุกๆ {space,1.5} {unit_length,ฟุต} ตามแนวแปลง {name,แพท} มีดอกไม้อยู่แล้ว {owned,17} ดอก ต้นไม้ดอกแต่ละต้นมีราคา {cur,฿}{cost,6} ที่ร้านค้า {name,แพท} จะต้องใช้เงินเท่าไหร่ที่ร้านค้าเพื่อเติมเต็มแปลงดอกไม้ของเธอ?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['ฟุต', 'เมตร'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "{name,แพท} มีแปลงดอกไม้ที่มีความยาว {length,111} {unit_length,ฟุต}. {name,แพท} ต้องการปลูกต้นไม้ให้เต็มแปลงดอกไม้ของเธอ ดอกไม้ของ{name,แพท} เติบโตกว้าง {plant_width,12} นิ้ว และแนวทางการทำสวนแนะนำให้ปลูกดอกไม้หนึ่งดอกทุกๆ {space,1.5} {unit_length,ฟุต} ตามแนวแปลง {name,แพท} มีดอกไม้อยู่แล้ว {owned,17} ดอก ต้นไม้ดอกแต่ละต้นมีราคา {cur,฿}{cost,6} ที่ร้านค้า {name,แพท} จะต้องใช้เงินเท่าไหร่ที่ร้านค้าเพื่อเติมเต็มแปลงดอกไม้ของเธอ?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['ฟุต', 'เมตร'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {
@@ -241,7 +241,7 @@
   },
   {
     "id": 49,
-    "question_annotated": "{name,จอห์น} เก็บขยะจาก {n,3} อาคารชุดที่แตกต่างกัน อาคารชุด {n_first_txt,สอง} แรกมี {a,200} ห้องแต่ละแห่ง และอันสุดท้ายมีขนาด {p,60}% ใหญ่กว่าอาคารชุด {n_first_txt,สอง} นั้นรวมกัน เขาเก็บขยะ {f,3} ครั้งต่อสัปดาห์จากแต่ละแห่ง และเขาได้รับเงิน {cur,$}{r,0.4} ต่อการเก็บขยะแต่ละครั้งสำหรับแต่ละห้อง เขาทำเงินได้เท่าไหร่ในหนึ่งสัปดาห์?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "question_annotated": "{name,จอห์น} เก็บขยะจาก {n,3} อาคารชุดที่แตกต่างกัน อาคารชุด {n_first_txt,สอง} แรกมี {a,200} ห้องแต่ละแห่ง และอันสุดท้ายมีขนาด {p,60}% ใหญ่กว่าอาคารชุด {n_first_txt,สอง} นั้นรวมกัน เขาเก็บขยะ {f,3} ครั้งต่อสัปดาห์จากแต่ละแห่ง และเขาได้รับเงิน {cur,$}{r,0.4} ต่อการเก็บขยะแต่ละครั้งสำหรับแต่ละห้อง เขาทำเงินได้เท่าไหร่ในหนึ่งสัปดาห์?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: round(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {

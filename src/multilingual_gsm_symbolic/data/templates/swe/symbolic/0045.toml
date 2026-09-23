@@ -18,7 +18,7 @@ question_annotated = """
 - name = sample(names_female)
 - cur = sample(currencies_sym)
 - $length = arange(25, 40, 0.2)
-- length_txt = int(length) if is_int(length) else length
+- length_txt = ensure_int(length) if is_int(length) else length
 - $plant_width = range(20, 40)
 - $space = range(20, 60)
 - $owned = range(5, 20)
@@ -27,17 +27,17 @@ question_annotated = """
 #conditions:
 - plant_width * 3 < length*100
 - plant_width < space
-- is_int(length*100 / space)
-- length*100 / space > owned
+- is_int(round(length*100) / space)
+- round(length*100) // space > owned
 
-#answer: int((length*100 / space - owned) * cost)
+#answer: (round(length*100) // space - owned) * cost
 """
 
 answer_annotated = """
-Rabatten är {length} m lång, alltså {int(length*100)} cm / {space} cm per planta = <<{int(length*100)}/{space}={int(length*100/space)}>>{int(length*100/space)} plantor.
-{name} behöver köpa {int(length*100/space)} plantor - {owned} plantor = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} plantor.
-{name} betalar {int(length*100/space)-owned} plantor * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
-#### {int(length*100/space - owned) * cost}
+Rabatten är {length} m lång, alltså {round(length*100)} cm / {space} cm per planta = <<{round(length*100)}/{space}={round(length*100) // space}>>{round(length*100) // space} plantor.
+{name} behöver köpa {round(length*100) // space} plantor - {owned} plantor = <<{round(length*100) // space}-{owned}={round(length*100) // space - owned}>>{round(length*100) // space - owned} plantor.
+{name} betalar {round(length*100) // space - owned} plantor * {cost} {cur} = <<{round(length*100) // space - owned}*{cost}={(round(length*100) // space - owned) * cost}>>{(round(length*100) // space - owned) * cost} {cur}.
+#### {(round(length*100) // space - owned) * cost}
 """
 
 creation = "machine-translated from Danish by Claude Opus 5 (manual), based on Danish templates; computationally validated; manually corrected by a group of Swedish native speakers at KB-Lab, namely Marie Mattson, Kevin Kelly, Faton Rekathati, Antonio Tällberg Ilestad, Viktoria Lundborg, Agnes Toftgård, Andreas Hedberg, and Johan Bisse Mattsson."
