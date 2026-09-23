@@ -4,5 +4,8 @@ id_orig = 984
 id_shuffled = 45
 question_annotated = "{name,پیٹ} کے پاس ایک پھولوں کی کیاری ہے جو {length,111} {unit_length,فٹ} لمبی ہے۔ {name,پیٹ} اپنی پھولوں کی کیاری کو پودوں سے بھرنا چاہتی ہے۔ {name,پیٹ} کے پھول {plant_width,12} انچ چوڑے بڑھتے ہیں، اور باغبانی کے رہنما اصول کہتے ہیں کہ کیاری کے ساتھ ہر {space,1.5} {unit_length,فٹ} پر ایک پھول لگایا جائے۔ {name,پیٹ} کے پاس پہلے سے {owned,17} پھول ہیں۔ ہر پھولدار پودا دکان پر {cur,$}{cost,6} کا ہے۔ اپنی پھولوں کی کیاری کو بھرنے کے لیے {name,پیٹ} دکان پر کتنی رقم خرچ کرے گی؟\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['فٹ', 'میٹر'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)\n"
 answer_annotated = "{name} کی پھولوں کی کیاری کے لیے {length} {unit_length} / فی پودا {space} {unit_length} = <<{length}/{space}={ensure_int(length/space)}>>{ensure_int(length/space)} پودے درکار ہیں۔\n{name} کو {ensure_int(length/space)} پودے - {owned} پودے = <<{ensure_int(length/space)}-{owned}={ensure_int(length/space)-owned}>>{ensure_int(length/space)-owned} پودے خریدنے ہوں گے۔\n{name} {ensure_int(length/space)-owned} پودے * {cur}{cost} = {cur}<<{ensure_int(length/space)-owned}*{cost}={ensure_int((length/space - owned) * cost)}>>{ensure_int((length/space - owned) * cost)} خرچ کرے گی۔\n#### {ensure_int((length/space - owned) * cost)}\n"
-creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; also validated by a native speaker"
+source-language = "eng"
+initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "urd"
