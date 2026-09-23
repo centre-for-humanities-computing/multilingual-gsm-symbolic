@@ -17,10 +17,10 @@ question_annotated = """Щоб зателефонувати з {dev,телефо
 - $t = range(10, 50)
 - $total = range(36, 100)
 - t_f = ukr_plural_measurements(t, "хвилина", "хвилини", "хвилин")
-- cost_f = ukr_plural_measurements(int(t*frac1), currency_single, currency_pl_1, currency_pl_2)
+- cost_f = ukr_plural_measurements(ensure_int(t*frac1), currency_single, currency_pl_1, currency_pl_2)
 - tt_f = ukr_plural_measurements(total-t, "хвилина", "хвилини", "хвилин")
-- cost1_f = ukr_plural_measurements(int((total-t)*frac2), currency_single, currency_pl_1, currency_pl_2)
-- cost2_f = ukr_plural_measurements(int(frac1 * t) + int(frac2*(total-t)), currency_single, currency_pl_1, currency_pl_2)
+- cost1_f = ukr_plural_measurements(ensure_int((total-t)*frac2), currency_single, currency_pl_1, currency_pl_2)
+- cost2_f = ukr_plural_measurements(ensure_int(frac1 * t) + ensure_int(frac2*(total-t)), currency_single, currency_pl_1, currency_pl_2)
 
 
 
@@ -30,13 +30,13 @@ question_annotated = """Щоб зателефонувати з {dev,телефо
 - frac2 < frac1
 - t < total
 
-#answer: int((frac1 * t) + frac2*(total-t))
+#answer: ensure_int((frac1 * t) + frac2*(total-t))
 """
-answer_annotated = """Перші {t} {t_f} коштували б {t} * {frac1} = <<{t}*{frac1}={int(t*frac1)}>>{int(t*frac1)} {cost_f}.
+answer_annotated = """Перші {t} {t_f} коштували б {t} * {frac1} = <<{t}*{frac1}={ensure_int(t*frac1)}>>{ensure_int(t*frac1)} {cost_f}.
 Потім залишається {total} - {t} = <<{total}-{t}={total-t}>>{total-t} {tt_f} дзвінка.
-І ці {total-t} {tt_f} коштують {total-t} * {frac2} = <<{total-t}*{frac2}={int((total-t)*frac2)}>>{int((total-t)*frac2)} {cost1_f}.
-Отже, загалом {total}-хвилинний дзвінок коштував би {int(t*frac1)} + {int((total-t)*frac2)} = {int(frac1 * t) + int(frac2*(total-t))} {cost2_f}.
-#### {int((frac1 * t) + frac2*(total-t))}
+І ці {total-t} {tt_f} коштують {total-t} * {frac2} = <<{total-t}*{frac2}={ensure_int((total-t)*frac2)}>>{ensure_int((total-t)*frac2)} {cost1_f}.
+Отже, загалом {total}-хвилинний дзвінок коштував би {ensure_int(t*frac1)} + {ensure_int((total-t)*frac2)} = {ensure_int(frac1 * t) + ensure_int(frac2*(total-t))} {cost2_f}.
+#### {ensure_int((frac1 * t) + frac2*(total-t))}
 """
 source-language = "dan"
 initial_translation_model = "gpt-5.4"

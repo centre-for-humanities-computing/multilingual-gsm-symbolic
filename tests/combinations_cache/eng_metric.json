@@ -51,7 +51,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "To make a call from a {dev,payphone}, you must pay {currency,$}{frac1,0.25} for each minute of your call. After {t,16} minutes, that price drops to {currency,$}{frac2,0.2} per minute. How much would a {total,36}-minute call cost?\n\n#init:\n- dev = sample(['phone booth', 'hotel room phone'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "To make a call from a {dev,payphone}, you must pay {currency,$}{frac1,0.25} for each minute of your call. After {t,16} minutes, that price drops to {currency,$}{frac2,0.2} per minute. How much would a {total,36}-minute call cost?\n\n#init:\n- dev = sample(['phone booth', 'hotel room phone'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -96,7 +96,7 @@
   },
   {
     "id": 19,
-    "question_annotated": "In a {n,60}-item quiz, {p1,40}% of the questions are {s1,easy}, and the rest are equally divided as {s2,average} and {s3,difficult} questions. If {name,Aries} is sure to get {r1,75}% of the {s1,easy} questions, and {frac_txt,half} of the {s2,average} and {s3,difficult} questions correctly, how many points is she sure to get?\n\n#init:\n- s1, s2, s3 = sample([\"history\", \"geography\", \"biology\", \"chemistry\", \"physics\", \"economics\", \"literature\", \"algebra\", \"geometry\" ], 3)\n- name = sample(names_female)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)",
+    "question_annotated": "In a {n,60}-item quiz, {p1,40}% of the questions are {s1,easy}, and the rest are equally divided as {s2,average} and {s3,difficult} questions. If {name,Aries} is sure to get {r1,75}% of the {s1,easy} questions, and {frac_txt,half} of the {s2,average} and {s3,difficult} questions correctly, how many points is she sure to get?\n\n#init:\n- s1, s2, s3 = sample([\"history\", \"geography\", \"biology\", \"chemistry\", \"physics\", \"economics\", \"literature\", \"algebra\", \"geometry\" ], 3)\n- name = sample(names_female)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)",
     "count": 100
   },
   {
@@ -226,7 +226,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,Pat} has a flower bed that is {length,111} {unit_length,meter}s long. {name,Pat} wants to fill her flower bed with plants. {name,Pat}'s flowers grow {plant_width,12} centimeters wide, and gardening guidelines say to plant one flower every {space,1.5} {unit_length,meter}s along the bed. {name,Pat} already owns {owned,17} flowers. Each flowering plant costs {cur,$}{cost,6} at the store. How much money will {name,Pat} spend at the store to fill up her flower bed?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "{name,Pat} has a flower bed that is {length,111} {unit_length,meter}s long. {name,Pat} wants to fill her flower bed with plants. {name,Pat}'s flowers grow {plant_width,12} centimeters wide, and gardening guidelines say to plant one flower every {space,1.5} {unit_length,meter}s along the bed. {name,Pat} already owns {owned,17} flowers. Each flowering plant costs {cur,$}{cost,6} at the store. How much money will {name,Pat} spend at the store to fill up her flower bed?\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['meter'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {
@@ -246,7 +246,7 @@
   },
   {
     "id": 49,
-    "question_annotated": "{name,John} collects garbage from {n,3} different apartment complexes. The first {n_first_txt,two} have {a,200} apartments each and the last one is {p,60}% bigger than the other {n_first_txt,two} combined. He collects garbage {f,3} times a week from each place and he gets paid {cur,$}{r,0.4} per collection for each apartment. How much money does he make in a week?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "question_annotated": "{name,John} collects garbage from {n,3} different apartment complexes. The first {n_first_txt,two} have {a,200} apartments each and the last one is {p,60}% bigger than the other {n_first_txt,two} combined. He collects garbage {f,3} times a week from each place and he gets paid {cur,$}{r,0.4} per collection for each apartment. How much money does he make in a week?\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: round(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {
@@ -256,7 +256,7 @@
   },
   {
     "id": 51,
-    "question_annotated": "{name,Artie} has a {product,flower} stand at the {location,Farmers Market}. He sells three kinds of {product,flower}s: {item1,marigolds}, {item2,petunias} and {item3,begonias}. He usually sells {item1,marigolds} for {cur,$}{p1,2.74} per {unit,pot}, {item2,petunias} for {cur,$}{p2,1.87} per {unit,pot} and {item3,begonias} for {cur,$}{p3,2.12} per {unit,pot}. {name,Artie} has no change today, so he has decided to round all his prices to the nearest dollar. If {name,Artie} sells {n1,12} {unit,pot}s of {item1,marigolds}, {n2,9} {unit,pot}s of {item2,petunias} and {n3,17} {unit,pot}s of {item3,begonias}, how much will he make?\n\n#init:\n- name = sample(names_male)\n- product = sample([\"vegetable\", \"flower\", \"herb\", \"plant\"])\n- location = sample([\"local fair\", \"community market\", \"street bazaar\", \"town square\"])\n- item1, item2, item3 = sample([\"roses\", \"daisies\", \"tulips\", \"lilies\", \"sunflowers\", \"orchids\"], 3)\n- unit = sample([\"bunch\", \"basket\", \"bouquet\", \"bundle\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
+    "question_annotated": "{name,Artie} has a {product,flower} stand at the {location,Farmers Market}. He sells three kinds of {product,flower}s: {item1,marigolds}, {item2,petunias} and {item3,begonias}. He usually sells {item1,marigolds} for {cur,$}{p1,2.74} per {unit,pot}, {item2,petunias} for {cur,$}{p2,1.87} per {unit,pot} and {item3,begonias} for {cur,$}{p3,2.12} per {unit,pot}. {name,Artie} has no change today, so he has decided to round all his prices to the nearest dollar. If {name,Artie} sells {n1,12} {unit,pot}s of {item1,marigolds}, {n2,9} {unit,pot}s of {item2,petunias} and {n3,17} {unit,pot}s of {item3,begonias}, how much will he make?\n\n#init:\n- name = sample(names_male)\n- product = sample([\"vegetable\", \"flower\", \"herb\", \"plant\"])\n- location = sample([\"local fair\", \"community market\", \"street bazaar\", \"town square\"])\n- item1, item2, item3 = sample([\"roses\", \"daisies\", \"tulips\", \"lilies\", \"sunflowers\", \"orchids\"], 3)\n- unit = sample([\"bunch\", \"basket\", \"bouquet\", \"bundle\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*int(round(p1, 2) + 0.5) + n2*int(round(p2, 2) + 0.5) + n3*int(round(p3, 2) + 0.5)",
     "count": 100
   },
   {
@@ -401,7 +401,7 @@
   },
   {
     "id": 80,
-    "question_annotated": "The vending machines sell {item1,chips} for {price1,40} cents and {item2,candy bars} for {price2,75} cents. {name,George} spent {cur,$}{total,5} and got {n1,3} bags of {item1,chips} and had {p,1}% of his money left in change. How many {item2,candy bars} did he buy?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['pretzels', 'popcorn', 'gum', 'cookies', 'crackers'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: int((total * (100 - p) - n1 * price1) / price2)",
+    "question_annotated": "The vending machines sell {item1,chips} for {price1,40} cents and {item2,candy bars} for {price2,75} cents. {name,George} spent {cur,$}{total,5} and got {n1,3} bags of {item1,chips} and had {p,1}% of his money left in change. How many {item2,candy bars} did he buy?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['pretzels', 'popcorn', 'gum', 'cookies', 'crackers'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)",
     "count": 100
   },
   {
@@ -421,7 +421,7 @@
   },
   {
     "id": 84,
-    "question_annotated": "{name,Maria} buys {n,8} shares of a stock for {cur,$}{p,8} each. The stock price increases {r1,50}% the first year {name,Maria} holds it, then decreases {r2,25}% in the second year. What is the final value of all {name,Maria}'s shares?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: int(n * p * (1 + r1/100) * (1 - r2/100))",
+    "question_annotated": "{name,Maria} buys {n,8} shares of a stock for {cur,$}{p,8} each. The stock price increases {r1,50}% the first year {name,Maria} holds it, then decreases {r2,25}% in the second year. What is the final value of all {name,Maria}'s shares?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))",
     "count": 100
   },
   {
@@ -471,7 +471,7 @@
   },
   {
     "id": 94,
-    "question_annotated": "{n,100} people apply for a job at {company,Google}. Of the people that apply, only {p1,30}% receive interviews. Of those who receive interviews, {p2,20}% receive a job offer. Of those who receive a job offer, {frac_txt,one third} of the people accept the position. How many people accept the position?\n\n#init:\n- company = sample([\"Microsoft\", \"Apple\", \"Amazon\", \"Facebook\", \"Netflix\", \"Tesla\", \"Microsoft\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: int(n * (p1/100) * (p2/100) * frac_val)",
+    "question_annotated": "{n,100} people apply for a job at {company,Google}. Of the people that apply, only {p1,30}% receive interviews. Of those who receive interviews, {p2,20}% receive a job offer. Of those who receive a job offer, {frac_txt,one third} of the people accept the position. How many people accept the position?\n\n#init:\n- company = sample([\"Microsoft\", \"Apple\", \"Amazon\", \"Facebook\", \"Netflix\", \"Tesla\", \"Microsoft\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: ensure_int(n * (p1/100) * (p2/100) * frac_val)",
     "count": 100
   },
   {

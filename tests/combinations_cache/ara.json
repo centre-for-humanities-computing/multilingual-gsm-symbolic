@@ -51,7 +51,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "لإجراء مكالمة من {dev,هاتف عمومي}، يجب أن تدفع {frac1,0.25} {currency,ريال} عن كل دقيقة من مكالمتك. وبعد {t,16} دقيقة، ينخفض هذا السعر إلى {frac2,0.2} {currency,ريال} للدقيقة. فكم تكلفة مكالمة مدتها {total,36} دقيقة؟\n\n#init:\n- dev = sample(['كشك هاتف', 'هاتف غرفة فندق'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "question_annotated": "لإجراء مكالمة من {dev,هاتف عمومي}، يجب أن تدفع {frac1,0.25} {currency,ريال} عن كل دقيقة من مكالمتك. وبعد {t,16} دقيقة، ينخفض هذا السعر إلى {frac2,0.2} {currency,ريال} للدقيقة. فكم تكلفة مكالمة مدتها {total,36} دقيقة؟\n\n#init:\n- dev = sample(['كشك هاتف', 'هاتف غرفة فندق'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: ensure_int((frac1 * t) + frac2*(total-t))",
     "count": 100
   },
   {
@@ -96,7 +96,7 @@
   },
   {
     "id": 19,
-    "question_annotated": "في اختبار مكوّن من {n,60} سؤالًا، {p1,40}% من الأسئلة {s1,سهلة}، والباقي مقسّم بالتساوي إلى أسئلة {s2,متوسطة} و{s3,صعبة}. إذا كانت {name,سارة} متأكّدة من حلّ {r1,75}% من الأسئلة {s1,سهلة}، و{frac_txt,نصف} الأسئلة {s2,متوسطة} و{s3,صعبة} بشكل صحيح، فكم نقطة هي متأكّدة من الحصول عليها؟\n\n#init:\n- s1, s2, s3 = sample([\"تاريخ\", \"جغرافيا\", \"أحياء\", \"كيمياء\", \"فيزياء\", \"اقتصاد\", \"أدب\", \"جبر\", \"هندسة\" ], 3)\n- name = sample(names_female)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)",
+    "question_annotated": "في اختبار مكوّن من {n,60} سؤالًا، {p1,40}% من الأسئلة {s1,سهلة}، والباقي مقسّم بالتساوي إلى أسئلة {s2,متوسطة} و{s3,صعبة}. إذا كانت {name,سارة} متأكّدة من حلّ {r1,75}% من الأسئلة {s1,سهلة}، و{frac_txt,نصف} الأسئلة {s2,متوسطة} و{s3,صعبة} بشكل صحيح، فكم نقطة هي متأكّدة من الحصول عليها؟\n\n#init:\n- s1, s2, s3 = sample([\"تاريخ\", \"جغرافيا\", \"أحياء\", \"كيمياء\", \"فيزياء\", \"اقتصاد\", \"أدب\", \"جبر\", \"هندسة\" ], 3)\n- name = sample(names_female)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)",
     "count": 100
   },
   {
@@ -226,7 +226,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "لدى {name,سارة} حوض زهور طوله {length,111} {unit_length,متر}. تريد {name,سارة} أن تملأ حوض الزهور بالنباتات. تنمو زهور {name,سارة} بعرض {plant_width,12} سنتيمتر، وتنصّ إرشادات البستنة بزراعة زهرة واحدة كل {space,1.5} {unit_length,متر} على امتداد الحوض. تملك {name,سارة} بالفعل {owned,17} زهرة. وتكلّف كل نبتة مزهرة {cost,6} {cur,ريال} في المتجر. فكم من المال ستنفق {name,سارة} في المتجر لملء حوض الزهور؟\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['متر'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "لدى {name,سارة} حوض زهور طوله {length,111} {unit_length,متر}. تريد {name,سارة} أن تملأ حوض الزهور بالنباتات. تنمو زهور {name,سارة} بعرض {plant_width,12} سنتيمتر، وتنصّ إرشادات البستنة بزراعة زهرة واحدة كل {space,1.5} {unit_length,متر} على امتداد الحوض. تملك {name,سارة} بالفعل {owned,17} زهرة. وتكلّف كل نبتة مزهرة {cost,6} {cur,ريال} في المتجر. فكم من المال ستنفق {name,سارة} في المتجر لملء حوض الزهور؟\n\n#init:\n- name = sample(names_female)\n- unit_length = sample(['متر'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {
@@ -246,7 +246,7 @@
   },
   {
     "id": 49,
-    "question_annotated": "يجمع {name,خالد} القمامة من {n,3} مجمّعات سكنية مختلفة. المجمّعات الأولى وعددها {n_first_txt,اثنان} يضمّ كلٌّ منها {a,200} شقة، والأخير أكبر بنسبة {p,60}% من المجمّعات الأخرى مجتمعة. يجمع القمامة {f,3} مرات في الأسبوع من كل مكان، ويتقاضى {r,0.4} {cur,ريال} عن كل عملية جمع لكل شقة. فكم من المال يكسب في الأسبوع؟\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "question_annotated": "يجمع {name,خالد} القمامة من {n,3} مجمّعات سكنية مختلفة. المجمّعات الأولى وعددها {n_first_txt,اثنان} يضمّ كلٌّ منها {a,200} شقة، والأخير أكبر بنسبة {p,60}% من المجمّعات الأخرى مجتمعة. يجمع القمامة {f,3} مرات في الأسبوع من كل مكان، ويتقاضى {r,0.4} {cur,ريال} عن كل عملية جمع لكل شقة. فكم من المال يكسب في الأسبوع؟\n\n#init:\n- name = sample(names_male)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = arange(0.20, 0.55, 0.05)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: round(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {
@@ -256,7 +256,7 @@
   },
   {
     "id": 51,
-    "question_annotated": "لدى {name,أحمد} كشك أزهار في {location,سوق المزارعين}. يبيع ثلاثة أنواع من {product,الأزهار}: {item1,القطيفة} و{item2,البطونية} و{item3,البيغونيا}. عادةً ما يبيع {item1,القطيفة} بسعر {p1,2.74} {cur,ريال} لكل {unit,أصيص}، و{item2,البطونية} بسعر {p2,1.87} {cur,ريال} لكل {unit,أصيص}، و{item3,البيغونيا} بسعر {p3,2.12} {cur,ريال} لكل {unit,أصيص}. ليس لدى {name,أحمد} فكّة اليوم، لذا قرّر تقريب جميع أسعاره إلى أقرب عدد صحيح. فإذا باع {name,أحمد} {n1,12} {unit,أصيص} من {item1,القطيفة} و{n2,9} {unit,أصيص} من {item2,البطونية} و{n3,17} {unit,أصيص} من {item3,البيغونيا}، فكم سيكسب؟\n\n#init:\n- name = sample(names_male)\n- product = sample([\"الخضار\", \"الأزهار\", \"الأعشاب\", \"النباتات\"])\n- location = sample([\"معرض محلي\", \"سوق المجتمع\", \"بازار الشارع\", \"ساحة البلدة\"])\n- item1, item2, item3 = sample([\"الورود\", \"الأقحوان\", \"الخزامى\", \"الزنابق\", \"دوار الشمس\", \"السحلب\"], 3)\n- unit = sample([\"باقة\", \"سلة\", \"حزمة\", \"ربطة\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1) + n2*round(p2) + n3*round(p3)",
+    "question_annotated": "لدى {name,أحمد} كشك أزهار في {location,سوق المزارعين}. يبيع ثلاثة أنواع من {product,الأزهار}: {item1,القطيفة} و{item2,البطونية} و{item3,البيغونيا}. عادةً ما يبيع {item1,القطيفة} بسعر {p1,2.74} {cur,ريال} لكل {unit,أصيص}، و{item2,البطونية} بسعر {p2,1.87} {cur,ريال} لكل {unit,أصيص}، و{item3,البيغونيا} بسعر {p3,2.12} {cur,ريال} لكل {unit,أصيص}. ليس لدى {name,أحمد} فكّة اليوم، لذا قرّر تقريب جميع أسعاره إلى أقرب عدد صحيح. فإذا باع {name,أحمد} {n1,12} {unit,أصيص} من {item1,القطيفة} و{n2,9} {unit,أصيص} من {item2,البطونية} و{n3,17} {unit,أصيص} من {item3,البيغونيا}، فكم سيكسب؟\n\n#init:\n- name = sample(names_male)\n- product = sample([\"الخضار\", \"الأزهار\", \"الأعشاب\", \"النباتات\"])\n- location = sample([\"معرض محلي\", \"سوق المجتمع\", \"بازار الشارع\", \"ساحة البلدة\"])\n- item1, item2, item3 = sample([\"الورود\", \"الأقحوان\", \"الخزامى\", \"الزنابق\", \"دوار الشمس\", \"السحلب\"], 3)\n- unit = sample([\"باقة\", \"سلة\", \"حزمة\", \"ربطة\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(1.26, 3.53, 0.33)\n- $p2 = arange(2.27, 5.53, 0.26)\n- $p3 = arange(4.85, 6.53, 0.31)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*int(round(p1, 2) + 0.5) + n2*int(round(p2, 2) + 0.5) + n3*int(round(p3, 2) + 0.5)",
     "count": 100
   },
   {
@@ -401,7 +401,7 @@
   },
   {
     "id": 80,
-    "question_annotated": "تبيع آلات البيع {item1,رقائق البطاطس} بسعر {price1,40} سنتًا و{item2,ألواح الحلوى} بسعر {price2,75} سنتًا. أنفق {name,أحمد} {cur,ريال}{total,5} واشترى {n1,3} أكياس من {item1,رقائق البطاطس} وتبقّى لديه {p,1}% من نقوده كباقٍ. فكم عدد ما اشتراه من {item2,ألواح الحلوى}؟\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['المعجّنات المملّحة', 'الفشار', 'العلكة', 'البسكويت', 'المقرمشات'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: int((total * (100 - p) - n1 * price1) / price2)",
+    "question_annotated": "تبيع آلات البيع {item1,رقائق البطاطس} بسعر {price1,40} سنتًا و{item2,ألواح الحلوى} بسعر {price2,75} سنتًا. أنفق {name,أحمد} {cur,ريال}{total,5} واشترى {n1,3} أكياس من {item1,رقائق البطاطس} وتبقّى لديه {p,1}% من نقوده كباقٍ. فكم عدد ما اشتراه من {item2,ألواح الحلوى}؟\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['المعجّنات المملّحة', 'الفشار', 'العلكة', 'البسكويت', 'المقرمشات'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)",
     "count": 100
   },
   {
@@ -421,7 +421,7 @@
   },
   {
     "id": 84,
-    "question_annotated": "تشتري {name,مريم} {n,8} أسهم بسعر {cur,ريال}{p,8} للسهم الواحد. يرتفع سعر السهم بنسبة {r1,50}% في السنة الأولى التي تحتفظ فيها {name,مريم} بالأسهم، ثم ينخفض بنسبة {r2,25}% في السنة الثانية. فما القيمة النهائية لجميع أسهم {name,مريم}؟\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: int(n * p * (1 + r1/100) * (1 - r2/100))",
+    "question_annotated": "تشتري {name,مريم} {n,8} أسهم بسعر {cur,ريال}{p,8} للسهم الواحد. يرتفع سعر السهم بنسبة {r1,50}% في السنة الأولى التي تحتفظ فيها {name,مريم} بالأسهم، ثم ينخفض بنسبة {r2,25}% في السنة الثانية. فما القيمة النهائية لجميع أسهم {name,مريم}؟\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))",
     "count": 100
   },
   {
@@ -471,7 +471,7 @@
   },
   {
     "id": 94,
-    "question_annotated": "يتقدم {n,100} شخص للحصول على وظيفة في {company,غوغل}. ومن بين المتقدمين، يحصل {p1,30}% فقط على مقابلات. ومن بين الذين يحصلون على مقابلات، يحصل {p2,20}% على عرض عمل. ومن بين الذين يحصلون على عرض عمل، يقبل {frac_txt,ثُلث} الأشخاص الوظيفة. فكم عدد الأشخاص الذين يقبلون الوظيفة؟\n\n#init:\n- company = sample([\"مايكروسوفت\", \"آبل\", \"أمازون\", \"فيسبوك\", \"نتفليكس\", \"تسلا\", \"مايكروسوفت\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: int(n * (p1/100) * (p2/100) * frac_val)",
+    "question_annotated": "يتقدم {n,100} شخص للحصول على وظيفة في {company,غوغل}. ومن بين المتقدمين، يحصل {p1,30}% فقط على مقابلات. ومن بين الذين يحصلون على مقابلات، يحصل {p2,20}% على عرض عمل. ومن بين الذين يحصلون على عرض عمل، يقبل {frac_txt,ثُلث} الأشخاص الوظيفة. فكم عدد الأشخاص الذين يقبلون الوظيفة؟\n\n#init:\n- company = sample([\"مايكروسوفت\", \"آبل\", \"أمازون\", \"فيسبوك\", \"نتفليكس\", \"تسلا\", \"مايكروسوفت\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: ensure_int(n * (p1/100) * (p2/100) * frac_val)",
     "count": 100
   },
   {
