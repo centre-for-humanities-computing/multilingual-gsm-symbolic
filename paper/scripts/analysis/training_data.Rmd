@@ -1,0 +1,159 @@
+---
+title: "Do open-data models vary with their training distribution?"
+subtitle: "Appendix, for the limitations section"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache.path = "_cache/training_data/")
+suppressPackageStartupMessages({ library(dplyr); library(tidyr); library(lme4); library(ggplot2) })
+```
+
+Section 4.4 reports that the language features explain 92% of the
+between-language variance but only about 20% of the model-by-language variance:
+*which* model struggles *where* is largely idiosyncratic. This appendix asks
+whether any of that residual is predictable from what the model was trained on,
+for the subset of models whose pretraining data is documented.
+
+**What is actually available** is much thinner than "open data" suggests:
+
+| family | English share | languages | source |
+|---|---|---|---|
+| OLMo 2 / 3 | ~90% | English-centric | Dolma; OLMo reports |
+| EuroLLM | 50% then 32.5% | 35, listed explicitly | EuroLLM-9B report, model card |
+| Apertus | ~60% | 1811 | tech report Table G.6 (FineWeb-2) |
+| Gemma 3, Granite, Qwen | not published | -- | -- |
+
+Only Apertus publishes anything approaching a per-language distribution, and
+even that is the *source corpus* (FineWeb-2) rather than the final mixture:
+high-resource languages are subsampled to 10% or 33%. EuroLLM gives aggregate
+English share plus an explicit list of supported languages, but its per-language
+token shares exist only as a figure. So the strongest test available is not a
+regression on token shares --- it is EuroLLM's documented **coverage boundary**.
+
+```{r data, cache=TRUE}
+cells <- readRDS("../../artifacts/analysis/model_cells.rds")
+cache <- function(pat) {
+  f <- list.files("_cache/transfer_analysis", pattern = pat, full.names = TRUE)
+  f <- f[grepl("[.]RData$", f)]
+  e <- new.env(); load(f[order(file.mtime(f), decreasing = TRUE)][1], envir = e); e
+}
+fit <- cache("^fit-lme4_")$fit_main
+
+## The model-by-language random effects are the right outcome here: they are what
+## is left of a model's performance in a language AFTER model ability, language
+## difficulty and the three language features are accounted for. Using raw
+## accuracy instead would confound coverage with the fact that English-centric
+## models also tend to be the weaker ones.
+re <- ranef(fit)$`model:language`
+ml <- tibble(key = rownames(re), effect = re[, 1]) %>%
+  separate(key, into = c("model", "language"), sep = ":", extra = "merge") %>%
+  left_join(cells %>% distinct(model, family) %>% mutate(across(everything(), as.character)),
+            by = "model")
+
+eurollm <- read.csv("eurollm_coverage.csv")
+apertus <- read.csv("apertus_fineweb2.csv")
+cat(nrow(ml), "model x language effects |", n_distinct(ml$family), "families\n")
+```
+
+# EuroLLM: the coverage boundary
+
+EuroLLM-9B's card lists 35 supported languages: the 24 official EU languages plus
+Arabic, Catalan, Chinese, Galician, Hindi, Japanese, Korean, Norwegian, Russian,
+Turkish and Ukrainian. Of our 15, that covers everything **except Icelandic and
+Marathi**. This is a documented, pre-existing boundary rather than one drawn to
+fit the results.
+
+```{r eurollm}
+eu <- ml %>% filter(family == "EuroLLM") %>%
+  left_join(eurollm, by = "language") %>%
+  mutate(supported = if_else(eurollm_supported == 1, "supported", "not supported"))
+
+eu %>% group_by(supported) %>%
+  summarise(n = n(), mean_effect = round(mean(effect), 3),
+            sd = round(sd(effect), 3), .groups = "drop")
+
+eu %>% filter(language != "eng") %>% arrange(effect) %>%
+  transmute(language, supported, effect = round(effect, 3)) %>% head(8)
+```
+
+```{r eurollm-test}
+t.test(effect ~ supported, data = filter(eu, language != "eng"))
+```
+
+# Apertus: does performance track the source-corpus share?
+
+Apertus is the only family with a per-language table. Table G.6 of the tech
+report gives FineWeb-2 document shares, covering 12 of our 15 languages
+(Icelandic and Marathi fall into "Others"; English comes from a different
+corpus). Because the high-resource languages are subsampled unevenly, this is a
+noisy proxy for the final mixture rather than a measurement of it.
+
+```{r apertus}
+ap <- ml %>% filter(family == "Apertus") %>%
+  inner_join(apertus, by = "language") %>%
+  mutate(log_share = log10(pct_fineweb2))
+
+ap %>% group_by(language) %>%
+  summarise(pct = first(pct_fineweb2), effect = round(mean(effect), 3), .groups = "drop") %>%
+  arrange(desc(pct))
+
+with(ap %>% group_by(language) %>%
+       summarise(log_share = first(log_share), effect = mean(effect), .groups = "drop"),
+     cor.test(log_share, effect, method = "pearson"))
+```
+
+# The Apertus English anomaly
+
+Both Apertus models score *worse* in English than in the average other language
+--- the only two of the 48 that do. This is not good transfer; it is a defect in
+the English runs, and it is worth naming because it inflates Apertus's apparent
+multilingual balance in any English-relative metric.
+
+```{r apertus-english}
+cells %>% filter(family == "Apertus") %>%
+  group_by(model, language) %>%
+  summarise(acc = sum(n_correct) / sum(n_total), .groups = "drop") %>%
+  group_by(model) %>%
+  summarise(english = round(100 * acc[language == "eng"], 1),
+            non_english = round(100 * mean(acc[language != "eng"]), 1),
+            gap = round(english - non_english, 1), .groups = "drop")
+```
+
+# Across families
+
+```{r families}
+gap_by_family <- cells %>%
+  group_by(family, model, language) %>%
+  summarise(acc = sum(n_correct) / sum(n_total), .groups = "drop") %>%
+  group_by(model) %>% mutate(rel = acc - acc[language == "eng"]) %>% ungroup() %>%
+  filter(language != "eng") %>%
+  group_by(family) %>%
+  summarise(mean_english_gap = round(-100 * mean(rel), 1), .groups = "drop") %>%
+  arrange(desc(mean_english_gap))
+gap_by_family
+```
+
+The ordering is consistent with what is published: the two English-centric OLMo
+families sit at the top, EuroLLM near the bottom, Apertus below zero for the
+reason above. But family is confounded with almost everything --- scale,
+recency, post-training, tokenizer --- and with only nine families and three
+documented data distributions, this is a descriptive observation and not a
+fitted claim. The EuroLLM coverage boundary above is the one comparison that
+holds the model fixed.
+
+```{r figure, fig.width=7, fig.height=3.2}
+eu %>% filter(language != "eng") %>%
+  mutate(language = reorder(language, effect)) %>%
+  ggplot(aes(effect, language, colour = supported)) +
+  geom_vline(xintercept = 0, colour = "grey60", linewidth = 0.35) +
+  geom_point(size = 2.4) +
+  scale_colour_manual(values = c(supported = "#2563EB", `not supported` = "#DC2626"), name = NULL) +
+  labs(x = "Model-by-language effect (log-odds, after language features)", y = NULL) +
+  theme_minimal(base_size = 10) +
+  theme(panel.grid.minor = element_blank(), legend.position = "top")
+```

@@ -40,13 +40,21 @@ information per cell.
 
 ```{r prep, cache=TRUE}
 EXCLUDED_LANGUAGES <- c("eng_metric", "uncorrected_isl", "nob")
+## Read straight from the parquet, so the exclusions in transfer_analysis.Rmd do
+## not apply automatically and are repeated here. The two runs below sit at the
+## probability floor (0.28% and 0.40% accuracy) and carry no information.
+## NOTE the naming: in the parquet the reasoning-ON run carries the BARE name
+## ("Qwen3.5-0.8B") and only the off-variant is suffixed. transfer_analysis.Rmd
+## adds the "(reasoning on)" suffix afterwards, so a document reading the parquet
+## must exclude the bare name or it silently keeps the model.
+EXCLUDED_RUNS <- c("gpt-5.4-nano", "Qwen3.5-0.8B", "EuroLLM-1.7B-Instruct")
 
 obs <- read_parquet("../../artifacts/transfer_tables/analysis.parquet") %>%
   select(source_id, language, correct, model, family, params_b, split, task,
          typological_distance, log10_common_crawl_pages) %>%
   filter(grepl("@refs/pr/16/", task, fixed = TRUE),
          !language %in% EXCLUDED_LANGUAGES,
-         model != "gpt-5.4-nano")
+         !model %in% EXCLUDED_RUNS)
 
 standardise <- function(x) as.numeric((x - mean(x)) / sd(x))
 

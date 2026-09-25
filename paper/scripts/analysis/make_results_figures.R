@@ -1,13 +1,17 @@
 ## Draft results figures. Reads fitted models from the knitr cache (does not
 ## refit) and prepared cells from ../../artifacts/analysis/model_cells.rds.
 ##
-## Figure order follows the "levers" spine:
-##   1 fig_levers        - the two interventions, on the probability scale  [SPINE]
-##   2 fig_levers_raw    - model-free companion to (1)
-##   3 fig_effects       - all fitted effects, grouped by inferential stratum
-##   4 fig_ladder        - model-free degradation curve
-##   5 fig_ladder_fitted - fitted effects by rung
-##   6 fig_design_space  - language selection / confound structure
+## The ten figures the paper uses, in the order they are built:
+##   fig_levers_odds          Fig. 3   the four lever x language-feature interactions
+##   fig_scale_cost           Fig. 14  each language's gap priced in model size
+##   fig_effects              Fig. 2   all fitted effects, by inferential stratum
+##   fig_ladder               Fig. 5   observed success rate by solution stage
+##   fig_ladder_fitted        Fig. 16  fitted effects by stage
+##   fig_design_space         Fig. 15  language selection / confound structure
+##   fig_predict_language     Fig. 6   forecasting a held-out language
+##   fig_predict_model_language Fig. 7 forecasting a model in a held-out language
+##   fig_predict_by_language  Fig. 13  the same, decomposed per language
+##   fig_symbolic_penalty     Fig. 4   symbolic penalty by language
 
 suppressPackageStartupMessages({
   library(lme4); library(dplyr); library(tidyr); library(ggplot2); library(scales)
@@ -201,27 +205,6 @@ anchor <- lang_meta %>%
 lev_cols <- setNames(c(PAL[["small"]], PAL[["large"]], PAL[["off"]], PAL[["on"]]), levels(nd$level_label))
 lev_ltys <- setNames(c("22","solid","22","solid"), levels(nd$level_label))
 
-p_levers <- ggplot(nd, aes(x_plot, err_rr, colour = level_label, linetype = level_label)) +
-  geom_hline(yintercept = 1, colour = "grey55", linewidth = 0.35) +
-  geom_rug(data = anchor, aes(x = x_plot), inherit.aes = FALSE, sides = "b",
-           alpha = 0.45, length = unit(0.02, "npc"), colour = "grey40") +
-  geom_line(linewidth = 1) +
-  facet_grid(lever ~ feature_lab, scales = "free_x", switch = "x",
-             labeller = labeller(feature_lab = label_parsed)) +
-  scale_x_continuous(labels = function(b) ifelse(b > 1, pages_lab(b), b)) +
-  scale_colour_manual(values = lev_cols, name = NULL) +
-  scale_linetype_manual(values = lev_ltys, name = NULL) +
-  scale_y_log10(breaks = c(1, 1.5, 2, 3, 5), labels = function(x) paste0(x, "x")) +
-  labs(x = NULL, y = axlab("Times more likely to get the answer wrong than in English", "predicted"),
-       title = "Reasoning narrows both gaps; scale is a different story",
-       subtitle = paste("Flatter = smaller penalty; 1x = parity with English. Ticks mark the observed languages.",
-                        "\nRisk ratios depend on the base rate they are measured against, so the size rows are not",
-                        "directly\ncomparable: at 32B the English error rate is ~7%, inflating the ratio. The fitted",
-                        "interaction,\nestimated on the odds scale, has scale REDUCING the resource penalty",
-                        "(see the odds-scale figure).")) +
-  theme_paper + theme(strip.placement = "outside")
-ok(p_levers, "fig_levers", 7.4, 5.4)
-
 ## Odds-ratio companion. The main figure uses the risk ratio because that is what
 ## "times more likely to be wrong" means, but the risk ratio depends on the base
 ## rate: at 32B the English error rate is ~7%, so a given absolute drop produces a
@@ -264,6 +247,16 @@ lev_cols_row <- setNames(c(PAL[["small"]], PAL[["large"]], PAL[["off"]], PAL[["o
                          c(paste0(SMALL, "B"), paste0(LARGE, "B"),
                            "reasoning off", "reasoning on"))
 
+## Every curve is expressed relative to English, so all four pass through exactly
+## 1x at English's own feature values -- the far right of the resource panels
+## (English is the highest-resource language) and the far left of the distance
+## panels (distance from English is 0 by definition). Marking that point makes
+## the reference visible instead of leaving it implied by the axis label.
+eng_point <- tibble::tibble(
+  panel = factor(levels(nd_row$panel), levels = levels(nd_row$panel)),
+  x_plot = c(dbl_res(eng_res), 0, dbl_res(eng_res), 0),
+  y = 1)
+
 ## The four panels do not share an x variable, so no single axis title serves
 ## them and facet_wrap offers no per-panel one. The row is therefore assembled
 ## from four plots with patchwork. y is held to a common range across panels so
@@ -281,6 +274,14 @@ lever_row <- function(yvar, yscale, ylab, file, h) {
       geom_rug(data = filter(anchor_row, panel == P), aes(x = x_plot), inherit.aes = FALSE,
                sides = "b", alpha = 0.4, length = unit(0.02, "npc"), colour = "grey45") +
       geom_line(linewidth = 0.9) +
+      geom_point(data = filter(eng_point, panel == P), aes(x_plot, y),
+                 inherit.aes = FALSE, size = 1.9, colour = "grey20") +
+      ## Below the point, not beside it: every curve converges ON this point, so
+      ## the space to its left and right is exactly where the lines are. The
+      ## y-scale's lower expansion is opened up to make room underneath.
+      geom_text(data = filter(eng_point, panel == P), aes(x_plot, y, label = "English"),
+                inherit.aes = FALSE, size = 2.5, colour = "grey20",
+                hjust = if (grepl("resource", P)) 0.9 else 0.1, vjust = 2.1) +
       ggrepel::geom_text_repel(data = filter(lab_row, panel == P),
                                aes(label = level_label, hjust = if_else(side == "left", 0, 1)),
                                size = 2.7, direction = "y", seed = 1, box.padding = 0.35,
@@ -306,19 +307,9 @@ lever_row <- function(yvar, yscale, ylab, file, h) {
 lever_row("err_or",
           scale_y_log10(breaks = c(1, 2, 5, 10, 20), labels = function(x) paste0(x, "x"),
                         limits = range(nd_row$err_or),
-                        expand = expansion(mult = c(0.04, 0.13))),
+                        expand = expansion(mult = c(0.13, 0.13))),
           axlab("Odds of a wrong answer", "relative to English, predicted"),
           "fig_levers_odds", 3.2)
-
-## Probability-scale companion, same layout. The probability scale re-expresses
-## each interaction through the base rate, so slopes are NOT comparable across
-## panels -- that belongs in the caption, not on the figure.
-lever_row("pred",
-          scale_y_continuous(labels = percent, limits = range(nd_row$pred),
-                             expand = expansion(mult = c(0.04, 0.13))),
-          axlab("Accuracy", "predicted"),
-          "fig_levers_prob", 3.2)
-
 
 ## =====================================================================
 ## 1b. THE SAME PENALTY, PRICED IN MODEL SIZE
@@ -363,61 +354,6 @@ p_cost <- ggplot(obs_gap, aes(param_mult, language)) +
 ok(p_cost, "fig_scale_cost", 6.6, 3.8)
 
 cat(sprintf("  exchange rate: %.2f log-odds per doubling of parameters\n", beta_per_doubling))
-
-## =====================================================================
-## 2. MODEL-FREE COMPANION: the same two claims, no model fitted
-## =====================================================================
-gap_scale <- cells %>%
-  group_by(model, language, log2_params) %>%
-  summarise(acc = sum(n_correct)/sum(n_total), .groups = "drop") %>%
-  group_by(model, log2_params) %>% mutate(eng = acc[language == "eng"]) %>% ungroup() %>%
-  filter(language != "eng") %>%
-  mutate(err_ratio = (1-acc)/(1-eng)) %>%   # risk ratio, matching the fitted figure
-  left_join(lang_meta, by = "language")
-
-pa <- ggplot(gap_scale, aes(2^log2_params, err_ratio)) +
-  geom_hline(yintercept = 1, colour = "grey55", linewidth = 0.35) +
-  geom_point(aes(colour = dbl_res(log10_common_crawl_pages)), alpha = 0.5, size = 1.4) +
-  geom_smooth(method = "loess", formula = y ~ x, se = TRUE, colour = "grey15",
-              fill = "grey80", linewidth = 0.8) +
-  scale_x_log10() +
-  scale_y_log10(breaks = c(0.5, 1, 2, 3, 5, 10), labels = function(x) paste0(x, "x")) +
-  scale_colour_viridis_c(option = "mako", begin = 0.1, end = 0.85, direction = -1,
-                         name = LEG_RES) +
-  labs(x = "Parameters (B, log scale)", y = axlab("Times more likely to be wrong than in English", "observed"),
-       title = "Scale narrows the gap", subtitle = "Each point: one model, one language") +
-  theme_paper
-
-paired <- cells %>% distinct(base_model, reasoning) %>% count(base_model) %>%
-  filter(n == 2) %>% pull(base_model)
-by_lang <- cells %>% filter(base_model %in% paired) %>%
-  group_by(reasoning, language) %>% summarise(acc = sum(n_correct)/sum(n_total), .groups="drop")
-eng_ref <- by_lang %>% filter(language == "eng") %>% select(reasoning, eng = acc)
-reason_df <- by_lang %>% filter(language != "eng") %>% left_join(eng_ref, by = "reasoning") %>%
-  mutate(err_ratio = (1-acc)/(1-eng)) %>%   # risk ratio
-  group_by(language) %>% mutate(ord = err_ratio[reasoning=="off"]) %>% ungroup() %>%
-  mutate(language = reorder(language, ord))
-
-pb <- ggplot(reason_df, aes(err_ratio, language)) +
-  geom_vline(xintercept = 1, colour = "grey55", linewidth = 0.35) +
-  geom_line(aes(group = language), colour = "grey75", linewidth = 0.6) +
-  geom_point(aes(colour = reasoning), size = 2.4) +
-  scale_colour_manual(values = PAL[c("off","on")], name = NULL) +
-  scale_x_log10(breaks = c(1, 1.5, 2, 3, 4), labels = function(x) paste0(x, "x")) +
-  labs(x = axlab("Times more likely to be wrong than in English", "observed"), y = NULL,
-       title = NULL, subtitle = NULL) +
-  theme_paper + theme(axis.text = element_text(size = 8),
-                      plot.margin = margin(2, 3, 2, 2))
-
-## Models that score 0% or 100% in a language give infinite / zero error-odds
-## and cannot be shown on a log scale. Report how many, rather than dropping
-## them silently.
-n_drop <- sum(!is.finite(log(gap_scale$err_ratio)))
-cat("  fig_levers_raw: dropped", n_drop, "of", nrow(gap_scale),
-    "model x language points with 0% or 100% accuracy\n")
-
-ok(pa, "fig_levers_raw_scale", 6.4, 4.2)
-ok(pb, "fig_levers_raw_reasoning", 5.2, 3.6)
 
 ## =====================================================================
 ## 3. EFFECT SIZES, grouped by the level at which each predictor varies
@@ -473,19 +409,21 @@ p_eff <- ggplot(eff, aes(Estimate, label)) +
   geom_errorbarh(aes(xmin = lo, xmax = hi), height = 0, linewidth = 0.6, colour = "grey35") +
   ## Filled vs hollow does the work here; hue alone was too weak at this mark
   ## size. Levers are the paper's actionable terms, so they get the solid mark.
-  geom_point(size = 2.1, colour = "black") +
+  geom_point(size = 2.4, colour = "black") +
   facet_grid(stratum ~ ., scales = "free_y", space = "free_y", switch = "y") +
   labs(x = "Effect size", y = NULL, title = NULL, subtitle = NULL) +
   theme_paper +
-  ## Compressed for the paper. With space = "free_y" the single-row Model-level
-  ## panel is only ~18pt tall, so the two-line strip has to be set small and
-  ## tight or it overruns its own panel into the neighbouring strip.
+  ## Taller than the other figures on purpose: 13 terms on a shared x axis need
+  ## the vertical room, and the stratum strips are the figure's argument rather
+  ## than decoration, so they are set at readable size rather than squeezed.
   theme(strip.placement = "outside",
-        strip.text.y.left = element_text(angle = 0, hjust = 0, size = 7, lineheight = 0.85),
-        axis.text.y = element_text(size = 8),
-        panel.spacing = unit(0.28, "lines"),
-        plot.margin = margin(2, 4, 2, 2))
-ok(p_eff, "fig_effects", 7.0, 3.5)
+        strip.text.y.left = element_text(angle = 0, hjust = 0, size = 8.5, lineheight = 0.95),
+        axis.text.y = element_text(size = 9.5),
+        axis.text.x = element_text(size = 9),
+        axis.title.x = element_text(size = 10),
+        panel.spacing = unit(0.5, "lines"),
+        plot.margin = margin(3, 5, 3, 3))
+ok(p_eff, "fig_effects", 7.0, 4.6)
 
 ## =====================================================================
 ## 4-5. THE LADDER

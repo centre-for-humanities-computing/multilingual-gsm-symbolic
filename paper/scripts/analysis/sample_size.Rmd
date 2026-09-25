@@ -1,0 +1,361 @@
+---
+title: "How many templates does the benchmark need?"
+subtitle: "Sample-size ablation, original vs symbolic"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache.path = "_cache/sample_size/")
+suppressPackageStartupMessages({ library(dplyr); library(tidyr); library(nanoparquet); library(ggplot2) })
+```
+
+Two questions a reviewer will ask, which have different answers:
+
+1. **Would more templates change which model looks best?** Measured as the rank
+   correlation between a $k$-template ordering of the models and the full
+   100-template ordering.
+2. **Would more templates change the reported accuracies?** Measured as the
+   standard error of a model's score at a budget of $k$ templates.
+
+The second is the one that speaks to whether 100 is enough, and it is where the
+two splits separate. A template is the unit you pay to translate and validate;
+the *original* split gives one instance per template, the *symbolic* split gives
+twenty. So at an equal translation budget the symbolic split buys twenty times
+the observations, and the question is how much precision that actually returns.
+
+```{r data, cache=TRUE}
+EXCLUDED_LANGUAGES <- c("eng_metric", "uncorrected_isl", "nob")
+## Read straight from the parquet, so the exclusions in transfer_analysis.Rmd do
+## not apply automatically and are repeated here. The two runs below sit at the
+## probability floor (0.28% and 0.40% accuracy) and carry no information.
+## NOTE the naming: in the parquet the reasoning-ON run carries the BARE name
+## ("Qwen3.5-0.8B") and only the off-variant is suffixed. transfer_analysis.Rmd
+## adds the "(reasoning on)" suffix afterwards, so a document reading the parquet
+## must exclude the bare name or it silently keeps the model.
+EXCLUDED_RUNS <- c("gpt-5.4-nano", "Qwen3.5-0.8B", "EuroLLM-1.7B-Instruct")
+
+cells <- read_parquet("../../artifacts/transfer_tables/analysis.parquet") %>%
+  select(source_id, language, correct, model, split, task) %>%
+  filter(grepl("@refs/pr/16/", task, fixed = TRUE),
+         !language %in% EXCLUDED_LANGUAGES,
+         !model %in% EXCLUDED_RUNS) %>%
+  group_by(split, model, language, template = source_id) %>%
+  summarise(n_correct = sum(correct), n_total = n(), .groups = "drop") %>%
+  mutate(acc = n_correct / n_total)
+
+cat("models:", n_distinct(cells$model), "| languages:", n_distinct(cells$language),
+    "| templates:", n_distinct(cells$template), "\n")
+cells %>% count(split, n_total) %>% rename(instances_per_template = n_total, cells = n)
+```
+
+# Precision: the standard error at a template budget
+
+The relevant population is *possible templates*, not the 100 we happen to have
+--- the question is whether a different draw of templates would give a different
+answer. So the standard error at a budget of $k$ templates is the template-to-
+template standard deviation divided by $\sqrt{k}$, with no finite-population
+correction. That also makes the curve extrapolable past 100, which is exactly
+what "would more samples help" needs.
+
+```{r se-curve, cache=TRUE, dependson='data'}
+KS <- c(10, 20, 50, 75, 100)
+NS <- c(1, 2, 5, 10, 20)   # instances per template, for the symbolic series
+
+## template-to-template SD of accuracy, within each (split, model, language)
+sd_tpl <- cells %>% group_by(split, model, language) %>%
+  summarise(sd_template = sd(acc), .groups = "drop")
+
+se <- sd_tpl %>%
+  tidyr::crossing(k = KS) %>%
+  mutate(se_pp = 100 * sd_template / sqrt(k)) %>%
+  group_by(split, k) %>%
+  summarise(se_pp = mean(se_pp), .groups = "drop")
+```
+
+```{r se-table}
+se %>% pivot_wider(names_from = split, values_from = se_pp) %>%
+  mutate(across(where(is.numeric), ~round(., 2)),
+         ratio = round(original / synthetic, 2)) %>%
+  rename(templates = k)
+```
+
+```{r se-equivalent}
+## How many original templates match 100 symbolic ones? SE scales as 1/sqrt(k),
+## so the equivalent budget is k * (sd_original / sd_synthetic)^2.
+r <- sd_tpl %>% group_by(split) %>% summarise(s = mean(sd_template), .groups = "drop")
+ratio2 <- (r$s[r$split == "original"] / r$s[r$split == "synthetic"])^2
+cat(sprintf("template-level SD: original %.4f, symbolic %.4f\n",
+            r$s[r$split == "original"], r$s[r$split == "synthetic"]))
+cat(sprintf("one symbolic template is worth %.1f original ones for precision;\n", ratio2))
+cat(sprintf("matching 100 symbolic templates would need %.0f original templates\n", 100 * ratio2))
+```
+
+# Ranking: does the ordering of models settle?
+
+```{r rank-curve, cache=TRUE, dependson='data'}
+R <- 40
+set.seed(20260916)
+tpls <- unique(cells$template)
+
+## Reference ordering: the best estimate available, i.e. all 100 templates at the
+## full 20 instances. Every curve is scored against the same reference so the
+## instance budgets are comparable to each other and to the original split.
+ref <- cells %>% filter(split == "synthetic") %>%
+  group_by(language, model) %>%
+  summarise(full = sum(n_correct) / sum(n_total), .groups = "drop")
+
+rank_one <- function(series, nn, k, r) {
+  d <- if (series == "Original") {
+    cells %>% filter(split == "original")
+  } else {
+    x <- cells %>% filter(split == "synthetic")
+    x$n_correct <- if (nn == 20) x$n_correct else
+      rhyper(nrow(x), x$n_correct, 20 - x$n_correct, nn)
+    x$n_total <- nn
+    x
+  }
+  S <- sample(tpls, k)
+  d %>% filter(template %in% S) %>%
+    group_by(language, model) %>%
+    summarise(sub = sum(n_correct) / sum(n_total), .groups = "drop") %>%
+    inner_join(ref, by = c("language", "model")) %>%
+    group_by(language) %>%
+    summarise(rho = cor(sub, full, method = "spearman"), .groups = "drop") %>%
+    mutate(series = series, k = k, rep = r)
+}
+grid <- bind_rows(
+  tidyr::crossing(series = sprintf("Symbolic, %d", NS), k = KS, rep = seq_len(R)) %>%
+    mutate(nn = as.integer(sub("Symbolic, ", "", series))),
+  tidyr::crossing(series = "Original", k = KS, rep = seq_len(R)) %>% mutate(nn = 1L))
+rank_res <- bind_rows(Map(rank_one, grid$series, grid$nn, grid$k, grid$rep))
+```
+
+```{r rank-table}
+rank_res %>% group_by(series, k) %>%
+  summarise(spearman = round(mean(rho), 4), .groups = "drop") %>%
+  pivot_wider(names_from = series, values_from = spearman) %>%
+  rename(templates = k)
+```
+
+Every series is scored against the same reference --- all 100 templates at the
+full 20 instances --- so the columns are comparable to each other. A column does
+not reach exactly 1 at $k = 100$ unless it *is* the reference, which is why only
+the 20-instance symbolic column does.
+
+# How many instances per template?
+
+The benchmark generates 20 symbolic instances from each template, and 20 turns
+out to be comfortably enough. The figure below shows the budgets converging with
+sharply diminishing returns, and the decomposition says why they must: the
+across-template variance splits into a part more instances remove and a part
+they cannot.
+
+$$\mathrm{Var}(\hat p) \;=\; \sigma^2_{\text{template}} \;+\; \mathbb{E}[q(1-q)]/n$$
+
+Only the second term depends on $n$. Anything that averages out with more
+instances --- including systematic difficulty differences *between*
+instantiations of the same template --- scales as $1/n$ and lands there by
+construction; $\sigma^2_{\text{template}}$ is the spread of true difficulty
+across templates, which no amount of resampling touches.
+
+Both terms are estimable from the $n = 20$ data alone, with no extrapolation:
+for $n$ draws at rate $q$, $\mathbb{E}[\hat p(1-\hat p)] = q(1-q)(1 - 1/n)$.
+
+```{r instances, cache=TRUE, dependson='data'}
+per_cell <- cells %>% filter(split == "synthetic") %>%
+  group_by(model, language) %>%
+  summarise(var_phat = var(acc),
+            Eq1q = mean(acc * (1 - acc) * n_total / (n_total - 1)),
+            n = first(n_total), .groups = "drop") %>%
+  mutate(sigma_t2 = var_phat - Eq1q / n)
+
+tibble(quantity = c("Var across templates", "binomial term at n = 20",
+                    "template-level (by subtraction)"),
+       value = c(mean(per_cell$var_phat), mean(per_cell$Eq1q) / 20,
+                 mean(per_cell$sigma_t2))) %>%
+  mutate(value = round(value, 5),
+         share = round(100 * value / value[1], 1))
+```
+
+```{r instances-implication}
+share <- mean(per_cell$sigma_t2) / mean(per_cell$var_phat)
+cat(sprintf("template-level share of the variance at n = 20: %.0f%%\n", 100 * share))
+cat(sprintf("removing the rest entirely would cut the standard error by %.1f%%\n",
+            100 * (1 - sqrt(share))))
+cat(sprintf("cells with a negative sigma_t^2 estimate (sampling noise): %d of %d\n",
+            sum(per_cell$sigma_t2 < 0), nrow(per_cell)))
+```
+
+So 20 instances capture nearly all the precision available: 10 to 20 buys a 3%
+cut in the standard error, and unlimited instances -- the $n \to \infty$ floor,
+where the binomial term vanishes and only $\sigma_{\text{template}}$ remains --
+would buy 3.4%. The binding constraint is the number of *templates*, not the
+number of instances. Note this is the correct reading of "irreducible": the floor cannot
+be lowered by generating more instances from these templates, but the standard
+error of a mean over $T$ templates still falls as
+$\sigma_{\text{template}}/\sqrt{T}$.
+
+# Precision of a model's overall score
+
+A model's headline figure is its mean over the 15 languages. If the
+per-language errors were independent that mean would be $\sqrt{15}$ times
+tighter. They are not: *the same 100 templates are used in every language*, so
+all fifteen scores share one template draw.
+
+```{r overall-se, cache=TRUE, dependson='data'}
+set.seed(20260919)
+sym <- cells %>% filter(split == "synthetic")
+tpl <- unique(sym$template)
+
+## Bootstrap the TEMPLATES, not the cells: that is the sampling unit whose
+## error propagates into every language at once. Resampling within language
+## would assume the independence this chunk exists to disprove.
+boot <- replicate(200, {
+  S <- tibble(template = sample(tpl, length(tpl), replace = TRUE))
+  S %>% inner_join(sym, by = "template", relationship = "many-to-many") %>%
+    group_by(model, language) %>%
+    summarise(a = sum(n_correct) / sum(n_total), .groups = "drop") %>%
+    group_by(model) %>% summarise(overall = 100 * mean(a), .groups = "drop") %>%
+    pull(overall)
+})
+se_overall <- mean(apply(boot, 1, sd))
+
+se_cell <- sd_tpl %>% filter(split == "synthetic") %>%
+  summarise(se = 100 * mean(sd_template) / 10) %>% pull(se)   # k = 100
+cat(sprintf("SE of one (model, language) score:      %.2f pp\n", se_cell))
+cat(sprintf("SE of the 15-language mean, bootstrap:  %.2f pp\n", se_overall))
+cat(sprintf("  ... if the 15 were independent:       %.2f pp\n", se_cell / sqrt(15)))
+
+## Cross-check, no resampling: the 15-language mean is itself a mean over
+## templates, so its SE is sd_t(mean over languages)/sqrt(100) directly. If the
+## bootstrap is sound the two agree.
+analytic <- sym %>% group_by(model, template) %>%
+  summarise(m = mean(acc), .groups = "drop") %>%
+  group_by(model) %>% summarise(se = 100 * sd(m) / 10, .groups = "drop")
+cat(sprintf("  ... analytic cross-check:             %.2f pp\n", mean(analytic$se)))
+
+## Why: a hard template is hard nearly everywhere.
+wide <- sym %>% select(model, language, template, acc) %>%
+  group_by(language, template) %>% summarise(a = mean(acc), .groups = "drop") %>%
+  tidyr::pivot_wider(names_from = language, values_from = a)
+rr <- cor(as.matrix(wide[, -1]))
+cat(sprintf("mean across-language correlation of template difficulty: r = %.2f\n",
+            mean(rr[upper.tri(rr)])))
+```
+
+# Figure
+
+```{r fig, fig.width=7.5, fig.height=3.0}
+## Extend the SE curves past 100 as dashed lines. SE = sd/sqrt(k) is the same
+## formula at every k, so this is not a risky extrapolation, and it lets the
+## reader SEE where the original curve reaches the precision the symbolic split
+## achieves at 100 rather than taking "213 templates" on trust.
+KX <- c(KS, 150, 213, 250)
+
+## One symbolic curve per instances-per-template budget, so the convergence is
+## visible: each extra instance buys less than the last. Subsampling n of the 20
+## instances is hypergeometric on the success count.
+set.seed(11)
+sym_cells <- cells %>% filter(split == "synthetic")
+sd_by_n <- bind_rows(lapply(NS, function(nn) {
+  reps <- replicate(10, {
+    a <- if (nn == 20) sym_cells$n_correct / 20 else
+      rhyper(nrow(sym_cells), sym_cells$n_correct, 20 - sym_cells$n_correct, nn) / nn
+    sym_cells %>% mutate(acc = a) %>% group_by(model, language) %>%
+      summarise(s = sd(acc), .groups = "drop") %>% pull(s) %>% mean()
+  })
+  tibble(series = sprintf("Symbolic, %d", nn), n_inst = nn, sd_template = mean(reps))
+}))
+sd_orig <- sd_tpl %>% filter(split == "original") %>% pull(sd_template) %>% mean()
+
+d_se <- bind_rows(sd_by_n,
+                  tibble(series = "Original", n_inst = NA_integer_, sd_template = sd_orig)) %>%
+  tidyr::crossing(k = KX) %>%
+  mutate(y = 100 * sd_template / sqrt(k))
+sym100 <- d_se$y[d_se$series == "Symbolic, 20" & d_se$k == 100]
+
+## What each extra instance actually buys, at the full 100 templates. The last
+## row is the n -> infinity limit, from the variance decomposition above: the
+## binomial term gone entirely.
+d_se %>% filter(k == 100) %>% arrange(desc(is.na(n_inst)), n_inst) %>%
+  transmute(series, se = round(y, 2),
+            cut_vs_prev = c(NA, sprintf("%.0f%%", 100 * -diff(y) / head(y, -1)))) %>%
+  bind_rows(tibble(series = "Symbolic, inf", se = round(sym100 * sqrt(share), 2),
+                   cut_vs_prev = sprintf("%.1f%%", 100 * (1 - sqrt(share))))) %>%
+  print()
+
+## Palette matched to the ladder figure: mako, dark = more of the thing, which
+## here is instances per template. A continuous scale rather than five discrete
+## keys, since the budgets are a quantity and the point is the gradient.
+##
+## The original split is not a point on that scale -- it is a different question
+## set, not a smaller budget -- so it is black, outside the gradient, and drawn
+## last so it sits on top of the ramp rather than behind it.
+ORIG_COL <- "black"
+
+lay <- function(d, ylab) {
+  sym <- d %>% filter(series != "Original") %>% arrange(n_inst, k)
+  org <- d %>% filter(series == "Original") %>% arrange(k)
+  list(
+    sym = sym, org = org,
+    base = ggplot(mapping = aes(k, y)) +
+      scale_colour_viridis_c(option = "mako", begin = 0.1, end = 0.85, direction = -1,
+                             name = "Instances\nper template",
+                             breaks = c(1, 5, 10, 20), limits = c(1, 20)) +
+      scale_linetype_manual(values = c(Original = "solid"), name = NULL) +
+      scale_x_continuous(breaks = c(10, 50, 100, 150, 213, 250)) +
+      labs(x = "Templates evaluated", y = ylab) +
+      theme_minimal(base_size = 10) +
+      ## No panel grid: the dotted reference line is the thing to read here.
+      theme(panel.grid = element_blank(),
+            axis.line = element_line(colour = "grey65", linewidth = 0.3),
+            axis.ticks = element_line(colour = "grey65", linewidth = 0.3),
+            axis.ticks.length = unit(2.5, "pt"),
+            legend.position = "right", legend.key.height = unit(0.9, "lines"),
+            legend.title = element_text(size = 8), legend.text = element_text(size = 8),
+            axis.title.x = element_text(size = 9),
+            axis.title.y = element_text(face = "bold", size = 9),
+            plot.margin = margin(2, 4, 2, 2)))
+}
+
+L <- lay(d_se, "Standard error (accuracy points)")
+p_left <- L$base +
+  geom_hline(yintercept = sym100, linetype = "dotted", colour = "grey55", linewidth = 0.35) +
+  geom_line(data = filter(L$sym, k <= 100), aes(colour = n_inst, group = n_inst), linewidth = 0.8) +
+  geom_line(data = filter(L$sym, k >= 100), aes(colour = n_inst, group = n_inst),
+            linewidth = 0.8, linetype = "22") +
+  geom_point(data = filter(L$sym, k %in% KS), aes(colour = n_inst), size = 1.5) +
+  ## original drawn after the ramp, so on top
+  geom_line(data = filter(L$org, k <= 100), aes(linetype = "Original"),
+            colour = ORIG_COL, linewidth = 0.9) +
+  geom_line(data = filter(L$org, k >= 100), colour = ORIG_COL,
+            linewidth = 0.9, linetype = "22") +
+  geom_point(data = filter(L$org, k %in% KS), colour = ORIG_COL, size = 1.7) +
+  annotate("point", x = 213, y = sym100, shape = 21, size = 2.4,
+           colour = ORIG_COL, fill = "white", stroke = 0.8) +
+  annotate("text", x = 213, y = sym100, label = "213", size = 2.6,
+           colour = ORIG_COL, vjust = -1.3)
+
+d_rho <- rank_res %>% group_by(series, k) %>% summarise(y = mean(rho), .groups = "drop") %>%
+  mutate(n_inst = suppressWarnings(as.integer(sub("Symbolic, ", "", series))))
+R2 <- lay(d_rho, "Rank correlation")
+p_right <- R2$base +
+  geom_line(data = R2$sym, aes(colour = n_inst, group = n_inst), linewidth = 0.8) +
+  geom_point(data = R2$sym, aes(colour = n_inst), size = 1.5) +
+  geom_line(data = R2$org, aes(linetype = "Original"), colour = ORIG_COL, linewidth = 0.9) +
+  geom_point(data = R2$org, colour = ORIG_COL, size = 1.7) +
+  coord_cartesian(xlim = c(10, 100))
+
+p_ss <- patchwork::wrap_plots(p_left, p_right, nrow = 1, guides = "collect") &
+  theme(legend.position = "right")
+
+## Saved alongside the other paper figures so it can be \includegraphics'd.
+dir.create("figures", showWarnings = FALSE)
+ggsave("figures/fig_sample_size.pdf", p_ss, width = 8.0, height = 3.0, device = cairo_pdf)
+ggsave("figures/fig_sample_size.png", p_ss, width = 8.0, height = 3.0, dpi = 200)
+p_ss
+```

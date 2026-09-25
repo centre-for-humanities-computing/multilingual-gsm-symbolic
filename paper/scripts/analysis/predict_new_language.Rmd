@@ -71,34 +71,28 @@ Baselines, in increasing order of what a practitioner would actually do:
 | `size_only` | a fitted model with size but no language features |
 | `features` | the full model |
 
-```{r lolo-fits, cache=TRUE, dependson='shared', cache.extra=RHS}
-## a novel language has no language or model:language intercept to borrow
-KNOWN_RE <- ~ (1 | family/base_model) + (1 | model) + (1 | template)
+```{r lolo-fits}
+## Each fold runs as its own R process (run_fold.R). R does not return heap freed
+## by glmer to the OS, so fitting 15 folds in one session grows memory until the
+## machine dies -- rm() and gc() are not enough. One process per fold also makes
+## the job resumable: a completed fold is a file in artifacts/analysis/folds/.
+FOLDS <- "../../artifacts/analysis/folds"
+LOLO_CSV <- file.path(out_dir, "lolo_predictions.csv")
 
-rows <- lapply(langs, function(L) {
-  z <- apply_z(cells %>% filter(language != L) %>% droplevels(),
-               cells %>% filter(language == L) %>% droplevels())
-  train <- z$train; test <- z$test
-
-  fit_feat <- glmer(as.formula(paste(Y, RHS)), data = train, family = binomial(), control = ctrl)
-  fit_size <- glmer(as.formula(paste(Y, "log_params_z + reasoning +", RE)),
-                    data = train, family = binomial(), control = ctrl)
-
-  p_feat <- plogis(predict(fit_feat, newdata = test, re.form = KNOWN_RE, allow.new.levels = TRUE))
-  p_size <- plogis(predict(fit_size, newdata = test, re.form = KNOWN_RE, allow.new.levels = TRUE))
-
-  model_mean <- train %>% group_by(model) %>%
-    summarise(p = sum(n_correct) / sum(n_total), .groups = "drop")
-
-  test %>%
-    transmute(language = L, model, template, n_correct, n_total,
-              observed = n_correct / n_total,
-              features = p_feat, size_only = p_size,
-              grand_mean = sum(train$n_correct) / sum(train$n_total)) %>%
-    left_join(model_mean %>% rename(model_mean = p), by = "model")
-})
-pred <- bind_rows(rows)
-write.csv(pred, file.path(out_dir, "lolo_predictions.csv"), row.names = FALSE)
+if (!file.exists(LOLO_CSV)) {
+  for (L in langs) {
+    if (file.exists(file.path(FOLDS, paste0("lolo_", L, ".rds")))) next
+    cat("fitting fold", L, "... "); flush.console()
+    t0 <- Sys.time()
+    system2("Rscript", c("run_fold.R", "lolo", L))
+    cat(round(as.numeric(difftime(Sys.time(), t0, units = "mins")), 1), "min\n")
+  }
+  got <- list.files(FOLDS, pattern = "^lolo_.*[.]rds$", full.names = TRUE)
+  stopifnot(length(got) == length(langs))
+  write.csv(bind_rows(lapply(got, readRDS)), LOLO_CSV, row.names = FALSE)
+}
+pred <- read.csv(LOLO_CSV)
+cat(nrow(pred), "rows,", n_distinct(pred$language), "languages\n")
 ```
 
 ```{r lolo-scores}
@@ -165,52 +159,48 @@ evaluating at all. That is a property of the model rather than of the method (se
 `model_ablations.Rmd`), and it is reported rather than smoothed over --- watch
 `sd_language` inflate at $k = 1$.
 
-```{r fewshot-fits, cache=TRUE, dependson='shared', cache.extra=RHS}
+```{r fewshot-fits}
 KS <- c(1, 2, 5, 10, 20)
-R <- 3
-WORKERS <- 4          # 10 cores, 16 GB; each glmer peaks around 1-2 GB
-set.seed(20260916)
+R <- 3                # replicates per (language, k). One draw is not enough at
+                      # small k: a single unlucky template set moved the
+                      # 15-language mean by over a point. Replicates also give a
+                      # handle on how much the template draw matters at all,
+                      # separately from which languages we happen to have.
+WORKERS <- 2          # 16 GB; each glmer peaks well over 1 GB
+FEW_CSV <- file.path(out_dir, "few_shot_refit.csv")
 
-tpls <- unique(cells$template)
-draws <- expand.grid(language = langs, rep = seq_len(R), stringsAsFactors = FALSE)
-draws$order <- lapply(seq_len(nrow(draws)), function(i) sample(tpls))
-jobs <- do.call(rbind, lapply(seq_len(nrow(draws)), function(i)
-  data.frame(i = i, language = draws$language[i], rep = draws$rep[i], k = KS)))
-cat(sprintf("%d languages x %d replicates x %d k-values = %d fits, %d at a time\n",
-            length(langs), R, length(KS), nrow(jobs), WORKERS))
+## Jobs are ordered so the most-cited k finishes first: if the run is interrupted
+## the curve is still usable at k = 10, then 5, 20, 2, 1.
+jobs <- expand.grid(rep = seq_len(R), language = langs, k = c(10, 5, 20, 2, 1),
+                    stringsAsFactors = FALSE)[, c("language", "k", "rep")]
+jobs <- jobs[order(match(jobs$k, c(10, 5, 20, 2, 1))), ]
+cat(nrow(jobs), "fits (", length(langs), "languages x", R, "replicates x",
+    length(KS), "k-values ),", WORKERS, "at a time\n")
 
-one <- function(j) {
-  L <- jobs$language[j]; k <- jobs$k[j]
-  keep <- head(draws$order[[jobs$i[j]]], k)
-  t0 <- Sys.time()
-  z <- apply_z(cells %>% filter(language != L | template %in% keep) %>% droplevels(),
-               cells %>% filter(language == L) %>% droplevels())
-  fit <- tryCatch(glmer(as.formula(paste(Y, RHS)), data = z$train,
-                        family = binomial(), control = ctrl),
-                  error = function(e) NULL)
-  if (is.null(fit)) return(NULL)
-  ## every random effect that exists: for k > 0 the target's language and
-  ## model:language levels are now estimated from the k templates
-  p <- plogis(predict(fit, newdata = z$test, re.form = NULL, allow.new.levels = TRUE))
-  tr <- truth %>% filter(language == L)
-  sc <- function(sel) {
-    d <- z$test[sel, ] %>% mutate(p = p[sel]) %>% group_by(model) %>%
-      summarise(pred = mean(p), .groups = "drop") %>% inner_join(tr, by = "model")
-    c(mae = mean(abs(d$pred - d$truth)), err = mean(d$pred) - mean(d$truth))
+if (!file.exists(FEW_CSV)) {
+  todo <- jobs[!file.exists(file.path(FOLDS, sprintf("few_%s_k%02d_r%d.rds",
+                                                     jobs$language, jobs$k, jobs$rep))), ]
+  cat(nrow(todo), "still to run\n"); flush.console()
+  if (nrow(todo)) {
+    ## xargs gives one fresh process per fit, for the same reason as above
+    spec <- paste(todo$language, todo$k, todo$rep)
+    writeLines(spec, tf <- tempfile())
+    system2("xargs", c("-P", WORKERS, "-L", "1",
+                       "Rscript", "run_fold.R", "fewshot"), stdin = tf)
   }
-  seen <- z$test$template %in% keep
-  a <- sc(rep(TRUE, nrow(z$test))); h <- sc(!seen)
-  data.frame(language = L, k = k, rep = jobs$rep[j],
-             mae_all = a[["mae"]], err_all = a[["err"]],
-             mae_heldout = h[["mae"]], err_heldout = h[["err"]],
-             sd_language = attr(VarCorr(fit)$language, "stddev")[[1]],
-             mins = as.numeric(difftime(Sys.time(), t0, units = "mins")))
+  ## Check the jobs we asked for, not the file count: earlier, wider grids leave
+  ## extra replicates on disk, and counting those would never match nrow(jobs).
+  want <- file.path(FOLDS, sprintf("few_%s_k%02d_r%d.rds", jobs$language, jobs$k, jobs$rep))
+  cat("completed", sum(file.exists(want)), "of", nrow(jobs), "requested\n")
+  if (all(file.exists(want))) {
+    ## keep any extra replicates that already exist -- they are free precision
+    all_f <- list.files(FOLDS, pattern = "^few_.*[.]rds$", full.names = TRUE)
+    write.csv(bind_rows(lapply(all_f, readRDS)), FEW_CSV, row.names = FALSE)
+  }
 }
-
-few <- bind_rows(mclapply(seq_len(nrow(jobs)), one,
-                          mc.cores = WORKERS, mc.preschedule = FALSE))
-write.csv(few, file.path(out_dir, "few_shot_refit.csv"), row.names = FALSE)
-cat("fits completed:", nrow(few), "of", nrow(jobs), "\n")
+few <- if (file.exists(FEW_CSV)) read.csv(FEW_CSV) else
+  bind_rows(lapply(list.files(FOLDS, pattern = "^few_.*[.]rds$", full.names = TRUE), readRDS))
+cat("fits available:", nrow(few), "\n")
 ```
 
 ```{r fewshot-curve}
@@ -220,14 +210,72 @@ b <- pred %>% group_by(language, model) %>%
   group_by(language) %>%
   summarise(mae = mean(abs(feat - truth)), err = mean(feat) - mean(truth), .groups = "drop")
 
-few %>% group_by(k) %>%
-  summarise(model_heldout = 100 * mean(mae_heldout),
-            language_mean = 100 * mean(abs(err_heldout)),
-            model_all = 100 * mean(mae_all), .groups = "drop") %>%
-  bind_rows(tibble(k = 0, model_heldout = 100 * mean(b$mae),
-                   language_mean = 100 * mean(abs(b$err)),
-                   model_all = 100 * mean(b$mae))) %>%
-  arrange(k) %>% mutate(across(where(is.numeric), ~round(., 2)))
+## Two sources of uncertainty, and they answer different questions.
+##
+##   across languages  how much would the curve move with a different set of 15
+##                     languages? This is the one that belongs on the reported
+##                     numbers, and it applies at every k including k = 0.
+##   across draws      how much does the particular template set matter at a
+##                     given k? Only defined for k > 0, and it is a property of
+##                     the method rather than of our estimate of it.
+##
+## The bootstrap resamples LANGUAGES (averaging replicates within a language
+## first), so it is paired across k: the same languages are drawn for every
+## budget, which is the right comparison since each k is evaluated on all 15.
+set.seed(7)
+BOOT <- 2000
+per_lang <- few %>% group_by(k, language) %>%
+  summarise(mae = mean(mae_heldout), err = mean(abs(err_heldout)),
+            n_draws = n(), .groups = "drop") %>%
+  bind_rows(b %>% transmute(k = 0, language, mae, err = abs(err), n_draws = 1L))
+
+boot_ci <- function(x) {
+  m <- replicate(BOOT, mean(sample(x, length(x), replace = TRUE)))
+  c(lo = unname(quantile(m, .025)), hi = unname(quantile(m, .975)))
+}
+curve <- per_lang %>% group_by(k) %>%
+  summarise(model_in_language = 100 * mean(mae),
+            ml_lo = 100 * boot_ci(mae)[1], ml_hi = 100 * boot_ci(mae)[2],
+            language_mean = 100 * mean(err),
+            lm_lo = 100 * boot_ci(err)[1], lm_hi = 100 * boot_ci(err)[2],
+            draws = first(n_draws), .groups = "drop") %>% arrange(k)
+
+curve %>% transmute(k, draws,
+  `model in language` = sprintf("%.2f [%.2f, %.2f]", model_in_language, ml_lo, ml_hi),
+  `language mean` = sprintf("%.2f [%.2f, %.2f]", language_mean, lm_lo, lm_hi))
+```
+
+Brackets are 95% bootstrap intervals over the 15 languages. They are wide because
+15 is a small sample of languages, and they are *paired* across $k$ --- the same
+languages are resampled at every budget --- so the intervals overlapping does not
+mean the differences between budgets are unreliable. The paired comparison below
+is the right test for that.
+
+```{r fewshot-paired}
+## Does a budget beat k = 0 on the SAME languages? Paired differences remove the
+## between-language variation that dominates the intervals above.
+base0 <- per_lang %>% filter(k == 0) %>% select(language, mae0 = mae, err0 = err)
+few %>% group_by(k, language) %>%
+  summarise(mae = mean(mae_heldout), err = mean(abs(err_heldout)), .groups = "drop") %>%
+  inner_join(base0, by = "language") %>%
+  group_by(k) %>%
+  summarise(n = n(),
+            d_model = 100 * mean(mae - mae0),
+            p_model = suppressWarnings(wilcox.test(mae, mae0, paired = TRUE)$p.value),
+            d_lang = 100 * mean(err - err0),
+            p_lang = suppressWarnings(wilcox.test(err, err0, paired = TRUE)$p.value),
+            .groups = "drop") %>%
+  mutate(across(where(is.numeric), ~round(., 3)))
+```
+
+```{r fewshot-draws}
+## How much does the template draw matter, at each k? This is the spread the
+## replicates exist to measure.
+few %>% group_by(k, language) %>%
+  summarise(sd_draw = sd(100 * mae_heldout), .groups = "drop") %>%
+  group_by(k) %>%
+  summarise(mean_sd_across_draws = round(mean(sd_draw, na.rm = TRUE), 2),
+            worst_language = round(max(sd_draw, na.rm = TRUE), 2), .groups = "drop")
 ```
 
 `sd(language)` by $k$. Inflation at small $k$ is the model charging a single
@@ -235,6 +283,6 @@ template's idiosyncrasy to the language effect:
 
 ```{r fewshot-sd}
 few %>% group_by(k) %>%
-  summarise(sd_language = round(mean(sd_language), 4),
-            core_minutes = round(sum(mins), 1), .groups = "drop")
+  summarise(fits = n(), languages = n_distinct(language),
+            sd_language = round(mean(sd_language), 4), .groups = "drop")
 ```

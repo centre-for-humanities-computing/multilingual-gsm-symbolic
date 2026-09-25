@@ -63,6 +63,29 @@ EXCLUDED_MODELS <- c(
   "gpt-5.4-nano"
 )
 
+# Excluded by FULL run name, so one reasoning variant can go without its pair.
+# Two runs land at the probability floor and carry essentially no information,
+# while exerting large leverage on the logit scale:
+#   Qwen3.5-0.8B (reasoning on) - 0.28%; enters thinking loops. Footnote 7 of the
+#                  paper already states this model is excluded.
+#   EuroLLM-1.7B-Instruct       - 0.40%; unpaired, and the smallest EuroLLM, so
+#                  it also anchors the low end of that family's size slope.
+#
+# Keeping them is not neutral. Between them they supply almost all of the
+# model-level variance -- sd(model) falls from 0.83 to 0.13 when they are
+# dropped -- and the reasoning main effect is tested against exactly that
+# stratum, so a thinking-loop failure was setting its standard error. Dropping
+# only these two runs, rather than their whole base models, reproduces the same
+# fit as dropping both Qwen3.5-0.8B variants: it is these runs that matter, not
+# the pairing.
+#
+# The cost, stated plainly: within-language relative fertility goes from
+# p = .014 to p = .23 and is no longer significant as a main effect.
+EXCLUDED_RUNS <- c(
+  "Qwen3.5-0.8B (reasoning on)",
+  "EuroLLM-1.7B-Instruct"
+)
+
 # eng_metric is English with metric units, not a language, and has no typological
 # or resource features. uncorrected_isl is machine-translated Icelandic before
 # human correction, kept in the dataset for the validation figure but not used in
@@ -176,13 +199,14 @@ observations %>%
 `EXCLUDED_MODELS` is matched on `base_model`, so it catches every reasoning
 variant of a listed model.
 
-```{r filter, cache=TRUE, dependson='reasoning', cache.extra=list(SPLIT, EXCLUDED_MODELS, EXCLUDED_LANGUAGES, DATASET_REVISION)}
+```{r filter, cache=TRUE, dependson='reasoning', cache.extra=list(SPLIT, EXCLUDED_MODELS, EXCLUDED_RUNS, EXCLUDED_LANGUAGES, DATASET_REVISION)}
 observations <- observations %>%
   filter(
     split == SPLIT,
     str_detect(task, fixed(DATASET_REVISION)),
     !language %in% EXCLUDED_LANGUAGES,
-    !base_model %in% EXCLUDED_MODELS
+    !base_model %in% EXCLUDED_MODELS,
+    !model %in% EXCLUDED_RUNS
   )
 
 count(observations, language)

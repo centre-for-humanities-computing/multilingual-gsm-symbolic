@@ -30,22 +30,12 @@ Two things to establish:
    both.
 
 The other two ablations in Appendix A.1 --- the resource x distance interaction
-and script as a feature --- live in `transfer_analysis.Rmd`, which already fits
-them alongside the main model.
+and script as a feature --- live in `transfer_analysis.Rmd`, which fits them
+alongside the main model.
 
-```{r data, cache=TRUE}
+```{r data}
 cells <- readRDS("../../artifacts/analysis/model_cells.rds")
-ctrl <- glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 5e5))
-
-RE_OLD <- paste("(1 | family/base_model) + (1 | model) + (1 | template) +",
-                "(1 | language) + (1 | model:language)")
-RE_NEW <- paste(RE_OLD, "+ (1 | template:language)")
-FEAT <- "(relative_fertility_within_z + typological_distance_z + log_resource_z)"
-rhs <- function(RE) paste(FEAT, "* log_params_z +",
-                          "reasoning * (relative_fertility_within_z +",
-                          "typological_distance_z + log_resource_z + log_params_z) +", RE)
-Y <- "cbind(n_correct, n_total - n_correct) ~"
-cat("cells:", nrow(cells), "| languages:", nlevels(cells$language),
+cat("cells:", nrow(cells), "| languages:", nlevels(droplevels(cells$language)),
     "| template:language levels:",
     nlevels(interaction(cells$template, cells$language, drop = TRUE)), "\n")
 ```
@@ -55,20 +45,24 @@ cat("cells:", nrow(cells), "| languages:", nlevels(cells$language),
 Both the full model and the size-only baseline are refitted with the extra term,
 because the variance decomposition compares the two.
 
-```{r fit, cache=TRUE, dependson='data', cache.extra=RE_NEW}
-fit_tl <- glmer(as.formula(paste(Y, rhs(RE_NEW))), data = cells,
-                family = binomial(), control = ctrl)
-base_tl <- glmer(as.formula(paste(Y, "log_params_z + reasoning +", RE_NEW)),
-                 data = cells, family = binomial(), control = ctrl)
+Each runs as its own process via `run_ablation.R` and is cached as an `.rds`
+rather than by knitr. These two fits carry ~1500 extra `template:language`
+levels and are the largest memory demand in the pipeline; knitr would hold both
+live and then serialise them again on top of that.
+
+```{r fit}
+for (w in c("full", "baseline")) system2("Rscript", c("run_ablation.R", w))
+fit_tl  <- readRDS("fit_template_language.rds")
+base_tl <- readRDS("fit_tl_baseline.rds")
 ```
 
 The models the paper reports come out of `transfer_analysis.Rmd`'s cache, so this
 document always compares against exactly what that document printed.
 
-```{r reference-fits, cache=TRUE, dependson='data'}
+```{r reference-fits}
 cache <- function(pat) {
   f <- list.files("_cache/transfer_analysis", pattern = pat, full.names = TRUE)
-  f <- f[grepl("\\.RData$", f)]
+  f <- f[grepl("[.]RData$", f)]
   stopifnot(length(f) >= 1)
   e <- new.env(); load(f[order(file.mtime(f), decreasing = TRUE)][1], envir = e); e
 }
@@ -87,7 +81,10 @@ for (nm in c("fit_tl", "base_tl")) {
 # Variance components
 
 ```{r variance-components}
-sdl <- function(f, g) { v <- VarCorr(f); if (is.null(v[[g]])) NA_real_ else as.numeric(attr(v[[g]], "stddev")[1]) }
+sdl <- function(f, g) {
+  v <- VarCorr(f)
+  if (is.null(v[[g]])) NA_real_ else as.numeric(attr(v[[g]], "stddev")[1])
+}
 gs <- unique(c(names(VarCorr(fit_old)), names(VarCorr(fit_tl))))
 data.frame(component = gs,
            reported = round(vapply(gs, sdl, numeric(1), f = fit_old), 4),
@@ -101,7 +98,8 @@ The question is not whether the term belongs --- it plainly does --- but whether
 leaving it out changed anything we report.
 
 ```{r fixed-effects}
-co_o <- summary(fit_old)$coefficients; co_n <- summary(fit_tl)$coefficients
+co_o <- summary(fit_old)$coefficients
+co_n <- summary(fit_tl)$coefficients
 tt <- rownames(co_o)
 data.frame(term = tt,
            est_reported = round(co_o[tt, 1], 4), est_with_term = round(co_n[tt, 1], 4),
@@ -111,14 +109,15 @@ data.frame(term = tt,
 ```
 
 ```{r sign-and-significance}
-sig_o <- co_o[, 4] < .05; sig_n <- co_n[, 4] < .05
-cat("significant in both:", sum(sig_o & sig_n), "of", sum(sig_o), "reported as significant\n")
+sig_o <- co_o[, 4] < .05
+cat("significant in both:", sum(sig_o & co_n[, 4] < .05), "of",
+    sum(sig_o), "reported as significant\n")
 cat("significant terms keeping their sign:",
     sum(sign(co_o[sig_o, 1]) == sign(co_n[sig_o, 1])), "of", sum(sig_o), "\n")
-cat("terms changing sign at all:", sum(sign(co_o[, 1]) != sign(co_n[, 1])),
-    "(check whether these are null in both)\n")
-print(round(cbind(reported = co_o[sign(co_o[, 1]) != sign(co_n[, 1]), 1, drop = FALSE],
-                  with_term = co_n[sign(co_o[, 1]) != sign(co_n[, 1]), 1, drop = FALSE]), 4))
+flip <- sign(co_o[, 1]) != sign(co_n[, 1])
+cat("terms changing sign at all:", sum(flip), "-- check whether null in both:\n")
+if (any(flip)) print(round(cbind(reported = co_o[flip, 1], with_term = co_n[flip, 1],
+                                 p_reported = co_o[flip, 4], p_with = co_n[flip, 4]), 4))
 cat("\nAIC reported / with term:", round(AIC(fit_old), 1), "/", round(AIC(fit_tl), 1), "\n")
 ```
 
@@ -137,12 +136,14 @@ data.frame(component = comp,
 ```
 
 ```{r variance-combined}
-cmb <- function(b, f) 1 - sum(sapply(comp, function(g) sdl(f, g)^2)) /
-                          sum(sapply(comp, function(g) sdl(b, g)^2))
+cmb <- function(b, f) {
+  1 - sum(sapply(comp, function(g) sdl(f, g)^2)) /
+      sum(sapply(comp, function(g) sdl(b, g)^2))
+}
 cat(sprintf("combined: reported %.1f%%, with term %.1f%%\n",
             100 * cmb(base_old, fit_old), 100 * cmb(base_tl, fit_tl)))
-cat(sprintf("sd(template:language) in the baseline %.4f vs the full model %.4f\n",
+cat(sprintf("sd(template:language): baseline %.4f, full model %.4f\n",
             sdl(base_tl, "template:language"), sdl(fit_tl, "template:language")))
-cat("-- near-identical means the language features explain none of it, which is\n")
-cat("   what a genuine nuisance component should look like.\n")
+cat("Near-identical means the language features explain none of it, which is what\n")
+cat("a genuine nuisance component should look like.\n")
 ```

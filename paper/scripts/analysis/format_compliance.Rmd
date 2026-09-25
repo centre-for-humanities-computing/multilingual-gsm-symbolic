@@ -1,0 +1,154 @@
+---
+title: "Answer-format compliance"
+subtitle: "Does the model emit \\boxed{} less often in some languages?"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache.path = "_cache/format_compliance/")
+suppressPackageStartupMessages({ library(dplyr); library(lme4) })
+```
+
+The prompt asks for the final answer in `\boxed{}`. If models comply less often
+in some languages than others, part of the transfer gap could be a formatting
+artefact rather than a reasoning failure. This document checks that.
+
+Two measurements, and the difference between them is the point:
+
+- **`has_boxed`** -- did the completion contain `\boxed{`, the format asked for.
+- **`extracted`** -- could the scorer recover *any* answer. It also accepts the
+  GSM8K `#### n` form, so a missing `\boxed` is not automatically a lost point.
+  This is the one that can cost accuracy.
+
+Data comes from `collect_compliance.py`, which parses all 958 synthetic eval
+logs on the Hub (`refs/pr/16`) and writes `compliance.csv`. It reads every 4th
+sample, 500 of 2,000 per log, which is ample for a rate.
+
+```{r data, cache=TRUE}
+d <- read.csv("../../artifacts/analysis/compliance.csv", stringsAsFactors = FALSE) %>%
+  mutate(model = sub("^.*/", "", model)) %>%     # vllm/org/name -> name
+  group_by(model, language) %>%
+  summarise(across(c(n, has_boxed, extracted, correct), sum), logs = n(),
+            .groups = "drop") %>%
+  mutate(boxed_rate = 100 * has_boxed / n,
+         ext_rate   = 100 * extracted / n,
+         acc        = 100 * correct / n)
+
+cat("cells:", nrow(d), "=", n_distinct(d$model), "models x",
+    n_distinct(d$language), "languages\n")
+cat("questions parsed:", format(sum(d$n), big.mark = ","), "\n")
+stopifnot(nrow(d) == n_distinct(d$model) * n_distinct(d$language))  # complete grid
+```
+
+A cell pools the logs belonging to it. Most cells hold one or two; the extras
+are reruns and reasoning variants. **The eval log's model field does not record
+the reasoning mode**, so a base model's reasoning-on and reasoning-off runs are
+pooled here and this document works with 36 base models rather than the paper's
+48 runs. That is a limitation for reading any single row, not for the language
+question, which is asked within model.
+
+# Per-language rates
+
+Averaged over models rather than pooled over logs: pooling would weight a model
+by how many times it happened to be rerun.
+
+```{r per-language}
+lang <- d %>% group_by(language) %>%
+  summarise(boxed = mean(boxed_rate), ext = mean(ext_rate), acc = mean(acc),
+            .groups = "drop") %>%
+  mutate(recovered = ext - boxed) %>%
+  arrange(desc(boxed))
+lang %>% mutate(across(where(is.numeric), ~round(.x, 1))) %>% as.data.frame()
+```
+
+Compliance does vary, from `r sprintf("%.1f%%", max(lang$boxed))` to
+`r sprintf("%.1f%%", min(lang$boxed))`, and it is not an English-versus-rest
+split: German and Italian comply *more* often than English.
+
+# Is the language variation real?
+
+The grid is complete, so this is a within-model comparison -- each model
+contributes a deviation from its own compliance rate.
+
+```{r glmm, cache=TRUE, dependson='data'}
+ctrl <- glmerControl(optimizer = "bobyqa")
+f1 <- glmer(cbind(has_boxed, n - has_boxed) ~ (1|model) + (1|language) + (1|model:language),
+            d, binomial, control = ctrl)
+f0 <- glmer(cbind(has_boxed, n - has_boxed) ~ (1|model) + (1|model:language),
+            d, binomial, control = ctrl)
+print(as.data.frame(VarCorr(f1)) %>% transmute(group = grp, sd = round(sdcor, 3)) %>%
+        arrange(desc(sd)))
+anova(f0, f1)
+```
+
+Yes, decisively -- but it is much the smaller term. Which model you use matters
+about four times as much as which language you ask in.
+
+# Is it a cause of the gap, or a symptom?
+
+Compliance correlates with accuracy across languages at
+`r sprintf("%.2f", cor(lang$boxed, lang$acc))`, which invites the reading that
+poor formatting costs accuracy. The causal arrow is more likely the reverse: a
+model that cannot solve the problem rambles and never reaches a boxed answer.
+
+The two readings make opposite predictions for models that *can* solve the
+problem. If formatting were a language-specific handicap it should persist in
+strong models; if it is a symptom of failure it should vanish.
+
+```{r strong-weak, cache=TRUE, dependson='data'}
+ms <- d %>% group_by(model) %>% summarise(m = mean(acc), .groups = "drop")
+strong <- ms %>% filter(m >= 85) %>% pull(model)
+weak   <- ms %>% filter(m <  40) %>% pull(model)
+
+summarise_set <- function(models, label) {
+  d %>% filter(model %in% models) %>% group_by(language) %>%
+    summarise(boxed = round(mean(boxed_rate), 1), ext = round(mean(ext_rate), 1),
+              acc = round(mean(acc), 1), .groups = "drop") %>%
+    arrange(desc(boxed)) %>% mutate(set = label)
+}
+cat(length(strong), "strong models (mean acc >= 85%),", length(weak), "weak (< 40%)\n")
+as.data.frame(summarise_set(strong, "strong"))
+as.data.frame(summarise_set(weak, "weak"))
+```
+
+```{r strong-detail}
+s <- d %>% filter(model %in% strong)
+cat(sprintf("strong: mean compliance %.2f%%, worst single cell %.2f%% (%s / %s)\n",
+            mean(s$boxed_rate), min(s$boxed_rate),
+            s$model[which.min(s$boxed_rate)], s$language[which.min(s$boxed_rate)]))
+cat(sprintf("strong: spread across the 15 language means = %.2f pp\n",
+            diff(range(tapply(s$boxed_rate, s$language, mean)))))
+cat(sprintf("strong: English %.1f%% vs Marathi %.1f%% accuracy, a %.1f pp gap\n",
+            mean(s$acc[s$language == "eng"]), mean(s$acc[s$language == "mar"]),
+            mean(s$acc[s$language == "eng"]) - mean(s$acc[s$language == "mar"])))
+```
+
+Symptom. Among the strong models compliance is essentially perfect in every
+language -- the whole spread is a fraction of a point -- while the accuracy gap
+between English and Marathi is still 16.8 points. The collapse in the weak
+models is real but it is a collapse in models that are failing anyway.
+
+# Ceiling on the format explanation
+
+The generous version of the question: if every answer the scorer could not
+extract would otherwise have been correct, how much of each language's gap to
+English would that explain?
+
+```{r ceiling}
+eng <- lang %>% filter(language == "eng")
+lang %>% filter(language != "eng") %>%
+  transmute(language,
+            acc_gap = round(eng$acc - acc, 1),
+            ext_gap = round(eng$ext - ext, 1),
+            max_share_pct = round(100 * (eng$ext - ext) / (eng$acc - acc))) %>%
+  arrange(desc(acc_gap)) %>% as.data.frame()
+```
+
+At most 11--16% in the four worst languages, and negative in the eight languages
+whose answers extract *more* reliably than English's do. The extraction fallback is why: it recovers
+most of the missing `\boxed`, and recovers most where compliance is worst
+(Marathi +10.5 points, Icelandic +7.3, against +0.2 in English).
