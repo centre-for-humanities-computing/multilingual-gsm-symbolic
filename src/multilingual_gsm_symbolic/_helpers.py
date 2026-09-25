@@ -548,8 +548,11 @@ def capitalize_sentences(text: str) -> str:
     return _RE_SENTENCE_CAP.sub(lambda m: m.group(1) + m.group(2).upper(), text)
 
 
-# Languages that use comma as decimal separator and period as thousands separator
+# Languages that use comma as decimal separator
 _COMMA_DECIMAL_LANGUAGES = {"dan", "nob", "nno", "swe", "deu", "fin", "isl", "nld", "fra", "ita"}
+
+# Comma-decimal languages default to a period as thousands separator; these use a space instead
+_SPACE_THOUSANDS_LANGUAGES = {"swe"}
 
 
 def format_numbers_by_language(text: str, language: str) -> str:
@@ -557,21 +560,24 @@ def format_numbers_by_language(text: str, language: str) -> str:
         return text.translate(str.maketrans("0123456789", "०१२३४५६७८९"))
 
     comma_decimal = language in _COMMA_DECIMAL_LANGUAGES
+    if language in _SPACE_THOUSANDS_LANGUAGES:
+        thousands_sep = " "
+    else:
+        thousands_sep = "." if comma_decimal else ","
 
     def format_number(match: re.Match) -> str:
         number_str = match.group(0)
         if "." in number_str:
             integer_part, decimal_part = number_str.split(".")
             number = int(integer_part)
-            formatted_int = f"{number:,}" if number >= 10000 else str(number)
+            formatted_int = f"{number:,}".replace(",", thousands_sep) if number >= 10000 else str(number)
             if comma_decimal:
-                return formatted_int.replace(",", ".") + "," + decimal_part
+                return formatted_int + "," + decimal_part
             return formatted_int + "." + decimal_part
         else:
             number = int(number_str)
             if number >= 10000:
-                formatted = f"{number:,}"
-                return formatted.replace(",", ".") if comma_decimal else formatted
+                return f"{number:,}".replace(",", thousands_sep)
             return number_str
 
     def format_decimal_only(match: re.Match) -> str:

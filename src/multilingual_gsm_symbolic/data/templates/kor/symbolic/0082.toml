@@ -1,0 +1,8 @@
+question = "파티 시작 시, 25명의 남자와 15명의 여자가 있었습니다. 1 시간 후, 총 인원의 1/4가 떠났습니다. 22명의 남자가 파티에 남았다면, 남은 여자는 몇 명입니까?"
+answer = "파티에 참석한 총 인원은 25 남자 + 15 여자 = <<25+15=40>>40명입니다.\n1 시간 후, 40명 * 1/4 = <<40*1/4=10>>10명이 파티를 떠났습니다.\n이는 40명 - 10명 = <<40-10=30>>30명이 남았다는 것을 의미합니다.\n남은 30명 중, 30명 - 22 남자 = <<30-22=8>>8명은 여자였습니다.\n#### 8\n"
+id_orig = 320
+id_shuffled = 82
+question_annotated = "{event,파티} 시작 시, {m,25}명의 {group1,남자}와 {w,15}명의 {group2,여자}가 있었습니다. {t,1 시간} 후, 총 인원의 {frac,1/4}가 떠났습니다. {m_left,22}명의 {group1,남자}가 {event,파티}에 남았다면, 남은 {group2,여자}는 몇 명입니까?\n\n#init:\n- event = sample(['파티', '회의', '컨퍼런스', '모임', '축하행사'])\n- group1, group2 = sample([ \"교사\", \"의사\", \"엔지니어\", \"간호사\", \"예술가\", \"변호사\",], 2)\n- t = sample(['1 시간', '2 시간', '30 분', '45 분'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left"
+answer_annotated = "{event}에 참석한 총 인원은 {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w}명입니다.\n{t} 후, {m+w}명 * {frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)}명이 {event}를 떠났습니다.\n이는 {m+w}명 - {int((m+w)*frac)}명 = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)}명이 남았다는 것을 의미합니다.\n남은 {m+w-int((m+w)*frac)}명 중, {m+w-int((m+w)*frac)}명 - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left}명은 {group2}였습니다.\n#### {m+w-int((m+w)*frac)-m_left}\n"
+creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+language = "kor"

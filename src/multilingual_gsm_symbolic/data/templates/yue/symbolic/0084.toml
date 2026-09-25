@@ -1,0 +1,8 @@
+question = "瑪麗亞 購買了 8 股股票，每股 $8。股價在 瑪麗亞 持有的第一年上漲了 50%，第二年則下跌了 25%。瑪麗亞 所有股票的最終價值是多少？"
+answer = "首先計算 瑪麗亞 購買的初始總價值：8 股 * $8/股 = $<<8*8=64>>64\n然後計算第一次價格上漲的金額：$64 * 0.5 = $<<64*0.5=32>>32\n將該金額加到初始價值上，以得出第一年的價值：$64 + $32 = $<<64+32=96>>96\n然後將該金額乘以 25% 以得出第二年的下跌金額：$96 * 25% = $<<96*25*.01=24>>24\n然後從第一年的價值中減去該金額以得出最終價值：$96 - $24 = $<<96-24=72>>72\n#### 72\n"
+id_orig = 336
+id_shuffled = 84
+question_annotated = "{name,瑪麗亞} 購買了 {n,8} 股股票，每股 {cur,$}{p,8}。股價在 {name,瑪麗亞} 持有的第一年上漲了 {r1,50}%，第二年則下跌了 {r2,25}%。{name,瑪麗亞} 所有股票的最終價值是多少？\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))\n"
+answer_annotated = "首先計算 {name} 購買的初始總價值：{n} 股 * {cur}{p}/股 = {cur}<<{n}*{p}={n*p}>>{n*p}\n然後計算第一次價格上漲的金額：{cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}\n將該金額加到初始價值上，以得出第一年的價值：{cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}\n然後將該金額乘以 {r2}% 以得出第二年的下跌金額：{cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}\n然後從第一年的價值中減去該金額以得出最終價值：{cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}\n"
+creation = "machine-translated from English using Qwen/Qwen3.5-122B-A10B-FP8, based on English templates; computationally validated"
+language = "yue"

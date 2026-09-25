@@ -18,8 +18,8 @@ import csv
 import json
 import multiprocessing
 import re
-from collections.abc import Iterator
 from collections import defaultdict
+from collections.abc import Iterator
 from concurrent.futures import ProcessPoolExecutor
 from itertools import islice
 from pathlib import Path
@@ -36,6 +36,7 @@ from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_ORDER,
     PLOT_STYLE,
+    figure_rows,
     heatmap_language_label,
     language_order,
     model_name,
@@ -44,7 +45,8 @@ from plot_config import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "prompt_number_coverage"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "number_coverage"
+DEFAULT_ANALYSIS_DIR = REPO_ROOT / "paper" / "artifacts" / "analysis" / "number_coverage"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 plt.rcParams.update(PLOT_STYLE)
 
@@ -329,16 +331,16 @@ def plot_coverage_accuracy_correlation(summaries: list[dict[str, Any]], path: Pa
         ax.plot(line_x, slope * line_x + intercept, color="#222222", linewidth=1.5, label="Linear fit")
 
     label = "r = n/a" if np.isnan(corr) else f"r = {corr:.2f}"
-    ax.text(0.03, 0.95, label, transform=ax.transAxes, ha="left", va="top", fontsize=11)
-    ax.set_xlabel("Prompt-number coverage")
-    ax.set_ylabel("Final-answer accuracy")
-    ax.set_title("Synthetic number coverage vs. accuracy")
+    ax.text(0.03, 0.95, label, transform=ax.transAxes, ha="left", va="top", fontsize=16)
+    ax.set_xlabel("Prompt-number coverage", fontsize=17)
+    ax.set_ylabel("Final-answer accuracy", fontsize=17)
+    ax.tick_params(axis="both", labelsize=14)
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.yaxis.set_major_formatter(PercentFormatter(1))
     ax.set_xlim(max(0, x.min() - 0.03), min(1, x.max() + 0.03))
     ax.set_ylim(max(0, y.min() - 0.05), min(1, y.max() + 0.05))
     ax.grid(axis="both", color="#E6E6E6", linewidth=0.8)
-    ax.legend(frameon=False)
+    ax.legend(frameon=False, fontsize=15, loc="upper center", bbox_to_anchor=(0.48, 1))
     fig.tight_layout()
     fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
@@ -399,6 +401,12 @@ def main() -> None:
     )
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument(
+        "--analysis-out-dir",
+        type=Path,
+        default=DEFAULT_ANALYSIS_DIR,
+        help="Directory for number coverage summary.json and samples.csv.",
+    )
+    parser.add_argument(
         "--max-samples",
         type=int,
         help="Maximum samples to analyze per log. Defaults to all samples.",
@@ -419,6 +427,7 @@ def main() -> None:
                "prompt_number_count", "retrieved_prompt_number_count", "lhs_count", "lhs_retrieved", "rhs_count",
                "rhs_retrieved", "all_prompt_numbers_present"]
     frame = pd.read_parquet(args.analysis, columns=columns)
+    frame = figure_rows(frame)
     frame = frame[frame["language"] != "uncorrected_isl"].copy()
     if args.max_samples:
         frame = frame.groupby(["model", "language", "split"], observed=True).head(args.max_samples)
@@ -445,14 +454,15 @@ def main() -> None:
         })
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    (args.out_dir / "summary.json").write_text(
+    args.analysis_out_dir.mkdir(parents=True, exist_ok=True)
+    (args.analysis_out_dir / "summary.json").write_text(
         json.dumps(summaries, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    write_csv(args.out_dir / "samples.csv", sample_rows)
-    heatmap_path = args.out_dir / "number_coverage_heatmap.png"
+    write_csv(args.analysis_out_dir / "samples.csv", sample_rows)
+    heatmap_path = args.out_dir / "number_coverage_heatmap.pdf"
     wrote_heatmap = plot_number_coverage_heatmap(sample_rows, heatmap_path)
-    correlation_path = args.out_dir / "coverage_accuracy_correlation.png"
+    correlation_path = args.out_dir / "coverage_accuracy_correlation.pdf"
     wrote_correlation = plot_coverage_accuracy_correlation(summaries, correlation_path)
 
     for summary in summaries:

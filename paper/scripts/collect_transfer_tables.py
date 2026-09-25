@@ -33,9 +33,11 @@ DEFAULT_UNVALIDATED_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revis
 DEFAULT_LOG_DIRS = [DEFAULT_LOG_DIR, DEFAULT_UNVALIDATED_LOG_DIR]
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "transfer_tables"
 DEFAULT_LANGUAGE_FEATURES = (
-    REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "language_features.csv"
+    REPO_ROOT / "paper" / "artifacts" / "analysis" / "transfer" / "language_features" / "language_features.csv"
 )
-DEFAULT_FERTILITY = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer_features" / "tokenizer_fertility.csv"
+DEFAULT_FERTILITY = (
+    REPO_ROOT / "paper" / "artifacts" / "analysis" / "transfer" / "language_features" / "tokenizer_fertility.csv"
+)
 
 
 def scalar(value: Any) -> Any:

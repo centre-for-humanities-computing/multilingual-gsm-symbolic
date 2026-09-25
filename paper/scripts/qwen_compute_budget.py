@@ -5,7 +5,7 @@
 
 The script reads Inspect ``.eval`` logs directly and writes:
 
-* one ``qwen_compute_budget_transfer.png`` per model family with paired
+* one ``qwen_compute_budget_transfer.pdf`` per model family with paired
   reasoning-on/off variants.
 """
 
@@ -32,12 +32,13 @@ from inspect_ai.log import read_eval_log
 from matplotlib.colors import to_hex, to_rgb
 from matplotlib.lines import Line2D
 from matplotlib.ticker import PercentFormatter
-from plot_config import PLOT_STYLE, path_slug
+from plot_config import PLOT_STYLE, figure_rows, path_slug
 from scipy.stats import bootstrap
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer" / "compute_budget"
+DEFAULT_ANALYSIS_DIR = REPO_ROOT / "paper" / "artifacts" / "analysis" / "transfer" / "compute_budget"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 REASONING_LABELS = {"off": "reasoning off", "on": "reasoning on"}
 FAMILY_COLORS = ["#2563EB", "#DC2626", "#059669", "#7C3AED", "#D97706", "#0891B2"]
@@ -185,6 +186,7 @@ def load_qwen_summary_parquet(path: Path) -> pd.DataFrame:
     rows = pd.read_parquet(
         path, columns=["model", "family", "params_b", "language", "split", "id", "correct", "total_tokens"]
     )
+    rows = figure_rows(rows)
     rows["model_raw"] = rows["model"].str.replace(r" \(reasoning (?:on|off)\)$", "", regex=True)
     rows = rows[(rows["split"] == "synthetic") & (rows["language"] != "uncorrected_isl")]
     rows = rows.dropna(subset=["correct", "total_tokens"])
@@ -356,7 +358,7 @@ def save_reasoning_budget_summary(table: pd.DataFrame, out_dir: Path) -> Path | 
     if not sentence:
         return None
 
-    out = out_dir / "qwen_compute_budget_transfer" / "reasoning_budget_summary.txt"
+    out = out_dir / "reasoning_budget_summary.txt"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(f"{sentence}\n", encoding="utf-8")
     return out
@@ -397,32 +399,34 @@ def _plot_compute_budget_table(
             group = group.sort_values("inference_flops")
             color = mode_color(family, reasoning)
             linestyle = ":" if reasoning == "off" else "-"
-            ax.plot(group["inference_flops"], group[gap_column], color=color, linestyle=linestyle, linewidth=1.8, zorder=1)
+            ax.plot(
+                group["inference_flops"], group[gap_column], color=color, linestyle=linestyle,
+                linewidth=1.8, marker=marker_by_family.get(family, "o"), markersize=5,
+                markeredgecolor="white", markeredgewidth=0.7, zorder=3,
+            )
             ax.errorbar(
                 group["inference_flops"], group[gap_column], yerr=group[ci_column], fmt="none",
                 ecolor=color, elinewidth=1, capsize=2, alpha=0.55, zorder=2,
-            )
-            ax.scatter(
-                group["inference_flops"], group[gap_column],
-                s=38 + group["params_b"].clip(upper=72) * 1.6,
-                marker=marker_by_family.get(family, "o"), color=color, edgecolor="white",
-                linewidth=0.7, alpha=0.9, label="_nolegend_", zorder=3,
             )
 
         for row in panel_table.itertuples(index=False):
             ax.annotate(
                 f"{row.params_b:g}B", (row.inference_flops, getattr(row, gap_column)),
-                xytext=(4, 4), textcoords="offset points", fontsize=7, color="#374151",
+                xytext=(-5, -17) if row.reasoning == "off" else (5, 6),
+                ha="right" if row.reasoning == "off" else "left",
+                textcoords="offset points", fontsize=14, color="#374151",
             )
 
         ax.set_xscale("log")
-        ax.set_xlabel("Estimated inference FLOPs per sample (log scale)")
+        ax.set_xlabel("Estimated inference FLOPs\nper sample (log scale)", fontsize=16)
+        ax.tick_params(axis="both", which="both", labelsize=14)
         ax.yaxis.set_major_formatter(PercentFormatter(1))
         ax.grid(axis="both", color="#E5E7EB", linewidth=0.7)
         ax.set_axisbelow(True)
-        ax.set_title(panel_family if panel_family is not None else "Reasoning on vs. off under a fixed compute budget")
+        if panel_family is not None:
+            ax.set_title(panel_family, fontsize=22)
 
-    axes[0, 0].set_ylabel("Percentage of English performance recovered")
+    axes[0, 0].set_ylabel("Percentage of English\nperformance recovered", fontsize=18)
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
         Line2D([0], [0], color="#374151", linestyle=":" if reasoning == "off" else "-", linewidth=1.8,
@@ -439,17 +443,24 @@ def _plot_compute_budget_table(
             for family in families
         )
     if combined and faceted:
-        fig.suptitle("Reasoning on vs. off under a fixed compute budget")
-        fig.legend(handles=handles, frameon=False, fontsize=8, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 0.94))
-        fig.text(0.5, 0.015, "Upper-left is better. Bars are 95% bootstrap CIs over questions.", ha="center", fontsize=8, color="#4B5563")
-        fig.tight_layout(rect=(0, 0.035, 1, 0.9))
+        fig.legend(handles=handles, frameon=False, fontsize=16, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 1.0))
+        fig.tight_layout(rect=(0, 0, 1, 0.92))
     else:
-        axes[0, 0].legend(handles=handles, frameon=False, fontsize=7, loc="upper right")
-        axes[0, 0].text(
-            0.01, 0.02, "Upper-left is better. Bars are 95% bootstrap CIs over questions.",
-            transform=axes[0, 0].transAxes, fontsize=8, color="#4B5563",
-        )
+        axes[0, 0].legend(handles=handles, frameon=False, fontsize=16, loc="upper right")
         fig.tight_layout()
+    # Separate neighboring model labels after the final axes layout is known.
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    for ax in axes[0]:
+        placed = []
+        for label in sorted(ax.texts, key=lambda text: text.xy[0]):
+            for _ in range(30):
+                bounds = label.get_window_extent(renderer).expanded(1.08, 1.15)
+                if not any(bounds.overlaps(other) for other in placed):
+                    break
+                x, y = label.get_position()
+                label.set_position((x, y + (5 if y >= 0 else -5)))
+            placed.append(label.get_window_extent(renderer).expanded(1.08, 1.15))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
     return True
@@ -485,10 +496,10 @@ def plot_qwen_compute_budget_family_transfers(summary: pd.DataFrame, out_dir: Pa
         return []
 
     outputs: list[Path] = []
-    root = out_dir / "qwen_compute_budget_transfer"
+    root = out_dir / "absolute"
     for family, family_table in table.groupby("family", sort=True):
         family_dir = root / path_slug(family)
-        family_out = family_dir / "qwen_compute_budget_transfer.png"
+        family_out = family_dir / "qwen_compute_budget_transfer.pdf"
         family_dir.mkdir(parents=True, exist_ok=True)
         _plot_compute_budget_table(family_table, family_out)
         outputs.append(family_out)
@@ -502,10 +513,10 @@ def plot_qwen_compute_budget_relative_family_transfers(summary: pd.DataFrame, ou
         return []
 
     outputs: list[Path] = []
-    root = out_dir / "qwen_compute_budget_transfer_relative"
+    root = out_dir / "relative"
     for family, family_table in table.groupby("family", sort=True):
         family_dir = root / path_slug(family)
-        family_out = family_dir / "qwen_compute_budget_transfer_relative.png"
+        family_out = family_dir / "qwen_compute_budget_transfer_relative.pdf"
         family_dir.mkdir(parents=True, exist_ok=True)
         _plot_compute_budget_table(family_table, family_out, relative=True)
         outputs.append(family_out)
@@ -522,6 +533,12 @@ def main() -> None:
         help="Canonical sample-level analysis parquet.",
     )
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
+    parser.add_argument(
+        "--analysis-out-dir",
+        type=Path,
+        default=DEFAULT_ANALYSIS_DIR,
+        help="Directory for compute budget analysis tables and summary text.",
+    )
     parser.add_argument("--scorer", help="Inspect scorer name to use; defaults to math, pattern, then first score.")
     parser.add_argument("--include-incomplete", action="store_true", help="Include readable samples from failed logs.")
     parser.add_argument("--workers", type=int, default=32, help="Workers used for log selection and full log loading.")
@@ -532,26 +549,26 @@ def main() -> None:
         raise SystemExit("No scored synthetic samples with generation timings found.")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    combined_out = args.out_dir / "qwen_compute_budget_transfer" / "qwen_compute_budget_transfer.png"
+    combined_out = args.out_dir / "absolute" / "qwen_compute_budget_transfer.pdf"
     combined_out.parent.mkdir(parents=True, exist_ok=True)
     if not plot_qwen_compute_budget_transfer(summary, combined_out):
         raise SystemExit("No combined model transfer rows found.")
     print(f"Saved {combined_out}")
 
-    overlay_out = args.out_dir / "qwen_compute_budget_transfer" / "qwen_compute_budget_transfer_overlay.png"
+    overlay_out = args.out_dir / "absolute" / "qwen_compute_budget_transfer_overlay.pdf"
     if not plot_qwen_compute_budget_overlay(summary, overlay_out):
         raise SystemExit("No combined overlay model transfer rows found.")
     print(f"Saved {overlay_out}")
 
-    png_outputs = plot_qwen_compute_budget_family_transfers(summary, args.out_dir)
-    if not png_outputs:
+    pdf_outputs = plot_qwen_compute_budget_family_transfers(summary, args.out_dir)
+    if not pdf_outputs:
         raise SystemExit("No model transfer rows found.")
 
-    for png_out in png_outputs:
-        print(f"Saved {png_out}")
+    for pdf_out in pdf_outputs:
+        print(f"Saved {pdf_out}")
 
     relative_combined_out = (
-        args.out_dir / "qwen_compute_budget_transfer_relative" / "qwen_compute_budget_transfer_relative.png"
+        args.out_dir / "relative" / "qwen_compute_budget_transfer_relative.pdf"
     )
     relative_combined_out.parent.mkdir(parents=True, exist_ok=True)
     if not plot_qwen_compute_budget_relative_transfer(summary, relative_combined_out):
@@ -560,19 +577,21 @@ def main() -> None:
 
     relative_overlay_out = (
         args.out_dir
-        / "qwen_compute_budget_transfer_relative"
-        / "qwen_compute_budget_transfer_relative_overlay.png"
+        / "relative"
+        / "qwen_compute_budget_transfer_relative_overlay.pdf"
     )
     if not plot_qwen_compute_budget_overlay(summary, relative_overlay_out, relative=True):
         raise SystemExit("No combined relative overlay model transfer rows found.")
     print(f"Saved {relative_overlay_out}")
 
     relative_outputs = plot_qwen_compute_budget_relative_family_transfers(summary, args.out_dir)
-    for png_out in relative_outputs:
-        print(f"Saved {png_out}")
+    for pdf_out in relative_outputs:
+        print(f"Saved {pdf_out}")
 
     table = qwen_compute_budget_table(summary)
-    summary_out = save_reasoning_budget_summary(table, args.out_dir)
+    args.analysis_out_dir.mkdir(parents=True, exist_ok=True)
+    table.to_csv(args.analysis_out_dir / "figure_11_data.csv", index=False)
+    summary_out = save_reasoning_budget_summary(table, args.analysis_out_dir)
     if summary_out:
         print(f"Saved {summary_out}")
         print(summary_out.read_text(encoding="utf-8").strip())

@@ -1,0 +1,37 @@
+[
+  {
+    "id": 5,
+    "question_annotated": "{name,ক্যাটি} {drink,কফি} প্রস্তুত করে চিনির চামচ এবং পানির কাপের অনুপাত {m,7}:{n,13} ব্যবহার করে। যদি সে মোট {x,120} চিনির চামচ এবং পানির কাপ ব্যবহার করে, তবে সে কত চিনির চামচ ব্যবহার করেছে তা গণনা করুন।\n\n#init:\n- name = sample(names_female)\n- drink = sample(['coffee', 'tea'])\n- $m = range(7, 101, 3)\n- $n = range(4, 61, 3)\n- $x = range(5, 500, 5)\n\n#conditions: \n- divides(x, m+n)\n\n#answer: ((m*x)//(m+n))",
+    "count": 100
+  },
+  {
+    "id": 10,
+    "question_annotated": "একটি {dev,পয়-ফোন} থেকে কল করতে হলে আপনাকে আপনার কলের প্রতি মিনিটের জন্য {currency,$}{frac1,0.25} দিতে হবে। {t,16} মিনিট পর, সেই দাম প্রতি মিনিটে {currency,$}{frac2,0.2}-এ নেমে আসে। {total,36} মিনিটের একটি কল কত খরচ হবে?\n\n#init:\n- dev = sample(['phone booth', 'hotel room phone'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "count": 100
+  },
+  {
+    "id": 13,
+    "question_annotated": "{name,মেরি} একজন উদ্যমী বাগানকারী। {time, গতকাল}, তার প্রিয় গাছপালা নার্সারি থেকে তাকে {x,18}টি নতুন পটের গাছ পাঠানো হয়। তার বড় গ্রামের বাড়ির {w,40}টি জানালার লেজের প্রতিটিতে ইতিমধ্যেই {r,2}টি করে পটের গাছ আছে। উদার হৃদয়বিশিষ্ট হয়ে, সে সিদ্ধান্ত নিয়েছে যে সে আগামীকাল প্রতিটি লেজ থেকে বন্ধু ও পরিবারের জন্য {n,1}টি করে পটের গাছ দান করবে। {name,মেরি} কতটি পটের গাছ নিয়ে থাকবে?\n\n#init:\n- name = sample(names_female)\n- time = sample([\"Last week\", \"Two days ago\", \"Last night\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
+    "count": 100
+  },
+  {
+    "id": 23,
+    "question_annotated": "{name,Martha} তার {count,3} নাতি-নাতনিদের জন্য শীতের পোশাক বুনছেন। তারা {children,triplets}, তাই তাদের সবাই একই সাইজের। তিনি তাদের প্রত্যেকের জন্য একটা {c1,hat}, {c2,scarf}, {c3,sweater}, {c4,mittens}, এবং {c5,socks} বানাতে চান। একটা {c1,hat} বানাতে {n1,2} স্কিন উল লাগে, একটা {c2,scarf}-এর জন্য {n2,4}, একটা {c3,sweater}-এর জন্য {n3,12}, একটা জোড়া {c4,mittens}-এর জন্য {n4,1}, এবং একটা জোড়া {c5,socks}-এর জন্য {n5,2}। তিনি মোট কত স্কিন উল কিনতে হবে?\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"sweater\", \"shawl\", \"hat\", \"cardigan\", \"poncho\", \"vest\", \"beanie\", \"tunic\"],3)\n- c4, c5 = sample([ \"mittens\", \"booties\", \"socks\",  \"leg warmers\", \"gloves\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"twins\",2), (\"triplets\",3), (\"quadruplets\", 4),  (\"quintuplets\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
+    "count": 100
+  },
+  {
+    "id": 27,
+    "question_annotated": "{name,James} প্রতিদিন {n,80} ইমেইল পান। সেই ইমেইলগুলোর {p,20}% এর কোনো উত্তর দেওয়ার প্রয়োজন নেই। তিনি বাকিগুলোর উত্তর দেন। {d,5} দিনের কাজের সপ্তাহে {name,James} কতগুলি ইমেইলের উত্তর দেন?\n\n#init:\n- name = sample(names)\n- $n = range(50, 200)\n- $p = range(5, 40)\n- $d = range(3, 7)\n\n#conditions:\n- is_int(n * p / 100)\n- is_int(n * (100 - p) / 100)\n\n#answer: d * (n * (100 - p) / 100)",
+    "count": 100
+  },
+  {
+    "id": 84,
+    "question_annotated": "{name,মারিয়া} একটি স্টকের {n,8}টি শেয়ার {cur,$}{p,8} টাকায় কেনে। {name,মারিয়া} যখন স্টকটি ধরে রাখে তখন প্ৰথম বছরে স্টকের দাম {r1,50}% বৃদ্ধি পায়, তারপর দ্বিতীয় বছরে {r2,25}% হ্রাস পায়। {name,মারিয়া}'র সমস্ত শেয়ারের চূড়ান্ত মূল্য কত?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))",
+    "count": 100
+  },
+  {
+    "id": 85,
+    "question_annotated": "যদি {name1,Sam} এবং {name2,Harry} একসাথে {total,100} {unit,সেন্টিমিটার} বেড়া রাখে, এবং তারা সম্মত হয় যে {name2,Harry} {name1,Sam}-এর চেয়ে {diff,60} {unit,সেন্টিমিটার} বেশি পাবে, তবে {name1,Sam}-এর জন্য কতটা অবশিষ্ট থাকবে?\n\n#init:\n- name1, name2 = sample(names, 2)\n- unit = sample([\"centimeters\", \"meters\"])\n- $total = range(100, 1000, 20)\n- $diff = range(20, 200, 10)\n\n#conditions:\n- total - diff > 10\n- is_int((total - diff) / 2)\n\n#answer: (total - diff) // 2",
+    "count": 100
+  }
+]

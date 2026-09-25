@@ -1,0 +1,87 @@
+[
+  {
+    "id": 1,
+    "question_annotated": "Гъста мъгла се спуска от океана, за да покрие град. Трябват {t,10} минути, за да се покрият всяки {d,3} километра от града. Ако градът е широк {y,42} километра от брега на океана до противоположния вътрешен край, колко минути ще отнеме на мъглата да покрие целия град?\n\n#init:\n- $t = range(2, 500)\n- $d = range(2, 100)\n- $y=range(2, 100)\n\n#conditions:\n- is_int(y/d)\n\n#answer: y//d*t",
+    "count": 100
+  },
+  {
+    "id": 3,
+    "question_annotated": "В една {g,група} от {n, 50} ученици има различни хоби. {n_1, 10} обичат да {h_1, печат}, {n_2,5} обичат да играят {h_2, баскетбол}, а останалите обичат или да {h_3, играят видео игри} или да {h_4, свирят музика}. Колко обичат да {h_3, играят видео игри}, ако броят на тези, които обичат да {h_4, свирят музика}, е два пъти броят на тези, които предпочитат да играят {h_2, баскетбол}?\n\n#init:\n- g = sample([\"група\", \"клас\"])\n- h_2 = sample(sports)\n- h_1, h_3, h_4 = sample(['четене', 'рисване', 'планинско ходене', 'танци', 'печене', 'играят видео игри', 'свирят музика'], 3)\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
+    "count": 100
+  },
+  {
+    "id": 5,
+    "question_annotated": "{name,Катя} прави {drink,кафето}, използвайки чаени лъжички захар и чаши вода в съотношение {m,7}:{n,13}. Ако е използвала общо {x,120} чаени лъжички захар и чаши вода, изчислете броя на чаените лъжички захар, които е използвала.\n\n#init:\n- name = sample(names_female)\n- drink = sample(['coffee', 'tea'])\n- $m = range(7, 101, 3)\n- $n = range(4, 61, 3)\n- $x = range(5, 500, 5)\n\n#conditions: \n- divides(x, m+n)\n\n#answer: ((m*x)//(m+n))",
+    "count": 100
+  },
+  {
+    "id": 6,
+    "question_annotated": "{name,Иван} има {x,10} {area,хектар}а {fruit,ананас}ово поле. На всеки {area,хектар} има {k,100} {fruit,ананас}а. {name, Иван} може да прибира ананасите си на всеки {n,3} месеца. Колко {fruit,ананас}а може да прибере {name,Иван} за една година?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- area = sample(['hectare', 'square meter'])\n- $x = range(5, 100, 5)\n- $k = range(2, 101)\n- $n = sample([1, 2, 3, 4, 6, 12])\n\n#answer: x * k * (12//n)",
+    "count": 100
+  },
+  {
+    "id": 10,
+    "question_annotated": "За да направите разговор от {dev,телефонна кабина}, трябва да платите {currency,$}{frac1,0.25} за всяка минута от разговора си. След {t,16} минути, цената пада до {currency,$}{frac2,0.2} на минута. Колко би струвал {total,36}-минутен разговор?\n\n#init:\n- dev = sample(['phone booth', 'hotel room phone'])\n- currency = sample(currencies_sym)\n- $frac1 = sample(fraction_decimals)\n- $frac2 = sample(fraction_decimals)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(frac1 * t)\n- is_int((total-t) * frac2)\n- frac2 < frac1\n- t < total\n\n#answer: int((frac1 * t) + frac2*(total-t))",
+    "count": 100
+  },
+  {
+    "id": 11,
+    "question_annotated": "{name, Петър} иска да направи кубчета лед с различни размери с {n,32} {unit,грама} вода. Той може да прави гигантски кубчета, които използват {w1,4} {unit,грама} на кубче, средни кубчета, които използват {w2,2} {unit,грама}, и малки кубчета, които използват {w3,1/2} грам. Ако направи {n1,3} гигантски кубчета, {n2,7} средни кубчета и {n3,8} малки кубчета, колко {unit,грама} вода му остава?\n\n#init:\n- name = sample(names_male)\n- unit = sample([\"грама\", \"g\"])\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
+    "count": 100
+  },
+  {
+    "id": 12,
+    "question_annotated": "{name, Jaime} поставя {obj,яйц}а на някои {surface,тава}и. Всяка {surface,тава} може да побере {x,24} {obj,яйц}а. Ако има {n,64} {obj,яйц}а и {k,2} {surface,тава}и, колко {obj,яйц}а няма да може да постави на {surface,тава}?\n\n#init:\n- name = sample(names_male)\n- obj = sample([\"маслина\", \"бадем\", \"бисквита\", \"крекер\", \"банан\"])\n- surface = sample([\"чиния\", \"маса\", \"чаша\", \"тава\", \"кошница\"])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x",
+    "count": 100
+  },
+  {
+    "id": 13,
+    "question_annotated": "{name,Mary} е страстен градинар. {time, Вчера}, тя получи {x,18} нови саксийни растения от любимата си растителна градина. Тя вече има {r,2} саксийни растения на всеки от {w,40} первази на прозорците в своя голям селски дом. Чувствайки се щедра, тя реши, че ще даде {n,1} от саксийните растения от всеки перваз на приятели и семейство утре. Колко саксийни растения ще остане при {name,Mary}?\n\n#init:\n- name = sample(names_female)\n- time = sample([\"Миналата седмица\", \"Преди два дни\", \"Миналата нощ\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
+    "count": 100
+  },
+  {
+    "id": 14,
+    "question_annotated": "{n1,Иван} и {n2,Петър} имат {t,30} минути, за да отидат заедно до {loc1,училището}. Трябват им {t1,6} минути, за да стигнат до ъгъла, където е {loc2,библиотеката}. Трябват им още {t2,13} минути, за да стигнат до {loc3,пожарната}. Колко още време им остава, за да стигнат до {loc1,училището}, без да закъснеят?\n\n#init:\n- n1, n2 = sample(names, 2)\n- loc1, loc2, loc3 = sample(['school', 'cinema', 'mall', 'library', 'park', 'gym', 'bank'], 3)\n- $t1 = range(6, 30)\n- $t2 = range(10, 70)\n- $t = range(30, 140)\n\n#conditions:\n- not divides(t1, 5)\n- not divides(t2, 5)\n- not divides(t, 5)\n- t > t1 + t2\n\n#answer: t - t1 - t2",
+    "count": 100
+  },
+  {
+    "id": 23,
+    "question_annotated": "{name,Марта} плете зимно облекло за своите {count,3} внуци. Те са {children,тройни близнаци}, така че са с еднакъв размер. Тя иска да изработи по една {c1,шапка}, {c2,шарф}, {c3,пуловер}, {c4,ръкавици} и {c5,чорапи} за всеки от тях. За изработването на {c1,шапка} са нужни {n1,2} кълба вълна, за {c2,шарф} са {n2,4}, за {c3,пуловер} са {n3,12}, за двойка {c4,ръкавици} е {n4,1}, а за двойка {c5,чорапи} са {n5,2}. Колко кълба вълна ще трябва да купи?\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"sweater\", \"shawl\", \"hat\", \"cardigan\", \"poncho\", \"vest\", \"beanie\", \"tunic\"],3)\n- c4, c5 = sample([ \"mittens\", \"booties\", \"socks\",  \"leg warmers\", \"gloves\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"twins\",2), (\"triplets\",3), (\"quadruplets\", 4),  (\"quintuplets\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
+    "count": 100
+  },
+  {
+    "id": 27,
+    "question_annotated": "{name,James} получава {n,80} имейла на ден. {p,20}% от тези имейли не изискват отговор. Той отговаря на останалите. Колко имейла отговаря {name,James} за {d,5} работни дни?\n\n#init:\n- name = sample(names)\n- $n = range(50, 200)\n- $p = range(5, 40)\n- $d = range(3, 7)\n\n#conditions:\n- is_int(n * p / 100)\n- is_int(n * (100 - p) / 100)\n\n#answer: d * (n * (100 - p) / 100)",
+    "count": 100
+  },
+  {
+    "id": 63,
+    "question_annotated": "Едно {person1,момче} има {n,5} {item,карт}и. Неговият {relation,брат} има с {k,3} {item,карт}и по-малко от него. Колко {item,карт}и имат заедно?\n\n#init:\n- person1 = sample([\"ученик\", \"момче\", \"дете\", \"момче\"])\n- item = sample([\"мрамор\", \"налепка\", \"играчка\", \"книга\", \"молив\"])\n- relation = sample([\"сестра\", \"брат\", \"приятел\", \"братовчед\"])\n- $n = range(5, 21)\n- $k = range(2, 10)\n\n#conditions:\n- n > k\n\n#answer: n + (n-k)",
+    "count": 100
+  },
+  {
+    "id": 74,
+    "question_annotated": "В {school_name,Малко Дърво} училище има {total,96} {grade,четвърти}-класници. {num_girls,43} от тях са момичета. На {day,петък}, {absent_girls,5} {grade,четвърти}-класни момичета и {absent_boys,4} {grade,четвърти}-класни момчета отсъстваха. Колко {grade,четвърти}-класни момчета присъстваха в {school_name,Малко Дърво} училище на {day,петък}?\n\n#init:\n- school_name = sample([\"Maple Grove\", \"Sunny Hill\", \"Oak Ridge\", \"Pine Valley\"])\n- grade = sample([\"first\", \"second\", \"third\", \"fourth\", \"fifth\"])\n- day = sample([\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\"])\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys",
+    "count": 100
+  },
+  {
+    "id": 81,
+    "question_annotated": "Екипът за {event,търсене на великденски яйца} скри {total,100} {item,яйца}. Близнята на семейство {family,Смит} намериха по {n,30} {item,яйца} всяко. Всички останали {item,яйца}, освен {m,10}, бяха намерени от техните приятели. Колко {item,яйца} намериха приятелите?\n\n#init:\n- event = sample([\"търсене на коледни бонбони\", \"търсене на съкровища\", \"търсене на предмети\", \"благотворително събиране\"])\n- item = sample([\"яйца\", \"бонбони\", \"играчки\", \"монети\", \"жетони\", \"топки\", \"сладкиши\", \"подаръци\"])\n- family = sample([\"Джонсън\", \"Уилямс\", \"Мирзахани\", \"Лопес\", \"Гарсия\", \"Ли\"])\n- $total = range(50, 201, 10)\n- $n = range(10, 51)\n- $m = range(5, 21)\n\n#conditions:\n- 2*n + m < total\n\n#answer: total - 2*n - m",
+    "count": 100
+  },
+  {
+    "id": 82,
+    "question_annotated": "В началото на {event,празненството}, имаше {m,25} {group1,мъже} и {w,15} {group2,жени}. След {t,един час}, {frac,1/4} от общия брой хора напуснаха. Колко {group2,жени} останаха, ако {m_left,22} {group1,мъже} останаха на {event,празненството}?\n\n#init:\n- event = sample(['party', 'meeting', 'conference', 'gathering', 'celebration'])\n- group1, group2 = sample([ \"teachers\", \"doctors\", \"engineers\", \"nurses\", \"artists\", \"lawyers\",], 2)\n- t = sample(['an hour', 'two hours', 'half an hour', '45 minutes'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left",
+    "count": 100
+  },
+  {
+    "id": 91,
+    "question_annotated": "В къщата на {name,Алан} има {mult_txt,два пъти} повече {food1,царевица} от {food2,каноло}. Той има общо {n,40} {food2,каноло} в къщата си. {name,Алан} купи {m,60} повече {food2,каноло} в магазина и {k,40} по-малко {food1,царевица} от броя на {food2,каноло}. Намерете общия брой на {food1,царевица} и {food2,каноло}, които {name,Алан} има в къщата?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"cannoli\",\"corn\", \"apple\", \"banana\", \"orange\", \"pear\", \"grape\", \"fig\", \"persimmon\", \"plum\", \"kiwi\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)",
+    "count": 100
+  },
+  {
+    "id": 94,
+    "question_annotated": "{n,100} души кандидатстват за работа в {company,Google}. От кандидатите, само {p1,30}% получават интервюта. От тези, които получават интервюта, {p2,20}% получават предложение за работа. От тези, които получават предложение за работа, {frac_txt,една трета} от хората приемат позицията. Колко души приемат позицията?\n\n#init:\n- company = sample([\"Майкрософт\", \"Епъл\", \"Амазон\", \"Фейсбук\", \"Нетфликс\", \"Тесла\", \"Майкрософт\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: ensure_int(n * (p1/100) * (p2/100) * frac_val)",
+    "count": 100
+  }
+]

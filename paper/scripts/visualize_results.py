@@ -3,8 +3,8 @@
 # ///
 """Generate evaluation visualisations for multilingual-gsm-symbolic.
 
-Produces figures under ``paper/artifacts/figures`` by default:
-  1. distribution.png  — 20 set-level accuracy dots + KDE, with memorisation gap arrow
+Produces figures under ``paper/artifacts/figures/distributions`` by default:
+  1. distribution.pdf  — 20 set-level accuracy dots + KDE, with memorisation gap arrow
 
 Usage:
     uv run paper/scripts/visualize_results.py
@@ -17,12 +17,12 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, language_order
+from plot_config import LANGUAGE_COLORS, LANGUAGE_LABELS, figure_rows, language_order
 from scipy.stats import gaussian_kde
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "distributions"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 
 plt.rcParams.update(
@@ -151,10 +151,11 @@ def main() -> None:
     args.out_dir.mkdir(exist_ok=True)
     samples = pd.read_parquet(args.analysis, columns=["id", "source_id", "language", "split", "correct"])
     samples = samples.rename(columns={"id": "sample_id"})
+    samples = figure_rows(samples)
     tables = build_tables(samples)
     print("Languages:", list(tables.keys()))
 
-    plot_distribution(tables, args.out_dir / "distribution.png")
+    plot_distribution(tables, args.out_dir / "distribution.pdf")
 
 
 if __name__ == "__main__":

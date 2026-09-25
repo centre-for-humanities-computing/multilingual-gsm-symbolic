@@ -11,8 +11,8 @@ every source template, then averages correctness across the selected problems.
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
 import gc
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +35,7 @@ from plot_config import (
     HUMAN_VERIFIED_LANGUAGES,
     LANGUAGE_LABELS,
     LANGUAGE_SPEAKERS,
+    figure_rows,
     format_speaker_count,
     language_order,
     model_family,
@@ -45,7 +46,7 @@ from plot_config import (
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "language_ridgeline"
+DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "distributions"
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
 
 SYNTHETIC_COLOR = "#173B75"
@@ -255,11 +256,62 @@ def collect_plot_data(
     return distributions, stats
 
 
+def draw_distribution(
+    ax: Any,
+    set_means: np.ndarray,
+    x: np.ndarray,
+    density: np.ndarray,
+    mean: float,
+    reference: float,
+) -> float:
+    """Draw the shared boxed-histogram and fitted-curve treatment."""
+    peak_density = float(density.max())
+    ax.hist(
+        set_means,
+        bins=min(18, max(8, int(np.sqrt(len(set_means)) / 2))),
+        density=True,
+        color=SYNTHETIC_FILL,
+        edgecolor="white",
+        linewidth=0.7,
+        alpha=0.72,
+        zorder=1,
+    )
+    ax.fill_between(x, 0, density, color=SYNTHETIC_FILL, alpha=0.22, zorder=2)
+    ax.plot(x, density, color=SYNTHETIC_COLOR, linewidth=2.4, zorder=3)
+    ax.scatter(mean, peak_density, color=SYNTHETIC_COLOR, s=48, zorder=5)
+    ax.axvline(reference, color=ORIGINAL_COLOR, linewidth=2.6, zorder=4)
+    return peak_density
+
+
+def save_distribution_asset(set_means: np.ndarray, out_path: Path) -> float:
+    """Save one compact headline curve using the ridgeline treatment."""
+    x, density, mean, _ = normal_curve(set_means)
+    with plt.rc_context({"font.family": "serif", "font.serif": ["Times New Roman"]}):
+        fig = plt.figure(figsize=(4.08, 1.70), dpi=100)
+        ax = fig.add_axes((0, 0.31, 1, 0.67))
+        draw_distribution(ax, set_means, x, density, mean, mean)
+        ax.set_xlim(0, 1)
+        ax.set_ylim(bottom=0)
+        ax.set_yticks([])
+        ax.set_xticks(np.linspace(0, 1, 5))
+        ax.xaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+        ax.tick_params(axis="x", labelsize=14, pad=5, colors="#4A5568")
+        ax.get_xticklabels()[0].set_ha("left")
+        ax.get_xticklabels()[-1].set_ha("right")
+        ax.grid(axis="x", color="#E7EBF1", linewidth=0.8)
+        ax.spines["bottom"].set_color("#8B97A8")
+        ax.spines["bottom"].set_linewidth(1.2)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out_path, dpi=200, facecolor="white")
+        plt.close(fig)
+    return mean
+
+
 def plot_distributions(
     distributions: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]],
     stats: list[PlotStats],
     scope_label: str,
-    out_png: Path,
+    out_path: Path,
 ) -> None:
     if not stats:
         raise ValueError("No languages have paired original and synthetic results.")
@@ -297,41 +349,13 @@ def plot_distributions(
 
     for ax, row in zip(axes, stats, strict=True):
         set_means, x, density = distributions[row.language]
-        peak_density = float(density.max())
-        histogram_bins = min(18, max(8, int(np.sqrt(len(set_means)) / 2)))
-
-        ax.hist(
+        peak_density = draw_distribution(
+            ax,
             set_means,
-            bins=histogram_bins,
-            density=True,
-            color=SYNTHETIC_FILL,
-            edgecolor="white",
-            linewidth=0.7,
-            alpha=0.72,
-            zorder=1,
-        )
-        ax.fill_between(
             x,
-            0,
             density,
-            color=SYNTHETIC_FILL,
-            alpha=0.22,
-            zorder=2,
-        )
-        ax.plot(x, density, color=SYNTHETIC_COLOR, linewidth=2.4, zorder=3)
-        ax.scatter(
             row.synthetic_mean,
-            peak_density,
-            color=SYNTHETIC_COLOR,
-            s=48,
-            zorder=5,
-        )
-
-        ax.axvline(
             row.original_accuracy,
-            color=ORIGINAL_COLOR,
-            linewidth=2.6,
-            zorder=4,
         )
 
         arrow_y = peak_density * 1.08
@@ -467,7 +491,7 @@ def plot_distributions(
         bottom=bottom_margin,
         hspace=hspace,
     )
-    fig.savefig(out_png, dpi=200, bbox_inches="tight", facecolor="white")
+    fig.savefig(out_path, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
 
@@ -518,16 +542,10 @@ def plot_headline_figure(
     if not stats:
         return
 
-    out_png = out_root / "ridgeline_selected.png"
+    out_pdf = out_root / "ridgeline_selected.pdf"
     out_root.mkdir(parents=True, exist_ok=True)
-    plot_distributions(curves, stats, headline_model, out_png)
-    print(f"Saved headline figure {out_png}")
-
-    fig_out = REPO_ROOT / "paper" / "artifacts" / "figures" / "ridgeline_selected.png"
-    fig_out.parent.mkdir(parents=True, exist_ok=True)
-    import shutil
-    shutil.copy(out_png, fig_out)
-    print(f"Saved headline figure {fig_out}")
+    plot_distributions(curves, stats, headline_model, out_pdf)
+    print(f"Saved headline figure {out_pdf}")
 
 
 def main() -> None:
@@ -566,7 +584,7 @@ def main() -> None:
     parser.add_argument(
         "--headline-model",
         default="Qwen2.5-7B-Instruct",
-        help="Model to use for the compact 3-curve headline figure (ridgeline_selected.png).",
+        help="Model to use for the compact 3-curve headline figure (ridgeline_selected.pdf).",
     )
     parser.add_argument(
         "--headline-languages",
@@ -590,6 +608,7 @@ def main() -> None:
     problems = pd.read_parquet(
         args.analysis, columns=["model", "language", "split", "id", "source_id", "correct"]
     ).rename(columns={"id": "sample_id"})
+    problems = figure_rows(problems)
     problems = problems[problems["language"] != "uncorrected_isl"]
     if args.model:
         problems = problems[problems["model"].str.lower().isin({model.lower() for model in args.model})]
@@ -632,14 +651,14 @@ def main() -> None:
             continue
 
         family = model_family(model)
-        out_dir = output_root / path_slug(family)
+        out_dir = output_root / "by_model" / path_slug(family)
         out_dir.mkdir(parents=True, exist_ok=True)
         model_slug = path_slug(model)
         base_name = f"{path_slug(args.output_name)}-{model_slug}" if args.output_name else model_slug
-        out_png = out_dir / f"{base_name}.png"
+        out_pdf = out_dir / f"{base_name}.pdf"
 
-        plot_distributions(curves, stats, model, out_png)
-        print(f"Saved {out_png}")
+        plot_distributions(curves, stats, model, out_pdf)
+        print(f"Saved {out_pdf}")
 
         del curves, stats, model_problems
         gc.collect()

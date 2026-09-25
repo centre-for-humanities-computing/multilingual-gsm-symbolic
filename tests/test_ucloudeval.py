@@ -56,6 +56,27 @@ def test_inspect_command_uses_stock_eval_set_identity():
     assert "--id" not in command
 
 
+def test_attention_backend_is_model_specific():
+    assert ucloudeval.attention_backend("swiss-ai/Apertus-70B-Instruct-2509") == "FLASH_ATTN"
+    assert ucloudeval.attention_backend("google/gemma-3-27b-it") == "FLASH_ATTN"
+    assert ucloudeval.attention_backend("google/gemma-4-12B-it") == "TRITON_ATTN"
+
+
+def test_vllm_environment_sets_selected_attention_backend(monkeypatch):
+    env = ucloudeval.vllm_environment({}, "swiss-ai/Apertus-70B-Instruct-2509")
+    server_args = ucloudeval.json.loads(env["VLLM_DEFAULT_SERVER_ARGS"])
+    assert server_args["attention_backend"] == "FLASH_ATTN"
+
+
+def test_explicit_attention_backend_override_wins():
+    env = ucloudeval.vllm_environment(
+        {"attention_backend": "FLEX_ATTENTION"},
+        "swiss-ai/Apertus-70B-Instruct-2509",
+    )
+    server_args = ucloudeval.json.loads(env["VLLM_DEFAULT_SERVER_ARGS"])
+    assert server_args["attention_backend"] == "FLEX_ATTENTION"
+
+
 def test_run_inspect_skips_completed_and_records_success(tmp_path, monkeypatch):
     done = ucloudeval.Task("done", "eng", "test_original", "prompt")
     pending = ucloudeval.Task("pending", "eng", "test_synthetic", "prompt")

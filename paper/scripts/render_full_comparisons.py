@@ -1,0 +1,34 @@
+# /// script
+# dependencies = ["inspect-ai", "matplotlib", "numpy", "pandas", "pyarrow", "scipy"]
+# ///
+"""Regenerate only the two full appendix comparisons from canonical samples."""
+
+import pandas as pd
+
+from visualizegrid import (
+    DEFAULT_ANALYSIS,
+    DEFAULT_ABLATIONS_DIR,
+    collect_correction_comparison_rows,
+    plot_correction_comparison,
+)
+
+
+def main():
+    samples = pd.read_parquet(DEFAULT_ANALYSIS).rename(columns={"id": "sample_id"})
+    samples["model_raw"] = samples["model"]
+    for old, new, language, path, labels in [
+        ("eng", "eng_metric", "eng", "english_units/eng_vs_eng_metric_full.pdf", ("English", "English metric")),
+        ("uncorrected_isl", "isl", "isl", "icelandic_validation/isl.pdf", ("Machine translated", "Verified")),
+    ]:
+        before = samples[samples.language == old].copy()
+        after = samples[samples.language == new].copy()
+        before["language"] = after["language"] = language
+        rows = collect_correction_comparison_rows(before, after, language, 2000, 0)
+        plot_correction_comparison(rows, language, DEFAULT_ABLATIONS_DIR / path, legend_labels=labels)
+        full_page_path = (DEFAULT_ABLATIONS_DIR / path).with_stem((DEFAULT_ABLATIONS_DIR / path).stem + "_fullpage").with_suffix(".pdf")
+        plot_correction_comparison(rows, language, full_page_path, legend_labels=labels, full_page=True)
+        print(f"{path}: {len(rows)} models", flush=True)
+
+
+if __name__ == "__main__":
+    main()

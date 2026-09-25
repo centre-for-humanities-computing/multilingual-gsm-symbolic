@@ -6,20 +6,24 @@
 The script reads Inspect ``.eval`` logs and writes:
 
 * ``run_summary.csv``: tidy accuracy table for downstream analysis.
-* ``accuracy_heatmaps.png``: accuracy on original and synthetic benchmark splits.
-* ``original_vs_synthetic.png``: paired split performance for each model/language.
-* ``family_scaling.png``: within-family accuracy as a function of parameter count.
-* ``english_normalized_transfer.png``: language accuracy relative to English.
-* ``eng_vs_eng_metric.png``: paired English and English-metric accuracy by model.
-* ``eng_vs_eng_metric_selected.png``: selected-model English/English-metric distributions.
-* ``eng_vs_eng_metric_full.png``: all paired-model English/English-metric distributions.
-* ``transfer_robustness.png``: transfer penalty and cross-language dispersion by size.
-* ``split_degradation_heatmaps.png``: absolute and relative original-to-synthetic drop.
-* ``reasoning_delta_heatmap.png``: English-vs-non-English synthetic gap by reasoning mode.
-* ``correction_comparison/*.png``: uncorrected vs corrected synthetic distributions when corrected logs exist.
+* ``accuracy_heatmaps.pdf``: accuracy on original and synthetic benchmark splits.
+* ``original_vs_synthetic.pdf``: paired split performance for each model/language.
+* ``family_scaling.pdf``: within-family accuracy as a function of parameter count.
+* ``english_normalized_transfer.pdf``: language accuracy relative to English.
+* ``eng_vs_eng_metric.pdf``: paired English and English-metric accuracy by model.
+* ``eng_vs_eng_metric_selected.pdf``: selected-model English/English-metric distributions.
+* ``eng_vs_eng_metric_full.pdf``: all paired-model English/English-metric distributions.
+* ``transfer_robustness.pdf``: transfer penalty and cross-language dispersion by size.
+* ``split_degradation_heatmaps.pdf``: absolute and relative original-to-synthetic drop.
+* ``reasoning_delta_heatmap.pdf``: English-vs-non-English synthetic gap by reasoning mode.
+* ``correction_comparison/*.pdf``: uncorrected vs corrected synthetic distributions when corrected logs exist.
 
 Only successful logs are included by default. Repeated/resumed logs with the same
 evaluation id are deduplicated, preferring a successful and then newer log.
+
+English-metric figures are written under ``--ablations-out-dir/eng_vs_eng_metric``;
+correction comparisons go under ``--ablations-out-dir/correction_comparison``.
+Other outputs continue to use ``--out-dir``.
 
 Example:
     uv run paper/scripts/visualizegrid.py --workers 8
@@ -59,6 +63,7 @@ from plot_config import (
     LANGUAGE_LABELS,
     PLOT_STYLE,
     SPLIT_LABELS,
+    figure_rows,
     heatmap_language_label,
     language_order,
     model_sort_key,
@@ -71,9 +76,14 @@ from scipy.stats import norm
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 DEFAULT_CORRECTED_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
-DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "model_grid"
+DEFAULT_FIGURES_DIR = REPO_ROOT / "paper" / "artifacts" / "figures"
+DEFAULT_ACCURACY_DIR = DEFAULT_FIGURES_DIR / "accuracy"
+DEFAULT_TRANSFER_DIR = DEFAULT_FIGURES_DIR / "transfer"
+DEFAULT_ANALYSIS_DIR = REPO_ROOT / "paper" / "artifacts" / "analysis" / "accuracy"
+DEFAULT_ABLATIONS_DIR = DEFAULT_FIGURES_DIR / "ablations"
+DEFAULT_OUT_DIR = DEFAULT_ACCURACY_DIR
 DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
-CORRECTION_COMPARISON_WIDTH = 13.5
+CORRECTION_COMPARISON_WIDTH = 3.35
 
 
 FAMILY_MARKERS = {
@@ -92,13 +102,33 @@ FAMILY_MARKERS = {
     "OpenAI": "X",
 }
 EXCLUDED_SPLIT_PAIR = ("OLMo-2-1124-7B-Instruct", "dan")
-SPLIT_PAIR_LABELS = {
-    ("Qwen2.5-1.5B-Instruct", "nob"): "Qwen2.5 1.5B (Norwegian)",
-    ("Apertus-8B-Instruct-2509", "zho"): "Apertus 8B (Chinese)",
-    ("granite-3.2-2b-instruct (reasoning on)", "zho"): "Granite 2B (Chinese)",
-    ("gemma-3-4b-it", "isl"): "Gemma 3 4B (Icelandic)",
-    ("OLMo-2-0425-1B-Instruct", "eng"): "OLMo 2 1B (English)",
+SPLIT_PAIR_ANNOTATIONS = {
+    ("Qwen3.5-0.8B (reasoning off)", "eng"): {
+        "text": "Qwen3.5 0.8B (English)\n+42.8 pp",
+        "xytext": (8, 0),
+        "ha": "left",
+        "va": "center",
+    },
+    ("Qwen3-0.6B", "dan"): {
+        "text": "Qwen3 0.6B (Danish)\n+11.5 pp",
+        "xytext": (0, 8),
+        "ha": "center",
+        "va": "bottom",
+    },
+    ("OLMo-2-0425-1B-Instruct", "eng_metric"): {
+        "text": "OLMo 2 1B (Eng. metric)\n−18.0 pp",
+        "xytext": (0, -10),
+        "ha": "center",
+        "va": "top",
+    },
+    ("Qwen3-0.6B (reasoning off)", "eng"): {
+        "text": "Qwen3 0.6B (English)\n−26.0 pp",
+        "xytext": (0, -10),
+        "ha": "center",
+        "va": "top",
+    },
 }
+SPLIT_PAIR_LABELS = {k: v["text"] for k, v in SPLIT_PAIR_ANNOTATIONS.items()}
 
 PROBLEM_KEYS = [
     "model_raw",
@@ -487,7 +517,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
     if paired.empty:
         return False
 
-    fig, ax = plt.subplots(figsize=(6.8, 6.4))
+    fig, ax = plt.subplots(figsize=(7.5, 7.2))
     sized = paired.reset_index()
     sized = sized[~((sized["model"] == EXCLUDED_SPLIT_PAIR[0]) & (sized["language"] == EXCLUDED_SPLIT_PAIR[1]))]
     finite_sizes = sized["params_b"].dropna()
@@ -509,7 +539,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
                 cmap=cmap,
                 norm=norm,
                 marker=marker,
-                s=58,
+                s=64,
                 alpha=0.9,
                 edgecolors="white",
                 linewidths=0.5,
@@ -522,28 +552,37 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
                 unknown_size["synthetic"],
                 color="#888888",
                 marker=marker,
-                s=58,
+                s=64,
                 alpha=0.8,
                 edgecolors="white",
                 linewidths=0.5,
             )
 
     for row in sized.itertuples():
-        label = SPLIT_PAIR_LABELS.get((row.model, row.language))
-        if label:
+        config = SPLIT_PAIR_ANNOTATIONS.get((row.model, row.language))
+        if config:
             ax.annotate(
-                label,
+                config["text"],
                 (row.original, row.synthetic),
-                xytext=(5, 0),
+                xytext=config["xytext"],
                 textcoords="offset points",
-                fontsize=7,
-                bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.72, "pad": 1},
+                fontsize=10.5,
+                color="black",
+                ha=config["ha"],
+                va=config["va"],
+                bbox=dict(
+                    boxstyle="round,pad=0.25",
+                    facecolor="white",
+                    edgecolor="none",
+                    alpha=0.6,
+                ),
             )
 
     mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable.set_array([])
     colorbar = fig.colorbar(mappable, ax=ax, shrink=0.82)
-    colorbar.set_label("Model parameters (billions)")
+    colorbar.set_label("Model parameters (billions)", fontsize=14, labelpad=10)
+    colorbar.ax.tick_params(labelsize=12)
 
     legend_handles = [
         Line2D(
@@ -553,7 +592,7 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
             linestyle="none",
             markerfacecolor="#777777",
             markeredgecolor="white",
-            markersize=7,
+            markersize=8.5,
         )
         for family in ordered_families(sized["family"])
     ]
@@ -562,21 +601,22 @@ def plot_split_pairs(summary: pd.DataFrame, out: Path) -> bool:
             legend_handles,
             ordered_families(sized["family"]),
             loc="lower center",
-            ncol=min(6, len(legend_handles)),
+            ncol=min(5, len(legend_handles)),
             frameon=False,
             title="Model family",
+            fontsize=11.5,
+            title_fontsize=12.5,
         )
 
     ax.plot([0, 1], [0, 1], linestyle="--", color="black", linewidth=1, alpha=0.6)
-    ax.set(
-        xlim=(0, 1),
-        ylim=(0, 1),
-        xlabel="Accuracy on original benchmark questions",
-        ylabel="Accuracy on synthetic numerical variants",
-    )
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("Accuracy on original benchmark questions", fontsize=14, labelpad=8)
+    ax.set_ylabel("Accuracy on synthetic numerical variants", fontsize=14, labelpad=8)
+    ax.tick_params(axis="both", labelsize=12)
     ax.xaxis.set_major_formatter(PercentFormatter(1))
     ax.yaxis.set_major_formatter(PercentFormatter(1))
-    fig.tight_layout(rect=(0, 0.09, 1, 1))
+    fig.tight_layout(rect=(0, 0.12, 1, 1))
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
 
@@ -951,7 +991,6 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
     first_legend = ax.legend(handles=family_handles, title="Model family", frameon=False, loc="upper left")
     ax.add_artist(first_legend)
     ax.legend(handles=mode_handles, title="Variant", frameon=False, loc="upper right")
-    fig.suptitle("Percentage of English performance recovered by model size and reasoning mode")
     fig.tight_layout()
     fig.savefig(out, bbox_inches="tight")
     plt.close(fig)
@@ -962,36 +1001,61 @@ def plot_correction_comparison(
     rows: list[CorrectionComparisonRow],
     language: str,
     out: Path,
-    legend_labels: tuple[str, str] = ("Uncorrected", "Corrected"),
-    title: str | None = None,
+    legend_labels: tuple[str, str] = ("Machine translated", "Verified"),
+    full_page: bool = False,
 ) -> None:
-    fig, axes = plt.subplots(
-        len(rows),
-        1,
-        figsize=(CORRECTION_COMPARISON_WIDTH, 1.45 * len(rows) + 1.35),
-        sharex=True,
-        squeeze=False,
+    # Physical size matches a half-page-width appendix figure. Full model
+    # slugs sit above panels so they do not steal horizontal curve space.
+    if not rows:
+        raise ValueError("A full comparison requires at least one model")
+    nrows = math.ceil(len(rows) / 2)
+    old_color, new_color = (
+        ("#2166AC", "#C66B16") if language == "eng" else ("#7860A8", "#17806D")
     )
+    label_size = 6
+    fig = plt.figure(figsize=(5.5, 8.55) if full_page else (CORRECTION_COMPARISON_WIDTH, 8.0))
+    columns = fig.add_gridspec(1, 2, left=0.025, right=0.965,
+                              bottom=0.035 if full_page else 0.05,
+                              top=0.96, wspace=0.18)
+    axes = np.empty((nrows, 2), dtype=object)
+    for col in range(2):
+        column_rows = rows[col * nrows:(col + 1) * nrows]
+        if not column_rows:
+            continue
+        # Reserve actual text height, including reasoning suffixes, separately
+        # from the curve. Uniform subplot spacing clips two-line full slugs.
+        heights = []
+        for row in column_rows:
+            heights.extend([13, 23, 3] if full_page else [14 if " (reasoning" in row.model else 8, 12, 3])
+        grid = columns[col].subgridspec(len(heights), 1, height_ratios=heights, hspace=0)
+        for panel_row, row in enumerate(column_rows):
+            label_ax = fig.add_subplot(grid[3 * panel_row])
+            label_ax.set_axis_off()
+            label_ax.text(0, 0.12, row.model if full_page else row.model.replace(" (reasoning", "\n(reasoning"),
+                          fontsize=label_size, va="bottom", linespacing=1.05)
+            axes[panel_row, col] = fig.add_subplot(grid[3 * panel_row + 1])
 
-    for ax, row in zip(axes[:, 0], rows, strict=True):
+    for index, row in enumerate(rows):
+        col, panel_row = divmod(index, nrows)
+        ax = axes[panel_row, col]
         old_counts, _, _ = ax.hist(
             row.uncorrected_sets,
             bins=18,
             density=True,
-            color=UNCORRECTED_FILL,
+            color=old_color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.38,
+            alpha=0.25,
             zorder=1,
         )
         new_counts, _, _ = ax.hist(
             row.corrected_sets,
             bins=18,
             density=True,
-            color=CORRECTED_FILL,
+            color=new_color,
             edgecolor="white",
             linewidth=0.35,
-            alpha=0.38,
+            alpha=0.25,
             zorder=1,
         )
         old_x, old_density, old_mean, _ = normal_curve(row.uncorrected_sets)
@@ -1002,39 +1066,46 @@ def plot_correction_comparison(
             float(old_density.max()),
             float(new_density.max()),
         )
+        ax.plot(old_x, old_density, color=old_color, linewidth=0.9, zorder=3)
+        ax.axvline(old_mean, color=old_color, linewidth=0.45, alpha=0.65, zorder=2)
 
-        ax.fill_between(old_x, 0, old_density, color=UNCORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
-        ax.plot(old_x, old_density, color=UNCORRECTED_COLOR, linewidth=1.8, zorder=3)
-        ax.axvline(old_mean, color=UNCORRECTED_COLOR, linewidth=1.2, zorder=4)
+        ax.plot(new_x, new_density, color=new_color, linewidth=0.9, linestyle="--", zorder=3)
+        ax.axvline(new_mean, color=new_color, linewidth=0.45, linestyle="--", alpha=0.65, zorder=2)
 
-        ax.fill_between(new_x, 0, new_density, color=CORRECTED_FILL, alpha=0.18, linewidth=0, zorder=2)
-        ax.plot(new_x, new_density, color=CORRECTED_COLOR, linewidth=1.8, zorder=3)
-        ax.axvline(new_mean, color=CORRECTED_COLOR, linewidth=1.2, zorder=4)
-
-        ax.set_ylabel(row.model, rotation=0, ha="right", va="center", labelpad=58, fontsize=11)
         ax.set_yticks([])
         ax.set_ylim(0, peak * 1.2)
-        ax.grid(axis="x", color="#D8DEE8", linewidth=0.7, alpha=0.6)
+        ax.grid(axis="x", color="#D8DEE8", linewidth=0.35, alpha=0.6)
+        ax.tick_params(axis="x", labelsize=label_size, length=2, width=0.4, pad=2)
+        ax.set_xlim(0, 1)
+        ax.set_xticks([0, 0.5, 1])
+        ax.tick_params(labelbottom=False, bottom=False)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.spines["bottom"].set_visible(True)
+        ax.spines["bottom"].set_color("#737373")
+        ax.spines["bottom"].set_linewidth(0.45)
 
-    axes[-1, 0].set_xlim(0, 1)
-    axes[-1, 0].xaxis.set_major_formatter(PercentFormatter(1))
-    axes[-1, 0].set_xlabel("Exact-answer accuracy", fontsize=12, labelpad=8)
+    for col in range(2):
+        count = min(nrows, max(0, len(rows) - col * nrows))
+        if count:
+            ax = axes[count - 1, col]
+            ax.set_xlim(0, 1)
+            ax.set_xticks([0, 0.5, 1])
+            ax.xaxis.set_major_formatter(PercentFormatter(1, decimals=0))
+            ax.tick_params(labelbottom=True, bottom=True)
+            ax.set_xlabel("Exact-answer accuracy", fontsize=8 if full_page else 6.5, labelpad=3)
 
     legend = [
-        Line2D([0], [0], color=UNCORRECTED_COLOR, lw=2, label=legend_labels[0]),
-        Line2D([0], [0], color=CORRECTED_COLOR, lw=2, label=legend_labels[1]),
+        Line2D([0], [0], color=old_color, lw=1, label=legend_labels[0]),
+        Line2D([0], [0], color=new_color, lw=1, linestyle="--", label=legend_labels[1]),
     ]
-    axes[0, 0].legend(handles=legend, loc="upper right", frameon=False, ncol=3, bbox_to_anchor=(1, 1.65))
-    fig.suptitle(
-        title or f"{LANGUAGE_LABELS.get(language, language)} correction comparison",
-        x=0.08,
-        ha="left",
-        fontsize=17,
-        fontweight="bold",
-    )
-    fig.tight_layout(rect=(0.06, 0.02, 1, 0.94))
+    fig.legend(handles=legend, loc="upper center", frameon=False, ncol=2, fontsize=9 if full_page else 7,
+               bbox_to_anchor=(0.5, 1), columnspacing=1, handlelength=2)
+    # No embedded heading: the LaTeX caption identifies the comparison.
     out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=220, bbox_inches="tight", facecolor="white")
+    # Keep curves as vectors and embed TrueType text for PDF output.
+    with plt.rc_context({"pdf.fonttype": 42}):
+        fig.savefig(out, dpi=450, facecolor="white")
     plt.close(fig)
 
 
@@ -1043,7 +1114,7 @@ def plot_correction_comparison_selected(
     language: str,
     out: Path,
     target_models: list[str] | None = None,
-    legend_labels: tuple[str, str] = ("Unvalidated", "Validated"),
+    legend_labels: tuple[str, str] = ("Machine translated", "Verified"),
 ) -> None:
     if not target_models:
         target_models = [
@@ -1061,7 +1132,7 @@ def plot_correction_comparison_selected(
     # after LaTeX scales the image to the column width.
     fig, ax = plt.subplots(figsize=(7.6, 3.2))
 
-    # Distinct colour per model; unvalidated = solid, validated = dashed
+    # Distinct colour per model; uncorrected = solid, corrected = dashed
     MODEL_COLORS = [
         "#1B365D",  # deep navy
         "#C0392B",  # crimson
@@ -1107,7 +1178,7 @@ def plot_correction_comparison_selected(
         )
         all_peaks.append(peak)
 
-        # Unvalidated — solid line
+        # Uncorrected — solid line
         ax.plot(
             old_x,
             old_density,
@@ -1127,7 +1198,7 @@ def plot_correction_comparison_selected(
             zorder=4,
         )
 
-        # Validated — dashed line
+        # Corrected — dashed line
         ax.plot(
             new_x,
             new_density,
@@ -1298,7 +1369,32 @@ def main() -> None:
     parser.add_argument(
         "--out-dir",
         type=Path,
-        default=DEFAULT_OUT_DIR,
+        default=DEFAULT_ACCURACY_DIR,
+        help="Default output directory for accuracy figures (backwards compatibility).",
+    )
+    parser.add_argument(
+        "--accuracy-out-dir",
+        type=Path,
+        default=DEFAULT_ACCURACY_DIR,
+        help="Directory for accuracy figures.",
+    )
+    parser.add_argument(
+        "--transfer-out-dir",
+        type=Path,
+        default=DEFAULT_TRANSFER_DIR,
+        help="Directory for transfer figures.",
+    )
+    parser.add_argument(
+        "--analysis-out-dir",
+        type=Path,
+        default=DEFAULT_ANALYSIS_DIR,
+        help="Directory for analysis run summary.",
+    )
+    parser.add_argument(
+        "--ablations-out-dir",
+        type=Path,
+        default=DEFAULT_ABLATIONS_DIR,
+        help="Root for English-units and Icelandic-validation figures.",
     )
     parser.add_argument(
         "--corrected-log-dir",
@@ -1335,6 +1431,7 @@ def main() -> None:
         parser.error("--correction-samples must be at least 2")
 
     samples = pd.read_parquet(args.analysis).rename(columns={"id": "sample_id"})
+    samples = figure_rows(samples)
     samples["model_raw"] = samples["model"]
 
     if samples.empty:
@@ -1344,21 +1441,45 @@ def main() -> None:
     samples = corrected
     summary = filter_summary_models(summarize(samples))
 
-    args.out_dir.mkdir(parents=True, exist_ok=True)
+    accuracy_dir = args.accuracy_out_dir if args.accuracy_out_dir != DEFAULT_ACCURACY_DIR else args.out_dir
+    transfer_dir = args.transfer_out_dir
+    analysis_dir = args.analysis_out_dir
+    accuracy_dir.mkdir(parents=True, exist_ok=True)
+    transfer_dir.mkdir(parents=True, exist_ok=True)
+    analysis_dir.mkdir(parents=True, exist_ok=True)
 
-    summary_path = args.out_dir / "run_summary.csv"
+    metric_dir = args.ablations_out_dir / "english_units"
+    metric_dir.mkdir(parents=True, exist_ok=True)
+    icelandic_dir = args.ablations_out_dir / "icelandic_validation"
+    icelandic_dir.mkdir(parents=True, exist_ok=True)
+
+    summary_path = analysis_dir / "run_summary.csv"
     sort_summary(summary).to_csv(summary_path, index=False)
 
-    plot_heatmaps(summary, args.out_dir / "accuracy_heatmaps.png")
-    made_pairs = plot_split_pairs(summary, args.out_dir / "original_vs_synthetic.png")
-    made_scaling = plot_family_scaling(summary, args.out_dir / "family_scaling.png")
+    plot_heatmaps(summary, accuracy_dir / "accuracy_heatmaps.pdf")
+    made_pairs = plot_split_pairs(summary, accuracy_dir / "original_vs_synthetic.pdf")
+    made_scaling = plot_family_scaling(summary, accuracy_dir / "family_scaling.pdf")
+    made_degradation = plot_split_degradation(
+        summary,
+        accuracy_dir / "split_degradation_heatmaps.pdf",
+    )
+
     made_transfer = plot_english_normalized_transfer(
         summary,
-        args.out_dir / "english_normalized_transfer.png",
+        transfer_dir / "english_normalized_transfer.pdf",
     )
+    made_robustness = plot_transfer_robustness(
+        summary,
+        transfer_dir / "transfer_robustness.pdf",
+    )
+    made_reasoning = plot_reasoning_delta(
+        summary,
+        transfer_dir / "reasoning_delta_heatmap.pdf",
+    )
+
     made_metric = plot_eng_metric_comparison(
         summary,
-        args.out_dir / "eng_vs_eng_metric.png",
+        metric_dir / "eng_vs_eng_metric.pdf",
     )
     eng_metric_selected = False
     eng_metric_full = False
@@ -1374,16 +1495,15 @@ def main() -> None:
             args.correction_seed,
         )
         if metric_rows:
-            metric_full_out = args.out_dir / "eng_vs_eng_metric_full.png"
+            metric_full_out = metric_dir / "eng_vs_eng_metric_full.pdf"
             plot_correction_comparison(
                 metric_rows,
                 "eng",
                 metric_full_out,
                 legend_labels=("English", "English metric"),
-                title="English vs English metric comparison",
             )
             eng_metric_full = True
-            metric_out = args.out_dir / "eng_vs_eng_metric_selected.png"
+            metric_out = metric_dir / "eng_vs_eng_metric_selected.pdf"
             plot_correction_comparison_selected(
                 metric_rows,
                 "eng",
@@ -1396,18 +1516,7 @@ def main() -> None:
                 legend_labels=("English", "English metric"),
             )
             eng_metric_selected = True
-    made_robustness = plot_transfer_robustness(
-        summary,
-        args.out_dir / "transfer_robustness.png",
-    )
-    made_degradation = plot_split_degradation(
-        summary,
-        args.out_dir / "split_degradation_heatmaps.png",
-    )
-    made_reasoning = plot_reasoning_delta(
-        summary,
-        args.out_dir / "reasoning_delta_heatmap.png",
-    )
+
     correction_outputs: list[Path] = []
     if "uncorrected_isl" in set(pd.read_parquet(args.analysis, columns=["language"])["language"]):
         all_samples = pd.read_parquet(args.analysis).rename(columns={"id": "sample_id"})
@@ -1430,57 +1539,57 @@ def main() -> None:
                 if not rows:
                     print(f"Skipping {language}: no paired corrected models.")
                     continue
-                out = args.out_dir / "correction_comparison" / f"{path_slug(language)}.png"
+                out = icelandic_dir / f"{path_slug(language)}.pdf"
                 plot_correction_comparison(rows, language, out)
                 correction_outputs.append(out)
 
-                out_selected = args.out_dir / "correction_comparison" / f"{path_slug(language)}_selected.png"
+                out_selected = icelandic_dir / f"{path_slug(language)}_selected.pdf"
                 plot_correction_comparison_selected(rows, language, out_selected)
                 correction_outputs.append(out_selected)
 
     print(f"Saved {summary_path}")
-    print(f"Saved {args.out_dir / 'accuracy_heatmaps.png'}")
+    print(f"Saved {accuracy_dir / 'accuracy_heatmaps.pdf'}")
 
     if made_pairs:
-        print(f"Saved {args.out_dir / 'original_vs_synthetic.png'}")
+        print(f"Saved {accuracy_dir / 'original_vs_synthetic.pdf'}")
     else:
-        print("Skipped original_vs_synthetic.png: no model/language has both splits.")
+        print("Skipped original_vs_synthetic.pdf: no model/language has both splits.")
 
     if made_scaling:
-        print(f"Saved {args.out_dir / 'family_scaling.png'}")
+        print(f"Saved {accuracy_dir / 'family_scaling.pdf'}")
     else:
-        print("Skipped family_scaling.png: no recognized model parameter counts.")
-
-    if made_transfer:
-        print(f"Saved {args.out_dir / 'english_normalized_transfer.png'}")
-    else:
-        print("Skipped english_normalized_transfer.png: paired English/non-English results are required.")
-
-    if made_metric:
-        print(f"Saved {args.out_dir / 'eng_vs_eng_metric.png'}")
-    else:
-        print("Skipped eng_vs_eng_metric.png: paired English and English-metric results are required.")
-    if eng_metric_selected:
-        print(f"Saved {args.out_dir / 'eng_vs_eng_metric_selected.png'}")
-    if eng_metric_full:
-        print(f"Saved {args.out_dir / 'eng_vs_eng_metric_full.png'}")
-
-    if made_robustness:
-        print(f"Saved {args.out_dir / 'transfer_robustness.png'}")
-    else:
-        print("Skipped transfer_robustness.png: paired transfer results with model sizes are required.")
+        print("Skipped family_scaling.pdf: no recognized model parameter counts.")
 
     if made_degradation:
-        print(f"Saved {args.out_dir / 'split_degradation_heatmaps.png'}")
+        print(f"Saved {accuracy_dir / 'split_degradation_heatmaps.pdf'}")
     else:
-        print("Skipped split_degradation_heatmaps.png: paired original/synthetic results are required.")
+        print("Skipped split_degradation_heatmaps.pdf: paired original/synthetic results are required.")
+
+    if made_transfer:
+        print(f"Saved {transfer_dir / 'english_normalized_transfer.pdf'}")
+    else:
+        print("Skipped english_normalized_transfer.pdf: paired English/non-English results are required.")
+
+    if made_robustness:
+        print(f"Saved {transfer_dir / 'transfer_robustness.pdf'}")
+    else:
+        print("Skipped transfer_robustness.pdf: paired transfer results with model sizes are required.")
 
     if made_reasoning:
-        print(f"Saved {args.out_dir / 'reasoning_delta_heatmap.png'}")
+        print(f"Saved {transfer_dir / 'reasoning_delta_heatmap.pdf'}")
     else:
         print(
-            "Skipped reasoning_delta_heatmap.png: paired synthetic English/non-English reasoning results with model sizes are required."
+            "Skipped reasoning_delta_heatmap.pdf: paired synthetic English/non-English reasoning results with model sizes are required."
         )
+
+    if made_metric:
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric.pdf'}")
+    else:
+        print("Skipped eng_vs_eng_metric.pdf: paired English and English-metric results are required.")
+    if eng_metric_selected:
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric_selected.pdf'}")
+    if eng_metric_full:
+        print(f"Saved {metric_dir / 'eng_vs_eng_metric_full.pdf'}")
 
     for out in correction_outputs:
         print(f"Saved {out}")

@@ -6,6 +6,15 @@ import re
 from collections.abc import Iterable
 from typing import Any
 
+# Norwegian is not human validated; exclude it before figure aggregation.
+EXCLUDED_FIGURE_LANGUAGES = {"nor", "nob", "nno"}
+
+
+def figure_rows(frame):
+    """Exclude unvalidated Norwegian from paper figure inputs."""
+    return frame.loc[~frame["language"].isin(EXCLUDED_FIGURE_LANGUAGES)].copy()
+
+
 LANGUAGE_LABELS = {
     "zho": "Chinese",
     "spa": "Spanish",
@@ -22,6 +31,7 @@ LANGUAGE_LABELS = {
     "isl": "Icelandic",
     "mar": "Marathi",
     "hin": "Hindi",
+    "urd": "Urdu",
     "ara": "Arabic",
     "nld": "Dutch",
     "est": "Estonian",
@@ -257,8 +267,12 @@ def ordered_families(families: Iterable[str]) -> list[str]:
 def language_order(
     languages: Iterable[str], requested: list[str] | None = None, *, english_first: bool = False
 ) -> list[str]:
+    languages = set(languages) - EXCLUDED_FIGURE_LANGUAGES
     if requested:
-        return [language for language in requested if language in set(languages) or not set(languages)]
+        return [
+            language for language in requested
+            if language not in EXCLUDED_FIGURE_LANGUAGES and (language in languages or not languages)
+        ]
 
     def key(language: str) -> tuple[int, int, str]:
         if english_first and language == "eng":

@@ -15,7 +15,7 @@ from scipy.stats import ttest_1samp
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_INPUT = REPO_ROOT / "paper/artifacts/transfer_tables/analysis.parquet"
-DEFAULT_OUTPUT = REPO_ROOT / "paper/artifacts/equivalence/isl_translation_tost.txt"
+DEFAULT_OUTPUT = REPO_ROOT / "paper/artifacts/analysis/equivalence/isl_translation_tost.txt"
 
 
 def model_scores(
@@ -87,7 +87,7 @@ def main() -> None:
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--split", default="synthetic")
-    parser.add_argument("--margin-pp", type=float, default=0.5)
+    parser.add_argument("--margin-pp", type=float, default=1.0)
     args = parser.parse_args()
     if args.margin_pp <= 0:
         parser.error("--margin-pp must be positive")
