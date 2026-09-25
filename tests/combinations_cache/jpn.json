@@ -51,7 +51,7 @@
   },
   {
     "id": 10,
-    "question_annotated": "{dev,公衆電話}からの通話は、1分ごとに{currency,￥}{price1,10}掛かります。{t,16}分を過ぎると、その料金は1分あたり{currency,￥}{price2,8}に下がります。{total,36}分の通話料金はいくらですか？\n\n#init:\n- dev = sample(['公衆電話', 'ホテルの電話'])\n- currency = sample(currencies_sym)\n- $price1 = range(10, 30)\n- $price2 = range(5, 20)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(price1 * t)\n- is_int((total-t) * price2)\n- price2 < price1\n- t < total\n\n#answer: int((price1 * t) + price2*(total-t))",
+    "question_annotated": "{dev,公衆電話}からの通話は、1分ごとに{currency,￥}{price1,10}掛かります。{t,16}分を過ぎると、その料金は1分あたり{currency,￥}{price2,8}に下がります。{total,36}分の通話料金はいくらですか？\n\n#init:\n- dev = sample(['公衆電話', 'ホテルの電話'])\n- currency = sample(currencies_sym)\n- $price1 = range(10, 30)\n- $price2 = range(5, 20)\n- $t = range(10, 50)\n- $total = range(36, 100)\n\n#conditions:\n- is_int(price1 * t)\n- is_int((total-t) * price2)\n- price2 < price1\n- t < total\n\n#answer: ensure_int((price1 * t) + price2*(total-t))",
     "count": 100
   },
   {
@@ -96,7 +96,7 @@
   },
   {
     "id": 19,
-    "question_annotated": "{n,60}問のクイズのうち問題の{p1,40}%は{s1,簡単}のであり、残りは{s2,普通}の問題と{s3,難しい}のに等しく分けられています。{name,まさる}が{s1,簡単}な問題の{r1,75}%は確実に正解でき、{s2,普通}の問題と{s3,難しい}問題は{frac_txt,半分}を正解できるとすると、確実には何点取れますか？\n\n#init:\n- s1, s2, s3 = sample([\"歴史\", \"地理\", \"生物\", \"化学\", \"物理\", \"経済\", \"文学\", \"代数\", \"幾何\" ], 3)\n- name = sample(names)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: int(n * (p1/100) * (r1/100)) + int(n*(1-(p1/100))*frac_val)",
+    "question_annotated": "{n,60}問のクイズのうち問題の{p1,40}%は{s1,簡単}のであり、残りは{s2,普通}の問題と{s3,難しい}のに等しく分けられています。{name,まさる}が{s1,簡単}な問題の{r1,75}%は確実に正解でき、{s2,普通}の問題と{s3,難しい}問題は{frac_txt,半分}を正解できるとすると、確実には何点取れますか？\n\n#init:\n- s1, s2, s3 = sample([\"歴史\", \"地理\", \"生物\", \"化学\", \"物理\", \"経済\", \"文学\", \"代数\", \"幾何\" ], 3)\n- name = sample(names)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)",
     "count": 100
   },
   {
@@ -226,7 +226,7 @@
   },
   {
     "id": 45,
-    "question_annotated": "{name,のぼる}は長さ{length,111}{unit_length,メートル}の花壇を持っています。{name,のぼる}はその花壇を植物でいっぱいにしたいと思っています。{name,のぼる}の花は幅{plant_width,12}センチメートルまで育ち、園芸の目安では花壇に沿って{space,1.5}{unit_length,メートル}ごとに1本の花を植えるとされています。{name,のぼる}はすでに{owned,17}本の花を持っています。開花する植物は1本{cost,6}ドルです。花壇をいっぱいにするために、{name,のぼる}は店でいくら使いますか？\n\n#init:\n- name = sample(names)\n- unit_length = sample(['メートル'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: int((length / space - owned) * cost)",
+    "question_annotated": "{name,のぼる}は長さ{length,111}{unit_length,メートル}の花壇を持っています。{name,のぼる}はその花壇を植物でいっぱいにしたいと思っています。{name,のぼる}の花は幅{plant_width,12}センチメートルまで育ち、園芸の目安では花壇に沿って{space,1.5}{unit_length,メートル}ごとに1本の花を植えるとされています。{name,のぼる}はすでに{owned,17}本の花を持っています。開花する植物は1本{cost,6}ドルです。花壇をいっぱいにするために、{name,のぼる}は店でいくら使いますか？\n\n#init:\n- name = sample(names)\n- unit_length = sample(['メートル'])\n- cur = sample(currencies_sym)\n- $length = range(110, 220)\n- $plant_width = range(2, 13)\n- $space = arange(1, 20, 0.25)\n- $owned = range(10, 30)\n- $cost = range(3, 15)\n\n#conditions:\n- plant_width * 3 < length\n- plant_width < space\n- is_int(length / space)\n- length / space > owned\n\n#answer: ensure_int((length / space - owned) * cost)",
     "count": 100
   },
   {
@@ -246,7 +246,7 @@
   },
   {
     "id": 49,
-    "question_annotated": "{name,まさひろ}は{n,3}つのアパート団地からごみを回収しています。最初の{n_first_txt,2}つにはそれぞれ{a,200}戸の部屋があり、最後の1つはその{n_first_txt,2}つを合わせた数より{p,60}%多いです。各場所から週に{f,3}回ごみを回収し、1戸あたり1回の回収につき{cur,￥}{r,40}の報酬を受け取ります。全部で1週間にいくら稼ぎますか？\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = range(20, 60, 5)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
+    "question_annotated": "{name,まさひろ}は{n,3}つのアパート団地からごみを回収しています。最初の{n_first_txt,2}つにはそれぞれ{a,200}戸の部屋があり、最後の1つはその{n_first_txt,2}つを合わせた数より{p,60}%多いです。各場所から週に{f,3}回ごみを回収し、1戸あたり1回の回収につき{cur,￥}{r,40}の報酬を受け取ります。全部で1週間にいくら稼ぎますか？\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- n_first_txt, n_first_val = range_str(2, 7, 1, numbers)\n- $a = range(100, 500, 50)\n- $p = range(20, 81, 5)\n- $f = range(2, 6)\n- $r = range(20, 60, 5)\n\n#conditions:\n- n_first_val == n-1\n- is_int((n-1)*a*p/100)\n- is_int(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)\n\n\n#answer: round(((n-1)*a + (n-1)*a + (n-1)*a*p/100) * f * r)",
     "count": 100
   },
   {
@@ -256,7 +256,7 @@
   },
   {
     "id": 51,
-    "question_annotated": "{name,やすお}は{location,市場}で{product,花}を売ります。{item1,マリーゴールド}、{item2,ペチュニア}と{item3,ひまわり}の3種類の{product,花}を売っています。ふだんは、{item1,マリーゴールド}を1{unit,鉢}あたり{cur,￥}{p1,275}、{item2,ペチュニア}を1{unit,鉢}あたり{cur,￥}{p2,180}、{item3,ひまわり}を1{unit,鉢}あたり{cur,￥}{p3,210}で売っています。今日はおつりが足りないので、すべての値段を最も近い￥100の位に丸めることにしました。{name,やすお}が{item1,マリーゴールド}を{n1,12}{unit,鉢}、{item2,ペチュニア}を{n2,9}{unit,鉢}、{item3,ひまわり}を{n3,17}{unit,鉢}売ると、売上はいくらになりますか？\n\n#init:\n- name = sample(names)\n- product = sample([\"花\", \"花束\", \"植物\"])\n- location = sample([\"市場\", \"屋台\", \"家の前\"])\n- item1, item2, item3 = sample([\"薔薇\", \"マリーゴールド\", \"チューリップ\", \"ペチュニア\", \"ひまわり\", \"ラベンダー\"], 3)\n- unit = sample([\"束\", \"かご\", \"花束\", \"ひとまとめ\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(250, 300, 5)\n- $p2 = arange(150, 250, 10)\n- $p3 = arange(200, 400, 10)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*round(p1, -2) + n2*round(p2, -2) + n3*round(p3, -2)",
+    "question_annotated": "{name,やすお}は{location,市場}で{product,花}を売ります。{item1,マリーゴールド}、{item2,ペチュニア}と{item3,ひまわり}の3種類の{product,花}を売っています。ふだんは、{item1,マリーゴールド}を1{unit,鉢}あたり{cur,￥}{p1,275}、{item2,ペチュニア}を1{unit,鉢}あたり{cur,￥}{p2,180}、{item3,ひまわり}を1{unit,鉢}あたり{cur,￥}{p3,210}で売っています。今日はおつりが足りないので、すべての値段を最も近い￥100の位に丸めることにしました。{name,やすお}が{item1,マリーゴールド}を{n1,12}{unit,鉢}、{item2,ペチュニア}を{n2,9}{unit,鉢}、{item3,ひまわり}を{n3,17}{unit,鉢}売ると、売上はいくらになりますか？\n\n#init:\n- name = sample(names)\n- product = sample([\"花\", \"花束\", \"植物\"])\n- location = sample([\"市場\", \"屋台\", \"家の前\"])\n- item1, item2, item3 = sample([\"薔薇\", \"マリーゴールド\", \"チューリップ\", \"ペチュニア\", \"ひまわり\", \"ラベンダー\"], 3)\n- unit = sample([\"束\", \"かご\", \"花束\", \"ひとまとめ\"])\n- cur = sample(currencies_sym)\n- $p1 = arange(250, 300, 5)\n- $p2 = arange(150, 250, 10)\n- $p3 = arange(200, 400, 10)\n- $n1 = range(5, 21)\n- $n2 = range(15, 31)\n- $n3 = range(35, 41)\n\n\n#answer: n1*int((p1 + 50) // 100 * 100) + n2*int((p2 + 50) // 100 * 100) + n3*int((p3 + 50) // 100 * 100)",
     "count": 100
   },
   {
@@ -401,7 +401,7 @@
   },
   {
     "id": 80,
-    "question_annotated": "自動販売機で、{cur,￥}{price1,150}の{item1,ポカリスエット}と{cur,￥}{price2,180}の{item2,ほうじ茶}が売られています。{name,のりゆき}は{cur,￥}{total,5000}を使い、{item1,ポカリスエット}を{n1,3}本買ったところ、おつりとして所持金の{p,1}%が残りました。彼は{item2,ほうじ茶}を何本買いましたか？\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['ポカリスエット', '煎茶', 'ほうじ茶', '緑茶', '烏龍茶', '午後の紅茶'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(100, 200, 10)\n- $price2 = range(100, 200, 10)\n- $total = range(1000, 10000, 1000)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: int((total * (100 - p) - n1 * price1) / price2)",
+    "question_annotated": "自動販売機で、{cur,￥}{price1,150}の{item1,ポカリスエット}と{cur,￥}{price2,180}の{item2,ほうじ茶}が売られています。{name,のりゆき}は{cur,￥}{total,5000}を使い、{item1,ポカリスエット}を{n1,3}本買ったところ、おつりとして所持金の{p,1}%が残りました。彼は{item2,ほうじ茶}を何本買いましたか？\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['ポカリスエット', '煎茶', 'ほうじ茶', '緑茶', '烏龍茶', '午後の紅茶'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(100, 200, 10)\n- $price2 = range(100, 200, 10)\n- $total = range(1000, 10000, 1000)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) / 100 > n1 * price1\n- (total * (100 - p) / 100 - n1 * price1) % price2 == 0\n\n#answer: ensure_int((total * (100 - p) / 100 - n1 * price1) / price2)",
     "count": 100
   },
   {
@@ -421,7 +421,7 @@
   },
   {
     "id": 84,
-    "question_annotated": "{name,しずか}は1株あたり{cur,￥}{p,800}で、ある会社の株を{n,8}株買いました。{name,しずか}がその株を保有した1年目に株価は{r1,50}%上がり、2年目には{r2,25}%下がりました。{name,しずか}が保有する株の最終的な価値はいくらですか？\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(500, 10000, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: int(n * p * (1 + r1/100) * (1 - r2/100))",
+    "question_annotated": "{name,しずか}は1株あたり{cur,￥}{p,800}で、ある会社の株を{n,8}株買いました。{name,しずか}がその株を保有した1年目に株価は{r1,50}%上がり、2年目には{r2,25}%下がりました。{name,しずか}が保有する株の最終的な価値はいくらですか？\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(500, 10000, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))",
     "count": 100
   },
   {
@@ -471,7 +471,7 @@
   },
   {
     "id": 94,
-    "question_annotated": "{n,100}人が{company,グーグル}に応募します。応募した人のうち、面接を受けられるのはわずか{p1,30}%です。面接を受けた人のうち、{p2,20}%が内定をもらいます。内定をもらった人のうち、{frac_txt,3分の1}がその内定を承諾します。何人が内定を承諾しますか？\n\n#init:\n- company = sample([\"グーグル\", \"アップル\", \"NEC\", \"パナソニック\", \"ソニー\", \"ソフトバンク\", \"NTT\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: int(n * (p1/100) * (p2/100) * frac_val)",
+    "question_annotated": "{n,100}人が{company,グーグル}に応募します。応募した人のうち、面接を受けられるのはわずか{p1,30}%です。面接を受けた人のうち、{p2,20}%が内定をもらいます。内定をもらった人のうち、{frac_txt,3分の1}がその内定を承諾します。何人が内定を承諾しますか？\n\n#init:\n- company = sample([\"グーグル\", \"アップル\", \"NEC\", \"パナソニック\", \"ソニー\", \"ソフトバンク\", \"NTT\"])\n- $n = range(100, 1001, 10)\n- $p1 = range(10, 51)\n- $p2 = range(10, 51)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (p2/100))\n- is_int(n * (p1/100) * (p2/100) * frac_val)\n\n#answer: ensure_int(n * (p1/100) * (p2/100) * frac_val)",
     "count": 100
   },
   {

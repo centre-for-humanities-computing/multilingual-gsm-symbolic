@@ -1,37 +1,7 @@
 [
   {
-    "id": 1,
-    "question_annotated": "Sebuah kabut bergerak dari laut untuk menutupi sebuah kota. Dibutuhkan {t,10} menit untuk menutupi setiap {d,3} kilometer kota. Jika kota tersebut memiliki lebar {y,42} kilometer dari tepi pantai hingga tepi daratan seberang, berapa menit yang dibutuhkan agar kabut tersebut menutupi seluruh kota?\n\n#init:\n- $t = range(2, 500)\n- $d = range(2, 100)\n- $y=range(2, 100)\n\n#conditions:\n- is_int(y/d)\n\n#answer: y//d*t",
-    "count": 100
-  },
-  {
-    "id": 3,
-    "question_annotated": "Sebuah {g,kelompok} dari {n, 50} siswa memiliki berbagai hobi. {n_1, 10} suka {h_1, memanggang}, {n_2, 5} suka bermain {h_2, bola basket}, dan sisanya suka baik {h_3, main video game} atau {h_4, bermain musik}. Berapa banyak yang suka {h_3, main video game} jika jumlah yang suka {h_4, bermain musik} adalah dua kali jumlah yang lebih suka bermain {h_2, bola basket}?\n\n#init:\n- g = sample([\"kelompok\", \"kelas\"])\n- h_2 = sample(sports)\n- h_1, h_3, h_4 = sample(['membaca', 'melukis', 'mendaki', 'menari', 'memanggang', 'main video game', 'bermain musik'], 3)\n- $n = range(5, 200)\n- $n_1 = range(2, 200)\n- $n_2 = range(2, 200)\n\n#conditions:\n- n_1 < n\n- n_2 < n\n- n - (n_1 + n_2) - (2 * n_2) > 0\n\n#answer: int(n - (n_1 + n_2) - (2 * n_2))",
-    "count": 100
-  },
-  {
-    "id": 4,
-    "question_annotated": "{name,Garrett} sedang membuat popcorn untuk camilan. Saat {p, wajan} berisi butiran jagung dipanaskan, butiran-butiran tersebut mulai meletup lebih cepat. {n,20} meletup dalam {s, 30} detik pertama memasak, kemudian {k_2_txt,tiga} kali jumlah itu dalam {s, 30} detik berikutnya. Butiran-butiran meningkat menjadi {k_3_txt,empat} kali laju meletup awal dalam {s, 30} detik berikutnya, tetapi dalam {s, 30} detik terakhir, meletup melambat menjadi setengah laju dari {s, 30} detik sebelumnya. Setelah {name,Garrett} mengangkat {p, wajan} dari panas, seperempat dari jumlah butiran yang meletup dalam {s, 30} detik terakhir memasak juga meletup dari panas sisa. Berapa banyak potongan popcorn yang harus dimakan {name,Garrett}?\n\n\n#init:\n- name = sample(names)\n- p = sample(['pan', 'pot', 'skillet'])\n- $n = range(10, 101, 10)\n- $s = range(10, 31, 2)\n- k_2_txt, k_2_val = range_str(2, 5, 1, numbers)\n- k_3_txt, k_3_val = range_str(3, 8, 1, numbers)\n\n#conditions:\n- k_3_val > k_2_val\n- divides(k_3_val * n, 8)\n\n#answer: n + (k_2_val * n + k_3_val * n) + (k_3_val * n // 2) + (k_3_val * n // 8)",
-    "count": 100
-  },
-  {
     "id": 6,
     "question_annotated": "{name,John} memiliki {x,10} {area,hektar} ladang {fruit,nanas}. Terdapat {k,100} {fruit,nanas} per {area,hektar}. {name, John} dapat memanen {fruit,nanas}nya setiap {n,3} bulan. Berapa banyak {fruit,nanas} yang dapat dipanen {name,John} dalam satu tahun?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- area = sample(['hektar', 'meter persegi'])\n- $x = range(5, 100, 5)\n- $k = range(2, 101)\n- $n = sample([1, 2, 3, 4, 6, 12])\n\n#answer: x * k * (12//n)",
-    "count": 100
-  },
-  {
-    "id": 11,
-    "question_annotated": "{name, Peter} ingin membuat es batu dengan berbagai ukuran dengan {n,32} {unit,gram} air. Dia bisa membuat kubus raksasa yang menggunakan {w1,4} {unit,gram} per kubus, kubus sedang yang menggunakan {w2,2} {unit,gram}, dan kubus kecil yang menggunakan {w3,1/2} {unit,gram}. Jika dia membuat {n1,3} kubus raksasa, {n2,7} kubus sedang, dan {n3,8} kubus kecil, berapa {unit,gram} air yang tersisa?\n\n#init:\n- name = sample(names_male)\n- unit = sample([\"gram\", \"g\"])\n- $w1 = range(4, 10)\n- $w2 = range(2, 10)\n- $w3 = sample(fractions)\n- $n1 = range(3, 10)\n- $n2 = range(7, 13)\n- $n3 = sample([8, 14, 24, 15])\n- $n = range(32, 240, 4)\n\n#conditions:\n- w3 < w2 < w1\n- is_int(n3 * w3)\n- n - (n1*w1) - (n2*w2) - int(n3*w3) > 0\n\n#answer: (n - (n1*w1) - (n2*w2) - int(n3*w3))",
-    "count": 100
-  },
-  {
-    "id": 12,
-    "question_annotated": "{name, Jaime} menempatkan {obj,telur} pada beberapa {surface,nampan}. Setiap {surface,nampan} dapat menampung {x,24} {obj,telur}. Jika ia memiliki {n,64} {obj,telur} dan {k,2} {surface,nampan}, berapa banyak {obj,telur} yang tidak dapat ia tempatkan pada {surface,nampan}?\n\n#init:\n- name = sample(names_male)\n- obj = sample([\"olive\", \"almond\", \"cookie\", \"cracker\", \"banana\"])\n- surface = sample([\"plate\", \"table\", \"bowl\", \"tray\", \"basket\"])\n- $x = range(20, 51)\n- $k = range(2, 30)\n- $n = range(60, 350, 2)\n\n#conditions:\n- k * x < n\n\n#answer: n - k*x",
-    "count": 100
-  },
-  {
-    "id": 13,
-    "question_annotated": "{name,Mary} adalah seorang tukang kebun yang antusias. {time, kemarin}, ia menerima {x,18} tanaman dalam pot baru dari pembibitan tanaman favoritnya. Ia sudah memiliki {r,2} tanaman dalam pot di setiap dari {w,40} ambang jendela rumah pedesaannya yang besar. Merasa murah hati, ia memutuskan akan memberikan {n,1} tanaman dalam pot dari setiap ambang jendela kepada teman dan keluarga besok. Berapa banyak tanaman dalam pot yang akan tersisa bagi {name,Mary}?\n\n#init:\n- name = sample(names_female)\n- time = sample([\"Minggu lalu\", \"Dua hari yang lalu\", \"Tadi malam\"])\n- $x = range(18, 50)\n- $r = range(2, 13)\n- $w = range(40, 70)\n- $n = range(1, 8)\n\n#conditions:\n- w * r + x - w*n > 0\n\n#answer: w * r + x - w*n",
     "count": 100
   },
   {
@@ -40,73 +10,13 @@
     "count": 100
   },
   {
-    "id": 15,
-    "question_annotated": "Anjing {name1, Jennifer} memiliki {n1, 8} anak anjing, {k1,3} di antaranya memiliki bintik. Anjing {name2, Brandon} memiliki {n2,12} anak anjing, {k2,4} di antaranya memiliki bintik. Berapa persen dari semua anak anjing yang memiliki bintik?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $n1 = range(4, 16)\n- $n2 = range(4, 20)\n- $k1 = range(2, 12)\n- $k2 = range(2, 12)\n\n#conditions:\n- k1 < n1\n- k2 < n2\n- divides(n1 + n2, k1 + k2)\n- is_int(100 * (k1+k2) / (n1+n2))\n\n#answer: int(100 * (k1+k2) / (n1+n2))",
-    "count": 100
-  },
-  {
-    "id": 16,
-    "question_annotated": "{name, Sunny} menjual {food,kue jahe} dan pie {fruit,apel} untuk penggalangan dana. Pada {d1,Sabtu}, ia menjual {n1,10} kotak {food,kue jahe} dan {m1,4} kotak pie {fruit,apel} lebih sedikit daripada pada {d2,Minggu}. Pada {d2,Minggu}, ia menjual {n2,5} kotak {food,kue jahe} lebih banyak daripada pada {d1,Sabtu} dan {m2,15} kotak pie {fruit,apel}. Jika {food,kue jahe} harganya {cur,$}{cn,6} dan pie {fruit,apel} harganya {cur,$}{cm,15}, berapa banyak yang {name,Sunny} hasilkan selama dua hari?\n\n#init:\n- name = sample(names_male)\n- fruit = sample(fruits)\n- cur = sample(currencies_sym)\n- food = sample([\"kue jahe\", \"kue kering\", \"brownies\", \"muffin\", \"cupcake\"])\n- d1, d2 = sample_sequential(weekdays, 2)\n- $n1 = range(21, 30)\n- $n2 = range(11, 15)\n- $m1 = range(4, 20)\n- $m2 = range(15, 30)\n- $cn = range(7, 13)\n- $cm = range(20, 33)\n\n#conditions:\n- m1 < m2\n\n#answer: (2*n1+n2)*cn + (2*m2-m1)*cm",
-    "count": 100
-  },
-  {
-    "id": 18,
-    "question_annotated": "{name,Raphael} pergi membeli beberapa perlengkapan sekolah. Dia membeli {n1,4} {obj1,pena} yang harganya {cur,$}{c1,1.5} masing-masing, {n2,2} {obj2,buku catatan} yang harganya {cur,$}{c2,4} masing-masing, dan satu rim kertas ikatan yang harganya {cur,$}{c3,20}. Berapa banyak yang dihabiskan {name,Raphael} untuk semuanya?\n\n#init:\n- name = sample(names_male)\n- obj1, obj2 = sample([\"buku catatan\", \"pensil\", \"penghapus\", \"krayon\", \"pensil warna\", \"spidol\", \"penggaris\", \"folder\"], 2)\n- cur = sample(currencies_sym)\n- $n1 = range(4, 25, 2)\n- $c1 = arange(1.5, 11.5, 0.25)\n- $n2 = range(2, 15, 2)\n- $c2 = arange(4, 19.5, 0.25)\n- $c3 = range(10, 25)\n\n#conditions:\n- is_int(n1 * c1)\n- is_int(n2 * c2)\n#answer: int(n1*c1 + n2*c2 + c3)",
-    "count": 100
-  },
-  {
-    "id": 19,
-    "question_annotated": "Dalam kuis {n,60} soal, {p1,40}% dari soal-soal adalah {s1,mudah}, dan sisanya dibagi sama rata sebagai soal-soal {s2,rata-rata} dan {s3,sulit}. Jika {name,Aries} pasti mendapatkan {r1,75}% dari soal-soal {s1,mudah}, dan {frac_txt,setengah} dari soal-soal {s2,rata-rata} dan {s3,sulit} dengan benar, berapa poin yang pasti dia dapatkan?\n\n#init:\n- s1, s2, s3 = sample([\"sejarah\", \"geografi\", \"biologi\", \"kimia\", \"fisika\", \"ekonomi\", \"sastra\", \"aljabar\", \"geometri\" ], 3)\n- name = sample(names_female)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $p1 = range(5, 71, 5)\n- $r1 = range(5, 101, 5)\n- $n = range(10, 151, 10)\n\n#conditions:\n- is_int(n * (p1/100))\n- is_int(n * (p1/100) * (r1/100))\n- is_int(n*(1-(p1/100))*frac_val)\n\n#answer: ensure_int(n * (p1/100) * (r1/100)) + ensure_int(n*(1-(p1/100))*frac_val)",
-    "count": 100
-  },
-  {
-    "id": 22,
-    "question_annotated": "{name,Julia} sedang mempersiapkan {event,pesta makan malam} di rumahnya, di mana ia berencana untuk menyajikan {food,sup}. Ia menyadari bahwa ia kehabisan {obj,sendok} plastik, jadi ia membeli paket {obj,sendok} baru. Kemudian, suaminya juga membeli paket {n1,5} {obj,sendok} baru dan memberikannya kepada {name,Julia}. Saat {name,Julia} membuat {food,sup}, ia menggunakan {n2_txt,tiga} {obj,sendok} untuk mencicipi {food,sup}nya. Kemudian, ketika ia pergi menata meja, ia memiliki total {total,12} {obj,sendok}. Berapa banyak {obj,sendok} yang ada dalam paket yang dibeli {name,Julia}?\n\n#init:\n- name = sample(names_female)\n- event = sample([\"pesta makan siang\", \"pesta ulang tahun\", \"pesta potluck\", \"baby shower\", \"pesta permainan\"])\n- food = sample([\"ayam panggang\", \"salmon panggang\", \"sup daging sapi\", \"lasagna sayuran\", \"paprika isi\", \"udang scampi\", \"creme brulee\"])\n- obj = sample([\"sendok\", \"garpu\", \"piring\"])\n- $n1 = range(5, 20)\n- n2_txt, n2_val = range_str(3, 10, 1, numbers)\n- $total = range(12, 40)\n\n#conditions:\n- total+n2_val-n1 > 0\n\n#answer: total+n2_val-n1",
-    "count": 100
-  },
-  {
     "id": 23,
     "question_annotated": "{name,Martha} sedang merajut pakaian musim dingin untuk {count,3} cucunya. Mereka {children,kembar tiga}, jadi mereka semua berukuran sama. Ia ingin membuat {c1,topi}, {c2,syal}, {c3,sweater}, {c4,sarung tangan}, dan {c5,kaus kaki} untuk masing-masing dari mereka. Dibutuhkan {n1,2} gulung wol untuk membuat {c1,topi}, {n2,4} untuk {c2,syal}, {n3,12} untuk {c3,sweater}, {n4,1} untuk sepasang {c4,sarung tangan}, dan {n5,2} untuk sepasang {c5,kaus kaki}. Berapa gulung wol yang harus ia beli?\n\n#init:\n- name = sample(names_female)\n- c1, c2, c3 = sample([\"sweater\", \"shawl\", \"hat\", \"cardigan\", \"poncho\", \"vest\", \"beanie\", \"tunic\"],3)\n- c4, c5 = sample([ \"mittens\", \"booties\", \"socks\",  \"leg warmers\", \"gloves\"], 2)\n- n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5)\n- children, count = sample([(\"twins\",2), (\"triplets\",3), (\"quadruplets\", 4),  (\"quintuplets\", 5)])\n\n#answer: count*(n1+n2+n3+n4+n5)",
     "count": 100
   },
   {
-    "id": 24,
-    "question_annotated": "Menurut informasi nutrisinya, sekantong {food,keripik} memiliki {cal,250} kalori per sajian. Jika sekantong {size,300} {unit,gram} memiliki {n,5} sajian, berapa {unit,gram} yang bisa Anda makan jika target kalori harian Anda adalah {total,2000} dan Anda sudah mengonsumsi {spent,1800} kalori?\n\n#init:\n- food = sample([\"popcorn\", \"breads\",  \"cookies\"])\n- unit = sample([\"gram\", \"g\"])\n- $cal = range(150, 500, 25)\n- $size = range(100, 400, 25)\n- $n = range(4, 8)\n- $total = range(1900, 2500, 5)\n- $spent = range(600, 1900, 25)\n\n#conditions:\n- spent < total\n- is_int( 5 * (total - spent) / cal)\n- divides(size, n)\n- divides(size//n, (total-spent)/cal)\n\n#answer: size//n * Fraction((total-spent)/cal)",
-    "count": 100
-  },
-  {
-    "id": 25,
-    "question_annotated": "Dalam kelas {teacher,Pak Roper} yang beranggotakan {total,30} siswa, {p1,20}% dari kelas adalah {group1,pemain sepak bola}. Dari sisa kelas, {p2,25}% dari siswa adalah {group2,pemandu sorak} atau bagian dari {group3,band}. Ketiga kelompok siswa ini perlu pergi lebih awal hari ini untuk bepergian ke {event,permainan} tandang. Berapa banyak siswa yang pergi lebih awal?\n\n#init:\n- teacher = sample(['Ms. Johnson', 'Mr. Smith', 'Dr. Lee', 'Mrs. Garcia'])\n- group1 = sample(['pemain sepak bola', 'pemain basket', 'pemain voli', 'perenang'])\n- group2, group3 = sample(['penari', 'anggota paduan suara', 'anggota tim debat', 'anggota klub robotika'],  2)\n- event = sample(['kompetisi', 'turnamen', 'pertunjukan', 'pertemuan'])\n- $total = range(20, 150)\n- $p1 = range(10, 50)\n- $p2 = range(15, 45)\n\n#conditions:\n- p1 < 100\n- p2 < 100\n- is_int(total * p1 / 100)\n- is_int((total - total * p1 / 100) * p2 / 100)\n\n#answer: int(total * p1 / 100 + (total - total * p1 / 100) * p2 / 100)",
-    "count": 100
-  },
-  {
-    "id": 27,
-    "question_annotated": "{name,James} menerima {n,80} email per hari. {p,20}% dari email tersebut tidak memerlukan balasan. Dia membalas sisanya. Berapa banyak email yang dibalas {name,James} dalam minggu kerja {d,5} hari?\n\n#init:\n- name = sample(names)\n- $n = range(50, 200)\n- $p = range(5, 40)\n- $d = range(3, 7)\n\n#conditions:\n- is_int(n * p / 100)\n- is_int(n * (100 - p) / 100)\n\n#answer: d * (n * (100 - p) / 100)",
-    "count": 100
-  },
-  {
-    "id": 28,
-    "question_annotated": "Sebuah {facility,rumah sakit} memiliki kapasitas {total,1000} {item,kasur} dengan {frac,1/5} terisi. Karena {event,wabah coronavirus}, {daily,50} pasien diterima di {facility,rumah sakit} setiap hari. Hitung total jumlah {item,kasur} yang tidak terisi di {facility,rumah sakit} setelah {period,2} minggu.\n\n#init:\n- facility = sample([\"hospital\", \"clinic\", \"medical center\", \"care facility\"])\n- item = sample([\"bed\", \"room\", \"ward\"])\n- event = sample([\"flu season\", \"natural disaster\", \"major accident\", \"pandemic\"])\n- $total = range(500, 2000, 100)\n- $frac = sample(fractions)\n- $daily = range(20, 100, 5)\n- $period = range(2, 5)\n\n#conditions:\n- is_int(total * frac)\n- total * frac + daily * period * 7 < total\n\n#answer: total - (total * frac + daily * period * 7)",
-    "count": 100
-  },
-  {
     "id": 31,
     "question_annotated": "{name1,Mia} dan {name2,Emma} saat ini berbeda usia {age_diff,16} tahun. Jika {name1,Mia}, yang lebih muda dari {name2,Emma}, berusia {age1,40} tahun, berapakah rata-rata usia mereka?\n\n#init:\n- name1, name2 = sample(names, 2)\n- $age_diff = range(5, 30)\n- $age1 = range(15, 75)\n\n#conditions:\n- is_int((2*age1 + age_diff) / 2)\n\n#answer: (2*age1 + age_diff) // 2",
-    "count": 100
-  },
-  {
-    "id": 33,
-    "question_annotated": "{name1,Carol} dan {name2,Jennifer} adalah saudara perempuan dari {city,Los Angeles} yang suka mengumpulkan tanda tangan dari {celebrity_type,selebriti}. Selama {vacation_type,liburan musim panas} mereka dari sekolah, para saudara perempuan menghabiskan setiap sore mengumpulkan tanda tangan. Setelah {n1_txt,lima} minggu, {name1,Carol} dan {name2,Jennifer} membandingkan buku tanda tangan mereka, menghitung jumlah tanda tangan yang telah dikumpulkan masing-masing saudara perempuan. {name1,Carol} memiliki {s1,20} tanda tangan di bukunya, dan {name2,Jennifer} memiliki {s2,44}. Para saudara perempuan memiliki {n2_txt,tiga} minggu lagi dari {vacation_type,liburan musim panas}, dan mereka memutuskan ingin mencapai {goal,100} tanda tangan bersama mereka sebelum akhir liburan. Berapa banyak tanda tangan yang perlu dikumpulkan para saudara perempuan untuk mencapai tujuan mereka?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- city = sample(cities)\n- celebrity_type = sample([\"movie stars\", \"athletes\", \"musicians\", \"politicians\", \"authors\"])\n- vacation_type = sample([\"winter break\", \"spring break\", \"summer break\", \"fall break\"])\n- n1_txt, n1_val = range_str(3, 8, 1, numbers)\n- n2_txt, n2_val = range_str(2, 5, 1, numbers)\n- $s1 = range(15, 40)\n- $s2 = range(30, 60)\n- $goal = range(90, 150, 5)\n\n#conditions:\n- s1 + s2 < goal\n\n#answer: goal - (s1 + s2)",
-    "count": 100
-  },
-  {
-    "id": 36,
-    "question_annotated": "{name,Toula} pergi ke {shop,toko roti} dan membeli berbagai jenis {item,kue}. Dia membeli {n1,3} lusin {item1,donat} yang harganya ${p1,68} per lusin, {n2,2} lusin {item2,mini cupcakes} yang harganya ${p2,80} per lusin, dan {n3,6} lusin {item3,mini cheesecakes} seharga ${p3,55} per lusin. Berapa total biayanya?\n\n#init:\n- name = sample(names_female)\n- shop = sample([\"toko roti\", \"patiseri\", \"konditori\", \"kafe\"])\n- item = sample([\"kue\", \"produk panggang\", \"dessert\", \"camilan\"])\n- item1 = sample([\"donat\", \"croissant\", \"eclair\", \"danish\"])\n- item2 = sample([\"mini cupcakes\", \"macaron\", \"kue kering\", \"tart\"])\n- item3 = sample([\"mini cheesecakes\", \"brownie\", \"muffin\", \"scone\"])\n- $n1 = range(1, 10)\n- $n2 = range(4, 10)\n- $n3 = range(2, 10)\n- $p1 = range(11, 21)\n- $p2 = range(73, 90)\n- $p3 = range(112, 120)\n\n#answer: n1 * p1 + n2 * p2 + n3 * p3",
-    "count": 100
-  },
-  {
-    "id": 38,
-    "question_annotated": "Satu potong {item1,roti} di {shop,toko roti} harganya {currency,$}{price1,2}. {item2,bagel} harganya {currency,$}{price2,1} masing-masing. Berapa lebih banyak harga {n1,3} potong {item1,roti} dibandingkan {n2,2} {item2,bagel}?\n\n#init:\n- item1 = sample([\"bread\", \"sourdough\"])\n- item2 = sample([\"bagel\", \"muffin\", \"croissant\", \"biscuit\"])\n- shop = sample([\"bakery\", \"cafe\", \"store\", \"market\"])\n- currency = sample(currencies_sym)\n- $price1 = range(2, 10)\n- $price2 = range(1, 5)\n- $n1 = range(2, 10)\n- $n2 = range(2, 10)\n\n#conditions:\n- n1 * price1 > n2 * price2\n\n#answer: n1 * price1 - n2 * price2",
     "count": 100
   },
   {
@@ -120,53 +30,8 @@
     "count": 100
   },
   {
-    "id": 42,
-    "question_annotated": "{name,Roger} pergi ke toko untuk membeli beberapa {item,kopi}. Merek {item,kopi} normal yang ia beli harganya {cur,Rp}{price,5} per {unit,kilogram}. Ia harus membeli merek yang lebih mahal yang harganya {percent,20}% lebih mahal karena merek favoritnya habis terjual. Ia memutuskan untuk membeli {item,kopi} untuk satu minggu dan ia menggunakan {usage,1} {unit,kilogram} {item,kopi} per hari. Ia juga memutuskan untuk membeli {extra_item,donat} untuk dirinya sendiri seharga {cur,Rp}{extra_price,2}. Berapa total biaya semuanya?\n\n#init:\n- name = sample(names_male)\n- item = sample(['teh', 'gula', 'tepung', 'beras'])\n- cur = sample(currencies_sym)\n- unit = sample(['kilogram', 'kg'])\n- extra_item = sample(['kue', 'muffin', 'bagel'])\n- $price = range(3, 25)\n- $percent = range(10, 50, 5)\n- $usage = range(1, 3)\n- $extra_price = range(1, 5)\n\n#conditions:\n- is_int(price * percent / 100)\n\n#answer: (price + price * percent / 100) * 7 * usage + extra_price",
-    "count": 100
-  },
-  {
-    "id": 43,
-    "question_annotated": "{name,Dax} pergi ke {place,kebun} mereka untuk memetik beberapa {fruit,apel} dan menemukan {frac_txt,setengah} sebanyak {insect1,kumbang} dibandingkan {insect2,semut} di {location,taman}. Jika ada {n,50} {insect2,semut}, hitung total jumlah serangga di {location,taman}.\n\n#init:\n- name = sample(names)\n- place = sample([\"orchard\", \"backyard\", \"greenhouse\", \"allotment\"])\n- fruit = sample([\"strawberries\", \"cherries\", \"blueberries\", \"raspberries\"])\n- location = sample([\"garden\", \"field\", \"plot\", \"patch\"])\n- insect1, insect2 = sample([\"beetles\", \"ladybugs\", \"grasshoppers\", \"caterpillars\", \"bees\", \"wasps\"], 2)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n = range(20, 201)\n\n#conditions:\n- is_int(n * frac_val)\n\n#answer: n + int(n * frac_val)",
-    "count": 100
-  },
-  {
-    "id": 44,
-    "question_annotated": "Ada {n,6} perempuan di {place,taman}. Jika ada {mult_txt,dua kali} jumlah anak laki-laki di {place,taman}, berapa banyak anak di {place,taman}?\n\n#init:\n- place = sample(['park', 'yard', 'field', 'playground', 'garden'])\n- $n = range(5, 51)\n- mult_txt, mult_val = sample(multi_times)\n\n#conditions:\n- is_int(n * mult_val + 1)\n- n * (mult_val + 1) <= 200\n\n#answer: n * (mult_val + 1)",
-    "count": 100
-  },
-  {
-    "id": 46,
-    "question_annotated": "{school,SMA Apple} sedang mengadakan upacara kelulusan di {venue,Pusat Seni Rupa} mereka tahun ini yang memiliki ruang untuk {total,6000} orang. Setelah memperhitungkan {graduates,950} kursi untuk lulusan dan {faculty,300} kursi untuk fakultas yang hadir, berapa banyak tiket yang akan diterima setiap lulusan untuk diberikan kepada teman dan keluarga mereka jika tiketnya dibagi rata?\n\n#init:\n- school = sample([\"Oakwood High School\", \"Riverside Academy\", \"Sunnyside High\", \"Greenville High School\"])\n- venue = sample([\"Auditorium\", \"Gymnasium\", \"Sports Arena\", \"Convention Center\"])\n- $total = range(3000, 10000, 100)\n- $graduates = range(100, 1500, 50)\n- $faculty = range(100, 500, 50)\n\n#conditions:\n- total > graduates + faculty\n- is_int((total - graduates - faculty) / graduates)\n\n#answer: (total - graduates - faculty) // graduates",
-    "count": 100
-  },
-  {
-    "id": 48,
-    "question_annotated": "{name,Emily} dapat mengupas {n1,6} {food,udang} per menit dan menumis {n2,30} {food,udang} dalam {t,10} menit. Berapa lama waktu yang dibutuhkan untuk mengupas dan menumis {total,90} {food,udang}? {name,Emily} tidak dapat mengupas dan menumis pada saat yang sama.\n\n#init:\n- name = sample(names_female)\n- food = sample([\"udang\", \"bawang\", \"wortel\", \"jamur\", \"kerang\"])\n- $n1 = range(4, 15)\n- $n2 = range(20, 50, 5)\n- $t = range(5, 20)\n- $total = range(60, 200, 10)\n\n#conditions:\n- divides(total, n1)\n- divides(total, n2)\n\n#answer: total // n1 + (total // n2) * t",
-    "count": 100
-  },
-  {
     "id": 53,
     "question_annotated": "{name1,Pierson} mencetak {n1,278} poin dalam satu permainan {game,bowling}. {name2,Nikita} mencetak {n2,11} poin lebih banyak dari {frac_txt,setengah} jumlah {name1,Pierson}. Berapa total poin yang dimiliki {name1,Pierson} dan {name2,Nikita}?\n\n#init:\n- name1, name2 = sample(names, 2)\n- game = sample([\"bowling\", \"darts\", \"archery\", \"basketball\", \"tennis\"])\n- $n1 = range(200, 500)\n- $n2 = range(5, 50)\n- frac_txt, frac_val = sample(fraction_alnum)\n\n#conditions:\n- is_int(frac_val * n1)\n\n#answer: n1 + int(frac_val * n1 + n2)",
-    "count": 100
-  },
-  {
-    "id": 54,
-    "question_annotated": "{name,Doxa} memotong sebuah {fruit,apel} utuh menjadi {total,18} potongan. Dia makan {n1,3} potongan, {sibling1,adik perempuannya} makan {n2,2} lebih banyak darinya, dan {sibling2,adik laki-lakinya} makan {n3,3} lebih banyak dari {sibling1,adik perempuannya}. Berapa banyak potongan {fruit,apel} yang mereka makan semua?\n\n#init:\n- name = sample(names_female)\n- fruit = sample([\"orange\", \"pear\", \"peach\", \"mango\", \"kiwi\"])\n- sibling1, sibling2 = sample([\"brother\", \"sister\", \"cousin\", \"friend\"], 2)\n- $total = range(6, 33)\n- $n1 = range(2, 15)\n- $n2 = range(2, 13)\n- $n3 = range(2, 14)\n\n#conditions:\n- n1 + (n1 + n2) + (n1 + n2 + n3) <= total\n\n#answer: n1 + (n1 + n2) + (n1 + n2 + n3)",
-    "count": 100
-  },
-  {
-    "id": 56,
-    "question_annotated": "Sebuah {container,gelas} {liquid,susu} adalah {vol,8} {unit,ons} {liquid,susu}. {name,John} minum {num,2} {container_plural,gelas} {liquid,susu}. Jika {liquid,susu} memiliki {cal,3} kalori per {unit,ons}, berapa kalori yang dia konsumsi?\n\n#init:\n- name = sample(names_male)\n- container, container_plural = sample([(\"gelas\",\"gelas\"), (\"cangkir\",\"cangkir\"), (\"botol\",\"botol\"), (\"karton\",\"karton\")])\n- liquid = sample([\"jus\", \"soda\", \"air berkarbonasi\", \"teh\", \"limun\"])\n- unit = sample([\"ons\", \"mL\", \"cc\", \"oz\"])\n- $vol = range(6, 16)\n- $num = range(2, 6)\n- $cal = range(2, 10)\n\n\n#answer: vol * num * cal",
-    "count": 100
-  },
-  {
-    "id": 57,
-    "question_annotated": "{name1,Ben} memiliki {n1,4} tabung cat {color1,biru} dan {n2,3} tabung cat {color2,kuning}. {name2,Jasper} memiliki {frac1_txt,setengah} sebanyak tabung cat {color1,biru} seperti {name1,Ben}, dan {mult1_txt,tiga} kali sebanyak tabung cat {color2,kuning} seperti {name1,Ben}. Berapa banyak tabung cat yang dimiliki {name2,Jasper}?\n\n#init:\n- name1, name2 = sample(names_male, 2)\n- color1, color2 = sample(colors, 2)\n- $n1 = range(2, 20)\n- $n2 = range(2, 20)\n- frac1_txt, frac1_val = sample(fraction_alnum)\n- mult1_txt, mult1_val = range_str(2,6,1,numbers)\n\n#conditions:\n- is_int(n1 * frac1_val)\n- is_int(n2 * mult1_val)\n\n#answer: int(n1 * frac1_val + n2 * mult1_val)",
-    "count": 100
-  },
-  {
-    "id": 60,
-    "question_annotated": "{name,Watson} bekerja dalam pergeseran {h,10}-jam setiap hari, {d_txt,lima} hari seminggu. Ia menerima {cur,$}{r,10} per jam dan mendapatkan bonus {cur,$}{b,300} setiap minggu jika perusahaan berkinerja baik. Berapa banyak uang yang dihasilkan {name,Watson} pada {month,April} jika perusahaan berkinerja sangat baik sepanjang bulan?\n\n#init:\n- name = sample(names_male)\n- month = sample([\"January\", \"February\", \"March\", \"April\", \"May\", \"June\", \"July\", \"August\", \"September\", \"October\", \"November\", \"December\"])\n- cur = sample(currencies_sym)\n- $h = range(6, 13)\n- d_txt, d_val = range_str(3, 7, 1, numbers)\n- $r = range(8, 31)\n- $b = range(100, 601)\n\n#conditions:\n- is_int(h * r)\n\n#answer: h * r * d_val * 4 + b * 4",
     "count": 100
   },
   {
@@ -180,43 +45,13 @@
     "count": 100
   },
   {
-    "id": 64,
-    "question_annotated": "{name,Mary} memiliki {n,6} toples {item,taburan} di {location,pantri}nya. Setiap toples {item,taburan} dapat menghias {m,8} {food,cupcake}. {name,Mary} ingin memanggang cukup {food,cupcake} untuk menghabiskan semua {item,taburan}nya. Jika setiap {container,loyang} menampung {k,12} {food,cupcake}, berapa banyak {container,loyang} penuh {food,cupcake} yang harus dia panggang?\n\n#init:\n- name = sample(names_female)\n- item = sample([\"sprinkles\", \"frosting\", \"icing\", \"chocolate chips\"])\n- food = sample([\"cupcake\", \"cookie\", \"brownie\", \"muffin\"])\n- location = sample([\"pantry\", \"cupboard\", \"kitchen cabinet\", \"storage room\"])\n- container = sample([\"pan\", \"tray\", \"baking sheet\", \"rack\"])\n- $n = range(3, 15)\n- $m = range(6, 20)\n- $k = range(6, 24)\n\n#conditions:\n- divides(n*m, k)\n\n#answer: (n*m)//k",
-    "count": 100
-  },
-  {
     "id": 65,
     "question_annotated": "{name,Jackie} sedang mencoba memutuskan apakah akan mengurus {task,pajaknya} sendiri atau menyewa seorang {profession,akuntan}. Jika dia melakukannya sendiri, dia akan bisa mengerjakan {n,3} jam lebih sedikit pekerjaan {work_type,lepas}, kehilangan pendapatan {cur,$}{rate,35}/jam. {profession,akuntan} tersebut mengenakan biaya {cur,$}{fee,90}. Berapa lebih banyak uang yang akan dia miliki jika dia menyewa {profession,akuntan}?\n\n#init:\n- name = sample(names_female)\n- task = sample([\"pajaknya\", \"perencanaan keuangannya\", \"akuntansi bisnisnya\"])\n- profession = sample([\"akuntan\", \"penasihat keuangan\", \"konsultan pajak\", \"pembukuan\"])\n- work_type = sample([\"lepas\", \"konsultasi\", \"paruh waktu\", \"kontrak\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 14)\n- $rate = range(20, 100)\n- $fee = range(50, 200)\n\n#conditions:\n- n * rate > fee\n\n#answer: n * rate - fee",
     "count": 100
   },
   {
-    "id": 68,
-    "question_annotated": "Dibutuhkan {name,Carmen} {t1,10} menit untuk menyelesaikan {game1,teka-teki silang} dan {t2,5} menit untuk menyelesaikan {game2,sudoku}. Selama {period,akhir pekan} dia menyelesaikan {n1,3} {game1,teka-teki silang} dan {n2,8} {game2,sudoku}. Berapa lama waktu yang dia habiskan untuk bermain permainan ini?\n\n#init:\n- name = sample(names_female)\n- game1, game2 = sample([\"teka-teki silang\", \"sudoku\", \"teka-teki kata\", \"teka-teki gambar\", \"catur\", \"teka-teki\", \"teka-teki otak\"], 2)\n- period = sample([\"akhir pekan\", \"liburan\", \"hari libur\", \"hari bebas\", \"waktu luang\"])\n- $t1 = range(5, 30)\n- $t2 = range(3, 20)\n- $n1 = range(2, 10)\n- $n2 = range(4, 15)\n\n#conditions:\n- t1 > t2\n\n#answer: t1*n1 + t2*n2",
-    "count": 100
-  },
-  {
-    "id": 70,
-    "question_annotated": "Seorang {occupation,builder} bekerja selama {w,4} minggu setiap bulan dan selama {d,6} hari setiap minggu. Jika dia dibayar {cur,$}{p,50} setiap hari, berapa banyak yang dia hasilkan jika dia bekerja selama satu tahun?\n\n#init:\n- occupation = sample([\"tukang ledeng\", \"elektrik\", \"pelukis\", \"tukang kayu\", \"tukang kebun\"])\n- cur = sample(currencies_sym)\n- $w = range(2, 5)\n- $d = range(4, 7)\n- $p = range(40, 200, 5)\n\n\n#answer: w * d * p * 12",
-    "count": 100
-  },
-  {
     "id": 71,
     "question_annotated": "{name,Nate} sedang memberi makan ternaknya dengan {food,jerami}. Setiap {animal1,kambing} membutuhkan {n1,5} {unit,kilogram}, dan setiap {animal2,llama} membutuhkan {n2,3} {unit,kilogram} kurang dari dua kali jumlah yang dibutuhkan setiap {animal1,kambing}. Jika ada {k1,15} {animal1,kambing} dan {k2,12} {animal2,llama}, berapa {unit,kilogram} {food,jerami} yang dibutuhkan {name,Nate}?\n\n#init:\n- name = sample(names_male)\n- food = sample([\"jerami\", \"biji-bijian\", \"pakan\", \"silase\"])\n- animal1, animal2 = sample([\"kambing\", \"sapi\", \"kuda\", \"keledai\", \"llama\", \"alpaka\", \"babi\", \"kalkun\", \"bebek\"], 2)\n- unit = sample([\"kilogram\", \"kg\"])\n- $n1 = range(3, 15)\n- $n2 = range(1, 10)\n- $k1 = range(10, 50)\n- $k2 = range(10, 50)\n\n#conditions:\n- 2*n1 - n2 > 0\n\n#answer: k1*n1 + k2*(2*n1 - n2)",
-    "count": 100
-  },
-  {
-    "id": 72,
-    "question_annotated": "{name,Mike} adalah teman surat dengan {n1,5} orang. Dia berhenti menjadi teman surat dengan {n2,2} dari mereka. Mereka masing-masing mengirim {l,2} surat per minggu yang panjangnya {p,5} halaman. Dia membalas dengan cara yang sama. Dia bisa menulis satu halaman setiap {t,6} menit. Berapa jam yang dia habiskan untuk menulis dalam seminggu?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 15)\n- $n2 = range(1, 5)\n- $l = range(2, 5)\n- $p = range(5, 12)\n- $t = range(4, 15)\n\n#conditions:\n- n2 < n1\n- is_int(((n1 - n2) * l * p * t) / 60)\n\n#answer: ((n1 - n2) * l * p * t) // 60",
-    "count": 100
-  },
-  {
-    "id": 73,
-    "question_annotated": "Komet {comet_name,Halley} mengorbit matahari setiap {orbit_period,75} tahun. {relative,ayah} {name,Bill} melihat Komet ketika ia berusia {relative_age,30} tahun. {name,Bill} melihat komet untuk kedua kalinya ketika ia berusia {multiple_txt,tiga} kali usia {relative,ayah} ketika melihat Komet. Berapa usia {name,Bill} ketika ia melihat Komet untuk pertama kalinya?\n\n#init:\n- comet_name = sample(['Halley', 'Hale-Bopp', 'Hyakutake', 'Encke'])\n- name = sample(names_male)\n- relative = sample(['dad', 'father', 'uncle', 'grandfather'])\n- $orbit_period = range(50, 101, 5)\n- $relative_age = range(20, 51)\n- multiple_txt, multiple_val = range_str(2, 6, 1, numbers)\n\n#conditions:\n- multiple_val * relative_age < 100\n- multiple_val * relative_age > orbit_period\n- is_int(multiple_val * relative_age - orbit_period)\n\n#answer: multiple_val * relative_age - orbit_period",
-    "count": 100
-  },
-  {
-    "id": 74,
-    "question_annotated": "Ada {total,96} siswa {grade,kelas empat} di Sekolah {school_name,Small Tree}. {num_girls,43} di antaranya adalah perempuan. Pada {day,hari Jumat}, {absent_girls,5} siswa perempuan {grade,kelas empat} dan {absent_boys,4} siswa laki-laki {grade,kelas empat} tidak hadir. Berapa banyak siswa laki-laki {grade,kelas empat} yang ada di Sekolah {school_name,Small Tree} pada {day,hari Jumat}?\n\n#init:\n- school_name = sample([\"Maple Grove\", \"Sunny Hill\", \"Oak Ridge\", \"Pine Valley\"])\n- grade = sample([\"first\", \"second\", \"third\", \"fourth\", \"fifth\"])\n- day = sample([\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\"])\n- $total = range(50, 200)\n- $num_girls = range(20, 100)\n- $absent_girls = range(2, 10)\n- $absent_boys = range(2, 10)\n\n#conditions:\n- num_girls < total\n- absent_girls < num_girls\n- absent_boys < (total - num_girls)\n\n#answer: total - num_girls - absent_boys",
     "count": 100
   },
   {
@@ -230,63 +65,13 @@
     "count": 100
   },
   {
-    "id": 78,
-    "question_annotated": "Ada {n1,6} periode dalam sehari untuk siswa normal tetapi {name,John} harus mengambil {n2,2} kelas tambahan. Setiap kelas berdurasi {t,40} menit. Dia pergi ke kelas selama {d,5} hari dalam seminggu. Dia kemudian menghabiskan {frac,1/16} dari mingguan menitnya masing-masing pada Sabtu dan Minggu sebagai waktu belajar tambahan. Berapa jam dalam seminggu dia menghabiskan waktu belajar?\n\n#init:\n- name = sample(names_male)\n- $n1 = range(5, 10)\n- $n2 = range(1, 5)\n- $t = range(30, 61, 5)\n- $d = range(4, 7)\n- $frac = sample(fractions)\n\n#conditions:\n- is_int((n1 + n2) * t * d * frac)\n- is_int(((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) / 60)\n\n#answer: ((n1 + n2) * t * d + 2 * (n1 + n2) * t * d * frac) // 60",
-    "count": 100
-  },
-  {
-    "id": 79,
-    "question_annotated": "{name,Teddy} menyelesaikan {frac_txt,setengah} dari puzzle {n1,500} keping, dan kemudian memulai dan menyelesaikan puzzle {n2,500} keping lainnya dalam satu jam. Berapa banyak keping puzzle yang dipasang oleh {name,Teddy} selama jam tersebut?\n\n#init:\n- name = sample(names)\n- frac_txt, frac_val = sample(fraction_alnum)\n- $n1 = range(100, 501)\n- $n2 = range(300, 1001)\n\n#conditions:\n- is_int(n1 * frac_val)\n\n#answer: int(n1 * frac_val) + n2",
-    "count": 100
-  },
-  {
-    "id": 80,
-    "question_annotated": "Mesin penjual otomatis menjual {item1,keripik} seharga {price1,40} sen dan {item2,cokelat batang} seharga {price2,75} sen. {name,George} menghabiskan {cur,$}{total,5} dan mendapat {n1,3} bungkus {item1,keripik} serta memiliki {p,1}% dari uangnya tersisa sebagai uang kembalian. Berapa banyak {item2,cokelat batang} yang ia beli?\n\n#init:\n- name = sample(names_male)\n- item1, item2 = sample(['pretzels', 'popcorn', 'gum', 'cookies', 'crackers'], 2)\n- cur = sample(currencies_sym)\n- $price1 = range(25, 100, 5)\n- $price2 = range(50, 150, 5)\n- $total = range(5, 21)\n- $n1 = range(1, 10)\n- $p = range(1, 10)\n\n#conditions:\n- price2 > price1\n- is_int(total * p / 100)\n- total * (100 - p) > n1 * price1\n- (total * (100 - p) - n1 * price1) % price2 == 0\n\n#answer: ensure_int((total * (100 - p) - n1 * price1) / price2)",
-    "count": 100
-  },
-  {
     "id": 81,
     "question_annotated": "Tim {event,berburu telur Paskah} menyembunyikan {total,100} {item,telur}. Kedua kembar {family,Smith} masing-masing menemukan {n,30} {item,telur}. Semua {item,telur} lainnya kecuali {m,10} ditemukan oleh teman-teman mereka. Berapa banyak {item,telur} yang ditemukan oleh teman-teman mereka?\n\n#init:\n- event = sample([\"perburuan permen Halloween\", \"perburuan harta karun\", \"perburuan barang\", \"penggalangan dana amal\"])\n- item = sample([\"telur\", \"permen\", \"mainan\", \"koin\", \"token\", \"bola\", \"permen\", \"barang\"])\n- family = sample([\"Johnson\", \"Williams\", \"Mirzakhani\", \"Lopez\", \"Garcia\", \"Lee\", ])\n- $total = range(50, 201, 10)\n- $n = range(10, 51)\n- $m = range(5, 21)\n\n#conditions:\n- 2*n + m < total\n\n#answer: total - 2*n - m",
     "count": 100
   },
   {
-    "id": 82,
-    "question_annotated": "Pada awal {event,pesta}, terdapat {m,25} {group1,pria} dan {w,15} {group2,wanita}. Setelah {t,1 jam}, {frac,1/4} dari total jumlah orang pergi. Berapa banyak {group2,wanita} yang tersisa jika {m_left,22} {group1,pria} tetap di {event,pesta}?\n\n#init:\n- event = sample(['pesta', 'rapat', 'konferensi', 'kumpul', 'perayaan'])\n- group1, group2 = sample([ \"guru\", \"dokter\", \"insinyur\", \"perawat\", \"seniman\", \"pengacara\",], 2)\n- t = sample(['1 jam', '2 jam', 'setengah jam', '45 menit'])\n- $frac = sample(fractions)\n- $m = range(20, 75)\n- $w = range(10, 80)\n- $m_left = range(15, 35)\n\n#conditions:\n- m_left < m\n- is_int((m + w) * frac)\n- (m + w) * (1-frac) > m_left\n- m + w - (m + w) * frac > m_left\n\n#answer: m + w - int((m + w) * frac) - m_left",
-    "count": 100
-  },
-  {
-    "id": 83,
-    "question_annotated": "Keluarga {family,Adams} sedang sibuk membuat {item,kue}. Sejauh ini, mereka telah membuat {total,7995} {item,kue}. Mereka memiliki {n1,2595} {item,kue} {flavor1,rainbow}, {n2,3075} {item,kue} {flavor2,oatmeal}, dan beberapa {item,kue} {flavor3,chocolate chip}. Berapa banyak {item,kue} {flavor3,chocolate chip} yang telah mereka buat?\n\n#init:\n- family = sample([\"Smith\", \"Johnson\", \"Williams\", \"Brown\", \"Jones\"])\n- item = sample([\"cupcake\", \"muffin\", \"brownie\", \"biscuit\"])\n- flavor1, flavor2, flavor3 = sample([\"vanilla\", \"strawberry\", \"blueberry\", \"lemon\", \"peanut butter\"], 3)\n- $total = range(4995, 10000, 25)\n- $n1 = range(995, 3000, 50)\n- $n2 = range(1075, 3200, 50)\n\n#conditions:\n- n1 + n2 < total\n\n#answer: total - (n1 + n2)",
-    "count": 100
-  },
-  {
-    "id": 85,
-    "question_annotated": "Jika {name1,Sam} dan {name2,Harry} memiliki {total,100} {unit,centimeters} pagar di antara mereka, dan mereka sepakat membaginya dengan {name2,Harry} mendapatkan {diff,60} {unit,centimeters} lebih banyak dari {name1,Sam}, berapa yang tersisa untuk {name1,Sam}?\n\n#init:\n- name1, name2 = sample(names, 2)\n- unit = sample([\"centimeters\", \"meters\"])\n- $total = range(100, 1000, 20)\n- $diff = range(20, 200, 10)\n\n#conditions:\n- total - diff > 10\n- is_int((total - diff) / 2)\n\n#answer: (total - diff) // 2",
-    "count": 100
-  },
-  {
     "id": 87,
     "question_annotated": "Seluncuran air terbesar di {park_name,Five Flags} memiliki panjang {l1,300} {unit,meter}, dan orang-orang meluncur ke bawah dengan kecepatan {s1,60} {unit,meter}/menit. Seluncuran air terbesar kedua memiliki panjang {l2,240} {unit,meter}, tetapi lebih curam, sehingga orang-orang meluncur ke bawah dengan kecepatan {s2,80} {unit,meter}/menit. Berapa lama lebih lama waktu yang dibutuhkan untuk menaiki seluncuran terbesar dibandingkan dengan seluncuran terbesar kedua?\n\n#init:\n- park_name = sample([\"Splash World\", \"Aqua Adventure\", \"Water Wonderland\", \"Neptunes Kingdom\"])\n- unit = sample(['meter'])\n- $l1 = range(250, 401, 10)\n- $l2 = range(200, 301, 10)\n- $s1 = range(40, 81, 5)\n- $s2 = range(60, 101, 5)\n\n#conditions:\n- l1 > l2\n- s2 > s1\n- is_int(l1/s1)\n- is_int(l2/s2)\n- l1/s1 > l2/s2\n\n#answer: l1/s1 - l2/s2",
-    "count": 100
-  },
-  {
-    "id": 89,
-    "question_annotated": "{name,James} menyewa {vehicle,kereta kuda} dari {start_time,5} PM sampai {end_time,9} PM. Dia mendapat {free_hours,1} jam gratis. Jam berbayar pertama adalah {cur,$}{first_hour_cost,15}, dan setiap jam berbayar setelah itu {multiplier_txt,dua kali} biaya jam berbayar pertama. Berapa yang dia bayar?\n\n#init:\n- name = sample(names_male)\n- vehicle = sample([\"limousine\", \"party bus\", \"boat\", \"luxury car\"])\n- $start_time = range(1, 8)\n- $end_time = range(3, 12)\n- $free_hours = range(1, 3)\n- cur = sample(currencies_sym)\n- $first_hour_cost = range(10, 51)\n- multiplier_txt, multiplier_val = sample(multi_times)\n\n#conditions:\n- end_time - start_time > free_hours + 1\n- is_int((end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val)\n\n#answer: first_hour_cost + (end_time - start_time - free_hours - 1) * first_hour_cost * multiplier_val",
-    "count": 100
-  },
-  {
-    "id": 90,
-    "question_annotated": "{name1,Charlie} memiliki {mult1_txt,tiga} kali lebih banyak teman {platform,Facebook} daripada {name2,Dorothy}. {name3,James} memiliki {mult2_txt,empat} kali lebih banyak teman di {platform,Facebook} daripada {name2,Dorothy}. Jika {name1,Charlie} memiliki {n,12} teman di {platform,Facebook}, berapa banyak teman {platform,Facebook} yang dimiliki {name3,James}?\n\n#init:\n- name1, name2, name3 = sample(names, 3)\n- platform = sample([\"Instagram\", \"Twitter\", \"LinkedIn\", \"TikTok\", \"Snapchat\"])\n- mult1_txt, mult1_val = range_str(1,6,1,numbers)\n- mult2_txt, mult2_val = range_str(1,6,1,numbers)\n- $n = range(10, 201)\n\n#conditions:\n- mult2_val != mult1_val\n- is_int(n / mult1_val)\n\n#answer: int((n / mult1_val) * mult2_val)",
-    "count": 100
-  },
-  {
-    "id": 91,
-    "question_annotated": "Di rumah {name,Allan}, ada {mult_txt,dua kali} lebih banyak {food1,jagung} daripada {food2,cannoli}. Dia memiliki total {n,40} {food2,cannoli} di rumahnya. {name,Allan} membeli {m,60} {food2,cannoli} lagi di toko dan {k,40} {food1,jagung} lebih sedikit daripada jumlah {food2,cannoli}. Temukan total gabungan jumlah {food1,jagung} dan {food2,cannoli} yang dimiliki {name,Allan} di rumah?\n\n#init:\n- name = sample(names_male)\n- food1, food2 = sample([\"cannoli\",\"corn\", \"apple\", \"banana\", \"orange\", \"pear\", \"grape\", \"fig\", \"persimmon\", \"plum\", \"kiwi\"], 2)\n- mult_txt, mult_val = sample(multi_times)\n- $n = range(20, 100)\n- $m = range(30, 100)\n- $k = range(10, 50)\n\n#conditions:\n- m > k\n\n#answer: mult_val*n + n + m + (m-k)",
-    "count": 100
-  },
-  {
-    "id": 97,
-    "question_annotated": "{name1,Julie} mengoperasikan register kasir tepat {mult_txt,dua kali} lebih cepat daripada rekan kerjanya yang kurang berpengalaman {name2,Jewel}. Setiap hari, {name2,Jewel} memproses {n,50} pelanggan. Berapa total produksi mingguan untuk keduanya jika mereka bekerja semua hari dalam seminggu?\n\n#init:\n- name1, name2 = sample(names_female, 2)\n- mult_txt, mult_var = sample(multi_times)\n- $n = range(30, 100)\n\n#conditions:\n- is_int(n * mult_var)\n- is_int((n + n * mult_var) * 7)\n\n#answer: (n + n * mult_var) * 7",
     "count": 100
   },
   {

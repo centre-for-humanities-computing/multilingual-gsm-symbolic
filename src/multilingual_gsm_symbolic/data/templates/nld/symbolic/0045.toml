@@ -26,19 +26,21 @@ question_annotated = """
 #conditions:
 - plant_width * 3 < length*100
 - plant_width < space
-- is_int(length*100 / space)
-- length*100 / space > owned
+- is_int(round(length*100) / space)
+- round(length*100) // space > owned
 
-#answer: int((length*100 / space - owned) * cost)
+#answer: (round(length*100) // space - owned) * cost
 """
 
 answer_annotated = """
-{name}s bloembed is {length} m / {space} cm per plant = <<{length*100}/{space}={int(length*100/space)}>>{int(length*100/space)} planten nodig.
-{name} moet {int(length*100/space)} planten kopen - {owned} planten = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} planten die gekocht moeten worden.
-{name} moet {int(length*100/space)-owned} planten * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int((length*100/space - owned) * cost)}>>{int((length*100/space - owned) * cost)} {cur} uitgeven.
-#### {int((length*100/space - owned) * cost)}
+{name}s bloembed is {length} m / {space} cm per plant = <<{round(length*100)}/{space}={round(length*100) // space}>>{round(length*100) // space} planten nodig.
+{name} moet {round(length*100) // space} planten kopen - {owned} planten = <<{round(length*100) // space}-{owned}={round(length*100) // space - owned}>>{round(length*100) // space - owned} planten die gekocht moeten worden.
+{name} moet {round(length*100) // space - owned} planten * {cost} {cur} = <<{round(length*100) // space - owned}*{cost}={(round(length*100) // space - owned) * cost}>>{(round(length*100) // space - owned) * cost} {cur} uitgeven.
+#### {(round(length*100) // space - owned) * cost}
 """
 
-creation = "machine-translated from Danish using gpt-5.4, based on Danish templates; computationally validated; validated by a native speaker."
-
+source-language = "dan"
+initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "nld"

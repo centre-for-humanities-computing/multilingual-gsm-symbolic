@@ -18,23 +18,26 @@ question_annotated = """{name,Софія} має клумбу завдовжки
 - $owned = range(5, 20)
 - $cost = range(20, 100)
 - ow_flowers = ukr_plural_measurements(owned, "квітка", "квіти", "квітів")
-- req_flowers = ukr_plural_measurements(int(length*100/space), "рослина", "рослини", "рослин")
-- b_flowers = ukr_plural_measurements(int(length*100/space)-owned, "рослина", "рослини", "рослин")
+- req_flowers = ukr_plural_measurements(round(length*100) // space, "рослина", "рослини", "рослин")
+- b_flowers = ukr_plural_measurements(round(length*100) // space - owned, "рослина", "рослини", "рослин")
 
 
 
 #conditions:
 - plant_width * 3 < length*100
 - plant_width < space
-- is_int(length*100 / space)
-- length*100 / space > owned
+- is_int(round(length*100) / space)
+- round(length*100) // space > owned
 
-#answer: int((length*100 / space - owned) * cost)
+#answer: (round(length*100) // space - owned) * cost
 """
-answer_annotated = """Щоб заповнити клумбу, потрібно {length} м / {space} см на одну рослину = <<{length*100}/{space}={int(length*100/space)}>>{int(length*100/space)} {req_flowers}.
-Треба купити {int(length*100/space)} - {owned} = <<{int(length*100/space)}-{owned}={int(length*100/space)-owned}>>{int(length*100/space)-owned} {b_flowers}.
-Отже, потрібно витратити {int(length*100/space)-owned} * {cost} {cur} = <<{int(length*100/space)-owned}*{cost}={int(length*100/space - owned) * cost}>>{int(length*100/space - owned) * cost} {cur}.
-#### {int(length*100 / space - owned) * cost}
+answer_annotated = """Щоб заповнити клумбу, потрібно {length} м / {space} см на одну рослину = <<{round(length*100)}/{space}={round(length*100) // space}>>{round(length*100) // space} {req_flowers}.
+Треба купити {round(length*100) // space} - {owned} = <<{round(length*100) // space}-{owned}={round(length*100) // space - owned}>>{round(length*100) // space - owned} {b_flowers}.
+Отже, потрібно витратити {round(length*100) // space - owned} * {cost} {cur} = <<{round(length*100) // space - owned}*{cost}={(round(length*100) // space - owned) * cost}>>{(round(length*100) // space - owned) * cost} {cur}.
+#### {(round(length*100) // space - owned) * cost}
 """
-creation = "Machine-translated from Danish using gpt-5.4, localized and validated by a native speaker, and computationally validated."
+source-language = "dan"
+initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "ukr"

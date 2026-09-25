@@ -22,14 +22,17 @@ question_annotated = """{name,しずか}は1株あたり{cur,￥}{p,800}で、�
 - is_int(n * p * r1/100)
 - is_int(n * p * (1 + r1/100) * (1 - r2/100))
 
-#answer: int(n * p * (1 + r1/100) * (1 - r2/100))
+#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))
 """
 answer_annotated = """まず、{name}の購入の最初の合計金額を求めます: {n}株 * {cur}{p}/株 = {cur}<<{n}*{p}={n*p}>>{n*p}
-次に、最初の値上がり額を求めます: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{int(n*p*r1/100)}
-その額を最初の金額に足して、1年目の後の価値を求めます: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{int(n*p*(1+r1/100))}
-次に、その額に{r2}%を掛けて、2年目の値下がり額を求めます: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{int(n*p*(1+r1/100)*r2/100)}
-最後に、その額を1年目の後の価値から引いて、最終的な価値を求めます: {cur}{int(n*p*(1+r1/100))} - {cur}{int(n*p*(1+r1/100)*r2/100)} = {cur}<<{int(n*p*(1+r1/100))}-{int(n*p*(1+r1/100)*r2/100)}={int(n*p*(1+r1/100)*(1-r2/100))}>>{int(n*p*(1+r1/100)*(1-r2/100))}
-#### {int(n*p*(1+r1/100)*(1-r2/100))}
+次に、最初の値上がり額を求めます: {cur}{n*p} * {r1/100} = {cur}<<{n*p}*{r1/100}={n*p*r1/100}>>{ensure_int(n*p*r1/100)}
+その額を最初の金額に足して、1年目の後の価値を求めます: {cur}{n*p} + {cur}{n*p*r1/100} = {cur}<<{n*p}+{n*p*r1/100}={n*p*(1+r1/100)}>>{ensure_int(n*p*(1+r1/100))}
+次に、その額に{r2}%を掛けて、2年目の値下がり額を求めます: {cur}{n*p*(1+r1/100)} * {r2}% = {cur}<<{n*p*(1+r1/100)}*{r2}*.01={n*p*(1+r1/100)*r2/100}>>{ensure_int(n*p*(1+r1/100)*r2/100)}
+最後に、その額を1年目の後の価値から引いて、最終的な価値を求めます: {cur}{ensure_int(n*p*(1+r1/100))} - {cur}{ensure_int(n*p*(1+r1/100)*r2/100)} = {cur}<<{ensure_int(n*p*(1+r1/100))}-{ensure_int(n*p*(1+r1/100)*r2/100)}={ensure_int(n*p*(1+r1/100)*(1-r2/100))}>>{ensure_int(n*p*(1+r1/100)*(1-r2/100))}
+#### {ensure_int(n*p*(1+r1/100)*(1-r2/100))}
 """
-creation = "machine-translated from English using gpt-5.4, based on English templates; computationally validated; validated by native speaker"
+source-language = "eng"
+initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "jpn"

@@ -29,20 +29,22 @@ question_annotated = """
 
 #conditions:
 - plant_width < space
-- is_int((length * 100) / space)
-- (length * 100) / space > owned
+- is_int(round(length*100) / space)
+- round(length*100) // space > owned
 
-#answer: int(((length * 100) / space - owned) * cost)
+#answer: (round(length*100) // space - owned) * cost
 """
 
 answer_annotated = """
-L'aiuola di {name} è lunga {length} {unit_length}, cioè {int(length*100)} centimetri.
-Servono {int(length*100)} centimetri / {space} centimetri per pianta = <<{int(length*100)}/{space}={int((length*100)/space)}>>{int((length*100)/space)} piante.
-{name} deve comprare {int((length*100)/space)} piante - {owned} piante = <<{int((length*100)/space)}-{owned}={int((length*100)/space)-owned}>>{int((length*100)/space)-owned} piante da acquistare.
-{name} spenderà {int((length*100)/space)-owned} piante * {cost} {cur} = <<{int((length*100)/space)-owned}*{cost}={int((((length*100)/space) - owned) * cost)}>>{int((((length*100)/space) - owned) * cost)} {cur}.
-#### {int((((length*100)/space) - owned) * cost)}
+L'aiuola di {name} è lunga {length} {unit_length}, cioè {round(length*100)} centimetri.
+Servono {round(length*100)} centimetri / {space} centimetri per pianta = <<{round(length*100)}/{space}={round(length*100) // space}>>{round(length*100) // space} piante.
+{name} deve comprare {round(length*100) // space} piante - {owned} piante = <<{round(length*100) // space}-{owned}={round(length*100) // space - owned}>>{round(length*100) // space - owned} piante da acquistare.
+{name} spenderà {round(length*100) // space - owned} piante * {cost} {cur} = <<{round(length*100) // space - owned}*{cost}={(round(length*100) // space - owned) * cost}>>{(round(length*100) // space - owned) * cost} {cur}.
+#### {(round(length*100) // space - owned) * cost}
 """
 
-creation = "machine-translated from English using gpt-5.4-nano, based on English templates; computationally validated; adapted to metric units"
-
+source-language = "eng"
+initial_translation_model = "gpt-5.4-nano"
+human-validated = "by two native speakers"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected by native speaker"
 language = "ita"

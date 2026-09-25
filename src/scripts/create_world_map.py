@@ -23,10 +23,9 @@ than a hand-written list, so the map stays in sync as languages are added:
 """
 
 import json
-import re
 import tomllib
 import urllib.request
-from collections import Counter, defaultdict
+from collections import defaultdict
 from pathlib import Path
 
 import geopandas as gpd
@@ -82,45 +81,27 @@ METHOD_COLORS = {
 CATEGORY_LABELS = {
     "original": "Original",
     "human_validated": "Translated and human-validated",
-    "machine_translated": "Machine-translated and machine-validated",
+    "machine_translated": "Machine translated",
 }
 
 
-# "validated by a native speaker", "human validated", "manually corrected by ..." etc.
-HUMAN_VALIDATED = re.compile(r"human|native speaker|fluent speaker|manually corrected", re.IGNORECASE)
-
-
-def classify_creation(creation: str) -> str:
-    """Classify a single template's `creation` string."""
-    if "derived from GSM-Symbolic" in creation:
+def get_creation_method(lang: str, templates_dir: Path) -> str:
+    """Classify a language only as human validated when all active templates are reviewed."""
+    records = []
+    for path in sorted((templates_dir / lang / "symbolic").glob("*.toml")):
+        with path.open("rb") as file:
+            record = tomllib.load(file)
+        if not record.get("ignore"):
+            records.append(record)
+    if not records:
+        return "none"
+    if lang in {"eng", "eng_metric"}:
         return "original"
-    if HUMAN_VALIDATED.search(creation):
+    if all(
+        record.get("human-validated") and "in progress" not in record["human-validated"].lower() for record in records
+    ):
         return "human_validated"
     return "machine_translated"
-
-
-def get_creation_method(lang: str, templates_dir: Path) -> str:
-    """Determine the creation method for a language from its active templates.
-
-    Languages are mixed (e.g. Ukrainian has a couple of templates derived straight
-    from GSM-Symbolic among otherwise human-validated ones), so the language takes
-    the method of the majority of its templates rather than of the first one.
-    """
-    lang_dir = templates_dir / lang / "symbolic"
-    if not lang_dir.exists():
-        return "none"
-
-    methods = Counter()
-    for template in sorted(lang_dir.glob("*.toml")):
-        with template.open("rb") as f:
-            data = tomllib.load(f)
-        if data.get("ignore"):
-            continue
-        methods[classify_creation(data.get("creation", ""))] += 1
-
-    if not methods:
-        return "none"
-    return methods.most_common(1)[0][0]
 
 
 def build_category_colors(methods: list[str]) -> dict[str, str]:

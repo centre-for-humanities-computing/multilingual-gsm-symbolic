@@ -127,18 +127,12 @@ lang_label <- function(x) sprintf("%s (%s)", LANG_NAME[as.character(x)], x)
 ## =====================================================================
 ## 1. THE LEVERS  (spine figure)
 ##
-## Two versions, because the scale matters for honesty:
-##
-##  (a) fig_levers -- predicted ERROR-ODDS RELATIVE TO ENGLISH, log scale.
-##      This is the quantity the model actually estimates, so lines are
-##      straight and the interaction IS the difference in slope. It is also
-##      the same quantity as the model-free figure, so the two are directly
-##      comparable. Flat line = no penalty.
-##
-##  (b) fig_levers_prob -- the same thing on the probability scale, which
-##      readers find more concrete but which re-expresses the interaction
-##      through the base rate: parallel log-odds lines look very different
-##      near the floor than near the ceiling. Use with care.
+## Plotted as predicted ERROR-ODDS RELATIVE TO ENGLISH on a log scale, which is
+## the quantity the model actually estimates: lines are straight and the
+## interaction IS the difference in slope. A flat line means no penalty. The
+## probability scale reads as more concrete but re-expresses the interaction
+## through the base rate -- parallel log-odds lines look very different near the
+## floor than near the ceiling -- so it is deliberately not used here.
 ## =====================================================================
 eng_res <- lang_meta$log10_common_crawl_pages[lang_meta$language == "eng"]
 eng_res0 <<- eng_res

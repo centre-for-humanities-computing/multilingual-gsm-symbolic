@@ -220,10 +220,10 @@ def translate_template(client: OpenAI, src_data: dict, src: str, tgt: str, model
     tgt_data.update(translated_fields)
     tgt_data = _strip_answer_annotated_defaults(tgt_data)
     tgt_data["language"] = tgt
-    tgt_data["creation"] = (
-        f"machine-translated from {lang_name(src)} using {model}, "
-        f"based on {lang_name(src)} templates; computationally validated"
-    )
+    tgt_data["source-language"] = src
+    tgt_data["initial_translation_model"] = model
+    tgt_data.pop("human-validated", None)
+    tgt_data.pop("error-analysis", None)
     return tgt_data, messages
 
 

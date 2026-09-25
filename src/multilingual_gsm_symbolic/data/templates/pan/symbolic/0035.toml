@@ -1,0 +1,11 @@
+question = "ਹਰਜੀਤ ਇੱਕ ਸਕੂਲੀ ਟ੍ਰਿਪ ਲਈ ਪੈਸੇ ਜੋੜ ਰਿਹਾ ਹੈ। ਉਸ ਨੇ ਸਕੂਲ ਤੋਂ ਮਦਦ ਮੰਗੀ ਹੈ, ਜਿਸ ਨੇ ਸਕੂਲੀ ਟ੍ਰਿਪ ਦੇ ਖਰਚੇ ਦਾ ਅੱਧਾ ਹਿੱਸਾ ਭਰਨ ਦਾ ਫ਼ੈਸਲਾ ਕੀਤਾ ਹੈ। ਜੇ ਉਸ ਕੋਲ $50 ਹਨ ਅਤੇ ਸਕੂਲੀ ਟ੍ਰਿਪ ਦਾ ਕੁੱਲ ਖਰਚਾ $300 ਹੈ, ਤਾਂ ਉਸਨੂੰ ਹੋਰ ਕਿੰਨੇ ਪੈਸੇ ਚਾਹੀਦੇ ਹਨ?"
+answer = "ਸਕੂਲ ਨੇ ਸਕੂਲੀ ਟ੍ਰਿਪ ਲਈ 300*1/2 = $<<300*1/2=150>>150 ਭਰਨ ਦਾ ਫ਼ੈਸਲਾ ਕੀਤਾ ਹੈ।\nਕੁੱਲ ਮਿਲਾ ਕੇ, ਸਕੂਲੀ ਟ੍ਰਿਪ ਲਈ ਹਰਜੀਤ ਕੋਲ 150 + 50 = $<<150+50=200>>200 ਦਾ ਇੰਤਜ਼ਾਮ ਹੋ ਗਿਆ ਹੈ।\nਇਸ ਲਈ, ਹਰਜੀਤ ਨੂੰ ਸਕੂਲੀ ਟ੍ਰਿਪ ਲਈ 300 - 200 = $<<300-200=100>>100 ਹੋਰ ਚਾਹੀਦੇ ਹਨ।\n#### 100"
+id_orig = 788
+id_shuffled = 35
+question_annotated = "{name,ਹਰਜੀਤ} ਇੱਕ {event,ਸਕੂਲੀ ਟ੍ਰਿਪ} ਲਈ ਪੈਸੇ ਜੋੜ ਰਿਹਾ ਹੈ। ਉਸ ਨੇ {organization,ਸਕੂਲ} ਤੋਂ ਮਦਦ ਮੰਗੀ ਹੈ, ਜਿਸ ਨੇ {event,ਸਕੂਲੀ ਟ੍ਰਿਪ} ਦੇ ਖਰਚੇ ਦਾ {fraction_txt,ਅੱਧਾ} ਹਿੱਸਾ ਭਰਨ ਦਾ ਫ਼ੈਸਲਾ ਕੀਤਾ ਹੈ। ਜੇ ਉਸ ਕੋਲ {cur,$}{current,50} ਹਨ ਅਤੇ {event,ਸਕੂਲੀ ਟ੍ਰਿਪ} ਦਾ ਕੁੱਲ ਖਰਚਾ {cur,$}{total,300} ਹੈ, ਤਾਂ ਉਸਨੂੰ ਹੋਰ ਕਿੰਨੇ ਪੈਸੇ ਚਾਹੀਦੇ ਹਨ?\n\n#init:\n- name = sample(names_male)\n- event = sample([\"ਸਕੂਲੀ ਟ੍ਰਿਪ\", \"ਵਿੱਦਿਅਕ ਟੂਰ\", \"ਖੇਡ ਟੂਰਨਾਮੈਂਟ\", \"ਕਾਨਫ਼ਰੰਸ\", \"ਸੰਗੀਤ ਮਹੋਤਸਵ\", \"ਵਿਗਿਆਨ ਪ੍ਰਦਰਸ਼ਨੀ\"])\n- cur = sample(currencies_sym)\n- organization = sample([\"ਸਕੂਲ\", \"ਸਮਾਜਿਕ ਕੇਂਦਰ\", \"ਸਥਾਨਕ ਦਾਨ ਸੰਸਥਾ\", \"ਯੁਵਾ ਕਲੱਬ\", \"ਮਾਪਿਆਂ ਦੀ ਸੰਸਥਾ\"])\n- fraction_txt, fraction_val = sample(fraction_alnum)\n- $current = range(10, 200, 5)\n- $total = range(200, 1000, 10)\n\n#conditions:\n- total > current\n- total - (total * fraction_val + current) > 0\n- is_int(total * fraction_val)\n- is_int(total - (total * fraction_val + current))\n\n#answer: total - (total * fraction_val + current)"
+answer_annotated = "{organization} ਨੇ {event} ਲਈ {total}*{fraction_val} = {cur}<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} ਭਰਨ ਦਾ ਫ਼ੈਸਲਾ ਕੀਤਾ ਹੈ।\nਕੁੱਲ ਮਿਲਾ ਕੇ, {event} ਲਈ {name} ਕੋਲ {total*fraction_val} + {current} = {cur}<<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} ਦਾ ਇੰਤਜ਼ਾਮ ਹੋ ਗਿਆ ਹੈ।\nਇਸ ਲਈ, {name} ਨੂੰ {event} ਲਈ {total} - {total*fraction_val+current} = {cur}<<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} ਹੋਰ ਚਾਹੀਦੇ ਹਨ।\n#### {total-(total*fraction_val+current)}"
+source-language = "eng"
+initial_translation_model = "manual"
+human-validated = "by two native speakers"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected by native speaker"
+language = "pan"

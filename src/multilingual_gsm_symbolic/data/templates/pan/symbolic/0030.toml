@@ -1,0 +1,11 @@
+question = "ਹਰਜੀਤ ਕੋਲ $12.48 ਹਨ ਅਤੇ ਉਸ ਦਾ ਹਾਰਡਵੇਅਰ ਸਟੋਰ ਤੋਂ 16 ਬੋਲਟ ਖਰੀਦਣ ਦਾ ਇਰਾਦਾ ਹੈ। ਹਰ ਬੋਲਟ ਦੀ ਕੀਮਤ $0.03 ਹੈ। ਬੋਲਟ ਖਰੀਦਣ ਤੋਂ ਬਾਅਦ ਹਰਜੀਤ ਕੋਲ ਕਿੰਨੇ ਪੈਸੇ ਬਚਣਗੇ?"
+answer = "16 ਬੋਲਟ ਦੀ ਕੀਮਤ 16 * $0.03 = $<<16*0.03=0.48>>0.48 ਹੈ।\nਹਰਜੀਤ ਕੋਲ $12.48 ਹਨ, ਇਸ ਲਈ ਉਸ ਕੋਲ $12.48 - $0.48 = $<<12.48-0.48=12>>12 ਬਚਦੇ ਹਨ।\n#### 12"
+id_orig = 873
+id_shuffled = 30
+question_annotated = "{name,ਹਰਜੀਤ} ਕੋਲ {cur,$}{initial_amount,12.48} ਹਨ ਅਤੇ ਉਸ ਦਾ {store_type,ਹਾਰਡਵੇਅਰ} ਸਟੋਰ ਤੋਂ {quantity,16} {item,ਬੋਲਟ} ਖਰੀਦਣ ਦਾ ਇਰਾਦਾ ਹੈ। ਹਰ {item,ਬੋਲਟ} ਦੀ ਕੀਮਤ {cur,$}{unit_price,0.03} ਹੈ। {item,ਬੋਲਟ} ਖਰੀਦਣ ਤੋਂ ਬਾਅਦ {name,ਹਰਜੀਤ} ਕੋਲ ਕਿੰਨੇ ਪੈਸੇ ਬਚਣਗੇ?\n\n#init:\n- name = sample(names)\n- cur = sample(currencies_sym)\n- item = sample([\"ਸਕਰੂ\", \"ਕਿੱਲ\", \"ਵਾਸ਼ਰ\", \"ਨਟ\", \"ਐਂਕਰ\"])\n- store_type = sample([\"ਹਾਰਡਵੇਅਰ\", \"ਬਿਲਡਿੰਗ ਮਟੀਰੀਅਲ\", \"ਸੈਨੇਟਰੀ\"])\n- $quantity = range(15, 60)\n- $initial_amount = arange(12.48, 105, 0.48)\n- $unit_price = arange(0.01, 1, 0.01)\n\n#conditions:\n- initial_amount > quantity * unit_price\n- round(initial_amount - quantity * unit_price) > 0\n- int(quantity * unit_price * 1000) % 10 == 0\n- is_int((initial_amount - quantity * unit_price))\n\n#answer: round(initial_amount - quantity * unit_price)"
+answer_annotated = "{quantity} {item} ਦੀ ਕੀਮਤ {quantity} * {cur}{round(unit_price,2)} = {cur}<<{quantity}*{round(unit_price,2)}={round(quantity*unit_price,2)}>>{round(quantity*unit_price,2)} ਹੈ।\n{name} ਕੋਲ {cur}{initial_amount} ਹਨ, ਇਸ ਲਈ ਉਸ ਕੋਲ {cur}{initial_amount} - {cur}{round(quantity*unit_price,2)} = {cur}<<{initial_amount}-{round(quantity*unit_price,2)}={round(initial_amount - quantity * unit_price)}>>{round(initial_amount - quantity * unit_price)} ਬਚਦੇ ਹਨ।\n#### {round(initial_amount - quantity * unit_price)}"
+source-language = "eng"
+initial_translation_model = "manual"
+human-validated = "by two native speakers"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected by native speaker"
+language = "pan"
