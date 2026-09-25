@@ -7,8 +7,9 @@ Two distinct measurements:
               lost point. This is the one that costs accuracy.
 
 Three things learned the hard way and encoded here:
-  * The remote user has Linger=no, so anything backgrounded dies when the ssh
-    session ends. This script must run in the FOREGROUND of a held-open session.
+  * Over ssh, a backgrounded run dies with the session if the account has
+    Linger=no -- setsid/nohup are not enough. Run it in the FOREGROUND of a
+    held-open session.
   * Results are appended per log, so a death costs one log, not the run. Rerun
     to resume: logs already in the CSV are skipped.
   * Parsing dominates, not bandwidth (6 MB/s/stream measured). Processes, not
@@ -22,8 +23,9 @@ import concurrent.futures as cf
 from huggingface_hub import HfApi, hf_hub_download
 
 RID, REV = "danish-foundation-models/multilingual-gsm-symbolic", "refs/pr/16"
-HOME = os.path.expanduser("~/gsm")
-OUT, STREAM = f"{HOME}/compliance.csv", f"{HOME}/stream"
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(HERE, "..", "..", "artifacts", "analysis", "compliance.csv")
+STREAM = os.path.join(HERE, "_stream")   # scratch; each log is deleted after parsing
 LANGS = {"ara","dan","deu","eng","est","fra","hin","isl","ita","jpn","mar","nld","rus","ukr","zho"}
 STRIDE = 4                                  # parse every 4th sample: 500 of 2000
 BOXED = re.compile(r"\\boxed\s*\{")

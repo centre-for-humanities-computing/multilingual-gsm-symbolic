@@ -2,16 +2,16 @@
 ## refit) and prepared cells from ../../artifacts/analysis/model_cells.rds.
 ##
 ## The ten figures the paper uses, in the order they are built:
-##   fig_levers_odds          Fig. 3   the four lever x language-feature interactions
-##   fig_scale_cost           Fig. 14  each language's gap priced in model size
-##   fig_effects              Fig. 2   all fitted effects, by inferential stratum
-##   fig_ladder               Fig. 5   observed success rate by solution stage
-##   fig_ladder_fitted        Fig. 16  fitted effects by stage
-##   fig_design_space         Fig. 15  language selection / confound structure
-##   fig_predict_language     Fig. 6   forecasting a held-out language
-##   fig_predict_model_language Fig. 7 forecasting a model in a held-out language
-##   fig_predict_by_language  Fig. 13  the same, decomposed per language
-##   fig_symbolic_penalty     Fig. 4   symbolic penalty by language
+##   fig_levers_odds            the four lever x language-feature interactions
+##   fig_scale_cost             each language's gap priced in model size
+##   fig_effects                all fitted effects, by inferential stratum
+##   fig_ladder                 observed success rate by solution stage
+##   fig_ladder_fitted          fitted effects by stage
+##   fig_design_space           language selection / confound structure
+##   fig_predict_language       forecasting a held-out language
+##   fig_predict_model_language forecasting a model in a held-out language
+##   fig_predict_by_language    the same, decomposed per language
+##   fig_symbolic_penalty       symbolic penalty by language
 
 suppressPackageStartupMessages({
   library(lme4); library(dplyr); library(tidyr); library(ggplot2); library(scales)
@@ -645,7 +645,7 @@ if (file.exists(lolo_path)) {
 
 ## =====================================================================
 ## 10. THE SYMBOLIC PENALTY, BY LANGUAGE
-## Fig. 2 (original vs synthetic scatter) shows that the penalty exists;
+## The original-vs-synthetic scatter shows that the penalty exists;
 ## this shows how it differs across languages, which the scatter cannot,
 ## since language is not encoded there.
 ## =====================================================================
