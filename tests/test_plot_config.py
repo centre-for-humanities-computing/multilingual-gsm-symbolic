@@ -4,9 +4,14 @@ import sys
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
+
 SCRIPT_DIR = Path(__file__).resolve().parents[1] / "paper" / "scripts"
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
+
+# The paper helpers pull in pandas, which is not part of the default `uv sync`.
+pytest.importorskip("pandas", reason="paper scripts require pandas")
 
 from eval_log_utils import map_log_loader  # noqa: E402
 from number_coverage_utils import extract_numbers, number_coverage_counts  # noqa: E402

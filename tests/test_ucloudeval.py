@@ -3,6 +3,11 @@ import importlib.util
 import sys
 from pathlib import Path
 
+import pytest
+
+# ucloudeval imports yaml, which lives in the optional `eval` dependency group.
+pytest.importorskip("yaml", reason="ucloudeval requires the eval dependency group")
+
 SCRIPT = Path(__file__).parents[1] / "paper" / "scripts" / "ucloudeval"
 loader = importlib.machinery.SourceFileLoader("ucloudeval", str(SCRIPT))
 spec = importlib.util.spec_from_loader(loader.name, loader)

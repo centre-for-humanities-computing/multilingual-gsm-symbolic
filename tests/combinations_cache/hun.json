@@ -15,8 +15,18 @@
     "count": 100
   },
   {
+    "id": 76,
+    "question_annotated": "{name,Deandre} {n,3} {fish,tonhal}at fogott el múlt {day,hétfőn}, az első fogott {fish,tonhal} {w1,56} {unit,kilogramm} súlyú, a második fogott {fish,tonhal} {w2,46} {unit,kilogramm} súlyú, és a maradék fogott {fish,tonhal} {w3,26} {unit,kilogramm} súlyú. Ha egy {unit,kilogramm} {fish,tonhal} {cur,$}{price,0.5}, mennyit fog keresni, miután eladta az összes {fish,tonhal}at a piacon?\n\n#init:\n- name = sample(names_male)\n- fish = sample([\"tuna\",\"salmon\", \"cod\", \"trout\", \"steelhead\"])\n- day = sample(weekdays)\n- unit = sample([\"kilogram\", \"kg\"])\n- cur = sample(currencies_sym)\n- $n = range(3, 8)\n- $w1 = range(40, 80)\n- $w2 = range(30, 60)\n- $w3 = range(20, 40)\n- $price = arange(0.25, 2.5, 0.25)\n\n#conditions:\n- n > 2\n- is_int((w1 + w2) * price + (n-2) * w3 * price)\n\n#answer: int((w1 + w2) * price + (n-2)*w3*price)",
+    "count": 100
+  },
+  {
     "id": 83,
     "question_annotated": "Az {family,Adams} család éppen {item,sütemény}eket készít. Eddig {total,7995} {item,sütemény}t készítettek. {n1,2595} {flavor1,szivárványos} {item,sütemény}ük, {n2,3075} {flavor2,zabos} {item,sütemény}ük van, és néhány {flavor3,csokis} {item,sütemény}ük is. Hány {flavor3,csokis} {item,sütemény}t készítettek?\n\n#init:\n- family = sample([\"Smith\", \"Johnson\", \"Williams\", \"Brown\", \"Jones\"])\n- item = sample([\"cupcake\", \"muffin\", \"brownie\", \"biscuit\"])\n- flavor1, flavor2, flavor3 = sample([\"vanilla\", \"strawberry\", \"blueberry\", \"lemon\", \"peanut butter\"], 3)\n- $total = range(4995, 10000, 25)\n- $n1 = range(995, 3000, 50)\n- $n2 = range(1075, 3200, 50)\n\n#conditions:\n- n1 + n2 < total\n\n#answer: total - (n1 + n2)",
+    "count": 100
+  },
+  {
+    "id": 84,
+    "question_annotated": "{name,Maria} {n,8} darab részvényt vásárol {p,8} {cur,dollár} darabonként. Az árfolyam az első évben {r1,50}%-kal nő, amikor {name,Maria} birtokolja, majd a második évben {r2,25}%-kal csökken. Mennyi az összes {name,Maria} részvényének végső értéke?\n\n#init:\n- name = sample(names_female)\n- cur = sample(currencies_sym)\n- $n = range(5, 20)\n- $p = range(5, 100)\n- $r1 = range(10, 100, 5)\n- $r2 = range(5, 50, 5)\n\n#conditions:\n- is_int(n * p * r1/100)\n- is_int(n * p * (1 + r1/100) * (1 - r2/100))\n\n#answer: ensure_int(n * p * (1 + r1/100) * (1 - r2/100))",
     "count": 100
   }
 ]
