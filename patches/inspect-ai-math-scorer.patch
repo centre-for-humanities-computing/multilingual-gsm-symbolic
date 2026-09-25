@@ -1,0 +1,30 @@
+diff --git a/inspect_ai/scorer/_math.py b/inspect_ai/scorer/_math.py
+--- a/inspect_ai/scorer/_math.py
++++ b/inspect_ai/scorer/_math.py
+@@ -542,8 +542,11 @@ def _parse_integer(text: str) -> int | None:
+     Returns:
+         Integer value if successful, None otherwise.
+     """
+-    if text.isdigit():
+-        return int(text)
++    if text.isdecimal():
++        try:
++            return int(text)
++        except ValueError:
++            return None
+     return None
+ 
+ 
+@@ -938,9 +941,10 @@ def math() -> Scorer:
+             # Check if the result contains unexpected free symbols (variables)
+             # Expected symbols: I (imaginary unit), pi, E (Euler's number)
+             # If we have other symbols, it's likely garbage from parsing plain text
+-            if hasattr(parsed_answer, "free_symbols"):
++            free_symbols = getattr(parsed_answer, "free_symbols", None)
++            if isinstance(free_symbols, (set, frozenset)):
+                 unexpected_symbols = {
+                     s.name
+-                    for s in parsed_answer.free_symbols
++                    for s in free_symbols
+                     if s.name not in {"I", "pi", "E", "e"}
+                 }

@@ -1,0 +1,316 @@
+from __future__ import annotations
+
+import json
+import math
+import re
+from collections.abc import Iterable
+from typing import Any
+
+# Norwegian is not human validated; exclude it before figure aggregation.
+EXCLUDED_FIGURE_LANGUAGES = {"nor", "nob", "nno"}
+
+
+def figure_rows(frame):
+    """Exclude unvalidated Norwegian from paper figure inputs."""
+    return frame.loc[~frame["language"].isin(EXCLUDED_FIGURE_LANGUAGES)].copy()
+
+
+LANGUAGE_LABELS = {
+    "zho": "Chinese",
+    "spa": "Spanish",
+    "eng": "English",
+    "eng_metric": "English metric",
+    "por": "Portuguese",
+    "rus": "Russian",
+    "deu": "German",
+    "fra": "French",
+    "ita": "Italian",
+    "ukr": "Ukrainian",
+    "dan": "Danish",
+    "nob": "Norwegian Bokmal",
+    "isl": "Icelandic",
+    "mar": "Marathi",
+    "hin": "Hindi",
+    "urd": "Urdu",
+    "ara": "Arabic",
+    "nld": "Dutch",
+    "est": "Estonian",
+    "jpn": "Japanese",
+}
+
+LANGUAGE_SPEAKERS = {
+    "zho": 940_000_000,
+    "spa": 486_000_000,
+    "eng": 380_000_000,
+    "por": 236_000_000,
+    "rus": 150_000_000,
+    "deu": 100_000_000,
+    "fra": 80_000_000,
+    "ita": 67_000_000,
+    "ukr": 33_000_000,
+    "dan": 6_000_000,
+    "nob": 5_000_000,
+    "isl": 370_000,
+    "mar": 83_000_000,
+    "hin": 345_000_000,
+    "ara": 274_000_000,
+    "nld": 25_000_000,
+    "est": 1_100_000,
+    "jpn": 123_000_000,
+}
+
+HUMAN_VERIFIED_LANGUAGES = {
+    "eng",
+    "dan",
+    "rus",
+    "zho",
+    "mar",
+    "hin",
+    "ara",
+    "nld",
+    "est",
+    "jpn",
+}
+
+LANGUAGE_COLORS = {
+    "zho": "#D62828",
+    "spa": "#F77F00",
+    "eng": "#012169",
+    "eng_metric": "#4B5563",
+    "por": "#2A9D8F",
+    "rus": "#4361EE",
+    "deu": "#FFCE00",
+    "fra": "#457B9D",
+    "ita": "#2D6A4F",
+    "ukr": "#3A86FF",
+    "dan": "#C60C30",
+    "nob": "#002868",
+    "isl": "#003897",
+    "mar": "#E76F51",
+    "hin": "#9B5DE5",
+    "ara": "#00A896",
+    "nld": "#F4A261",
+    "est": "#6A4C93",
+    "jpn": "#E63946",
+}
+
+FAMILY_ORDER = {
+    "Qwen2.5": 0,
+    "Qwen3": 1,
+    "Qwen3.5": 2,
+    "Qwen": 3,
+    "Gemma 3": 4,
+    "OLMo 2": 5,
+    "OLMo 3": 6,
+    "Granite": 7,
+    "EuroLLM": 8,
+    "Apertus": 9,
+    "Phi 4": 10,
+    "OpenAI": 11,
+}
+
+FAMILY_COLORS = {
+    "Qwen2.5": "#7B2CBF",
+    "Qwen3": "#5A189A",
+    "Qwen3.5": "#7B2CBF",
+    "Qwen": "#9D4EDD",
+    "OLMo 2": "#D62828",
+    "OLMo 3": "#8A1C7C",
+    "Granite": "#5E6472",
+    "Gemma 3": "#2A9D8F",
+    "EuroLLM": "#118AB2",
+    "Apertus": "#6A994E",
+    "Phi 4": "#F43F5E",
+    "OpenAI": "#457B9D",
+}
+
+SPLIT_LABELS = {
+    "original": "Original benchmark questions",
+    "synthetic": "Synthetic numerical variants",
+}
+
+LANGUAGE_ORDER = {
+    "zho": 0,
+    "spa": 1,
+    "hin": 2,
+    "eng": 3,
+    "eng_metric": 4,
+    "ara": 5,
+    "por": 6,
+    "jpn": 7,
+    "rus": 8,
+    "deu": 9,
+    "mar": 10,
+    "fra": 11,
+    "ita": 12,
+    "ukr": 13,
+    "nld": 14,
+    "dan": 15,
+    "nob": 16,
+    "est": 17,
+    "isl": 18,
+}
+
+PLOT_STYLE = {
+    "axes.spines.right": False,
+    "axes.spines.top": False,
+    "figure.dpi": 160,
+    "font.family": "sans-serif",
+}
+
+
+def reasoning_mode(model_args: dict[str, Any] | None) -> str | None:
+    if not model_args:
+        return None
+
+    kwargs = model_args.get("default_chat_template_kwargs") or model_args.get("chat_template_kwargs")
+    if isinstance(kwargs, str):
+        try:
+            kwargs = json.loads(kwargs)
+        except json.JSONDecodeError:
+            return None
+
+    if not isinstance(kwargs, dict):
+        return None
+
+    if "enable_thinking" in kwargs:
+        return "on" if kwargs["enable_thinking"] else "off"
+    if "think" in kwargs:
+        return "on" if kwargs["think"] else "off"
+    if "thinking" in kwargs:
+        return "on" if kwargs["thinking"] else "off"
+    return None
+
+
+def model_name(raw_model: str, model_args: dict[str, Any] | None = None) -> str:
+    name = raw_model.rstrip("/").split("/")[-1]
+    mode = reasoning_mode(model_args)
+    if mode is None and name.lower().startswith("olmo-3-") and name.lower().endswith("-think"):
+        mode = "on"
+    return f"{name} (reasoning {mode})" if mode else name
+
+
+def model_family(raw_model: str) -> str:
+    name = model_name(raw_model)
+    lower = name.lower()
+    raw_lower = raw_model.lower()
+    if "qwen2.5" in lower:
+        return "Qwen2.5"
+    if "qwen3.5" in lower:
+        return "Qwen3.5"
+    if "qwen3" in lower:
+        return "Qwen3"
+    if "qwen" in lower:
+        return "Qwen"
+    if "olmo-2" in lower:
+        return "OLMo 2"
+    if "olmo-3" in lower:
+        return "OLMo 3"
+    if "granite" in lower:
+        return "Granite"
+    if "eurollm" in lower:
+        return "EuroLLM"
+    if "gemma-3" in lower:
+        return "Gemma 3"
+    if "apertus" in lower:
+        return "Apertus"
+    if "phi-4" in lower:
+        return "Phi 4"
+    if raw_lower.startswith("openai/") or lower.startswith(("gpt-", "o1", "o3", "o4")):
+        return "OpenAI"
+    return name.split("-", 1)[0].split("_", 1)[0].split(".", 1)[0]
+
+
+def model_size_b(raw_model: str) -> float:
+    name = model_name(raw_model).lower()
+    match = re.search(r"(?<![\d.])(\d+(?:\.\d+)?)\s*b(?:\b|[-_])", name)
+    if match:
+        return float(match.group(1))
+
+    compact_b = re.search(r"(?<![\d.])(\d+)b(\d+)(?:\b|[-_])", name)
+    if compact_b:
+        whole, decimal = compact_b.groups()
+        return float(f"{whole}.{decimal}")
+
+    compact_m = re.search(r"(?<![\d.])(\d+)m(?:\b|[-_])", name)
+    if compact_m:
+        return float(compact_m.group(1)) / 1_000
+
+    return math.inf
+
+
+def reasoning_sort_bucket(model: str) -> int:
+    if model.endswith(" (reasoning off)"):
+        return 0
+    if model.endswith(" (reasoning on)"):
+        return 2
+    return 1
+
+
+def model_sort_key(raw_model: str) -> tuple[int, int, float, str]:
+    name = model_name(raw_model)
+    family = model_family(raw_model)
+    return FAMILY_ORDER.get(family, 99), reasoning_sort_bucket(name), model_size_b(raw_model), name.lower()
+
+
+def ordered_models(models: Iterable[str]) -> list[str]:
+    return sorted(models, key=model_sort_key)
+
+
+def ordered_families(families: Iterable[str]) -> list[str]:
+    unique_families = set(families)
+    known = [family for family in FAMILY_ORDER if family in unique_families]
+    extra = sorted(unique_families - set(FAMILY_ORDER))
+    return known + extra
+
+
+def language_order(
+    languages: Iterable[str], requested: list[str] | None = None, *, english_first: bool = False
+) -> list[str]:
+    languages = set(languages) - EXCLUDED_FIGURE_LANGUAGES
+    if requested:
+        return [
+            language for language in requested
+            if language not in EXCLUDED_FIGURE_LANGUAGES and (language in languages or not languages)
+        ]
+
+    def key(language: str) -> tuple[int, int, str]:
+        if english_first and language == "eng":
+            return -1, 0, language
+        known = 0 if language in LANGUAGE_ORDER else 1
+        return known, LANGUAGE_ORDER.get(language, 999), language
+
+    return sorted(set(languages), key=key)
+
+
+def path_slug(value: str) -> str:
+    """Convert an arbitrary string into a filesystem-safe slug."""
+    slug = re.sub(r"[^a-z0-9.]+", "-", value.lower()).strip("-")
+    return slug or "unknown"
+
+
+def format_speaker_count(count: int) -> str:
+    """Format a native-speaker count as a compact human-readable string."""
+    if count >= 1_000_000:
+        return f"{count / 1_000_000:g}M"
+    if count >= 1_000:
+        return f"{count / 1_000:g}K"
+    return str(count)
+
+
+def heatmap_language_label(language: str) -> str:
+    """Return a two-line axis label with language name and speaker count."""
+    name = LANGUAGE_LABELS.get(language, language)
+    speakers = LANGUAGE_SPEAKERS.get(language)
+    return f"{name}\n({format_speaker_count(speakers)} speakers)" if speakers is not None else name
+
+
+def reasoning_variant_name(model: str) -> tuple[str, str | None]:
+    suffixes = {
+        " (reasoning on)": "on",
+        " (reasoning off)": "off",
+    }
+    for suffix, mode in suffixes.items():
+        if model.endswith(suffix):
+            return model[: -len(suffix)], mode
+    return model, None

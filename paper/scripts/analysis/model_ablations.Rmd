@@ -1,0 +1,149 @@
+---
+title: "Model ablations: the template-by-language random effect"
+subtitle: "Alternative GLMM specifications"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache.path = "_cache/model_ablations/")
+suppressPackageStartupMessages({ library(dplyr); library(lme4) })
+```
+
+The main model carries `(1 | template)` but no template-by-language term, i.e. it
+assumes a template's difficulty is the same in every language up to that
+language's overall effect. It is not: decomposing per-(language, template)
+accuracy on the logit scale gives sd(template) around 0.69 against
+sd(template x language) around 0.52, and the cross-language Spearman correlation
+of template difficulty averages 0.73.
+
+Two things to establish:
+
+1. what the omitted component does to the fixed effects and their standard
+   errors --- in particular the language-level terms, which are the paper's
+   headline estimates;
+2. whether the variance decomposition reported in the results is stable, since
+   those percentages are a *ratio between two fits* and adding the term changes
+   both.
+
+The other two ablations --- the resource x distance interaction
+and script as a feature --- live in `transfer_analysis.Rmd`, which fits them
+alongside the main model.
+
+```{r data}
+cells <- readRDS("../../artifacts/analysis/model_cells.rds")
+cat("cells:", nrow(cells), "| languages:", nlevels(droplevels(cells$language)),
+    "| template:language levels:",
+    nlevels(interaction(cells$template, cells$language, drop = TRUE)), "\n")
+```
+
+# Fits
+
+Both the full model and the size-only baseline are refitted with the extra term,
+because the variance decomposition compares the two.
+
+Each runs as its own process via `run_ablation.R` and is cached as an `.rds`
+rather than by knitr. These two fits carry ~1500 extra `template:language`
+levels and are the largest memory demand in the pipeline; knitr would hold both
+live and then serialise them again on top of that.
+
+```{r fit}
+for (w in c("full", "baseline")) system2("Rscript", c("run_ablation.R", w))
+fit_tl  <- readRDS("fit_template_language.rds")
+base_tl <- readRDS("fit_tl_baseline.rds")
+```
+
+The models the paper reports come out of `transfer_analysis.Rmd`'s cache, so this
+document always compares against exactly what that document printed.
+
+```{r reference-fits}
+cache <- function(pat) {
+  f <- list.files("_cache/transfer_analysis", pattern = pat, full.names = TRUE)
+  f <- f[grepl("[.]RData$", f)]
+  stopifnot(length(f) >= 1)
+  e <- new.env(); load(f[order(file.mtime(f), decreasing = TRUE)][1], envir = e); e
+}
+fit_old  <- cache("^fit-lme4_")$fit_main
+base_old <- cache("^fit-baseline_")$fit_baseline
+```
+
+```{r convergence}
+for (nm in c("fit_tl", "base_tl")) {
+  f <- get(nm)
+  cat(nm, "| conv:",
+      if (length(f@optinfo$conv$lme4$messages)) f@optinfo$conv$lme4$messages else "OK", "\n")
+}
+```
+
+# Variance components
+
+```{r variance-components}
+sdl <- function(f, g) {
+  v <- VarCorr(f)
+  if (is.null(v[[g]])) NA_real_ else as.numeric(attr(v[[g]], "stddev")[1])
+}
+gs <- unique(c(names(VarCorr(fit_old)), names(VarCorr(fit_tl))))
+data.frame(component = gs,
+           reported = round(vapply(gs, sdl, numeric(1), f = fit_old), 4),
+           with_term = round(vapply(gs, sdl, numeric(1), f = fit_tl), 4)) %>%
+  arrange(desc(coalesce(with_term, 0)))
+```
+
+# Fixed effects
+
+The question is not whether the term belongs --- it plainly does --- but whether
+leaving it out changed anything we report.
+
+```{r fixed-effects}
+co_o <- summary(fit_old)$coefficients
+co_n <- summary(fit_tl)$coefficients
+tt <- rownames(co_o)
+data.frame(term = tt,
+           est_reported = round(co_o[tt, 1], 4), est_with_term = round(co_n[tt, 1], 4),
+           se_reported  = round(co_o[tt, 2], 4), se_with_term  = round(co_n[tt, 2], 4),
+           se_ratio = round(co_n[tt, 2] / co_o[tt, 2], 2),
+           p_with_term = signif(co_n[tt, 4], 3))
+```
+
+```{r sign-and-significance}
+sig_o <- co_o[, 4] < .05
+cat("significant in both:", sum(sig_o & co_n[, 4] < .05), "of",
+    sum(sig_o), "reported as significant\n")
+cat("significant terms keeping their sign:",
+    sum(sign(co_o[sig_o, 1]) == sign(co_n[sig_o, 1])), "of", sum(sig_o), "\n")
+flip <- sign(co_o[, 1]) != sign(co_n[, 1])
+cat("terms changing sign at all:", sum(flip), "-- check whether null in both:\n")
+if (any(flip)) print(round(cbind(reported = co_o[flip, 1], with_term = co_n[flip, 1],
+                                 p_reported = co_o[flip, 4], p_with = co_n[flip, 4]), 4))
+cat("\nAIC reported / with term:", round(AIC(fit_old), 1), "/", round(AIC(fit_tl), 1), "\n")
+```
+
+# Is the variance decomposition stable?
+
+The results section quotes the share of each component the language features
+remove, relative to a size-only baseline. Both fits change here, so the ratio has
+to be recomputed rather than inferred from the coefficients being stable.
+
+```{r variance-explained}
+sp <- function(b, f, g) 1 - sdl(f, g)^2 / sdl(b, g)^2
+comp <- c("language", "model:language")
+data.frame(component = comp,
+           reported = round(100 * sapply(comp, function(g) sp(base_old, fit_old, g)), 1),
+           with_term = round(100 * sapply(comp, function(g) sp(base_tl, fit_tl, g)), 1))
+```
+
+```{r variance-combined}
+cmb <- function(b, f) {
+  1 - sum(sapply(comp, function(g) sdl(f, g)^2)) /
+      sum(sapply(comp, function(g) sdl(b, g)^2))
+}
+cat(sprintf("combined: reported %.1f%%, with term %.1f%%\n",
+            100 * cmb(base_old, fit_old), 100 * cmb(base_tl, fit_tl)))
+cat(sprintf("sd(template:language): baseline %.4f, full model %.4f\n",
+            sdl(base_tl, "template:language"), sdl(fit_tl, "template:language")))
+cat("Near-identical means the language features explain none of it, which is what\n")
+cat("a genuine nuisance component should look like.\n")
+```

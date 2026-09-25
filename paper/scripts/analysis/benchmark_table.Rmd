@@ -1,0 +1,205 @@
+---
+title: "Benchmark results"
+subtitle: "Which models do best on Multilingual GSM-Symbolic"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache.path = "_cache/benchmark_table/")
+suppressPackageStartupMessages({ library(dplyr); library(tidyr); library(nanoparquet) })
+```
+
+A plain leaderboard, for readers who want one. Both splits are reported. English
+is shown separately from the mean over the other 14 languages, and the gap
+between them is the quantity the rest of the paper is about.
+
+Everything here is built from the parquet, not from `model_cells.rds`, for two
+reasons: `model_cells.rds` holds only the symbolic split, and it has already had
+the analysis exclusions applied. The two runs excluded from the GLMM are
+**reported here and marked** `*` -- a reader looking up a model should find it
+even when it did not enter the fit.
+
+Sampling error differs by split, because the two have different cell sizes: a
+symbolic cell is 100 templates $\times$ 20 instances = 2,000 examples and an
+original cell is 100 templates $\times$ 1 = 100. Per `sample_size.Rmd` that is
+$\pm 2.3$ accuracy points per language on symbolic and $\pm 3.4$ on original.
+A model's 15-language average is tighter, but only to about $\pm 1.8$ --- the
+same 100 templates are used in every language, so the per-language errors are
+correlated ($r = 0.67$), and independence would have given $\pm 0.6$.
+
+```{r config}
+EXCLUDED_LANGUAGES <- c("eng_metric", "uncorrected_isl", "nob")
+
+# Runs kept in these tables but flagged, because they were dropped from the GLMM:
+# both sit at the probability floor (0.28% and 0.40%) and exert large leverage on
+# the logit scale. See the EXCLUDED_RUNS note in transfer_analysis.Rmd.
+FLAGGED_RUNS <- c("Qwen3.5-0.8B (reasoning on)", "EuroLLM-1.7B-Instruct")
+```
+
+```{r data, cache=TRUE, cache.extra=list(EXCLUDED_LANGUAGES, FLAGGED_RUNS)}
+raw <- nanoparquet::read_parquet("../../artifacts/transfer_tables/analysis.parquet") %>%
+  filter(grepl("@refs/pr/16/", task, fixed = TRUE))
+
+## The parquet's naming is NOT uniform, so the bare name cannot be assumed to
+## mean one thing. Qwen3/Qwen3.5 label only the off run, making the bare name the
+## reasoning-ON run; granite labels both explicitly; Olmo-3-Think appears only as
+## "(reasoning on)". This reproduces transfer_analysis.Rmd's canonicalisation
+## rather than re-deriving it -- getting it wrong silently mislabels the
+## reasoning mode of every Qwen run.
+off_bases <- raw %>% filter(grepl("\\(reasoning off\\)$", model)) %>%
+  mutate(b = sub("\\s*\\(reasoning off\\)$", "", model)) %>% distinct(b) %>% pull(b)
+
+cells <- raw %>%
+  mutate(model = ifelse(model %in% off_bases, paste0(model, " (reasoning on)"), model),
+         base_model = sub("\\s*\\(reasoning (on|off)\\)$", "", model),
+         reasoning = ifelse(grepl("\\(reasoning on\\)$", model), "on", "off"),
+         flagged = model %in% FLAGGED_RUNS) %>%
+  filter(!language %in% EXCLUDED_LANGUAGES)
+
+bylang <- cells %>%
+  group_by(model, base_model, reasoning, flagged, params_b, family, language, split) %>%
+  summarise(acc = 100 * mean(correct), n = n(), .groups = "drop")
+
+cat(n_distinct(bylang$model), "runs x", n_distinct(bylang$language), "languages x",
+    n_distinct(bylang$split), "splits =", nrow(bylang), "rows\n")
+cat("flagged runs present:", sum(unique(bylang[c("model","flagged")])$flagged), "\n")
+cat("norwegian present?", "nob" %in% bylang$language, "\n")
+cat("examples per cell:", paste(range(bylang$n), collapse = "-"), "\n")
+```
+
+# Overview
+
+Ordered by symbolic accuracy averaged over the 15 languages.
+
+```{r overview, cache=TRUE, dependson='data'}
+tab <- bylang %>% filter(split == "synthetic") %>%
+  group_by(model, base_model, reasoning, flagged, params_b, family) %>%
+  summarise(overall = mean(acc),
+            english = acc[language == "eng"],
+            non_english = mean(acc[language != "eng"]),
+            worst = min(acc),
+            worst_lang = as.character(language[which.min(acc)]),
+            .groups = "drop") %>%
+  mutate(gap = english - non_english) %>%
+  arrange(desc(overall))
+
+## Original-split overall, for the leaderboard's second accuracy column.
+orig <- bylang %>% filter(split == "original") %>%
+  group_by(model) %>% summarise(overall_orig = mean(acc), .groups = "drop")
+tab <- tab %>% left_join(orig, by = "model")
+
+tab %>% transmute(Model = base_model, Reas. = reasoning, `Params (B)` = params_b,
+                  Original = round(overall_orig, 1), Symbolic = round(overall, 1),
+                  English = round(english, 1), `Non-English` = round(non_english, 1),
+                  Gap = round(gap, 1),
+                  Worst = paste0(round(worst, 1), " (", worst_lang, ")"),
+                  Fit = ifelse(flagged, "excluded", ""))
+```
+
+```{r overview-latex, results='asis'}
+esc <- function(x) gsub("_", "\\\\_", x)
+dir.create("tables", showWarnings = FALSE)
+sink("tables/leaderboard.tex", split = TRUE)   # split: also echo into the knit
+cat("\\begin{table}[p]\n\\centering\n\\small\n")
+cat("\\begin{tabular}{llrrrrrrl}\n\\toprule\n")
+cat("Model & Reas. & Params & Orig. & Symb. & English & Non-Eng. & Gap & Worst \\\\\n")
+cat("\\midrule\n")
+for (i in seq_len(nrow(tab))) with(tab[i, ], cat(sprintf(
+  "%s%s & %s & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f & %.1f (%s) \\\\\n",
+  esc(base_model), ifelse(flagged, "$^{*}$", ""), reasoning, params_b,
+  overall_orig, overall, english, non_english, gap, worst, worst_lang)))
+cat("\\bottomrule\n\\end{tabular}\n")
+cat("\\caption{Exact-answer accuracy on Multilingual GSM-Symbolic, averaged over the 15",
+    "benchmark languages and ordered by symbolic accuracy. \\emph{Gap} is English minus the",
+    "mean of the other 14 languages. \\emph{Worst} is the lowest-scoring language on the",
+    "symbolic split. Per-language scores carry roughly $\\pm 2.3$ points of sampling error",
+    "on the symbolic split and $\\pm 3.4$ on the original; the 15-language averages about",
+    "$\\pm 1.8$ (Appendix~\\ref{app:sec:sample-size}).",
+    "$^{*}$Reported here but excluded from the model in Equation~\\ref{eq:model}.}\n")
+cat("\\label{tab:leaderboard}\n\\end{table}\n")
+sink()
+```
+
+# Summary
+
+```{r summary}
+cat(sprintf("best overall: %s (%.1f%%)\n", tab$model[1], tab$overall[1]))
+cat(sprintf("largest English-to-non-English gap: %s (%.1f points)\n",
+            tab$model[which.max(tab$gap)], max(tab$gap)))
+
+## Apertus is the one model whose English score is far BELOW its non-English
+## scores, so its "gap" is large and negative. That is a known anomaly rather
+## than good transfer, and reporting the minimum gap without saying so would
+## crown it the most balanced model in the suite.
+neg <- tab %>% filter(gap < 0)
+if (nrow(neg)) {
+  cat("\nruns scoring WORSE in English than in the average other language:\n")
+  print(neg %>% transmute(model, english = round(english, 1),
+                          non_english = round(non_english, 1), gap = round(gap, 1)))
+}
+
+paired <- tab %>% filter(!flagged) %>%
+  select(base_model, reasoning, overall, gap) %>%
+  pivot_wider(names_from = reasoning, values_from = c(overall, gap)) %>%
+  filter(!is.na(overall_on), !is.na(overall_off))
+cat(sprintf("\nacross %d base models run both ways, reasoning adds %.1f points overall\n",
+            nrow(paired), mean(paired$overall_on - paired$overall_off)))
+cat(sprintf("and narrows the English gap by %.1f points\n",
+            mean(paired$gap_off - paired$gap_on)))
+
+cat(sprintf("\nsymbolic is below original by %.1f points on average\n",
+            mean(tab$overall_orig - tab$overall)))
+```
+
+# Results by language
+
+A 720-row long table is unreadable on the page, so this goes out as two
+run $\times$ language matrices, one per split. Within a split the per-cell
+sampling error is near-uniform, so intervals add nothing that one caption
+sentence cannot carry -- but the two splits differ ($\pm 2.3$ vs $\pm 3.4$),
+so each caption states its own.
+
+```{r by-language-latex, results='asis'}
+langs <- sort(unique(as.character(bylang$language)))
+ord <- tab %>% transmute(model, overall)
+stopifnot(setequal(ord$model, unique(bylang$model)))
+
+emit <- function(sp, label, cap, file) {
+  sink(file.path("tables", file), split = TRUE)
+  m <- bylang %>% filter(split == sp) %>%
+    select(model, base_model, reasoning, flagged, language, acc) %>%
+    tidyr::pivot_wider(names_from = language, values_from = acc) %>%
+    left_join(ord, by = "model") %>%
+    arrange(desc(overall))
+  cat("\\begin{sidewaystable}\n\\centering\n\\resizebox{\\textheight}{!}{%\n")
+  cat("\\begin{tabular}{ll", strrep("r", length(langs)), "}\n\\toprule\n", sep = "")
+  cat("Model & Reas. & ", paste(langs, collapse = " & "), " \\\\\n\\midrule\n", sep = "")
+  for (i in seq_len(nrow(m))) {
+    cat(esc(m$base_model[i]), if (m$flagged[i]) "$^{*}$" else "", " & ",
+        m$reasoning[i], " & ",
+        paste(sprintf("%.1f", unlist(m[i, langs])), collapse = " & "), " \\\\\n", sep = "")
+  }
+  cat("\\bottomrule\n\\end{tabular}}\n")
+  cat("\\caption{", cap, "}\n\\label{", label, "}\n\\end{sidewaystable}\n\n", sep = "")
+  sink()
+}
+
+emit("original", "tab:by-language-original",
+     paste("Exact-answer accuracy (\\%) on the \\textbf{original} split, by run and language.",
+           "Rows are ordered by mean symbolic accuracy, matching",
+           "Table~\\ref{tab:leaderboard}. Each cell is 100 questions, one per template, and",
+           "carries roughly $\\pm 3.4$ points of sampling error",
+           "(Appendix~\\ref{app:sec:sample-size}).",
+           "$^{*}$Excluded from the model in Equation~\\ref{eq:model}."),
+     "by_language_original.tex")
+emit("synthetic", "tab:by-language-symbolic",
+     paste("Exact-answer accuracy (\\%) on the \\textbf{symbolic} split, by run and language.",
+           "Row order and $^{*}$ as in Table~\\ref{tab:by-language-original}. Each cell is",
+           "2{,}000 questions, 20 per template, and carries roughly $\\pm 2.3$ points of",
+           "sampling error."),
+     "by_language_symbolic.tex")
+```

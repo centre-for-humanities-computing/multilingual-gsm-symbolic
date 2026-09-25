@@ -1,0 +1,130 @@
+---
+title: "The symbolic penalty"
+subtitle: "Are symbolic variants harder, and does it vary by language?"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache.path = "_cache/symbolic_penalty/")
+suppressPackageStartupMessages({ library(dplyr); library(lme4); library(nanoparquet) })
+```
+
+The descriptive claim --- synthetic variants are harder --- is a paired comparison
+over 768 model x language gaps, which ignores the nested structure. Here the
+penalty is fitted properly: both splits in one binomial GLMM, with `split` as a
+fixed effect and as a random slope over language.
+
+| term | asks |
+|---|---|
+| `split` | the average symbolic penalty |
+| `split x` language features | is the penalty predicted by resource level or typological distance? |
+| `(1 + split \| language)` | does the penalty vary by language beyond what the features explain? |
+
+The likelihood-ratio test of the random slope against a random-intercept-only
+model is the test of *does fragility differ across languages at all*.
+
+# Data
+
+The exclusions match `transfer_analysis.Rmd`: `eng_metric` and `uncorrected_isl`
+are diagnostic labels rather than languages, and `nob` is not one of the
+benchmark's 15.
+
+Note the two splits differ in instances per cell --- the original split has one
+instance per (model, language, template), the synthetic split has 20. The
+binomial outcome handles this; it means the original arm simply carries less
+information per cell.
+
+```{r prep, cache=TRUE}
+EXCLUDED_LANGUAGES <- c("eng_metric", "uncorrected_isl", "nob")
+## Read straight from the parquet, so the exclusions in transfer_analysis.Rmd do
+## not apply automatically and are repeated here. The two runs below sit at the
+## probability floor (0.28% and 0.40% accuracy) and carry no information.
+## NOTE the naming: in the parquet the reasoning-ON run carries the BARE name
+## ("Qwen3.5-0.8B") and only the off-variant is suffixed. transfer_analysis.Rmd
+## adds the "(reasoning on)" suffix afterwards, so a document reading the parquet
+## must exclude the bare name or it silently keeps the model.
+EXCLUDED_RUNS <- c("gpt-5.4-nano", "Qwen3.5-0.8B", "EuroLLM-1.7B-Instruct")
+
+obs <- read_parquet("../../artifacts/transfer_tables/analysis.parquet") %>%
+  select(source_id, language, correct, model, family, params_b, split, task,
+         typological_distance, log10_common_crawl_pages) %>%
+  filter(grepl("@refs/pr/16/", task, fixed = TRUE),
+         !language %in% EXCLUDED_LANGUAGES,
+         !model %in% EXCLUDED_RUNS)
+
+standardise <- function(x) as.numeric((x - mean(x)) / sd(x))
+
+cells <- obs %>%
+  mutate(base_model = sub("\\s*\\(reasoning (on|off)\\)$", "", model)) %>%
+  group_by(model, base_model, family, language, template = source_id, split) %>%
+  summarise(n_correct = sum(correct), n_total = n(),
+            params_b = first(params_b),
+            typological_distance = first(typological_distance),
+            log10_resource = first(log10_common_crawl_pages), .groups = "drop") %>%
+  mutate(split = factor(split, levels = c("original", "synthetic")),
+         log_resource_z = standardise(log10_resource),
+         typological_distance_z = standardise(typological_distance),
+         across(c(model, base_model, family, language, template), as.factor))
+```
+
+```{r prep-report}
+cat("cells:", nrow(cells), "| languages:", nlevels(cells$language),
+    "| models:", nlevels(cells$model), "\n")
+cells %>% count(split, n_total)
+```
+
+# Model
+
+Only what the claims need: the average penalty, and whether it is predicted by
+the two language features. Model ability needs no fixed term --- the model,
+base-model and family random effects already carry it.
+
+```{r model-spec}
+FIX <- paste("cbind(n_correct, n_total - n_correct) ~",
+             "split * (log_resource_z + typological_distance_z) +")
+RE_BASE <- "(1 | family/base_model) + (1 | model) + (1 | template) + (1 | model:language)"
+ctrl <- glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 3e5))
+```
+
+```{r fit, cache=TRUE, dependson='prep', cache.extra=list(FIX, RE_BASE)}
+run <- function(re_lang) {
+  glmer(as.formula(paste(FIX, re_lang, "+", RE_BASE)),
+        data = cells, family = binomial(), control = ctrl)
+}
+fit_slope <- run("(1 + split | language)")
+fit_int   <- run("(1 | language)")
+```
+
+```{r convergence}
+for (nm in c("fit_slope", "fit_int")) {
+  f <- get(nm)
+  cat(nm, "| conv:",
+      if (length(f@optinfo$conv$lme4$messages)) f@optinfo$conv$lme4$messages else "OK", "\n")
+}
+```
+
+# The penalty
+
+```{r summary-slope}
+summary(fit_slope)
+```
+
+# Does the penalty vary by language?
+
+```{r lrt}
+anova(fit_int, fit_slope)
+vc <- VarCorr(fit_slope)$language
+cat("SD of the split slope across languages:",
+    round(attr(vc, "stddev")[2], 4), "log-odds\n")
+```
+
+```{r per-language}
+re <- ranef(fit_slope)$language
+pen <- data.frame(language = rownames(re),
+                  penalty_logodds = fixef(fit_slope)[["splitsynthetic"]] + re[, 2])
+pen[order(pen$penalty_logodds), ]
+```

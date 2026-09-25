@@ -1,0 +1,716 @@
+#!/usr/bin/env python3
+# /// script
+# dependencies = ["datasets", "huggingface-hub", "inspect-ai", "pyyaml"]
+# ///
+"""Run multilingual GSM-Symbolic Inspect tasks against local vLLM servers."""
+
+from __future__ import annotations
+
+import argparse
+import base64
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
+from functools import cache
+from pathlib import Path
+from typing import Any
+
+import yaml
+from huggingface_hub import hf_hub_download
+
+MODELS = (
+     #  Qwen2.5 Instruct
+    "Qwen/Qwen2.5-0.5B-Instruct",
+    "Qwen/Qwen2.5-1.5B-Instruct",
+    "Qwen/Qwen2.5-3B-Instruct",
+    "Qwen/Qwen2.5-7B-Instruct",
+    "Qwen/Qwen2.5-14B-Instruct",
+    "Qwen/Qwen2.5-32B-Instruct",
+    "Qwen/Qwen2.5-72B-Instruct",
+
+     #  Qwen3 dense reasoning-capable models
+    "Qwen/Qwen3-0.6B",
+    "Qwen/Qwen3-1.7B",
+    "Qwen/Qwen3-4B",
+    "Qwen/Qwen3-8B",
+    "Qwen/Qwen3-14B",
+    "Qwen/Qwen3-32B",
+
+    #   Qwen3.5 reasoning models up to 27B
+    "Qwen/Qwen3.5-0.8B",
+    "Qwen/Qwen3.5-4B",
+    "Qwen/Qwen3.5-9B",
+    "Qwen/Qwen3.5-27B",
+
+    #   OLMo 2 Instruct
+    "allenai/OLMo-2-0425-1B-Instruct",
+    "allenai/OLMo-2-1124-7B-Instruct",
+    "allenai/OLMo-2-1124-13B-Instruct",
+    "allenai/OLMo-2-0325-32B-Instruct",
+
+    #   OLMo 3
+    "allenai/Olmo-3-7B-Think",
+    "allenai/Olmo-3-7B-Instruct",
+    "allenai/Olmo-3-32B-Think",
+    "allenai/Olmo-3.1-32B-Instruct",
+
+   #    Granite 3.2
+    "ibm-granite/granite-3.2-2b-instruct",
+    "ibm-granite/granite-3.2-8b-instruct",
+
+   #    Gemma 3 IT
+    "google/gemma-3-1b-it",
+    "google/gemma-3-4b-it",
+    "google/gemma-3-12b-it",
+    "google/gemma-3-27b-it",
+
+    #   Gemma 4 dense IT
+    "google/gemma-4-12B-it",
+    "google/gemma-4-31B-it",
+
+   #    Apertus
+    "swiss-ai/Apertus-8B-Instruct-2509",
+    "swiss-ai/Apertus-70B-Instruct-2509",
+
+    #   OpenEuroLLM
+    "utter-project/EuroLLM-1.7B-Instruct",
+    "utter-project/EuroLLM-9B-Instruct-2512",
+    "utter-project/EuroLLM-22B-Instruct-2512",
+
+)
+# Repository id (no revision) and optional revision to apply to each task
+DATASET = "danish-foundation-models/multilingual-gsm-symbolic"
+REVISION = "main"
+HISTORICAL_SYNTHETIC_REVISIONS = {
+    "isl": ("0850f21ea3197a67221af050c288883caabd36f6",),
+}
+HISTORICAL_SPLITS = ("test_original", "test_synthetic")
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+CACHE_POLICY = Path(__file__).with_name("cache.yaml")
+INSPECT_PATCH = REPO_ROOT / "patches" / "inspect-ai-math-scorer.patch"
+CACHE_DIR = REPO_ROOT / "cache"
+LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
+HISTORICAL_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
+OPTIONAL_LANGUAGES = {"eng_metric"}
+DEFAULT_VLLM_SERVER_ARGS: dict[str, Any] = {
+    "dtype": "auto",
+    "max_num_seqs": 512,
+    "gpu_memory_utilization": 0.95,
+    "enable_prefix_caching": True,
+    "async_scheduling": True,
+    "disable_log_stats": False,
+}
+COMPLETED_TASKS_FILE = ".completed-tasks.json"
+
+
+class RunnerError(RuntimeError):
+    pass
+
+
+@dataclass(frozen=True)
+class Task:
+    task_id: str
+    language: str
+    split: str
+    prompt: str
+
+
+@dataclass(frozen=True)
+class ModelRun:
+    model: str
+    args: tuple[str, ...] = ()
+    reasoning: str | None = None
+
+
+def unique(values: Sequence[str]) -> list[str]:
+    return list(dict.fromkeys(values))
+
+
+def patch_inspect() -> None:
+    import inspect_ai
+
+    package_root = Path(inspect_ai.__file__).resolve().parent.parent
+    for patch in (INSPECT_PATCH,):
+        command = ["patch", "--batch", "--forward", "-p1", "-i", str(patch)]
+        applied = subprocess.run(command, cwd=package_root, capture_output=True)
+        if applied.returncode == 0:
+            continue
+        check = command[:2] + ["--dry-run", "--reverse"] + command[3:]
+        if subprocess.run(check, cwd=package_root, capture_output=True).returncode:
+            raise RunnerError(f"Installed Inspect version is incompatible with {patch.name}")
+
+
+def load_tasks(revision: str = REVISION) -> list[Task]:
+    try:
+        path = Path(
+            hf_hub_download(
+                repo_id=DATASET,
+                filename="eval.yaml",
+                repo_type="dataset",
+                revision=revision,
+            )
+        )
+        raw_tasks = yaml.safe_load(path.read_text(encoding="utf-8"))["tasks"]
+    except Exception as error:
+        raise RunnerError(
+            f"Could not load remote eval.yaml for {DATASET}@{revision}: {error}"
+        ) from error
+
+    return [
+        Task(
+            item["id"],
+            item["config"],
+            item["split"],
+            next(
+                solver["args"]["template"]
+                for solver in item["solvers"]
+                if solver["name"] == "prompt_template"
+            ),
+        )
+        for item in raw_tasks
+    ]
+
+
+def build_parser(languages: Sequence[str], splits: Sequence[str]) -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Evaluate multilingual GSM-Symbolic tasks against one local vLLM model at a time, "
+            "resuming completed and interrupted work from the log directory."
+        )
+    )
+    options = (
+        ("model", MODELS, "HF_MODEL_ID", "curated Hugging Face model id"),
+        ("language", languages, "CODE", "language code"),
+        ("split", splits, "HF_SPLIT", "full Hugging Face split name"),
+    )
+    for name, available, metavar, label in options:
+        choices = "curated list" if name == "model" else ", ".join(available)
+        parser.add_argument(
+            f"--{name}", nargs="+", default=["all"], metavar=metavar,
+            help=f"{label}(s), or 'all' (available: {choices})",
+        )
+    parser.add_argument("--revision", default=REVISION, help="Dataset revision for normal runs.")
+    parser.add_argument(
+        "--historical-revisions",
+        action="store_true",
+        help="Evaluate configured historical synthetic revisions into isolated log directories.",
+    )
+    parser.add_argument(
+        "--log-dir",
+        type=Path,
+        default=LOG_DIR,
+        help="Inspect log directory for normal runs.",
+    )
+    parser.add_argument("--reasoning-effort", help="Forwarded to Inspect for models that support it.")
+    parser.add_argument(
+        "--reasoning",
+        choices=("on", "off"),
+        help="Run only the selected reasoning mode for toggleable models.",
+    )
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        help="Override size-based max connections and samples for Inspect.",
+    )
+    parser.add_argument(
+        "--tasks",
+        type=int,
+        default=16,
+        help="Max tasks for Inspect.",
+    )
+    parser.add_argument(
+        "--max-retries",
+        type=int,
+        default=10,
+        help="Maximum model API retries per request (default: 10).",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=600,
+        help="Model API request timeout in seconds (default: 600).",
+    )
+    parser.add_argument(
+        "--vllm-server-arg",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
+        help="vLLM server argument merged into VLLM_DEFAULT_SERVER_ARGS. Repeat for multiple args.",
+    )
+    return parser
+
+
+def expand(
+    parser: argparse.ArgumentParser,
+    option: str,
+    values: Sequence[str],
+    available: Sequence[str],
+    default_all: Sequence[str] | None = None,
+) -> list[str]:
+    values = unique(values)
+    if "all" in values:
+        if len(values) > 1:
+            parser.error(f"--{option}: 'all' cannot be combined with other values")
+        return list(available if default_all is None else default_all)
+    if option != "model" and (invalid := [value for value in values if value not in available]):
+        parser.error(
+            f"--{option}: invalid value(s): {', '.join(invalid)} "
+            f"(choose from {', '.join(available)}, or all)"
+        )
+    return values
+
+
+def select_tasks(
+    tasks: Sequence[Task],
+    languages: Sequence[str],
+    splits: Sequence[str],
+    all_defined: bool = False,
+) -> list[Task]:
+    if all_defined:
+        return list(tasks)
+
+    requested = {(language, split) for language in languages for split in splits}
+    available = {(task.language, task.split) for task in tasks}
+    if missing := sorted(requested - available):
+        combinations = ", ".join(f"{language}/{split}" for language, split in missing)
+        raise RunnerError(f"No task definition exists for language/split combination(s): {combinations}")
+    return [task for task in tasks if (task.language, task.split) in requested]
+
+
+def model_args(model: str) -> list[str]:
+    lower = model.lower()
+    if lower.startswith("allenai/olmo-3-") and lower.endswith("-think"):
+        kwargs = json.dumps({"think": True}).replace("'", "'\"'\"'")
+        return ["-M", f"default_chat_template_kwargs='{kwargs}'"]
+    if lower.startswith("qwen/qwen3-") or lower.startswith("qwen/qwen3.5-"):
+        return ["-M", "reasoning_parser=qwen3"]
+    return []
+
+
+def reasoning_toggleable(model: str) -> bool:
+    lower = model.lower()
+    return (
+        lower.startswith("qwen/qwen3-")
+        or lower.startswith("qwen/qwen3.5-")
+        or lower.startswith("ibm-granite/granite-3.2-")
+    )
+
+
+def reasoning_kwargs(model: str) -> tuple[str, str]:
+    lower = model.lower()
+    if lower.startswith("ibm-granite/granite-3.2-"):
+        key = "thinking"
+    else:
+        key = "enable_thinking"
+    on = json.dumps({key: True}).replace("'", "'\"'\"'")
+    off = json.dumps({key: False}).replace("'", "'\"'\"'")
+    return (
+        f"default_chat_template_kwargs='{on}'",
+        f"default_chat_template_kwargs='{off}'",
+    )
+
+
+def model_runs(models: Iterable[str]) -> list[ModelRun]:
+    runs = []
+    for model in models:
+        base_args = tuple(model_args(model))
+        lower = model.lower()
+        if lower.startswith("allenai/olmo-3-") and lower.endswith("-think"):
+            runs.append(ModelRun(model, base_args, "on"))
+        elif reasoning_toggleable(model):
+            on_kwargs, off_kwargs = reasoning_kwargs(model)
+            is_qwen_reasoning = lower.startswith("qwen/qwen3-") or lower.startswith("qwen/qwen3.5-")
+            on_args = base_args if is_qwen_reasoning else base_args + ("-M", on_kwargs)
+            off_args = ("-M", off_kwargs) if is_qwen_reasoning else base_args + ("-M", off_kwargs)
+            runs.extend(
+                [
+                    ModelRun(model, on_args, "on"),
+                    ModelRun(model, off_args, "off"),
+                ]
+            )
+        else:
+            runs.append(ModelRun(model, base_args))
+    return runs
+
+
+def model_ref(model: str) -> str:
+    if model.startswith(("openai/", "vllm/")):
+        return model
+    return f"vllm/{model}"
+
+
+def canonical_model_id(model: str) -> str:
+    return model.split("/", 1)[1] if model.startswith(("openai/", "vllm/")) else model
+
+
+def model_concurrency(model: str) -> int:
+    matches = re.findall(r"(\d+(?:\.\d+)?)B(?:-|$)", model, re.IGNORECASE)
+    size = float(matches[-1]) if matches else 8
+    return 256 if size <= 2 else 128 if size <= 10 else 64 if size <= 20 else 32 if size <= 40 else 16
+
+
+def _normalize_model_arg_value(value: Any) -> Any:
+    if not isinstance(value, str):
+        return value
+
+    stripped = value.strip()
+    if len(stripped) >= 2 and stripped[0] == stripped[-1] and stripped[0] in {"'", '"'}:
+        stripped = stripped[1:-1]
+    try:
+        return json.loads(stripped)
+    except json.JSONDecodeError:
+        return stripped
+
+
+@cache
+def parquet_digest(language: str, split: str, revision: str) -> str:
+    path = hf_hub_download(
+        repo_id=DATASET,
+        filename=f"data/{language}/{split}-00000-of-00001.parquet",
+        repo_type="dataset",
+        revision=revision,
+    )
+    with open(path, "rb") as parquet:
+        return hashlib.file_digest(parquet, "sha256").hexdigest()
+
+
+def task_fingerprint(task: Task, run: ModelRun, revision: str) -> str:
+    payload = [
+        parquet_digest(task.language, task.split, revision),
+        task.prompt,
+        canonical_model_id(run.model),
+        run.reasoning or "",
+    ]
+    digest = hashlib.sha256(
+        json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    ).digest()
+    return base64.urlsafe_b64encode(digest).decode("ascii").rstrip("=")
+
+
+def load_completed_tasks(log_dir: Path) -> set[str]:
+    path = log_dir / COMPLETED_TASKS_FILE
+    return set(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else set()
+
+
+def save_completed_tasks(log_dir: Path, completed: set[str]) -> None:
+    (log_dir / COMPLETED_TASKS_FILE).write_text(
+        json.dumps(sorted(completed), indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def inspect_command(
+    run: ModelRun,
+    tasks: Sequence[Task],
+    log_dir: Path = LOG_DIR,
+    revision: str = REVISION,
+    reasoning_effort: str | None = None,
+    concurrency: int = 64,
+    max_tasks: int = 16,
+    max_retries: int = 10,
+    timeout: int = 600,
+) -> list[str]:
+    inspect_executable = str(Path(sys.executable).with_name("inspect"))
+    # place the revision after the task id so the HF loader parses it correctly
+    specs = [
+        f"hf/{DATASET}/{task.task_id}@{revision}" if revision else f"hf/{DATASET}/{task.task_id}" for task in tasks
+    ]
+    command = [
+        # Eval sets use the log directory to skip successful tasks and retry
+        # interrupted tasks without repeating their completed samples.
+        inspect_executable, "eval-set", *specs,
+        "--model", model_ref(run.model),
+        *run.args,
+        "--max-connections", str(concurrency),
+        "--max-samples", str(concurrency),
+        "--max-tasks", str(max_tasks),
+        "--max-retries", str(max_retries),
+        "--timeout", str(timeout),
+        "--cache", str(CACHE_POLICY),
+        "--log-dir", str(log_dir),
+        "--log-dir-allow-dirty",
+    ]
+    if reasoning_effort:
+        command.extend(["--reasoning-effort", reasoning_effort])
+    return command
+
+
+def inspect_targets(
+    tasks: Sequence[Task],
+    historical: bool = False,
+    base_log_dir: Path = LOG_DIR,
+    revision: str = REVISION,
+) -> list[tuple[Path, str, list[Task]]]:
+    if not historical:
+        return [(base_log_dir, revision, list(tasks))]
+
+    unsupported_splits = sorted({task.split for task in tasks if task.split not in HISTORICAL_SPLITS})
+    if unsupported_splits:
+        raise RunnerError(
+            f"--historical-revisions only supports {', '.join(HISTORICAL_SPLITS)}, got: {', '.join(unsupported_splits)}"
+        )
+
+    missing = sorted({task.language for task in tasks if task.language not in HISTORICAL_SYNTHETIC_REVISIONS})
+    if missing:
+        raise RunnerError(f"No historical revisions configured for language(s): {', '.join(missing)}")
+
+    targets = []
+    for language in unique([task.language for task in tasks]):
+        task_ids = {task.task_id for task in tasks if task.language == language}
+        for historical_revision in HISTORICAL_SYNTHETIC_REVISIONS[language]:
+            log_dir = base_log_dir / language / historical_revision[:12]
+            revision_tasks = [
+                task for task in load_tasks(historical_revision) if task.task_id in task_ids
+            ]
+            targets.append((log_dir, historical_revision, revision_tasks))
+    return targets
+
+
+def parse_server_arg_values(values: Sequence[str]) -> dict[str, Any]:
+    parsed: dict[str, Any] = {}
+    for raw in values:
+        key, separator, value = raw.partition("=")
+        if not separator or not key:
+            raise RunnerError(f"--vllm-server-arg must use KEY=VALUE syntax: {raw!r}")
+        parsed[key] = _normalize_model_arg_value(value)
+    return parsed
+
+
+def merged_vllm_server_args(env: dict[str, str], overrides: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(DEFAULT_VLLM_SERVER_ARGS)
+    existing = env.get("VLLM_DEFAULT_SERVER_ARGS")
+    if existing:
+        try:
+            decoded = json.loads(existing)
+        except json.JSONDecodeError as error:
+            raise RunnerError(f"VLLM_DEFAULT_SERVER_ARGS is not valid JSON: {error}") from error
+        if not isinstance(decoded, dict):
+            raise RunnerError("VLLM_DEFAULT_SERVER_ARGS must decode to a JSON object")
+        merged.update(decoded)
+    merged.update(overrides)
+    return merged
+
+
+def attention_backend(model: str) -> str:
+    # Gemma 4 uses head sizes unsupported by FlashAttention on Blackwell.
+    # All other curated models should avoid vLLM's automatic backend probing,
+    # which imports the locally incompatible FlashInfer installation.
+    if model.startswith("google/gemma-4-"):
+        return "TRITON_ATTN"
+    return "FLASH_ATTN"
+
+
+def vllm_environment(
+    server_args: dict[str, Any] | None = None,
+    model: str = "",
+) -> dict[str, str]:
+    env = os.environ.copy()
+    env["PATH"] = os.pathsep.join(
+        (str(Path(sys.executable).parent), env.get("PATH", ""))
+    )
+    env["INSPECT_CACHE_DIR"] = str(CACHE_DIR)
+    cache_compat = Path(__file__).with_name("cache_compat")
+    env["PYTHONPATH"] = os.pathsep.join(
+        (str(cache_compat), env.get("PYTHONPATH", ""))
+    )
+    # The CUDA 13 packages in this environment have mismatched nvcc/headers.
+    # Avoid vLLM paths that require FlashInfer or DeepGEMM runtime compilation.
+    env["VLLM_USE_FLASHINFER_SAMPLER"] = "0"
+    env["VLLM_USE_DEEP_GEMM"] = "0"
+    selected_server_args = dict(server_args or {})
+    selected_server_args.setdefault("attention_backend", attention_backend(model))
+    env["VLLM_DEFAULT_SERVER_ARGS"] = json.dumps(
+        merged_vllm_server_args(env, selected_server_args),
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return env
+
+
+def require_hf_token(runs: Sequence[ModelRun]) -> None:
+    gated_models = [run.model for run in runs if run.model.startswith("google/gemma-")]
+    if gated_models and not os.environ.get("HF_TOKEN", "").strip():
+        raise RunnerError(
+            "HF_TOKEN must be exported before running gated Gemma models. "
+            "The token must belong to an account with Gemma access."
+        )
+
+
+def show_command(message: str, command: Sequence[str]) -> None:
+    print(f"{message}\n  {' '.join(command)}")
+
+
+def cleanup_vllm_processes() -> None:
+    import time
+    try:
+        subprocess.run(["pkill", "-9", "-f", "vllm serve"], stderr=subprocess.DEVNULL, check=False)
+        time.sleep(2)
+    except Exception:
+        pass
+
+
+def run_inspect(
+    run: ModelRun,
+    tasks: Sequence[Task],
+    historical: bool,
+    base_log_dir: Path,
+    revision: str,
+    reasoning_effort: str | None,
+    server_args: dict[str, Any],
+    concurrency: int = 64,
+    max_tasks: int = 16,
+    max_retries: int = 10,
+    timeout: int = 600,
+) -> None:
+    suffix = f" (reasoning {run.reasoning})" if run.reasoning else ""
+    completed = load_completed_tasks(base_log_dir)
+    for log_dir, command_revision, command_tasks in inspect_targets(
+        tasks,
+        historical,
+        base_log_dir,
+        revision,
+    ):
+        pending = [
+            task
+            for task in command_tasks
+            if task_fingerprint(task, run, command_revision) not in completed
+        ]
+        if not pending:
+            print(f"Skipping {len(command_tasks)} completed task(s) for {run.model}{suffix}")
+            continue
+        command = inspect_command(
+            run,
+            pending,
+            log_dir,
+            command_revision,
+            reasoning_effort,
+            concurrency,
+            max_tasks,
+            max_retries,
+            timeout,
+        )
+        show_command(f"Running {len(pending)} Inspect task(s) for {run.model}{suffix}", command)
+        try:
+            subprocess.run(command, check=True, env=vllm_environment(server_args, run.model))
+            completed.update(task_fingerprint(task, run, command_revision) for task in pending)
+            save_completed_tasks(base_log_dir, completed)
+        except subprocess.CalledProcessError as error:
+            raise RunnerError(f"Inspect failed for {run.model}{suffix} with status {error.returncode}") from error
+        except OSError as error:
+            raise RunnerError(f"Could not start Inspect for {run.model}{suffix}: {error}") from error
+        finally:
+            cleanup_vllm_processes()
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    patch_inspect()
+    revision_parser = argparse.ArgumentParser(add_help=False)
+    revision_parser.add_argument("--revision", default=REVISION)
+    revision_args, _ = revision_parser.parse_known_args(argv)
+    try:
+        tasks = load_tasks(revision_args.revision)
+    except RunnerError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+
+    available = {
+        "model": MODELS,
+        "language": unique([task.language for task in tasks]),
+        "split": unique([task.split for task in tasks]),
+    }
+    parser = build_parser(available["language"], available["split"])
+    args = parser.parse_args(argv)
+    historical_languages = sorted(HISTORICAL_SYNTHETIC_REVISIONS)
+    default_all = {
+        "model": available["model"],
+        "language": historical_languages
+        if args.historical_revisions
+        else [language for language in available["language"] if language not in OPTIONAL_LANGUAGES],
+        "split": HISTORICAL_SPLITS if args.historical_revisions else available["split"],
+    }
+    selected = {
+        name: expand(parser, name, getattr(args, name), values, default_all=default_all[name])
+        for name, values in available.items()
+    }
+
+    try:
+        selected_tasks = select_tasks(
+            tasks,
+            selected["language"],
+            selected["split"],
+            all_defined=not args.historical_revisions and set(args.language) == {"all"} and set(args.split) == {"all"},
+        )
+    except RunnerError as error:
+        parser.error(str(error))
+
+    try:
+        server_args = parse_server_arg_values(args.vllm_server_arg)
+    except RunnerError as error:
+        parser.error(str(error))
+
+    log_dir = HISTORICAL_LOG_DIR if args.historical_revisions and args.log_dir == LOG_DIR else args.log_dir
+    log_dir.mkdir(parents=True, exist_ok=True)
+    selected_runs = model_runs(selected["model"])
+    try:
+        require_hf_token(selected_runs)
+    except RunnerError as error:
+        parser.error(str(error))
+    if args.reasoning:
+        invalid = [run.model for run in selected_runs if run.reasoning is None]
+        if invalid:
+            parser.error(
+                f"--reasoning is not supported by: {', '.join(unique(invalid))}"
+            )
+        selected_runs = [run for run in selected_runs if run.reasoning == args.reasoning]
+
+    for label, values in (
+        ("Models", [f"{run.model} (reasoning {run.reasoning})" if run.reasoning else run.model for run in selected_runs]),
+        ("Languages", selected["language"]),
+        ("Splits", selected["split"]),
+        ("Tasks", [task.task_id for task in selected_tasks]),
+    ):
+        print(f"{label}: {', '.join(values)}")
+    print(f"Logs: {log_dir}")
+
+    failures = []
+    try:
+        for run in selected_runs:
+            try:
+                run_inspect(
+                    run,
+                    selected_tasks,
+                    args.historical_revisions,
+                    log_dir,
+                    args.revision,
+                    args.reasoning_effort,
+                    server_args,
+                    args.concurrency or model_concurrency(run.model),
+                    args.tasks,
+                    args.max_retries,
+                    args.timeout,
+                )
+            except Exception as error:
+                failures.append((run.model, str(error)))
+                print(f"Model failed: {error}", file=sys.stderr)
+    except KeyboardInterrupt:
+        print("\nInterrupted.", file=sys.stderr)
+        return 130
+
+    if failures:
+        print("\nFailed model runs:", file=sys.stderr)
+        for model, error in failures:
+            print(f"  {model}: {error}", file=sys.stderr)
+        return 1
+
+    print("\nAll model runs completed successfully.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,240 @@
+# /// script
+# dependencies = ["pandas", "pyarrow"]
+# ///
+"""Write a compact all-model LaTeX table of evaluation results."""
+
+from __future__ import annotations
+
+import argparse
+from dataclasses import dataclass
+from itertools import zip_longest
+from math import sqrt
+from pathlib import Path
+from statistics import NormalDist
+
+import pandas as pd
+from plot_config import EXCLUDED_FIGURE_LANGUAGES, LANGUAGE_LABELS, language_order, model_sort_key
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet"
+DEFAULT_OUTPUT = REPO_ROOT / "paper" / "artifacts" / "tables" / "original_vs_synthetic_accuracy.tex"
+# The 15 analysis languages, plus the English metric variant.
+DEFAULT_LANGUAGES = [
+    "zho", "hin", "eng", "eng_metric", "ara", "jpn", "rus", "deu", "mar",
+    "fra", "ita", "ukr", "nld", "dan", "est", "isl",
+]
+
+
+@dataclass(frozen=True)
+class TableRow:
+    model: str
+    language: str
+    original_accuracy: float
+    original_ci: tuple[float, float]
+    synthetic_accuracy: float
+    synthetic_ci: tuple[float, float]
+
+
+def wilson_interval(correct: pd.Series, confidence: float = 0.95) -> tuple[float, float]:
+    """Return a Wilson score interval for a binary accuracy series."""
+    n = len(correct)
+    if n == 0:
+        raise ValueError("At least one scored example is required.")
+    proportion = float(correct.mean())
+    z = NormalDist().inv_cdf(0.5 + confidence / 2)
+    denominator = 1 + z**2 / n
+    center = (proportion + z**2 / (2 * n)) / denominator
+    margin = z * sqrt(proportion * (1 - proportion) / n + z**2 / (4 * n**2)) / denominator
+    return max(0.0, center - margin), min(1.0, center + margin)
+
+
+def collect_model_rows(
+    problems: pd.DataFrame,
+    model: str,
+    languages: list[str] | None,
+) -> list[TableRow]:
+    """Collect split-level accuracy and 95% confidence intervals by language for one model."""
+    matching_models = [name for name in problems["model"].unique() if name.lower() == model.lower()]
+    if not matching_models:
+        available = ", ".join(sorted(problems["model"].unique()))
+        raise ValueError(f"Model {model!r} was not found. Available models: {available}")
+
+    resolved_model = matching_models[0]
+    model_rows = problems[problems["model"] == resolved_model]
+    available_languages = set(model_rows["language"].unique())
+    selected_languages = language_order(available_languages, languages)
+    missing = [language for language in languages or [] if language not in available_languages]
+    if missing:
+        raise ValueError(f"No {resolved_model} results for language(s): {', '.join(missing)}")
+
+    rows: list[TableRow] = []
+    for language in selected_languages:
+        language_rows = model_rows[model_rows["language"] == language]
+        original = language_rows[language_rows["split"] == "original"]
+        synthetic = language_rows[language_rows["split"] == "synthetic"]
+        if original.empty or synthetic.empty:
+            raise ValueError(f"Both original and synthetic results are required for {language}.")
+        rows.append(
+            TableRow(
+                model=resolved_model,
+                language=language,
+                original_accuracy=float(original["correct"].mean()),
+                original_ci=wilson_interval(original["correct"]),
+                synthetic_accuracy=float(synthetic["correct"].mean()),
+                synthetic_ci=wilson_interval(synthetic["correct"]),
+            )
+        )
+    return rows
+
+
+def collect_rows(
+    problems: pd.DataFrame,
+    models: list[str] | None,
+    languages: list[str] | None,
+) -> list[TableRow]:
+    """Collect every selected model-language combination."""
+    available_models = sorted(problems["model"].dropna().unique(), key=model_sort_key)
+    if models:
+        lookup = {model.lower(): model for model in available_models}
+        missing = [model for model in models if model.lower() not in lookup]
+        if missing:
+            available = ", ".join(available_models)
+            raise ValueError(f"Model(s) not found: {', '.join(missing)}. Available models: {available}")
+        selected_models = list(dict.fromkeys(lookup[model.lower()] for model in models))
+    else:
+        selected_models = available_models
+
+    return [row for model in selected_models for row in collect_model_rows(problems, model, languages)]
+
+
+def latex_escape(value: str) -> str:
+    """Escape plain text for use in LaTeX."""
+    replacements = {
+        "\\": r"\textbackslash{}",
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+        "{": r"\{",
+        "}": r"\}",
+        "~": r"\textasciitilde{}",
+        "^": r"\textasciicircum{}",
+    }
+    return "".join(replacements.get(character, character) for character in value)
+
+
+def render_table(
+    rows: list[TableRow],
+    caption: str | None = None,
+    label: str = "tab:original-vs-synthetic-accuracy",
+) -> str:
+    """Render a compact booktabs/longtable-compatible LaTeX table."""
+    if not rows:
+        raise ValueError("At least one model is required.")
+
+    models = list(dict.fromkeys(row.model for row in rows))
+    scope = models[0] if len(models) == 1 else f"all {len(models)} models"
+    caption_text = caption or (
+        f"Original and synthetic exact-answer accuracy by model and language for {scope}. "
+        "Bracketed values are 95% confidence intervals (CI), computed using Wilson score intervals "
+        "over scored examples within each split."
+    )
+    panel_header = (
+        r"Model & Language & \shortstack{Original\\Accuracy} & \shortstack{Synthetic\\Accuracy}"
+    )
+    header = f"{panel_header} & {panel_header} \\\\"
+
+    midpoint = (len(models) + 1) // 2
+    left_models = set(models[:midpoint])
+    right_models = set(models[midpoint:])
+    left_rows = [row for row in rows if row.model in left_models]
+    right_rows = [row for row in rows if row.model in right_models]
+
+    def format_panel(row: TableRow | None, previous_model: str | None) -> str:
+        if row is None:
+            return " &  &  & "
+        model = latex_escape(row.model) if row.model != previous_model else ""
+        language = latex_escape(LANGUAGE_LABELS.get(row.language, row.language))
+        original_low, original_high = row.original_ci
+        synthetic_low, synthetic_high = row.synthetic_ci
+        return (
+            f"{model} & {language} & {row.original_accuracy * 100:.1f}\\% "
+            f"[{original_low * 100:.1f}-{original_high * 100:.1f}] & "
+            f"{row.synthetic_accuracy * 100:.1f}\\% "
+            f"[{synthetic_low * 100:.1f}-{synthetic_high * 100:.1f}]"
+        )
+
+    lines = [
+        r"% Requires \usepackage{longtable}; all other commands use packages already in the paper.",
+        r"\begingroup",
+        r"\tiny",
+        r"\setlength{\tabcolsep}{1.25pt}",
+        r"\renewcommand{\arraystretch}{0.9}",
+        r"\begin{longtable}{p{0.145\linewidth}lrr@{\hspace{4pt}}p{0.145\linewidth}lrr}",
+        f"\\caption{{{latex_escape(caption_text)}}}\\label{{{label}}}" + r" \\",
+        r"\toprule",
+        header,
+        r"\midrule",
+        r"\endfirsthead",
+        r"\multicolumn{8}{c}{\tablename\ \thetable{} -- continued from previous page} \\",
+        r"\toprule",
+        header,
+        r"\midrule",
+        r"\endhead",
+        r"\midrule",
+        r"\multicolumn{8}{r}{Continued on next page} \\",
+        r"\endfoot",
+        r"\bottomrule",
+        r"\endlastfoot",
+    ]
+    previous_left_model: str | None = None
+    previous_right_model: str | None = None
+    for left, right in zip_longest(left_rows, right_rows):
+        left_changed = left is not None and previous_left_model is not None and left.model != previous_left_model
+        right_changed = right is not None and previous_right_model is not None and right.model != previous_right_model
+        if left_changed or right_changed:
+            lines.append(r"\addlinespace[2pt]")
+        lines.append(f"{format_panel(left, previous_left_model)} & {format_panel(right, previous_right_model)} \\\\")
+        if left is not None:
+            previous_left_model = left.model
+        if right is not None:
+            previous_right_model = right.model
+    lines.extend([r"\end{longtable}", r"\endgroup", ""])
+    return "\n".join(lines)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--analysis", type=Path, default=DEFAULT_ANALYSIS)
+    parser.add_argument(
+        "--model",
+        nargs="+",
+        help="Optional model names; defaults to every available model.",
+    )
+    parser.add_argument(
+        "--languages", nargs="+", default=DEFAULT_LANGUAGES,
+        help="Optional language codes; defaults to the 15 analysis languages plus English metric.",
+    )
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--caption", help="Optional replacement table caption.")
+    parser.add_argument("--label", default="tab:original-vs-synthetic-accuracy")
+    args = parser.parse_args()
+
+    problems = pd.read_parquet(
+        args.analysis,
+        columns=["model", "language", "split", "source_id", "correct"],
+    )
+    problems = problems[problems["language"] != "uncorrected_isl"]
+    problems = problems[~problems["language"].isin(EXCLUDED_FIGURE_LANGUAGES)]
+    rows = collect_rows(problems, args.model, args.languages)
+    output = render_table(rows, args.caption, args.label)
+
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(output, encoding="utf-8", newline="\n")
+    model_count = len({row.model for row in rows})
+    print(f"Saved {args.output} ({model_count} models, {len(rows)} model-language rows)")
+
+
+if __name__ == "__main__":
+    main()
