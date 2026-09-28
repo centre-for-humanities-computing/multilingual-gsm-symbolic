@@ -91,9 +91,7 @@ def relationship_plot(
     show_ylabel: bool = True,
 ) -> list[Path]:
     """Plot a descriptive feature relationship for the synthetic split only."""
-    plot_data = data[
-        (data["language"] != "eng_metric") & (data["family"] != "OpenAI")
-    ].dropna(
+    plot_data = data[(data["language"] != "eng_metric") & (data["family"] != "OpenAI")].dropna(
         subset=[x_column, "performance_recovered"]
     )
     if plot_data.empty:
@@ -156,11 +154,7 @@ def relationship_plot(
         )
 
     if label_languages:
-        label_positions = (
-            panel.groupby("language", as_index=False)
-            .agg(x=(x_column, "mean"))
-            .sort_values("x")
-        )
+        label_positions = panel.groupby("language", as_index=False).agg(x=(x_column, "mean")).sort_values("x")
         x_span = max(float(panel[x_column].max() - panel[x_column].min()), 1e-9)
         lane_gap = 9 if compact else 14
         lane_last_x: dict[bool, list[float]] = {True: [], False: []}
@@ -168,11 +162,7 @@ def relationship_plot(
             above = index % 2 == 0
             side_lanes = lane_last_x[above]
             lane = next(
-                (
-                    index
-                    for index, previous_x in enumerate(side_lanes)
-                    if row.x - previous_x >= 0.16 * x_span
-                ),
+                (index for index, previous_x in enumerate(side_lanes) if row.x - previous_x >= 0.16 * x_span),
                 len(side_lanes),
             )
             if lane == len(side_lanes):
@@ -366,6 +356,7 @@ def combined_relationship_plot(data: pd.DataFrame, plots: list[tuple[Any, ...]],
     fig.savefig(output, bbox_inches="tight")
     plt.close(fig)
     return [output]
+
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUT_DIR = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer" / "language_features"
@@ -609,9 +600,7 @@ def build_transfer_table(
             }
         )
     )
-    transfer = values[
-        ~values["language"].isin({"eng", "eng_metric"}) & (values["family"] != "OpenAI")
-    ].merge(
+    transfer = values[~values["language"].isin({"eng", "eng_metric"}) & (values["family"] != "OpenAI")].merge(
         english,
         on=["model_raw", "model", "family", "params_b", "split"],
         how="inner",
@@ -643,6 +632,7 @@ def build_transfer_table(
         )
     return transfer
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -650,7 +640,11 @@ def main() -> None:
         type=Path,
         default=REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "analysis.parquet",
     )
-    parser.add_argument("--cached-features", action="store_true", help="Reuse saved language features and tokenizer fertility when redrawing figures.")
+    parser.add_argument(
+        "--cached-features",
+        action="store_true",
+        help="Reuse saved language features and tokenizer fertility when redrawing figures.",
+    )
     parser.add_argument("--data-dir", type=Path, default=REPO_ROOT / "hf_dataset" / "data")
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument(
@@ -671,7 +665,11 @@ def main() -> None:
     samples = figure_rows(samples)
     samples = samples[samples["language"] != "uncorrected_isl"]
     group_cols = ["model", "family", "params_b", "vocab_size", "language", "split"]
-    summary = samples.groupby(group_cols, dropna=False)["correct"].agg(accuracy="mean", n_problems="size", stderr="sem").reset_index()
+    summary = (
+        samples.groupby(group_cols, dropna=False)["correct"]
+        .agg(accuracy="mean", n_problems="size", stderr="sem")
+        .reset_index()
+    )
     summary["model_raw"] = summary["model"].map(model_repo)
     if "eng" not in set(summary["language"]):
         raise SystemExit("English results are required to calculate recovered performance.")

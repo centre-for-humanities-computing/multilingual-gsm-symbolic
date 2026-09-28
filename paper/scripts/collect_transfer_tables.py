@@ -66,9 +66,8 @@ def load_log_rows(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame, st
     rows: list[dict[str, Any]] = []
 
     is_uncorrected_isl = (
-        ("logs_unvalidated_revisions" in path.parts or "0850f21ea319" in str(path) or "0850f21ea319" in log.eval.task)
-        and task_language == "isl"
-    )
+        "logs_unvalidated_revisions" in path.parts or "0850f21ea319" in str(path) or "0850f21ea319" in log.eval.task
+    ) and task_language == "isl"
 
     for sample in log.samples or []:
         score = sample_score(sample, scorer)

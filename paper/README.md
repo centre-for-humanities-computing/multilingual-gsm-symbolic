@@ -11,7 +11,7 @@ HTML); see the README there.
 - `artifacts/figures/`: topic-organized publication figures:
   - `overview/`: introductory and example figures.
   - `accuracy/`: accuracy heatmaps, original vs. synthetic, split degradation, and family scaling plots.
-  - `transfer/`: English-normalized transfer, transfer robustness, reasoning deltas, absolute transfer gaps, compute budget curves (`compute_budget/absolute/` and `compute_budget/relative/`), and `language_features/`.
+  - `transfer/`: English-normalized transfer, transfer robustness, reasoning deltas, absolute transfer gaps, and compute budget curves (`compute_budget/absolute/` and `compute_budget/relative/`).
   - `ablations/`: unit ablations (`english_units/`) and Icelandic human-verification comparisons (`icelandic_validation/`).
   - `number_coverage/`: number-coverage heatmaps and correlation figures.
 - `artifacts/analysis/`: supporting CSVs, JSON summaries, and measurements matched by topic:
@@ -19,7 +19,6 @@ HTML); see the README there.
   - `transfer/`: compute budget data tables and transfer feature measurements.
   - `number_coverage/`: coverage summary and sample records.
   - `subset_size/`: subset-size stability draws and summaries.
-  - `equivalence/`: TOST equivalence test outputs.
 - `artifacts/tables/`: paper-ready LaTeX tables.
 - `artifacts/transfer_tables/`: canonical evaluation parquets (`analysis.parquet`).
 

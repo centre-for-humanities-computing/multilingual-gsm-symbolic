@@ -20,8 +20,22 @@ DEFAULT_ANALYSIS = REPO_ROOT / "paper" / "artifacts" / "transfer_tables" / "anal
 DEFAULT_OUTPUT = REPO_ROOT / "paper" / "artifacts" / "tables" / "original_vs_synthetic_accuracy.tex"
 # The 15 analysis languages, plus the English metric variant.
 DEFAULT_LANGUAGES = [
-    "zho", "hin", "eng", "eng_metric", "ara", "jpn", "rus", "deu", "mar",
-    "fra", "ita", "ukr", "nld", "dan", "est", "isl",
+    "zho",
+    "hin",
+    "eng",
+    "eng_metric",
+    "ara",
+    "jpn",
+    "rus",
+    "deu",
+    "mar",
+    "fra",
+    "ita",
+    "ukr",
+    "nld",
+    "dan",
+    "est",
+    "isl",
 ]
 
 
@@ -140,9 +154,7 @@ def render_table(
         "Bracketed values are 95% confidence intervals (CI), computed using Wilson score intervals "
         "over scored examples within each split."
     )
-    panel_header = (
-        r"Model & Language & \shortstack{Original\\Accuracy} & \shortstack{Synthetic\\Accuracy}"
-    )
+    panel_header = r"Model & Language & \shortstack{Original\\Accuracy} & \shortstack{Synthetic\\Accuracy}"
     header = f"{panel_header} & {panel_header} \\\\"
 
     midpoint = (len(models) + 1) // 2
@@ -213,7 +225,9 @@ def main() -> None:
         help="Optional model names; defaults to every available model.",
     )
     parser.add_argument(
-        "--languages", nargs="+", default=DEFAULT_LANGUAGES,
+        "--languages",
+        nargs="+",
+        default=DEFAULT_LANGUAGES,
         help="Optional language codes; defaults to the 15 analysis languages plus English metric.",
     )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)

@@ -132,7 +132,6 @@ def discover_logs(inputs: list[Path]) -> list[Path]:
     return sorted(logs)
 
 
-
 def _read_log_header(path: Path) -> tuple[Path, Any | None, str | None]:
     try:
         return path, read_eval_log(str(path), header_only=True), None

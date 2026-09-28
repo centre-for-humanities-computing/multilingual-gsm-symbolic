@@ -9,7 +9,6 @@ from copy import copy
 import inspect_ai.model._cache as cache
 from inspect_ai.model._model_output import ModelOutput
 
-
 _original_cache_fetch = cache.cache_fetch
 _original_cache_key = cache._cache_key
 

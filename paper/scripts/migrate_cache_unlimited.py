@@ -9,7 +9,6 @@ import tempfile
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
-
 CACHE_ROOT = Path(__file__).resolve().parents[2] / "cache" / "generate"
 
 
@@ -26,9 +25,7 @@ def migrate_tree(root: Path) -> tuple[int, int, int, int]:
                 skipped += 1
                 continue
 
-            descriptor, temporary_name = tempfile.mkstemp(
-                dir=path.parent, prefix=f".{path.name}.", suffix=".tmp"
-            )
+            descriptor, temporary_name = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
             try:
                 with os.fdopen(descriptor, "wb") as destination:
                     pickle.dump((None, output), destination)
@@ -77,8 +74,7 @@ def main() -> int:
 
     scanned, migrated, skipped, failed = totals
     print(
-        f"finished: scanned={scanned} migrated={migrated} "
-        f"already_unlimited={skipped} failed={failed}",
+        f"finished: scanned={scanned} migrated={migrated} already_unlimited={skipped} failed={failed}",
         flush=True,
     )
     return 1 if failed else 0

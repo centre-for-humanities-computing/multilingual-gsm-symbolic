@@ -270,7 +270,8 @@ def language_order(
     languages = set(languages) - EXCLUDED_FIGURE_LANGUAGES
     if requested:
         return [
-            language for language in requested
+            language
+            for language in requested
             if language not in EXCLUDED_FIGURE_LANGUAGES and (language in languages or not languages)
         ]
 

@@ -20,13 +20,11 @@ import numpy as np
 import pandas as pd
 from eval_log_utils import (
     classify_reasoning_variants,
-    discover_logs,
     infer_model_info,
     map_log_loader,
     model_name,
     parse_task,
     sample_score,
-    select_logs,
 )
 from inspect_ai.log import read_eval_log
 from matplotlib.colors import to_hex, to_rgb
@@ -81,10 +79,6 @@ def _bootstrap_gap_cis(outcomes: list[dict[str, float]], rng: np.random.Generato
     return float(half_widths[0]), float(half_widths[1])
 
 
-
-
-
-
 def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | None, str | None]:
     try:
         log = read_eval_log(str(path))
@@ -132,15 +126,11 @@ def _load_one_log(path: Path, scorer: str | None) -> tuple[str, pd.DataFrame | N
     frame = pd.DataFrame(rows)
     keys = ["model_raw", "model", "family", "params_b", "language"]
     grouped = frame.groupby(keys, dropna=False)
-    summary = (
-        grouped
-        .agg(
-            accuracy=("correct", "mean"),
-            n_problems=("correct", "size"),
-            avg_total_tokens=("total_tokens", "mean"),
-        )
-        .reset_index()
-    )
+    summary = grouped.agg(
+        accuracy=("correct", "mean"),
+        n_problems=("correct", "size"),
+        avg_total_tokens=("total_tokens", "mean"),
+    ).reset_index()
     sample_correct = grouped[["sample_id", "correct"]].apply(
         lambda group: dict(zip(group["sample_id"], group["correct"], strict=True))
     )
@@ -250,9 +240,7 @@ def qwen_compute_budget_table(summary: pd.DataFrame) -> pd.DataFrame:
         paired_outcomes = pd.DataFrame(index=accuracy.index, columns=accuracy.columns, dtype=object)
 
     token_usage = (
-        rows.groupby(["model_raw", "model", "family", "params_b", "reasoning"], dropna=False)[
-            "avg_total_tokens"
-        ]
+        rows.groupby(["model_raw", "model", "family", "params_b", "reasoning"], dropna=False)["avg_total_tokens"]
         .mean()
         .rename("avg_total_tokens")
     )
@@ -400,21 +388,38 @@ def _plot_compute_budget_table(
             color = mode_color(family, reasoning)
             linestyle = ":" if reasoning == "off" else "-"
             ax.plot(
-                group["inference_flops"], group[gap_column], color=color, linestyle=linestyle,
-                linewidth=1.8, marker=marker_by_family.get(family, "o"), markersize=5,
-                markeredgecolor="white", markeredgewidth=0.7, zorder=3,
+                group["inference_flops"],
+                group[gap_column],
+                color=color,
+                linestyle=linestyle,
+                linewidth=1.8,
+                marker=marker_by_family.get(family, "o"),
+                markersize=5,
+                markeredgecolor="white",
+                markeredgewidth=0.7,
+                zorder=3,
             )
             ax.errorbar(
-                group["inference_flops"], group[gap_column], yerr=group[ci_column], fmt="none",
-                ecolor=color, elinewidth=1, capsize=2, alpha=0.55, zorder=2,
+                group["inference_flops"],
+                group[gap_column],
+                yerr=group[ci_column],
+                fmt="none",
+                ecolor=color,
+                elinewidth=1,
+                capsize=2,
+                alpha=0.55,
+                zorder=2,
             )
 
         for row in panel_table.itertuples(index=False):
             ax.annotate(
-                f"{row.params_b:g}B", (row.inference_flops, getattr(row, gap_column)),
+                f"{row.params_b:g}B",
+                (row.inference_flops, getattr(row, gap_column)),
                 xytext=(-5, -17) if row.reasoning == "off" else (5, 6),
                 ha="right" if row.reasoning == "off" else "left",
-                textcoords="offset points", fontsize=14, color="#374151",
+                textcoords="offset points",
+                fontsize=14,
+                color="#374151",
             )
 
         ax.set_xscale("log")
@@ -429,21 +434,39 @@ def _plot_compute_budget_table(
     axes[0, 0].set_ylabel("Percentage of English\nperformance recovered", fontsize=18)
     reasoning_order = [key for key in ("standard", "off", "on") if key in set(table["reasoning"])]
     handles = [
-        Line2D([0], [0], color="#374151", linestyle=":" if reasoning == "off" else "-", linewidth=1.8,
-               label=REASONING_LABELS[reasoning])
+        Line2D(
+            [0],
+            [0],
+            color="#374151",
+            linestyle=":" if reasoning == "off" else "-",
+            linewidth=1.8,
+            label=REASONING_LABELS[reasoning],
+        )
         for reasoning in reasoning_order
     ]
     if combined and not faceted:
         handles.extend(
             Line2D(
-                [0], [0], marker=marker_by_family[family], linestyle="-",
-                markerfacecolor=color_by_family[family], markeredgecolor="white",
-                color=color_by_family[family], label=family,
+                [0],
+                [0],
+                marker=marker_by_family[family],
+                linestyle="-",
+                markerfacecolor=color_by_family[family],
+                markeredgecolor="white",
+                color=color_by_family[family],
+                label=family,
             )
             for family in families
         )
     if combined and faceted:
-        fig.legend(handles=handles, frameon=False, fontsize=16, loc="upper center", ncol=len(handles), bbox_to_anchor=(0.5, 1.0))
+        fig.legend(
+            handles=handles,
+            frameon=False,
+            fontsize=16,
+            loc="upper center",
+            ncol=len(handles),
+            bbox_to_anchor=(0.5, 1.0),
+        )
         fig.tight_layout(rect=(0, 0, 1, 0.92))
     else:
         axes[0, 0].legend(handles=handles, frameon=False, fontsize=16, loc="upper right")
@@ -567,19 +590,13 @@ def main() -> None:
     for pdf_out in pdf_outputs:
         print(f"Saved {pdf_out}")
 
-    relative_combined_out = (
-        args.out_dir / "relative" / "qwen_compute_budget_transfer_relative.pdf"
-    )
+    relative_combined_out = args.out_dir / "relative" / "qwen_compute_budget_transfer_relative.pdf"
     relative_combined_out.parent.mkdir(parents=True, exist_ok=True)
     if not plot_qwen_compute_budget_relative_transfer(summary, relative_combined_out):
         raise SystemExit("No combined relative model transfer rows found.")
     print(f"Saved {relative_combined_out}")
 
-    relative_overlay_out = (
-        args.out_dir
-        / "relative"
-        / "qwen_compute_budget_transfer_relative_overlay.pdf"
-    )
+    relative_overlay_out = args.out_dir / "relative" / "qwen_compute_budget_transfer_relative_overlay.pdf"
     if not plot_qwen_compute_budget_overlay(summary, relative_overlay_out, relative=True):
         raise SystemExit("No combined relative overlay model transfer rows found.")
     print(f"Saved {relative_overlay_out}")
@@ -595,7 +612,6 @@ def main() -> None:
     if summary_out:
         print(f"Saved {summary_out}")
         print(summary_out.read_text(encoding="utf-8").strip())
-
 
 
 if __name__ == "__main__":

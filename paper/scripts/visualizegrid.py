@@ -42,7 +42,6 @@ import numpy as np
 import pandas as pd
 from eval_log_utils import (
     classify_reasoning_variants,
-    discover_logs,
     infer_model_info,
     map_log_loader,
     model_name,
@@ -50,7 +49,6 @@ from eval_log_utils import (
     parse_task,
     sample_score,
     sample_synthetic_sets,
-    select_logs,
 )
 from inspect_ai.log import read_eval_log, read_eval_log_sample_summaries
 from matplotlib.colors import Normalize
@@ -645,9 +643,7 @@ def plot_english_normalized_transfer(summary: pd.DataFrame, out: Path) -> bool:
     if not panels:
         return False
 
-    finite_values = np.concatenate(
-        [matrix.to_numpy()[np.isfinite(matrix.to_numpy())] for _title, matrix in panels]
-    )
+    finite_values = np.concatenate([matrix.to_numpy()[np.isfinite(matrix.to_numpy())] for _title, matrix in panels])
     value_min = min(0.0, float(finite_values.min()))
     value_max = max(1.0, float(finite_values.max()))
     height = max(4.0, 0.42 * len(order) + 1.5)
@@ -941,9 +937,7 @@ def plot_reasoning_delta(summary: pd.DataFrame, out: Path) -> bool:
         + (non_english_stderr / english_accuracy).pow(2)
     )
     by_language["performance_recovered"] = non_english_accuracy / english_accuracy
-    by_language["performance_recovered_ci95"] = (
-        performance_recovered_stderr * norm.ppf(0.975)
-    ).fillna(0)
+    by_language["performance_recovered_ci95"] = (performance_recovered_stderr * norm.ppf(0.975)).fillna(0)
     gaps = by_language[["performance_recovered", "performance_recovered_ci95"]].dropna().reset_index()
 
     gaps = gaps[np.isfinite(gaps["params_b"])]
@@ -1009,17 +1003,15 @@ def plot_correction_comparison(
     if not rows:
         raise ValueError("A full comparison requires at least one model")
     nrows = math.ceil(len(rows) / 2)
-    old_color, new_color = (
-        ("#2166AC", "#C66B16") if language == "eng" else ("#7860A8", "#17806D")
-    )
+    old_color, new_color = ("#2166AC", "#C66B16") if language == "eng" else ("#7860A8", "#17806D")
     label_size = 6
     fig = plt.figure(figsize=(5.5, 8.55) if full_page else (CORRECTION_COMPARISON_WIDTH, 8.0))
-    columns = fig.add_gridspec(1, 2, left=0.025, right=0.965,
-                              bottom=0.035 if full_page else 0.05,
-                              top=0.96, wspace=0.18)
+    columns = fig.add_gridspec(
+        1, 2, left=0.025, right=0.965, bottom=0.035 if full_page else 0.05, top=0.96, wspace=0.18
+    )
     axes = np.empty((nrows, 2), dtype=object)
     for col in range(2):
-        column_rows = rows[col * nrows:(col + 1) * nrows]
+        column_rows = rows[col * nrows : (col + 1) * nrows]
         if not column_rows:
             continue
         # Reserve actual text height, including reasoning suffixes, separately
@@ -1031,8 +1023,14 @@ def plot_correction_comparison(
         for panel_row, row in enumerate(column_rows):
             label_ax = fig.add_subplot(grid[3 * panel_row])
             label_ax.set_axis_off()
-            label_ax.text(0, 0.12, row.model if full_page else row.model.replace(" (reasoning", "\n(reasoning"),
-                          fontsize=label_size, va="bottom", linespacing=1.05)
+            label_ax.text(
+                0,
+                0.12,
+                row.model if full_page else row.model.replace(" (reasoning", "\n(reasoning"),
+                fontsize=label_size,
+                va="bottom",
+                linespacing=1.05,
+            )
             axes[panel_row, col] = fig.add_subplot(grid[3 * panel_row + 1])
 
     for index, row in enumerate(rows):
@@ -1099,8 +1097,16 @@ def plot_correction_comparison(
         Line2D([0], [0], color=old_color, lw=1, label=legend_labels[0]),
         Line2D([0], [0], color=new_color, lw=1, linestyle="--", label=legend_labels[1]),
     ]
-    fig.legend(handles=legend, loc="upper center", frameon=False, ncol=2, fontsize=9 if full_page else 7,
-               bbox_to_anchor=(0.5, 1), columnspacing=1, handlelength=2)
+    fig.legend(
+        handles=legend,
+        loc="upper center",
+        frameon=False,
+        ncol=2,
+        fontsize=9 if full_page else 7,
+        bbox_to_anchor=(0.5, 1),
+        columnspacing=1,
+        handlelength=2,
+    )
     # No embedded heading: the LaTeX caption identifies the comparison.
     out.parent.mkdir(parents=True, exist_ok=True)
     # Keep curves as vectors and embed TrueType text for PDF output.

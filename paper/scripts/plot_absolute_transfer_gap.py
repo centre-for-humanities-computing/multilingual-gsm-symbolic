@@ -7,29 +7,15 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.ticker import PercentFormatter
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_DATA = (
-    REPO_ROOT
-    / "paper"
-    / "artifacts"
-    / "analysis"
-    / "transfer"
-    / "compute_budget"
-    / "figure_11_data.csv"
-)
-DEFAULT_OUT = (
-    REPO_ROOT
-    / "paper"
-    / "artifacts"
-    / "figures"
-    / "transfer"
-    / "absolute_transfer_gap.pdf"
-)
+DEFAULT_DATA = REPO_ROOT / "paper" / "artifacts" / "analysis" / "transfer" / "compute_budget" / "figure_11_data.csv"
+DEFAULT_OUT = REPO_ROOT / "paper" / "artifacts" / "figures" / "transfer" / "absolute_transfer_gap.pdf"
 
 PLOT_STYLE = {
     "axes.spines.right": False,
@@ -53,11 +39,7 @@ def plot_absolute_gap_line(
 
     # Sort models by parameter count
     qwen = qwen.sort_values(["params_b", "reasoning"])
-    models = (
-        qwen.drop_duplicates(subset=["model_raw"])
-        .sort_values("params_b")["model_raw"]
-        .tolist()
-    )
+    models = qwen.drop_duplicates(subset=["model_raw"]).sort_values("params_b")["model_raw"].tolist()
 
     fig, ax = plt.subplots(figsize=(6.5, 4.2))
 
@@ -92,11 +74,7 @@ def plot_absolute_gap_line(
             x_vals = np.array([x_positions[m] for m in subset["model_raw"]])
 
         y_vals = subset["absolute_transfer_gap"].to_numpy()
-        y_err = (
-            subset["transfer_gap_ci95"].to_numpy()
-            if "transfer_gap_ci95" in subset.columns
-            else None
-        )
+        y_err = subset["transfer_gap_ci95"].to_numpy() if "transfer_gap_ci95" in subset.columns else None
 
         ax.plot(
             x_vals,
@@ -172,9 +150,7 @@ def main() -> None:
     args = parser.parse_args()
 
     df = pd.read_csv(args.data)
-    saved = plot_absolute_gap_line(
-        df, args.out, family=args.family, use_log_params=args.log_params
-    )
+    saved = plot_absolute_gap_line(df, args.out, family=args.family, use_log_params=args.log_params)
     print(f"Saved: {saved}")
     print(f"Saved: {saved.with_suffix('.pdf')}")
 

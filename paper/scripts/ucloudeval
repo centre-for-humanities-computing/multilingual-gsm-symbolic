@@ -93,7 +93,6 @@ HISTORICAL_SPLITS = ("test_original", "test_synthetic")
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CACHE_POLICY = Path(__file__).with_name("cache.yaml")
-INSPECT_PATCH = REPO_ROOT / "patches" / "inspect-ai-math-scorer.patch"
 CACHE_DIR = REPO_ROOT / "cache"
 LOG_DIR = REPO_ROOT / "hf_dataset" / "logs"
 HISTORICAL_LOG_DIR = REPO_ROOT / "hf_dataset" / "logs_unvalidated_revisions"
@@ -130,20 +129,6 @@ class ModelRun:
 
 def unique(values: Sequence[str]) -> list[str]:
     return list(dict.fromkeys(values))
-
-
-def patch_inspect() -> None:
-    import inspect_ai
-
-    package_root = Path(inspect_ai.__file__).resolve().parent.parent
-    for patch in (INSPECT_PATCH,):
-        command = ["patch", "--batch", "--forward", "-p1", "-i", str(patch)]
-        applied = subprocess.run(command, cwd=package_root, capture_output=True)
-        if applied.returncode == 0:
-            continue
-        check = command[:2] + ["--dry-run", "--reverse"] + command[3:]
-        if subprocess.run(check, cwd=package_root, capture_output=True).returncode:
-            raise RunnerError(f"Installed Inspect version is incompatible with {patch.name}")
 
 
 def load_tasks(revision: str = REVISION) -> list[Task]:
@@ -609,7 +594,6 @@ def run_inspect(
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    patch_inspect()
     revision_parser = argparse.ArgumentParser(add_help=False)
     revision_parser.add_argument("--revision", default=REVISION)
     revision_args, _ = revision_parser.parse_known_args(argv)

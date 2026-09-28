@@ -12,7 +12,6 @@ from pathlib import Path
 import pandas as pd
 from scipy.stats import ttest_1samp
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_INPUT = REPO_ROOT / "paper/artifacts/transfer_tables/analysis.parquet"
 DEFAULT_OUTPUT = REPO_ROOT / "paper/artifacts/analysis/equivalence/isl_translation_tost.txt"
@@ -27,13 +26,11 @@ def model_scores(
     right_label: str,
 ) -> pd.DataFrame:
     data = pd.read_parquet(path, columns=["language", "split", "model", "correct"])
-    data = data.loc[
-        (data["split"] == split) & data["language"].isin([left_language, right_language])
-    ]
+    data = data.loc[(data["split"] == split) & data["language"].isin([left_language, right_language])]
     scores = data.groupby(["model", "language"])["correct"].mean().unstack()
-    scores = scores.rename(
-        columns={left_language: left_label, right_language: right_label}
-    ).dropna(subset=[left_label, right_label])
+    scores = scores.rename(columns={left_language: left_label, right_language: right_label}).dropna(
+        subset=[left_label, right_label]
+    )
     if len(scores) < 2:
         raise ValueError("At least two models with both Icelandic template variants are required")
     return scores.sort_index()
@@ -57,9 +54,7 @@ def tost_report(
     tost_p = max(float(lower.pvalue), float(upper.pvalue))
     equivalent = tost_p < 0.05
 
-    table = scores.assign(difference=differences).to_string(
-        float_format=lambda value: f"{value:.6f}"
-    )
+    table = scores.assign(difference=differences).to_string(float_format=lambda value: f"{value:.6f}")
     table = "\n".join(line.rstrip() for line in table.splitlines())
     lines = [
         f"Paired TOST equivalence test: {title}",

@@ -28,7 +28,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from eval_log_utils import discover_logs, sample_score, select_logs
+from eval_log_utils import sample_score
 from inspect_ai.log import read_eval_log
 from matplotlib.ticker import PercentFormatter
 from number_coverage_utils import display_number, extract_chevron_side_numbers, extract_numbers
@@ -148,10 +148,6 @@ def analyze_log(path: Path, max_samples: int | None = None) -> tuple[dict[str, A
         ),
     }
     return summary, sample_rows
-
-
-
-
 
 
 def analyze_logs(
@@ -423,9 +419,23 @@ def main() -> None:
         run_self_test()
         return
 
-    columns = ["model", "task", "eval_id", "id", "source_id", "language", "split", "correct",
-               "prompt_number_count", "retrieved_prompt_number_count", "lhs_count", "lhs_retrieved", "rhs_count",
-               "rhs_retrieved", "all_prompt_numbers_present"]
+    columns = [
+        "model",
+        "task",
+        "eval_id",
+        "id",
+        "source_id",
+        "language",
+        "split",
+        "correct",
+        "prompt_number_count",
+        "retrieved_prompt_number_count",
+        "lhs_count",
+        "lhs_retrieved",
+        "rhs_count",
+        "rhs_retrieved",
+        "all_prompt_numbers_present",
+    ]
     frame = pd.read_parquet(args.analysis, columns=columns)
     frame = figure_rows(frame)
     frame = frame[frame["language"] != "uncorrected_isl"].copy()
@@ -440,18 +450,26 @@ def main() -> None:
         right = summarize_group([row for row in rows if row["final_correct"]])
         wrong = summarize_group([row for row in rows if not row["final_correct"]])
         coverage = summarize_group(rows)
-        summaries.append({
-            "model": _model, "task": _task, "eval_id": _eval, "samples": len(rows),
-            "final_scored_samples": len(rows), "final_accuracy": float(group["final_correct"].mean()),
-            "number_coverage_samples": coverage["samples"],
-            "samples_with_all_prompt_numbers_present": coverage["samples_with_all_prompt_numbers_present"],
-            "all_prompt_numbers_present_rate": coverage["all_prompt_numbers_present_rate"],
-            "number_coverage_breakdown": {"final_correct": right, "final_incorrect": wrong},
-            "correct_minus_incorrect_percentage_points": (
-                (right["all_prompt_numbers_present_rate"] - wrong["all_prompt_numbers_present_rate"]) * 100
-                if right["all_prompt_numbers_present_rate"] is not None and wrong["all_prompt_numbers_present_rate"] is not None else None
-            ),
-        })
+        summaries.append(
+            {
+                "model": _model,
+                "task": _task,
+                "eval_id": _eval,
+                "samples": len(rows),
+                "final_scored_samples": len(rows),
+                "final_accuracy": float(group["final_correct"].mean()),
+                "number_coverage_samples": coverage["samples"],
+                "samples_with_all_prompt_numbers_present": coverage["samples_with_all_prompt_numbers_present"],
+                "all_prompt_numbers_present_rate": coverage["all_prompt_numbers_present_rate"],
+                "number_coverage_breakdown": {"final_correct": right, "final_incorrect": wrong},
+                "correct_minus_incorrect_percentage_points": (
+                    (right["all_prompt_numbers_present_rate"] - wrong["all_prompt_numbers_present_rate"]) * 100
+                    if right["all_prompt_numbers_present_rate"] is not None
+                    and wrong["all_prompt_numbers_present_rate"] is not None
+                    else None
+                ),
+            }
+        )
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     args.analysis_out_dir.mkdir(parents=True, exist_ok=True)
