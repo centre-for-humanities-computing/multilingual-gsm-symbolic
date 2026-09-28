@@ -1,7 +1,8 @@
 # Paper Content
 
 This directory contains evaluation and visualization tooling used for the paper.
-It intentionally lives only on the `paper-content` branch.
+The statistical modelling lives alongside it in `scripts/analysis/` (R, knitted to
+HTML); see the README there.
 
 ## Layout
 
@@ -10,7 +11,6 @@ It intentionally lives only on the `paper-content` branch.
 - `artifacts/figures/`: topic-organized publication figures:
   - `overview/`: introductory and example figures.
   - `accuracy/`: accuracy heatmaps, original vs. synthetic, split degradation, and family scaling plots.
-  - `distributions/`: overall distribution, selected ridgeline overview, and `by_model/<family>/` ridgelines.
   - `transfer/`: English-normalized transfer, transfer robustness, reasoning deltas, absolute transfer gaps, compute budget curves (`compute_budget/absolute/` and `compute_budget/relative/`), and `language_features/`.
   - `ablations/`: unit ablations (`english_units/`) and Icelandic human-verification comparisons (`icelandic_validation/`).
   - `number_coverage/`: number-coverage heatmaps and correlation figures.
@@ -40,7 +40,7 @@ uv run paper/scripts/ucloudeval --help
 
 Norwegian (`nob`, `nno`, `nor`) is not human validated and is excluded before
 figure aggregation by `plot_config.figure_rows`. Raw evaluation data is retained.
-Regenerate plots with `visualizegrid.py`, `visualize_results.py`, `ridgeline.py`,
-`qwen_compute_budget.py`, and `numbercoverage.py`.
+Regenerate plots with `visualizegrid.py`, `qwen_compute_budget.py`, and
+`numbercoverage.py`.
 Use `transferfeatures.py --cached-features` to redraw feature plots from saved
 feature measurements without downloading tokenizers.
