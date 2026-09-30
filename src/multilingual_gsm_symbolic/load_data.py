@@ -49,6 +49,26 @@ def load_replacements(language: str = "eng") -> dict:
         return json.load(f)
 
 
+def load_instruction(language: str = "eng") -> str:
+    """Load the language-specific instruction used to prompt a model with a question.
+
+    The instruction asks the model to solve the problem step by step and put the final answer in
+    `\\boxed{}`. It is meant to be followed by a blank line and the question.
+
+    Args:
+        language: Language code, e.g. "eng" (default).
+
+    Returns:
+        The instruction text.
+
+    Raises:
+        FileNotFoundError: If no instruction has been added for the language yet.
+    """
+    instruction_path = _DATA_ROOT / language / "instruction.toml"
+    with instruction_path.open("rb") as f:
+        return tomllib.load(f)["instruction"]
+
+
 def load_data(language: str = "eng", directory: str | Path | None = None) -> list[AnnotatedQuestion]:
     """Load symbolic templates.
 

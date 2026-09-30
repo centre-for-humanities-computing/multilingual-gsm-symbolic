@@ -8,6 +8,7 @@ from multilingual_gsm_symbolic.load_data import (
     available_languages,
     load_data,
     load_gsm,
+    load_instruction,
     load_replacements,
 )
 
@@ -19,5 +20,6 @@ __all__ = [
     "available_languages",
     "load_data",
     "load_gsm",
+    "load_instruction",
     "load_replacements",
 ]

@@ -277,7 +277,7 @@ The following table shows the list of validated languages:
 
 ### Want to add a new language?
 
-Want to add a new language or validate an existing one? Great to hear. The [`src/multilingual_gsm_symbolic/data/templates/`](src/multilingual_gsm_symbolic/data/templates/) folder contains the templates for each language, and [`src/scripts/translate_templates.py`](src/scripts/translate_templates.py) can be used to translate the templates from one language to another. We have already pre-generated a few languages; see the templates folder for which ones. Once you have validated the examples you can submit a PR with the changes.
+Want to add a new language or validate an existing one? Great to hear. The [`src/multilingual_gsm_symbolic/data/templates/`](src/multilingual_gsm_symbolic/data/templates/) folder contains the templates for each language, and [`src/scripts/translate_templates.py`](src/scripts/translate_templates.py) can be used to translate the templates from one language to another. We have already pre-generated a few languages; see the templates folder for which ones. Each language folder also contains an `instruction.toml` with the prompt used to evaluate models (available through `load_instruction`), which should be validated along with the templates. Once you have validated the examples you can submit a PR with the changes.
 
 ## 📖 API reference
 
@@ -307,6 +307,19 @@ Load language-specific named values (e.g. lists of names, places) used inside te
 | ----------- | ------ | ---------------------------------------- |
 | `language`  | `str`  | Language code, e.g. `"eng"` (default)    |
 | **RETURNS** | `dict` | Mapping of replacement name → value list |
+
+### <kbd>function</kbd> `load_instruction`
+
+```python
+load_instruction(language="eng") → str
+```
+
+Load the language-specific instruction used to prompt a model with a question (solve step by step and put the final answer in `\boxed{}`). It is meant to be followed by a blank line and the question. Raises `FileNotFoundError` if the language has no instruction yet.
+
+| Argument    | Type  | Description                           |
+| ----------- | ----- | ------------------------------------- |
+| `language`  | `str` | Language code, e.g. `"eng"` (default) |
+| **RETURNS** | `str` | The instruction text                  |
 
 ### <kbd>function</kbd> `load_gsm`
 
