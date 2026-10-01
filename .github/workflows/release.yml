@@ -5,9 +5,11 @@
 #   version is read from the tag at build time by hatch-vcs)
 # - Build the package from the new tag and upload it to PyPI
 # - Create a release on GitHub with the built distributions
+# - Build the Hugging Face dataset from the new release and push it (see publish-dataset.yml)
 #
 # It requires trusted publishing to be set up on PyPI for this repository and workflow (release.yml), see:
 # https://docs.pypi.org/trusted-publishers/
+# and a Hugging Face token with write access to the dataset stored as the `HF_TOKEN` secret.
 
 name: Release
 
@@ -25,6 +27,9 @@ jobs:
     permissions:
       id-token: write # required for trusted publishing to PyPI
       contents: write # required to push the tag and create the GitHub release
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      tag: ${{ steps.release.outputs.tag }}
 
     # Under workflow_run, github.ref is always the default branch, so check what triggered the tests instead
     if: >-
@@ -73,3 +78,14 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.release.outputs.tag }}
+
+  dataset:
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/publish-dataset.yml
+    with:
+      tag: ${{ needs.release.outputs.tag }}
+    secrets:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
