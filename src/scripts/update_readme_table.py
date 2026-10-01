@@ -66,16 +66,20 @@ def _markdown_cell(value: str) -> str:
     return value.replace("|", "\\|").replace("\n", "<br>")
 
 
-def _included_languages(languages: list[LanguageValidation]) -> list[LanguageValidation]:
-    return [lang for lang in languages if lang.language != "eng_metric" and (lang.human or lang.language == "eng")]
+def _included_languages(
+    languages: list[LanguageValidation], exclude: frozenset[str] = frozenset({"eng_metric"})
+) -> list[LanguageValidation]:
+    return [lang for lang in languages if lang.language not in exclude and (lang.human or lang.language == "eng")]
 
 
-def render_language_tables(languages: list[LanguageValidation]) -> str:
+def render_language_tables(
+    languages: list[LanguageValidation], exclude: frozenset[str] = frozenset({"eng_metric"})
+) -> str:
     lines = [
         "| Language | Computationally validated | Human validated | Error analysis |",
         "| --- | --- | --- | --- |",
     ]
-    for lang in _included_languages(languages):
+    for lang in _included_languages(languages, exclude):
         error = "✓" if lang.error else ""
         lines.append(f"| `{lang.language}` | ✓ | {_markdown_cell(lang.human)} | {error} |")
     return "\n".join(lines)
