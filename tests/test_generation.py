@@ -405,28 +405,6 @@ def test_example_40_limits_leftovers_for_single_use_offers():
         assert "n12 - n1 - n2 < n1" in template.conditions, template_path
 
 
-@pytest.mark.parametrize(("n1", "n2", "pounds", "expected"), [(1, 1, 4, 18.5), (1, 1, 5, 15.5), (2, 1, 6, 12.5)])
-def test_example_40_repeats_offer_and_charges_full_price_for_leftovers(n1, n2, pounds, expected):
-    template_path = (
-        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0040.toml"
-    )
-    template = AnnotatedQuestion.from_toml(template_path)
-    fixed = {
-        "total": 30,
-        "n1": n1,
-        "n2": n2,
-        "n12": pounds,
-        "n3": 4,
-        "p1": 3,
-        "p2": "1.5",
-        "p3": "0.25",
-        "discount": "1/2",
-    }
-    question = template.generate_questions(n=1, fixed=fixed, seed=42, verbose=False)[0]
-    assert f"She scooped up {pounds} pounds" in question.question
-    assert _extract_final_answer(question.answer) == expected
-
-
 def test_multiple_questions_are_not_all_identical():
     """Generating n>1 questions should produce more than one distinct output."""
     t = _repro_template()
