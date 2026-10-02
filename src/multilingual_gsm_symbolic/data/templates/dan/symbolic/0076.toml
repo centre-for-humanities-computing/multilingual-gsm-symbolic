@@ -1,9 +1,9 @@
-question = "Dennis fangede 3 tun i mandags, den første tun han fangede vejer 56 kilogram, den anden tun han fangede vejer 46 kilogram og den sidste tun han fangede vejer 26 kilogram. Hvis et kilogram tun koster 0,5 kr, hvor meget vil han tjene efter at have solgt alle tunene til markedet?"
+question = "Dennis fangede 3 tun i mandags, den første tun han fangede vejer 56 kilogram, den anden tun han fangede vejer 46 kilogram og hver af de resterende tun vejer 26 kilogram. Hvis et kilogram tun koster 0,5 kr, hvor meget vil han tjene efter at have solgt alle tunene til markedet?"
 
 answer = """
 Dennis vil tjene 56*0,5 kr = <<56*0,5=28>>28 kr fra den første tun.
 Han vil tjene 46*0,5 kr = <<46*0,5=23>>23 kr for den anden tun.
-Og han vil tjene 26*0,5 kr = <<26*0,5=13>>13 kr fra den tredje tun.
+Han vil tjene 1*26*0,5 kr = <<1*26*0,5=13>>13 kr fra de resterende tun.
 Derfor, den totale mængde han vil tjene for alle tunene er 28 kr + 23 kr + 13 kr = <<28+23+13=64>>64 kr.
 #### 64
 """
@@ -13,7 +13,7 @@ id_orig = 1207
 id_shuffled = 76
 
 question_annotated = """
-{name,Dennis} fangede {n,3} {fish,tun} i {day,mandags}, den første {fish,tun} han fangede vejer {w1,56} {unit,kilogram}, den anden {fish,tun} han fangede vejer {w2,46} {unit,kilogram} og den sidste {fish,tun} han fangede vejer {w3,26} {unit,kilogram}. Hvis et {unit,kilogram} {fish,tun} koster {price,0.5} {cur,kr}, hvor meget vil han tjene efter at have solgt alle {fish,tun}ene til markedet?
+{name,Dennis} fangede {n,3} {fish,tun} i {day,mandags}, den første {fish,tun} han fangede vejer {w1,56} {unit,kilogram}, den anden {fish,tun} han fangede vejer {w2,46} {unit,kilogram} og hver af de resterende {fish,tun} vejer {w3,26} {unit,kilogram}. Hvis et {unit,kilogram} {fish,tun} koster {price,0.5} {cur,kr}, hvor meget vil han tjene efter at have solgt alle {fish,tun}ene til markedet?
 
 #init:
 - name = sample(names_male)
@@ -37,8 +37,8 @@ question_annotated = """
 answer_annotated = """
 {name} vil tjene {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} fra den første {fish}.
 Han vil tjene {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} for den anden {fish}.
-Og han vil tjene {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} fra den tredje tun.
-Derfor, den totale mængde han vil tjene for alle {fish}ene er {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+Han vil tjene {n-2}*{w3}*{price} {cur} = <<{n-2}*{w3}*{price}={(n-2)*w3*price}>>{(n-2)*w3*price} {cur} fra de resterende {fish}.
+Derfor, den totale mængde han vil tjene for alle {fish}ene er {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={ensure_int((w1 + w2 + (n-2)*w3) * price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
 #### {int((w1 + w2 + (n-2)*w3) * price)}
 """
 
