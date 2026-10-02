@@ -56,3 +56,17 @@ def test_danish_saturation_answers(template_id, updates, expected):
     assert eval_node(parse_expr(formula), EVAL_CONTEXT_HELPERS | assignments) == expected
     assert int(answer.split("####")[-1]) == expected
     assert not _check_answer(answer, str(template_id))
+
+
+@pytest.mark.parametrize(
+    "n, p1, r1, fraction, valid",
+    [
+        (10, 10, 100, Fraction(1, 3), False),
+        (20, 10, 100, Fraction(1, 3), True),
+        (60, 40, 75, Fraction(1, 2), True),
+    ],
+)
+def test_quiz_remainder_splits_equally(n, p1, r1, fraction, valid):
+    template = next(t for t in load_data("dan") if t.id_shuffled == 19)
+    env = EVAL_CONTEXT_HELPERS | {"n": n, "p1": p1, "r1": r1, "frac_val": fraction}
+    assert all(eval_node(condition, env) for condition in template._condition_asts) == valid
