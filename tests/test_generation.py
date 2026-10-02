@@ -354,9 +354,9 @@ def test_rounding_regressions_render_consistent_worked_solutions():
         ),
         (
             "0019.toml",
-            {"n": 90, "p1": 70, "r1": 100, "frac_txt": "one third", "frac_val": "1/3"},
-            "72",
-            "63 points + 9 points",
+            {"n": 120, "p1": 55, "r1": 100, "frac_txt": "one third", "frac_val": "1/3"},
+            "84",
+            "66 points + 18 points",
         ),
         (
             "0084.toml",
@@ -389,7 +389,7 @@ def test_example_40_never_produces_negative_answer():
         assert val > 0, f"Example 40 produced non-positive answer {val!r} in:\n{q.question}"
 
 
-def test_example_40_limits_leftovers_in_every_language():
+def test_example_40_limits_leftovers_for_single_use_offers():
     template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
     template_paths = [
         template_root / language / "symbolic/0040.toml"
@@ -399,6 +399,8 @@ def test_example_40_limits_leftovers_in_every_language():
     assert template_paths
 
     for template_path in template_paths:
+        if template_path.parents[1].name == "eng":
+            continue  # English now repeats the offer instead of limiting it to one bundle.
         template = AnnotatedQuestion.from_toml(template_path)
         assert "n12 - n1 - n2 < n1" in template.conditions, template_path
 
