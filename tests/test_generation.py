@@ -354,9 +354,9 @@ def test_rounding_regressions_render_consistent_worked_solutions():
         ),
         (
             "0019.toml",
-            {"n": 90, "p1": 70, "r1": 100, "frac_txt": "one third", "frac_val": "1/3"},
-            "72",
-            "63 points + 9 points",
+            {"n": 120, "p1": 55, "r1": 100, "frac_txt": "one third", "frac_val": "1/3"},
+            "84",
+            "66 points + 18 points",
         ),
         (
             "0084.toml",
@@ -389,7 +389,7 @@ def test_example_40_never_produces_negative_answer():
         assert val > 0, f"Example 40 produced non-positive answer {val!r} in:\n{q.question}"
 
 
-def test_example_40_limits_leftovers_in_every_language():
+def test_example_40_limits_leftovers_for_single_use_offers():
     template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
     template_paths = [
         template_root / language / "symbolic/0040.toml"
@@ -399,8 +399,32 @@ def test_example_40_limits_leftovers_in_every_language():
     assert template_paths
 
     for template_path in template_paths:
+        if template_path.parents[1].name == "eng":
+            continue  # English now repeats the offer instead of limiting it to one bundle.
         template = AnnotatedQuestion.from_toml(template_path)
         assert "n12 - n1 - n2 < n1" in template.conditions, template_path
+
+
+@pytest.mark.parametrize(("n1", "n2", "pounds", "expected"), [(1, 1, 4, 18.5), (1, 1, 5, 15.5), (2, 1, 6, 12.5)])
+def test_example_40_repeats_offer_and_charges_full_price_for_leftovers(n1, n2, pounds, expected):
+    template_path = (
+        pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates/eng/symbolic/0040.toml"
+    )
+    template = AnnotatedQuestion.from_toml(template_path)
+    fixed = {
+        "total": 30,
+        "n1": n1,
+        "n2": n2,
+        "n12": pounds,
+        "n3": 4,
+        "p1": 3,
+        "p2": "1.5",
+        "p3": "0.25",
+        "discount": "1/2",
+    }
+    question = template.generate_questions(n=1, fixed=fixed, seed=42, verbose=False)[0]
+    assert f"She scooped up {pounds} pounds" in question.question
+    assert _extract_final_answer(question.answer) == expected
 
 
 def test_multiple_questions_are_not_all_identical():
