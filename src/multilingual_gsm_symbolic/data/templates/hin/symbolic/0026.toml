@@ -10,15 +10,16 @@ id_orig = 1023
 id_shuffled = 26
 
 question_annotated = """
-{name1,एक आदमी} प्रति {time_unit,दिन} {n1,५} {food,सैंडविच} खाता है, {name2,उसकी पत्नी} प्रति {time_unit,दिन} {n2,४} {food,सैंडविच} खाती है, और उनका {relation,बेटा} प्रति {time_unit,दिन} {n3,२} {food,सैंडविच} खाता है। यह परिवार एक {time_period,सप्ताह} में कितने {food,सैंडविच} खाता है?
+{name1,एक आदमी} प्रति {time_unit,दिन} {n1,५} {food,सैंडविच} खाता है, {name2,उसकी पत्नी} प्रति {time_unit,दिन} {n2,४} {food,सैंडविच} खाती है, और {rel_poss,उनका} {relation,बेटा} प्रति {time_unit,दिन} {n3,२} {food,सैंडविच} {rel_verb,खाता} है। यह परिवार एक {time_period,सप्ताह} में कितने {food,सैंडविच} खाता है{placeholder_txt,?}
 
 #init:
 - name1 = sample(["एक पिता", "एक दादा", "एक चाचा"])
-- name2 = sample(["उसकी पत्नी", "उसकी साथी", "उसका जीवनसाथी"])
-- relation = sample(["बेटी", "बेटा", "पोता/पोती"])
+- name2 = sample(["उसकी पत्नी", "उसकी साथी", "उसकी जीवनसाथी"])
+- relation, rel_poss, rel_verb = sample([("बेटी", "उनकी", "खाती"), ("बेटा", "उनका", "खाता"), ("पोता", "उनका", "खाता"), ("पोती", "उनकी", "खाती")])
 - food = sample(["पिज्जा", "बुरिटो", "टैको", "सुशी रोल", "हैमबर्गर"])
 - time_unit = sample(["दिन"])
 - time_period = sample(["सप्ताह", "महीने"])
+- placeholder_txt = "? मान लीजिए कि एक महीने में ३० दिन होते हैं।" if time_period == "महीने" else "?"
 - $n1 = range(2, 9)
 - $n2 = range(2, 9)
 - $n3 = range(2, 9)
