@@ -405,6 +405,20 @@ Dataclass holding a single generated problem.
 
 ## Acknowledgement
 
+If you use this dataset please cite the [paper](https://arxiv.org/abs/2610.03367):
+
+```
+@misc{enevoldsen2026multilingualgsmsymbolicdeterminescapability,
+      title={Multilingual GSM-Symbolic: What determines capability transfer across languages?}, 
+      author={Kenneth Enevoldsen and Riley Herchert and Sofie Mosegaard and Dan Saattrup Smart and Simon Enni and Isaac Chung and Sofie Bruun and Ayush Sunil Munot and Max Müller-Eberstein and Adnan El-Assadi and Elisa Bassignana and Gianluca Barmina and Hafsteinn Einarsson and Iben Nyholm Debess and Linda Freienthal and Lukas Galke Poech and Mike Zhang and Nicolas Legrand and Vladimir Salnikov and Yevhen Kostiuk and Zafar Hussain and Sagandeep Kaur and Agnes Toftgård and Marie Mattson and Kristoffer Nielbo},
+      year={2026},
+      eprint={2610.03367},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2610.03367}, 
+}
+```
+
 The symbolic template engine and the danish subset were originally developed as part of the [m-gsm-symbolic](https://github.com/centre-for-humanities-computing/m-gsm-symbolic) project at the [Centre for Humanities Computing](https://chc.au.dk/) by:
 
 - [Kenneth Enevoldsen](https://github.com/KennethEnevoldsen)
@@ -412,5 +426,3 @@ The symbolic template engine and the danish subset were originally developed as 
 - [Simon Enni](https://github.com/Enniwhere)
 
 The initial template format was derived from Apple's [GSM-Symbolic](https://machinelearning.apple.com/research/gsm-symbolic) paper and the original concrete problems are from [GSM8k](https://huggingface.co/datasets/openai/gsm8k).
-
-The code was refactored for optimizations and usability by [Kenneth Enevoldsen](https://github.com/KennethEnevoldsen), who is also the current maintainer.
