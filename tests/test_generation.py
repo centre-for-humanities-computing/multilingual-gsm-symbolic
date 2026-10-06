@@ -389,7 +389,7 @@ def test_example_40_never_produces_negative_answer():
         assert val > 0, f"Example 40 produced non-positive answer {val!r} in:\n{q.question}"
 
 
-def test_example_40_limits_leftovers_for_single_use_offers():
+def test_example_40_handles_leftovers_in_every_language():
     template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
     template_paths = [
         template_root / language / "symbolic/0040.toml"
@@ -399,10 +399,43 @@ def test_example_40_limits_leftovers_for_single_use_offers():
     assert template_paths
 
     for template_path in template_paths:
-        if template_path.parents[1].name == "eng":
-            continue  # English now repeats the offer instead of limiting it to one bundle.
         template = AnnotatedQuestion.from_toml(template_path)
-        assert "n12 - n1 - n2 < n1" in template.conditions, template_path
+        if template.language == "dan":
+            fixed = {
+                "n1": 200,
+                "n2": 200,
+                "p1": 20,
+                "discount": 0.5,
+                "p2": 17,
+                "n3": 4,
+                "p3": 2,
+                "total": 90,
+            }
+            cases = [(650, 10), (800, 5)]
+        elif template.language == "eng":
+            fixed = {
+                "n1": 1,
+                "n2": 1,
+                "p1": 3,
+                "discount": 0.5,
+                "p2": 1.5,
+                "n3": 4,
+                "p3": 0.25,
+                "total": 15,
+            }
+            cases = [(4, 3.5), (5, 0.5)]
+        else:
+            assert "n12 - n1 - n2 < n1" in template.conditions, template_path
+            continue
+
+        assignments = template.get_default_assignments() | fixed
+        formula = template.question_annotated.split("#answer:", 1)[1].strip()
+        for quantity, expected in cases:
+            assignments["n12"] = quantity
+            env = build_eval_context(Random(0), {}) | assignments
+            assert all(eval_node(condition, env) for condition in template._condition_asts)
+            assert eval_node(parse_expr(formula), env) == expected
+            assert _extract_final_answer(template.format_answer(assignments)) == expected
 
 
 def test_multiple_questions_are_not_all_identical():
