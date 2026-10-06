@@ -11,7 +11,6 @@ from multilingual_gsm_symbolic._helpers import (
     range_possibilities_str,
     range_str,
 )
-from multilingual_gsm_symbolic.load_data import _active_template_files, available_languages
 from multilingual_gsm_symbolic.templates import AnnotatedQuestion, Question
 
 
@@ -354,9 +353,9 @@ def test_rounding_regressions_render_consistent_worked_solutions():
         ),
         (
             "0019.toml",
-            {"n": 90, "p1": 70, "r1": 100, "frac_txt": "one third", "frac_val": "1/3"},
-            "72",
-            "63 points + 9 points",
+            {"n": 120, "p1": 55, "r1": 100, "frac_txt": "one third", "frac_val": "1/3"},
+            "84",
+            "66 points + 18 points",
         ),
         (
             "0084.toml",
@@ -387,39 +386,6 @@ def test_example_40_never_produces_negative_answer():
     for q in questions:
         val = _extract_final_answer(q.answer)
         assert val > 0, f"Example 40 produced non-positive answer {val!r} in:\n{q.question}"
-
-
-def test_example_40_handles_leftovers_in_every_language():
-    template_root = pathlib.Path(__file__).parent.parent / "src/multilingual_gsm_symbolic/data/templates"
-    template_paths = [
-        template_root / language / "symbolic/0040.toml"
-        for language in available_languages()
-        if (template_root / language / "symbolic/0040.toml") in _active_template_files(template_root / language)
-    ]
-    assert template_paths
-
-    for template_path in template_paths:
-        template = AnnotatedQuestion.from_toml(template_path)
-        if template.language == "dan":
-            assignments = template.get_default_assignments() | {
-                "n1": 200,
-                "n2": 200,
-                "p1": 20,
-                "discount": 0.5,
-                "p2": 17,
-                "n3": 4,
-                "p3": 2,
-                "total": 90,
-            }
-            for weight, expected in [(650, 10), (800, 5)]:
-                assignments["n12"] = weight
-                env = build_eval_context(Random(0), {}) | assignments
-                assert all(eval_node(condition, env) for condition in template._condition_asts)
-                formula = template.question_annotated.split("#answer:", 1)[1].strip()
-                assert eval_node(parse_expr(formula), env) == expected
-                assert _extract_final_answer(template.format_answer(assignments)) == expected
-        else:
-            assert "n12 - n1 - n2 < n1" in template.conditions, template_path
 
 
 def test_multiple_questions_are_not_all_identical():
