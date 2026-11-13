@@ -1659,8 +1659,8 @@ the feature model has to beat to be worth anything</td>
 ## by glmer to the OS, so fitting 15 folds in one session grows memory until the
 ## machine dies -- rm() and gc() are not enough. One process per fold also makes
 ## the job resumable: a completed fold is a file in artifacts/analysis/folds/.
-FOLDS &lt;- &quot;../../artifacts/analysis/folds&quot;
-LOLO_CSV &lt;- file.path(out_dir, &quot;lolo_predictions.csv&quot;)
+FOLDS &lt;- &quot;../../artifacts/analysis/folds_tl&quot;
+LOLO_CSV &lt;- file.path(out_dir, &quot;lolo_predictions_tl.csv&quot;)
 
 if (!file.exists(LOLO_CSV)) {
   for (L in langs) {
@@ -1698,19 +1698,19 @@ level.</p>
 <pre><code>## # A tibble: 4 × 5
 ##   method       MAE  RMSE pearson spearman
 ##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
-## 1 features    3.17  3.58   0.933    0.896
+## 1 features    3.09  3.56   0.934    0.875
 ## 2 grand_mean  8.50 10.7   -1       -1    
 ## 3 model_mean  8.50 10.7   -1       -1    
-## 4 size_only   8.68 10.8   -0.999   -1</code></pre>
+## 4 size_only   8.57 10.7   -0.999   -1</code></pre>
 <p>Predicting a <strong>specific model in a novel language</strong>,
 where the per-model baseline does separate from the grand mean:</p>
 <pre class="r"><code>score(pred, c(&quot;language&quot;, &quot;model&quot;))</code></pre>
 <pre><code>## # A tibble: 4 × 5
 ##   method       MAE  RMSE pearson spearman
 ##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
-## 1 features    5.98  8.82   0.959    0.947
-## 2 size_only   9.75 14.8    0.883    0.885
-## 3 model_mean  9.78 14.5    0.884    0.883
+## 1 features    6.05  8.95   0.959    0.95 
+## 2 model_mean  9.78 14.5    0.884    0.883
+## 3 size_only   9.85 15.1    0.883    0.887
 ## 4 grand_mean 27.0  31.2   -0.322   -0.315</code></pre>
 <pre class="r"><code>pred %&gt;% group_by(language) %&gt;%
   summarise(observed = weighted.mean(observed, n_total),
@@ -1720,21 +1720,21 @@ where the per-model baseline does separate from the grand mean:</p>
 <pre><code>## # A tibble: 15 × 4
 ##    language observed predicted error_pp
 ##    &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-##  1 ita         0.728     0.666   -6.13 
-##  2 ara         0.624     0.566   -5.79 
-##  3 dan         0.648     0.603   -4.50 
-##  4 zho         0.692     0.663   -2.86 
-##  5 fra         0.713     0.689   -2.33 
-##  6 ukr         0.636     0.62    -1.61 
-##  7 nld         0.683     0.67    -1.33 
-##  8 hin         0.539     0.525   -1.33 
-##  9 eng         0.807     0.813    0.632
-## 10 mar         0.43      0.446    1.69 
-## 11 deu         0.697     0.722    2.57 
-## 12 est         0.506     0.54     3.31 
-## 13 isl         0.473     0.512    3.85 
-## 14 rus         0.662     0.709    4.72 
-## 15 jpn         0.613     0.662    4.88</code></pre>
+##  1 ita         0.728     0.672   -5.54 
+##  2 ara         0.624     0.572   -5.27 
+##  3 dan         0.648     0.609   -3.94 
+##  4 zho         0.692     0.668   -2.37 
+##  5 fra         0.713     0.695   -1.79 
+##  6 ukr         0.636     0.626   -1.03 
+##  7 hin         0.539     0.53    -0.874
+##  8 nld         0.683     0.676   -0.732
+##  9 eng         0.807     0.82     1.26 
+## 10 mar         0.43      0.445    1.59 
+## 11 deu         0.697     0.728    3.09 
+## 12 est         0.506     0.544    3.73 
+## 13 isl         0.473     0.517    4.37 
+## 14 rus         0.662     0.714    5.22 
+## 15 jpn         0.613     0.669    5.56</code></pre>
 </div>
 <div id="with-a-few-evaluated-templates" class="section level1">
 <h1>With a few evaluated templates</h1>
@@ -1771,7 +1771,7 @@ R &lt;- 3                # replicates per (language, k). One draw is not enough 
                       # handle on how much the template draw matters at all,
                       # separately from which languages we happen to have.
 WORKERS &lt;- 2          # 16 GB; each glmer peaks well over 1 GB
-FEW_CSV &lt;- file.path(out_dir, &quot;few_shot_refit.csv&quot;)
+FEW_CSV &lt;- file.path(out_dir, &quot;few_shot_refit_tl.csv&quot;)
 
 ## Jobs are ordered so the most-cited k finishes first: if the run is interrupted
 ## the curve is still usable at k = 10, then 5, 20, 2, 1.
@@ -1848,12 +1848,12 @@ curve %&gt;% transmute(k, draws,
 <pre><code>## # A tibble: 6 × 4
 ##       k draws `model in language` `language mean`  
 ##   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;               &lt;chr&gt;            
-## 1     0     1 5.98 [5.22, 6.86]   3.17 [2.32, 4.06]
-## 2     1     3 8.38 [7.15, 9.69]   6.66 [5.05, 8.41]
-## 3     2     3 7.02 [6.26, 7.94]   4.35 [3.26, 5.38]
-## 4     5     3 5.63 [4.88, 6.48]   3.29 [2.26, 4.33]
-## 5    10     3 4.19 [3.75, 4.69]   2.38 [1.78, 3.08]
-## 6    20     3 2.73 [2.50, 2.96]   1.44 [1.11, 1.78]</code></pre>
+## 1     0     1 6.05 [5.32, 6.85]   3.09 [2.22, 4.05]
+## 2     1     3 6.34 [5.96, 6.68]   2.83 [2.06, 3.64]
+## 3     2     3 6.01 [5.62, 6.37]   2.68 [1.99, 3.43]
+## 4     5     3 5.21 [4.71, 5.66]   2.56 [1.77, 3.37]
+## 5    10     3 4.36 [3.88, 4.86]   1.96 [1.22, 2.78]
+## 6    20     3 3.19 [2.80, 3.61]   1.61 [1.20, 2.11]</code></pre>
 <p>Brackets are 95% bootstrap intervals over the 15 languages. They are
 wide because 15 is a small sample of languages, and they are
 <em>paired</em> across <span class="math inline">\(k\)</span> — the same
@@ -1877,11 +1877,11 @@ few %&gt;% group_by(k, language) %&gt;%
 <pre><code>## # A tibble: 5 × 6
 ##       k     n d_model p_model d_lang p_lang
 ##   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1     1    15   2.40    0.01   3.49   0.002
-## 2     2    15   1.04    0.083  1.18   0.041
-## 3     5    15  -0.351   0.639  0.118  1    
-## 4    10    15  -1.79    0.008 -0.786  0.151
-## 5    20    15  -3.25    0     -1.73   0.002</code></pre>
+## 1     1    15   0.287   0.277 -0.26   0.208
+## 2     2    15  -0.041   0.679 -0.409  0.277
+## 3     5    15  -0.843   0.169 -0.533  0.083
+## 4    10    15  -1.69    0.003 -1.13   0.008
+## 5    20    15  -2.86    0     -1.48   0.001</code></pre>
 <pre class="r"><code>## How much does the template draw matter, at each k? This is the spread the
 ## replicates exist to measure.
 few %&gt;% group_by(k, language) %&gt;%
@@ -1892,11 +1892,11 @@ few %&gt;% group_by(k, language) %&gt;%
 <pre><code>## # A tibble: 5 × 3
 ##       k mean_sd_across_draws worst_language
 ##   &lt;int&gt;                &lt;dbl&gt;          &lt;dbl&gt;
-## 1     1                 2.7            8.29
-## 2     2                 2.49          11.4 
-## 3     5                 1.84           9.17
-## 4    10                 1.22           4.09
-## 5    20                 0.73           1.95</code></pre>
+## 1     1                 0.92           2.08
+## 2     2                 0.95           1.98
+## 3     5                 0.78           1.75
+## 4    10                 0.74           1.77
+## 5    20                 0.59           1.32</code></pre>
 <p><code>sd(language)</code> by <span class="math inline">\(k\)</span>.
 Inflation at small <span class="math inline">\(k\)</span> is the model
 charging a single template’s idiosyncrasy to the language effect:</p>
@@ -1906,11 +1906,11 @@ charging a single template’s idiosyncrasy to the language effect:</p>
 <pre><code>## # A tibble: 5 × 4
 ##       k  fits languages sd_language
 ##   &lt;int&gt; &lt;int&gt;     &lt;int&gt;       &lt;dbl&gt;
-## 1     1    45        15       0.291
-## 2     2    45        15       0.269
-## 3     5    45        15       0.262
-## 4    10    45        15       0.260
-## 5    20    45        15       0.254</code></pre>
+## 1     1    45        15       0.243
+## 2     2    45        15       0.243
+## 3     5    45        15       0.245
+## 4    10    45        15       0.245
+## 5    20    45        15       0.246</code></pre>
 </div>
 
 

@@ -66,8 +66,11 @@ cache <- function(pat) {
   stopifnot(length(f) >= 1)
   e <- new.env(); load(f[order(file.mtime(f), decreasing = TRUE)][1], envir = e); e
 }
-fit_old  <- cache("^fit-lme4_")$fit_main
-base_old <- cache("^fit-baseline_")$fit_baseline
+## The primary model now INCLUDES template:language (see transfer_analysis.Rmd);
+## "old"/"reported" below is the original specification WITHOUT it, preserved from
+## the earlier knitr cache so this comparison stays reproducible.
+fit_old  <- readRDS("../../artifacts/analysis/original_spec/fit_main.rds")
+base_old <- readRDS("../../artifacts/analysis/original_spec/fit_baseline.rds")
 ```
 
 ```{r convergence}

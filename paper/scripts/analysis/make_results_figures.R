@@ -541,7 +541,7 @@ cat("resource-typology correlation across languages:", round(r_conf,3), "\n")
 ## Produced by predict_new_language.R. Every predictor is obtainable without
 ## running the model on the language, so this is a forecast, not a fit.
 ## =====================================================================
-lolo_path <- "../../artifacts/analysis/lolo_predictions.csv"
+lolo_path <- "../../artifacts/analysis/lolo_predictions_tl.csv"
 if (file.exists(lolo_path)) {
   lolo <- read.csv(lolo_path)
 
@@ -578,7 +578,7 @@ if (file.exists(lolo_path)) {
 
   cat("\nLOLO language-level MAE:",
       round(100 * mean(abs(by_lang$predicted - by_lang$observed)), 2), "points\n")
-} else cat("\n(lolo_predictions.csv not found; skipping prediction figures)\n")
+} else cat("\n(lolo_predictions_tl.csv not found; skipping prediction figures)\n")
 
 ## =====================================================================
 ## 9. (model, language) PREDICTED vs OBSERVED

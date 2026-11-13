@@ -1617,8 +1617,11 @@ compares against exactly what that document printed.</p>
   stopifnot(length(f) &gt;= 1)
   e &lt;- new.env(); load(f[order(file.mtime(f), decreasing = TRUE)][1], envir = e); e
 }
-fit_old  &lt;- cache(&quot;^fit-lme4_&quot;)$fit_main
-base_old &lt;- cache(&quot;^fit-baseline_&quot;)$fit_baseline</code></pre>
+## The primary model now INCLUDES template:language (see transfer_analysis.Rmd);
+## &quot;old&quot;/&quot;reported&quot; below is the original specification WITHOUT it, preserved from
+## the earlier knitr cache so this comparison stays reproducible.
+fit_old  &lt;- readRDS(&quot;../../artifacts/analysis/original_spec/fit_main.rds&quot;)
+base_old &lt;- readRDS(&quot;../../artifacts/analysis/original_spec/fit_baseline.rds&quot;)</code></pre>
 <pre class="r"><code>for (nm in c(&quot;fit_tl&quot;, &quot;base_tl&quot;)) {
   f &lt;- get(nm)
   cat(nm, &quot;| conv:&quot;,

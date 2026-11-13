@@ -1571,9 +1571,9 @@ border-radius: 0px;
 
 
 <p>Which language-level features govern how well mathematical reasoning
-transfers out of English? This implements the GLMM from
-<code>analysis.md</code>, from the raw instance table through to the
-fitted model, with inspection at each stage.</p>
+transfers out of English? This implements the GLMM described in the
+paper’s methods, from the raw instance table through to the fitted
+model, with inspection at each stage.</p>
 <p>The document fits <strong>one</strong> model of final accuracy and
 <strong>one</strong> decomposition of where in a solution the transfer
 gap accrues. Everything else is an ablation against the first of
@@ -1734,7 +1734,7 @@ observations &lt;- read_parquet(file.path(transfer_dir, &quot;analysis.parquet&q
   select(-tokenizer_fertility_rec, -english_fertility_tokens_per_character_rec)
 
 dim(observations)</code></pre>
-<pre><code>## [1] 2086100      21</code></pre>
+<pre><code>## [1] 2324700      21</code></pre>
 </div>
 <div id="reasoning-mode" class="section level1">
 <h1>Reasoning mode</h1>
@@ -2237,9 +2237,13 @@ cache on <code>RHS</code>: edit the model and every fit below rebuilds,
 leave it alone and none of them do.</p>
 <pre class="r"><code>library(lme4)
 
-ctrl &lt;- glmerControl(optimizer = &quot;bobyqa&quot;, optCtrl = list(maxfun = 3e5))
+ctrl &lt;- glmerControl(optimizer = &quot;bobyqa&quot;, optCtrl = list(maxfun = 5e5))
 
-RE &lt;- &quot;(1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) + (1 | model:language)&quot;
+## Primary specification: includes template-by-language (differential template
+## difficulty across languages). The earlier specification without this term is
+## reported in the appendix (see model_ablations.Rmd).
+RE &lt;- paste(&quot;(1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) +&quot;,
+            &quot;(1 | model:language) + (1 | template:language)&quot;)
 FEAT &lt;- &quot;(relative_fertility_within_z + typological_distance_z + log_resource_z)&quot;
 RHS &lt;- paste(
   FEAT, &quot;* log_params_z +&quot;,
@@ -2248,7 +2252,7 @@ RHS &lt;- paste(
 )
 
 cat(RHS)</code></pre>
-<pre><code>## (relative_fertility_within_z + typological_distance_z + log_resource_z) * log_params_z + reasoning * (relative_fertility_within_z + typological_distance_z + log_resource_z + log_params_z) + (1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) + (1 | model:language)</code></pre>
+<pre><code>## (relative_fertility_within_z + typological_distance_z + log_resource_z) * log_params_z + reasoning * (relative_fertility_within_z + typological_distance_z + log_resource_z + log_params_z) + (1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) + (1 | model:language) + (1 | template:language)</code></pre>
 <pre class="r"><code>fit_main &lt;- glmer(
   as.formula(paste(&quot;cbind(n_correct, n_total - n_correct) ~&quot;, RHS)),
   data = cells, family = binomial(), control = ctrl
@@ -2262,43 +2266,45 @@ cat(RHS)</code></pre>
 ##     typological_distance_z + log_resource_z) * log_params_z +  
 ##     reasoning * (relative_fertility_within_z + typological_distance_z +  
 ##         log_resource_z + log_params_z) + (1 | family/base_model) +  
-##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language)
+##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language) +  
+##     (1 | template:language)
 ##    Data: cells
 ## Control: ctrl
 ## 
 ##       AIC       BIC    logLik -2*log(L)  df.resid 
-##  422409.9  422583.6 -211186.0  422371.9     68981 
+##  320129.0  320311.8 -160044.5  320089.0     68980 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -40.722  -0.731   0.526   1.188  26.752 
+## -27.861  -0.637   0.355   0.957 135.369 
 ## 
 ## Random effects:
 ##  Groups            Name        Variance Std.Dev.
-##  model:language    (Intercept) 0.33415  0.5781  
-##  template          (Intercept) 1.46162  1.2090  
-##  model             (Intercept) 0.01581  0.1257  
-##  base_model:family (Intercept) 0.52904  0.7274  
-##  language          (Intercept) 0.06245  0.2499  
-##  family            (Intercept) 1.70687  1.3065  
+##  template:language (Intercept) 0.89566  0.9464  
+##  model:language    (Intercept) 0.36693  0.6057  
+##  template          (Intercept) 1.79987  1.3416  
+##  model             (Intercept) 0.02793  0.1671  
+##  base_model:family (Intercept) 0.63047  0.7940  
+##  language          (Intercept) 0.06057  0.2461  
+##  family            (Intercept) 2.20161  1.4838  
 ## Number of obs: 69000, groups:  
-## model:language, 690; template, 100; model, 46; base_model:family, 35; language, 15; family, 9
+## template:language, 1500; model:language, 690; template, 100; model, 46; base_model:family, 35; language, 15; family, 9
 ## 
 ## Fixed effects:
-##                                          Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)                               0.01493    0.44577   0.033 0.973276
-## relative_fertility_within_z              -0.04113    0.03171  -1.297 0.194609
-## typological_distance_z                   -0.25283    0.07409  -3.412 0.000644
-## log_resource_z                            0.77269    0.07420  10.414  &lt; 2e-16
-## log_params_z                              1.76764    0.13250  13.341  &lt; 2e-16
-## reasoningon                               0.66941    0.08479   7.895 2.89e-15
-## relative_fertility_within_z:log_params_z -0.04714    0.03037  -1.553 0.120537
-## typological_distance_z:log_params_z       0.02379    0.02386   0.997 0.318703
-## log_resource_z:log_params_z              -0.26503    0.02408 -11.005  &lt; 2e-16
-## relative_fertility_within_z:reasoningon   0.10589    0.07955   1.331 0.183158
-## typological_distance_z:reasoningon        0.11487    0.05294   2.170 0.030014
-## log_resource_z:reasoningon               -0.20016    0.05325  -3.759 0.000171
-## log_params_z:reasoningon                 -0.34373    0.09277  -3.705 0.000211
+##                                           Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)                               0.025515   0.479103   0.053 0.957528
+## relative_fertility_within_z              -0.044515   0.033242  -1.339 0.180527
+## typological_distance_z                   -0.277249   0.078051  -3.552 0.000382
+## log_resource_z                            0.841306   0.078048  10.779  &lt; 2e-16
+## log_params_z                              1.972644   0.144314  13.669  &lt; 2e-16
+## reasoningon                               0.765545   0.098818   7.747 9.41e-15
+## relative_fertility_within_z:log_params_z -0.053617   0.031818  -1.685 0.091966
+## typological_distance_z:log_params_z       0.006148   0.025050   0.245 0.806120
+## log_resource_z:log_params_z              -0.255721   0.025273 -10.118  &lt; 2e-16
+## relative_fertility_within_z:reasoningon   0.134125   0.083891   1.599 0.109864
+## typological_distance_z:reasoningon        0.104177   0.055520   1.876 0.060604
+## log_resource_z:reasoningon               -0.170357   0.055773  -3.054 0.002255
+## log_params_z:reasoningon                 -0.371752   0.108055  -3.440 0.000581
 ##                                             
 ## (Intercept)                                 
 ## relative_fertility_within_z                 
@@ -2306,12 +2312,12 @@ cat(RHS)</code></pre>
 ## log_resource_z                           ***
 ## log_params_z                             ***
 ## reasoningon                              ***
-## relative_fertility_within_z:log_params_z    
+## relative_fertility_within_z:log_params_z .  
 ## typological_distance_z:log_params_z         
 ## log_resource_z:log_params_z              ***
 ## relative_fertility_within_z:reasoningon     
-## typological_distance_z:reasoningon       *  
-## log_resource_z:reasoningon               ***
+## typological_distance_z:reasoningon       .  
+## log_resource_z:reasoningon               ** 
 ## log_params_z:reasoningon                 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
@@ -2332,54 +2338,58 @@ how we read off the transfer variation the features explain.</p>
 ##  Family: binomial  ( logit )
 ## Formula: 
 ## cbind(n_correct, n_total - n_correct) ~ log_params_z + (1 | family/base_model) +  
-##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language)
+##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language) +  
+##     (1 | template:language)
 ##    Data: cells
 ## Control: ctrl
 ## 
 ##       AIC       BIC    logLik -2*log(L)  df.resid 
-##  422610.8  422683.9 -211297.4  422594.8     68992 
+##  320302.2  320384.5 -160142.1  320284.2     68991 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -40.725  -0.733   0.525   1.187  26.837 
+## -28.228  -0.638   0.354   0.957 135.616 
 ## 
 ## Random effects:
 ##  Groups            Name        Variance Std.Dev.
-##  model:language    (Intercept) 0.4317   0.6570  
-##  template          (Intercept) 1.4622   1.2092  
-##  model             (Intercept) 0.2956   0.5437  
-##  base_model:family (Intercept) 0.4148   0.6440  
-##  language          (Intercept) 0.7509   0.8666  
-##  family            (Intercept) 1.8753   1.3694  
+##  template:language (Intercept) 0.8961   0.9466  
+##  model:language    (Intercept) 0.4523   0.6725  
+##  template          (Intercept) 1.8007   1.3419  
+##  model             (Intercept) 0.3858   0.6211  
+##  base_model:family (Intercept) 0.4845   0.6960  
+##  language          (Intercept) 0.9105   0.9542  
+##  family            (Intercept) 2.4195   1.5555  
 ## Number of obs: 69000, groups:  
-## model:language, 690; template, 100; model, 46; base_model:family, 35; language, 15; family, 9
+## template:language, 1500; model:language, 690; template, 100; model, 46; base_model:family, 35; language, 15; family, 9
 ## 
 ## Fixed effects:
 ##              Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)    0.1962     0.5483   0.358     0.72    
-## log_params_z   1.7000     0.1457  11.665   &lt;2e-16 ***
+## (Intercept)    0.2333     0.5883   0.397    0.692    
+## log_params_z   1.9002     0.1594  11.924   &lt;2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
 ##             (Intr)
-## log_parms_z -0.046</code></pre>
+## log_parms_z -0.022</code></pre>
 <pre class="r"><code>VarCorr(fit_main)</code></pre>
 <pre><code>##  Groups            Name        Std.Dev.
-##  model:language    (Intercept) 0.57806 
-##  template          (Intercept) 1.20897 
-##  model             (Intercept) 0.12573 
-##  base_model:family (Intercept) 0.72735 
-##  language          (Intercept) 0.24989 
-##  family            (Intercept) 1.30647</code></pre>
+##  template:language (Intercept) 0.94639 
+##  model:language    (Intercept) 0.60575 
+##  template          (Intercept) 1.34159 
+##  model             (Intercept) 0.16712 
+##  base_model:family (Intercept) 0.79402 
+##  language          (Intercept) 0.24611 
+##  family            (Intercept) 1.48378</code></pre>
 <pre class="r"><code>VarCorr(fit_baseline)</code></pre>
 <pre><code>##  Groups            Name        Std.Dev.
-##  model:language    (Intercept) 0.65702 
-##  template          (Intercept) 1.20922 
-##  model             (Intercept) 0.54374 
-##  base_model:family (Intercept) 0.64404 
-##  language          (Intercept) 0.86656 
-##  family            (Intercept) 1.36942</code></pre>
+##  template:language (Intercept) 0.94664 
+##  model:language    (Intercept) 0.67250 
+##  template          (Intercept) 1.34190 
+##  model             (Intercept) 0.62109 
+##  base_model:family (Intercept) 0.69604 
+##  language          (Intercept) 0.95422 
+##  family            (Intercept) 1.55547</code></pre>
 </div>
 <div id="results" class="section level2">
 <h2>Results</h2>
@@ -2456,9 +2466,9 @@ tibble::tibble(
 <pre><code>## # A tibble: 3 × 2
 ##   quantity                                              value
 ##   &lt;chr&gt;                                                 &lt;dbl&gt;
-## 1 per doubling of parameters                            0.948
-## 2 per doubling of Common Crawl pages                    0.270
-## 3 doublings of data equal to one doubling of parameters 3.51</code></pre>
+## 1 per doubling of parameters                            1.06 
+## 2 per doubling of Common Crawl pages                    0.294
+## 3 doublings of data equal to one doubling of parameters 3.60</code></pre>
 <p>Model size buys about <strong>1.0 log-odds per doubling of
 parameters</strong>, and language resource about <strong>0.25 log-odds
 per doubling of Common Crawl pages</strong>. So one doubling of model
@@ -2501,8 +2511,8 @@ tibble(
 <pre><code>## # A tibble: 2 × 4
 ##   component      sd_baseline sd_full variance_explained
 ##   &lt;chr&gt;                &lt;dbl&gt;   &lt;dbl&gt;              &lt;dbl&gt;
-## 1 language             0.867   0.250              0.917
-## 2 model:language       0.657   0.578              0.226</code></pre>
+## 1 language             0.954   0.246              0.933
+## 2 model:language       0.672   0.606              0.189</code></pre>
 <ul>
 <li><strong>Between-language variance: ~89% explained</strong> (SD 0.83
 -&gt; 0.27). Almost all of <em>why some languages are harder than
@@ -2528,22 +2538,22 @@ comparable to either of these.</p>
 <pre class="r"><code>ranef(fit_main)$language %&gt;%
   tibble::rownames_to_column(&quot;language&quot;) %&gt;%
   arrange(`(Intercept)`)</code></pre>
-<pre><code>##    language  (Intercept)
-## 1       rus -0.416930436
-## 2       deu -0.289491908
-## 3       isl -0.190613162
-## 4       est -0.187258896
-## 5       jpn -0.182523633
-## 6       mar -0.097224574
-## 7       nld -0.010257163
-## 8       eng  0.004783205
-## 9       fra  0.029763501
-## 10      hin  0.040168381
-## 11      ukr  0.092415028
-## 12      zho  0.171991198
-## 13      dan  0.276371613
-## 14      ita  0.349634484
-## 15      ara  0.409109015</code></pre>
+<pre><code>##    language (Intercept)
+## 1       rus -0.40201622
+## 2       isl -0.20163614
+## 3       deu -0.19649424
+## 4       jpn -0.17832353
+## 5       est -0.17358683
+## 6       mar -0.07022723
+## 7       eng -0.06055471
+## 8       nld -0.01903226
+## 9       hin  0.02099107
+## 10      ukr  0.08148407
+## 11      fra  0.10192074
+## 12      zho  0.14491951
+## 13      dan  0.27210763
+## 14      ita  0.32068951
+## 15      ara  0.35965649</code></pre>
 <p>The features over-predict <code>rus</code>, <code>deu</code>,
 <code>isl</code> and <code>est</code>, and under-predict
 <code>nob</code>, <code>ara</code>, <code>ita</code> and
@@ -2580,42 +2590,44 @@ isolates the effect of using the wrong error stratum.</p>
 ##     typological_distance_z + log_resource_z) * log_params_z +  
 ##     reasoning * (relative_fertility_within_z + typological_distance_z +  
 ##         log_resource_z + log_params_z) + (1 | family/base_model) +  
-##     (1 | model) + (1 | template) + (1 | model:language)
+##     (1 | model) + (1 | template) + (1 | model:language) + (1 |  
+##     template:language)
 ##    Data: cells
 ## Control: ctrl
 ## 
 ##       AIC       BIC    logLik -2*log(L)  df.resid 
-##  422484.8  422649.4 -211224.4  422448.8     68982 
+##  320154.7  320328.3 -160058.3  320116.7     68981 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -40.665  -0.731   0.526   1.188  26.756 
+## -27.914  -0.638   0.355   0.957 135.633 
 ## 
 ## Random effects:
 ##  Groups            Name        Variance Std.Dev.
-##  model:language    (Intercept) 0.39813  0.6310  
-##  template          (Intercept) 1.46148  1.2089  
-##  model             (Intercept) 0.01046  0.1023  
-##  base_model:family (Intercept) 0.53074  0.7285  
-##  family            (Intercept) 1.69988  1.3038  
+##  template:language (Intercept) 0.91291  0.9555  
+##  model:language    (Intercept) 0.38145  0.6176  
+##  template          (Intercept) 1.79868  1.3411  
+##  model             (Intercept) 0.02663  0.1632  
+##  base_model:family (Intercept) 0.63096  0.7943  
+##  family            (Intercept) 2.19613  1.4819  
 ## Number of obs: 69000, groups:  
-## model:language, 690; template, 100; model, 46; base_model:family, 35; family, 9
+## template:language, 1500; model:language, 690; template, 100; model, 46; base_model:family, 35; family, 9
 ## 
 ## Fixed effects:
-##                                          Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)                               0.01660    0.46048   0.036 0.971245
-## relative_fertility_within_z              -0.03874    0.03444  -1.125 0.260618
-## typological_distance_z                   -0.25327    0.03051  -8.302  &lt; 2e-16
-## log_resource_z                            0.77163    0.03068  25.149  &lt; 2e-16
-## log_params_z                              1.76725    0.13258  13.330  &lt; 2e-16
-## reasoningon                               0.66836    0.08354   8.000 1.24e-15
-## relative_fertility_within_z:log_params_z -0.04333    0.03274  -1.323 0.185727
-## typological_distance_z:log_params_z       0.02443    0.02597   0.941 0.346906
-## log_resource_z:log_params_z              -0.26364    0.02618 -10.069  &lt; 2e-16
-## relative_fertility_within_z:reasoningon   0.08983    0.08472   1.060 0.289003
-## typological_distance_z:reasoningon        0.11631    0.05767   2.017 0.043716
-## log_resource_z:reasoningon               -0.20083    0.05795  -3.466 0.000529
-## log_params_z:reasoningon                 -0.34505    0.09150  -3.771 0.000163
+##                                           Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)                               0.026744   0.498044   0.054 0.957175
+## relative_fertility_within_z              -0.044041   0.033846  -1.301 0.193192
+## typological_distance_z                   -0.277452   0.039803  -6.971 3.15e-12
+## log_resource_z                            0.840807   0.039921  21.062  &lt; 2e-16
+## log_params_z                              1.972303   0.144648  13.635  &lt; 2e-16
+## reasoningon                               0.765267   0.098654   7.757 8.69e-15
+## relative_fertility_within_z:log_params_z -0.052007   0.032301  -1.610 0.107374
+## typological_distance_z:log_params_z       0.006405   0.025520   0.251 0.801838
+## log_resource_z:log_params_z              -0.254913   0.025742  -9.903  &lt; 2e-16
+## relative_fertility_within_z:reasoningon   0.129895   0.084765   1.532 0.125422
+## typological_distance_z:reasoningon        0.104639   0.056576   1.850 0.064379
+## log_resource_z:reasoningon               -0.170130   0.056834  -2.993 0.002759
+## log_params_z:reasoningon                 -0.371986   0.107729  -3.453 0.000554
 ##                                             
 ## (Intercept)                                 
 ## relative_fertility_within_z                 
@@ -2627,8 +2639,8 @@ isolates the effect of using the wrong error stratum.</p>
 ## typological_distance_z:log_params_z         
 ## log_resource_z:log_params_z              ***
 ## relative_fertility_within_z:reasoningon     
-## typological_distance_z:reasoningon       *  
-## log_resource_z:reasoningon               ***
+## typological_distance_z:reasoningon       .  
+## log_resource_z:reasoningon               ** 
 ## log_params_z:reasoningon                 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
@@ -2636,8 +2648,6 @@ isolates the effect of using the wrong error stratum.</p>
 ## Correlation matrix not shown by default, as p = 13 &gt; 12.
 ## Use print(x, correlation=TRUE)  or
 ##     vcov(x)        if you need it</code></pre>
-<pre><code>## optimizer (bobyqa) convergence code: 0 (OK)
-## Model failed to converge with max|grad| = 0.00245655 (tol = 0.002, component 1)</code></pre>
 <pre class="r"><code>tm &lt;- summary(fit_main)$coefficients
 tn &lt;- summary(fit_nolang)$coefficients
 keep &lt;- intersect(rownames(tm), rownames(tn))
@@ -2647,33 +2657,33 @@ round(data.frame(
   se_ratio = tm[keep, 2] / tn[keep, 2]
 ), 4)</code></pre>
 <pre><code>##                                          est_nolang se_nolang p_nolang est_main
-## (Intercept)                                  0.0166    0.4605   0.9712   0.0149
-## relative_fertility_within_z                 -0.0387    0.0344   0.2606  -0.0411
-## typological_distance_z                      -0.2533    0.0305   0.0000  -0.2528
-## log_resource_z                               0.7716    0.0307   0.0000   0.7727
-## log_params_z                                 1.7673    0.1326   0.0000   1.7676
-## reasoningon                                  0.6684    0.0835   0.0000   0.6694
-## relative_fertility_within_z:log_params_z    -0.0433    0.0327   0.1857  -0.0471
-## typological_distance_z:log_params_z          0.0244    0.0260   0.3469   0.0238
-## log_resource_z:log_params_z                 -0.2636    0.0262   0.0000  -0.2650
-## relative_fertility_within_z:reasoningon      0.0898    0.0847   0.2890   0.1059
-## typological_distance_z:reasoningon           0.1163    0.0577   0.0437   0.1149
-## log_resource_z:reasoningon                  -0.2008    0.0580   0.0005  -0.2002
-## log_params_z:reasoningon                    -0.3451    0.0915   0.0002  -0.3437
+## (Intercept)                                  0.0267    0.4980   0.9572   0.0255
+## relative_fertility_within_z                 -0.0440    0.0338   0.1932  -0.0445
+## typological_distance_z                      -0.2775    0.0398   0.0000  -0.2772
+## log_resource_z                               0.8408    0.0399   0.0000   0.8413
+## log_params_z                                 1.9723    0.1446   0.0000   1.9726
+## reasoningon                                  0.7653    0.0987   0.0000   0.7655
+## relative_fertility_within_z:log_params_z    -0.0520    0.0323   0.1074  -0.0536
+## typological_distance_z:log_params_z          0.0064    0.0255   0.8018   0.0061
+## log_resource_z:log_params_z                 -0.2549    0.0257   0.0000  -0.2557
+## relative_fertility_within_z:reasoningon      0.1299    0.0848   0.1254   0.1341
+## typological_distance_z:reasoningon           0.1046    0.0566   0.0644   0.1042
+## log_resource_z:reasoningon                  -0.1701    0.0568   0.0028  -0.1704
+## log_params_z:reasoningon                    -0.3720    0.1077   0.0006  -0.3718
 ##                                          se_main p_main se_ratio
-## (Intercept)                               0.4458 0.9733   0.9681
-## relative_fertility_within_z               0.0317 0.1946   0.9208
-## typological_distance_z                    0.0741 0.0006   2.4287
-## log_resource_z                            0.0742 0.0000   2.4183
-## log_params_z                              0.1325 0.0000   0.9994
-## reasoningon                               0.0848 0.0000   1.0149
-## relative_fertility_within_z:log_params_z  0.0304 0.1205   0.9274
-## typological_distance_z:log_params_z       0.0239 0.3187   0.9186
-## log_resource_z:log_params_z               0.0241 0.0000   0.9197
-## relative_fertility_within_z:reasoningon   0.0796 0.1832   0.9391
-## typological_distance_z:reasoningon        0.0529 0.0300   0.9180
-## log_resource_z:reasoningon                0.0533 0.0002   0.9189
-## log_params_z:reasoningon                  0.0928 0.0002   1.0138</code></pre>
+## (Intercept)                               0.4791 0.9575   0.9620
+## relative_fertility_within_z               0.0332 0.1805   0.9821
+## typological_distance_z                    0.0781 0.0004   1.9610
+## log_resource_z                            0.0780 0.0000   1.9551
+## log_params_z                              0.1443 0.0000   0.9977
+## reasoningon                               0.0988 0.0000   1.0017
+## relative_fertility_within_z:log_params_z  0.0318 0.0920   0.9851
+## typological_distance_z:log_params_z       0.0251 0.8061   0.9816
+## log_resource_z:log_params_z               0.0253 0.0000   0.9818
+## relative_fertility_within_z:reasoningon   0.0839 0.1099   0.9897
+## typological_distance_z:reasoningon        0.0555 0.0606   0.9813
+## log_resource_z:reasoningon                0.0558 0.0023   0.9813
+## log_params_z:reasoningon                  0.1081 0.0006   1.0030</code></pre>
 <p>The result is about as clean as this kind of check gets: standard
 errors inflate by ~2.6x on <em>exactly</em> the two language-level
 predictors and are unchanged (0.90-1.00x) on every other term. Point
@@ -2697,15 +2707,15 @@ penalty?</p>
 <pre class="r"><code>fit_rxt &lt;- update(fit_main, . ~ . + typological_distance_z:log_resource_z)</code></pre>
 <pre class="r"><code>round(summary(fit_rxt)$coefficients[&quot;typological_distance_z:log_resource_z&quot;, , drop = FALSE], 4)</code></pre>
 <pre><code>##                                       Estimate Std. Error z value Pr(&gt;|z|)
-## typological_distance_z:log_resource_z   -7e-04     0.0591 -0.0119   0.9905</code></pre>
+## typological_distance_z:log_resource_z    0.002     0.0624  0.0322   0.9743</code></pre>
 <pre class="r"><code>anova(fit_main, fit_rxt)</code></pre>
 <pre><code>## Data: cells
 ## Models:
-## fit_main: cbind(n_correct, n_total - n_correct) ~ (relative_fertility_within_z + typological_distance_z + log_resource_z) * log_params_z + reasoning * (relative_fertility_within_z + typological_distance_z + log_resource_z + log_params_z) + (1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) + (1 | model:language)
-## fit_rxt: cbind(n_correct, n_total - n_correct) ~ relative_fertility_within_z + typological_distance_z + log_resource_z + log_params_z + reasoning + (1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) + (1 | model:language) + relative_fertility_within_z:log_params_z + typological_distance_z:log_params_z + log_resource_z:log_params_z + relative_fertility_within_z:reasoning + typological_distance_z:reasoning + log_resource_z:reasoning + log_params_z:reasoning + typological_distance_z:log_resource_z
+## fit_main: cbind(n_correct, n_total - n_correct) ~ (relative_fertility_within_z + typological_distance_z + log_resource_z) * log_params_z + reasoning * (relative_fertility_within_z + typological_distance_z + log_resource_z + log_params_z) + (1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) + (1 | model:language) + (1 | template:language)
+## fit_rxt: cbind(n_correct, n_total - n_correct) ~ relative_fertility_within_z + typological_distance_z + log_resource_z + log_params_z + reasoning + (1 | family/base_model) + (1 | model) + (1 | template) + (1 | language) + (1 | model:language) + (1 | template:language) + relative_fertility_within_z:log_params_z + typological_distance_z:log_params_z + log_resource_z:log_params_z + relative_fertility_within_z:reasoning + typological_distance_z:reasoning + log_resource_z:reasoning + log_params_z:reasoning + typological_distance_z:log_resource_z
 ##          npar    AIC    BIC  logLik -2*log(L) Chisq Df Pr(&gt;Chisq)
-## fit_main   19 422410 422584 -211186    422372                    
-## fit_rxt    20 422412 422595 -211186    422372 1e-04  1     0.9905</code></pre>
+## fit_main   20 320129 320312 -160044    320089                    
+## fit_rxt    21 320131 320323 -160044    320089 0.001  1     0.9742</code></pre>
 <pre class="r"><code>summary(fit_rxt)</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
 ##   Approximation) [glmerMod]
@@ -2713,7 +2723,8 @@ penalty?</p>
 ## Formula: cbind(n_correct, n_total - n_correct) ~ relative_fertility_within_z +  
 ##     typological_distance_z + log_resource_z + log_params_z +  
 ##     reasoning + (1 | family/base_model) + (1 | model) + (1 |  
-##     template) + (1 | language) + (1 | model:language) + relative_fertility_within_z:log_params_z +  
+##     template) + (1 | language) + (1 | model:language) + (1 |  
+##     template:language) + relative_fertility_within_z:log_params_z +  
 ##     typological_distance_z:log_params_z + log_resource_z:log_params_z +  
 ##     relative_fertility_within_z:reasoning + typological_distance_z:reasoning +  
 ##     log_resource_z:reasoning + log_params_z:reasoning + typological_distance_z:log_resource_z
@@ -2721,39 +2732,40 @@ penalty?</p>
 ## Control: ctrl
 ## 
 ##       AIC       BIC    logLik -2*log(L)  df.resid 
-##  422411.9  422594.8 -211186.0  422371.9     68980 
+##  320131.0  320322.9 -160044.5  320089.0     68979 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -40.722  -0.731   0.526   1.188  26.752 
+## -27.860  -0.637   0.355   0.957 135.369 
 ## 
 ## Random effects:
 ##  Groups            Name        Variance Std.Dev.
-##  model:language    (Intercept) 0.33415  0.5781  
-##  template          (Intercept) 1.46157  1.2090  
-##  model             (Intercept) 0.01580  0.1257  
-##  base_model:family (Intercept) 0.52906  0.7274  
-##  language          (Intercept) 0.06244  0.2499  
-##  family            (Intercept) 1.70696  1.3065  
+##  template:language (Intercept) 0.89566  0.9464  
+##  model:language    (Intercept) 0.36693  0.6057  
+##  template          (Intercept) 1.79980  1.3416  
+##  model             (Intercept) 0.02794  0.1671  
+##  base_model:family (Intercept) 0.63048  0.7940  
+##  language          (Intercept) 0.06057  0.2461  
+##  family            (Intercept) 2.20246  1.4841  
 ## Number of obs: 69000, groups:  
-## model:language, 690; template, 100; model, 46; base_model:family, 35; language, 15; family, 9
+## template:language, 1500; model:language, 690; template, 100; model, 46; base_model:family, 35; language, 15; family, 9
 ## 
 ## Fixed effects:
-##                                            Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)                               0.0147416  0.4505442   0.033 0.973898
-## relative_fertility_within_z              -0.0411259  0.0316943  -1.298 0.194432
-## typological_distance_z                   -0.2527256  0.0744876  -3.393 0.000692
-## log_resource_z                            0.7727024  0.0739897  10.443  &lt; 2e-16
-## log_params_z                              1.7676569  0.1315848  13.434  &lt; 2e-16
-## reasoningon                               0.6693987  0.0846680   7.906 2.65e-15
-## relative_fertility_within_z:log_params_z -0.0471324  0.0303694  -1.552 0.120669
-## typological_distance_z:log_params_z       0.0237886  0.0238577   0.997 0.318713
-## log_resource_z:log_params_z              -0.2650329  0.0240777 -11.007  &lt; 2e-16
-## relative_fertility_within_z:reasoningon   0.1058345  0.0795133   1.331 0.183180
-## typological_distance_z:reasoningon        0.1148754  0.0528814   2.172 0.029831
-## log_resource_z:reasoningon               -0.2001790  0.0531763  -3.764 0.000167
-## log_params_z:reasoningon                 -0.3437379  0.0925131  -3.716 0.000203
-## typological_distance_z:log_resource_z    -0.0007011  0.0591447  -0.012 0.990542
+##                                           Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)                               0.025804   0.495776   0.052 0.958490
+## relative_fertility_within_z              -0.044528   0.033245  -1.339 0.180447
+## typological_distance_z                   -0.277555   0.078578  -3.532 0.000412
+## log_resource_z                            0.841257   0.078146  10.765  &lt; 2e-16
+## log_params_z                              1.972650   0.145662  13.543  &lt; 2e-16
+## reasoningon                               0.765588   0.099232   7.715 1.21e-14
+## relative_fertility_within_z:log_params_z -0.053645   0.031830  -1.685 0.091924
+## typological_distance_z:log_params_z       0.006147   0.025052   0.245 0.806171
+## log_resource_z:log_params_z              -0.255726   0.025276 -10.117  &lt; 2e-16
+## relative_fertility_within_z:reasoningon   0.134242   0.083971   1.599 0.109894
+## typological_distance_z:reasoningon        0.104168   0.055541   1.876 0.060721
+## log_resource_z:reasoningon               -0.170350   0.055795  -3.053 0.002265
+## log_params_z:reasoningon                 -0.371718   0.108113  -3.438 0.000586
+## typological_distance_z:log_resource_z     0.002014   0.062446   0.032 0.974273
 ##                                             
 ## (Intercept)                                 
 ## relative_fertility_within_z                 
@@ -2761,12 +2773,12 @@ penalty?</p>
 ## log_resource_z                           ***
 ## log_params_z                             ***
 ## reasoningon                              ***
-## relative_fertility_within_z:log_params_z    
+## relative_fertility_within_z:log_params_z .  
 ## typological_distance_z:log_params_z         
 ## log_resource_z:log_params_z              ***
 ## relative_fertility_within_z:reasoningon     
-## typological_distance_z:reasoningon       *  
-## log_resource_z:reasoningon               ***
+## typological_distance_z:reasoningon       .  
+## log_resource_z:reasoningon               ** 
 ## log_params_z:reasoningon                 ***
 ## typological_distance_z:log_resource_z       
 ## ---
@@ -2797,8 +2809,8 @@ fit_script &lt;- glmer(as.formula(paste(&quot;cbind(n_correct, n_total - n_corre
                     data = cells_script, family = binomial(), control = ctrl)</code></pre>
 <pre class="r"><code>round(summary(fit_script)$coefficients[c(&quot;non_latinyes&quot;, &quot;typological_distance_z&quot;), , drop = FALSE], 4)</code></pre>
 <pre><code>##                        Estimate Std. Error z value Pr(&gt;|z|)
-## non_latinyes             0.0095     0.2047  0.0465   0.9629
-## typological_distance_z  -0.2566     0.1101 -2.3312   0.0197</code></pre>
+## non_latinyes            -0.0407     0.2158 -0.1884   0.8505
+## typological_distance_z  -0.2610     0.1157 -2.2554   0.0241</code></pre>
 <pre class="r"><code>summary(fit_script)</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
 ##   Approximation) [glmerMod]
@@ -2808,44 +2820,46 @@ fit_script &lt;- glmer(as.formula(paste(&quot;cbind(n_correct, n_total - n_corre
 ##     typological_distance_z + log_resource_z) * log_params_z +  
 ##     reasoning * (relative_fertility_within_z + typological_distance_z +  
 ##         log_resource_z + log_params_z) + (1 | family/base_model) +  
-##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language)
+##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language) +  
+##     (1 | template:language)
 ##    Data: cells_script
 ## Control: ctrl
 ## 
 ##       AIC       BIC    logLik -2*log(L)  df.resid 
-##  422411.9  422594.8 -211186.0  422371.9     68980 
+##  320130.9  320322.9 -160044.5  320088.9     68979 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -40.722  -0.731   0.526   1.188  26.752 
+## -27.861  -0.637   0.355   0.957 135.369 
 ## 
 ## Random effects:
 ##  Groups            Name        Variance Std.Dev.
-##  model:language    (Intercept) 0.33415  0.5781  
-##  template          (Intercept) 1.46159  1.2090  
-##  model             (Intercept) 0.01580  0.1257  
-##  base_model:family (Intercept) 0.52909  0.7274  
-##  language          (Intercept) 0.06244  0.2499  
-##  family            (Intercept) 1.70658  1.3064  
+##  template:language (Intercept) 0.89566  0.9464  
+##  model:language    (Intercept) 0.36693  0.6057  
+##  template          (Intercept) 1.79977  1.3416  
+##  model             (Intercept) 0.02795  0.1672  
+##  base_model:family (Intercept) 0.63044  0.7940  
+##  language          (Intercept) 0.06039  0.2457  
+##  family            (Intercept) 2.20199  1.4839  
 ## Number of obs: 69000, groups:  
-## model:language, 690; template, 100; model, 46; base_model:family, 35; language, 15; family, 9
+## template:language, 1500; model:language, 690; template, 100; model, 46; base_model:family, 35; language, 15; family, 9
 ## 
 ## Fixed effects:
 ##                                           Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)                               0.010140   0.432302   0.023 0.981287
-## non_latinyes                              0.009516   0.204687   0.046 0.962918
-## relative_fertility_within_z              -0.041120   0.031693  -1.297 0.194471
-## typological_distance_z                   -0.256623   0.110082  -2.331 0.019742
-## log_resource_z                            0.771893   0.076051  10.150  &lt; 2e-16
-## log_params_z                              1.767635   0.132251  13.366  &lt; 2e-16
-## reasoningon                               0.669389   0.084585   7.914  2.5e-15
-## relative_fertility_within_z:log_params_z -0.047142   0.030365  -1.553 0.120535
-## typological_distance_z:log_params_z       0.023789   0.023857   0.997 0.318684
-## log_resource_z:log_params_z              -0.265034   0.024080 -11.007  &lt; 2e-16
-## relative_fertility_within_z:reasoningon   0.105819   0.079413   1.333 0.182689
-## typological_distance_z:reasoningon        0.114879   0.052889   2.172 0.029849
-## log_resource_z:reasoningon               -0.200174   0.053164  -3.765 0.000166
-## log_params_z:reasoningon                 -0.343755   0.092553  -3.714 0.000204
+## (Intercept)                               0.044435   0.506892   0.088 0.930145
+## non_latinyes                             -0.040662   0.215805  -0.188 0.850547
+## relative_fertility_within_z              -0.044551   0.033240  -1.340 0.180154
+## typological_distance_z                   -0.261048   0.115745  -2.255 0.024110
+## log_resource_z                            0.844771   0.080061  10.552  &lt; 2e-16
+## log_params_z                              1.972715   0.145314  13.576  &lt; 2e-16
+## reasoningon                               0.765576   0.099215   7.716  1.2e-14
+## relative_fertility_within_z:log_params_z -0.053612   0.031816  -1.685 0.091980
+## typological_distance_z:log_params_z       0.006148   0.025049   0.245 0.806126
+## log_resource_z:log_params_z              -0.255720   0.025274 -10.118  &lt; 2e-16
+## relative_fertility_within_z:reasoningon   0.134370   0.083967   1.600 0.109537
+## typological_distance_z:reasoningon        0.104162   0.055528   1.876 0.060679
+## log_resource_z:reasoningon               -0.170335   0.055774  -3.054 0.002258
+## log_params_z:reasoningon                 -0.371719   0.108140  -3.437 0.000587
 ##                                             
 ## (Intercept)                                 
 ## non_latinyes                                
@@ -2854,12 +2868,12 @@ fit_script &lt;- glmer(as.formula(paste(&quot;cbind(n_correct, n_total - n_corre
 ## log_resource_z                           ***
 ## log_params_z                             ***
 ## reasoningon                              ***
-## relative_fertility_within_z:log_params_z    
+## relative_fertility_within_z:log_params_z .  
 ## typological_distance_z:log_params_z         
 ## log_resource_z:log_params_z              ***
 ## relative_fertility_within_z:reasoningon     
-## typological_distance_z:reasoningon       *  
-## log_resource_z:reasoningon               ***
+## typological_distance_z:reasoningon       .  
+## log_resource_z:reasoningon               ** 
 ## log_params_z:reasoningon                 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
@@ -3059,11 +3073,11 @@ round(data.frame(
   final = summary(fit_main)$coefficients[ladder_terms, 1]
 ), 4)</code></pre>
 <pre><code>##                                 lhs     rhs   final
-## relative_fertility_within_z -0.0379 -0.0589 -0.0411
-## typological_distance_z      -0.0751 -0.1545 -0.2528
-## log_resource_z               0.3157  0.4505  0.7727
-## log_params_z                 0.4855  0.9149  1.7676
-## log_resource_z:log_params_z -0.0680 -0.1341 -0.2650</code></pre>
+## relative_fertility_within_z -0.0388 -0.0613 -0.0445
+## typological_distance_z      -0.1198 -0.1949 -0.2772
+## log_resource_z               0.4025  0.5157  0.8413
+## log_params_z                 0.4922  0.9528  1.9726
+## log_resource_z:log_params_z -0.0575 -0.1109 -0.2557</code></pre>
 <pre class="r"><code>summary(fit_lhs)</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
 ##   Approximation) [glmerMod]
@@ -3072,47 +3086,49 @@ round(data.frame(
 ##     typological_distance_z + log_resource_z) * log_params_z +  
 ##     reasoning * (relative_fertility_within_z + typological_distance_z +  
 ##         log_resource_z + log_params_z) + (1 | family/base_model) +  
-##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language)
+##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language) +  
+##     (1 | template:language)
 ##    Data: filter(cells, n_lhs &gt; 0)
 ## Control: ctrl
 ## 
 ##       AIC       BIC    logLik -2*log(L)  df.resid 
-##  828589.5  828762.8 -414275.8  828551.5     67555 
+##  727395.6  727578.1 -363677.8  727355.6     67554 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -30.091  -1.385   0.880   1.972  32.668 
+## -31.267  -1.238   0.697   1.788  35.049 
 ## 
 ## Random effects:
 ##  Groups            Name        Variance Std.Dev.
-##  model:language    (Intercept) 0.15892  0.3986  
-##  template          (Intercept) 0.70303  0.8385  
-##  model             (Intercept) 0.08767  0.2961  
-##  base_model:family (Intercept) 0.09496  0.3082  
-##  language          (Intercept) 0.01734  0.1317  
-##  family            (Intercept) 0.11101  0.3332  
+##  template:language (Intercept) 0.16777  0.4096  
+##  model:language    (Intercept) 0.16181  0.4023  
+##  template          (Intercept) 0.80414  0.8967  
+##  model             (Intercept) 0.09199  0.3033  
+##  base_model:family (Intercept) 0.09738  0.3121  
+##  language          (Intercept) 0.03430  0.1852  
+##  family            (Intercept) 0.11369  0.3372  
 ## Number of obs: 67574, groups:  
-## model:language, 690; template, 98; model, 46; base_model:family, 35; language, 15; family, 9
+## template:language, 1469; model:language, 690; template, 98; model, 46; base_model:family, 35; language, 15; family, 9
 ## 
 ## Fixed effects:
 ##                                           Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)                               1.704701   0.162725  10.476  &lt; 2e-16
-## relative_fertility_within_z              -0.037877   0.021458  -1.765  0.07754
-## typological_distance_z                   -0.075133   0.040880  -1.838  0.06608
-## log_resource_z                            0.315726   0.040913   7.717 1.19e-14
-## log_params_z                              0.485539   0.076609   6.338 2.33e-10
-## reasoningon                              -0.007240   0.133995  -0.054  0.95691
-## relative_fertility_within_z:log_params_z  0.032952   0.020368   1.618  0.10571
-## typological_distance_z:log_params_z      -0.005206   0.016208  -0.321  0.74808
-## log_resource_z:log_params_z              -0.067964   0.016249  -4.183 2.88e-05
-## relative_fertility_within_z:reasoningon   0.086418   0.054372   1.589  0.11198
-## typological_distance_z:reasoningon        0.063014   0.036189   1.741  0.08164
-## log_resource_z:reasoningon               -0.176551   0.036317  -4.861 1.17e-06
-## log_params_z:reasoningon                  0.413813   0.130001   3.183  0.00146
+## (Intercept)                               1.788188   0.170463  10.490  &lt; 2e-16
+## relative_fertility_within_z              -0.038783   0.021660  -1.791 0.073363
+## typological_distance_z                   -0.119796   0.055492  -2.159 0.030864
+## log_resource_z                            0.402468   0.055589   7.240 4.49e-13
+## log_params_z                              0.492156   0.078086   6.303 2.92e-10
+## reasoningon                              -0.011010   0.137399  -0.080 0.936130
+## relative_fertility_within_z:log_params_z  0.030080   0.020568   1.462 0.143623
+## typological_distance_z:log_params_z      -0.008848   0.016356  -0.541 0.588509
+## log_resource_z:log_params_z              -0.057489   0.016399  -3.506 0.000456
+## relative_fertility_within_z:reasoningon   0.088073   0.054954   1.603 0.109011
+## typological_distance_z:reasoningon        0.063234   0.036528   1.731 0.083432
+## log_resource_z:reasoningon               -0.170588   0.036646  -4.655 3.24e-06
+## log_params_z:reasoningon                  0.426103   0.132142   3.225 0.001262
 ##                                             
 ## (Intercept)                              ***
 ## relative_fertility_within_z              .  
-## typological_distance_z                   .  
+## typological_distance_z                   *  
 ## log_resource_z                           ***
 ## log_params_z                             ***
 ## reasoningon                                 
@@ -3137,50 +3153,52 @@ round(data.frame(
 ##     typological_distance_z + log_resource_z) * log_params_z +  
 ##     reasoning * (relative_fertility_within_z + typological_distance_z +  
 ##         log_resource_z + log_params_z) + (1 | family/base_model) +  
-##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language)
+##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language) +  
+##     (1 | template:language)
 ##    Data: filter(cells, n_rhs &gt; 0)
 ## Control: ctrl
 ## 
 ##       AIC       BIC    logLik -2*log(L)  df.resid 
-##  787639.6  787812.9 -393800.8  787601.6     67555 
+##  651687.8  651870.2 -325823.9  651647.8     67554 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -35.591  -1.302   0.953   1.916  33.924 
+## -29.241  -1.201   0.748   1.691  38.447 
 ## 
 ## Random effects:
 ##  Groups            Name        Variance Std.Dev.
-##  model:language    (Intercept) 0.15576  0.3947  
-##  template          (Intercept) 1.13251  1.0642  
-##  model             (Intercept) 0.01475  0.1214  
-##  base_model:family (Intercept) 0.20795  0.4560  
-##  language          (Intercept) 0.02445  0.1564  
-##  family            (Intercept) 0.43425  0.6590  
+##  template:language (Intercept) 0.31757  0.5635  
+##  model:language    (Intercept) 0.15599  0.3950  
+##  template          (Intercept) 1.23845  1.1129  
+##  model             (Intercept) 0.01623  0.1274  
+##  base_model:family (Intercept) 0.22774  0.4772  
+##  language          (Intercept) 0.03595  0.1896  
+##  family            (Intercept) 0.47123  0.6865  
 ## Number of obs: 67574, groups:  
-## model:language, 690; template, 98; model, 46; base_model:family, 35; language, 15; family, 9
+## template:language, 1469; model:language, 690; template, 98; model, 46; base_model:family, 35; language, 15; family, 9
 ## 
 ## Fixed effects:
-##                                           Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)                               0.892415   0.250693   3.560 0.000371
-## relative_fertility_within_z              -0.058946   0.021227  -2.777 0.005488
-## typological_distance_z                   -0.154533   0.046905  -3.295 0.000985
-## log_resource_z                            0.450550   0.046925   9.601  &lt; 2e-16
-## log_params_z                              0.914949   0.084704  10.802  &lt; 2e-16
-## reasoningon                               0.136858   0.069620   1.966 0.049324
-## relative_fertility_within_z:log_params_z  0.043185   0.020254   2.132 0.032991
-## typological_distance_z:log_params_z      -0.004816   0.016070  -0.300 0.764427
-## log_resource_z:log_params_z              -0.134126   0.016118  -8.321  &lt; 2e-16
-## relative_fertility_within_z:reasoningon   0.123377   0.052337   2.357 0.018405
-## typological_distance_z:reasoningon        0.082703   0.035887   2.305 0.021193
-## log_resource_z:reasoningon               -0.164558   0.035994  -4.572 4.83e-06
-## log_params_z:reasoningon                  0.061911   0.073963   0.837 0.402567
+##                                          Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)                               0.96385    0.26190   3.680 0.000233
+## relative_fertility_within_z              -0.06126    0.02126  -2.882 0.003951
+## typological_distance_z                   -0.19489    0.05747  -3.391 0.000695
+## log_resource_z                            0.51574    0.05749   8.971  &lt; 2e-16
+## log_params_z                              0.95280    0.08828  10.793  &lt; 2e-16
+## reasoningon                               0.13633    0.07142   1.909 0.056292
+## relative_fertility_within_z:log_params_z  0.04123    0.02029   2.032 0.042126
+## typological_distance_z:log_params_z      -0.01374    0.01609  -0.854 0.393070
+## log_resource_z:log_params_z              -0.11088    0.01614  -6.872 6.34e-12
+## relative_fertility_within_z:reasoningon   0.12740    0.05256   2.424 0.015348
+## typological_distance_z:reasoningon        0.07867    0.03592   2.190 0.028506
+## log_resource_z:reasoningon               -0.14279    0.03603  -3.963 7.41e-05
+## log_params_z:reasoningon                  0.06549    0.07602   0.861 0.388965
 ##                                             
 ## (Intercept)                              ***
 ## relative_fertility_within_z              ** 
 ## typological_distance_z                   ***
 ## log_resource_z                           ***
 ## log_params_z                             ***
-## reasoningon                              *  
+## reasoningon                              .  
 ## relative_fertility_within_z:log_params_z *  
 ## typological_distance_z:log_params_z         
 ## log_resource_z:log_params_z              ***
@@ -3194,6 +3212,8 @@ round(data.frame(
 ## Correlation matrix not shown by default, as p = 13 &gt; 12.
 ## Use print(x, correlation=TRUE)  or
 ##     vcov(x)        if you need it</code></pre>
+<pre><code>## optimizer (bobyqa) convergence code: 0 (OK)
+## Model failed to converge with max|grad| = 0.00273634 (tol = 0.002, component 1)</code></pre>
 <div id="reading-the-ladder" class="section level2">
 <h2>Reading the ladder</h2>
 <p>Every coefficient grows along the chain: typological distance -0.09
@@ -3245,9 +3265,9 @@ tibble(
 <pre><code>## # A tibble: 3 × 4
 ##   rung  language model_language family
 ##   &lt;chr&gt;    &lt;dbl&gt;          &lt;dbl&gt;  &lt;dbl&gt;
-## 1 lhs      0.132          0.399  0.333
-## 2 rhs      0.156          0.395  0.659
-## 3 final    0.250          0.578  1.31</code></pre>
+## 1 lhs      0.185          0.402  0.337
+## 2 rhs      0.190          0.395  0.686
+## 3 final    0.246          0.606  1.48</code></pre>
 </div>
 <div id="per-step-versus-accumulated" class="section level2">
 <h2>Per-step versus accumulated</h2>
@@ -3284,9 +3304,9 @@ round(data.frame(
   adj_p = summary(fit_rhs_adj)$coefficients[tt, 4]
 ), 4)</code></pre>
 <pre><code>##                             unadjusted adjusted adj_se  adj_p
-## log_resource_z                  0.4505   0.1175 0.0206 0.0000
-## typological_distance_z         -0.1545  -0.0777 0.0206 0.0002
-## relative_fertility_within_z    -0.0589  -0.0221 0.0118 0.0627</code></pre>
+## log_resource_z                  0.5157   0.2033 0.0275 0.0000
+## typological_distance_z         -0.1949  -0.1183 0.0275 0.0000
+## relative_fertility_within_z    -0.0613  -0.0249 0.0112 0.0263</code></pre>
 <pre class="r"><code>summary(fit_rhs_adj)</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
 ##   Approximation) [glmerMod]
@@ -3296,56 +3316,58 @@ round(data.frame(
 ##     typological_distance_z + log_resource_z) * log_params_z +  
 ##     reasoning * (relative_fertility_within_z + typological_distance_z +  
 ##         log_resource_z + log_params_z) + (1 | family/base_model) +  
-##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language)
+##     (1 | model) + (1 | template) + (1 | language) + (1 | model:language) +  
+##     (1 | template:language)
 ##    Data: cells_adj
 ## Control: ctrl
 ## 
 ##       AIC       BIC    logLik -2*log(L)  df.resid 
-##  528138.7  528321.1 -264049.3  528098.7     67554 
+##  466809.2  467000.8 -233383.6  466767.2     67553 
 ## 
 ## Scaled residuals: 
 ##      Min       1Q   Median       3Q      Max 
-## -17.0736  -0.9864   0.6888   1.6167  28.2478 
+## -15.0772  -0.9470   0.5837   1.4664  18.1456 
 ## 
 ## Random effects:
 ##  Groups            Name        Variance  Std.Dev. 
-##  model:language    (Intercept) 4.725e-02 2.174e-01
-##  template          (Intercept) 5.638e-01 7.509e-01
-##  model             (Intercept) 3.703e-02 1.924e-01
-##  base_model:family (Intercept) 8.480e-10 2.912e-05
-##  language          (Intercept) 4.145e-03 6.438e-02
-##  family            (Intercept) 1.368e-01 3.698e-01
+##  template:language (Intercept) 1.916e-01 4.378e-01
+##  model:language    (Intercept) 4.196e-02 2.048e-01
+##  template          (Intercept) 5.974e-01 7.729e-01
+##  model             (Intercept) 3.604e-02 1.898e-01
+##  base_model:family (Intercept) 2.067e-10 1.438e-05
+##  language          (Intercept) 6.733e-03 8.205e-02
+##  family            (Intercept) 1.589e-01 3.986e-01
 ## Number of obs: 67574, groups:  
-## model:language, 690; template, 98; model, 46; base_model:family, 35; language, 15; family, 9
+## template:language, 1469; model:language, 690; template, 98; model, 46; base_model:family, 35; language, 15; family, 9
 ## 
 ## Fixed effects:
 ##                                           Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)                               0.966078   0.149067   6.481 9.12e-11
-## lhs_rate_z                                1.378183   0.002919 472.161  &lt; 2e-16
-## relative_fertility_within_z              -0.022050   0.011847  -1.861 0.062702
-## typological_distance_z                   -0.077717   0.020593  -3.774 0.000161
-## log_resource_z                            0.117550   0.020616   5.702 1.19e-08
-## log_params_z                              0.411117   0.035326  11.638  &lt; 2e-16
-## reasoningon                               0.385469   0.076892   5.013 5.35e-07
-## relative_fertility_within_z:log_params_z -0.006497   0.011150  -0.583 0.560063
-## typological_distance_z:log_params_z      -0.004557   0.008941  -0.510 0.610323
-## log_resource_z:log_params_z              -0.030103   0.008972  -3.355 0.000793
-## relative_fertility_within_z:reasoningon   0.044332   0.030097   1.473 0.140765
-## typological_distance_z:reasoningon        0.018657   0.020003   0.933 0.350964
-## log_resource_z:reasoningon                0.069449   0.020077   3.459 0.000542
-## log_params_z:reasoningon                 -0.356410   0.073046  -4.879 1.06e-06
+## (Intercept)                               1.015975   0.160189   6.342 2.26e-10
+## lhs_rate_z                                1.299403   0.003208 405.027  &lt; 2e-16
+## relative_fertility_within_z              -0.024872   0.011193  -2.222 0.026273
+## typological_distance_z                   -0.118293   0.027506  -4.301 1.70e-05
+## log_resource_z                            0.203294   0.027526   7.385 1.52e-13
+## log_params_z                              0.458205   0.034780  13.174  &lt; 2e-16
+## reasoningon                               0.383892   0.075923   5.056 4.27e-07
+## relative_fertility_within_z:log_params_z -0.006594   0.010550  -0.625 0.531984
+## typological_distance_z:log_params_z      -0.013289   0.008452  -1.572 0.115883
+## log_resource_z:log_params_z              -0.017233   0.008480  -2.032 0.042142
+## relative_fertility_within_z:reasoningon   0.047121   0.028549   1.651 0.098838
+## typological_distance_z:reasoningon        0.017781   0.018902   0.941 0.346856
+## log_resource_z:reasoningon                0.073729   0.018971   3.886 0.000102
+## log_params_z:reasoningon                 -0.337493   0.071930  -4.692 2.71e-06
 ##                                             
 ## (Intercept)                              ***
 ## lhs_rate_z                               ***
-## relative_fertility_within_z              .  
+## relative_fertility_within_z              *  
 ## typological_distance_z                   ***
 ## log_resource_z                           ***
 ## log_params_z                             ***
 ## reasoningon                              ***
 ## relative_fertility_within_z:log_params_z    
 ## typological_distance_z:log_params_z         
-## log_resource_z:log_params_z              ***
-## relative_fertility_within_z:reasoningon     
+## log_resource_z:log_params_z              *  
+## relative_fertility_within_z:reasoningon  .  
 ## typological_distance_z:reasoningon          
 ## log_resource_z:reasoningon               ***
 ## log_params_z:reasoningon                 ***

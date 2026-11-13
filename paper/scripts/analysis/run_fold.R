@@ -13,12 +13,15 @@ suppressPackageStartupMessages({ library(dplyr); library(lme4) })
 setwd("/Users/au561649/Github/multilingual-gsm-symbolic/paper/scripts/analysis")
 a <- commandArgs(trailingOnly = TRUE)
 mode <- a[1]; L <- a[2]
-out <- "../../artifacts/analysis/folds"; dir.create(out, showWarnings = FALSE, recursive = TRUE)
+## folds_tl: results under the template x language specification. Kept apart from
+## the old folds/ directory so a finished fold from the previous specification is
+## never mistaken for one from this one (a completed fold is a file on disk).
+out <- "../../artifacts/analysis/folds_tl"; dir.create(out, showWarnings = FALSE, recursive = TRUE)
 
 cells <- readRDS("../../artifacts/analysis/model_cells.rds")
 ctrl <- glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 3e5))
 RE <- paste("(1 | family/base_model) + (1 | model) + (1 | template) +",
-            "(1 | language) + (1 | model:language)")
+            "(1 | language) + (1 | model:language) + (1 | template:language)")
 FEAT <- "(relative_fertility_within_z + typological_distance_z + log_resource_z)"
 RHS <- paste(FEAT, "* log_params_z +",
              "reasoning * (relative_fertility_within_z +",
