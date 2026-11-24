@@ -13,14 +13,15 @@ id_orig = 473
 id_shuffled = 0
 
 question_annotated = """
-{n,Heiðrikkur} sá ein {x,3} metrar langan {big_fish,háv} við {k,tveimum} {y,15} cm langum markingum á síðuni. Hvussu nógv prosent av kroppslongdini á {big_fish,háv}inum er samlaða longdin av markingunum?
+{n,Heiðrikkur} sá ein {x,3} metrar langan {big_fish,háv} við {k_dat,tveimum} {y,15} cm langum markingum á síðuni. Hvussu nógv prosent av kroppslongdini á {big_fish_dat_def,hávinum} er samlaða longdin av markingunum?
 
 #init:
 - n = sample(names)
-- big_fish = sample(["delfinur", "hvalur", "hávur"])
+- big_fish, big_fish_dat_def = sample([("delfin", "delfininum"), ("hval", "hvalinum"), ("háv", "hávinum")])
 - $x = range(2, 21, 1)
 - $k = range(2, 21)
 - $y = range(2, 100)
+- k_dat = "tveimum" if k == 2 else ("trimum" if k == 3 else str(k))
 
 #conditions:
 - k * y  < x* 100
@@ -34,11 +35,13 @@ question_annotated = """
 answer_annotated = """
 Fyrst finnur tú samlaðu longdina av markingunum í cm: {y} cm/marking * {k} markingar = <<{y}*{k}={k*y}>>{k*y} cm.
 Síðani býtir tú tað talið við 100 fyri at umrokna tað til metrar: {k*y} cm / 100 cm/m = <<{k*y}/100={k*y/100}>>{k*y/100} m.
-Síðani býtir tú samlaðu markingarlongdina í metrum við longdina á {big_fish}inum og faldar við 100% fyri at gera svarið til prosenttal: {k*y/100}/{x} metrar * 100% = {int(k*y/(100*x)*100)}%
+Síðani býtir tú samlaðu markingarlongdina í metrum við longdina á {big_fish_dat_def} og faldar við 100% fyri at gera svarið til prosenttal: {k*y/100}/{x} metrar * 100% = {int(k*y/(100*x)*100)}%
 
 #### {int(k*y/(100*x)*100)}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

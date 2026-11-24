@@ -16,18 +16,18 @@ id_orig = 107
 id_shuffled = 21
 
 question_annotated = """
-{name,Símun} hyggur sjónvarp, eftir at hann er liðugur við heimaarbeiðið. {d1_cap,Mánadag} og {d2,týsdag} hugdi hann at einum {h1,1}-tímalangum parti av síni yndissending. {d3_cap,Mikudag} hugdi hann at nøkrum pørtum av einum {m1,30} minuttir langari sending. {d4_cap,Hósdag} varð hann tíðliga liðugur við heimaarbeiðið og hugdi at einum {h2,1}-tímalangum parti og einari {m2,30} minuttir langari sending. {d5_cap,Fríggjadag} fekk hann loyvi at vera leingi uppi, so hann hugdi at {n2_txt,tveimum} {h3,1}-tímalangum pørtum. Um hann tilsamans hugdi {total,7} tímar sjónvarp, hvussu nógvum {m1,30} minuttir langum pørtum hugdi hann at {d3,mikudag}?
+{name,Símun} hyggur sjónvarp, eftir at hann er liðugur við heimaarbeiðið. {d1,mánadag} og {d2,týsdag} hugdi hann at einum {h1,1}-tímalangum parti av síni yndissending. {d3,mikudag} hugdi hann at nøkrum pørtum av einum {m1,30} minuttir langari sending. {d4,hósdag} varð hann tíðliga liðugur við heimaarbeiðið og hugdi at einum {h2,1}-tímalangum parti og einari {m2,30} minuttir langari sending. {d5,fríggjadag} fekk hann loyvi at vera leingi uppi, so hann hugdi at {n2_txt,tveimum} {h3,1}-tímalangum pørtum. Um hann tilsamans hugdi {total,7} tímar sjónvarp, hvussu nógvum {m1,30} minuttir langum pørtum hugdi hann at {d3,mikudag}?
 
 #init:
 - name = sample(names_male)
-- d1, d2, d3, d4, d5 = sample_sequential(weekdays, 5)
+- d1, d2, d3, d4, d5 = sample_sequential(weekdays_acc, 5)
 - $total = range(7, 33)
 - $h1 = range(1, 7)
 - $h3 = range(1, 6)
 - $m1 = range(5, 61, 5)
 - $m2 = range(5, 61, 5)
 - $h2 = range(1, 7)
-- n2_txt, n2_val = range_str(2, 5, 1, numbers)
+- n2_txt, n2_val = sample([("tveimum", 2), ("trimum", 3), ("fýra", 4), ("fimm", 5)])
 
 #conditions: 
 - divides(m1, 15)
@@ -41,10 +41,10 @@ question_annotated = """
 
 answer_annotated = """
 Lat E vera talið av pørtum, hann hugdi at {d3}.
-Eftir {d1,mánadag} hevði hann {total} - {h1} = <<{total}-{h1}={total-h1}>>{total-h1} tímar av sjónvarpi eftir.
+Eftir {d1} hevði hann {total} - {h1} = <<{total}-{h1}={total-h1}>>{total-h1} tímar av sjónvarpi eftir.
 Eftir {d2} hevði hann {total-h1} - {h1} = <<{total-h1}-{h1}={total-2*h1}>>{total-2*h1} tímar av sjónvarpi eftir.
-Eftir {d4,hósdag} hevði hann {total-2*h1} - {h2} - {m2/60} = {total-2*h1-h2- m2/60} tímar av sjónvarpi eftir.
-Eftir {d5,fríggjadag} hevði hann {total-2*h1-h2- m2/60} - {n2_val*h3} = {total-2*h1-h2- m2/60-n2_val*h3} tímar av sjónvarpi eftir.
+Eftir {d4} hevði hann {total-2*h1} - {h2} - {m2/60} = {total-2*h1-h2- m2/60} tímar av sjónvarpi eftir.
+Eftir {d5} hevði hann {total-2*h1-h2- m2/60} - {n2_val*h3} = {total-2*h1-h2- m2/60-n2_val*h3} tímar av sjónvarpi eftir.
 Hvør {m1} minuttir langur partur er {m1/60} tími.
 Sostatt er E = {total-2*h1-h2-m2/60-n2_val*h3}/{m1/60} = {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)} partar.
 #### {int((total * 60 - 2* h1 * 60 - h2 * 60 - m2 - n2_val* h3 * 60)/m1)}
@@ -52,4 +52,6 @@ Sostatt er E = {total-2*h1-h2-m2/60-n2_val*h3}/{m1/60} = {int((total * 60 - 2* h
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

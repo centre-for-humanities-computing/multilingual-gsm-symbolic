@@ -12,10 +12,12 @@ id_orig = 728
 id_shuffled = 66
 
 question_annotated = """
-{name,Karin} hevur {n1,15} ljósabláar tráðrullur, {n2,45} myrkabláar tráðrullur, {n3,40} ljósagrønar tráðrullur og {n4,50} myrkagrønar tráðrullur. Hvør prosentpartur av hennara rullum er {c1,bláur}?
+{name,Karin} hevur {n1,15} ljósa{c1s,blá}ar tráðrullur, {n2,45} myrka{c1s,blá}ar tráðrullur, {n3,40} ljósa{c2s,grøn}ar tráðrullur og {n4,50} myrka{c2s,grøn}ar tráðrullur. Hvør prosentpartur av hennara rullum er {c1,bláur}?
 #init:
-- name = sample(names)
-- c1, c2 = sample(colors, 2)
+- name = sample(names_female)
+- c1s, c2s = sample(["blá", "grøn", "reyð", "gul"], 2)
+- c1 = c1s + "ur"
+- c1_dat = c1s + "um"
 - $n1 = range(15, 100, 5)
 - $n2 = range(45, 150, 5)
 - $n3 = range(20, 80, 5)
@@ -28,12 +30,14 @@ question_annotated = """
 """
 
 answer_annotated = """
-Fyrst finna vit talið av bláum rullum: {n1} rullur + {n2} rullur = <<{n1}+{n2}={n1+n2}>>{n1+n2} rullur
+Fyrst finna vit talið av {c1_dat} rullum: {n1} rullur + {n2} rullur = <<{n1}+{n2}={n1+n2}>>{n1+n2} rullur
 Síðani finna vit samlaða talið av rullum: {n3} rullur + {n4} rullur + {n1+n2} rullur = <<{n3}+{n4}+{n1+n2}={n1+n2+n3+n4}>>{n1+n2+n3+n4} rullur
-Síðani býta vit talið av bláum rullum við samlaða talinum av rullum og falda við 100% fyri at geva svarið í prosentum: {n1+n2} rullur / {n1+n2+n3+n4} rullur * 100% = {int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))}%
+Síðani býta vit talið av {c1_dat} rullum við samlaða talinum av rullum og falda við 100% fyri at geva svarið í prosentum: {n1+n2} rullur / {n1+n2+n3+n4} rullur * 100% = {int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))}%
 #### {int(100 * (n1 + n2) / (n1 + n2 + n3 + n4))}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

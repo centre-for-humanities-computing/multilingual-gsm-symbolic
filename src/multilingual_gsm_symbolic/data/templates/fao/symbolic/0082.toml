@@ -13,10 +13,12 @@ id_orig = 320
 id_shuffled = 82
 
 question_annotated = """
-Tá {event,veitsla}n byrjaði, vóru {m,25} {group1,menn} og {w,15} {group2,kvinnur}. Eftir {t,ein tíma} fóru {frac,1/4} av samlaða talinum av fólki. Hvussu nógvar {group2,kvinnur} eru eftir, um {m_left,22} {group1,menn} vóru eftir til veitsluna?
+Tá {event,veitslan} byrjaði, vóru {m,25} {group1,menn} og {w,15} {group2,kvinnur}. Eftir {t,ein tíma} fóru {frac,1/4} av samlaða talinum av fólki. Hvussu {many,nógvar} {group2,kvinnur} eru eftir, um {m_left,22} {group1,menn} vóru eftir til {event_acc,veitsluna}?
 #init:
-- event = sample(['veitsluni', 'haldinum', 'føðingardegnum', 'ráðstevnuni', 'samkomuni', 'tiltakinum'])
-- group1, group2 = sample([ "lærarar", "læknar", "verkfrøðingar", "sjúkrarøktarfrøðingar", "listafólk", "advokatar",], 2)
+- event, event_acc, event_dat = sample([('veitslan', 'veitsluna', 'veitsluni'), ('ráðstevnan', 'ráðstevnuna', 'ráðstevnuni'), ('samkoman', 'samkomuna', 'samkomuni'), ('føðingardagsveitslan', 'føðingardagsveitsluna', 'føðingardagsveitsluni')])
+- g1, g2 = sample([("menn", "nógvir"), ("kvinnur", "nógvar"), ("lærarar", "nógvir"), ("læknar", "nógvir"), ("sjúkrarøktarfrøðingar", "nógvir"), ("advokatar", "nógvir")], 2)
+- group1, many1 = g1
+- group2, many = g2
 - t = sample(['ein tíma', 'tveir tímar', 'ein hálvan tíma', '45 minuttir'])
 - $frac = sample(fractions)
 - $m = range(20, 75)
@@ -33,7 +35,7 @@ Tá {event,veitsla}n byrjaði, vóru {m,25} {group1,menn} og {w,15} {group2,kvin
 """
 
 answer_annotated = """
-Tilsamans vóru {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} fólk við í {event_dat,veitsluni}.
+Tilsamans vóru {m} {group1} + {w} {group2} = <<{m}+{w}={m+w}>>{m+w} fólk við í {event_dat}.
 Eftir {t} fóru {m+w} fólk*{frac} = <<{m+w}*{frac}={int((m+w)*frac)}>>{int((m+w)*frac)} fólk heim úr {event_dat}.
 Hetta merkir, at {m+w} fólk - {int((m+w)*frac)} fólk = <<{m+w}-{int((m+w)*frac)}={m+w-int((m+w)*frac)}>>{m+w-int((m+w)*frac)} fólk vóru eftir.
 Av teimum {m+w-int((m+w)*frac)}, sum vóru eftir, vóru {m+w-int((m+w)*frac)} fólk - {m_left} {group1} = <<{m+w-int((m+w)*frac)}-{m_left}={m+w-int((m+w)*frac)-m_left}>>{m+w-int((m+w)*frac)-m_left} {group2}.
@@ -42,4 +44,6 @@ Av teimum {m+w-int((m+w)*frac)}, sum vóru eftir, vóru {m+w-int((m+w)*frac)} f�
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

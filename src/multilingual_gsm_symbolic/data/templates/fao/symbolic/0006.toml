@@ -12,26 +12,28 @@ id_orig = 145
 id_shuffled = 6
 
 question_annotated = """
-{name,Martin} eigur {x,10} {area,hektarar} av {fruit,ananasv}iðarlund. Har eru {k,100} {fruit_plural,ananas} fyri hvønn {area_singular,hektar}. {name,Martin} kann heysta síni {fruit_plural,ananas} triðja hvønn {unit,mánað}. Hvussu nógvar {fruit_plural,ananas} kann {name,Martin} heysta innan fyri eitt ár?
+{name,Martin} eigur {x,10} {area,hektarar} av {fruit_grove,ananasviðarlund}. Har eru {k,100} {fruit_plural,ananas} fyri hvønn {area_singular,hektar}. {name,Martin} kann heysta {poss,síni} {fruit_plural,ananas} {n_txt,triðja hvønn mánað}. Hvussu {many,nógvar} {fruit_plural,ananas} kann {name,Martin} heysta innan fyri eitt ár?
 
 #init:
 - name = sample(names_male)
-- fruit, fruit_plural = sample(fruits)
-- area = sample(['hektarar', 'fermetrar'])
+- fruit_plural, fruit_grove, poss, many = sample([("ananas", "ananasviðarlund", "síni", "nógvar"), ("epli", "eplaviðarlund", "síni", "nógv"), ("perur", "peruviðarlund", "sínar", "nógvar"), ("appilsinir", "appilsinviðarlund", "sínar", "nógvar"), ("bananir", "bananviðarlund", "sínar", "nógvar")])
+- area, area_singular = sample([('hektarar', 'hektar'), ('fermetrar', 'fermetur')])
 - $x = range(5, 100, 5)
 - $k = range(2, 101)
-- $n = sample([1, 2, 3, 4, 6, 12])
+- n_txt, n = sample([("hvønn mánað", 1), ("annan hvønn mánað", 2), ("triðja hvønn mánað", 3), ("fjórða hvønn mánað", 4), ("sætta hvønn mánað", 6), ("tólvta hvønn mánað", 12)])
 
 #answer: x * k * (12//n)
 """
 
 answer_annotated = """
 {name} hevur {k}*{x}= <<{k}*{x}={k*x}>>{k*x} {fruit_plural} á síni plantagu.
-{name} kann heysta síni {fruit_plural} 12 / {n} = <<12/{n}={12//n}>>{12//n} ferðir um árið
+{name} kann heysta {poss} {fruit_plural} 12 / {n} = <<12/{n}={12//n}>>{12//n} ferðir um árið
 Tí kann {name} heysta {k*x}*{12//n} = <<{k*x}*{12//n}={k*x*12//n}>>{k*x*12//n} {fruit_plural} um árið.
 #### {k*x*12//n}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

@@ -12,11 +12,11 @@ id_orig = 1025
 id_shuffled = 81
 
 question_annotated = """
-{event,Páskaeggjaveiðiliðið} krógvaði {total,100} {item,egg}. Tvíburarnir {family,Simonsen} funnu hvør síni {n,30} {item,egg}. Øll hini {item,egg}ini uttan {m,10} vórðu funnin av vinum teirra. Hvussu nógv {item,egg} funnu vinirnir?
+Páskaeggjaveiðiliðið krógvaði {total,100} {item,egg}. Tvíburarnir {family,Simonsen} funnu hvør síni {n,30} {item,egg}. Øll hini {item_def,eggini} uttan {m,10} vórðu funnin av vinum teirra. Hvussu nógv {item,egg} funnu vinirnir?
 
 #init:
-- item = sample(["egg", "søtsakir", "leikur", "myntir", "slikk" "góðir"])
-- family = sample(["Madsen", "Hansen", "Æbelgaard", "Poulsen", "Christensen"])
+- item, item_def, item_dat = sample([("egg", "eggini", "eggum"), ("sjokulátuegg", "sjokulátueggini", "sjokulátueggum"), ("páskaegg", "páskaeggini", "páskaeggum")])
+- family = sample(["Simonsen", "Hansen", "Joensen", "Petersen", "Olsen"])
 - $total = range(50, 201, 10)
 - $n = range(10, 51)
 - $m = range(5, 21)
@@ -28,12 +28,14 @@ question_annotated = """
 """
 
 answer_annotated = """
-Tvíburarnir {family,Simonsen} funnu {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
-Talið á eggum, sum framvegis vóru krógvað, var {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
+Tvíburarnir {family} funnu {n} * 2 = <<{n}*2={2*n}>>{2*n} {item}.
+Talið á {item_dat}, sum framvegis vóru krógvað, var {total} - {2*n} = <<{total}-{2*n}={total-2*n}>>{total-2*n} {item}
 Tá {m} {item} ikki vórðu funnin, merkir tað, at vinirnir funnu {total-2*n} - {m} = {total - 2*n - m} {item}.
 #### {total - 2*n - m}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

@@ -11,12 +11,12 @@ id_orig = 164
 id_shuffled = 65
 
 question_annotated = """
-{name,Jákubina} umhugsar, um hon skal gera sína {task,skattauppgerð} sjálv ella seta ein {profession,grannskoðara}. Um hon ger tað sjálv, fer hon at kunna hava {n,3} færri tímar til {work_type,fríyrkis}arbeiði, sum førir til eitt tap upp á {rate,35} {cur,kr}/tíma í mistari inntøku. {profession_definite,Grannskoðarin} krevur {fee,90} {cur,kr}. Hvussu nógv fleiri pengar fer hon at hava, um hon setur {profession,grannskoðara}n?
+{name,Jákubina} umhugsar, um hon skal gera sína {task,skattauppgerð} sjálv ella seta ein {profession,grannskoðara}. Um hon ger tað sjálv, fer hon at kunna hava {n,3} færri tímar til {work_type,fríyrkis}arbeiði, sum førir til eitt tap upp á {rate,35} {cur,kr}/tíma í mistari inntøku. {profession_definite,grannskoðarin} krevur {fee,90} {cur,kr}. Hvussu nógv fleiri pengar fer hon at hava, um hon setur {profession_acc_def,grannskoðaran}?
 #init:
 - name = sample(names_female)
-- task = sample(["sínar skattir", "sína fíggjarligu planlegging", "sínan vinnuroknskap"])
-- profession, profession_definite = sample([("grannskoðari", "grannskoðarin"), ("fíggjarligur ráðgevi", "fíggjarligi ráðgevin"), ("skattaráðgevi", "skattaráðgevin"), ("bókhaldari", "bókhaldarin")])
-- work_type = sample(["frílans", "konsulent", "parttíðar", "kontrakt"])
+- task = sample(["skattauppgerð", "ársuppgerð"])
+- profession, profession_definite, profession_acc_def, profession_dat_def = sample([("grannskoðara", "grannskoðarin", "grannskoðaran", "grannskoðaranum"), ("bókhaldara", "bókhaldarin", "bókhaldaran", "bókhaldaranum"), ("skattaráðgeva", "skattaráðgevin", "skattaráðgevan", "skattaráðgevanum")])
+- work_type = sample(["fríyrkis", "eyka"])
 - cur = sample(currencies_sym)
 - $n = range(3, 14)
 - $rate = range(20, 100)
@@ -29,11 +29,13 @@ question_annotated = """
 """
 
 answer_annotated = """
-Finn fyrst samlaðu mistu inntøkuna, um {name} ger sína egnu {task,skattauppgerð}: {rate} {cur}/tíma * {n} tímar = <<{rate}*{n}={rate*n}>>{rate*n} {cur}
-Drag síðani gjaldið hjá {profession,grannskoðara}num frá fyri at finna út av, hvussu nógvar pengar {name} sparir: {rate*n} {cur} - {fee} {cur} = <<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee} {cur}
+Finn fyrst samlaðu mistu inntøkuna, um {name} ger sína egnu {task}: {rate} {cur}/tíma * {n} tímar = <<{rate}*{n}={rate*n}>>{rate*n} {cur}
+Drag síðani gjaldið hjá {profession_dat_def} frá fyri at finna út av, hvussu nógvar pengar {name} sparir: {rate*n} {cur} - {fee} {cur} = <<{rate*n}-{fee}={rate*n-fee}>>{rate*n-fee} {cur}
 #### {rate*n-fee}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

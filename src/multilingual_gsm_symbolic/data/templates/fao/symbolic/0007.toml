@@ -15,15 +15,17 @@ id_orig = 459
 id_shuffled = 7
 
 question_annotated = """
-Ein bóndi keypir fóður til síni {animals_indef,ross}. Hann keypir fleiri ymisk sløg av {o1_dat,hoyggi}, {o2_dat,havra}, {o3,gularótum} og {o4_dat,sukurmolum}. Av tí at {o4_nom,sukurmolar} eru ein sjáldsamur gloypibiti, keypir hann bara {n4_txt,tvær} {w4,1}-{unit,kilo} eskjur til alt fjósið. Hann vil bara hava nóg mikið av {o3,gularótum} til at geva {animals_def,rossunum}, meðan grønmetið er feskt, so hann keypir {n3_txt,fýra} {w3,12}-{unit,kilo} posar. {o1__nom,Hoyggj} er høvuðsrætturin í kostinum hjá {animals_def,rossunum}, so hann keypir {n1_txt,tveyogfjøruti} {w1,75}-{unit,kilo} hoyballur. {o2_nom,Havri} er ein grundvøra at leggja afturat {o1_dat_def,hoynum}, so hann keypir {n2_txt,tjúgu} {w2,65}-{unit,kilo} sekkir. Um bilur hansara kann bera {total,2250} {unit,kilo} í senn, hvussu nógvar túrar skal bóndin koyra fyri at flyta alt fóðrið?
+Ein bóndi keypir fóður til {poss,síni} {animals_indef,ross}. Hann keypir fleiri ymisk sløg av {o1_dat,hoyggi}, {o2_dat,havra}, {o3,gularótum} og {o4_dat,sukurmolum}. Av tí at {o4_nom,sukurmolar} eru ein sjáldsamur gloypibiti, keypir hann bara {n4_txt,tvær} {w4,1}-{unit,kilo} eskjur til alt fjósið. Hann vil bara hava nóg mikið av {o3,gularótum} til at geva {animals_def,rossunum}, meðan grønmetið er feskt, so hann keypir {n3_txt,fýra} {w3,12}-{unit,kilo} posar. {o1_nom,Hoyggj} er høvuðsrætturin í kostinum hjá {animals_def,rossunum}, so hann keypir {n1_txt,tveyogfjøruti} {w1,75}-{unit,kilo} hoyballur. {o2_nom,Havri} er ein grundvøra at leggja afturat {o1_dat_def,hoynum}, so hann keypir {n2_txt,tjúgu} {w2,65}-{unit,kilo} sekkir. Um bilur hansara kann bera {total,2250} {unit,kilo} í senn, hvussu nógvar túrar skal bóndin koyra fyri at flyta alt fóðrið?
 
 #init:
-- animals, animals_definite = sample([('heste', 'hestene'), ('køer', 'køerne'), ('får', 'fårene'), ('grise', 'grisene'), ('alpakkaer', 'alpakkaerne')])
+- poss, animals_indef, animals_def = sample([('síni', 'ross', 'rossunum'), ('sínar', 'kýr', 'kúnum'), ('sínar', 'seyðir', 'seyðunum'), ('síni', 'svín', 'svínunum'), ('sínar', 'geitir', 'geitunum')])
 - unit = sample(weights_med)
-- o1, o2 = sample(["hoyggj", "majs", "havri", "epli", "hveiti"], 2)
-- o3 = sample(["gularøtur", "reyðrøtur", "gúrkur"])
-- o4 = sample(["sukurbitar", "vatnmelón"])
-- n4_txt, n4_val = range_str(2, 7, 2, numbers)
+- o1, o2 = sample([("hoyggj", "hoyggi", "hoynum"), ("majs", "majsi", "majsinum"), ("havri", "havra", "havranum"), ("hveiti", "hveiti", "hveitinum")], 2)
+- o1_nom, o1_dat, o1_dat_def = o1
+- o2_nom, o2_dat, o2_dat_def = o2
+- o3 = sample(["gularótum", "reyðrótum", "gúrkum"])
+- o4_nom, o4_dat = sample([("sukurmolar", "sukurmolum"), ("sukurbitar", "sukurbitum"), ("vatnmelónir", "vatnmelónum")])
+- n4_txt, n4_val = sample([("tvær", 2), ("fýra", 4), ("seks", 6)])
 - n3_txt, n3_val = range_str(4, 11, 2, numbers)
 - n2_txt, n2_val = range_str(15, 21, 1, numbers)
 - n1_txt, n1_val = range_str(30, 43, 2, numbers)
@@ -41,7 +43,7 @@ Ein bóndi keypir fóður til síni {animals_indef,ross}. Hann keypir fleiri ymi
 """
 
 answer_annotated = """
-Bóndin keypir {n4_val}*{w4}=<<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit} {o4_dat}.
+Bóndin keypir {n4_val}*{w4}=<<{n4_val}*{w4}={n4_val*w4}>>{n4_val*w4} {unit} {o4_nom}.
 Hann keypir {n3_val}*{w3}=<<{n3_val}*{w3}={n3_val*w3}>>{n3_val*w3} {unit} av {o3}.
 Hann keypir {n1_val}*{w1}=<<{n1_val}*{w1}={n1_val*w1}>>{n1_val*w1} {unit} av {o1_dat}.
 Hann keypir {n2_val}*{w2}=<<{n2_val}*{w2}={n2_val*w2}>>{n2_val*w2} {unit} av {o2_dat}.
@@ -52,4 +54,6 @@ Tí skal bóndin koyra {n1_val*w1 + n2_val*w2 + n3_val*w3 + n4_val*w4} / {total}
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

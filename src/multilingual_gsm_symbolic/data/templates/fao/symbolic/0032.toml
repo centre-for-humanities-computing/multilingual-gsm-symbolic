@@ -13,11 +13,11 @@ id_orig = 265
 id_shuffled = 32
 
 question_annotated = """
-{name,Frú Joensen} leitar eftir {property_type_article,einum} {property_type,húsi}, sum ikki fer upp um hennara fíggjarætlan, sum er {budget,2700000} kr. Hon hevur sæð eina ogn, sum hevur søluprísin {price,2370000} kr. Harumframt skal keyparin gjalda eitt meklaragjald, sum er {brokerage_fee,5}% av søluprísinum, og eisini flytingargjaldið, sum er {transfer_fee,12}% av søluprísinum. Hvussu nógv meira er samlaði prísurin á {property_type_definite,húsinum} enn fíggjarætlanin hjá {name_dat,frú Joensen}?
+{name,frú Joensen} leitar eftir {property_type_article,einum} {property_type,húsi}, sum ikki fer upp um hennara fíggjarætlan, sum er {budget,2700000} kr. Hon hevur sæð eina ogn, sum hevur søluprísin {price,2370000} kr. Harumframt skal keyparin gjalda eitt meklaragjald, sum er {brokerage_fee,5}% av søluprísinum, og eisini flytingargjaldið, sum er {transfer_fee,12}% av søluprísinum. Hvussu nógv meira er samlaði prísurin á {property_type_definite,húsinum} enn fíggjarætlanin hjá {name,frú Joensen}?
 
 #init:
-- name, name_genitive = sample([("Fru Madsen", "fru Madsens"), ("Frøken Hansen", "frøken Hansens"), ("Dr. Sørensen", "dr. Sørensens"), ("Fru Andersen", "fru Andersens")])
-- property_type_article, property_type, property_type_definite = sample([("et", "hus", "huset"), ("en", "lejlighed", "lejligheden"), ("et", "byhus", "byhuset"), ("en", "andelslejlighed", "andelslejligheden")])
+- name = sample(["frú Joensen", "frú Hansen", "frú Olsen", "frú Petersen", "frú Jacobsen"])
+- property_type_article, property_type, property_type_definite = sample([("einum", "húsi", "húsinum"), ("eini", "íbúð", "íbúðini"), ("einum", "raðhúsi", "raðhúsinum")])
 - $budget = range(2000000, 3410000, 100000)
 - $price = range(1700000, 3050000, 10000)
 - $brokerage_fee = range(3, 8)
@@ -38,10 +38,12 @@ answer_annotated = """
 Meklaragjaldið er {price} kr*{brokerage_fee}/100 = <<{price}*{brokerage_fee}/100={int(price*brokerage_fee/100)}>>{int(price*brokerage_fee/100)} kr.
 Flytingargjaldið er {price} kr*{transfer_fee}/100 = <<{price}*{transfer_fee}/100={int(price*transfer_fee/100)}>>{int(price*transfer_fee/100)} kr.
 Samlaði prísurin á {property_type_definite} er {price} kr + {int(price*brokerage_fee/100)} kr + {int(price*transfer_fee/100)} kr = {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kr.
-So tað er {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kr - {budget} kr = <<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} kr meira enn fíggjarætlanin hjá {name_dat}.
+So tað er {int(price + price*brokerage_fee/100 + price*transfer_fee/100)} kr - {budget} kr = <<{int(price + price*brokerage_fee/100 + price*transfer_fee/100)}-{budget}={int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}>>{int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)} kr meira enn fíggjarætlanin hjá {name}.
 #### {int(price + price*brokerage_fee/100 + price*transfer_fee/100 - budget)}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

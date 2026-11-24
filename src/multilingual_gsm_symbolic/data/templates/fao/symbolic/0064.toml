@@ -11,13 +11,13 @@ id_orig = 469
 id_shuffled = 64
 
 question_annotated = """
-{name,Maria} hevur {n,6} krukkur við {item,krymmli} í sínum {location,spísikamari}. Hvør krukka við {item,krymmli} kann pynta {m,8} {food,muffur}. {name,Maria} vil baka nóg mikið av muffum til at brúka alt {item_def,krymmlið}. Um hvør {container,bakiformur} rúmar {k,12} muffum, hvussu nógvar {container_plural,bakiformar} skal hon baka?
+{name,Maria} hevur {n,6} krukkur við {item,krymmli} í sínum {location,spísikamari}. Hvør krukka við {item,krymmli} kann pynta {m,8} {food,muffur}. {name,Maria} vil baka nóg mikið av {food_dat,muffum} til at brúka alt {item_def,krymmlið}. Um hvør {container,bakiformur} rúmar {k,12} {food_dat,muffum}, hvussu nógvar {container_plural,bakiformar} skal hon baka?
 #init:
 - name = sample(names_female)
-- item = sample(["krymmli", "frosting", "glasur", "sjokulátiknappar"])
-- food = sample(["cupcakes", "cookies", "brownies", "muffins"])
-- location = sample(["matkamari", "skáp", "køkskáp", "goymslurúm"])
-- container, container_plural = sample([("panna", "pannur"), ("bakki","bakkar"), ("bakipláta","bakiplátur"), ("stativ", "stativ"), ("bakiformur", "bakiformar")])
+- item, item_def = sample([("krymmli", "krymmlið")])
+- food, food_dat, food_def = sample([("muffur", "muffum", "muffurnar"), ("smákøkur", "smákøkum", "smákøkurnar"), ("cupcakes", "cupcakes", "cupcakes")])
+- location = sample(["spísikamari", "køkskápi", "goymslurúmi"])
+- container, container_plural, container_plural_dat = sample([("bakiformur", "bakiformar", "bakiformum"), ("bakki", "bakkar", "bakkum"), ("bakiplata", "bakiplátur", "bakiplátum")])
 - $n = range(3, 15)
 - $m = range(6, 20)
 - $k = range(6, 24)
@@ -29,11 +29,13 @@ question_annotated = """
 """
 
 answer_annotated = """
-Hon hevur nóg mikið av {item,krymmli} til {n} * {m} = <<{n}*{m}={n*m}>>{n*m} {food}.
-Hon hevur brúk fyri {n*m} / {k} = <<{n*m}/{k}={(n*m)//k}>>{(n*m)//k} {container_plural_dat,bakiformum} fyri at baka allar {food}nar.
+Hon hevur nóg mikið av {item} til {n} * {m} = <<{n}*{m}={n*m}>>{n*m} {food}.
+Hon hevur brúk fyri {n*m} / {k} = <<{n*m}/{k}={(n*m)//k}>>{(n*m)//k} {container_plural_dat} fyri at baka allar {food_def}.
 #### {(n*m)//k}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

@@ -11,10 +11,11 @@ id_orig = 300
 id_shuffled = 69
 
 question_annotated = """
-{day3_cap,Týsdag}in vil {name,Petur} venja {mult_txt,tvær ferðir} so leingi, sum hann gjørdi {day2,mánadag}in og {day1,sunnudag}in tilsamans. {day1_cap,Sunnudag}in vandi hann í {t1,23} minuttir. {day2_cap,Mánadag}in vandi hann í {t2,16} minuttir. Hvussu nógvar minuttir skal hann venja {day3,týsdag}in fyri at røkka málinum?
+{day3,týsdag}in vil {name,Petur} venja {mult_txt,tvær ferðir} so leingi, sum hann gjørdi {day2,mánadag}in og {day1,sunnudag}in tilsamans. {day1,sunnudag}in vandi hann í {t1,23} minuttir. {day2,mánadag}in vandi hann í {t2,16} minuttir. Hvussu nógvar minuttir skal hann venja {day3,týsdag}in fyri at røkka málinum?
 #init:
-- name = sample(names)
-- day1, day2, day3 = sample_sequential(weekdays, 3)
+- name = sample(names_male)
+- day1, day2, day3 = sample_sequential(weekdays_acc, 3)
+- day3_cap = to_title(day3)
 - $t1 = range(10, 60)
 - $t2 = range(10, 60)
 - mult_txt, mult_val = sample(multi_times)
@@ -26,11 +27,13 @@ question_annotated = """
 """
 
 answer_annotated = """
-{day1_cap}in og {day2}in vandi hann tilsamans í {t1+t2} minuttir tí {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}
+{day1}in og {day2}in vandi hann tilsamans í {t1+t2} minuttir tí {t1} + {t2} = <<{t1}+{t2}={t1+t2}>>{t1+t2}
 {day3_cap}in skal hann venja í {(t1+t2)*mult_val} minuttir tí {t1+t2}*{mult_val}=<<{t1+t2}*{mult_val}={(t1+t2)*mult_val}>>{(t1+t2)*mult_val}
 #### {(t1+t2)*mult_val}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

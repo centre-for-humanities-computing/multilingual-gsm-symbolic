@@ -260,6 +260,7 @@ The following table shows the list of validated languages:
 | `deu` | ✓ | by two native speakers | ✓ |
 | `eng` | ✓ | by a native speaker | ✓ |
 | `est` | ✓ | by a native speaker | ✓ |
+| `fao` | ✓ | by a native speaker | ✓ |
 | `fra` | ✓ | by a native speaker | ✓ |
 | `hin` | ✓ | by a native speaker | ✓ |
 | `isl` | ✓ | by native speakers | ✓ |

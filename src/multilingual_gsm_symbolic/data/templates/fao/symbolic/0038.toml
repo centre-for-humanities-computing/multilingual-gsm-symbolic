@@ -12,12 +12,12 @@ id_orig = 799
 id_shuffled = 38
 
 question_annotated = """
-Eitt {item1,breyð} hjá {shop,bakaranum} kostar {price1,30} {cur,kr}. {item2_cap,Beyglur} kosta {price2,10} {cur,kr} stykkið. Hvussu nógv meira kosta {n1,3} {item1,breyð} enn {n2,2} {item2,beyglur}?
+Eitt {item1,breyð} hjá {shop,bakaranum} kostar {price1,30} {cur,kr}. {item2,beyglur} kosta {price2,10} {cur,kr} stykkið. Hvussu nógv meira kosta {n1,3} {item1,breyð} enn {n2,2} {item2,beyglur}?
 
 #init:
-- item1 = sample(["breyð", "súrdeigsbreyð", "rugbreyð"])
-- item2 = sample(["bagels", "muffins", "croissantar", "smákøkur"])
-- shop = sample(["bakaranum", "kaféini", "matvøruhandlinum", "sjoppuni"])
+- item1, item1_def = sample([("breyð", "breyðini"), ("súrdeigsbreyð", "súrdeigsbreyðini"), ("rugbreyð", "rugbreyðini")])
+- item2, item2_def = sample([("beyglur", "beyglurnar"), ("muffur", "muffurnar"), ("croissantar", "croissantarnar"), ("smákøkur", "smákøkurnar")])
+- shop = sample(["bakaranum", "handlinum"])
 - cur = sample(currencies_sym)
 - $price1 = range(30, 100)
 - $price2 = range(10, 35)
@@ -33,10 +33,12 @@ Eitt {item1,breyð} hjá {shop,bakaranum} kostar {price1,30} {cur,kr}. {item2_ca
 answer_annotated = """
 {n1} {item1} kosta {n1} * {price1} {cur} = <<{n1}*{price1}={n1*price1}>>{n1*price1} {cur}.
 {n2} {item2} kosta {n2} * {price2} {cur} = <<{n2}*{price2}={n2*price2}>>{n2*price2} {cur}.
-{item1_cap,Breyð}ini kosta {n1*price1} {cur} - {n2*price2} {cur} = <<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} {cur} meira enn {item2}nar.
+{item1_def} kosta {n1*price1} {cur} - {n2*price2} {cur} = <<{n1*price1}-{n2*price2}={n1*price1-n2*price2}>>{n1*price1-n2*price2} {cur} meira enn {item2_def}.
 #### {n1*price1-n2*price2}
 """
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"

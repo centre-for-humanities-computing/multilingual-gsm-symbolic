@@ -14,10 +14,12 @@ id_orig = 406
 id_shuffled = 91
 
 question_annotated = """
-Hjá {name,Allan} eru {mult_txt,tvær ferðir} so nógv {food1,mais} sum {food2,bananir}. Hann hevur tilsamans {n,40} {food2,bananir} í húsinum. {name,Allan} keypti {m,60} {food2,bananir} afturat í handlinum og {k,40} færri {food1,mais} enn talið av {food2_dat,bananum}. Hvat er samlaða talið av {food1,mais} og {food2_dat,bananum} tilsamans, sum {name,Allan} hevur?
+Hjá {name,Allan} eru {mult_txt,tvær ferðir} so nógv {food1,mais} sum {food2,bananir}. Hann hevur tilsamans {n,40} {food2,bananir} í húsinum. {name,Allan} keypti {m,60} {food2,bananir} afturat í handlinum og {k,40} færri {food1,mais} enn talið av {food2_dat,bananum}. Hvat er samlaða talið av {food1_dat,mais} og {food2_dat,bananum} tilsamans, sum {name,Allan} hevur?
 #init:
 - name = sample(names_male)
-- food1, food2 = sample(["perur", "epli", "appelsinir", "sitronir", "fikur", "nektarinur", "plommur", "jarðber", "kiwi", "bláber"], 2)
+- f1, f2 = sample([("mais", "mais", "nakað"), ("bananir", "bananum", "nakrar"), ("appilsinir", "appilsinum", "nakrar"), ("perur", "perum", "nakrar"), ("epli", "eplum", "nøkur")], 2)
+- food1, food1_dat, f1_some = f1
+- food2, food2_dat, f2_some = f2
 - mult_txt, mult_val = sample(multi_times)
 - $n = range(20, 100)
 - $m = range(30, 100)
@@ -30,8 +32,8 @@ Hjá {name,Allan} eru {mult_txt,tvær ferðir} so nógv {food1,mais} sum {food2,
 """
 
 answer_annotated = """
-Áðrenn hann keypti nakað {food1} og nakrar {food2}, hevði {name} {mult_txt} so nógv {food1} sum {food2}, sum er {mult_val}*{n} = <<{mult_val}*{n}={n*mult_val}>>{n*mult_val} {food1}
-Samlaða talið av {food1} og {food2_bananum,bananum}, sum {name} hevði frammanundan, er {n*mult_val} {food1} + {n} {food2} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} lutir
+Áðrenn hann keypti {f1_some} {food1} og {f2_some} {food2}, hevði {name} {mult_txt} so nógv {food1} sum {food2}, sum er {mult_val}*{n} = <<{mult_val}*{n}={n*mult_val}>>{n*mult_val} {food1}
+Samlaða talið av {food1_dat} og {food2_dat}, sum {name} hevði frammanundan, er {n*mult_val} {food1} + {n} {food2} = <<{n*mult_val}+{n}={n*mult_val+n}>>{n*mult_val+n} lutir
 Tá hann keypti {k} færri {food1} enn {food2}, keypti hann {m} - {k} = <<{m}-{k}={m-k}>>{m-k} {food1}
 Tilsamans keypti hann {m-k} {food1} + {m} {food2} = <<{m-k}+{m}={2*m-k}>>{2*m-k} lutir
 Eftir at hava keypt hevur {name} {n*mult_val+n} lutir + {2*m-k} lutir = <<{n*mult_val+n}+{2*m-k}={n*mult_val+n+2*m-k}>>{n*mult_val+n+2*m-k} {food1} og {food2} tilsamans.
@@ -40,4 +42,6 @@ Eftir at hava keypt hevur {name} {n*mult_val+n} lutir + {2*m-k} lutir = <<{n*mul
 
 source-language = "dan"
 initial_translation_model = "gpt-5.4"
+human-validated = "by a native speaker"
+error-analysis = "performed using anthropic/claude-opus-4-8, with errors manually inspected"
 language = "fao"
