@@ -17,13 +17,13 @@ question_annotated = """
 {facility_article,Eitt} {facility,sjúkrahús} hevur pláss fyri {total,1000} {item_dat_pl,seingjum}, har {frac,1/5} er upptiknar. Vegna {event,koronuútbrotið} verða {daily,50} sjúklingar innlagdir á {facility_acc_def,sjúkrahúsið} hvønn dag. Rokna samlaða talið av tøkum {item_dat_pl,seingjum} á {facility_dat_def,sjúkrahúsinum} eftir {period_txt,tvær} vikur.
 
 #init:
-- facility, facility_article, facility_definite = sample([("sjúkrahús", "eitt", "sjúkrahúsið"), ("klinikk", "ein", "klinikkin"), ("heilsumiðstøð", "eitt", "heilsumiðstøðin"), ("røktarheim", "eitt", "røktarheimið")])
-- item, item_plural = sample([("seing","seingir"), ("rúm","rúm"), ("deild","deildir")])
-- event = sample(["koronuútbrotinum", "influensatíðini", "einari náttúruvanlukku", "einari stórari vanlukku", "farsóttini"])
+- facility_article, facility, facility_acc_def, facility_dat_def = sample([("Eitt", "sjúkrahús", "sjúkrahúsið", "sjúkrahúsinum"), ("Ein", "klinikk", "klinikkina", "klinikkini"), ("Ein", "heilsumiðstøð", "heilsumiðstøðina", "heilsumiðstøðini"), ("Eitt", "røktarheim", "røktarheimið", "røktarheiminum")])
+- item_dat_pl, item_nom_pl, item_acc_sg = sample([("seingjum", "sengur", "song")])
+- event = sample(["koronuútbrotið", "influensutíðina", "farsóttina"])
 - $total = range(500, 2000, 100)
 - $frac = sample(fractions)
 - $daily = range(20, 100, 5)
-- period_txt, period_val = range_str(2, 5, 1, numbers)
+- period_txt, period_val = sample([("tvær", 2), ("tríggjar", 3), ("fýra", 4), ("fimm", 5)])
 
 #conditions:
 - is_int(total * frac)
@@ -33,10 +33,10 @@ question_annotated = """
 """
 
 answer_annotated = """
-Um {frac} av samlaða seingjarkapasitetinum er upptikin, merkir tað, at {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_nom_pl,sengur} hava sjúklingar, sum brúka tær.
+Um {frac} av samlaða seingjarkapasitetinum er upptikin, merkir tað, at {frac} * {total} = <<{total}*{frac}={int(total*frac)}>>{int(total*frac)} {item_nom_pl} hava sjúklingar, sum brúka tær.
 Samlaða talið av seingjum á {facility_dat_def} uttan nýggjar innleggingar er {total} {item_nom_pl} - {int(total*frac)} {item_nom_pl} = <<{total}-{int(total*frac)}={total-int(total*frac)}>>{total-int(total*frac)} {item_nom_pl}.
 Um {daily} fólk verða innløgd hvønn dag, er samlaða talið av sjúklingum á {facility_dat_def} eftir eina viku {daily} sjúklingar/dag * 7 dagar/viku = {daily*7} sjúklingar.
-Eftir {period_txt} vikur er samlaða talið av sjúklingum, sum eru innlagdir á {facility_dat_def}, {daily*7} sjúklingar/viku*{period_val} vikur = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} sjúklingar, sum hvør brúkar eina {item_acc_sg,song}.
+Eftir {period_txt} vikur er samlaða talið av sjúklingum, sum eru innlagdir á {facility_dat_def}, {daily*7} sjúklingar/viku*{period_val} vikur = <<{daily*7}*{period_val}={daily*period_val*7}>>{daily*period_val*7} sjúklingar, sum hvør brúkar eina {item_acc_sg}.
 Um tað vóru {total-int(total*frac)} tøkar {item_nom_pl} á {facility_dat_def} áðrenn nýggju innleggingarnar, minkar samlaða talið til {total-int(total*frac)} {item_nom_pl} - {daily*period_val*7} {item_nom_pl} = <<{total-int(total*frac)}-{daily*period_val*7}={total - (total * frac + daily * period_val * 7)}>>{total - (total * frac + daily * period_val * 7)} tøkar {item_nom_pl}.
 #### {total - (total * frac + daily * period_val * 7)}
 """

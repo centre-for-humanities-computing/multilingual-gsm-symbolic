@@ -12,11 +12,13 @@ id_orig = 158
 id_shuffled = 18
 
 question_annotated = """
-{name,Rasmus} fór at keypa sær nøkur ting til skúlabrúk. Hann keypti {n1,4} {obj1,pennar}, sum kostaðu {c1,1,5} {cur,krónur} hvør, {n2,2} {obj2,skrivihefti}, sum kostaðu {c2,4} {cur,krónur} hvør, og ein pakka av pappíri, sum kostaði {c3,20} {cur,krónur}. Hvussu nógv brúkti {name,Rasmus} tilsamans?
+{name,Rasmus} fór at keypa sær nøkur ting til skúlabrúk. Hann keypti {n1,4} {obj1,pennar}, sum kostaðu {c1,1.5} {cur,krónur} hvør, {n2,2} {obj2,skrivihefti}, sum kostaðu {c2,4} {cur,krónur} hvør, og ein pakka av pappíri, sum kostaði {c3,20} {cur,krónur}. Hvussu nógv brúkti {name,Rasmus} tilsamans?
 
 #init:
 - name = sample(names_male)
-- obj1, obj2 = sample(["skrivibøkur", "blýantar", "litblýantar", "tussjar", "linjalir", "mappur"], 2)
+- o1, o2 = sample([("pennar", "pennarnar"), ("skrivihefti", "skriviheftini"), ("skrivibøkur", "skrivibøkurnar"), ("blýantar", "blýantarnar"), ("litblýantar", "litblýantarnar"), ("mappur", "mappurnar")], 2)
+- obj1, obj1_def = o1
+- obj2, obj2_def = o2
 - cur = sample(currencies_sym)
 - $n1 = range(4, 25, 2)
 - $c1 = arange(1.5, 11.5, 0.25)
@@ -31,8 +33,8 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name} brúkti {n1}*{c1} {cur} = <<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} {cur} upp á {obj1}nar.
-Hann brúkti eisini {n2}*{c2} {cur} = <<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} {cur} upp á {obj2}ni.
+{name} brúkti {n1}*{c1} {cur} = <<{n1}*{c1}={int(n1*c1)}>>{int(n1*c1)} {cur} upp á {obj1_def}.
+Hann brúkti eisini {n2}*{c2} {cur} = <<{n2}*{c2}={int(n2*c2)}>>{int(n2*c2)} {cur} upp á {obj2_def}.
 Tí brúkti {name} tilsamans {int(n1*c1)} {cur} + {int(n2*c2)} {cur} + {c3} {cur} = <<{int(n1*c1)}+{int(n2*c2)}+{c3}={int(n1*c1+n2*c2+c3)}>>{int(n1*c1+n2*c2+c3)} {cur} upp á ting til skúlabrúk.
 #### {int(n1*c1+n2*c2+c3)}
 """

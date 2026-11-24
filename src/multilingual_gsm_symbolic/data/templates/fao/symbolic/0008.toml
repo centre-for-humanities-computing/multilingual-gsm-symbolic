@@ -11,13 +11,14 @@ id_orig = 269
 id_shuffled = 8
 
 question_annotated = """
-Ein gyklari kann fimla við {n,16} bóltum. {frac_1_txt,Helmingurin} av bóltunum eru {ball_type,golf}bóltar, og {frac_2_txt,helmingurin} av {ball_type,golf}bóltunum eru {color,bláir}. Hvussu nógvir {color,bláir} {ball_type,golf}bóltar eru?
+Ein gyklari kann fimla við {n,16} bóltum. {frac_1_cap,Helmingurin} av bóltunum eru {ball_type,golf}bóltar, og {frac_2_txt,helmingurin} av {ball_type,golf}bóltunum eru {color,bláir}. Hvussu nógvir {color,bláir} {ball_type,golf}bóltar eru?
 
 #init:
 - ball_type = sample(["golf", "tennis"])
-- color = sample(colors)
-- $frac_1_txt, frac_1_val = sample(fraction_alnum)
-- $frac_2_txt, frac_2_val = sample(fraction_alnum)
+- color = sample(["reyðir", "grønir", "bláir", "gulir", "brúnir", "svartir", "hvítir"])
+- $frac_1_txt, frac_1_val = sample([("helmingurin", "1/2"), ("ein triðingur", "1/3"), ("tveir triðingar", "2/3"), ("ein fjórðingur", "1/4"), ("tríggir fjórðingar", "3/4"), ("ein fimtipartur", "1/5")])
+- $frac_2_txt, frac_2_val = sample([("helmingurin", "1/2"), ("ein triðingur", "1/3"), ("tveir triðingar", "2/3"), ("ein fjórðingur", "1/4"), ("tríggir fjórðingar", "3/4"), ("ein fimtipartur", "1/5")])
+- frac_1_cap = to_title(frac_1_txt)
 - $n = range(16, 100, 2)
 
 #conditions:
@@ -28,8 +29,8 @@ Ein gyklari kann fimla við {n,16} bóltum. {frac_1_txt,Helmingurin} av bóltunu
 """
 
 answer_annotated = """
-{ball_type_cap,Golf}bóltar: {n}*{frac_1_val}=<<{n}*{frac_1_val}={n*frac_1_val}>>{int(n*frac_1_val)}.
-{color_cap_stem,Blá}ir {ball_type}bóltar: {int(n*frac_1_val)}*{frac_2_val}=<<{int(n*frac_1_val)}*{frac_2_val}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} bóltar
+{ball_type}bóltar: {n}*{frac_1_val}=<<{n}*{frac_1_val}={n*frac_1_val}>>{int(n*frac_1_val)}.
+{color} {ball_type}bóltar: {int(n*frac_1_val)}*{frac_2_val}=<<{int(n*frac_1_val)}*{frac_2_val}={int(n*frac_1_val*frac_2_val)}>>{int(n*frac_1_val*frac_2_val)} bóltar
 #### {int(n*frac_1_val*frac_2_val)}
 """
 

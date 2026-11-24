@@ -12,14 +12,14 @@ id_orig = 788
 id_shuffled = 35
 
 question_annotated = """
-{name,Niels} savnar pengar til {event_article,eina} {event,útferð við skúlanum}. Hann hevur søkt um stuðul frá {organization_definite,skúlanum}, sum hevur avgjørt at rinda {fraction_txt,helvtina} av kostnaðinum fyri {event_genitive,útferðina}. Hvussu nógvar pengar vantar {name,Niels}, um hann hevur {current,350} {cur,kr} og {event_definite,skúlaútferðin} kostar {total,2000} {cur,kr}?
+{name,Niels} savnar pengar til {event_article,eina} {event,útferð við skúlanum}. Hann hevur søkt um stuðul frá {organization_definite,skúlanum}, sum hevur avgjørt at rinda {fraction_txt,helvtina} av kostnaðinum fyri {event_acc_def,útferðina}. Hvussu nógvar pengar vantar {name,Niels}, um hann hevur {current,350} {cur,kr} og {event_definite,skúlaútferðin} kostar {total,2000} {cur,kr}?
 
 #init:
 - name = sample(names_male)
-- event_article, event, event_definite, event_genitive = sample([("eina", "útferð", "útferðin", "útferðarinnar"), ("eina", "ítróttarkapping", "ítróttarkappingin", "ítróttarkappingarinnar"), ("eina", "ráðstevna", "ráðstevnan", "ráðstevnunnar"), ("eina", "festival", "festivalurin", "festivalsins"), ("eina", "vísindastevna", "vísindastevnan", "vísindastevnunnar")])
+- event_article, event, event_definite, event_acc_def, event_dat_def = sample([("eina", "útferð við skúlanum", "skúlaútferðin", "útferðina", "útferðini"), ("eina", "ítróttarkapping", "ítróttarkappingin", "ítróttarkappingina", "ítróttarkappingini"), ("eina", "ráðstevnu", "ráðstevnan", "ráðstevnuna", "ráðstevnuni")])
 - cur = sample(currencies_sym)
-- organization, organization_definite = sample([("skúli", "skúlin"), ("kommuna", "kommunan"), ("lokal vælgerðarfelagsskapur", "lokali vælgerðarfelagsskapurin"), ("ungdómsklubbi", "ungdómsklubbin"), ("foreldur", "foreldrini")])
-- $fraction_txt, fraction_val = sample(fraction_alnum)
+- organization, organization_definite = sample([("skúlin", "skúlanum"), ("ítróttarfelagið", "ítróttarfelagnum")])
+- $fraction_txt, fraction_val = sample(fraction_alnum_acc)
 - $current = range(50, 1350, 50)
 - $total = range(1350, 7000, 50)
 
@@ -33,8 +33,8 @@ question_annotated = """
 """
 
 answer_annotated = """
-Skúlin hjá {name} hevur avgjørt at gjalda {total}*{fraction_val}=<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} {cur} fyri {event_acc_def,útferðina} hjá honum.
-Tilsamans hevur {name} goldið {total*fraction_val} + {current} = <<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} {cur} av {event_dat_def,útferðini}
+{organization} hjá {name} hevur avgjørt at gjalda {total}*{fraction_val}=<<{total}*{fraction_val}={total*fraction_val}>>{total*fraction_val} {cur} fyri {event_acc_def} hjá honum.
+Tilsamans hevur {name} goldið {total*fraction_val} + {current} = <<{total*fraction_val}+{current}={total*fraction_val+current}>>{total*fraction_val+current} {cur} av {event_dat_def}
 Tí hevur {name} brúk fyri {total} - {total*fraction_val+current} = <<{total}-{total*fraction_val+current}={total-(total*fraction_val+current)}>>{total-(total*fraction_val+current)} {cur} afturat til {event_acc_def}.
 #### {total-(total*fraction_val+current)}
 """

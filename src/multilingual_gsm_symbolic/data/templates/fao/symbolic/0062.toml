@@ -13,11 +13,13 @@ id_orig = 456
 id_shuffled = 62
 
 question_annotated = """
-Í einum setti {item,við} gandakortum eru {n1,15} {c1_base,reyð} kort og {p,60}% fleiri {c2_base,grøn} kort. {c3,Gul} kort eru líka nógv sum summurin av {c1_dat_pl,reyðum} og {c2_dat_pl,grønum} kortum. Hvussu nógv kort av øllum nevndu litunum eru har?
+Í einum setti við gandakortum eru {n1,15} {c1_base,reyð} kort og {p,60}% fleiri {c2_base,grøn} kort. {c3_base,gul} kort eru líka nógv sum summurin av {c1_dat_pl,reyðum} og {c2_dat_pl,grønum} kortum. Hvussu nógv kort av øllum nevndu litunum eru har?
 
 #init:
-- item = sample(["gandur", "gandakallur", "gandamaður", "listamaður", "gandi"])
-- c1, c2, c3 = sample(["reyð", "blá", "grøn", "gul", "lilla", "appilsingul"], 3)
+- c1, c2, c3 = sample([("reyð", "reyðum"), ("blá", "bláum"), ("grøn", "grønum"), ("gul", "gulum"), ("hvít", "hvítum"), ("svart", "svartum")], 3)
+- c1_base, c1_dat_pl = c1
+- c2_base, c2_dat_pl = c2
+- c3_base, c3_dat_pl = c3
 - $n1 = range(15, 81)
 - $p = range(20, 90)
 
@@ -31,7 +33,7 @@ question_annotated = """
 answer_annotated = """
 Tað eru {p}/100 * {n1} = <<{p}/100*{n1}={int(p/100*n1)}>>{int(p/100*n1)} fleiri {c2_base} kort enn {c1_base} kort.
 Tað merkir, at tað eru {n1} + {int(p/100*n1)} = <<{n1}+{int(p/100*n1)}={n1+int(p/100*n1)}>>{n1+int(p/100*n1)} {c2_base} kort.
-Av {c3_dat_pl,gulum} kortum eru tilsamans {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} kort.
+Av {c3_dat_pl} kortum eru tilsamans {n1} + {n1+int(p/100*n1)} = <<{n1}+{n1+int(p/100*n1)}={n1+(n1+int(p/100*n1))}>>{n1+(n1+int(p/100*n1))} kort.
 So tilsamans eru {n1+(n1+int(p/100*n1))} + {n1+(n1+int(p/100*n1))} = <<{n1+(n1+int(p/100*n1))}+{n1+(n1+int(p/100*n1))}={2*(n1+(n1+int(p/100*n1)))}>>{2*(n1+(n1+int(p/100*n1)))} kort í ymiskum litum.
 #### {2*(n1+(n1+int(p/100*n1)))}
 """

@@ -12,18 +12,19 @@ id_orig = 1275
 id_shuffled = 67
 
 question_annotated = """
-{vehicle_cap,Bil}urin hjá {name,Jón} steðgar upp. {vehicle_cap,Bil}urin vigar {weight_vehicle,1200} {unit,kg}, og hann hevur {item,viðføri} í honum, sum vigar {weight_item,250} {unit,kg}. Hann hevur eisini {num_passengers_txt,tvey} {passenger_type,børn}, sum hvørt viga {weight_passenger,75} {unit,kg}, í honum. Um kraftin at flyta {vehicle,bil}in er {force_percent,1}% av vektini, hvussu nógva kraft hevur hann brúk fyri at skumpa {vehicle,bil}in?
+{vehicle_nom,bilurin} hjá {name,Jón} steðgar upp. {vehicle_nom,bilurin} vigar {weight_vehicle,1200} {unit,kg}, og hann hevur {item,viðføri} í honum, sum vigar {weight_item,250} {unit,kg}. Hann hevur eisini {num_passengers_txt,tvey} {passenger_type,børn}, sum hvørt viga {weight_passenger,75} {unit,kg}, í honum. Um kraftin at flyta {vehicle_acc,bilin} er {force_percent,1}% av vektini, hvussu nógva kraft hevur hann brúk fyri at skumpa {vehicle_acc,bilin}?
 
 #init:
 - name = sample(names_male)
-- vehicle = sample(['bil', 'vøruvogn', 'lastbil', 'SUV'])
-- item = sample(['viðføri', 'gerandisvørur', 'útgerð', 'møblar'])
-- passenger_type = sample(['børn', 'vinir', 'starvsfelagar', 'syskin'])
+- vehicle_nom, vehicle_acc, vehicle_dat = sample([('bilurin', 'bilin', 'bilinum'), ('lastbilurin', 'lastbilin', 'lastbilinum'), ('jeppin', 'jeppan', 'jeppanum')])
+- item = sample(['viðføri', 'útgerð'])
+- passenger_type, passenger_type_def = sample([('børn', 'børnini'), ('systkin', 'systkinini')])
 - unit = sample(['kg', 'kilogram'])
 - $weight_vehicle = range(1000, 3000, 50)
 - $weight_item = range(100, 500, 25)
 - $weight_passenger = range(50, 100, 5)
-- num_passengers_txt, num_passengers_val = range_str(2, 5, 1, numbers)
+- num_passengers_txt, num_passengers_val = sample([('tvey', 2), ('trý', 3), ('fýra', 4)])
+- both = "bæði" if num_passengers_val == 2 else "øll"
 - $force_percent = range(1, 6)
 
 #conditions:
@@ -33,8 +34,8 @@ question_annotated = """
 """
 
 answer_annotated = """
-Bæði {passenger_type_def,børnini} viga {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
-So samlaða vektin av {vehicle}inum og øllum er {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
+{both} {passenger_type_def} viga {weight_passenger}*{num_passengers_val}=<<{weight_passenger}*{num_passengers_val}={weight_passenger*num_passengers_val}>>{weight_passenger*num_passengers_val} {unit}
+So samlaða vektin av {vehicle_dat} og øllum er {weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}=<<{weight_vehicle}+{weight_item}+{weight_passenger*num_passengers_val}={weight_vehicle+weight_item+weight_passenger*num_passengers_val}>>{weight_vehicle+weight_item+weight_passenger*num_passengers_val} {unit}
 So hann skal framleiða {weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}=<<{weight_vehicle+weight_item+weight_passenger*num_passengers_val}*{force_percent/100}={int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}>>{int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)} {unit}
 #### {int((weight_vehicle+weight_item+weight_passenger*num_passengers_val)*force_percent/100)}
 """

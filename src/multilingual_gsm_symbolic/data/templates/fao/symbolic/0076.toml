@@ -13,12 +13,12 @@ id_orig = 1207
 id_shuffled = 76
 
 question_annotated = """
-{name,Dávur} fangaði {n,3} {fish,tunfiskar} {day,mánadagin}. Tann fyrsti {fish_def,tunfiskurin}, hann fangaði, vigar {w1,56} {unit,kilo}, tann næsti {fish_def,tunfiskurin}, hann fangaði, vigar {w2,46} {unit,kilo} og tann síðsti {fish_def,tunfiskurin}, hann fangaði, vigar {w3,26} {unit,kilo}. Um eitt {unit,kilo} av {fish_dat,tunfiski} kostar {price,0.5} {cur,kr}, hvussu nógv fer hann at forvinna eftir at hava selt allar {fish,tunfiskar}nar á marknaðinum?
+{name,Dávur} fangaði {n,3} {fish,tunfiskar} {day,mánadagin}. Tann fyrsti {fish_def,tunfiskurin}, hann fangaði, vigar {w1,56} {unit,kilo}, tann næsti {fish_def,tunfiskurin}, hann fangaði, vigar {w2,46} {unit,kilo} og tann síðsti {fish_def,tunfiskurin}, hann fangaði, vigar {w3,26} {unit,kilo}. Um eitt {unit,kilo} av {fish_dat,tunfiski} kostar {price,0.5} {cur,kr}, hvussu nógv fer hann at forvinna eftir at hava selt allar {fish_def_pl,tunfiskarnar} á marknaðinum?
 #init:
 - name = sample(names_male)
-- fish = sample(["tunfiskur", "laksur", "toskur", "síl", "hvasskvøsa"])
-- day = sample(weekdays)
-- unit = sample(["kilogram", "kg"])
+- fish, fish_def, fish_dat, fish_def_pl, fish_dat_def = sample([("tunfiskar", "tunfiskurin", "tunfiski", "tunfiskarnar", "tunfiskinum"), ("laksar", "laksurin", "laksi", "laksarnar", "laksinum"), ("toskar", "toskurin", "toski", "toskarnar", "toskinum")])
+- day = sample(weekdays_acc_def)
+- unit = sample(["kilo", "kg"])
 - cur = sample(currencies_sym)
 - $n = range(3, 8)
 - $w1 = range(40, 80)
@@ -34,10 +34,10 @@ question_annotated = """
 """
 
 answer_annotated = """
-{name} fer at forvinna {w1}*0,{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} frá tí fyrsta tunfiskinum.
-Hann fer at forvinna {w2}*0,{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} frá tí næsta tunfiskinum.
-Og hann fer at forvinna {w3}*0,{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} frá tí triðja tunfiskinum.
-Tí er samlaða upphæddin, hann fer at forvinna fyri allar {fish}nar, {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
+{name} fer at forvinna {w1}*{price} {cur} = <<{w1}*{price}={w1*price}>>{w1*price} {cur} frá tí fyrsta {fish_dat_def}.
+Hann fer at forvinna {w2}*{price} {cur} = <<{w2}*{price}={w2*price}>>{w2*price} {cur} frá tí næsta {fish_dat_def}.
+Og hann fer at forvinna {w3}*{price} {cur} = <<{w3}*{price}={w3*price}>>{w3*price} {cur} frá tí triðja {fish_dat_def}.
+Tí er samlaða upphæddin, hann fer at forvinna fyri allar {fish_def_pl}, {w1*price} {cur} + {w2*price} {cur} + {((n-2)*w3*price)} {cur} = <<{w1*price}+{w2*price}+{((n-2)*w3*price)}={int((w1 + w2) * price)+int((n-2)*w3*price)}>>{int((w1 + w2 + (n-2)*w3) * price)} {cur}.
 #### {int((w1 + w2 + (n-2)*w3) * price)}
 """
 

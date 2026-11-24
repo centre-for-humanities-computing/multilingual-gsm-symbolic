@@ -15,11 +15,11 @@ id_shuffled = 58
 question_annotated = """
 Ein {worker,dvørgur} kann vinna {base,12} {unit,kg} av málmi um dagin við {tool1,sínum beru hondum}. Hann kann vinna {mult1_txt,tvær ferðir} so nógv við einum {tool2,jarnhakkara} og {mult2,50}% meira við einum {tool3,stálhakkara} enn við einum {tool2,jarnhakkara}. Hvussu nógv {unit,kg} av málmi kunnu {n,40} {worker_plural,dvørgar} við {tool3_pl,stálhakkarum} vinna upp á ein mánað við {days,30} døgum?
 #init:
-- worker, worker_plural = sample([("dvergur", "dvergar"), ("goblin", "goblinir"), ("gnómur", "gnómar"), ("trøll", "trøll")])
-- tool1 = sample(["berar hendur", "spaki", "træhakkur"])
+- worker, worker_plural, worker_plural_dat, worker_sing = sample([("dvørgur", "dvørgar", "dvørgum", "dvørg"), ("risi", "risar", "risum", "risa"), ("nissi", "nissar", "nissum", "nissa")])
+- tool1 = sample(["sínum beru hondum"])
 - unit = sample(["kg", "g"])
-- tool2 = sample(["nikkelhakkur", "bronsuhakkur", "silvurhakkur"])
-- tool3 = sample(["stálhakka", "diamant-hakka", "mithrilhakka", "titaniumhakka"])
+- tool2 = sample(["jarnhakkara", "koparhakkara", "bronsuhakkara"])
+- tool3, tool3_pl = sample([("stálhakkara", "stálhakkarum"), ("diamanthakkara", "diamanthakkarum"), ("titanhakkara", "titanhakkarum")])
 - $base = range(5, 20)
 - mult1_txt, mult1_val = sample(multi_times)
 - $mult2 = range(30, 80, 5)
@@ -36,7 +36,7 @@ Ein {worker,dvørgur} kann vinna {base,12} {unit,kg} av málmi um dagin við {to
 answer_annotated = """
 Finn fyrst út av, hvussu nógv málm ein {worker} kann vinna við einum {tool2}: {base} {unit}/dag*{mult1_val}=<<{base}*{mult1_val}={base*mult1_val}>>{base*mult1_val} {unit}/dag
 Síðani falda ta nøgdina við {100+mult2}% fyri at finna út av, hvussu nógv ein {worker} kann vinna við einum {tool3}: {base*mult1_val} {unit}/dag * {100+mult2}% = <<{base*mult1_val}*{100+mult2}*.01={int(base*mult1_val*(1+mult2/100))}>>{int(base*mult1_val*(1+mult2/100))} {unit}/dag
-Síðani falda tað, sum ein {worker} kann vinna upp á ein dag við einum {tool3}, við talinum av {worker_plural_dat,dvørgum}: {int(base*mult1_val*(1+mult2/100))} {unit}/dag/{worker_sing,dvørg} * {n} {worker_plural} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag
+Síðani falda tað, sum ein {worker} kann vinna upp á ein dag við einum {tool3}, við talinum av {worker_plural_dat}: {int(base*mult1_val*(1+mult2/100))} {unit}/dag/{worker_sing} * {n} {worker_plural} = <<{int(base*mult1_val*(1+mult2/100))}*{n}={int(base*mult1_val*(1+mult2/100)*n)}>>{int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag
 Síðani falda dagligu nøgdina av málmi við talinum av døgum fyri at finna samlaðu nøgdina, sum er vunnin upp á ein mánað: {int(base*mult1_val*(1+mult2/100)*n)} {unit}/dag * {days} dagar = <<{int(base*mult1_val*(1+mult2/100)*n)}*{days}={int(base*mult1_val*(1+mult2/100)*n*days)}>>{int(base*mult1_val*(1+mult2/100)*n*days)} {unit}/dag
 #### {int(base*mult1_val*(1+mult2/100)*n*days)}
 """

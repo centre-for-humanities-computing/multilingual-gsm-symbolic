@@ -13,11 +13,13 @@ id_orig = 937
 id_shuffled = 71
 
 question_annotated = """
-{name,Niklas} gevur sínum húsdjórum {food,hoyggj}. Hvør {animal1,geit} hevur brúk fyri {n1,5} {unit,kg}, og hvør {animal2,seyður} hevur brúk fyri {n2,3} {unit,kg} minni enn tvífalt so nógv sum tað, hvør {animal1,geit} hevur brúk fyri. Um tað eru {k1,15} {animal1,geit}ir og {k2,12} seyðir, hvussu nógv {unit,kg} av hoyggi hevur {name,Niklas} brúk fyri?
+{name,Niklas} gevur sínum húsdjórum {food,hoyggj}. Hvør {animal1,geit} hevur brúk fyri {n1,5} {unit,kg}, og hvør {animal2,seyður} hevur brúk fyri {n2,3} {unit,kg} minni enn tvífalt so nógv sum tað, hvør {animal1,geit} hevur brúk fyri. Um tað eru {k1,15} {animal1_pl,geitir} og {k2,12} {animal2_pl,seyðir}, hvussu nógv {unit,kg} av {food_dat,hoyggi} hevur {name,Niklas} brúk fyri?
 #init:
 - name = sample(names_male)
-- food = sample(["hoyggj", "korn", "fóður", "hálmur"])
-- animal1, animal2 = sample(["geit", "kúgv", "hestur", "esil", "lama", "alpaka", "grísur", "kalkun", "ont"], 2)
+- food, food_dat = sample([("hoyggj", "hoyggi"), ("korn", "korni"), ("fóður", "fóðri")])
+- a1, a2 = sample([("geit", "geitir", "geitirnar", "geit"), ("seyður", "seyðir", "seyðirnir", "seyð"), ("kúgv", "kýr", "kýrnar", "kú"), ("hestur", "hestar", "hestarnir", "hest")], 2)
+- animal1, animal1_pl, animal1_def, animal1_acc = a1
+- animal2, animal2_pl, animal2_def, animal2_acc = a2
 - unit = sample(["kg", "kilogram"])
 - $n1 = range(3, 15)
 - $n2 = range(1, 10)
@@ -31,10 +33,10 @@ question_annotated = """
 """
 
 answer_annotated = """
-Rokna fyrst út, hvussu nógv {food} hvør {animal2} hevur brúk fyri: {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2_acc,seyð}
-Rokna so út, hvussu nógv {food} seyðirnir til samans hava brúk fyri: {2*n1-n2} {unit}/{animal2} * {k2} seyðir = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
-Rokna síðani út, hvussu nógv {food} geitirnar til samans hava brúk fyri: {n1} {unit}/{animal1} * {k1} geitir = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
-At enda leggur tú tær báðar nøgdirnar av hoyggi saman fyri at finna samlaða talið: {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
+Rokna fyrst út, hvussu nógv {food} hvør {animal2} hevur brúk fyri: {n1} {unit} * 2 - {n2} = <<{n1}*2-{n2}={2*n1-n2}>>{2*n1-n2} {unit}/{animal2_acc}
+Rokna so út, hvussu nógv {food} {animal2_def} til samans hava brúk fyri: {2*n1-n2} {unit}/{animal2} * {k2} {animal2_pl} = <<{2*n1-n2}*{k2}={k2*(2*n1-n2)}>>{k2*(2*n1-n2)} {unit}
+Rokna síðani út, hvussu nógv {food} {animal1_def} til samans hava brúk fyri: {n1} {unit}/{animal1} * {k1} {animal1_pl} = <<{n1}*{k1}={k1*n1}>>{k1*n1} {unit}
+At enda leggur tú tær báðar nøgdirnar av {food_dat} saman fyri at finna samlaða talið: {k2*(2*n1-n2)} {unit} + {k1*n1} {unit} = <<{k2*(2*n1-n2)}+{k1*n1}={k1*n1 + k2*(2*n1 - n2)}>>{k1*n1 + k2*(2*n1 - n2)} {unit}
 #### {k1*n1 + k2*(2*n1 - n2)}
 """
 

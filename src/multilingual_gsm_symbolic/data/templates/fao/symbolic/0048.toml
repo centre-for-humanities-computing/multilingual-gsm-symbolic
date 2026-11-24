@@ -15,8 +15,8 @@ id_shuffled = 48
 question_annotated = """
 {name,Emilia} kann pilka {n1,6} {food,rækjur} um minuttin og steikja {n2,30} {food,rækjur} upp á {t,10} minuttir. Hvussu langa tíð fer tað at taka henni at pilka og steikja {total,90} {food,rækjur}? {name,Emilia} kann ikki pilka og steikja samstundis.
 #init:
-- name = sample(names_female)
-- food = sample(["rækjur", "leykar", "gularøtur", "soppir", "kræklingar"])
+- name, name_acc = sample(names_female_obl)
+- food, food_def, food_dat = sample([("rækjur", "rækjurnar", "rækjum"), ("gularøtur", "gularøturnar", "gularótum"), ("kartøflur", "kartøflurnar", "kartøflum")])
 - $n1 = range(4, 15)
 - $n2 = range(20, 50, 5)
 - $t = range(5, 20)
@@ -30,8 +30,8 @@ question_annotated = """
 """
 
 answer_annotated = """
-Fyrst finnur tú út av, hvussu langa tíð tað tekur {name_acc,Emiliu} at pilka {food}nar: {total} {food} / {n1} {food}/minutt = <<{total}/{n1}={total//n1}>>{total//n1} minuttir
-Síðani finnur tú út av, hvussu nógvar portiónir av rækjum hon skal tilgera: {total} {food} / {n2} {food}/portión = <<{total}/{n2}={total//n2}>>{total//n2} portiónir
+Fyrst finnur tú út av, hvussu langa tíð tað tekur {name_acc} at pilka {food_def}: {total} {food} / {n1} {food}/minutt = <<{total}/{n1}={total//n1}>>{total//n1} minuttir
+Síðani finnur tú út av, hvussu nógvar portiónir av {food_dat} hon skal tilgera: {total} {food} / {n2} {food}/portión = <<{total}/{n2}={total//n2}>>{total//n2} portiónir
 Síðani faldar tú talið av portiónum við tíðini fyri hvørja portión fyri at finna samlaðu tilgerðartíðina: {total//n2} portiónir * {t} minuttir/portión = <<{total//n2}*{t}={(total//n2)*t}>>{(total//n2)*t} minuttir
 At enda leggur tú pilkitíðina afturat fyri at finna samlaðu tíðina, {name} brúkar: {(total//n2)*t} minuttir + {total//n1} minuttir = <<{(total//n2)*t}+{total//n1}={(total//n2)*t + total//n1}>>{(total//n2)*t + total//n1} minuttir
 #### {(total//n2)*t + total//n1}

@@ -11,15 +11,15 @@ id_orig = 125
 id_shuffled = 22
 
 question_annotated = """
-{name,Laura} gjørdi klárt til eina {event,veitslu} heima hjá sær sjálvari, har hon hevði ætlað at borðreiða við {food_dat,grýturætti}. Hon legði til merkis, at plastskeiðirnar vóru uppi, so hon keypti ein nýggjan pakka við {obj_dat,skeiðum}. Seinni keypti maður hennara eisini ein pakka við {n1_txt,fimm} nýggjum {obj_dat,skeiðum} og gav {name_acc,Lauru} tær. Meðan {name,Laura} gjørdi {food_acc,grýturætt}, brúkti hon {n2_txt,tríggjar} {obj_acc,skeiðir} til at smakka upp á {food_def,grýturættin}. Seinni, tá ið hon fór at dekka borðið, hevði hon tilsamans {total,12} {obj_acc,skeiðir}. Hvussu nógvar {obj_acc,skeiðir} vóru í pakkanum, sum {name,Laura} keypti?
+{name,Laura} gjørdi klárt til {event,eina veitslu} heima hjá sær sjálvari, har hon hevði ætlað at borðreiða við {food_dat,grýturætti}. Hon legði til merkis, at {obj_plast_def,plastskeiðirnar} vóru uppi, so hon keypti ein nýggjan pakka við {obj_dat,skeiðum}. Seinni keypti maður hennara eisini ein pakka við {n1_txt,fimm} nýggjum {obj_dat,skeiðum} og gav {name_acc,Lauru} {pron,tær}. Meðan {name,Laura} gjørdi {food_acc,grýturætt}, brúkti hon {n2_txt,tríggjar} {obj_acc,skeiðir} til at smakka upp á {food_def,grýturættin}. Seinni, tá ið hon fór at dekka borðið, hevði hon tilsamans {total,12} {obj_acc,skeiðir}. Hvussu {many,nógvar} {obj_acc,skeiðir} vóru í pakkanum, sum {name,Laura} keypti?
 
 #init:
-- name = sample(names_female)
-- event = sample(["døgurðaveitsla", "føðingardagsveitsla", "samkoma", "baby shower", "spælikvøld"])
-- food = sample(["steiktur kyllingur", "grillaður laksur", "oksagrýturættur", "vegetar lasagna", "fyltar piparfruktir", "creme brulee"])
-- obj = sample(["skeiðir", "gafflar", "tallerkar"])
+- name, name_acc = sample(names_female_obl)
+- event = sample(["eina veitslu", "eina døgurðaveitslu", "eina føðingardagsveitslu", "eina samkomu", "eitt spælikvøld"])
+- food_dat, food_acc, food_def = sample([("grýturætti", "grýturætt", "grýturættin"), ("kyllingi", "kylling", "kyllingin"), ("laksi", "laks", "laksin"), ("lasagnu", "lasagnu", "lasagnuna"), ("súpu", "súpu", "súpuna")])
+- obj_acc, obj_dat, obj_plast_def, pron, many = sample([("skeiðir", "skeiðum", "plastskeiðirnar", "tær", "nógvar"), ("gafflar", "gafflum", "plastgafflarnir", "teir", "nógvir")])
 - n1_txt, n1_val = range_str(5, 20, 1, numbers)
-- n2_txt, n2_val = range_str(3, 10, 1, numbers)
+- n2_txt, n2_val = sample([("tríggjar", 3), ("fýra", 4), ("fimm", 5), ("seks", 6), ("sjey", 7), ("átta", 8), ("níggju", 9), ("tíggju", 10)])
 - $total = range(12, 40)
 
 #conditions:
@@ -29,7 +29,7 @@ question_annotated = """
 """
 
 answer_annotated = """
-Samanlagda talið av {obj_dat} frá {name_acc,Lauru} og manni hennara var {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj_acc}.
+Samanlagda talið av {obj_dat} frá {name_acc} og manni hennara var {total}+{n2_val}=<<{total}+{n2_val}={total+n2_val}>>{total+n2_val} {obj_acc}.
 Tá ið maðurin keypti ein pakka við {n1_txt} {obj_dat}, vóru {total+n2_val}-{n1_val}=<<{total+n2_val}-{n1_val}={total+n2_val-n1_val}>>{total+n2_val-n1_val} {obj_acc} í pakkanum hjá {name_acc}.
 #### {total+n2_val-n1_val}
 """

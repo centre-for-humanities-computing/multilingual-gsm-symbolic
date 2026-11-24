@@ -1,4 +1,4 @@
-question = "Marta bindur vetrarklæði til síni 3 ommubørn. Tey eru tríburðar, so tey eru øll líka stór. Hon vil gera eina húgvu, eitt turriklæði, ein troyggju, vøttir og hosur til hvørt teirra. Tað krevur 2 noðu at gera eina húgvu, 4 til eitt turriklæði, 12 til eina troyggju, 1 til eitt par av vøttum og 2 til eitt par av hosum. Hvussu nógv noðu skal hon keypa?"
+question = "Marta bindur vetrarklæði til síni 3 ommubørn. Tey eru tríburðar, so tey eru øll líka stór. Hon vil gera eina húgvu, eitt turriklæði, eina troyggju, vøttir og hosur til hvørt teirra. Tað krevur 2 noðu at gera eina húgvu, 4 til eitt turriklæði, 12 til eina troyggju, 1 til eitt par av vøttum og 2 til eitt par av hosum. Hvussu nógv noðu skal hon keypa?"
 
 answer = """
 Eitt fullfíggjað sett til hvørt barn krevur 2 noðu fyri hvørja húgvu + 4 noðu fyri hvørt turriklæði + 12 noðu fyri hvørja troyggju + 1 noða fyri hvørt par av vøttum + 2 noðu fyri hvørt par av hosum = <<2+4+12+1+2=21>>21 noða.
@@ -11,20 +11,26 @@ id_orig = 520
 id_shuffled = 23
 
 question_annotated = """
-{name,Marta} bindur vetrarklæði til síni {count,3} ommubørn. Tey eru {children,tríburðar}, so tey eru øll líka stór. Hon vil gera eina {c1,húgvu}, eitt {c2,turriklæði}, ein {c3,troyggju}, {c4_nom,vøttir} og {c5_nom,hosur} til hvørt teirra. Tað krevur {n1,2} noðu at gera eina {c1,húgvu}, {n2,4} til eitt {c2,turriklæði}, {n3,12} til eina {c3,troyggju}, {n4,1} til eitt par av vøttum og {n5,2} til eitt par av hosum. Hvussu nógv noðu skal hon keypa?
+{name,Marta} bindur vetrarklæði til síni {count,3} ommubørn. Tey eru {children,tríburðar}, so tey eru øll líka stór. Hon vil gera {c1_art,eina} {c1_acc,húgvu}, {c2_art,eitt} {c2_acc,turriklæði}, {c3_art,eina} {c3_acc,troyggju}, {c4_nom,vøttir} og {c5_nom,hosur} til hvørt teirra. Tað krevur {n1,2} noðu at gera {c1_art,eina} {c1_acc,húgvu}, {n2,4} til {c2_art,eitt} {c2_acc,turriklæði}, {n3,12} til {c3_art,eina} {c3_acc,troyggju}, {n4,1} til eitt par av {c4_dat,vøttum} og {n5,2} til eitt par av {c5_dat,hosum}. Hvussu nógv noðu skal hon keypa?
 
 #init:
 - name = sample(names_female)
-- c1, c2, c3 = sample(["troyggja", "bundin troyggja", "húgva", "poncho"],3)
-- c4, c5 = sample([ "hanskar","vøttir", "hosur",  "beinvarmarar"], 2)
+- c1, c2, c3 = sample([("húgvu", "eina", "hvørja"), ("turriklæði", "eitt", "hvørt"), ("troyggju", "eina", "hvørja"), ("poncho", "ein", "hvønn")], 3)
+- c1_acc, c1_art, c1_each = c1
+- c2_acc, c2_art, c2_each = c2
+- c3_acc, c3_art, c3_each = c3
+- c4, c5 = sample([("vøttir", "vøttum"), ("hosur", "hosum"), ("hanskar", "hanskum")], 2)
+- c4_nom, c4_dat = c4
+- c5_nom, c5_dat = c5
+- n4_unit = "noða" if n4 == 1 else "noðu"
 - n1, n2, n3, n4, n5 = sample(range_list(3, 19), 5) 
-- children, count = sample([("tvíburar",2), ("trillingar",3), ("fýrlingar", 4),  ("fimmburar", 5)])
+- children, count = sample([("tvíburar", 2), ("tríburðar", 3)])
 
 #answer: count*(n1+n2+n3+n4+n5)
 """
 
 answer_annotated = """
-Eitt fullfíggjað sett til hvørt barn krevur {n1} noðu fyri hvørja {c1} + {n2} noðu fyri hvørt {c2} + {n3} noðu fyri hvørja {c3} + {n4} noða fyri hvørt par av {c4_dat,vøttum} + {n5} noðu fyri hvørt par av {c5_dat,hosum} = <<{n1}+{n2}+{n3}+{n4}+{n5}={n1+n2+n3+n4+n5}>>{n1+n2+n3+n4+n5} noða.
+Eitt fullfíggjað sett til hvørt barn krevur {n1} noðu fyri {c1_each} {c1_acc} + {n2} noðu fyri {c2_each} {c2_acc} + {n3} noðu fyri {c3_each} {c3_acc} + {n4} {n4_unit} fyri hvørt par av {c4_dat} + {n5} noðu fyri hvørt par av {c5_dat} = <<{n1}+{n2}+{n3}+{n4}+{n5}={n1+n2+n3+n4+n5}>>{n1+n2+n3+n4+n5} noða.
 So fyri at binda klæði til øll síni ommubørn hevur hon brúk fyri {count}*{n1+n2+n3+n4+n5} = <<{count}*{n1+n2+n3+n4+n5}={count*(n1+n2+n3+n4+n5)}>>{count*(n1+n2+n3+n4+n5)} noðum.
 #### {count*(n1+n2+n3+n4+n5)}
 """

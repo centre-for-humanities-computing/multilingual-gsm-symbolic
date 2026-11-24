@@ -12,12 +12,12 @@ id_orig = 1020
 id_shuffled = 20
 
 question_annotated = """
-{name,Jónas} hentar {n1,4} {fruit_plural,bananir} {d1,mikudag}. So hentar hann {n2,6} {fruit_plural,bananir} {d2,hósdag}. {d3,Fríggjadag} hentar hann {mult_txt,tríggjar ferðir} so nógvar {fruit_plural,bananir}, sum hann gjørdi {d1,mikudag}in. Hvussu nógvar {fruit_plural,bananir} hevur {name,Jónas}?
+{name,Jónas} hentar {n1,4} {fruit_plural,bananir} {d1,mikudag}. So hentar hann {n2,6} {fruit_plural,bananir} {d2,hósdag}. {d3,fríggjadag} hentar hann {mult_txt,tríggjar ferðir} so {many,nógvar} {fruit_plural,bananir}, sum hann gjørdi {d1,mikudag}in. Hvussu {many,nógvar} {fruit_plural,bananir} hevur {name,Jónas}?
 
 #init:
 - name = sample(names_male)
-- d1, d2, d3 = sample_sequential(weekdays, 3)
-- fruit, fruit_plural = sample(fruits)
+- d1, d2, d3 = sample_sequential(weekdays_acc, 3)
+- fruit_plural, fruit_dat, many = sample(fruits_plural_cases)
 - $n1 = range(30, 400)
 - $n2 = range(50, 400)
 - mult_txt, mult_val = sample(multi_times)
@@ -26,8 +26,8 @@ question_annotated = """
 """
 
 answer_annotated = """
-{d1_cap,Mikudag} og {d2,hósdag} tilsamans hevur {name} {n1} {fruit_plural} + {n2} {fruit_plural} = <<{n1}+{n2}={n1+n2}>>{n1+n2} {fruit_plural}.
-{d3_,Fríggjadag} hentar hann {mult_val}*{n1} {fruit_plural} = <<{mult_val}*{n1}={mult_val*n1}>>{mult_val*n1} {fruit_plural}.
+{d1} og {d2} tilsamans hevur {name} {n1} {fruit_plural} + {n2} {fruit_plural} = <<{n1}+{n2}={n1+n2}>>{n1+n2} {fruit_plural}.
+{d3} hentar hann {mult_val}*{n1} {fruit_plural} = <<{mult_val}*{n1}={mult_val*n1}>>{mult_val*n1} {fruit_plural}.
 Tilsamans hevur {name} {n1+n2} {fruit_plural} + {mult_val*n1} {fruit_plural} = <<{n1+n2}+{n1*mult_val}={n1 + n2 + mult_val * n1}>>{n1 + n2 + mult_val * n1} {fruit_plural}.
 #### {n1 + n2 + mult_val * n1}
 """
